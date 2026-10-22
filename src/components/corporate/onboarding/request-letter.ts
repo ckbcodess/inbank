@@ -14,6 +14,7 @@ import {
   CORPORATE_ROLE_LINE,
   lastFour,
   signatoryLabel,
+  type CompanyApplicant,
   type CorporateCompanyRecord,
   type CorporateUserDraft,
   type EnrolledAccountSummary,
@@ -24,6 +25,8 @@ export interface RequestLetterData {
   company: CorporateCompanyRecord;
   accounts: EnrolledAccountSummary[];
   users: CorporateUserDraft[];
+  /** Who prepared the request. When they aren't a signatory (a company secretary), the letter names them as the contact. */
+  applicant?: CompanyApplicant | null;
 }
 
 function esc(value: string): string {
@@ -34,7 +37,7 @@ function esc(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-export function requestLetterHtml({ reference, company, accounts, users }: RequestLetterData): string {
+export function requestLetterHtml({ reference, company, accounts, users, applicant }: RequestLetterData): string {
   const today = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(new Date());
   const addressee = company.relationshipManager
     ? `${esc(company.relationshipManager.name)}<br>Relationship Manager`
@@ -68,6 +71,11 @@ export function requestLetterHtml({ reference, company, accounts, users }: Reque
       </div>`,
     )
     .join("");
+
+  const contact =
+    applicant && !applicant.isSignatory
+      ? `<p>This request was prepared by ${esc(applicant.name)}${applicant.designation ? `, ${esc(applicant.designation)}` : ""}, who you may contact about it on <span class="num">${esc(applicant.mobile)}</span> or ${esc(applicant.email)}.</p>`
+      : "";
 
   const roleNotes = (Object.keys(CORPORATE_ROLE_LINE) as (keyof typeof CORPORATE_ROLE_LINE)[])
     .map((r) => `<li><strong>${r}</strong>: ${esc(CORPORATE_ROLE_LINE[r])}</li>`)
@@ -115,6 +123,7 @@ export function requestLetterHtml({ reference, company, accounts, users }: Reque
 </table>
 
 <p>We confirm that the users in the annex may act on internet banking in the roles shown, within our mandate (${esc(company.mandate.toLowerCase())}). This letter is signed by ${esc(company.signingRule)}.</p>
+${contact}
 
 <p>Yours faithfully,</p>
 <div class="signs">${signatureBlocks}</div>

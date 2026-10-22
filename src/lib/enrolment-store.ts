@@ -19,7 +19,7 @@ import {
   type EnrolmentStatus,
   type EnrolmentTimelineEvent,
   type LetterChannel,
-  type MandateSignatory,
+  type CompanyApplicant,
   type SignatureCheckItem,
   type VerificationCallLog,
 } from "./corporate-enrolment";
@@ -58,6 +58,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       mobile: "0244123456",
       email: "ransford.gyasi@adinkratextiles.com",
       ghanaCard: "GHA-012345678-9",
+      isSignatory: true,
     },
     mandate: "Both to sign",
     approvalRule: "Dual authorization: 1 Signatory A (Director) + 1 Signatory B (Finance)",
@@ -200,6 +201,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       mobile: "0201200314",
       email: "kofi.mensah@voltariver.com",
       ghanaCard: "GHA-112233445-5",
+      isSignatory: true,
     },
     mandate: "Either to sign",
     approvalRule: "Single authorization: Any registered Signatory can approve up to GHS 500,000",
@@ -312,6 +314,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       mobile: "0243112233",
       email: "kyeboah@accratimber.com",
       ghanaCard: "GHA-998811223-4",
+      isSignatory: true,
     },
     mandate: "Both to sign",
     approvalRule: "Two directors to sign jointly",
@@ -425,6 +428,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       mobile: "0244778899",
       email: "akua.osei@ashantiagro.com",
       ghanaCard: "GHA-776655443-2",
+      isSignatory: true,
     },
     mandate: "Any two to sign",
     approvalRule: "Dual sign-off for outward payments",
@@ -557,6 +561,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       mobile: "0201200314",
       email: "kofi.mensah@voltariver.com",
       ghanaCard: "GHA-901234567-3",
+      isSignatory: true,
     },
     mandate: "Either to sign",
     approvalRule: "Single authorisation: any registered signatory can approve up to GHS 500,000",
@@ -604,7 +609,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
     timeline: enrolmentTimeline(
       "awaiting_letter",
       { type: "operations", name: "Corporate Banking Team" },
-      "0201200314",
+      { mobile: "0201200314", isSignatory: true },
       "20 Oct 2026, 09:05 AM",
     ),
   },
@@ -998,11 +1003,15 @@ function reviewerPhrase(assignedTo: Pick<EnrolmentStaffAssignment, "type" | "nam
   return assignedTo.type === "rm" ? `${assignedTo.name}, your relationship manager,` : `Our ${assignedTo.name}`;
 }
 
-/** The customer-facing timeline for a new application, before or after the signed letter arrives. */
+/**
+ * The customer-facing timeline for a new application, before or after the signed letter arrives. The call goes to
+ * the applicant when they're a signatory; someone else applying (a company secretary) can't confirm for the
+ * company, so the bank calls a signatory instead.
+ */
 export function enrolmentTimeline(
   status: "awaiting_letter" | "checking_signatures",
   assignedTo: Pick<EnrolmentStaffAssignment, "type" | "name">,
-  applicantMobile: string,
+  applicant: Pick<CompanyApplicant, "mobile" | "isSignatory">,
   stamp: string,
 ): EnrolmentTimelineEvent[] {
   const waiting = status === "awaiting_letter";
@@ -1038,7 +1047,9 @@ export function enrolmentTimeline(
     {
       status: "call_verification",
       label: "Confirming by phone",
-      description: `We'll call ${maskedMobile(applicantMobile)} to confirm. We will never ask for a code or password.`,
+      description: applicant.isSignatory
+        ? `We'll call ${maskedMobile(applicant.mobile)} to confirm. We will never ask for a code or password.`
+        : "We'll call one of your signatories to confirm. We will never ask for a code or password.",
       timestamp: "Next",
       done: false,
       current: false,
@@ -1058,7 +1069,7 @@ export interface NewEnrolmentInput {
   reference: string;
   company: CorporateCompanyRecord;
   accounts: EnrolledAccountSummary[];
-  applicant: MandateSignatory;
+  applicant: CompanyApplicant;
   users: CorporateUserDraft[];
   /** The signed letter, when uploaded now. Without it the application waits for the letter. */
   letter?: { fileName: string; fileSize: string };
@@ -1077,13 +1088,9 @@ export function submitEnrolment(input: NewEnrolmentInput): EnrolmentApplication 
     companyName: input.company.companyName,
     companyTin: input.company.tin,
     companyAddress: input.company.address,
+    companyEmail: input.company.email,
     accounts: input.accounts,
-    applicant: {
-      name: input.applicant.name,
-      mobile: input.applicant.mobile,
-      email: input.applicant.email,
-      ghanaCard: input.applicant.ghanaCard,
-    },
+    applicant: { ...input.applicant },
     users: input.users.map((u) => ({ ...u, inviteStatus: "pending" })),
     mandate: input.company.mandate,
     approvalRule: input.company.approvalRule,
@@ -1105,12 +1112,14 @@ export function submitEnrolment(input: NewEnrolmentInput): EnrolmentApplication 
     })),
     verificationCall: {
       logged: false,
-      calledNumber: input.applicant.mobile,
+      calledNumber: input.applicant.isSignatory
+        ? input.applicant.mobile
+        : (input.company.signatories[0]?.mobile ?? ""),
       answeredBy: "",
       outcome: null,
     },
     returns: [],
-    timeline: enrolmentTimeline(status, assignedTo, input.applicant.mobile, stampNow()),
+    timeline: enrolmentTimeline(status, assignedTo, input.applicant, stampNow()),
   };
   saveEnrolment(application);
   return application;
@@ -1129,7 +1138,7 @@ function letterArrived(
       uploadedAt: new Date().toISOString(),
       receivedVia: via,
     },
-    timeline: enrolmentTimeline("checking_signatures", app.assignedTo, app.applicant.mobile, stampNow()),
+    timeline: enrolmentTimeline("checking_signatures", app.assignedTo, app.applicant, stampNow()),
   });
 }
 

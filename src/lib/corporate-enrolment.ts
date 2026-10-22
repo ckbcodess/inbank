@@ -10,6 +10,8 @@
  *
  *   Customer (/business/signup/enrol):
  *     Account -> Who's applying -> Code -> Users -> Review -> Letter -> Submitted
+ *   Anyone at the company can apply, a signatory or not (designer, 2026-10-22). A company secretary gives their
+ *   own details and proves their number with the code; the signatories approve by signing the letter.
  *   Customer (/business/signup/status): reference -> code -> status, re-upload in place
  *   Staff (/admin/enrolments): signature check against Flexcube -> callback -> approve, return or decline
  */
@@ -44,11 +46,14 @@ export interface CorporateEnrolmentScenario {
   outcome?: CorporateEnrolmentOutcome;
   /** Which demo account the scenario opens with. */
   account?: string;
+  /** Opens with someone who isn't on the mandate applying (the demo company secretary). */
+  nonSignatory?: boolean;
 }
 
 export const CORPORATE_ENROLMENT_SCENARIOS: readonly CorporateEnrolmentScenario[] = [
   { id: "account", label: "Find your company", step: "account" },
   { id: "applicant", label: "Who's applying", step: "applicant" },
+  { id: "applicant-other", label: "Company secretary applying", step: "applicant", nonSignatory: true },
   { id: "otp", label: "Confirm code", step: "otp" },
   { id: "users", label: "Users and roles", step: "users" },
   { id: "review", label: "Review", step: "review" },
@@ -127,7 +132,19 @@ export interface CompanyApplicant {
   mobile: string;
   email: string;
   ghanaCard?: string;
+  /** Their position at the company. A signatory's comes from the mandate. */
+  designation?: string;
+  /** False for someone applying who isn't on the mandate, such as a company secretary. */
+  isSignatory: boolean;
 }
+
+/** The demo company secretary who applies without being a signatory. */
+export const NON_SIGNATORY_DEMO: Omit<CompanyApplicant, "isSignatory"> = {
+  name: "Adwoa Mensah",
+  designation: "Company Secretary",
+  mobile: "0244300420",
+  email: "adwoa.mensah@adinkratextiles.com",
+};
 
 export interface SignatureCheckItem {
   signatoryName: string;
@@ -206,6 +223,8 @@ export interface EnrolmentApplication {
   companyName: string;
   companyTin: string;
   companyAddress?: string;
+  /** The company's own address on file, copied on every update so the signatories hear about it too. */
+  companyEmail?: string;
   accounts: EnrolledAccountSummary[];
   applicant: CompanyApplicant;
   users: CorporateUserDraft[];
@@ -245,6 +264,8 @@ export interface CorporateCompanyRecord {
   companyName: string;
   tin: string;
   address: string;
+  /** The company's email address on file in Flexcube. */
+  email: string;
   alreadyEnrolled?: boolean;
   mandate: string;
   /** The signing rule in plain words, used on the letter and the status page. */
@@ -273,6 +294,7 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
     companyName: "Adinkra Textiles Ltd",
     tin: "C0012345678",
     address: "Plot 14 Industrial Area, North Kaneshie, Accra",
+    email: "info@adinkratextiles.com",
     mandate: "Both to sign",
     signingRule: "one Signatory A and one Signatory B",
     approvalRule: "Dual authorisation: 1 Signatory A (Director) + 1 Signatory B (Finance)",
@@ -297,6 +319,7 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
     companyName: "Volta River Logistics Ltd",
     tin: "C0098765432",
     address: "Harbour Road, Tema",
+    email: "operations@voltariver.com",
     mandate: "Either to sign",
     signingRule: "either signatory",
     approvalRule: "Single authorisation: any registered signatory can approve up to GHS 500,000",
@@ -314,6 +337,7 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
     companyName: "Gold Coast Agro Processing Ltd",
     tin: "C0044556677",
     address: "Spintex Road, Accra",
+    email: "admin@goldcoastagro.com",
     alreadyEnrolled: true,
     mandate: "Any two to sign",
     signingRule: "any two signatories",

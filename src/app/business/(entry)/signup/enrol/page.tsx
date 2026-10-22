@@ -5,14 +5,16 @@
  *
  * The bank's process stays the same: a request letter signed per the mandate, checked against Flexcube, then
  * approved by the RM, branch or central team. What this saves the customer is the paperwork: the company and
- * its signatories come from the bank's records, the applicant is proved by a code to a number the bank already
- * holds, and we write the letter. They print it on their letterhead, sign it and upload it, or send it by email,
- * post or branch and the application waits for it. Model and steps: `lib/corporate-enrolment.ts`.
+ * its signatories come from the bank's records, the applicant proves their number with a code, and we write the
+ * letter. They print it on their letterhead, sign it and upload it, or send it by email, post or branch and the
+ * application waits for it. Anyone at the company can apply; someone who isn't a signatory (a company secretary)
+ * gives their own details, and the signatories approve by signing the letter. Model and steps:
+ * `lib/corporate-enrolment.ts`.
  */
 
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Building2, CheckCircle2, FileText, Mail, Plus, SearchX, X } from "@/components/ui/icons";
+import { Building2, CheckCircle2, FileText, Mail, Plus, SearchX, UserPlus, X } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import FindBranchDialog from "@/components/corporate/FindBranchDialog";
@@ -35,10 +37,12 @@ import {
   lastFour,
   lookupCorporateAccount,
   newEnrolmentReference,
+  NON_SIGNATORY_DEMO,
   reviewerFor,
   rolesFor,
   signatoryLabel,
   usersReady,
+  type CompanyApplicant,
   type CorporateAppRole,
   type CorporateCompanyRecord,
   type CorporateEnrolmentOutcome,
@@ -53,6 +57,9 @@ const RESEND_SECONDS = 30;
 const DEMO_REFERENCE = "ENR-2026-0814";
 
 type Step = CorporateEnrolmentStep;
+
+/** A signatory picked by their place on the mandate, or someone else at the company. */
+type ApplicantChoice = number | "other";
 
 /** Signatories start as Authorisers: they already approve for the company on the mandate. */
 function usersFromMandate(company: CorporateCompanyRecord): CorporateUserDraft[] {
@@ -84,7 +91,11 @@ function CorporateEnrolmentFlow() {
   const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([]);
 
   // Applicant and code
-  const [applicantIdx, setApplicantIdx] = useState<number | null>(null);
+  const [applicantChoice, setApplicantChoice] = useState<ApplicantChoice | null>(null);
+  const [otherName, setOtherName] = useState("");
+  const [otherDesignation, setOtherDesignation] = useState("");
+  const [otherMobile, setOtherMobile] = useState("");
+  const [otherEmail, setOtherEmail] = useState("");
   const [digits, setDigits] = useState<string[]>(() => Array<string>(OTP_LENGTH).fill(""));
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
 
@@ -96,21 +107,46 @@ function CorporateEnrolmentFlow() {
   const [newEmail, setNewEmail] = useState("");
   const [newGhanaCard, setNewGhanaCard] = useState("");
   const [newRole, setNewRole] = useState<CorporateAppRole>("Inputter");
+  const [newDesignation, setNewDesignation] = useState("");
 
   // Letter
   const [reference, setReference] = useState("");
   const [letter, setLetter] = useState<AttachedFile | null>(null);
   const [sendingLater, setSendingLater] = useState(false);
 
-  const applicant = company && applicantIdx !== null ? company.signatories[applicantIdx] : null;
+  const otherError =
+    otherMobile && !isCompleteGhanaMobile(otherMobile)
+      ? "Enter a full Ghana mobile number."
+      : "";
+  const otherReady =
+    otherName.trim() !== "" &&
+    otherDesignation.trim() !== "" &&
+    otherEmail.includes("@") &&
+    isCompleteGhanaMobile(otherMobile);
+
+  let applicant: CompanyApplicant | null = null;
+  if (company && typeof applicantChoice === "number") {
+    const s = company.signatories[applicantChoice];
+    applicant = { name: s.name, mobile: s.mobile, email: s.email, ghanaCard: s.ghanaCard, designation: s.designation, isSignatory: true };
+  } else if (applicantChoice === "other") {
+    applicant = {
+      name: otherName.trim(),
+      designation: otherDesignation.trim(),
+      mobile: otherMobile,
+      email: otherEmail.trim(),
+      isSignatory: false,
+    };
+  }
   const accounts = company ? company.accounts.filter((a) => selectedAccountIds.includes(a.id)) : [];
   const usersBlock = usersReady(users);
+  // Someone who isn't a signatory isn't a user yet; offer to add them, with what they already typed.
+  const canAddSelf = applicant !== null && !applicant.isSignatory && !users.some((u) => u.mobile === applicant.mobile);
 
   const loadCompany = useCallback((record: CorporateCompanyRecord) => {
     setCompany(record);
     setSelectedAccountIds(record.accounts.map((a) => a.id));
     setUsers(usersFromMandate(record));
-    setApplicantIdx(null);
+    setApplicantChoice(null);
   }, []);
 
   // `?scenario=` opens the flow on a given screen (the Demo hub links with it).
@@ -146,7 +182,15 @@ function CorporateEnrolmentFlow() {
       return;
     }
     loadCompany(record);
-    if (scenario.step !== "applicant") setApplicantIdx(0);
+    if (scenario.nonSignatory) {
+      setApplicantChoice("other");
+      setOtherName(NON_SIGNATORY_DEMO.name);
+      setOtherDesignation(NON_SIGNATORY_DEMO.designation ?? "");
+      setOtherMobile(NON_SIGNATORY_DEMO.mobile);
+      setOtherEmail(NON_SIGNATORY_DEMO.email);
+    } else if (scenario.step !== "applicant") {
+      setApplicantChoice(0);
+    }
     if (scenario.step === "users" || scenario.step === "review" || scenario.step === "letter" || scenario.step === "submitted") {
       // The demo company's third signatory is the Inputter, as on the invitation demo.
       setUsers((prev) => prev.map((u, i) => (i === 2 ? { ...u, role: "Inputter" } : u)));
@@ -194,7 +238,7 @@ function CorporateEnrolmentFlow() {
   }
 
   function handleSendCode() {
-    if (applicantIdx === null) return;
+    if (applicantChoice === null || (applicantChoice === "other" && !otherReady)) return;
     setBusy(true);
     window.setTimeout(() => {
       setBusy(false);
@@ -239,7 +283,18 @@ function CorporateEnrolmentFlow() {
     setNewEmail("");
     setNewGhanaCard("");
     setNewRole("Inputter");
+    setNewDesignation("");
     setAdding(false);
+  }
+
+  /** Opens the add form with the applicant's own details, so they only add their Ghana Card number. */
+  function startAddingSelf() {
+    if (!applicant) return;
+    setNewName(applicant.name);
+    setNewMobile(applicant.mobile);
+    setNewEmail(applicant.email);
+    setNewDesignation(applicant.designation ?? "");
+    setAdding(true);
   }
 
   function handleAddUser(e: React.FormEvent) {
@@ -254,6 +309,7 @@ function CorporateEnrolmentFlow() {
         mobile: newMobile,
         ghanaCard: newGhanaCard,
         role: newRole,
+        designation: newDesignation || undefined,
         isFromMandate: false,
       },
     ]);
@@ -310,7 +366,7 @@ function CorporateEnrolmentFlow() {
       <>
         <AuthLayout
           title="We Couldn't Find That Account"
-          description="Check the number and try again, or your branch can help."
+          description="Check the number and try again. If your company doesn't bank with GCB yet, we'll call you to open an account."
           icon={SearchX}
           align="center"
           onBack={handleBack}
@@ -320,6 +376,14 @@ function CorporateEnrolmentFlow() {
           <div className="flex flex-col gap-3">
             <Button size="lg" className="h-10 w-full text-[14px]" onClick={handleBack}>
               Try Again
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="h-10 w-full text-[14px]"
+              onClick={() => router.push("/business/signup/new-to-gcb?type=company")}
+            >
+              Open an Account
             </Button>
             <Button
               variant="outline"
@@ -367,13 +431,15 @@ function CorporateEnrolmentFlow() {
   if (step === "submitted" && company) {
     const reviewer = reviewerFor(company);
     const reviewerName = reviewer.type === "rm" ? `${reviewer.name}, your relationship manager,` : `Our ${reviewer.name}`;
+    // Updates go to the applicant and to the company's own address, so the signatories hear about it too.
+    const updatesTo = applicant ? `${applicant.email} and ${company.email}` : company.email;
     return (
       <AuthLayout
         title={sendingLater ? "Application Saved" : "Application Sent"}
         description={
           sendingLater
-            ? `Send the signed letter to ${reviewer.email}, post it, or bring it to any branch. Quote your reference.`
-            : `${reviewerName} will check the signatures against our records. We'll email ${applicant?.email ?? "you"} as it moves.`
+            ? `Send the signed letter to ${reviewer.email}, post it, or bring it to any branch. Quote your reference. We've emailed the details to ${updatesTo}.`
+            : `${reviewerName} will check the signatures against our records. We'll email ${updatesTo} as it moves.`
         }
         icon={sendingLater ? Mail : CheckCircle2}
         align="center"
@@ -425,7 +491,7 @@ function CorporateEnrolmentFlow() {
     step === "account" ? (
       "Enter any GCB account number your company holds."
     ) : step === "applicant" ? (
-      "We'll send a code to the number we hold for you."
+      "Choose yourself if you sign for the company. Anyone else can apply too."
     ) : step === "otp" ? (
       <>
         A 6-digit code has been sent to {maskMobile(applicant?.mobile ?? "")}.
@@ -517,48 +583,72 @@ function CorporateEnrolmentFlow() {
           </form>
         )}
 
-        {/* 2. Applicant: a signatory, proved by a code to the number the bank holds */}
+        {/* 2. Applicant: a signatory (code to the number the bank holds) or anyone else at the company (code to
+            the number they give). Either way the signatories approve by signing the letter. */}
         {step === "applicant" && company && (
           <div className="flex flex-col gap-6">
-            <div role="radiogroup" aria-label="Signatories" className="flex flex-col gap-2">
-              {company.signatories.map((s, i) => {
-                const selected = applicantIdx === i;
-                return (
-                  <button
-                    key={s.name}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={() => setApplicantIdx(i)}
-                    className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-colors duration-hover ${
-                      selected
-                        ? "border-[var(--active-border)] bg-[var(--active-bg)]"
-                        : "border-border bg-card hover:bg-muted/50"
-                    }`}
-                  >
-                    <span className="min-w-0">
-                      <span className="block truncate text-[14px] text-foreground">{s.name}</span>
-                      <span className="block truncate text-[12px] text-muted-foreground">{signatoryLabel(s)}</span>
-                    </span>
-                    <span className="tabular shrink-0 text-[13px] text-muted-foreground">{maskMobile(s.mobile)}</span>
-                  </button>
-                );
-              })}
+            <div role="radiogroup" aria-label="Who's applying" className="flex flex-col gap-2">
+              {company.signatories.map((s, i) => (
+                <ApplicantOption
+                  key={s.name}
+                  selected={applicantChoice === i}
+                  onSelect={() => setApplicantChoice(i)}
+                  primary={s.name}
+                  secondary={signatoryLabel(s)}
+                  meta={maskMobile(s.mobile)}
+                />
+              ))}
+              <ApplicantOption
+                selected={applicantChoice === "other"}
+                onSelect={() => setApplicantChoice("other")}
+                primary="Someone Else"
+                secondary="Not on the mandate, such as a company secretary"
+              />
             </div>
 
-            <div className="flex flex-col gap-3">
+            {applicantChoice === "other" && (
+              <div className="flex flex-col gap-4">
+                <Field label="Full Name" htmlFor="otherName">
+                  <Input id="otherName" autoComplete="name" value={otherName} onChange={(e) => setOtherName(e.target.value)} autoFocus />
+                </Field>
+                <Field label="Position" htmlFor="otherDesignation" hint="For example, Company Secretary.">
+                  <Input
+                    id="otherDesignation"
+                    autoComplete="organization-title"
+                    value={otherDesignation}
+                    onChange={(e) => setOtherDesignation(e.target.value)}
+                  />
+                </Field>
+                <Field label="Mobile Number" htmlFor="otherMobile" hint="We'll send a code here." error={otherError}>
+                  <PhoneInput id="otherMobile" value={otherMobile} onValueChange={setOtherMobile} />
+                </Field>
+                <Field label="Email" htmlFor="otherEmail">
+                  <Input
+                    id="otherEmail"
+                    type="email"
+                    autoComplete="email"
+                    value={otherEmail}
+                    onChange={(e) => setOtherEmail(e.target.value)}
+                  />
+                </Field>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-2">
               <Button
                 size="lg"
                 loading={busy}
-                disabled={applicantIdx === null}
+                disabled={applicantChoice === null || (applicantChoice === "other" && !otherReady)}
                 onClick={handleSendCode}
                 className="h-10 w-full text-[14px]"
               >
                 Send Code
               </Button>
-              <p className="text-center text-[12px] text-muted-foreground">
-                Not a signatory? Ask one of them to start the application.
-              </p>
+              {applicantChoice === "other" && (
+                <p className="text-center text-[12px] text-muted-foreground">
+                  {`Your signatories approve the application by signing the letter we write (${company.signingRule}).`}
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -638,7 +728,7 @@ function CorporateEnrolmentFlow() {
                   <div className="min-w-0">
                     <p className="truncate text-[14px] text-foreground">{u.name}</p>
                     <p className="truncate text-[12px] text-muted-foreground">
-                      {u.isFromMandate ? u.designation : "Added by you"}
+                      {u.isFromMandate ? u.designation : (u.designation ?? "Added by you")}
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
@@ -718,10 +808,18 @@ function CorporateEnrolmentFlow() {
                 </div>
               </form>
             ) : (
-              <Button variant="outline" size="lg" className="h-10 w-full text-[14px]" onClick={() => setAdding(true)}>
-                <Plus size={16} />
-                Add a User
-              </Button>
+              <div className="flex flex-col gap-3">
+                {canAddSelf && (
+                  <Button variant="outline" size="lg" className="h-10 w-full text-[14px]" onClick={startAddingSelf}>
+                    <UserPlus size={16} />
+                    Add Myself
+                  </Button>
+                )}
+                <Button variant="outline" size="lg" className="h-10 w-full text-[14px]" onClick={() => setAdding(true)}>
+                  <Plus size={16} />
+                  Add a User
+                </Button>
+              </div>
             )}
 
             <dl className="flex flex-col gap-1 text-[12px] text-muted-foreground">
@@ -760,7 +858,12 @@ function CorporateEnrolmentFlow() {
             </ReviewGroup>
 
             <ReviewGroup title="Applicant" onEdit={() => setStep("applicant")}>
-              {applicant && <ReviewLine primary={applicant.name} secondary={maskMobile(applicant.mobile)} tabular />}
+              {applicant && (
+                <>
+                  <ReviewLine primary={applicant.name} secondary={maskMobile(applicant.mobile)} tabular />
+                  {!applicant.isSignatory && applicant.designation && <ReviewLine primary={applicant.designation} />}
+                </>
+              )}
             </ReviewGroup>
 
             <ReviewGroup title="Users" onEdit={() => setStep("users")}>
@@ -783,7 +886,7 @@ function CorporateEnrolmentFlow() {
                 variant="outline"
                 size="lg"
                 className="h-10 w-full text-[14px]"
-                onClick={() => openRequestLetter({ reference, company, accounts, users })}
+                onClick={() => openRequestLetter({ reference, company, accounts, users, applicant })}
               >
                 <FileText size={16} />
                 Open Letter to Print
@@ -831,6 +934,38 @@ function CorporateEnrolmentFlow() {
       </AuthLayout>
       <FindBranchDialog open={showBranchDialog} onOpenChange={setShowBranchDialog} />
     </>
+  );
+}
+
+function ApplicantOption({
+  selected,
+  onSelect,
+  primary,
+  secondary,
+  meta,
+}: {
+  selected: boolean;
+  onSelect: () => void;
+  primary: string;
+  secondary: string;
+  meta?: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={selected}
+      onClick={onSelect}
+      className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-colors duration-hover ${
+        selected ? "border-[var(--active-border)] bg-[var(--active-bg)]" : "border-border bg-card hover:bg-muted/50"
+      }`}
+    >
+      <span className="min-w-0">
+        <span className="block truncate text-[14px] text-foreground">{primary}</span>
+        <span className="block truncate text-[12px] text-muted-foreground">{secondary}</span>
+      </span>
+      {meta && <span className="tabular shrink-0 text-[13px] text-muted-foreground">{meta}</span>}
+    </button>
   );
 }
 

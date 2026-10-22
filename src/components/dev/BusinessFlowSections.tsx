@@ -123,10 +123,22 @@ export function BusinessFlowSections({
         <div className="flex h-7 items-center px-2 text-[13px] text-muted-foreground">Online application</div>
         <ol className="flex flex-col">
           {row(
-            "Choose business type",
+            "Account holder or new to GCB",
             "The front door",
             () => go("/business/signup"),
-            pathname === "/business/signup" && type !== "company",
+            pathname === "/business/signup" && type !== "company" && step !== "type",
+          )}
+          {row(
+            "Choose business type",
+            "Sole proprietor or company",
+            () => go("/business/signup?step=type"),
+            pathname === "/business/signup" && step === "type",
+          )}
+          {row(
+            "New to GCB",
+            "No business account yet: request a call",
+            () => go("/business/signup/new-to-gcb"),
+            pathname === "/business/signup/new-to-gcb",
           )}
           {row(
             "Set up your company",

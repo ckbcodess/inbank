@@ -15,7 +15,6 @@ import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswo
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import PinRequirements from "@/components/auth/PinRequirements";
 import SelfieCapture from "@/components/auth/SelfieCapture";
-import FindBranchDialog from "@/components/corporate/FindBranchDialog";
 import { AlertToast } from "@/components/ui/alert-toast";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -78,7 +77,6 @@ function SoleProprietorSignupContent() {
   const [pinMisses, setPinMisses] = useState(0);
   const [pinNote, setPinNote] = useState("");
 
-  const [showBranchDialog, setShowBranchDialog] = useState(false);
 
   useEffect(() => {
     if (stepParam) {
@@ -283,7 +281,7 @@ function SoleProprietorSignupContent() {
     } else if (step === "selfie") {
       setStep("ghana_card");
     } else {
-      router.push("/business/signup");
+      router.push("/business/signup?step=type");
     }
   }
 
@@ -326,10 +324,9 @@ function SoleProprietorSignupContent() {
 
   if (outcome === "no-account") {
     return (
-      <>
         <AuthLayout
           title="We Couldn't Find a Business Account"
-          description="There's no sole proprietor account under this Ghana Card. Your branch can help."
+          description="There's no sole proprietor account under this Ghana Card. If you don't bank with GCB yet, we'll call you to open one."
           icon={SearchX}
           align="center"
           onBack={handleBackStep}
@@ -340,9 +337,9 @@ function SoleProprietorSignupContent() {
             <Button
               size="lg"
               className="h-10 w-full text-[14px]"
-              onClick={() => setShowBranchDialog(true)}
+              onClick={() => router.push("/business/signup/new-to-gcb?type=sole")}
             >
-              Find a Branch
+              Open an Account
             </Button>
             <Button
               variant="outline"
@@ -357,12 +354,6 @@ function SoleProprietorSignupContent() {
             </Button>
           </div>
         </AuthLayout>
-
-        <FindBranchDialog
-          open={showBranchDialog}
-          onOpenChange={setShowBranchDialog}
-        />
-      </>
     );
   }
 
@@ -389,7 +380,7 @@ function SoleProprietorSignupContent() {
             variant="outline"
             size="lg"
             className="h-10 w-full text-[14px]"
-            onClick={() => router.push("/business/signup")}
+            onClick={() => router.push("/business/signup?step=type")}
           >
             Back to Options
           </Button>

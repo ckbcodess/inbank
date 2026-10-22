@@ -89,8 +89,9 @@ export default function AdminEnrolmentDetailPage({
     const loaded = getEnrolment(normalizedId);
     if (loaded) {
       setApplication(loaded);
-      setCallNumber(loaded.applicant.mobile);
-      setCallAnsweredBy(loaded.applicant.name);
+      // A non-signatory applicant can't confirm for the company, so the call goes to a signatory.
+      setCallNumber(loaded.applicant.isSignatory ? loaded.applicant.mobile : loaded.verificationCall.calledNumber);
+      setCallAnsweredBy(loaded.applicant.isSignatory ? loaded.applicant.name : "");
       setCallLogged(loaded.verificationCall.logged);
       if (loaded.verificationCall.callNotes) {
         setCallNotes(loaded.verificationCall.callNotes);
@@ -336,6 +337,11 @@ export default function AdminEnrolmentDetailPage({
               <dt className="text-muted-foreground">Applicant</dt>
               <dd className="font-medium text-foreground">
                 {application.applicant.name} ({application.applicant.mobile})
+                {!application.applicant.isSignatory && (
+                  <span className="block text-[12px] font-normal text-muted-foreground">
+                    {application.applicant.designation ?? "Not a signatory"}, not on the mandate
+                  </span>
+                )}
               </dd>
             </div>
             <div className="flex justify-between">
