@@ -403,6 +403,12 @@ const business: Entry[] = [
   ["Set a limit for one payment.", "Définissez un plafond par paiement.", "Fije un límite por pago.", "请设置单笔付款限额。"],
   ["This is above the highest limit your bank allows for one person.", "Ce montant dépasse le plafond maximal autorisé par votre banque pour une personne.", "Supera el límite máximo que su banco permite por persona.", "超出银行允许的每人最高限额。"],
   ["Only accounts your bank enabled for internet banking can be given.", "Seuls les comptes activés par votre banque pour la banque en ligne peuvent être attribués.", "Solo se pueden asignar cuentas que su banco habilitó para la banca en línea.", "只能分配银行已开通网上银行的账户。"],
+  ["Sent Back to You", "Renvoyés vers vous", "Devueltos a usted", "退回给您的付款"],
+  ["1 more of yours is waiting for approval.", "1 autre de vos paiements attend une approbation.", "1 pago más suyo está pendiente de aprobación.", "您还有 1 笔付款待审批。"],
+  ["{0} more of yours are waiting for approval.", "{0} autres de vos paiements attendent une approbation.", "{0} pagos más suyos están pendientes de aprobación.", "您还有 {0} 笔付款待审批。"],
+  ["1 user change needs a second person", "1 modification d’utilisateur attend une deuxième personne", "1 cambio de usuario necesita una segunda persona", "1 项用户变更需要第二人批准"],
+  ["{0} user changes need a second person", "{0} modifications d’utilisateurs attendent une deuxième personne", "{0} cambios de usuarios necesitan una segunda persona", "{0} 项用户变更需要第二人批准"],
+  ["Open Administration", "Ouvrir l’administration", "Abrir administración", "打开管理"],
 ];
 
 export default business;

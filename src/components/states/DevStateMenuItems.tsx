@@ -3,7 +3,9 @@
 /**
  * The option list inside the Dev Mode dropdown, shared by the header control
  * and the floating `DevStatePanel` so both draw a screen's primary states,
- * customer simulation presets (Clean, Single Account, Everyday), and any extra groups.
+ * the demo users, and any extra groups. Personal banking lists its customer
+ * presets (Clean, Single Account, Everyday); a signed-in business lists its
+ * users by role and their flows instead (`BusinessDevMenuItems`).
  */
 
 import { Fragment } from "react";
@@ -14,7 +16,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { BusinessDevMenuItems } from "@/components/corporate/dev/BusinessDevMenuItems";
 import { useDevUserStore, DEMO_USER_CONFIGS, type DemoUserType } from "@/lib/dev-user-simulation";
+import { isBusinessProfile } from "@/lib/profile";
+import { useSession } from "@/lib/session-store";
 
 function OptionList({
   states,
@@ -97,10 +102,11 @@ export function DemoUserSwitcherSection() {
 }
 
 export function DevStateMenuItems({ devState }: { devState?: DevStateData | null }) {
+  const business = isBusinessProfile(useSession((s) => s.activeProfile));
   return (
     <>
-      {/* 1. Global Demo User Persona Switcher */}
-      <DemoUserSwitcherSection />
+      {/* 1. Who you're testing as: personal demo customers, or the business's users by role */}
+      {business ? <BusinessDevMenuItems /> : <DemoUserSwitcherSection />}
 
       {/* 2. Page-Specific Dev States (if registered by the active route) */}
       {devState && (

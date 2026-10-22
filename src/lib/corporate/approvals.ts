@@ -175,6 +175,33 @@ export const APPROVAL_QUEUE: ApprovalItem[] = [
   ),
 ];
 
+// Sent back by the Reviewer: the inputter sees the comment on the receipt and can edit and resubmit
+const SENT_BACK = seed(
+  {
+    id: "apr-007",
+    reference: "NIB-2026-884244",
+    type: "payment",
+    description: "Invoice 2231 — Bonwire Kente Weavers",
+    counterparty: "Bonwire Kente Weavers",
+    currency: "GHS",
+    amount: 62_750.0,
+    accountId: "acc-001",
+    submittedBy: "Ransford Gyasi",
+    submittedAt: "2026-08-10 14:22",
+    priority: "standard",
+  },
+  ["review", "authorise"],
+);
+SENT_BACK.status = "returned";
+SENT_BACK.trail.push({
+  by: "Justice Oduro",
+  role: "Reviewer",
+  action: "returned",
+  at: "2026-08-10 16:05",
+  comment: "The invoice says 2,500 metres, not 3,000. Please correct the amount and attach the revised invoice.",
+});
+APPROVAL_QUEUE.push(SENT_BACK);
+
 export function findApproval(id: string): ApprovalItem | undefined {
   return APPROVAL_QUEUE.find((a) => a.id === id);
 }

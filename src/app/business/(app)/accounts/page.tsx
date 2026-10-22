@@ -16,6 +16,7 @@ import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/state
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import type { BaselineState } from "@/lib/states";
 import { businessAccounts } from "@/lib/corporate/accounts";
+import { useSession } from "@/lib/session-store";
 
 const BASELINE: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
@@ -26,7 +27,9 @@ function tail(number: string) {
 
 export default function BusinessAccountsPage() {
   const [state, setState] = useState<BaselineState>("populated");
-  const accounts = useMemo(() => businessAccounts(), []);
+  // Per-user visibility (UAR-05): re-read when the signed-in person changes.
+  const actorId = useSession((s) => s.actor?.id);
+  const accounts = useMemo(() => (actorId ? businessAccounts() : []), [actorId]);
 
   return (
     <div className="flex flex-col gap-4">

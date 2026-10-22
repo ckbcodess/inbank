@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { useDevState } from "@/components/providers/DevStateProvider";
 import { DevStateMenuItems } from "@/components/states/DevStateMenuItems";
+import { businessDevBadge } from "@/components/corporate/dev/BusinessDevMenuItems";
 import { useCaptureMode } from "@/lib/capture-mode";
 import { toggleDevToolsHidden, useDevToolsHidden } from "@/lib/dev-tools-visibility";
 import { NOTIFICATIONS } from "@/lib/mock-data";
@@ -128,7 +129,9 @@ export default function TopHeader({
   const captureMode = useCaptureMode();
   const devToolsHidden = useDevToolsHidden();
   const simUserType = useDevUserStore((s) => s.userType);
-  const simBadge = DEMO_USER_CONFIGS[simUserType]?.badgeLabel || "Dev";
+  const business = isBusinessProfile(useSession((s) => s.activeProfile));
+  // A business is tested as a role, not a personal demo customer.
+  const simBadge = business ? businessDevBadge(actor.id) : DEMO_USER_CONFIGS[simUserType]?.badgeLabel || "Dev";
   const { t } = useTranslation();
   const [logoutOpen, setLogoutOpen] = useState(false);
 
@@ -141,7 +144,6 @@ export default function TopHeader({
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
   // Business banking has no notifications or settings screens yet, so it shows neither (a control that
   // leads to the other app is worse than none).
-  const business = isBusinessProfile(useSession((s) => s.activeProfile));
 
   return (
     <header className="absolute inset-x-0 top-0 z-20 flex h-12 items-center justify-between gap-3 border-b border-border/60 bg-[var(--shell-header)] px-3 backdrop-blur-xl backdrop-saturate-150 sm:px-5 lg:px-6">
