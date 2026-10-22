@@ -71,23 +71,23 @@ export function findCorporateEnrolmentScenario(id: string): CorporateEnrolmentSc
 /* ── Roles ─────────────────────────────────────────────────────────────────── */
 
 /**
- * The roles on the bank's application form. The form says Initiator; BRD v2 calls the same role Inputter, and
- * the invitation already says Inputter, so we use that. Viewer is on the form but not in v2, and v2's Reviewer
- * is an approval level the bank configures, not a form category. Both are open questions in WORKING_LOG.
+ * The roles a company asks for. The bank's form says Initiator; BRD v2 calls the same role Inputter, so we use
+ * that. Reviewer is v2's middle step (BRL-03). Viewer is on the form but not in v2, an open question in WORKING_LOG.
  */
-export type CorporateAppRole = "Inputter" | "Authoriser" | "Viewer";
+export type CorporateAppRole = "Inputter" | "Reviewer" | "Authoriser" | "Viewer";
 
-export const CORPORATE_ROLES: readonly CorporateAppRole[] = ["Inputter", "Authoriser", "Viewer"];
+export const CORPORATE_ROLES: readonly CorporateAppRole[] = ["Inputter", "Reviewer", "Authoriser", "Viewer"];
 
 export const CORPORATE_ROLE_LINE: Record<CorporateAppRole, string> = {
-  Inputter: "Prepares payments. Someone else authorises them.",
-  Authoriser: "Approves payments before they leave.",
+  Inputter: "Prepares payments. Someone else reviews and authorises them.",
+  Reviewer: "Checks payments and passes them on, or sends them back with a comment.",
+  Authoriser: "Gives the final approval that sends a payment.",
   Viewer: "Sees balances, statements and history.",
 };
 
-/** Authorisers must be named on the mandate (BRL-03), so someone added by the applicant can't be one. */
+/** Reviewers and authorisers must be named on the mandate (BRL-03), so someone added by the applicant can be neither. */
 export function rolesFor(isFromMandate: boolean): readonly CorporateAppRole[] {
-  return isFromMandate ? CORPORATE_ROLES : CORPORATE_ROLES.filter((r) => r !== "Authoriser");
+  return isFromMandate ? CORPORATE_ROLES : CORPORATE_ROLES.filter((r) => r !== "Authoriser" && r !== "Reviewer");
 }
 
 /** A company needs someone to prepare payments and someone else to approve them (BRL-04). */
@@ -311,7 +311,7 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
     signatories: [
       { name: "Yaw Oppong", designation: "Managing Director", signingClass: "A", email: "yaw.oppong@adinkratextiles.com", mobile: "0244123456", ghanaCard: "GHA-789012345-1", specimenUrl: "/signatures/specimen-yaw.svg" },
       { name: "Esther Appiah", designation: "Finance Director", signingClass: "B", email: "esther.appiah@adinkratextiles.com", mobile: "0244300412", ghanaCard: "GHA-345678901-2", specimenUrl: "/signatures/specimen-esther.svg" },
-      { name: "Kwame Boateng", designation: "Executive Director", signingClass: "A", email: "kwame.boateng@adinkratextiles.com", mobile: "0244300411", ghanaCard: "GHA-334455667-8", specimenUrl: "/signatures/specimen-kwame.svg" },
+      { name: "Ransford Gyasi", designation: "Executive Director", signingClass: "A", email: "ransford.gyasi@adinkratextiles.com", mobile: "0244300411", ghanaCard: "GHA-334455667-8", specimenUrl: "/signatures/specimen-kwame.svg" },
     ],
   },
   // One account, no RM: the Corporate Banking Team reviews it

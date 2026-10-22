@@ -1,8 +1,9 @@
 "use client";
 
 /**
- * Pay a Supplier — the business payment a maker prepares, or a sole proprietor sends directly.
- * A maker prepares a payment and submits it for approval; a sole proprietor's payment goes straight out after the code.
+ * Pay a Supplier — the business payment an inputter prepares, or a sole proprietor sends directly.
+ * An inputter prepares a payment within their limit and submits it down its approval path (review if the amount
+ * needs it, then authorise); a sole proprietor's payment goes straight out after the code.
  * One bank transfer to one supplier, in four quiet steps: where it comes from, who it goes to (the name is looked
  * up from the account number, never typed), how much and what for, then a review that says plainly what leaves
  * the account, what it costs and whether an approver sees it first.
@@ -37,7 +38,8 @@ import {
 } from "@/components/payments/flows/shared";
 import { businessAccounts, businessTransactions } from "@/lib/corporate/accounts";
 import { sendSupplierPayment, submitSupplierPayment } from "@/lib/corporate/payments";
-import { paysWithoutApproval } from "@/lib/corporate/roles";
+import { approvalPath, companyUserFor, describePath } from "@/lib/corporate/controls";
+import { canInitiate, paysWithoutApproval } from "@/lib/corporate/roles";
 import { findTransaction, formatMoney } from "@/lib/mock-data";
 import { roundMoney } from "@/lib/money";
 import { useSession } from "@/lib/session-store";
@@ -84,6 +86,8 @@ export default function SupplierPaymentFlow() {
   const search = useSearchParams();
   const actor = useSession((s) => s.actor);
   const direct = actor ? paysWithoutApproval(actor.role) : false;
+  // The inputter's limit for one payment (BRL-06). A sole proprietor has none.
+  const limit = direct ? undefined : companyUserFor(actor)?.limit;
 
   const accounts = useMemo(() => businessAccounts().filter((a) => a.status === "Active"), []);
   const suppliers = useMemo(() => recentSuppliers(), []);
@@ -117,7 +121,9 @@ export default function SupplierPaymentFlow() {
   const fee = methodOption.fee;
   const total = roundMoney(numAmount + fee);
   const overBalance = total > (fromAccount?.available ?? 0);
-  const valid = Boolean(fromAccount) && verified && numAmount > 0 && !overBalance;
+  const overLimit = limit !== undefined && numAmount > limit;
+  const valid = Boolean(fromAccount) && verified && numAmount > 0 && !overBalance && !overLimit;
+  const path = approvalPath(numAmount);
 
   function pick(supplier: RecentSupplier) {
     setBank(supplier.bank);
@@ -152,10 +158,22 @@ export default function SupplierPaymentFlow() {
       const { transaction } = sendSupplierPayment(request);
       setSubmitted({ transactionId: transaction.id, reference: transaction.reference });
     } else {
-      const { transaction } = submitSupplierPayment(request, actor?.name ?? "A maker");
+      const { transaction } = submitSupplierPayment(request, actor?.name ?? "An inputter");
       setSubmitted({ transactionId: transaction.id, reference: transaction.reference });
     }
     setStep("submitted");
+  }
+
+  // Reviewers, authorisers and administrators don't start payments (BRL-04); the nav doesn't offer this page.
+  if (actor && !canInitiate(actor.role)) {
+    return (
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
+        <PageHeader title="Pay a Supplier" backTo={{ href: "/business/overview", label: "Home" }} />
+        <p className="text-[14px] leading-relaxed text-muted-foreground">
+          Payments are prepared by inputters. You review or authorise them in Approvals.
+        </p>
+      </div>
+    );
   }
 
   if (step === "submitted" && submitted && fromAccount) {
@@ -175,8 +193,8 @@ export default function SupplierPaymentFlow() {
                 </>
               ) : (
                 <>
-                  <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} is with an approver. Nothing leaves{" "}
-                  {fromAccount.name} until it is approved. You will see the result in Transactions.
+                  <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} goes to {describePath(path)}.
+                  Nothing leaves {fromAccount.name} until it is authorised. You can follow it in Transactions.
                 </>
               )}
             </p>
@@ -230,8 +248,7 @@ export default function SupplierPaymentFlow() {
 
         {!direct && (
           <p className="text-[13px] leading-relaxed text-muted-foreground">
-            This goes to an approver first. {fromAccount.mandate ? `The account's mandate is ${fromAccount.mandate.toLowerCase()}. ` : ""}
-            Nothing is sent, and nothing is debited, until it is approved, and you can follow it in Transactions.
+            {`This goes to ${describePath(path)}. Either can send it back to you with a comment. Nothing is sent, and nothing is debited, until it is authorised.`}
           </p>
         )}
 
@@ -317,7 +334,16 @@ export default function SupplierPaymentFlow() {
                 onChange={setAmount}
                 label="Amount"
                 onFocus={() => setCollapsed(true)}
-                error={overBalance ? <InsufficientFundsAlert /> : undefined}
+                error={
+                  overBalance ? (
+                    <InsufficientFundsAlert />
+                  ) : overLimit && limit !== undefined ? (
+                    <span>
+                      Your limit for one payment is <span className="tabular">{formatMoney(limit, "GHS", true)}</span>. The bank sets
+                      limits; your administrator can ask for a change.
+                    </span>
+                  ) : undefined
+                }
               />
 
               <Field label="How It's Sent">

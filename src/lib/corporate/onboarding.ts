@@ -35,7 +35,7 @@ export const BUSINESS_ROLE_LINE: Record<BusinessUserRole, string> = {
 
 export const BUSINESS_INVITE_DEMO = {
   companyName: "Adinkra Textiles Ltd",
-  inviteeName: "Kwame Boateng",
+  inviteeName: "Ransford Gyasi",
   role: "Inputter" as BusinessUserRole,
   ghanaCardOnRecord: "GHA-334455667-8",
   mobile: "+233244300411",

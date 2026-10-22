@@ -76,8 +76,8 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       },
       {
         id: "u-draft-2",
-        name: "Kwame Boateng",
-        email: "kwame.boateng@adinkratextiles.com",
+        name: "Ransford Gyasi",
+        email: "ransford.gyasi@adinkratextiles.com",
         mobile: "0244300411",
         role: "Inputter",
         ghanaCard: "GHA-567890123-4",

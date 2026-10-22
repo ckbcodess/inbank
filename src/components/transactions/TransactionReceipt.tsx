@@ -398,10 +398,13 @@ function StateBand({
   repeatTo: string | null;
   renderBand?: (state: TransactionState, txn: Transaction) => React.ReactNode;
 }) {
+  // An app can tell its own version of a shared state (a business payment waiting on named approvers).
+  const own = renderBand?.(state, txn);
+  if (own) return own;
   switch (state) {
     case "pending":
       return (
-        <Band tone="warning" icon={<Clock size={17} strokeWidth={1.8} aria-hidden="true" />} title="Processing">
+        <Band tone="warning" icon={<Clock size={17} aria-hidden="true" />} title="Processing">
           <p>
             This payment has been submitted and is being processed. Funds are expected to settle by{" "}
             <span className="text-foreground tabular-nums numorainput">{formatDate(txn.valueDate)}, end of day</span>.
@@ -414,7 +417,7 @@ function StateBand({
 
     case "failed-single":
       return (
-        <Band tone="destructive" icon={<AlertCircle size={17} strokeWidth={1.8} aria-hidden="true" />} title="Payment failed">
+        <Band tone="destructive" icon={<AlertCircle size={17} aria-hidden="true" />} title="Payment failed">
           <p>
             {txn.failureReason ??
               "The receiving bank rejected this payment. No funds left your account."}
@@ -435,7 +438,7 @@ function StateBand({
 
     case "reversed":
       return (
-        <Band tone="neutral" icon={<RotateCcw size={17} strokeWidth={1.8} aria-hidden="true" />} title="Reversed">
+        <Band tone="neutral" icon={<RotateCcw size={17} aria-hidden="true" />} title="Reversed">
           <p>
             This transaction completed and was later reversed with reference{" "}
             <span className="text-foreground tabular-nums numorainput">{txn.reversalReference ?? "—"}</span>.
@@ -445,7 +448,7 @@ function StateBand({
 
     case "disputed":
       return (
-        <Band tone="warning" icon={<ShieldQuestion size={17} strokeWidth={1.8} aria-hidden="true" />} title="Under dispute">
+        <Band tone="warning" icon={<ShieldQuestion size={17} aria-hidden="true" />} title="Under dispute">
           <p>
             This transaction has been flagged as disputed and is being investigated. You&apos;ll be notified when the outcome is recorded.
           </p>
@@ -454,7 +457,7 @@ function StateBand({
 
     case "awaiting-approval":
       return (
-        <Band tone="neutral" icon={<Clock size={17} strokeWidth={1.8} />} title="Waiting for approval">
+        <Band tone="neutral" icon={<Clock size={17} />} title="Waiting for approval">
           <p>
             This payment is in an approver&apos;s queue and hasn&apos;t been sent yet.
           </p>
@@ -462,7 +465,7 @@ function StateBand({
       );
 
     default:
-      return renderBand?.(state, txn) ?? null;
+      return null;
   }
 }
 

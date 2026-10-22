@@ -2,8 +2,8 @@
 
 /**
  * Business home. The question a finance officer opens it with is "what can we spend, and what is waiting
- * for me?". So: one figure (available cash across the company's accounts, derived from the ledger), what
- * needs the person's approval (approvers only), the accounts it is made of, and the two payment doors.
+ * for me?". So: one figure (available cash across the accounts this person can see, derived from the ledger), what
+ * needs their review or authorisation, the accounts it is made of, and, for inputters, the two payment doors.
  * Nothing sits between the person and the balance.
  */
 
@@ -14,9 +14,10 @@ import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import { toLocalEquivalent } from "@/lib/mock-data";
-import { APPROVAL_QUEUE } from "@/lib/corporate/approvals";
+import { queueFor } from "@/lib/corporate/approvals";
+import { userChangesToApprove } from "@/lib/corporate/controls";
 import { sumMoney } from "@/lib/money";
-import { isApprover } from "@/lib/corporate/roles";
+import { canInitiate } from "@/lib/corporate/roles";
 import { businessAccounts } from "@/lib/corporate/accounts";
 import { useSession } from "@/lib/session-store";
 
@@ -30,11 +31,19 @@ export default function BusinessOverviewPage() {
     [accounts],
   );
 
-  const waiting = actor && isApprover(actor.role) ? APPROVAL_QUEUE : [];
+  const waiting = queueFor(actor);
+  const userChanges = userChangesToApprove(actor).length;
   const urgent = waiting.filter((item) => item.priority === "urgent").length;
 
   const cashLine = accounts.length === 1 ? "Available in 1 account" : `Available across ${accounts.length} accounts`;
-  const waitingLine = waiting.length === 1 ? "1 request needs your approval" : `${waiting.length} requests need your approval`;
+  const waitingLine =
+    actor?.role === "CORPORATE_REVIEWER"
+      ? waiting.length === 1
+        ? "1 payment to review"
+        : `${waiting.length} payments to review`
+      : waiting.length === 1
+        ? "1 request to authorise"
+        : `${waiting.length} requests to authorise`;
 
   return (
     <div className="flex flex-col gap-10">
@@ -47,16 +56,22 @@ export default function BusinessOverviewPage() {
         </div>
       </section>
 
-      {waiting.length > 0 && (
+      {(waiting.length > 0 || userChanges > 0) && (
         <section className="flex flex-col gap-3">
           <h2 className="min-h-6 text-[16px] font-medium">Waiting for you</h2>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-[14px] text-foreground">
-              {waitingLine}
+              {waiting.length > 0 && waitingLine}
               {urgent > 0 && <span className="text-muted-foreground"> {`· ${urgent} marked urgent`}</span>}
+              {userChanges > 0 && (
+                <span className={waiting.length > 0 ? "text-muted-foreground" : undefined}>
+                  {waiting.length > 0 ? " · " : ""}
+                  {userChanges === 1 ? "1 user change to approve" : `${userChanges} user changes to approve`}
+                </span>
+              )}
             </p>
             <Button nativeButton={false} render={<Link href="/business/approvals" />}>
-              Review Approvals
+              Open Approvals
             </Button>
           </div>
         </section>
@@ -91,14 +106,16 @@ export default function BusinessOverviewPage() {
         )}
       </section>
 
-      <section className="flex flex-wrap gap-3">
-        <Button variant="outline" nativeButton={false} render={<Link href="/business/payments/supplier" />}>
-          Send a Payment
-        </Button>
-        <Button variant="outline" nativeButton={false} render={<Link href="/business/payments/bulk" />}>
-          Pay in Bulk
-        </Button>
-      </section>
+      {actor && canInitiate(actor.role) && (
+        <section className="flex flex-wrap gap-3">
+          <Button variant="outline" nativeButton={false} render={<Link href="/business/payments/supplier" />}>
+            Send a Payment
+          </Button>
+          <Button variant="outline" nativeButton={false} render={<Link href="/business/payments/bulk" />}>
+            Pay in Bulk
+          </Button>
+        </section>
+      )}
     </div>
   );
 }

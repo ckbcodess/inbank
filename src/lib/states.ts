@@ -33,7 +33,8 @@ export type TransactionState =
   | "failed-trade" // version history (v1/v2/v3) + resubmit path
   | "reversed" // show original + reversal reference
   | "disputed" // flagged — open item, confirm scope with BRD
-  | "awaiting-approval"; // read-only variant for initiator, no decision controls
+  | "awaiting-approval" // read-only variant for initiator, no decision controls
+  | "returned"; // business: a reviewer or authoriser sent it back to the inputter; nothing was debited
 
 export type TransactionKind = "single" | "bulk" | "trade";
 
@@ -105,4 +106,5 @@ export const TRANSACTION_STATE_LABEL: Record<TransactionState, string> = {
   reversed: "Reversed",
   disputed: "Disputed",
   "awaiting-approval": "Awaiting approval",
+  returned: "Sent back",
 };

@@ -1,192 +1,190 @@
 "use client";
 
 /**
- * User Details → User Access Wizard — section 5, state model 13.7. STUB.
- *
- * The wizard is a flow reached FROM User Details, not a nav destination (12.4).
- *
- * The one behaviour worth showing even in stub form is the wizard dependency
- * rule: when a later step is unavailable because of an earlier selection, the
- * REASON is stated. Never a silent grey-out.
+ * One company user (option C). Shows their role and what it means, their limit for one payment, the accounts they
+ * can see, and whether they're on the mandate. The administrator can change access: a change that narrows it
+ * (lower limit, fewer accounts) applies at once; one that widens it (another role, a higher limit, another account)
+ * waits for an Authoriser or another administrator. Suspending is instant; reactivating waits, because it gives
+ * access back.
  */
 
 import { use, useState } from "react";
-import Link from "next/link";
-import { Check, Info, Lock, ShieldAlert, UserCog } from "@/components/ui/icons";
+import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
-import StubNotice from "@/components/StubNotice";
 import SuspensionDialog from "@/components/SuspensionDialog";
-import { Button } from "@/components/ui/button";
+import UserAccessFields from "@/components/corporate/admin/UserAccessFields";
+import UserChangeSummary from "@/components/corporate/admin/UserChangeSummary";
 import { Badge } from "@/components/ui/badge";
-import { StateSwitcher } from "@/components/states/StateSwitcher";
-import type { WizardStepState } from "@/lib/states";
+import { Button } from "@/components/ui/button";
+import { Fact } from "@/components/ui/fact";
+import {
+  draftOf,
+  draftProblem,
+  findCompanyUser,
+  LIMIT_MEANING,
+  pendingChangeFor,
+  proposeUserChange,
+  ROLE_LINE,
+  roleHasLimit,
+  suspendUser,
+  useControlsVersion,
+  widens,
+  type UserDraft,
+} from "@/lib/corporate/controls";
+import { findAccount, formatMoney } from "@/lib/mock-data";
+import { useSession } from "@/lib/session-store";
 
-const WIZARD_STATES: readonly WizardStepState[] = [
-  "locked",
-  "valid",
-  "invalid",
-  "review-pending",
-] as const;
-
-type Role = "Viewer" | "Maker" | "Approver" | "Corporate Admin";
-
-interface Step {
-  n: number;
-  name: string;
-  /** Reason this step is unavailable, or null when it's available. */
-  lockedReason: (role: Role) => string | null;
-}
-
-const STEPS: Step[] = [
-  { n: 1, name: "Profile Details", lockedReason: () => null },
-  { n: 2, name: "Roles & Service Access", lockedReason: () => null },
-  {
-    n: 3,
-    name: "Transaction Limits",
-    // Section 5's worked example, verbatim in spirit.
-    lockedReason: (role) =>
-      role === "Viewer" ? "Limits unavailable — this user has Viewer-only access." : null,
-  },
-  {
-    n: 4,
-    name: "Approval Matrices",
-    // Section 5: only expose when the selected role permits approval authority.
-    lockedReason: (role) =>
-      role === "Approver" || role === "Corporate Admin"
-        ? null
-        : `Approval matrices unavailable — the ${role} role carries no approval authority.`,
-  },
-  { n: 5, name: "Review", lockedReason: () => null },
-];
-
-export default function UserDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+export default function CompanyUserPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [role, setRole] = useState<Role>("Maker");
+  useControlsVersion();
+  const actor = useSession((s) => s.actor);
+  const user = findCompanyUser(id);
   const [suspendOpen, setSuspendOpen] = useState(false);
-  const [suspended, setSuspended] = useState(false);
-  const [wizardState, setWizardState] = useState<WizardStepState>("valid");
+  const [editing, setEditing] = useState<UserDraft | null>(null);
+  const [tried, setTried] = useState(false);
+
+  if (!user) {
+    return <PageHeader title="User Not Found" backTo={{ href: "/business/administration", label: "Administration" }} />;
+  }
+
+  const first = user.name.split(" ")[0];
+  const pending = pendingChangeFor(user.id);
+  const suspended = user.status === "Suspended";
+  const problem = editing && tried ? draftProblem(editing) : "";
+  const limitProblem = problem.includes("limit") ? problem : "";
+  const accountsProblem = problem && !limitProblem ? problem : "";
+  const willWait = editing ? widens(draftOf(user), editing) : false;
+
+  function save() {
+    if (!editing || !actor || !user) return;
+    setTried(true);
+    if (draftProblem(editing)) return;
+    const { applied } = proposeUserChange({ kind: "update", userId: user.id, after: editing, proposedBy: actor.name });
+    setEditing(null);
+    toast.success(applied ? `Saved. It applies to ${first} now.` : "Sent for approval. It applies once it's approved.");
+  }
+
+  function reactivate() {
+    if (!actor || !user) return;
+    proposeUserChange({ kind: "reactivate", userId: user.id, after: draftOf(user), proposedBy: actor.name });
+    toast.success(`Sent for approval. ${first} can sign in again once it's approved.`);
+  }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-[640px] flex-col gap-10">
       <PageHeader
-        title="Kwame Boateng"
-        description={`kwame.boateng@example.com · ${id}`}
+        title={user.name}
+        description={`${user.designation} · ${user.email}`}
         backTo={{ href: "/business/administration", label: "Administration" }}
-        actions={
-          <Button
-            variant="destructive"
-            onClick={() => setSuspendOpen(true)}
-            disabled={suspended}
-          >
-            <ShieldAlert size={14} strokeWidth={1.9} aria-hidden="true" />
-            {suspended ? "Suspended" : "Suspend user"}
-          </Button>
-        }
       />
 
-      <StateSwitcher section="13.7" states={WIZARD_STATES} value={wizardState} onChange={setWizardState} />
+      {pending && (
+        <section className="flex flex-col gap-3">
+          <h2 className="min-h-6 text-[16px] font-medium text-foreground">Change Waiting for Approval</h2>
+          <UserChangeSummary change={pending} />
+          <p className="tabular text-[12px] text-muted-foreground">{`Proposed by ${pending.proposedBy} · ${pending.proposedAt}`}</p>
+        </section>
+      )}
 
-      <StubNotice section="section 5" states="13.7" />
-
-      <section className="rounded-2xl border border-border bg-card p-4">
-        <div className="flex items-center gap-2">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-            <UserCog size={19} aria-hidden="true" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-[15px] text-foreground">Access configuration</p>
-            <p className="mt-0.5 text-[12.5px] text-muted-foreground">
-              Role selection in step 2 determines which later steps apply.
+      {editing ? (
+        <section className="flex flex-col gap-6">
+          <UserAccessFields
+            draft={editing}
+            onChange={(next) => {
+              setEditing(next);
+              if (tried) setTried(false);
+            }}
+            limitError={limitProblem}
+            accountsError={accountsProblem}
+          />
+          <div className="flex flex-col gap-2">
+            <p className="text-[13px] text-muted-foreground">
+              {willWait
+                ? "This gives more access, so an Authoriser or another administrator approves it first."
+                : `This only reduces access, so it applies to ${first} as soon as you save.`}
             </p>
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={save}>{willWait ? "Send for Approval" : "Save Changes"}</Button>
+              <Button variant="ghost" onClick={() => setEditing(null)}>
+                Cancel
+              </Button>
+            </div>
           </div>
-          <Badge variant={suspended ? "warning" : "success"}>
-            {suspended ? "Suspended" : "Active"}
-          </Badge>
-        </div>
+        </section>
+      ) : (
+        <>
+          <section className="flex flex-col gap-3">
+            <div className="flex min-h-6 items-center gap-2">
+              <h2 className="text-[16px] font-medium text-foreground">{user.role}</h2>
+              {suspended && <Badge variant="warning">Suspended</Badge>}
+            </div>
+            <p className="text-[14px] text-foreground">{ROLE_LINE[user.role]}</p>
+            <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+              {roleHasLimit(user.role) && <Fact label={LIMIT_MEANING[user.role]} value={formatMoney(user.limit, "GHS", true)} mono />}
+              <Fact label="On the Mandate" value={user.onMandate ? "Yes" : "No"} />
+            </dl>
+          </section>
 
-        {/* Role selector drives the dependency demonstration below */}
-        <div className="mt-4">
-          <p className="mb-2 text-[11px] uppercase tracking-wider text-muted-foreground">
-            Selected role (step 2)
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {(["Viewer", "Maker", "Approver", "Corporate Admin"] as const).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRole(r)}
-                aria-pressed={role === r}
-                className={`rounded-lg border px-2 py-2 text-[12.5px] transition ${
-                  role === r
-                    ? "border-primary bg-[var(--active-bg)] text-foreground"
-                    : "border-border bg-background text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
+          <section className="flex flex-col gap-3">
+            <h2 className="min-h-6 text-[16px] font-medium text-foreground">Accounts They Can See</h2>
+            <ul className="flex flex-col gap-2">
+              {user.accountIds.map((accountId) => {
+                const a = findAccount(accountId);
+                if (!a) return null;
+                return (
+                  <li key={a.id} className="flex items-center justify-between gap-3">
+                    <span className="truncate text-[14px] text-foreground">{a.name}</span>
+                    <span className="tabular shrink-0 text-[13px] text-muted-foreground">•••• {a.number.replace(/\s/g, "").slice(-4)}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
 
-      <section className="rounded-2xl border border-border bg-card">
-        <h2 className="border-b border-border px-4 py-3 text-[15px] text-foreground">
-          User Access Wizard
-        </h2>
-        <ol className="divide-y divide-border">
-          {STEPS.map((step) => {
-            const reason = step.lockedReason(role);
-            const locked = reason !== null;
-            return (
-              <li key={step.n} className="flex items-start gap-3 px-4 py-3">
-                <span
-                  className={`flex size-6 shrink-0 items-center justify-center rounded-full text-[12px] ${
-                    locked
-                      ? "bg-muted text-muted-foreground"
-                      : "bg-primary text-primary-foreground"
-                  }`}
+          <section className="flex flex-col gap-2">
+            <div className="flex flex-wrap gap-3">
+              {!suspended && (
+                <Button
+                  variant="outline"
+                  disabled={Boolean(pending)}
+                  onClick={() => {
+                    setTried(false);
+                    setEditing(draftOf(user));
+                  }}
                 >
-                  {locked ? <Lock size={12} aria-hidden="true" /> : step.n === 5 ? <Check size={13} aria-hidden="true" /> : step.n}
-                </span>
-
-                <div className="min-w-0 flex-1">
-                  <p className={`text-[13.5px] ${locked ? "text-muted-foreground" : "text-foreground"}`}>
-                    {step.name}
-                  </p>
-                  {/* 13.7: the reason is stated explicitly — never a silent grey-out */}
-                  {locked && (
-                    <p className="mt-1 flex items-start gap-2 text-[12.5px] text-warning-text">
-                      <Info size={13} aria-hidden="true" className="mt-px shrink-0" />
-                      {reason}
-                    </p>
-                  )}
-                </div>
-
-                <Button variant="outline" size="xs" disabled>
-                  {locked ? "Unavailable" : "Open"}
+                  Change Access
                 </Button>
-              </li>
-            );
-          })}
-        </ol>
-      </section>
+              )}
+              {suspended ? (
+                <Button variant="outline" disabled={Boolean(pending)} onClick={reactivate}>
+                  Reactivate {first}
+                </Button>
+              ) : (
+                <Button variant="destructive" onClick={() => setSuspendOpen(true)}>
+                  Suspend {first}
+                </Button>
+              )}
+            </div>
+            <p className="text-[12px] text-muted-foreground">
+              {pending
+                ? "A change is already waiting for approval. Once it's decided you can make another."
+                : suspended
+                  ? `${first} can't sign in. Reactivating gives access back, so it needs approval.`
+                  : "Suspending stops them signing in straight away."}
+            </p>
+          </section>
+        </>
+      )}
 
-      <div>
-        <Button variant="outline" nativeButton={false} render={<Link href="/business/administration" />}>
-          Back to Administration
-        </Button>
-      </div>
-
-      {/* Same shared compliance modal used by Customer Details in the Admin
-          Portal — one component, both shells (12.6). */}
       <SuspensionDialog
         open={suspendOpen}
         onOpenChange={setSuspendOpen}
-        subject="Kwame Boateng"
+        subject={user.name}
         action="suspend"
         onConfirm={() => {
           setSuspendOpen(false);
-          setSuspended(true);
+          suspendUser(user.id);
+          toast.success(`${user.name} is suspended.`);
         }}
       />
     </div>

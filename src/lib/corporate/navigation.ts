@@ -7,13 +7,16 @@
 
 import type { NavItem } from "../navigation";
 import type { Actor } from "../roles";
-import { isApprover, isCorporateAdmin } from "./roles";
+import { canInitiate, isApprover, isCorporateAdmin } from "./roles";
 
 export function businessNav(actor: Actor): NavItem[] {
   const items: NavItem[] = [
     { key: "overview", label: "Home", path: "/business/overview", icon: "Home", group: "primary" },
     { key: "accounts", label: "Accounts", path: "/business/accounts", icon: "Wallet", group: "primary" },
-    { key: "payments", label: "Send & Pay", path: "/business/payments", icon: "Send", group: "move" },
+    // Send & Pay — only for people who start payments. Reviewers and authorisers never initiate (BRL-04).
+    ...(canInitiate(actor.role)
+      ? [{ key: "payments", label: "Send & Pay", path: "/business/payments", icon: "Send", group: "move" } as NavItem]
+      : []),
     { key: "transactions", label: "Transactions", path: "/business/transactions", icon: "ArrowLeftRight", group: "move" },
   ];
 
@@ -22,7 +25,7 @@ export function businessNav(actor: Actor): NavItem[] {
     items.push({ key: "trade", label: "Trade", path: "/business/trade", icon: "Ship", group: "move" });
   }
 
-  // Approvals — hidden unless the role is Approver (section 12.4).
+  // Approvals — for reviewers and authorisers only (section 12.4).
   if (isApprover(actor.role)) {
     items.push({ key: "approvals", label: "Approvals", path: "/business/approvals", icon: "CheckCircle2", group: "control" });
   }

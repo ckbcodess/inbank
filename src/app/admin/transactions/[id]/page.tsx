@@ -31,7 +31,7 @@ const TRANSACTION_STATES: readonly TransactionState[] = [
 ] as const;
 
 const AUDIT_TRAIL = [
-  { at: "2026-08-10 09:14", actor: "Kwame Boateng", event: "Payment submitted via Internet Banking" },
+  { at: "2026-08-10 09:14", actor: "Ransford Gyasi", event: "Payment submitted via Internet Banking" },
   { at: "2026-08-10 09:15", actor: "System", event: "Sanctions screening passed" },
   { at: "2026-08-10 09:16", actor: "System", event: "Routed to approver queue" },
   { at: "2026-08-10 11:02", actor: "System", event: "Flagged — counterparty name mismatch" },

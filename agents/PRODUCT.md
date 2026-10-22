@@ -69,7 +69,7 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
 | Corporate administrator (customer-side) | Business view | Views, and where the bank permits maintains, user configuration within the mandate | `[CONFIRMED v2]` §17; `[OPEN QUESTION]` scope to be confirmed |
 | Corporate group administrator | Business view | Oversees subsidiaries and consolidated reporting for the parent | `[CONFIRMED v2]` §17, FR-COR-13 (Should), RPT-07 |
 | System / API principal | API only | An authenticated corporate ERP that submits instructions and retrieves status. Revocable independently of users | `[CONFIRMED v2]` §17, UAR-10, SEC-07 |
-| Corporate Maker, Approver, Admin, Viewer (prototype roles) | Business view | Single and bulk payments, approvals, trade, user administration | `[CONFLICT]` v1 FR-06 to FR-18; v2 uses inputter, reviewer, authoriser |
+| Inputter, Reviewer, Authoriser, Admin (prototype roles) | Business view | `CORPORATE_INPUTTER`, `_REVIEWER`, `_AUTHORISER`, `_ADMIN`; Maker and Approver were renamed 2026-10-22 | `[DECIDED 2026-10-22]` follows v2; Viewer is still an open question |
 | Bank administrator | Admin portal | Configures companies, subsidiaries, users, roles, mandates, limits, approval workflows and host-to-host. Under maker-checker | `[CONFIRMED v2]` §17, FR-ADM-01 to FR-ADM-07, UAR-06 |
 | Branch officer | Branch / admin portal | Captures and submits corporate applications, completes verification | `[CONFIRMED v2]` §17, FR-ADM-05 |
 | Operations / support user | Admin portal | Read-only access to transactions, batches and audit for investigation. No initiation or approval | `[CONFIRMED v2]` §17 |
@@ -288,7 +288,7 @@ to RPT-17; Trade monitoring is `[NOT IN v2]`.
     - Sole proprietors self-onboard online at `/business/signup/sole-proprietor` (Ghana Card verification, liveness
       selfie, account discovery, OTP, password, PIN) and land directly on `/business/overview`.
   - **Prototype today:** sole proprietor payments send directly without an approval leg (`paysWithoutApproval`);
-    company payments submit for approval; approvals and administration as built before v2; bulk is the original stub;
+    company payments go review (above the threshold) then authorise, with comments and send-back (2026-10-22); bulk is the original stub;
     online account opening is deleted (out of Phase 1); trade initiation and lifecycle
     tracking `[NOT IN v2]`; user administration is Profile → Roles & Services → Limits → Approval matrices → Review `[CONFLICT v2]`.
 - **Admin portal:** transaction monitoring and exceptions, trade monitoring, customers, fee
@@ -440,6 +440,12 @@ to RPT-17; Trade monitoring is `[NOT IN v2]`.
     without balances, OTP, password, PIN) and land on `/business/overview`. Passport is held (BRL-01).
   - Sole proprietor payments need no approval leg (`paysWithoutApproval`) and leave after the OTP.
   - Online account opening is removed. `/activate` is personal activation only.
+- `[DECIDED 2026-10-22]` **Company user administration is option C.** The bank sets ceilings at setup (enabled accounts,
+  the highest per-person limit, the approval matrix, the daily limit). Inside them the company's administrator adds users
+  and changes access. Widening access (new user, new role, higher limit, another account, reactivation) waits for an
+  Authoriser or another administrator, who approves with a one-time code; nobody approves their own change. Narrowing
+  access and suspending apply at once. Reviewers and authorisers must be mandate signatories, and the mandate only changes
+  at the bank. Code: `lib/corporate/controls.ts`. Needs the bank to accept this as an "authorised change" (BRL-05).
 - `[DECIDED 2026-10-20]` **A business payment is submitted, not sent.** A maker confirms with a one-time code;
   it lands in the approvers' queue and on the ledger as awaiting approval; an approver's decision settles it.
   Recent suppliers come from the ledger; there is no saved-suppliers list yet.
@@ -541,12 +547,13 @@ The Loans, Lifestyle, Cardless and QR scope conflicts are listed in WORKING_LOG.
 | Yaw Oppong | `u-yaw` | Retail customer on a new device |
 | Justice Oduro | `u-legacy` | Migrating from the old internet banking |
 | Akosua Darko | `u-sole` | Sole proprietor, Akosua Darko Enterprises |
-| Kwame Boateng | `u-dual` | Corporate maker (v2: inputter), Adinkra Textiles (the id is a leftover name) |
-| Esther Appiah | `u-approver` | Corporate approver (v2: authoriser), Adinkra Textiles |
-| Yaw Oppong (Corporate Admin) | `u-corpadmin` | Corporate admin |
+| Ransford Gyasi | `u-dual` | Inputter, Adinkra Textiles. A separate identity from the retail Ransford (`u-retail`) |
+| Justice Oduro | `u-reviewer` | Reviewer, Adinkra Textiles. Separate from the retail Justice (`u-legacy`) |
+| Esther Appiah | `u-approver` | Authoriser, Adinkra Textiles |
+| Samuel Quartey | `u-corpadmin` | Corporate admin, Adinkra Textiles. Separate from the retail Samuel (`u-clean`) |
 | Nana Addo, Abena Owusu, Kofi Asante | `u-tradeofficer`, `u-ops`, `u-bankadmin` | Admin portal: trade officer, operations, bank admin |
 
-- v2 has no reviewer persona yet. One is needed when the control model is built.
+- Each business persona's role, limit and accounts are in `lib/corporate/controls.ts` (`COMPANY_USERS`).
 - Dev Mode customers on `/accounts` come from `src/lib/accounts-scenarios.ts`.
 - Demo triggers:
   - `000000` is always a wrong code.

@@ -33,11 +33,11 @@ const TRADE_APPROVAL_STATES: readonly TradeApprovalState[] = [
 ] as const;
 
 const AUDIT = [
-  { at: "2026-08-04 11:20", actor: "Kwame Boateng", event: "v1 submitted" },
+  { at: "2026-08-04 11:20", actor: "Ransford Gyasi", event: "v1 submitted" },
   { at: "2026-08-06 14:03", actor: "N. Addo (Trade Officer)", event: "Returned — invoice quantity mismatch" },
-  { at: "2026-08-08 09:55", actor: "Kwame Boateng", event: "v2 submitted with corrected quantity" },
+  { at: "2026-08-08 09:55", actor: "Ransford Gyasi", event: "v2 submitted with corrected quantity" },
   { at: "2026-08-09 10:31", actor: "System", event: "Document audit flagged missing certificate of origin" },
-  { at: "2026-08-10 16:41", actor: "Kwame Boateng", event: "v3 submitted — incoterms revised" },
+  { at: "2026-08-10 16:41", actor: "Ransford Gyasi", event: "v3 submitted — incoterms revised" },
 ];
 
 export default function TradeOfficerWorkstationPage({ params }: { params: Promise<{ id: string }> }) {

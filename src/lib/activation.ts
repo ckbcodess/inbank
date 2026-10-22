@@ -376,7 +376,7 @@ export function getCorporateInvite(): CorporateInvite | null {
     actor,
     company: "Adinkra Textiles Ltd",
     invitedBy: "Yaw Oppong",
-    roleLabel: "Corporate Maker",
+    roleLabel: "Inputter",
     maskedMobile: maskMobile(DEMO_MOBILE),
     maskedEmail: maskEmail(actor.email),
     expiresIn: "6 days",

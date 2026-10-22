@@ -12,7 +12,9 @@
  * These are two separate screens by design (section 4: "Approval Details" was
  * split into variants), not one screen with conditional content.
  *
- * Reachable only by an Approver — the nav hides it otherwise (12.3).
+ * Each person sees only what waits on them: a Reviewer the payments at review, an Authoriser those at
+ * authorisation, on accounts they can see, never their own (BRL-04, UAR-05). Reachable only by reviewers and
+ * authorisers; the nav hides it otherwise (12.3).
  */
 
 import { useMemo, useState } from "react";
@@ -32,7 +34,9 @@ import {
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import { formatMoney } from "@/lib/mock-data";
-import { APPROVAL_QUEUE } from "@/lib/corporate/approvals";
+import { currentStep, eligibility, queueFor } from "@/lib/corporate/approvals";
+import { findCompanyUser, userChangesToApprove, useControlsVersion } from "@/lib/corporate/controls";
+import { useSession } from "@/lib/session-store";
 
 const LIST_STATES: readonly ListState[] = [
   "loading",
@@ -49,9 +53,17 @@ export default function ApprovalQueuePage() {
   const [state, setState] = useState<ListState>("populated");
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
+  const actor = useSession((s) => s.actor);
+  const queue = useMemo(() => queueFor(actor), [actor]);
+  // An Authoriser is also the second person on user changes that widen access (option C).
+  const version = useControlsVersion();
+  const userChanges = useMemo(() => {
+    void version;
+    return userChangesToApprove(actor);
+  }, [actor, version]);
 
   const results = useMemo(() => {
-    return APPROVAL_QUEUE.filter((item) => {
+    return queue.filter((item) => {
       if (typeFilter !== "all" && item.type !== typeFilter) return false;
       if (!query.trim()) return true;
       const q = query.toLowerCase();
@@ -61,13 +73,13 @@ export default function ApprovalQueuePage() {
         item.reference.toLowerCase().includes(q)
       );
     });
-  }, [query, typeFilter]);
+  }, [queue, query, typeFilter]);
 
   const filtersActive = query.trim() !== "" || typeFilter !== "all";
   const effective: ListState =
     state === "populated" && filtersActive && results.length === 0 ? "filtered-empty" : state;
 
-  const rows = effective === "partial-load" ? APPROVAL_QUEUE : results;
+  const rows = effective === "partial-load" ? queue : results;
 
   function resetFilters() {
     setQuery("");
@@ -92,6 +104,33 @@ export default function ApprovalQueuePage() {
   return (
     <div className="flex flex-col gap-4">
       <PageHeader title="Approvals" />
+
+      {userChanges.length > 0 && (
+        <section className="flex flex-col gap-3 pb-6">
+          <h2 className="min-h-6 text-[16px] font-medium text-foreground">User Changes</h2>
+          <ul className="flex flex-col">
+            {userChanges.map((c) => {
+              const name = c.userId ? (findCompanyUser(c.userId)?.name ?? c.after.name) : c.after.name;
+              return (
+                <li key={c.id}>
+                  <Link
+                    href={`/business/approvals/user-change/${c.id}`}
+                    className="-mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors duration-hover ease-settle hover:bg-muted/50"
+                  >
+                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                      <span className="truncate text-[14px] text-foreground">
+                        {c.kind === "add" ? `Add ${name}` : c.kind === "reactivate" ? `Reactivate ${name}` : `Change ${name}'s access`}
+                      </span>
+                      <span className="tabular truncate text-[12px] text-muted-foreground">{`Proposed by ${c.proposedBy} · ${c.proposedAt}`}</span>
+                    </span>
+                    <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       <StateSwitcher
         section="13.1"
@@ -148,7 +187,8 @@ export default function ApprovalQueuePage() {
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ul className="divide-y divide-border">
             {rows.map((item) => {
-              const exceedsLimit = item.amount > item.approvalLimit;
+              const check = eligibility(actor, item);
+              const stepLabel = currentStep(item)?.kind === "review" ? "To review" : "To authorise";
               return (
                 <li key={item.id}>
                   <Link
@@ -171,10 +211,12 @@ export default function ApprovalQueuePage() {
                       <span className="flex items-center gap-2">
                         <span className="truncate text-[13.5px] text-foreground">{item.description}</span>
                         {item.priority === "urgent" && <Badge variant="warning">Urgent</Badge>}
-                        {exceedsLimit && <Badge variant="destructive">Exceeds your limit</Badge>}
+                        {!check.ok && (
+                          <Badge variant="warning">{check.reason === "over-limit" ? "Above your limit" : "Over today's limit"}</Badge>
+                        )}
                       </span>
                       <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
-                        {item.reference} · {item.submittedBy} · {item.submittedAt}
+                        {stepLabel} · {item.reference} · {item.submittedBy} · {item.submittedAt}
                       </span>
                     </span>
 

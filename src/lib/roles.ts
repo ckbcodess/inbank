@@ -13,8 +13,9 @@ export type Role =
   // Customer / Corporate shell
   | "RETAIL_CUSTOMER"
   | "SOLE_PROPRIETOR"
-  | "CORPORATE_MAKER"
-  | "CORPORATE_APPROVER"
+  | "CORPORATE_INPUTTER"
+  | "CORPORATE_REVIEWER"
+  | "CORPORATE_AUTHORISER"
   | "CORPORATE_ADMIN"
   // Admin Portal shell — internal staff only
   | "TRADE_OFFICER"
@@ -54,8 +55,9 @@ export interface Actor {
 export const ROLE_LABEL: Record<Role, string> = {
   RETAIL_CUSTOMER: "Retail Customer",
   SOLE_PROPRIETOR: "Sole Proprietor",
-  CORPORATE_MAKER: "Corporate Maker",
-  CORPORATE_APPROVER: "Corporate Approver",
+  CORPORATE_INPUTTER: "Inputter",
+  CORPORATE_REVIEWER: "Reviewer",
+  CORPORATE_AUTHORISER: "Authoriser",
   CORPORATE_ADMIN: "Corporate Admin",
   TRADE_OFFICER: "Trade Officer",
   OPERATIONS_USER: "Operations User",
@@ -66,8 +68,9 @@ export const ROLE_LABEL: Record<Role, string> = {
 export const SHELL_OF_ROLE: Record<Role, Shell> = {
   RETAIL_CUSTOMER: "customer",
   SOLE_PROPRIETOR: "customer",
-  CORPORATE_MAKER: "customer",
-  CORPORATE_APPROVER: "customer",
+  CORPORATE_INPUTTER: "customer",
+  CORPORATE_REVIEWER: "customer",
+  CORPORATE_AUTHORISER: "customer",
   CORPORATE_ADMIN: "customer",
   TRADE_OFFICER: "admin",
   OPERATIONS_USER: "admin",

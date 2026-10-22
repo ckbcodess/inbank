@@ -43,11 +43,12 @@ const PERSONAS = [
 ] as const;
 type PersonaId = (typeof PERSONAS)[number]["id"];
 
-/** Business demo users by role: the navigation differs (Approvals for an approver, Administration for an admin). */
+/** Business demo users by role: the navigation differs (Approvals for reviewers and authorisers, Administration for an admin). */
 const BUSINESS_USERS = [
   { id: "u-sole", label: "Sole Proprietor" },
-  { id: "u-dual", label: "Maker" },
-  { id: "u-approver", label: "Approver" },
+  { id: "u-dual", label: "Inputter" },
+  { id: "u-reviewer", label: "Reviewer" },
+  { id: "u-approver", label: "Authoriser" },
   { id: "u-corpadmin", label: "Admin" },
 ] as const;
 type BusinessUserId = (typeof BUSINESS_USERS)[number]["id"];

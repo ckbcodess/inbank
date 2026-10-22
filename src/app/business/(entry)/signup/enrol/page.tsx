@@ -784,7 +784,7 @@ function CorporateEnrolmentFlow() {
                 >
                   <GhanaCardInput id="newGhanaCard" value={newGhanaCard} onValueChange={setNewGhanaCard} />
                 </Field>
-                <Field label="Role" htmlFor="newRole" hint="Authorisers must be signatories on your mandate.">
+                <Field label="Role" htmlFor="newRole" hint="Reviewers and authorisers must be signatories on your mandate.">
                   <Select value={newRole} onValueChange={(v) => v && setNewRole(v as CorporateAppRole)}>
                     <SelectTrigger id="newRole" className="w-full">
                       <SelectValue />

@@ -27,8 +27,8 @@ import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
 const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
 const CUSTOMER_USERS = [
-  { id: "u1", name: "Kwame Boateng", role: "Maker", status: "Active" },
-  { id: "u2", name: "Esther Appiah", role: "Approver", status: "Active" },
+  { id: "u1", name: "Ransford Gyasi", role: "Inputter", status: "Active" },
+  { id: "u2", name: "Esther Appiah", role: "Authoriser", status: "Active" },
   { id: "u3", name: "Yaw Oppong", role: "Corporate Admin", status: "Active" },
   { id: "u4", name: "Adjoa Frimpong", role: "Viewer", status: "Suspended" },
 ];
@@ -49,7 +49,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
         backTo={{ href: "/admin/customers", label: "Customers" }}
         actions={
           <Button variant="destructive" onClick={() => setSuspendOpen(true)} disabled={suspended}>
-            <ShieldAlert size={14} strokeWidth={1.9} aria-hidden="true" />
+            <ShieldAlert size={14} aria-hidden="true" />
             {suspended ? "Suspended" : "Suspend customer"}
           </Button>
         }

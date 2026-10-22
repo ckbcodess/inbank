@@ -1,13 +1,16 @@
 /**
- * Business payments: makers submit for approval; a sole proprietor's payment goes straight out after the code.
- * When a maker prepares a supplier payment, it is held in the approvers' queue and recorded as "awaiting approval"
- * on the company's ledger, and nothing leaves the account until an approver decides. The approver's decision then
- * settles the same transaction, so the two screens tell one story.
+ * Business payments: inputters submit for approval; a sole proprietor's payment goes straight out after the code.
+ * When an inputter prepares a supplier payment, it is recorded as "awaiting approval" on the company's ledger and
+ * starts down its approval path (review if the amount needs it, then authorise). Nothing leaves the account until
+ * the last step. A reviewer or authoriser can send it back to the inputter with a comment instead; the ledger
+ * entry then reads "sent back" and nothing was debited. Every step settles the same transaction, so the queue,
+ * the receipt and the inputter's view tell one story.
  *
  * Mock data, in memory: a reload returns to the seeded queue and ledger, like the rest of the prototype's store.
  */
 
-import { APPROVAL_QUEUE, type ApprovalItem } from "./approvals";
+import { APPROVAL_QUEUE, currentStep, type ApprovalItem } from "./approvals";
+import { approvalPath, recordRelease } from "./controls";
 import { recordTransaction, TRANSACTIONS, type Transaction } from "../mock-data";
 import { roundMoney } from "../money";
 
@@ -23,9 +26,6 @@ export interface SupplierPaymentRequest {
   /** What the invoice or reference says; it becomes the payment's narration. */
   reference: string;
 }
-
-/** The limit shown to approvers until limits are set per user in Administration. */
-const DEFAULT_APPROVAL_LIMIT = 250_000;
 
 let sequence = 0;
 
@@ -84,6 +84,7 @@ export function submitSupplierPayment(
   const { transaction, suffix } = buildSupplierTransaction(request, "awaiting-approval");
   recordTransaction(transaction);
 
+  const submittedAt = `${transaction.date} ${transaction.time ?? ""}`.trim();
   const approval: ApprovalItem = {
     id: `apr-${suffix}`,
     reference: transaction.reference,
@@ -92,31 +93,69 @@ export function submitSupplierPayment(
     counterparty: request.supplierName,
     currency: "GHS",
     amount: roundMoney(request.amount),
+    accountId: request.fromAccountId,
     submittedBy,
-    submittedAt: `${transaction.date} ${transaction.time ?? ""}`.trim(),
-    approvalLimit: DEFAULT_APPROVAL_LIMIT,
+    submittedAt,
     priority: "standard",
+    steps: approvalPath(request.amount).map((kind) => ({ kind })),
+    current: 0,
+    status: "open",
+    trail: [{ by: submittedBy, role: "Inputter", action: "submitted", at: submittedAt }],
   };
   APPROVAL_QUEUE.unshift(approval);
 
   return { transaction, approval };
 }
 
-/**
- * Record an approver's decision. An approved payment is on its way (pending until it settles); a rejected one never
- * left the account. Items from the seeded queue have no ledger entry, so only the queue changes for them.
- */
-export function decideApproval(approvalId: string, decision: "approved" | "rejected"): void {
-  const index = APPROVAL_QUEUE.findIndex((a) => a.id === approvalId);
-  if (index < 0) return;
-  const [item] = APPROVAL_QUEUE.splice(index, 1);
+function nowStamp(): string {
+  const { day, time } = stamp();
+  return `${day} ${time}`;
+}
 
-  const txn = TRANSACTIONS.find((t) => t.reference === item.reference);
-  if (!txn) return;
-  if (decision === "approved") {
-    txn.state = "pending";
+function ledgerEntry(item: ApprovalItem): Transaction | undefined {
+  return TRANSACTIONS.find((t) => t.reference === item.reference);
+}
+
+/**
+ * Take the waiting step. A review passes the request on to the next step; the last step authorises it, and the
+ * payment is on its way (pending until it settles). Seeded requests have no ledger entry, so only the queue moves.
+ */
+export function approveStep(approvalId: string, by: string, comment?: string): ApprovalItem | undefined {
+  const item = APPROVAL_QUEUE.find((a) => a.id === approvalId);
+  const step = item ? currentStep(item) : undefined;
+  if (!item || !step) return undefined;
+  const at = nowStamp();
+  const note = comment?.trim() || undefined;
+  step.by = by;
+  step.at = at;
+  step.comment = note;
+
+  const last = item.current === item.steps.length - 1;
+  if (last) {
+    item.status = "authorised";
+    item.trail.push({ by, role: "Authoriser", action: "authorised", at, comment: note });
+    if (item.currency === "GHS") recordRelease(item.amount);
+    const txn = ledgerEntry(item);
+    if (txn) txn.state = "pending";
   } else {
-    txn.state = "failed-single";
-    txn.failureReason = "An approver rejected this payment. Nothing was debited.";
+    item.current += 1;
+    item.trail.push({ by, role: "Reviewer", action: "passed", at, comment: note });
   }
+  return item;
+}
+
+/** Send the request back to the inputter with a comment (BRL-10). Nothing was debited. */
+export function sendBack(approvalId: string, by: string, comment: string): ApprovalItem | undefined {
+  const item = APPROVAL_QUEUE.find((a) => a.id === approvalId);
+  const step = item ? currentStep(item) : undefined;
+  if (!item || !step) return undefined;
+  const at = nowStamp();
+  item.status = "returned";
+  item.trail.push({ by, role: step.kind === "review" ? "Reviewer" : "Authoriser", action: "returned", at, comment: comment.trim() });
+  const txn = ledgerEntry(item);
+  if (txn) {
+    txn.state = "returned";
+    txn.failureReason = comment.trim();
+  }
+  return item;
 }

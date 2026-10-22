@@ -1,165 +1,138 @@
 "use client";
 
 /**
- * User Management — section 5, state model 13.1. STUB.
+ * Administration: the company's internet banking users and the changes waiting on a second person. Only a
+ * Corporate Admin reaches it; the nav hides it otherwise (12.3).
  *
- * Only reachable by a Corporate Admin; the nav entry is absent for everyone
- * else (12.3). User Details is an object destination reached from this list.
+ * Option C (designer, 2026-10-22): the administrator adds users and changes their access inside the bank's
+ * ceilings. Anything that widens access waits for an Authoriser or another administrator; narrowing applies at
+ * once. The rows read the same control table the payment screens enforce (`lib/corporate/controls.ts`).
  */
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Plus, UserCog } from "@/components/ui/icons";
+import { ChevronRight, Plus } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
-import StubNotice from "@/components/StubNotice";
-import { Button } from "@/components/ui/button";
+import UserChangeSummary from "@/components/corporate/admin/UserChangeSummary";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Badge } from "@/components/ui/badge";
-import { StateSwitcher } from "@/components/states/StateSwitcher";
-import { FilteredEmptyState, TrueEmptyState } from "@/components/states/ListStates";
-import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
+import { Button } from "@/components/ui/button";
+import { FilteredEmptyState } from "@/components/states/ListStates";
+import {
+  canApproveUserChange,
+  COMPANY_USERS,
+  findCompanyUser,
+  pendingChangeFor,
+  pendingUserChanges,
+  roleHasLimit,
+  useControlsVersion,
+  type CompanyUser,
+} from "@/lib/corporate/controls";
+import { formatMoney } from "@/lib/mock-data";
+import { useSession } from "@/lib/session-store";
 
-import { getAllEnrolments } from "@/lib/enrolment-store";
+function limitLine(u: CompanyUser): string {
+  return roleHasLimit(u.role) ? `Up to ${formatMoney(u.limit, "GHS", true)} a payment` : "No payment limit";
+}
 
-const LIST_STATES: readonly ListState[] = [
-  "loading",
-  "empty",
-  "filtered-empty",
-  "populated",
-  "partial-load",
-  "error",
-] as const;
-
-const USERS = [
-  { id: "user-1", name: "Kwame Boateng", email: "kwame.boateng@example.com", role: "Maker", status: "Active", access: "Payments, Trade" },
-  { id: "user-2", name: "Esther Appiah", email: "esther.appiah@example.com", role: "Approver", status: "Active", access: "Payments, Trade, Approvals" },
-  { id: "user-3", name: "Yaw Oppong", email: "yaw.oppong@example.com", role: "Corporate Admin", status: "Active", access: "Full access" },
-  { id: "user-4", name: "Adjoa Frimpong", email: "adjoa.frimpong@example.com", role: "Viewer", status: "Suspended", access: "View only" },
-];
-
-export default function UserManagementPage() {
-  const [state, setState] = useState<ListState>("populated");
+export default function AdministrationPage() {
+  const version = useControlsVersion();
+  const actor = useSession((s) => s.actor);
   const [query, setQuery] = useState("");
 
-  const allUsers = useMemo(() => {
-    const list = [...USERS];
-    try {
-      const enrolments = getAllEnrolments();
-      const approved = enrolments.filter((e) => e.status === "approved");
-      for (const app of approved) {
-        for (const u of app.users) {
-          if (!list.some((existing) => existing.email.toLowerCase() === u.email.toLowerCase())) {
-            list.push({
-              id: u.id,
-              name: u.name,
-              email: u.email,
-              role: u.role,
-              status: u.inviteStatus === "used" ? "Active" : "Invited",
-              access:
-                u.role === "Authoriser"
-                  ? "Payments, Trade, Approvals"
-                  : u.role === "Inputter"
-                  ? "Payments, Trade"
-                  : "View only",
-            });
-          }
-        }
-      }
-    } catch {
-      // Ignore
-    }
-    return list;
-  }, []);
-
-  const filteredUsers = useMemo(() => {
-    if (!query.trim()) return allUsers;
-    const q = query.toLowerCase();
-    return allUsers.filter(
-      (u) =>
-        u.name.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.role.toLowerCase().includes(q) ||
-        u.access.toLowerCase().includes(q)
+  const users = useMemo(() => {
+    void version;
+    const q = query.trim().toLowerCase();
+    if (!q) return [...COMPANY_USERS];
+    return COMPANY_USERS.filter(
+      (u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.role.toLowerCase().includes(q),
     );
-  }, [allUsers, query]);
+  }, [query, version]);
+  const waiting = useMemo(() => {
+    void version;
+    return pendingUserChanges();
+  }, [version]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       <PageHeader
         title="Administration"
         actions={
-          <Button nativeButton={false} render={<Link href="/business/administration/user-1" />}>
-            <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-            Add user
+          <Button nativeButton={false} render={<Link href="/business/administration/new" />}>
+            <Plus size={15} aria-hidden="true" />
+            Add User
           </Button>
         }
       />
 
-      <StateSwitcher
-        section="13.1"
-        states={LIST_STATES}
-        value={state}
-        onChange={setState}
-        labels={LIST_STATE_LABEL}
-      />
+      {waiting.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <h2 className="min-h-6 text-[16px] font-medium text-foreground">Waiting for Approval</h2>
+          <p className="text-[12px] text-muted-foreground">
+            New access starts once an Authoriser or another administrator approves it. Nobody approves their own change.
+          </p>
+          <ul className="flex flex-col gap-6">
+            {waiting.map((change) => {
+              const name = change.userId ? findCompanyUser(change.userId)?.name : change.after.name;
+              const mine = canApproveUserChange(actor, change);
+              return (
+                <li key={change.id} className="flex flex-col gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-[14px] text-foreground">
+                      {change.kind === "add" ? `Add ${name}` : change.kind === "reactivate" ? `Reactivate ${name}` : `Change ${name}`}
+                    </span>
+                    {mine ? (
+                      <Button size="sm" variant="outline" nativeButton={false} render={<Link href={`/business/approvals/user-change/${change.id}`} />}>
+                        Review Change
+                      </Button>
+                    ) : (
+                      <span className="tabular text-[12px] text-muted-foreground">
+                        {`Proposed by ${change.proposedBy} · ${change.proposedAt}`}
+                      </span>
+                    )}
+                  </div>
+                  <UserChangeSummary change={change} />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
-      <StubNotice section="section 5 / sitemap 12.4" states="13.1 list, 13.7 wizard" />
-
-      <section className="rounded-2xl border border-border bg-card">
-        <div className="flex items-center justify-between gap-2 p-3">
-          <span className="text-[13px] font-medium text-foreground">
-            Users ({filteredUsers.length})
-          </span>
-          <ExpandableSearch
-            value={query}
-            onChange={setQuery}
-            placeholder="Search by name or email"
-            tooltip="Search users"
-          />
+      <section className="flex flex-col gap-3">
+        <div className="flex min-h-6 items-center justify-between gap-3">
+          <h2 className="text-[16px] font-medium text-foreground">Users</h2>
+          <ExpandableSearch value={query} onChange={setQuery} placeholder="Search by name or role" tooltip="Search users" />
         </div>
-      </section>
 
-      {filteredUsers.length === 0 ? (
-        query ? (
-          <FilteredEmptyState
-            onReset={() => setQuery("")}
-            description={`No users match "${query}". Clear search to view all users.`}
-          />
+        {users.length === 0 ? (
+          <FilteredEmptyState onReset={() => setQuery("")} description={`No users match "${query}".`} />
         ) : (
-          <TrueEmptyState
-            icon={<UserCog size={22} strokeWidth={1.8} />}
-            title="No users found"
-            description="Users will appear here once invited to your organization."
-          />
-        )
-      ) : (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <ul className="divide-y divide-border">
-            {filteredUsers.map((u) => (
+          <ul className="flex flex-col">
+            {users.map((u) => (
               <li key={u.id}>
                 <Link
                   href={`/business/administration/${u.id}`}
-                  className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                  className="-mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors duration-hover ease-settle hover:bg-muted/50"
                 >
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                    <UserCog size={16} aria-hidden="true" />
+                  <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="flex items-center gap-2">
+                      <span className="truncate text-[14px] text-foreground">{u.name}</span>
+                      {u.status === "Suspended" && <Badge variant="warning">Suspended</Badge>}
+                      {pendingChangeFor(u.id) && <Badge variant="outline">Change waiting</Badge>}
+                    </span>
+                    <span className="truncate text-[12px] text-muted-foreground">
+                      {u.role} · <span className="tabular">{limitLine(u)}</span> ·{" "}
+                      {u.accountIds.length === 1 ? "1 account" : `${u.accountIds.length} accounts`}
+                    </span>
                   </span>
-                  <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[13.5px] text-foreground">{u.name}</span>
-                    <span className="truncate text-[12px] text-muted-foreground">{u.email}</span>
-                  </span>
-                  <span className="hidden shrink-0 text-[12.5px] text-muted-foreground sm:block sm:w-38">
-                    {u.access}
-                  </span>
-                  <Badge variant="outline">{u.role}</Badge>
-                  <Badge variant={u.status === "Active" ? "success" : "warning"}>{u.status}</Badge>
                   <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                 </Link>
               </li>
             ))}
           </ul>
-        </div>
-      )}
+        )}
+      </section>
     </div>
   );
 }

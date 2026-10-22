@@ -22,6 +22,7 @@ const TRANSACTION_STATUS: Record<TransactionState, { label: string; variant: Var
   reversed: { label: "Reversed", variant: "secondary" },
   disputed: { label: "Disputed", variant: "warning" },
   "awaiting-approval": { label: "Awaiting approval", variant: "outline" },
+  returned: { label: "Sent back", variant: "warning" },
 };
 
 /** The plain word for a state ("Completed"), for text that isn't a badge. */

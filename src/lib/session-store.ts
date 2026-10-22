@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { signInOpenFor } from "./launch";
 import { persist } from "zustand/middleware";
-import type { Actor, Profile } from "./roles";
+import type { Actor, Profile, Role } from "./roles";
 import { MIGRATED_DATA } from "./migration";
 
 interface SessionState {
@@ -72,7 +72,19 @@ export const useSession = create<SessionState>()(
       selectProfile: (profile) => set({ activeProfile: profile }),
       signOut: () => set({ actor: null, activeProfile: null, mfaVerified: false, previousSignIn: null }),
     }),
-    { name: "nibs-session" },
+    {
+      name: "nibs-session",
+      // v1 renamed the corporate roles to BRD v2's (Maker → Inputter, Approver → Authoriser). A session saved
+      // before that keeps working instead of landing on an unknown role.
+      version: 1,
+      migrate: (persisted) => {
+        const state = persisted as Partial<SessionState> | undefined;
+        const renamed: Record<string, Role> = { CORPORATE_MAKER: "CORPORATE_INPUTTER", CORPORATE_APPROVER: "CORPORATE_AUTHORISER" };
+        const role = state?.actor?.role as string | undefined;
+        if (state?.actor && role && renamed[role]) state.actor = { ...state.actor, role: renamed[role] };
+        return state as SessionState;
+      },
+    },
   ),
 );
 

@@ -6,6 +6,7 @@
 
 import { accountsForProfile, type Account, type Transaction, transactionsForProfile } from "../mock-data";
 import { useSession } from "../session-store";
+import { canSeeAccount } from "./controls";
 import { CORPORATE_PROFILE } from "./ledger";
 
 function activeProfileName(): string {
@@ -13,11 +14,15 @@ function activeProfileName(): string {
   return session.activeProfile?.name ?? session.actor?.profiles[0]?.name ?? CORPORATE_PROFILE.name;
 }
 
-/** Every account the company can see and pay from. */
+/**
+ * The company's accounts that the signed-in person may see (UAR-05). Every business screen reads accounts, and
+ * so balances, totals and transactions, through here, so a person never sees an account they weren't given.
+ */
 export function businessAccounts(): Account[] {
   const company = activeProfileName();
+  const actor = useSession.getState().actor;
   return accountsForProfile("CORPORATE").filter(
-    (a) => (a.companyName ?? CORPORATE_PROFILE.name) === company,
+    (a) => (a.companyName ?? CORPORATE_PROFILE.name) === company && canSeeAccount(actor, a.id),
   );
 }
 
