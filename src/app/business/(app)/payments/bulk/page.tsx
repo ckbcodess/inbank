@@ -13,6 +13,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2, FileSpreadsheet, Upload } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
+import { cn } from "@/lib/utils";
+import { LIST_CARD_CLASS } from "@/components/ui/list-card";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +45,7 @@ export default function BulkUploadPage() {
   const invalidCount = 2;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       <PageHeader
         title="Bulk Payments"
         backTo={{ href: "/business/payments", label: "Send & Pay" }}
@@ -53,7 +55,7 @@ export default function BulkUploadPage() {
 
       <StubNotice section="section 3" states="13.8" />
 
-      <section className="rounded-2xl border border-border bg-card p-4">
+      <section className={cn(LIST_CARD_CLASS, "p-4")}>
         <div className="flex items-center gap-2 border-b border-border pb-3">
           <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
             <FileSpreadsheet size={17} aria-hidden="true" />
@@ -74,27 +76,27 @@ export default function BulkUploadPage() {
             label="Valid records"
             value={String(validCount)}
             hint={formatMoney(282200)}
-            icon={<CheckCircle2 size={15} strokeWidth={1.8} />}
+            icon={<CheckCircle2 size={15} />}
           />
           <SummaryCard
             label="Invalid records"
             value={String(invalidCount)}
             hint="Correct or remove below"
-            icon={<AlertCircle size={15} strokeWidth={1.8} />}
+            icon={<AlertCircle size={15} />}
             tone="destructive"
           />
           <SummaryCard label="Batch total" value={formatMoney(286400)} hint="If all records are sent" />
         </div>
       </section>
 
-      <section className="rounded-2xl border border-border bg-card">
+      <section className={cn(LIST_CARD_CLASS)}>
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h2 className="text-[15px] text-foreground">Records</h2>
           <span className="text-[12px] text-muted-foreground">
             Showing rows 35–39 of 140
           </span>
         </div>
-        <ul className="divide-y divide-border">
+        <ul className="flex flex-col gap-0.5">
           {RECORDS.map((r) => (
             <li
               key={r.row}

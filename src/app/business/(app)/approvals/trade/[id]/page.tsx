@@ -33,6 +33,8 @@ import {
 } from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import PageHeader from "@/components/layout/PageHeader";
+import { cn } from "@/lib/utils";
+import { LIST_CARD_CLASS } from "@/components/ui/list-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
@@ -200,7 +202,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       )}
 
       {/* Trade summary */}
-      <section className="rounded-2xl border border-border bg-card p-4">
+      <section className={cn(LIST_CARD_CLASS, "p-4")}>
         <div className="border-b border-border pb-4">
           <span className="text-[12px] text-muted-foreground">Trade value</span>
           <p className="mt-2 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
@@ -219,7 +221,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
 
       {/* ── Version comparison — a real field-level diff, per 13.5 ── */}
       {state === "version-comparison" ? (
-        <section className="rounded-2xl border border-border bg-card">
+        <section className={cn(LIST_CARD_CLASS)}>
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
             <div className="flex items-center gap-2">
               <GitCompare size={16} aria-hidden="true" className="text-muted-foreground" />
@@ -232,13 +234,13 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             </Button>
           </div>
 
-          <div className="grid grid-cols-[1fr_auto_1fr] gap-x-3 border-b border-border bg-muted/30 px-4 py-2 text-[11px] uppercase tracking-wider text-muted-foreground">
+          <div className="grid grid-cols-[1fr_auto_1fr] gap-x-3 border-b border-border bg-muted/30 px-4 py-2 text-[11px] text-muted-foreground">
             <span>v{previousVersion.version} — {previousVersion.submittedAt}</span>
             <span />
             <span>v{currentVersion.version} — {currentVersion.submittedAt}</span>
           </div>
 
-          <ul className="divide-y divide-border">
+          <ul className="flex flex-col gap-0.5">
             {VERSION_DIFF.map((row) => (
               <li
                 key={row.field}
@@ -279,7 +281,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
         </section>
       ) : (
         /* ── Document viewer — present in the default awaiting-decision state ── */
-        <section className="rounded-2xl border border-border bg-card">
+        <section className={cn(LIST_CARD_CLASS)}>
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
             <h2 className="text-[15px] text-foreground">Documents</h2>
             <Button variant="outline" size="sm" onClick={() => setState("version-comparison")}>

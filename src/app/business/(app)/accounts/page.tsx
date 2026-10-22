@@ -1,8 +1,9 @@
 "use client";
 
 /**
- * Business Accounts — the company's accounts, one row each with what can be spent. Unlike the personal list,
- * a company wants the balance on the row: it picks the account to pay from by what is in it.
+ * Business Accounts — the company's accounts, one row each with what can be spent. Laid out like the personal
+ * list (the same rows in the same glass-edged list card); unlike it, a company wants the balance on the row: it
+ * picks the account to pay from by what is in it. Only the accounts this person was given are listed (UAR-05).
  */
 
 import { useMemo, useState } from "react";
@@ -11,6 +12,7 @@ import { ChevronRight, Landmark } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { TileChip } from "@/components/ui/action-tile";
+import { LIST_CARD_CLASS, ListCard } from "@/components/ui/list-card";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
@@ -32,13 +34,13 @@ export default function BusinessAccountsPage() {
   const accounts = useMemo(() => (actorId ? businessAccounts() : []), [actorId]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       <PageHeader title="Accounts" />
 
       <StateSwitcher section="13.9 baseline" states={BASELINE} value={state} onChange={setState} />
 
       {state === "loading" && (
-        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+        <div className={LIST_CARD_CLASS}>
           <ListSkeleton rows={4} />
         </div>
       )}
@@ -58,8 +60,7 @@ export default function BusinessAccountsPage() {
       )}
 
       {state === "populated" && accounts.length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-border bg-card">
-          <ul className="flex flex-col p-1">
+        <ListCard aria-label="Accounts">
             {accounts.map((account) => (
               <li key={account.id}>
                 <Link
@@ -90,8 +91,7 @@ export default function BusinessAccountsPage() {
                 </Link>
               </li>
             ))}
-          </ul>
-        </div>
+        </ListCard>
       )}
     </div>
   );

@@ -19,11 +19,14 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, FileText, Send } from "@/components/ui/icons";
+import { ChevronRight, FileText, Send, UserCog } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
 import { Badge } from "@/components/ui/badge";
+import { TileChip } from "@/components/ui/action-tile";
+import { LIST_CARD_CLASS, ListCard } from "@/components/ui/list-card";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
   FilteredEmptyState,
@@ -102,138 +105,121 @@ export default function ApprovalQueuePage() {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       <PageHeader title="Approvals" />
 
       {userChanges.length > 0 && (
-        <section className="flex flex-col gap-3 pb-6">
-          <h2 className="min-h-6 text-[16px] font-medium text-foreground">User Changes</h2>
-          <ul className="flex flex-col">
+        <section className="flex flex-col gap-3">
+          <SectionHeading title="User Changes" />
+          <ListCard>
             {userChanges.map((c) => {
               const name = c.userId ? (findCompanyUser(c.userId)?.name ?? c.after.name) : c.after.name;
               return (
                 <li key={c.id}>
                   <Link
                     href={`/business/approvals/user-change/${c.id}`}
-                    className="-mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors duration-hover ease-settle hover:bg-muted/50"
+                    className="group flex items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover sm:px-3"
                   >
-                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                      <span className="truncate text-[14px] text-foreground">
+                    <TileChip tone="onCard">
+                      <UserCog size={20} aria-hidden="true" />
+                    </TileChip>
+                    <span className="flex min-w-0 flex-1 flex-col gap-1">
+                      <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">
                         {c.kind === "add" ? `Add ${name}` : c.kind === "reactivate" ? `Reactivate ${name}` : `Change ${name}'s access`}
                       </span>
-                      <span className="tabular truncate text-[12px] text-muted-foreground">{`Proposed by ${c.proposedBy} · ${c.proposedAt}`}</span>
+                      <span className="tabular truncate text-[13px] text-muted-foreground">{`Proposed by ${c.proposedBy} · ${c.proposedAt}`}</span>
                     </span>
-                    <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                    <ChevronRight size={20} aria-hidden="true" className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
                   </Link>
                 </li>
               );
             })}
-          </ul>
+          </ListCard>
         </section>
       )}
 
-      <StateSwitcher
-        section="13.1"
-        states={LIST_STATES}
-        value={state}
-        onChange={setState}
-        labels={LIST_STATE_LABEL}
-      />
+      <section className="flex flex-col gap-3">
+        <StateSwitcher section="13.1" states={LIST_STATES} value={state} onChange={setState} labels={LIST_STATE_LABEL} />
 
-      {/* Filter and Search Ribbon */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <FilterPanel groups={filterGroups} onClear={() => setTypeFilter("all")} align="start" />
-          <AppliedFilters groups={filterGroups} />
+        <div className="flex min-h-6 flex-wrap items-center justify-between gap-2">
+          <h2 className="text-[16px] font-medium text-foreground">Payments</h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <AppliedFilters groups={filterGroups} />
+            <FilterPanel groups={filterGroups} onClear={() => setTypeFilter("all")} align="end" />
+            <ExpandableSearch
+              value={query}
+              onChange={setQuery}
+              placeholder="Search reference or description"
+              tooltip="Search approvals"
+              inputWidthClassName="w-52 sm:w-70"
+            />
+          </div>
         </div>
 
-        <ExpandableSearch
-          value={query}
-          onChange={setQuery}
-          placeholder="Search reference or description"
-          tooltip="Search approvals"
-          inputWidthClassName="w-52 sm:w-70"
-        />
-      </div>
+        {effective === "loading" && (
+          <div className={LIST_CARD_CLASS}>
+            <ListSkeleton rows={4} />
+          </div>
+        )}
 
-      {effective === "loading" && (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <ListSkeleton rows={4} />
-        </div>
-      )}
+        {effective === "error" && (
+          <ListErrorState
+            onRetry={() => setState("populated")}
+            description="We couldn't load your approval queue. Nothing has been approved or rejected — try again."
+          />
+        )}
 
-      {effective === "error" && (
-        <ListErrorState
-          onRetry={() => setState("populated")}
-          description="We couldn't load your approval queue. Nothing has been approved or rejected — try again."
-        />
-      )}
+        {effective === "empty" && (
+          <TrueEmptyState illustration="caught-up" title="Nothing waiting on you" description="Payments that need your review or authorisation show here." />
+        )}
 
-      {effective === "empty" && (
-        <TrueEmptyState illustration="caught-up"
-          title="Nothing waiting on you"
-          description="Requests that need your approval will appear here."
-        />
-      )}
+        {effective === "filtered-empty" && (
+          <FilteredEmptyState
+            onReset={resetFilters}
+            description="No items match these filters. Clear them to see everything in your queue."
+          />
+        )}
 
-      {effective === "filtered-empty" && (
-        <FilteredEmptyState
-          onReset={resetFilters}
-          description="No items match these filters. Clear them to see everything in your queue."
-        />
-      )}
-
-      {(effective === "populated" || effective === "partial-load") && (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <ul className="divide-y divide-border">
-            {rows.map((item) => {
-              const check = eligibility(actor, item);
-              const stepLabel = currentStep(item)?.kind === "review" ? "To review" : "To authorise";
-              return (
-                <li key={item.id}>
-                  <Link
-                    href={
-                      item.type === "payment"
-                        ? `/business/approvals/payment/${item.id}`
-                        : `/business/approvals/trade/${item.id}`
-                    }
-                    className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
-                  >
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                      {item.type === "payment" ? (
-                        <Send size={16} aria-hidden="true" />
-                      ) : (
-                        <FileText size={16} aria-hidden="true" />
-                      )}
-                    </span>
-
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="flex items-center gap-2">
-                        <span className="truncate text-[13.5px] text-foreground">{item.description}</span>
-                        {item.priority === "urgent" && <Badge variant="warning">Urgent</Badge>}
-                        {!check.ok && (
-                          <Badge variant="warning">{check.reason === "over-limit" ? "Above your limit" : "Over today's limit"}</Badge>
+        {(effective === "populated" || effective === "partial-load") && (
+          <ListCard as="div">
+            <ul className="flex flex-col gap-0.5">
+              {rows.map((item) => {
+                const check = eligibility(actor, item);
+                const stepLabel = currentStep(item)?.kind === "review" ? "To review" : "To authorise";
+                return (
+                  <li key={item.id}>
+                    <Link
+                      href={item.type === "payment" ? `/business/approvals/payment/${item.id}` : `/business/approvals/trade/${item.id}`}
+                      className="group flex items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover sm:px-3"
+                    >
+                      <TileChip tone="onCard">
+                        {item.type === "payment" ? (
+                          <Send size={20} aria-hidden="true" />
+                        ) : (
+                          <FileText size={20} aria-hidden="true" />
                         )}
+                      </TileChip>
+                      <span className="flex min-w-0 flex-1 flex-col gap-1">
+                        <span className="flex flex-wrap items-center gap-2">
+                          <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{item.counterparty}</span>
+                          {item.priority === "urgent" && <Badge variant="warning">Urgent</Badge>}
+                          {!check.ok && <Badge variant="warning">{check.reason === "over-limit" ? "Above your limit" : "Over today's limit"}</Badge>}
+                        </span>
+                        <span className="tabular truncate text-[13px] text-muted-foreground">
+                          {stepLabel} · {item.submittedBy} · {item.submittedAt}
+                        </span>
                       </span>
-                      <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
-                        {stepLabel} · {item.reference} · {item.submittedBy} · {item.submittedAt}
-                      </span>
-                    </span>
-
-                    <span className="shrink-0 text-[13.5px] text-foreground tabular">
-                      {formatMoney(item.amount, item.currency, true)}
-                    </span>
-
-                    <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-
-          {effective === "partial-load" && <PartialLoadFooter />}
-        </div>
-      )}
+                      <span className="tabular shrink-0 text-[14px] text-foreground">{formatMoney(item.amount, item.currency, true)}</span>
+                      <ChevronRight size={20} aria-hidden="true" className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            {effective === "partial-load" && <PartialLoadFooter />}
+          </ListCard>
+        )}
+      </section>
     </div>
   );
 }

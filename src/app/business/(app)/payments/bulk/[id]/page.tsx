@@ -12,6 +12,8 @@ import { useState, use } from "react";
 import Link from "next/link";
 import { AlertCircle } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
+import { cn } from "@/lib/utils";
+import { LIST_CARD_CLASS } from "@/components/ui/list-card";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +38,7 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
   const [state, setState] = useState<BulkUploadState>("mixed");
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       <PageHeader
         title="Batch Correction"
         description={`Batch ${id} · payroll-august-2026.csv`}
@@ -55,11 +57,11 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
         </p>
       </div>
 
-      <section className="rounded-2xl border border-border bg-card">
+      <section className={cn(LIST_CARD_CLASS)}>
         <h2 className="border-b border-border px-4 py-3 text-[15px] text-foreground">
           Records needing correction
         </h2>
-        <ul className="divide-y divide-border">
+        <ul className="flex flex-col gap-0.5">
           {FAILED_RECORDS.map((r) => (
             <li key={r.row} className="flex items-center gap-3 bg-destructive/5 px-4 py-3">
               <span className="w-7 shrink-0 text-[12.5px] text-muted-foreground tabular">{r.row}</span>

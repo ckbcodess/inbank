@@ -7,8 +7,7 @@
  * variants in ./layouts only arrange these.
  */
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -31,8 +30,6 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { useSession } from "@/lib/session-store";
-import { heroWaveVars, useHeroWave } from "@/lib/hero-wave";
-import { decodeImage, holdSplash } from "@/lib/app-splash";
 import { RevealingAmount, useBalanceVisibility } from "@/components/providers/AmountVisibilityProvider";
 import {
   DropdownMenu,
@@ -46,6 +43,7 @@ import { CurrencyLogo } from "@/components/ui/currency-logo";
 import { FX_RATES, findFxRate } from "@/lib/mock-data";
 import { FxRatesDialog } from "./FxRatesDialog";
 import { ShareDetailsDialog, groupDigits } from "@/components/accounts/ShareDetailsDialog";
+import { HeroSheet, HeroStack, HeroSurface } from "@/components/hero/hero-frame";
 import {
   SPRING,
   selectedAccount,
@@ -53,7 +51,9 @@ import {
   type DashData,
 } from "./parts";
 
-const ASSETS = "/dashboard/hero";
+
+// The frame (surface, art, sheet) is shared with business banking; it lives in components/hero.
+export { HeroSheet, HeroStack, HeroSurface };
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
 
@@ -73,141 +73,6 @@ export function LastLogin({ className }: { className?: string }) {
     <span className={cn("tabular text-[12px] tracking-[var(--ls-tight)] text-muted-foreground", className)} suppressHydrationWarning>
       {t("dashboard.lastLogin", "Last login: {0}", { 0: formatLastLogin(previous) })}
     </span>
-  );
-}
-
-/* ── Surface ─────────────────────────────────────────────────────────────── */
-
-/**
- * A smooth ease-out from the centre, many stops, mixed in OKLab — even steps
- * through dark tones, so soft light doesn't band. No blur on top: large blurs
- * render at low precision and bring the banding back.
- */
-function softFalloff(color: string): string {
-  const stops = [
-    [100, 0],
-    [92, 12],
-    [78, 24],
-    [60, 36],
-    [42, 48],
-    [27, 60],
-    [15, 72],
-    [7, 84],
-    [2, 94],
-  ]
-    .map(([mix, at]) => `color-mix(in oklab, ${color} ${mix}%, transparent) ${at}%`)
-    .join(", ");
-  return `radial-gradient(closest-side in oklab, ${stops}, transparent 100%)`;
-}
-
-const WAVE_A_FILL = softFalloff("var(--hero-wave-a)");
-const WAVE_B_FILL = softFalloff("var(--hero-wave-b)");
-
-/**
- * Dither against banding: opaque greyscale noise centred on mid-grey. Blended
- * with `overlay` it nudges each pixel up or down by a level or two without
- * shifting the average, so the waves' steps dissolve into grain.
- */
-const DITHER =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
-
-/**
- * The flat card, two slow waves of light that act as its gradient, a dither
- * against banding, and the dotted map — decoration only. Everything sits in one
- * layer so the map's color-burn blends with the light beneath it.
- */
-function HeroArt({ map = true }: { map?: boolean }) {
-  return (
-    // Behind the content: the surface is isolated, so -z-10 still sits above its fill.
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10 [contain:paint]"
-      style={{ background: "var(--hero-surface)" }}
-    >
-      <div
-        className="hero-wave-a absolute -left-[20%] h-[95%] rounded-[50%] will-change-transform [backface-visibility:hidden]"
-        style={{
-          background: WAVE_A_FILL,
-          bottom: "calc(var(--wave-lift) - 95%)",
-          width: "var(--wave-size)",
-        }}
-      />
-      <div
-        className="hero-wave-b absolute -right-[15%] h-[85%] rounded-[50%] will-change-transform [backface-visibility:hidden]"
-        style={{
-          background: WAVE_B_FILL,
-          bottom: "calc(var(--wave-lift) - 100%)",
-          width: "calc(var(--wave-size) * 0.89)",
-          opacity: "var(--wave-second)",
-        }}
-      />
-      <div className="absolute inset-0 mix-blend-overlay" style={{ backgroundImage: DITHER, opacity: "var(--wave-grain)" }} />
-      {map && (
-        <Image
-          alt=""
-          src={`${ASSETS}/hero-map.svg`}
-          width={471}
-          height={238}
-          unoptimized
-          // Above the fold, and the splash already fetched it: load now, not lazily.
-          priority
-          className="absolute hidden mix-blend-color-burn [--eagle-opacity:var(--eagle-opacity-light)] sm:block dark:[--eagle-opacity:var(--eagle-opacity-dark)]"
-          style={{
-            right: "var(--eagle-right)",
-            bottom: "var(--eagle-bottom)",
-            opacity: "var(--eagle-opacity)",
-            scale: "var(--eagle-scale)",
-            transformOrigin: "bottom right",
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-/** The hero panel with its gradient and art. Shape, padding and layout come from `className`. */
-export function HeroSurface({
-  children,
-  className,
-  map = true,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  /** The dotted map sits bottom-right; drop it where controls would sit on top of it. */
-  map?: boolean;
-}) {
-  // The wave tuner's settings arrive as CSS variables here, so the text, glass
-  // controls and art underneath all pick them up.
-  const wave = useHeroWave();
-  // On first load, the splash waits for the dotted map so the card appears whole.
-  useEffect(() => {
-    if (map) holdSplash(decodeImage(`${ASSETS}/hero-map.svg`));
-  }, [map]);
-  // The two waves drift forever. Off screen (scrolled past, or another tab) nobody sees them, but the browser still
-  // repaints the blended layers and the glass buttons over them, which is where the flicker comes from.
-  const ref = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) el.removeAttribute("data-hero-offscreen");
-      else el.setAttribute("data-hero-offscreen", "");
-    });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  return (
-    <section
-      ref={ref}
-      className={cn(
-        "relative isolate overflow-hidden border border-[var(--hero-border)] bg-[var(--hero-surface)] text-[var(--hero-foreground)]",
-        className,
-      )}
-      style={heroWaveVars(wave)}
-    >
-      <HeroArt map={map} />
-      {children}
-    </section>
   );
 }
 
@@ -346,7 +211,7 @@ export function HeroFxAction({ className }: { className?: string }) {
           <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-2 max-sm:ml-0" />
         </span>
         <span className="tabular text-[14px] tracking-[var(--ls-tight)] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
-        <RateTrend size={15} strokeWidth={2} className={cn("size-[15px]", usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
+        <RateTrend size={15} className={cn("size-[15px]", usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
       </Button>
 
       <FxRatesDialog open={ratesOpen} onOpenChange={setRatesOpen} />

@@ -860,6 +860,57 @@ html.i18n-pending body {
   background-color: var(--hover);
 }
 
+/* ── Business banking theme: smoke ash ─────────────────────────────────────
+   Business banking wears smoke ash where personal banking wears GCB amber (designer, 2026-10-22; an override of
+   CONSTITUTION §4 for the business app only). The business layout sets data-app="business" on <html> while a
+   /business page is open, so dialogs, menus and toasts in portals pick it up too. Only the brand accent and the
+   hero move; status colours (warning amber, success, destructive) and categorical colours stay as they are. */
+:root[data-app="business"] {
+  --primary: var(--smoke-700);
+  --primary-hover: var(--smoke-600);
+  --primary-foreground: var(--white);
+  --ring: var(--smoke-400);
+  --tile-accent: var(--smoke-600);
+  --duo-accent: var(--smoke-400);
+  --glass-shine: var(--smoke-300);
+  --glass-shade: var(--smoke-900);
+  /* The "amber" glass and duotone icon tone, in ash. */
+  --icon-amber-light: var(--smoke-100);
+  --icon-amber-mid: var(--smoke-400);
+  --icon-amber-dark: var(--smoke-600);
+  --icon-amber-ink: var(--smoke-500);
+  /* A deeper ash hero than personal's slate, so the two homes are told apart at a glance. */
+  --hero-surface: var(--smoke-800);
+  --hero-border: var(--smoke-700);
+  --hero-wave-a: color-mix(in srgb, var(--smoke-400) 48%, transparent);
+  --hero-wave-b: color-mix(in srgb, var(--smoke-300) 40%, transparent);
+  /* Filled buttons on the hero: light ash on the dark panel. */
+  --hero-primary: var(--smoke-100);
+  --hero-primary-hover: var(--white);
+  --hero-primary-foreground: var(--smoke-950);
+}
+.dark[data-app="business"] {
+  --primary: var(--smoke-200);
+  --primary-hover: var(--smoke-100);
+  --primary-foreground: var(--smoke-950);
+  --ring: var(--smoke-300);
+  --tile-accent: var(--smoke-300);
+  --duo-accent: var(--smoke-300);
+  --glass-shine: var(--white);
+  --glass-shade: var(--smoke-950);
+  --icon-amber-light: var(--smoke-300);
+  --icon-amber-mid: var(--smoke-700);
+  --icon-amber-dark: var(--smoke-500);
+  --icon-amber-ink: var(--smoke-200);
+  --hero-surface: var(--smoke-900);
+  --hero-border: var(--smoke-800);
+  --hero-wave-a: color-mix(in srgb, var(--smoke-600) 70%, transparent);
+  --hero-wave-b: color-mix(in srgb, var(--smoke-500) 55%, transparent);
+  --hero-primary: var(--smoke-200);
+  --hero-primary-hover: var(--smoke-100);
+  --hero-primary-foreground: var(--smoke-950);
+}
+
 /* Auth & Onboarding shell: reassign --card so all nested card utilities use the auth card token */
 [data-auth-shell] {
   --card: var(--card-auth);

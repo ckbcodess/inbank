@@ -17,6 +17,8 @@ import UserChangeSummary from "@/components/corporate/admin/UserChangeSummary";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { TileChip } from "@/components/ui/action-tile";
+import { ListCard } from "@/components/ui/list-card";
 import { FilteredEmptyState } from "@/components/states/ListStates";
 import {
   canApproveUserChange,
@@ -71,12 +73,12 @@ export default function AdministrationPage() {
           <p className="text-[12px] text-muted-foreground">
             New access starts once an Authoriser or another administrator approves it. Nobody approves their own change.
           </p>
-          <ul className="flex flex-col gap-6">
+          <ListCard as="div" className="gap-5 p-4 sm:p-5">
             {waiting.map((change) => {
               const name = change.userId ? findCompanyUser(change.userId)?.name : change.after.name;
               const mine = canApproveUserChange(actor, change);
               return (
-                <li key={change.id} className="flex flex-col gap-2">
+                <div key={change.id} className="flex flex-col gap-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-[14px] text-foreground">
                       {change.kind === "add" ? `Add ${name}` : change.kind === "reactivate" ? `Reactivate ${name}` : `Change ${name}`}
@@ -92,10 +94,10 @@ export default function AdministrationPage() {
                     )}
                   </div>
                   <UserChangeSummary change={change} />
-                </li>
+                </div>
               );
             })}
-          </ul>
+          </ListCard>
         </section>
       )}
 
@@ -108,29 +110,32 @@ export default function AdministrationPage() {
         {users.length === 0 ? (
           <FilteredEmptyState onReset={() => setQuery("")} description={`No users match "${query}".`} />
         ) : (
-          <ul className="flex flex-col">
+          <ListCard>
             {users.map((u) => (
               <li key={u.id}>
                 <Link
                   href={`/business/administration/${u.id}`}
-                  className="-mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors duration-hover ease-settle hover:bg-muted/50"
+                  className="group flex items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover sm:px-3"
                 >
-                  <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    <span className="flex items-center gap-2">
-                      <span className="truncate text-[14px] text-foreground">{u.name}</span>
+                  <TileChip tone="onCard">
+                    <span className="text-[13px] font-medium">{u.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}</span>
+                  </TileChip>
+                  <span className="flex min-w-0 flex-1 flex-col gap-1">
+                    <span className="flex flex-wrap items-center gap-2">
+                      <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{u.name}</span>
                       {u.status === "Suspended" && <Badge variant="warning">Suspended</Badge>}
                       {pendingChangeFor(u.id) && <Badge variant="outline">Change waiting</Badge>}
                     </span>
-                    <span className="truncate text-[12px] text-muted-foreground">
+                    <span className="truncate text-[13px] text-muted-foreground">
                       {u.role} · <span className="tabular">{limitLine(u)}</span> ·{" "}
                       {u.accountIds.length === 1 ? "1 account" : `${u.accountIds.length} accounts`}
                     </span>
                   </span>
-                  <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                  <ChevronRight size={20} aria-hidden="true" className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
                 </Link>
               </li>
             ))}
-          </ul>
+          </ListCard>
         )}
       </section>
     </div>

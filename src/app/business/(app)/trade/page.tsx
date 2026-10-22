@@ -12,6 +12,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, FileText, Plus, Ship } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
+import { cn } from "@/lib/utils";
+import { LIST_CARD_CLASS } from "@/components/ui/list-card";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,12 +40,12 @@ const TRADES = [
 export default function TradeHubPage() {
   const [state, setState] = useState<ListState>("populated");
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       <PageHeader
         title="Trade"
         actions={
           <Button nativeButton={false} render={<Link href="/business/trade/new" />}>
-            <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
+            <Plus size={15} aria-hidden="true" />
             New trade request
           </Button>
         }
@@ -59,12 +61,12 @@ export default function TradeHubPage() {
 
       <StubNotice section="section 6 / sitemap 12.4" states="13.6 Trade Details" />
 
-      <section className="rounded-2xl border border-border bg-card">
+      <section className={cn(LIST_CARD_CLASS)}>
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h2 className="text-[15px] text-foreground">My trades</h2>
           <span className="text-[12px] text-muted-foreground">{TRADES.length} active</span>
         </div>
-        <ul className="divide-y divide-border">
+        <ul className="flex flex-col gap-0.5">
           {TRADES.map((t) => (
             <li key={t.id}>
               <Link
@@ -91,7 +93,7 @@ export default function TradeHubPage() {
         </ul>
       </section>
 
-      <section className="rounded-2xl border border-border bg-card p-4">
+      <section className={cn(LIST_CARD_CLASS, "p-4")}>
         <div className="flex items-center gap-2">
           <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
             <FileText size={17} aria-hidden="true" />

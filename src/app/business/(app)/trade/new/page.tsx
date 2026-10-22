@@ -12,6 +12,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { FileCheck, FileText, Landmark, Receipt } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
+import { cn } from "@/lib/utils";
+import { LIST_CARD_CLASS } from "@/components/ui/list-card";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
@@ -54,7 +56,7 @@ export default function TradeTypeSelectionPage() {
   const [state, setState] = useState<TradeState>("draft");
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       <PageHeader
         title="New Trade Request"
         description="Choose the instrument — the request form changes to match it."
@@ -74,7 +76,7 @@ export default function TradeTypeSelectionPage() {
               className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4"
             >
               <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-                <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
+                <Icon size={19} aria-hidden="true" />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-[15px] text-foreground">{t.name}</p>
@@ -91,7 +93,7 @@ export default function TradeTypeSelectionPage() {
         })}
       </div>
 
-      <section className="rounded-2xl border border-border bg-card p-4">
+      <section className={cn(LIST_CARD_CLASS, "p-4")}>
         <h2 className="flex items-center gap-2 text-[15px] text-foreground">
           <FileText size={16} aria-hidden="true" className="text-muted-foreground" />
           Remaining steps

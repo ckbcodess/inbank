@@ -12,6 +12,7 @@ import { useParams } from "next/navigation";
 import { AlertTriangle, CheckCircle2, Pause, Play, Trash2 } from "@/components/ui/icons";
 import { Button, buttonVariants } from "@/components/ui/button";
 import PageHeader from "@/components/layout/PageHeader";
+import { LIST_CARD_CLASS } from "@/components/ui/list-card";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { findBusinessAccount } from "@/lib/corporate/accounts";
@@ -120,7 +121,7 @@ export default function BusinessStandingOrderDetailPage() {
           </span>
         </section>
 
-        <section className="flex flex-col rounded-2xl border border-border bg-card p-2">
+        <section className={LIST_CARD_CLASS}>
           {facts.map(([label, value]) => (
             <div key={label} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3 text-[14px]">
               <span className="shrink-0 text-muted-foreground">{label}</span>
