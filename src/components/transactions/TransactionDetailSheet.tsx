@@ -256,7 +256,7 @@ export function TransactionDetailSheet({
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
-          side="right"
+          side="center"
           className="flex flex-col bg-modal p-0 select-text overflow-hidden"
           showCloseButton={true}
         >

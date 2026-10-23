@@ -129,7 +129,7 @@ function SheetContent({
   showCloseButton = true,
   ...props
 }: SheetPrimitive.Popup.Props & {
-  side?: "top" | "right" | "bottom" | "left";
+  side?: "top" | "right" | "bottom" | "left" | "center";
   showCloseButton?: boolean;
 }) {
   const popupRef = React.useRef<HTMLDivElement | null>(null);
@@ -159,6 +159,13 @@ function SheetContent({
           side === "left" && [
             SHEET_MOBILE_BOTTOM,
             "sm:inset-y-3 sm:h-[calc(100dvh-28px)] sm:left-3 sm:right-auto sm:max-h-[calc(100dvh-28px)] sm:w-[440px] sm:max-w-md",
+            "sm:border sm:border-black/[0.08] dark:sm:border-white/[0.1] sm:rounded-3xl",
+            "shadow-2xl sm:shadow-[0_24px_64px_rgba(0,0,0,0.22),0_1px_3px_rgba(0,0,0,0.06)] dark:sm:shadow-[0_28px_72px_rgba(0,0,0,0.72)]",
+          ],
+          // Centre: a bottom sheet below `sm`, a dialog in the middle of the screen from `sm` up. Same parts as the side sheets.
+          side === "center" && [
+            SHEET_MOBILE_BOTTOM,
+            "sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:max-h-[min(90dvh,860px)] sm:w-[480px] sm:max-w-[calc(100vw-32px)]",
             "sm:border sm:border-black/[0.08] dark:sm:border-white/[0.1] sm:rounded-3xl",
             "shadow-2xl sm:shadow-[0_24px_64px_rgba(0,0,0,0.22),0_1px_3px_rgba(0,0,0,0.06)] dark:sm:shadow-[0_28px_72px_rgba(0,0,0,0.72)]",
           ],

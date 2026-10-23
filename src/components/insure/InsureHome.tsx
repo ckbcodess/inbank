@@ -5,11 +5,11 @@
  *
  *  - Your Policies: every policy the customer holds, across plans, with anything that needs them (a missed premium, a
  *    medical assessment) said on the row. Only there when they hold one.
- *  - Plans: the four plans on offer as cards. A card opens the plan in a side panel over the list, so the customer can
+ *  - Plans: the four plans on offer as cards. A card opens the plan in a centred dialog over the list, so the customer can
  *    look at one plan after another without leaving the page.
  *    Plans the bank hasn't opened yet are left off for now.
  *
- * `/insure/plans/[id]` renders this same page with that plan's panel already open, so a link, a refresh and Back from
+ * `/insure/plans/[id]` renders this same page with that plan's dialog already open, so a link, a refresh and Back from
  * the buy flow all land where the customer was.
  *
  * Browsing never needs an insurance profile. Without one, a line and one button explain that buying a plan does, and
@@ -28,7 +28,7 @@ import { InvestRowBones, ListPageSkeleton } from "@/components/states/PageSkelet
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { InsureDevTools, PolicyRow } from "@/components/insure/parts";
 import { PlanCard } from "@/components/insure/PlanCards";
-import { PlanSheet } from "@/components/insure/PlanSheet";
+import { PlanDialog } from "@/components/insure/PlanDialog";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { INSURANCE_PLANS, INSURE_HOME, type PlanId } from "@/lib/insurance-plans";
 import { useInsuranceHydrated, useMyInsurance } from "@/lib/insurance";
@@ -58,7 +58,7 @@ export function InsureHome({ openPlanId }: { openPlanId?: PlanId }) {
   const { showAmounts } = useAmountVisibility();
   const [state, setState] = useState<PageState>("populated");
   const [openId, setOpenId] = useState<PlanId | null>(openPlanId ?? null);
-  // The panel keeps showing the plan it just had while it slides away.
+  // The dialog keeps showing the plan it just had while it fades out.
   const [shownId, setShownId] = useState<PlanId | null>(openPlanId ?? null);
 
   // Scaffolding: production builds always show the plain two-column cards.
@@ -147,7 +147,7 @@ export function InsureHome({ openPlanId }: { openPlanId?: PlanId }) {
         </section>
       </div>
 
-      {shownId && <PlanSheet planId={shownId} open={openId !== null} onClose={closePlan} />}
+      {shownId && <PlanDialog planId={shownId} open={openId !== null} onClose={closePlan} />}
     </div>
   );
 }

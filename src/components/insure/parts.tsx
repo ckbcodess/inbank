@@ -42,7 +42,7 @@ export function PlanIcon({ planId, muted = false }: { planId: PlanId; muted?: bo
 }
 
 /**
- * Each plan has a colour of its own from the categorical set, so a plan is recognisable on the cards and in its panel.
+ * Each plan has a colour of its own from the categorical set, so a plan is recognisable on the cards and in its dialog.
  * None is red: red means an error here, and a protection plan is not one.
  */
 const PLAN_TONES: Partial<Record<PlanId, string>> = {
@@ -52,7 +52,7 @@ const PLAN_TONES: Partial<Record<PlanId, string>> = {
   "ultimate-protection": "var(--cat-5)",
 };
 
-/** The CSS variable a card or panel sets as `--plan`; plans without a colour yet fall back to the muted fill. */
+/** The CSS variable a card or dialog sets as `--plan`; plans without a colour yet fall back to the muted fill. */
 export const planToneStyle = (planId: PlanId) => ({ "--plan": PLAN_TONES[planId] ?? "var(--muted)" }) as React.CSSProperties;
 
 /** The plan's icon on a disc of its colour. Dark glyph, as on any filled amber button. */

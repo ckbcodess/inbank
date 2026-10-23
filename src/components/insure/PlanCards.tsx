@@ -6,7 +6,7 @@
  *  - colour: the whole card in the plan's colour.
  *  - art:    a picture slot on top (the plan's icon until StarLife's illustrations arrive), then the name and line.
  *  - price:  plain, plus what the plan costs from, so cost can be compared before opening anything.
- * A card opens the plan in a side panel; it never navigates away from the list.
+ * A card opens the plan in a dialog; it never navigates away from the list.
  */
 
 import { formatMoney } from "@/lib/mock-data";

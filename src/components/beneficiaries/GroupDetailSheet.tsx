@@ -30,7 +30,7 @@ export function GroupDetailSheet({ group, open, onOpenChange, onEdit, onDelete }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="flex flex-col">
+      <SheetContent side="center" className="flex flex-col">
         {/* Centred as a block like the beneficiary sheet. When the members are too many to fit, the name stays put and only the list scrolls */}
         <div className="flex min-h-0 flex-1 flex-col justify-center">
           <div className="flex shrink-0 flex-col items-center gap-1 px-5 pt-12 pb-5 text-center sm:px-8">

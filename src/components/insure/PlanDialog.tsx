@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * One plan, to look at before committing to anything, in a side panel over the plans list: what it is for, what it
- * costs from, what it pays, the few facts that matter, and one button to start. Looking never needs a profile;
- * starting does, and the line above the button says so.
+ * One plan, to look at before committing to anything, in a dialog in the middle of the screen over the plans list: what
+ * it is for, what it costs from, what it pays, the few facts that matter, and one button to start. Looking never needs a
+ * profile; starting does, and the line above the button says so. On a phone the dialog is a bottom sheet.
  *
  * Figma also puts "View & Manage Policies" here. The customer's policies are already listed on Insure itself, so it
  * isn't repeated: one list, one place.
@@ -12,7 +12,7 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetBody, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogBody, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { FactsPanel } from "@/components/invest/parts";
 import { PlanDisc, perPeriod } from "@/components/insure/parts";
 import { formatMoney } from "@/lib/mock-data";
@@ -21,7 +21,7 @@ import { planFromMonthly, useMyInsurance } from "@/lib/insurance";
 
 const money = (n: number) => formatMoney(n, "GHS", true);
 
-export function PlanSheet({ planId, open, onClose }: { planId: PlanId; open: boolean; onClose: () => void }) {
+export function PlanDialog({ planId, open, onClose }: { planId: PlanId; open: boolean; onClose: () => void }) {
   const plan = findPlan(planId);
   const { profile } = useMyInsurance();
   if (!plan || !plan.kind) return null;
@@ -52,17 +52,17 @@ export function PlanSheet({ planId, open, onClose }: { planId: PlanId; open: boo
           ];
 
   return (
-    <Sheet open={open} onOpenChange={(next) => !next && onClose()}>
-      <SheetContent>
-        <SheetHeader className="gap-4 pt-6 sm:pt-7">
+    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
+      <DialogContent size="lg" showCloseButton showDragHandle>
+        <div className="flex shrink-0 flex-col gap-4 px-5 pb-2 pt-5 pr-14 sm:px-6 sm:pt-6">
           <PlanDisc planId={planId} size={48} />
           <div className="flex flex-col gap-1">
-            <SheetTitle className="text-[20px] tracking-[var(--ls-heading)]">{plan.name}</SheetTitle>
-            <SheetDescription className="text-[14px] leading-relaxed">{plan.description}</SheetDescription>
+            <DialogTitle className="whitespace-normal text-[20px] font-medium tracking-[var(--ls-heading)]">{plan.name}</DialogTitle>
+            <DialogDescription className="text-[14px] leading-relaxed">{plan.description}</DialogDescription>
           </div>
-        </SheetHeader>
+        </div>
 
-        <SheetBody className="gap-6 pt-4">
+        <DialogBody className="gap-6 px-5 pt-4 sm:px-6">
           {from !== null && (
             <div className="flex flex-col gap-1">
               <span className="text-[12px] text-muted-foreground">From</span>
@@ -80,15 +80,15 @@ export function PlanSheet({ planId, open, onClose }: { planId: PlanId; open: boo
           </ul>
 
           <FactsPanel rows={facts} />
-        </SheetBody>
+        </DialogBody>
 
-        <SheetFooter>
+        <div className="flex shrink-0 flex-col gap-2 p-5 pt-3 sm:p-6 sm:pt-4">
           {!profile && <p className="text-center text-[13px] text-muted-foreground">You’ll create your insurance profile first. You only do it once.</p>}
           <Button nativeButton={false} render={<Link href={startHref} />} className="h-11 w-full rounded-2xl text-[16px]">
             Get Started
           </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

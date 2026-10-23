@@ -99,7 +99,7 @@ export function BeneficiaryDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="flex flex-col">
+      <SheetContent side="center" className="flex flex-col">
         {/* Who it is, then the details listed out; the block is centred in the space above the actions, like the receipt */}
         <div className="flex flex-1 flex-col justify-center overflow-y-auto px-5 pt-12 pb-5 no-scrollbar sm:px-8">
           <div className="flex flex-col items-center gap-1 pb-6 text-center">
