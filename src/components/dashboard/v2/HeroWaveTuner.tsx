@@ -111,7 +111,7 @@ function TunerPanel() {
           const changed = wave[key] !== HERO_WAVE_DEFAULTS[key];
           return (
             <label key={key} className="flex flex-col gap-2">
-              <span className="flex items-center justify-between text-[12.5px] text-muted-foreground">
+              <span className="flex items-center justify-between text-[12px] text-muted-foreground">
                 {label}
                 <span className={cn("tabular", changed ? "text-foreground" : "text-muted-foreground")}>
                   {wave[key]}

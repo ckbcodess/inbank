@@ -142,7 +142,7 @@ function MigrateContent() {
             <span className="text-[13px] text-muted-foreground">What&apos;s new</span>
             <span className="text-[14px] text-foreground">A clearer dashboard, faster payments to saved payees, and passkey login on your own devices.</span>
           </div>
-          <Button size="lg" onClick={next} className="h-10 w-full text-[14.5px]">
+          <Button size="lg" onClick={next} className="h-10 w-full text-[14px]">
             Get started
           </Button>
         </div>
@@ -164,7 +164,7 @@ function MigrateContent() {
             invalid={codeError}
           />
           {busy && (
-            <div className="flex items-center justify-center gap-2 text-[13.5px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 text-[13px] text-muted-foreground">
               <AppLoader size={16} />
               <span>Checking…</span>
             </div>
@@ -189,14 +189,14 @@ function MigrateContent() {
               <span className="text-[13px] text-muted-foreground">Unchanged</span>
             </div>
           </div>
-          <p className="text-[12.5px] text-muted-foreground">
+          <p className="text-[12px] text-muted-foreground">
             Something missing? You can tell us from Help once you&apos;re in — nothing on your accounts has changed.
           </p>
           <div className="flex gap-2">
-            <Button variant="outline" size="lg" onClick={back} className="h-10 flex-1 text-[14.5px]">
+            <Button variant="outline" size="lg" onClick={back} className="h-10 flex-1 text-[14px]">
               Back
             </Button>
-            <Button size="lg" onClick={next} className="h-10 flex-[2] text-[14.5px]">
+            <Button size="lg" onClick={next} className="h-10 flex-[2] text-[14px]">
               Looks right
             </Button>
           </div>
@@ -222,7 +222,7 @@ function MigrateContent() {
             onConfirmChange={setConfirm}
             autoFocus
           />
-          <Button type="submit" size="lg" disabled={!newPasswordReady(password, confirm)} loading={busy} className="mt-1 h-10 w-full text-[14.5px]">
+          <Button type="submit" size="lg" disabled={!newPasswordReady(password, confirm)} loading={busy} className="mt-1 h-10 w-full text-[14px]">
             Proceed
           </Button>
         </form>
@@ -239,12 +239,12 @@ function MigrateContent() {
             />
             <span className="flex flex-col gap-1">
               <span>I accept the updated Terms of Use</span>
-              <span className="text-[12.5px] text-muted-foreground">
+              <span className="text-[12px] text-muted-foreground">
                 The main change: you can now log in with a passkey on devices you choose to remember.
               </span>
             </span>
           </label>
-          <Button size="lg" onClick={finish} disabled={!acceptTerms} loading={busy} className="h-10 w-full text-[14.5px]">
+          <Button size="lg" onClick={finish} disabled={!acceptTerms} loading={busy} className="h-10 w-full text-[14px]">
             Go to my dashboard
           </Button>
         </div>
@@ -271,7 +271,7 @@ function CarriedGroup({
         aria-expanded={open}
         className="flex items-center gap-2 px-3 py-3 text-left cursor-pointer"
       >
-        <Icon size={17} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+        <Icon size={17} className="shrink-0 text-muted-foreground" aria-hidden="true" />
         <span className="flex-1 text-[14px] text-foreground">{title}</span>
         <span className="tabular text-[13px] text-muted-foreground">{items.length}</span>
         <Check size={15} className="text-success" aria-label="Carried across" />

@@ -460,7 +460,7 @@ function SoleProprietorSignupContent() {
             >
               Continue
             </Button>
-            <p className="text-center text-[12.5px] leading-5 text-muted-foreground">
+            <p className="text-center text-[12px] leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
               <a
                 href="#"
@@ -615,7 +615,7 @@ function SoleProprietorSignupContent() {
           </div>
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
               <AppLoader size={16} />
               <span>Verifying code...</span>
             </div>

@@ -431,8 +431,8 @@ export default function RequestFlow({ account }: { account: Account }) {
             <div className="flex w-full flex-col divide-y divide-border/60 overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
               {[["Request", KIND_META[kind].title] as [string, string], ...summary.rows].map(([label, value]) => (
                 <div key={label} className="flex w-full items-center justify-between gap-3 px-3 py-2">
-                  <span className="shrink-0 text-[13.5px] text-muted-foreground">{label}</span>
-                  <span className="min-w-0 truncate text-right text-[13.5px] text-foreground tabular">{value}</span>
+                  <span className="shrink-0 text-[13px] text-muted-foreground">{label}</span>
+                  <span className="min-w-0 truncate text-right text-[13px] text-foreground tabular">{value}</span>
                 </div>
               ))}
             </div>
@@ -440,7 +440,7 @@ export default function RequestFlow({ account }: { account: Account }) {
             <div className="my-1 w-full border-t border-border/70" />
 
             <div className="flex w-full items-center justify-between overflow-hidden rounded-2xl border border-border bg-muted/40 px-3 py-3 shadow-xs dark:bg-muted/20">
-              <span className="text-[13.5px] text-foreground">Fee</span>
+              <span className="text-[13px] text-foreground">Fee</span>
               <span className="text-[26px] tracking-[var(--ls-display)] text-foreground tabular sm:text-[28px]">
                 {formatMoney(summary.fee, "GHS", true)}
               </span>
@@ -540,7 +540,7 @@ function FlowSelect({
               {(o.fee || o.speed) && (
                 <div className="shrink-0 text-right">
                   {o.fee && <span className="block text-[13px] font-medium text-foreground tabular">{o.fee}</span>}
-                  {o.speed && <span className="text-[11.5px] font-normal text-muted-foreground">{o.speed}</span>}
+                  {o.speed && <span className="text-[11px] font-normal text-muted-foreground">{o.speed}</span>}
                 </div>
               )}
             </div>

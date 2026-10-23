@@ -243,7 +243,7 @@ export function QuickFundFlow({
   const body = (
     <>
           {stage === "otp" && (
-            <p className="text-[13.5px] text-muted-foreground mb-3 leading-relaxed">
+            <p className="text-[13px] text-muted-foreground mb-3 leading-relaxed">
               Enter the 6-digit code sent to <span className="font-medium text-foreground">{maskMobile(displayGhanaMobile(phone))}</span>.
             </p>
           )}
@@ -362,7 +362,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
               />
 
               {busy && (
-                <div className="flex items-center justify-center gap-2 text-[13.5px] text-muted-foreground">
+                <div className="flex items-center justify-center gap-2 text-[13px] text-muted-foreground">
                   <AppLoader size={16} />
                   <span>Verifying code…</span>
                 </div>
@@ -406,11 +406,11 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 <span className="tabular-nums text-[20px] font-medium tracking-tight text-foreground">
                   GHS {parseFloat(amount).toFixed(2)}
                 </span>
-                <p className="text-[13.5px] text-muted-foreground">
+                <p className="text-[13px] text-muted-foreground">
                   Enter your Mobile Money PIN on your phone to approve.
                 </p>
               </div>
-              <div className="flex items-center gap-2 pt-2 text-[12.5px] text-muted-foreground">
+              <div className="flex items-center gap-2 pt-2 text-[12px] text-muted-foreground">
                 <AppLoader size={14} />
                 <span>Waiting for approval…</span>
               </div>
@@ -428,7 +428,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 <h4 className="tabular-nums text-[20px] font-medium tracking-tight text-foreground">
                   GHS {parseFloat(amount).toFixed(2)} deposited
                 </h4>
-                <p className="text-[13.5px] text-muted-foreground">
+                <p className="text-[13px] text-muted-foreground">
                   Available in your account now.
                 </p>
               </div>

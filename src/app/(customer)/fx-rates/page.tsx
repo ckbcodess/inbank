@@ -178,7 +178,7 @@ export default function FxRatesPage() {
             <div className="w-full">
               <div className="mb-3">
                 <h2 className="text-[15px] font-medium text-foreground">Currency converter</h2>
-                <p className="text-[12.5px] text-muted-foreground">
+                <p className="text-[12px] text-muted-foreground">
                   Indicative calculator based on today&apos;s published rates.
                 </p>
               </div>
@@ -287,7 +287,7 @@ export default function FxRatesPage() {
                 </div>
               </div>
 
-              <p className="mt-3 text-center text-[12.5px] font-medium text-muted-foreground tabular">
+              <p className="mt-3 text-center text-[12px] font-medium text-muted-foreground tabular">
                 1 {fromCcy} = {formatRate(conversion.rate)} {toCcy}
               </p>
             </div>
@@ -308,7 +308,7 @@ export default function FxRatesPage() {
                         <span className="font-medium text-[14px] text-foreground tabular">
                           {rate.pair}
                         </span>
-                        <span className="text-[11.5px] text-muted-foreground truncate">
+                        <span className="text-[11px] text-muted-foreground truncate">
                           {meta.name}
                         </span>
                       </div>
@@ -321,7 +321,7 @@ export default function FxRatesPage() {
                         <span>Sell {formatRate(rate.sell)}</span>
                       </div>
                       <span
-                        className={`mt-0.5 inline-flex items-center gap-1 text-[11.5px] tabular font-medium ${
+                        className={`mt-0.5 inline-flex items-center gap-1 text-[11px] tabular font-medium ${
                           up ? "text-success-text" : "text-destructive"
                         }`}
                       >
@@ -364,7 +364,7 @@ export default function FxRatesPage() {
                               <span className="font-medium text-foreground tabular">
                                 {rate.pair}
                               </span>
-                              <span className="text-[11.5px] text-muted-foreground">
+                              <span className="text-[11px] text-muted-foreground">
                                 {meta.name} · {meta.country}
                               </span>
                             </div>

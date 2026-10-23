@@ -150,7 +150,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
               <button
                 type="button"
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
-                className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11.5px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+                className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
               >
                 <span>{selectedAccount}</span>
                 <ChevronDown size={12} className="text-muted-foreground" />
@@ -182,7 +182,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
           <Link
             href="/transactions"
-            className="inline-flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
+            className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
           >
             <span>View all</span>
             <ChevronRight size={13} />
@@ -242,15 +242,15 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                     {formatMoney(item.amount, "GHS", true)}
                   </span>
                   {isFailed ? (
-                    <span className="text-[11.5px] text-destructive font-normal">
+                    <span className="text-[11px] text-destructive font-normal">
                       Failed
                     </span>
                   ) : isPending ? (
-                    <span className="text-[11.5px] text-warning font-normal">
+                    <span className="text-[11px] text-warning font-normal">
                       Pending
                     </span>
                   ) : (
-                    <span className="text-[11.5px] text-muted-foreground">
+                    <span className="text-[11px] text-muted-foreground">
                       {item.account.split(" ").pop()}
                     </span>
                   )}

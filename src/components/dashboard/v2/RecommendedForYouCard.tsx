@@ -229,7 +229,7 @@ export function RecommendedForYouCard({
                 </Fragment>
               ))}
             </p>
-            <motion.p className="text-[12.5px] text-muted-foreground" {...reveal(reasonAt)}>
+            <motion.p className="text-[12px] text-muted-foreground" {...reveal(reasonAt)}>
               {r.reason}
             </motion.p>
           </div>

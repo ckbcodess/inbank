@@ -417,9 +417,9 @@ function ActivityRow({
             {formatMoney(t.amount, t.currency, true)}
           </span>
           {isFailed ? (
-            <span className="text-[11.5px] text-destructive">Failed</span>
+            <span className="text-[11px] text-destructive">Failed</span>
           ) : isPending ? (
-            <span className="text-[11.5px] text-warning">Pending</span>
+            <span className="text-[11px] text-warning">Pending</span>
           ) : null}
         </span>
       </button>
@@ -466,7 +466,7 @@ function RecentTransactionsDialog({
             variant="outline"
             nativeButton={false}
             render={<Link href={`/transactions?account=${account.id}`} />}
-            className="h-9 w-full rounded-lg text-[13.5px]"
+            className="h-9 w-full rounded-lg text-[13px]"
           >
             View All Transactions
           </Button>

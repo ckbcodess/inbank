@@ -46,7 +46,7 @@ function StatTile({
   // A row of the grouped stats panel on a phone; its own tile from sm up.
   return (
     <div className="flex items-center justify-between gap-2 px-3 py-3 sm:flex-col sm:items-start sm:justify-start sm:rounded-2xl sm:border sm:border-border sm:bg-card sm:p-4">
-      <span className="text-[13px] text-muted-foreground sm:text-[12.5px]">{label}</span>
+      <span className="text-[13px] text-muted-foreground sm:text-[12px]">{label}</span>
       {loading ? (
         <Bone className="h-4 w-21 sm:h-5 sm:w-28" />
       ) : (
@@ -75,7 +75,7 @@ function TopCategories({ data, loading, showAmounts }: { data: DashData; loading
         <ul className="flex flex-col gap-3 sm:gap-3">
           {slices.map((s) => (
             <li key={s.label} className="flex flex-col gap-2">
-              <span className="flex items-baseline justify-between gap-2 text-[13.5px]">
+              <span className="flex items-baseline justify-between gap-2 text-[13px]">
                 <span className="truncate text-foreground">{s.label}</span>
                 <span className="shrink-0 tabular text-muted-foreground">
                   {formatMoney(s.amount, "GHS", showAmounts)}

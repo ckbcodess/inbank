@@ -67,11 +67,11 @@ function PinContent() {
       {/* New device: what we saw, so the person can tell if it was them. */}
       {isNewDevice && (
         <div data-tour="mfa-device-info" className="mb-5 rounded-2xl border border-primary/20 bg-primary/5 p-3 text-left space-y-2">
-          <div className="flex items-center gap-2 text-[13.5px] font-medium text-foreground">
+          <div className="flex items-center gap-2 text-[13px] font-medium text-foreground">
             <Laptop size={17} className="text-primary" />
             <span>Windows PC · Google Chrome</span>
           </div>
-          <div className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+          <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
             <MapPin size={15} />
             <span>Accra, Greater Accra · IP 154.160.22.84</span>
           </div>
@@ -118,7 +118,7 @@ function PinContent() {
         <AlertToast when={auth.state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${REGISTERED_PHONE}.`} />
 
         {verifying ? (
-          <div className="flex items-center justify-center gap-2 text-[13.5px] text-muted-foreground">
+          <div className="flex items-center justify-center gap-2 text-[13px] text-muted-foreground">
             <AppLoader size={16} />
             <span>Logging you in...</span>
           </div>

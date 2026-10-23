@@ -111,7 +111,7 @@ function ThemeSegmented() {
               active === value ? "bg-chip-selected text-chip-selected-foreground shadow-xs dark:bg-background" : "text-chip-foreground hover:text-chip-selected-foreground"
             }`}
           >
-            <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
+            <Icon size={16} aria-hidden="true" />
           </button>
         </SimpleTooltip>
       ))}
@@ -229,7 +229,7 @@ export default function TopHeader({
                 {initials}
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className="truncate text-[14.5px] font-medium text-foreground tracking-[var(--ls-tight)]">{actor.name}</span>
+                <span className="truncate text-[14px] font-medium text-foreground tracking-[var(--ls-tight)]">{actor.name}</span>
                 <span className="truncate text-[12px] text-muted-foreground">{actor.email}</span>
               </div>
             </div>
@@ -241,7 +241,7 @@ export default function TopHeader({
             {/* Profile, security and alerts are one Settings modal for customers; staff still go to the page. */}
             <DropdownMenuItem
               onClick={() => (actor.shell === "customer" ? openSettings() : router.push("/settings"))}
-              className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+              className="flex items-center justify-between py-2 px-2 text-[13px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
               <span className="flex items-center gap-2">
                 <Settings size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
@@ -256,7 +256,7 @@ export default function TopHeader({
             {process.env.NODE_ENV !== "production" && (
               <DropdownMenuItem
                 onClick={toggleDevToolsHidden}
-                className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+                className="flex items-center justify-between py-2 px-2 text-[13px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
               >
                 <span className="flex items-center gap-2">
                   {devToolsHidden ? (
@@ -295,7 +295,7 @@ export default function TopHeader({
             <DropdownMenuItem
               variant="destructive"
               onClick={() => setLogoutOpen(true)}
-              className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg transition-colors"
+              className="flex items-center justify-between py-2 px-2 text-[13px] cursor-pointer rounded-lg transition-colors"
             >
               <span className="flex items-center gap-2">
                 <LogOut size={16} className="shrink-0" aria-hidden="true" />
@@ -328,7 +328,7 @@ export default function TopHeader({
             <DialogTitle>{t("header.signOutConfirmTitle", "Log out?")}</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
               {t("header.signOutConfirmBody", "You can log in again anytime to access your accounts.")}
             </p>
           </DialogBody>

@@ -376,7 +376,7 @@ function AccountsContent() {
               }}
               className="shrink-0"
             >
-              <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
+              <Plus size={15} aria-hidden="true" />
               <span>{isWalletCustomer ? "Open a GCB Account" : "Add Account"}</span>
             </Button>
           ) : undefined
@@ -398,7 +398,7 @@ function AccountsContent() {
         <div className="flex items-start gap-2 rounded-2xl border border-border bg-card p-3 sm:p-4" role="status">
           <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-success" aria-hidden="true" />
           <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <p className="text-[14.5px] text-foreground">Your GCB account is ready</p>
+            <p className="text-[14px] text-foreground">Your GCB account is ready</p>
             <p className="text-[13px] leading-relaxed text-muted-foreground tabular">
               {formatMoney(migratedAmount, "GHS", true)} moved from your wallet to {defaultAccount.name}. Your linked
               wallets and cards now top up this account.
@@ -475,7 +475,7 @@ function AccountsContent() {
                   description="Link mobile money or a bank card to add money."
                   action={
                     <Button onClick={() => setLinkOpen(true)}>
-                      <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
+                      <Plus size={15} aria-hidden="true" />
                       Link a Wallet or Card
                     </Button>
                   }
@@ -629,14 +629,14 @@ function AccountsContent() {
             </div>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setRemoveOpen(false)} className="h-9 flex-1 rounded-lg text-[13.5px]">
+            <Button type="button" variant="outline" onClick={() => setRemoveOpen(false)} className="h-9 flex-1 rounded-lg text-[13px]">
               Cancel
             </Button>
             <Button
               type="button"
               variant="destructive"
               onClick={() => removing && handleRemoveSource(removing)}
-              className="h-9 flex-1 rounded-lg text-[13.5px]"
+              className="h-9 flex-1 rounded-lg text-[13px]"
             >
               {removing?.type === "card" ? "Remove Card" : "Remove"}
             </Button>

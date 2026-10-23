@@ -124,7 +124,7 @@ export function CardTopUpFlow({
                 ? `Card Reference: ${refCode}`
                 : `GCB ${selectedCard?.type} · ${selectedCard?.scheme} · ${selectedCard?.maskedNumber}`
             }
-            icon={<CreditCard size={18} strokeWidth={1.8} className="shrink-0" />}
+            icon={<CreditCard size={18} className="shrink-0" />}
             onChange={() => setCollapsed(false)}
           />
         ) : (
@@ -183,7 +183,7 @@ export function CardTopUpFlow({
                           <CreditCard size={20} className="shrink-0" />
                         </span>
                         <div className="flex flex-col min-w-0 text-left gap-0.5">
-                          <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">
+                          <span className="text-[14px] text-foreground font-medium truncate leading-tight">
                             GCB {selectedCard.name}
                           </span>
                           <span className="text-[12px] text-muted-foreground font-normal truncate leading-tight">
@@ -195,7 +195,7 @@ export function CardTopUpFlow({
                         <span className="text-[14px] text-foreground font-semibold tabular block">
                           {formatMoney(selectedCard.balance ?? 0, selectedCard.currency, true)}
                         </span>
-                        <span className="text-[11.5px] text-muted-foreground font-normal">Balance</span>
+                        <span className="text-[11px] text-muted-foreground font-normal">Balance</span>
                       </div>
                     </div>
                   )}

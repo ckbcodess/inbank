@@ -49,7 +49,7 @@ export default function BusinessStandingOrderDetailPage() {
           <CheckCircle2 size={22} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
             <span className="text-[18px] text-foreground">Cancelled</span>
-            <span className="text-[13.5px] text-muted-foreground">{cancelled} won&apos;t be paid again. You can set it up again anytime.</span>
+            <span className="text-[13px] text-muted-foreground">{cancelled} won&apos;t be paid again. You can set it up again anytime.</span>
           </div>
           <Link href={back.href} className={buttonVariants({ variant: "outline", size: "sm" })}>
             Back to Standing Orders
@@ -65,7 +65,7 @@ export default function BusinessStandingOrderDetailPage() {
         <PageHeader title="Standing Order" backTo={back} />
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-start gap-2 px-1">
           <span className="text-[18px] text-foreground">We couldn&apos;t find this standing order</span>
-          <span className="text-[13.5px] text-muted-foreground">It may have been cancelled.</span>
+          <span className="text-[13px] text-muted-foreground">It may have been cancelled.</span>
           <Link href={back.href} className={buttonVariants({ variant: "outline", size: "sm" })}>
             Back to Standing Orders
           </Link>
@@ -157,10 +157,10 @@ export default function BusinessStandingOrderDetailPage() {
             <DialogTitle>Cancel this standing order?</DialogTitle>
           </DialogHeader>
           <DialogBody className="gap-3">
-            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
               &quot;{si.beneficiary}&quot; will stop running. You can set it up again anytime.
             </p>
-            <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-2 text-[12.5px] text-muted-foreground">
+            <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-2 text-[12px] text-muted-foreground">
               <AlertTriangle size={15} className="mt-0.5 shrink-0 text-warning-text" aria-hidden="true" />
               <span>If you just want to pause it temporarily, use Pause instead.</span>
             </div>

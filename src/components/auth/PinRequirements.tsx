@@ -21,7 +21,7 @@ export default function PinRequirements({
       <p className="mb-2 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
         PIN Requirements
       </p>
-      <ul className="grid grid-cols-1 gap-2 text-[12.5px] sm:grid-cols-2" aria-label="PIN requirements">
+      <ul className="grid grid-cols-1 gap-2 text-[12px] sm:grid-cols-2" aria-label="PIN requirements">
         {PIN_RULES.map((rule) => {
           const met = rule.test(pin);
           return (

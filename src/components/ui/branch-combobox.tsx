@@ -237,7 +237,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
               })}
             </div>
           ) : (
-            <div className="p-2 text-center text-[13.5px] text-muted-foreground">
+            <div className="p-2 text-center text-[13px] text-muted-foreground">
               <span>No branches found matching &ldquo;{query}&rdquo;</span>
             </div>
           )}

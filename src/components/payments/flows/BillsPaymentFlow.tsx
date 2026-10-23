@@ -218,7 +218,7 @@ export function BillsPaymentFlow({
       onClick={handleVerify}
       disabled={!canVerify || isVerifying}
       className={cn(
-        "absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2 px-2 py-1 text-[12.5px] font-medium transition-all rounded-lg select-none",
+        "absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2 px-2 py-1 text-[12px] font-medium transition-all rounded-lg select-none",
         canVerify
           ? "text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 cursor-pointer"
           : "text-muted-foreground/35 cursor-not-allowed pointer-events-none"
@@ -419,13 +419,13 @@ export function BillsPaymentFlow({
             {isVerified && (
               <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-muted/30 p-3 mt-1 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[12.5px] text-muted-foreground">Name of Biller</span>
+                  <span className="text-[12px] text-muted-foreground">Name of Biller</span>
                   <span className="text-[13px] text-foreground font-medium">
                     {state.subType === "ecg" ? "Electricity Company of Ghana (ECG)" : state.subType === "ghanagov" ? (state.govService || "Ghana.gov") : (selectedBiller?.name || "Biller")}
                   </span>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[12.5px] text-muted-foreground">
+                  <span className="text-[12px] text-muted-foreground">
                     {state.subType === "ecg" ? "Meter Number" : state.subType === "ghanagov" ? "PRN / Reference" : isGivingCategory ? "Member ID / Phone" : (selectedBiller?.reference || "Reference Number")}
                   </span>
                   <span className="text-[13px] font-mono text-foreground">

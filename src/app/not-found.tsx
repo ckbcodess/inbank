@@ -12,7 +12,7 @@ export default function NotFound() {
         </div>
         <span className="text-[13px] font-medium tracking-wide uppercase text-primary">404</span>
         <h1 className="mt-1 text-[22px] font-medium tracking-tight text-foreground">Page not found</h1>
-        <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
+        <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
           The page you are looking for does not exist or has been moved.
         </p>
         <div className="mt-5 flex justify-center">

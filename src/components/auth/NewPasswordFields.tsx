@@ -64,14 +64,14 @@ export default function NewPasswordFields({
           onToggle={() => setShowConfirm((s) => !s)}
           invalid={mismatch}
         />
-        {mismatch && <p className="text-[12.5px] text-destructive">These don&apos;t match yet.</p>}
+        {mismatch && <p className="text-[12px] text-destructive">These don&apos;t match yet.</p>}
       </div>
 
       <div className="rounded-2xl border border-border/80 bg-muted/20 p-3">
         <p className="mb-2 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
           Password Requirements
         </p>
-        <ul className="grid grid-cols-1 gap-2 text-[12.5px] sm:grid-cols-2" aria-label="Password requirements">
+        <ul className="grid grid-cols-1 gap-2 text-[12px] sm:grid-cols-2" aria-label="Password requirements">
           {PASSWORD_RULES.map((rule) => {
             const met = rule.test(password);
             return (

@@ -18,7 +18,7 @@ export function RememberDeviceRow({
   hint?: string;
 }) {
   return (
-    <label className="flex items-start gap-2 px-1 text-[13.5px] text-foreground cursor-pointer select-none">
+    <label className="flex items-start gap-2 px-1 text-[13px] text-foreground cursor-pointer select-none">
       <Checkbox
         checked={checked}
         onCheckedChange={(c) => onCheckedChange(!!c)}
@@ -27,7 +27,7 @@ export function RememberDeviceRow({
       />
       <span className="flex flex-col gap-0.5">
         <span>Remember this device for {TRUST_DAYS} days</span>
-        <span className="text-[12.5px] text-muted-foreground">{hint}</span>
+        <span className="text-[12px] text-muted-foreground">{hint}</span>
       </span>
     </label>
   );

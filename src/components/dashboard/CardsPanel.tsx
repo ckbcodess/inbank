@@ -77,7 +77,7 @@ export function CardsPanel({
                         <Badge variant="destructive">{card.status}</Badge>
                       )}
                     </span>
-                    <span className="mt-0.5 text-[11.5px] text-muted-foreground tabular">
+                    <span className="mt-0.5 text-[11px] text-muted-foreground tabular">
                       {card.type} · {card.maskedNumber}
                     </span>
                   </Link>
@@ -131,7 +131,7 @@ export function CardsPanel({
                   )}
 
                   {blocked && (
-                    <span className="text-[11.5px] text-muted-foreground">
+                    <span className="text-[11px] text-muted-foreground">
                       Transactions declined while blocked
                     </span>
                   )}

@@ -96,7 +96,7 @@ export function CountryPicker({
               </li>
             ))}
             {matches.length === 0 && (
-              <li className="py-6 text-center text-[13.5px] text-muted-foreground">
+              <li className="py-6 text-center text-[13px] text-muted-foreground">
                 No country matches &ldquo;{query.trim()}&rdquo;.
               </li>
             )}

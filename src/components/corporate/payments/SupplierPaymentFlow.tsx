@@ -267,6 +267,19 @@ export default function SupplierPaymentFlow() {
             setOtpOpen(false);
             confirm();
           }}
+          summary={
+            <p className="text-[13px] text-foreground">
+              {direct ? (
+                <>
+                  Pay <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} from {fromAccount.name}.
+                </>
+              ) : (
+                <>
+                  Submit <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} from {fromAccount.name} for approval.
+                </>
+              )}
+            </p>
+          }
         />
       </div>
     );

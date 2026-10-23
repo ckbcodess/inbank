@@ -486,7 +486,7 @@ export function FirstRunWelcome({
                         </DialogTitle>
                       </div>
 
-                      <p className="text-[13.5px] text-muted-foreground leading-relaxed">
+                      <p className="text-[13px] text-muted-foreground leading-relaxed">
                         Select how you would like to fund your virtual account.
                       </p>
 
@@ -555,10 +555,10 @@ export function FirstRunWelcome({
                       <div className="flex items-center gap-3 rounded-2xl border border-border/80 bg-muted/20 p-3 text-left sm:p-3">
                         <OperatorLogo operator={operator} size={44} />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-[14px] font-medium tracking-[var(--ls-tight)] text-foreground sm:text-[14.5px]">
+                          <p className="truncate text-[14px] font-medium tracking-[var(--ls-tight)] text-foreground sm:text-[14px]">
                             {operator} Wallet
                           </p>
-                          <p className="tabular-nums truncate text-[12.5px] text-muted-foreground sm:text-[13px]">
+                          <p className="tabular-nums truncate text-[12px] text-muted-foreground sm:text-[13px]">
                             {displayGhanaMobile(phone)}
                           </p>
                         </div>
@@ -632,7 +632,7 @@ export function FirstRunWelcome({
                             <div className="flex items-center gap-2 rounded-2xl border border-border/80 bg-muted/20 p-2 sm:p-3 text-left">
                               <OperatorLogo operator={operator} size={44} />
                               <div className="min-w-0 flex-1">
-                                <p className="truncate text-[13.5px] font-medium tracking-[var(--ls-tight)] text-foreground">
+                                <p className="truncate text-[13px] font-medium tracking-[var(--ls-tight)] text-foreground">
                                   {operator} Wallet
                                 </p>
                                 <p className="tabular-nums truncate text-[12px] text-muted-foreground">
@@ -772,7 +772,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
 
                         <InlineError message={errorMsg} />
 
-                        <div className="flex items-center justify-center pt-2 text-[12.5px]">
+                        <div className="flex items-center justify-center pt-2 text-[12px]">
                           <button
                             type="button"
                             disabled={countdown > 0}
@@ -808,11 +808,11 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                       <span className="tabular-nums text-[22px] font-medium tracking-tight text-foreground">
                         GHS {parseFloat(amount).toFixed(2)}
                       </span>
-                      <p className="text-[13.5px] text-muted-foreground max-w-[280px]">
+                      <p className="text-[13px] text-muted-foreground max-w-[280px]">
                         Enter your Mobile Money PIN on your phone to approve.
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 pt-2 text-[12.5px] text-muted-foreground">
+                    <div className="flex items-center gap-2 pt-2 text-[12px] text-muted-foreground">
                       <AppLoader size={14} />
                       <span>Waiting for approval…</span>
                     </div>

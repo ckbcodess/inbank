@@ -386,7 +386,7 @@ export default function SelfieCapture({
           ) : cameraState === "requesting" ? (
             <div className="flex flex-col items-center gap-2 p-3 text-center text-muted-foreground">
               <AppLoader size={32} />
-              <span className="text-[12.5px] font-medium text-foreground">Starting camera...</span>
+              <span className="text-[12px] font-medium text-foreground">Starting camera...</span>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 p-4 text-center text-muted-foreground">
@@ -442,7 +442,7 @@ export default function SelfieCapture({
               <button
                 type="button"
                 onClick={handleRetakeClick}
-                className="inline-flex items-center justify-center gap-2 text-[12.5px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
+                className="inline-flex items-center justify-center gap-2 text-[12px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
               >
                 <RefreshCw size={13} />
                 Retake photo

@@ -334,7 +334,7 @@ export function HeroBalance({
 export function HeroUpdated({ updatedAt, className }: { updatedAt: number; className?: string }) {
   const label = useUpdatedLabel(updatedAt);
   return (
-    <span className={cn("relative text-[12.5px] leading-5 tracking-[-0.005em] sm:text-[14px]", className)} suppressHydrationWarning>
+    <span className={cn("relative text-[12px] leading-5 tracking-[-0.005em] sm:text-[14px]", className)} suppressHydrationWarning>
       {label}
     </span>
   );

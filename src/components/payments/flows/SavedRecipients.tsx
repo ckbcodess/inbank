@@ -129,7 +129,7 @@ export function SavedSuggestions({
               >
                 <PayeeAvatar name={item.name} initials={item.initials} size="sm" />
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[13.5px] text-foreground">{item.name}</span>
+                  <span className="truncate text-[13px] text-foreground">{item.name}</span>
                   <span className="truncate text-[12px] text-muted-foreground tabular">
                     {item.subtitle || [item.bank, item.acct].filter(Boolean).join(" · ")}
                   </span>

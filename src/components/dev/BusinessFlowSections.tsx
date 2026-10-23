@@ -75,7 +75,7 @@ export function BusinessFlowSections({
           active ? "bg-muted" : "hover:bg-muted/60",
         )}
       >
-        <span className="text-[13.5px] text-foreground">{title}</span>
+        <span className="text-[13px] text-foreground">{title}</span>
         <span className="text-[12px] text-muted-foreground">{subtitle}</span>
       </button>
     </li>

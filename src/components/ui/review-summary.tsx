@@ -54,8 +54,8 @@ export function ReviewSummary({
 function Row({ row }: { row: ReviewRow }) {
   return (
     <div className="flex items-center justify-between gap-4 px-3 py-2">
-      <span className="shrink-0 text-[13.5px] text-muted-foreground">{row.label}</span>
-      <span className={cn("min-w-0 truncate text-right text-[13.5px] text-foreground", row.tabular && "tabular")}>{row.value}</span>
+      <span className="shrink-0 text-[13px] text-muted-foreground">{row.label}</span>
+      <span className={cn("min-w-0 truncate text-right text-[13px] text-foreground", row.tabular && "tabular")}>{row.value}</span>
     </div>
   );
 }

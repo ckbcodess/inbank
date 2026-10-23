@@ -81,15 +81,15 @@ export default function AdminOverviewPage() {
         <div className="mt-3 flex flex-col gap-2">
           {isOps && (
             <>
-              <QueueLink href="/admin/transactions" icon={<ArrowLeftRight size={16} strokeWidth={1.8} aria-hidden="true" />} label="Transaction Monitoring" hint="Operational scanning and filtering" />
-              <QueueLink href="/admin/exceptions" icon={<AlertTriangle size={16} strokeWidth={1.8} aria-hidden="true" />} label="Exceptions" hint="Filtered view of monitoring" />
+              <QueueLink href="/admin/transactions" icon={<ArrowLeftRight size={16} aria-hidden="true" />} label="Transaction Monitoring" hint="Operational scanning and filtering" />
+              <QueueLink href="/admin/exceptions" icon={<AlertTriangle size={16} aria-hidden="true" />} label="Exceptions" hint="Filtered view of monitoring" />
             </>
           )}
           {isTrade && (
-            <QueueLink href="/admin/trade" icon={<Ship size={16} strokeWidth={1.8} aria-hidden="true" />} label="Trade Monitoring" hint="Opens the Trade Officer Workstation" />
+            <QueueLink href="/admin/trade" icon={<Ship size={16} aria-hidden="true" />} label="Trade Monitoring" hint="Opens the Trade Officer Workstation" />
           )}
           {isBankAdmin && (
-            <QueueLink href="/admin/customers" icon={<Building2 size={16} strokeWidth={1.8} aria-hidden="true" />} label="Customer Management" hint="Internal customer directory" />
+            <QueueLink href="/admin/customers" icon={<Building2 size={16} aria-hidden="true" />} label="Customer Management" hint="Internal customer directory" />
           )}
         </div>
       </section>
@@ -117,7 +117,7 @@ function QueueLink({
         {icon}
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="text-[13.5px] text-foreground">{label}</span>
+        <span className="text-[13px] text-foreground">{label}</span>
         <span className="text-[12px] text-muted-foreground">{hint}</span>
       </span>
       <ChevronRight size={17} aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform group-hover:text-foreground" />

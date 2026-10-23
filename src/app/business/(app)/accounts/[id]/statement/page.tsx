@@ -133,7 +133,7 @@ export default function BusinessStatementPage({ params }: { params: Promise<{ id
                 <ListCard>
                     {rows.map((t) => (
                       <li key={t.id} className="flex items-center gap-3 rounded-xl px-2 py-2 sm:px-3">
-                        <span className="w-21 shrink-0 text-[12.5px] text-muted-foreground tabular">{formatDate(t.date)}</span>
+                        <span className="w-21 shrink-0 text-[12px] text-muted-foreground tabular">{formatDate(t.date)}</span>
                         <span className="min-w-0 flex-1 truncate text-[13px] text-foreground">{t.description}</span>
                         <span className="shrink-0 text-[13px] text-foreground tabular">
                           {t.direction === "debit" ? "−" : "+"}

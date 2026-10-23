@@ -126,9 +126,9 @@ function LoginForm() {
               type="button"
               data-tour="entry-personal"
               onClick={() => handleTypeChange("personal")}
-              className="inline-flex items-center gap-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
+              className="inline-flex items-center gap-2 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
             >
-              <User size={13.5} strokeWidth={1.8} className="shrink-0" />
+              <User size={13.5} className="shrink-0" />
               <span>Switch to Personal Banking</span>
             </button>
           )}
@@ -188,7 +188,7 @@ function LoginForm() {
             </div>
             <Link
               href="/forgot-password"
-              className="mt-1 self-end text-[12.5px] text-foreground underline underline-offset-4 hover:text-foreground/70"
+              className="mt-1 self-end text-[12px] text-foreground underline underline-offset-4 hover:text-foreground/70"
             >
               Forgot password?
             </Link>
@@ -204,7 +204,7 @@ function LoginForm() {
             variant="default"
             size="lg"
             loading={state === "submitting"}
-            className="h-10 sm:h-10 w-full text-[14.5px]"
+            className="h-10 sm:h-10 w-full text-[14px]"
           >
             Log in
           </Button>
@@ -214,7 +214,7 @@ function LoginForm() {
             render={<Link href={bankingType === "business" ? "/business/signup" : "/get-started"} data-tour="login-get-started" />}
             variant="outline"
             size="lg"
-            className="h-10 sm:h-10 w-full text-[14.5px]"
+            className="h-10 sm:h-10 w-full text-[14px]"
           >
             {bankingType === "business" ? (
               "Register"
@@ -359,12 +359,12 @@ function ReturningSignIn({
             </div>
             <Link
               href="/forgot-password"
-              className="mt-1 self-end text-[12.5px] text-foreground underline underline-offset-4 hover:text-foreground/70"
+              className="mt-1 self-end text-[12px] text-foreground underline underline-offset-4 hover:text-foreground/70"
             >
               Forgot password?
             </Link>
 </Field>
-          <Button type="submit" variant="default" size="lg" loading={submitting} className="h-10 sm:h-10 w-full text-[14.5px]">
+          <Button type="submit" variant="default" size="lg" loading={submitting} className="h-10 sm:h-10 w-full text-[14px]">
             Log in
           </Button>
         </form>

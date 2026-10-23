@@ -229,7 +229,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg py-2 pr-6 pl-2 text-[13.5px] text-foreground outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground dark:text-foreground dark:hover:bg-menu-item-hover dark:focus:bg-menu-item-hover dark:data-highlighted:bg-menu-item-hover data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3",
+        "relative flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg py-2 pr-6 pl-2 text-[13px] text-foreground outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground dark:text-foreground dark:hover:bg-menu-item-hover dark:focus:bg-menu-item-hover dark:data-highlighted:bg-menu-item-hover data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3",
         className
       )}
       {...props}
@@ -242,7 +242,7 @@ function SelectItem({
           <span className="pointer-events-none absolute right-1.5 flex size-3.5 items-center justify-center text-foreground" />
         }
       >
-        <HugeiconsIcon icon={Tick02Icon} size={14} strokeWidth={2} className="pointer-events-none size-3 text-foreground shrink-0" />
+        <HugeiconsIcon icon={Tick02Icon} size={14} className="pointer-events-none size-3 text-foreground shrink-0" />
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   )
@@ -274,7 +274,7 @@ function SelectScrollUpButton({
       )}
       {...props}
     >
-      <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={2} />
+      <HugeiconsIcon icon={ArrowUp01Icon} />
     </SelectPrimitive.ScrollUpArrow>
   )
 }
@@ -292,7 +292,7 @@ function SelectScrollDownButton({
       )}
       {...props}
     >
-      <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} />
+      <HugeiconsIcon icon={ArrowDown01Icon} />
     </SelectPrimitive.ScrollDownArrow>
   )
 }

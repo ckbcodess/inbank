@@ -227,7 +227,7 @@ export function ScanAndPayFlow({
                     }
                   />
                   <div className="mt-3 flex flex-col items-center text-center">
-                    <span className="text-[14.5px] font-semibold text-foreground tracking-tight">{userName}</span>
+                    <span className="text-[14px] font-semibold text-foreground tracking-tight">{userName}</span>
                     <span className="text-[12px] text-muted-foreground font-mono mt-0.5">
                       {receiveAccount?.name || "Operating Account"} ∗∗∗∗ {(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}
                     </span>
@@ -309,7 +309,7 @@ export function ScanAndPayFlow({
                 </div>
 
                 {/* Subtitle helper placed directly underneath the crosshairs */}
-                <p className="mt-3 text-center px-3 text-[13.5px] font-medium text-white/90 tracking-tight drop-shadow-sm">
+                <p className="mt-3 text-center px-3 text-[13px] font-medium text-white/90 tracking-tight drop-shadow-sm">
                   Scan the QR code to pay
                 </p>
 
@@ -454,7 +454,7 @@ export function ScanAndPayFlow({
                         <Check size={9} className="shrink-0" />
                       </span>
                     </div>
-                    <span className="text-[11.5px] text-muted-foreground font-mono">
+                    <span className="text-[11px] text-muted-foreground font-mono">
                       Terminal: {state.qrCode || "Universal QR Verified"}
                     </span>
                   </div>

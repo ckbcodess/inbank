@@ -165,7 +165,7 @@ export default function TourOverlay() {
         )}
 
         <div className="flex items-start justify-between gap-2">
-          <span className="text-[10.5px] font-semibold uppercase tracking-wide text-warning-text">
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-warning-text">
             <span className="tabular">Step {stepIndex + 1} of {total}</span> · {tour.title}
           </span>
           <button
@@ -180,12 +180,12 @@ export default function TourOverlay() {
 
         {/* On the first step, orient the tester to the whole journey */}
         {stepIndex === 0 && (
-          <p className="mt-2 rounded-lg bg-warning/10 px-2 py-2 text-[11.5px] leading-snug text-muted-foreground dark:bg-primary/10">
+          <p className="mt-2 rounded-lg bg-warning/10 px-2 py-2 text-[11px] leading-snug text-muted-foreground dark:bg-primary/10">
             {tour.summary}
           </p>
         )}
 
-        <h4 className="mt-2 text-[13.5px] text-foreground tracking-[var(--ls-tight)]">{step.title}</h4>
+        <h4 className="mt-2 text-[13px] text-foreground tracking-[var(--ls-tight)]">{step.title}</h4>
 
         {/* Purpose — what this step does and why it's part of the flow */}
         <p className="mt-1 text-[12px] leading-snug text-muted-foreground">{step.body}</p>
@@ -201,7 +201,7 @@ export default function TourOverlay() {
             <button
               type="button"
               onClick={prev}
-              className="inline-flex items-center gap-1 text-[11.5px] font-medium text-muted-foreground hover:text-foreground cursor-pointer"
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground hover:text-foreground cursor-pointer"
             >
               <ArrowLeft size={12} />
               Back

@@ -258,14 +258,14 @@ export function CardDeliveryTracker({
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[14.5px] font-medium text-foreground truncate">
+                <span className="text-[14px] font-medium text-foreground truncate">
                   {card.courierRider.name}
                 </span>
-                <span className="text-[10.5px] px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
                   Rider
                 </span>
               </div>
-              <span className="text-[12.5px] text-muted-foreground truncate">
+              <span className="text-[12px] text-muted-foreground truncate">
                 {card.courierRider.company || "GCB Express Courier"} • {card.courierRider.vehiclePlate || "Motorbike"}
               </span>
             </div>
@@ -434,7 +434,7 @@ export function CardDeliveryTrackerModal({
               </div>
 
               {/* Security Hint */}
-              <div className="w-full rounded-xl bg-muted/40 border border-border/80 px-3 py-2 text-[12.5px] text-muted-foreground text-center">
+              <div className="w-full rounded-xl bg-muted/40 border border-border/80 px-3 py-2 text-[12px] text-muted-foreground text-center">
                 <span>Do not share this code via phone or SMS. Present it only in person upon delivery.</span>
               </div>
             </div>

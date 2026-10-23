@@ -137,7 +137,7 @@ export function AccountExpensesView({
                   className="mt-1 text-[26px] leading-[1.25] tracking-[-0.025em] text-foreground tabular sm:text-[30px]"
                 />
                 {activeSlice && (
-                  <span className="mt-2 text-[12.5px] text-muted-foreground tabular">
+                  <span className="mt-2 text-[12px] text-muted-foreground tabular">
                     {percent(activeSlice.share)} of spend
                   </span>
                 )}
@@ -218,7 +218,7 @@ export function AccountExpensesView({
                             <li key={b.category} className="flex items-center gap-2 px-2 py-2">
                               <span className="flex min-w-0 flex-1 items-baseline gap-2">
                                 <span className="truncate text-[14px] text-foreground">{b.category}</span>
-                                <span className="shrink-0 text-[12.5px] text-muted-foreground tabular">
+                                <span className="shrink-0 text-[12px] text-muted-foreground tabular">
                                   {percent(b.share)}
                                 </span>
                               </span>
@@ -254,7 +254,7 @@ function PeriodMenu({ value, onChange }: { value: ExpensePeriod; onChange: (p: E
       <DropdownMenuTrigger
         render={
           <Button variant="outline" className="h-8 gap-2 px-2 text-[13.5px]">
-            <Calendar size={15} strokeWidth={1.8} className="text-muted-foreground" />
+            <Calendar size={15} className="text-muted-foreground" />
             <span className="tabular">{`Last ${EXPENSE_PERIOD_LABEL[value]}`}</span>
             <ChevronDown size={15} className="text-muted-foreground" />
           </Button>
@@ -299,7 +299,7 @@ function Comparison({
       : diff > 0
         ? `${formatMoney(diff, currency)} more than the previous ${periodLabel}`
         : `${formatMoney(Math.abs(diff), currency)} less than the previous ${periodLabel}`;
-  return <p className="max-w-[260px] text-center text-[12.5px] leading-relaxed text-muted-foreground tabular">{text}</p>;
+  return <p className="max-w-[260px] text-center text-[12px] leading-relaxed text-muted-foreground tabular">{text}</p>;
 }
 
 /** Drawn in a 300-unit viewBox and scaled to its container, so it shrinks on phones. */

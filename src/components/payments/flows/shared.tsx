@@ -646,7 +646,7 @@ export function AccountSelectTriggerContent({
           <Landmark size={20} className="shrink-0" />
         </span>
         <div className="flex flex-col min-w-0 text-left gap-0.5">
-          <span className="text-[14.5px] text-foreground font-medium tracking-[var(--ls-tight)] truncate leading-tight">
+          <span className="text-[14px] text-foreground font-medium tracking-[var(--ls-tight)] truncate leading-tight">
             {account.name}
           </span>
           <span className="text-[12px] text-muted-foreground font-normal truncate tabular leading-tight">
@@ -657,7 +657,7 @@ export function AccountSelectTriggerContent({
 
       {/* Right: Balance */}
       <div className="text-right shrink-0">
-        <span className="text-[14.5px] text-foreground font-medium tabular tracking-tight">
+        <span className="text-[14px] text-foreground font-medium tabular tracking-tight">
           {formatMoney(account.available ?? 0, account.currency || "GHS", true)}
         </span>
       </div>
@@ -1225,7 +1225,7 @@ export function AccountVerificationStatus({
 
   if (name) {
     return (
-      <div className={cn("flex items-center gap-2 pt-2 text-[13.5px] text-foreground select-none animate-verify-in", className)}>
+      <div className={cn("flex items-center gap-2 pt-2 text-[13px] text-foreground select-none animate-verify-in", className)}>
         <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
           <Check size={10} className="shrink-0" />
         </span>
@@ -1242,7 +1242,7 @@ export function AccountVerificationStatus({
 export function VerifiedAccountBadge({ name, className }: { name: string; className?: string }) {
   if (!name) return null;
   return (
-    <div className={cn("flex items-center gap-2 pt-2 text-[13.5px] text-foreground select-none animate-verify-in", className)}>
+    <div className={cn("flex items-center gap-2 pt-2 text-[13px] text-foreground select-none animate-verify-in", className)}>
       <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
         <Check size={10} className="shrink-0" />
       </span>
@@ -1335,7 +1335,7 @@ export function CollapsedDetailsBadge({
         )}
         <div className="flex min-w-0 flex-col gap-0.5 text-left">
           <span className="flex min-w-0 items-center gap-2">
-            <span className="truncate text-[14.5px] font-medium leading-tight tracking-[var(--ls-tight)] text-foreground">{title}</span>
+            <span className="truncate text-[14px] font-medium leading-tight tracking-[var(--ls-tight)] text-foreground">{title}</span>
             {nameCheck?.confirmed && (
               <span
                 className="flex size-3 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop"
@@ -1361,7 +1361,7 @@ export function CollapsedDetailsBadge({
       <button
         type="button"
         onClick={onChange}
-        className="shrink-0 cursor-pointer text-[13.5px] font-medium text-foreground hover:underline"
+        className="shrink-0 cursor-pointer text-[13px] font-medium text-foreground hover:underline"
       >
         Change
       </button>
@@ -1438,7 +1438,7 @@ export function SchedulePaymentSection({
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <span className="text-[14px] font-medium text-foreground">Schedule Payment</span>
-          <span className="text-[12.5px] text-muted-foreground">
+          <span className="text-[12px] text-muted-foreground">
             Set up a future date or recurring transfer
           </span>
         </div>
@@ -1623,7 +1623,7 @@ export function BankSelect({
                 <button
                   type="button"
                   onClick={() => pick(b)}
-                  className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-left text-[13.5px] text-foreground transition-colors hover:bg-menu-item-hover"
+                  className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-menu-item-hover"
                 >
                   <BankMark name={b} size={28} />
                   <span className="flex-1 truncate">{b}</span>
@@ -1658,7 +1658,7 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
               </div>
               <div className="shrink-0 text-right">
                 <span className="tabular block text-[13px] font-medium text-foreground">{m.feeText}</span>
-                <span className="text-[11.5px] font-normal text-muted-foreground">{m.speed}</span>
+                <span className="text-[11px] font-normal text-muted-foreground">{m.speed}</span>
               </div>
             </div>
           </SelectItem>

@@ -327,7 +327,7 @@ function ForgotPinContent() {
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
               <AppLoader size={16} />
               <span>Saving your PIN…</span>
             </div>
@@ -372,7 +372,7 @@ function ForgotPinContent() {
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
               <AppLoader size={16} />
               <span>Updating PIN...</span>
             </div>
@@ -385,7 +385,7 @@ function ForgotPinContent() {
           <Button variant="default" size="lg" onClick={retrySelfie} className="h-10 w-full text-[14px]">
             Try again
           </Button>
-          <p className="text-center text-[12.5px] text-muted-foreground tabular">
+          <p className="text-center text-[12px] text-muted-foreground tabular">
             {MAX_SELFIE_ATTEMPTS - failedAttempts === 1
               ? "1 try left before we ask you to visit a branch"
               : `${MAX_SELFIE_ATTEMPTS - failedAttempts} tries left before we ask you to visit a branch`}

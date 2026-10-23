@@ -66,7 +66,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-[15px] text-foreground">Corporate relationship</p>
-            <p className="mt-0.5 text-[12.5px] text-muted-foreground tabular">
+            <p className="mt-0.5 text-[12px] text-muted-foreground tabular">
               Onboarded 12 Mar 2021 · Relationship manager: A. Owusu
             </p>
           </div>
@@ -104,7 +104,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
                 <MiniCardThumbnail card={c} />
                 <div className="flex flex-col min-w-0">
                   <span className="truncate text-[13px] font-medium text-foreground">{c.name}</span>
-                  <span className="mt-0.5 text-[11.5px] text-muted-foreground tabular">
+                  <span className="mt-0.5 text-[11px] text-muted-foreground tabular">
                     {c.scheme} · {c.maskedNumber} · {c.holder}
                   </span>
                 </div>

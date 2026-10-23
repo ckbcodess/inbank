@@ -101,7 +101,7 @@ export function InteractiveCardsHub({
               key={c.id}
               type="button"
               onClick={() => setActiveCardIndex(i)}
-              className={`px-2 py-1 text-[11.5px] rounded-xl font-medium transition ${
+              className={`px-2 py-1 text-[11px] rounded-xl font-medium transition ${
                 activeCardIndex === i
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "bg-muted text-muted-foreground hover:text-foreground"
@@ -141,11 +141,11 @@ export function InteractiveCardsHub({
 
             <div className="flex items-center gap-2">
               {isBlocked ? (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pill-destructive text-pill-destructive-text text-[10.5px] font-medium border border-destructive/30">
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pill-destructive text-pill-destructive-text text-[11px] font-medium border border-destructive/30">
                   <Lock size={10} /> Frozen
                 </span>
               ) : (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text text-[10.5px] font-medium border border-success/30">
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text text-[11px] font-medium border border-success/30">
                   <Sparkles size={10} /> Active
                 </span>
               )}
@@ -195,7 +195,7 @@ export function InteractiveCardsHub({
           variant={isBlocked ? "default" : "outline"}
           size="sm"
           onClick={toggleCardBlock}
-          className={`h-8 text-[12.5px] gap-2 rounded-xl ${
+          className={`h-8 text-[12px] gap-2 rounded-xl ${
             isBlocked ? "bg-success hover:bg-success text-white" : ""
           }`}
         >
@@ -215,7 +215,7 @@ export function InteractiveCardsHub({
             variant="outline"
             size="sm"
             onClick={() => onTopUp(currentCard.id)}
-            className="h-8 text-[12.5px] gap-2 rounded-xl"
+            className="h-8 text-[12px] gap-2 rounded-xl"
           >
             <Plus size={13} /> Top Up
           </Button>
@@ -225,7 +225,7 @@ export function InteractiveCardsHub({
             size="sm"
             render={<Link href={`/cards/${currentCard.id}`} />}
             nativeButton={false}
-            className="h-8 text-[12.5px] gap-2 rounded-xl"
+            className="h-8 text-[12px] gap-2 rounded-xl"
           >
             Limits &amp; PIN
           </Button>
@@ -233,7 +233,7 @@ export function InteractiveCardsHub({
       </div>
 
       {/* Spend Limit Meter */}
-      <div className="mt-3 pt-2 border-t border-border/60 text-[11.5px]">
+      <div className="mt-3 pt-2 border-t border-border/60 text-[11px]">
         <div className="flex justify-between items-center text-muted-foreground mb-1">
           <span>Monthly Spend Limit</span>
           <span className="text-foreground font-medium">GHS 2,450 / 10,000</span>

@@ -187,7 +187,7 @@ export function VirtualCardView({
         {/* Middle & Bottom Content of Card Graphic */}
         <div className="relative z-10 mt-6 flex items-end justify-between">
           <div className="flex flex-col">
-            <span className="text-[13.5px] font-normal text-slate-500 dark:text-slate-400">
+            <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400">
               {activeCard.name ?? "Savings Card"}
             </span>
             <span className="mt-0.5 text-[28px] font-medium tracking-tight text-slate-900 dark:text-white tabular">
@@ -221,7 +221,7 @@ export function VirtualCardView({
 
 
       {/* Card Details Key-Value List */}
-      <div className="mt-4 space-y-3 text-[13.5px]">
+      <div className="mt-4 space-y-3 text-[13px]">
         <div className="flex items-center justify-between">
           <span className="text-slate-500 dark:text-slate-400 font-normal">Card number</span>
           <span className="font-medium text-slate-900 dark:text-slate-100 tabular tracking-wide">
@@ -267,10 +267,10 @@ export function VirtualCardView({
               placeholder="12000.00"
               className="tabular bg-white dark:bg-slate-900"
             />
-            <Button variant="ghost" size="sm" onClick={() => setAdjustingLimit(false)} className="h-8 px-2 text-[12.5px]">
+            <Button variant="ghost" size="sm" onClick={() => setAdjustingLimit(false)} className="h-8 px-2 text-[12px]">
               Cancel
             </Button>
-            <Button size="sm" onClick={handleSaveLimit} className="h-8 px-2 text-[12.5px]">
+            <Button size="sm" onClick={handleSaveLimit} className="h-8 px-2 text-[12px]">
               Save
             </Button>
           </div>
@@ -279,7 +279,7 @@ export function VirtualCardView({
 
       {/* Security Channels Panel */}
       {showSecurityModal && (
-        <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3 text-[12.5px]">
+        <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3 text-[12px]">
           <div className="flex items-center justify-between font-medium text-slate-800 dark:text-slate-200 pb-1 border-b border-slate-200 dark:border-slate-800">
             <span>Card Security Channels</span>
             <button type="button" onClick={() => setShowSecurityModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -363,7 +363,7 @@ export function VirtualCardView({
             setShowMoreMenu((prev) => !prev);
             setAdjustingLimit(false);
           }}
-          className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           More
         </Button>

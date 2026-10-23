@@ -62,7 +62,7 @@ export function BlockReasonDialog({
                     onClick={() => setReason(item.id)}
                     className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl px-2 py-2 text-left transition-colors duration-hover outline-none hover:bg-muted/50 focus-visible:ring-1 focus-visible:ring-ring"
                   >
-                    <span className="text-[13.5px] text-foreground">{item.title}</span>
+                    <span className="text-[13px] text-foreground">{item.title}</span>
                     <span
                       className={cn(
                         "flex size-3.5 shrink-0 items-center justify-center rounded-full border transition-colors",

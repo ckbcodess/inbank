@@ -145,7 +145,7 @@ function TunerPanel() {
                 aria-pressed={on}
                 onClick={() => applyTunerPreset(p.id)}
                 className={cn(
-                  "flex-1 cursor-pointer rounded-lg border px-2 py-2 text-[12.5px] transition-colors",
+                  "flex-1 cursor-pointer rounded-lg border px-2 py-2 text-[12px] transition-colors",
                   on
                     ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
                     : "border-border bg-card text-muted-foreground hover:bg-muted/50 hover:text-foreground",
@@ -166,7 +166,7 @@ function TunerPanel() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder={`Find among ${groups.reduce((n, g) => n + g.tokens.length, 0)} colours`}
           aria-label="Find a colour token"
-          className="h-7 w-full rounded-lg border border-field-border bg-field pl-6 pr-2 text-[12.5px] text-foreground outline-none placeholder:text-muted-foreground focus:border-field-border-focus"
+          className="h-7 w-full rounded-lg border border-field-border bg-field pl-6 pr-2 text-[12px] text-foreground outline-none placeholder:text-muted-foreground focus:border-field-border-focus"
         />
       </label>
 
@@ -260,7 +260,7 @@ function ColorRow({
           title="Show where this is used on the page"
           className="flex min-w-0 cursor-pointer flex-col rounded-lg text-left outline-none transition-colors hover:bg-muted/60 focus-visible:ring-1 focus-visible:ring-ring"
         >
-          <span className={cn("truncate text-[12.5px]", changed ? "text-foreground" : "text-muted-foreground")}>{label}</span>
+          <span className={cn("truncate text-[12px]", changed ? "text-foreground" : "text-muted-foreground")}>{label}</span>
           <span className="flex items-center gap-1 truncate text-[11px] text-muted-foreground/70">
             <Crosshair size={10} aria-hidden="true" />--{token}
           </span>

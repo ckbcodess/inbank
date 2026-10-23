@@ -197,7 +197,7 @@ export default function BulkPaymentPage() {
             setStep("submitted");
           }}
           summary={
-            <p className="text-[13.5px] text-foreground">
+            <p className="text-[13px] text-foreground">
               {`Submit ${lines.length} payments, ${formatMoney(sum.amount, "GHS", true)} in total, from ${from.name} for approval.`}
             </p>
           }

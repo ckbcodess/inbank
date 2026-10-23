@@ -16,7 +16,7 @@ export function WorkInProgress({ title }: { title: string }) {
         </span>
         <div className="flex flex-col gap-2">
           <h2 className="text-[18px] tracking-[var(--ls-tight)] text-foreground">Work in progress</h2>
-          <p className="max-w-[340px] text-[13.5px] leading-relaxed text-muted-foreground">
+          <p className="max-w-[340px] text-[13px] leading-relaxed text-muted-foreground">
             {title} is on the way — we&rsquo;re still building it.
           </p>
         </div>

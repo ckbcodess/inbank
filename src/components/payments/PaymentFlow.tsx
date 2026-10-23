@@ -2462,7 +2462,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             </div>
           </div>
         ) : (
-          <p className="rounded-2xl border border-dashed border-border bg-muted/20 px-3 py-2 text-[12.5px] text-muted-foreground">
+          <p className="rounded-2xl border border-dashed border-border bg-muted/20 px-3 py-2 text-[12px] text-muted-foreground">
             You don&apos;t have a proxy ID yet. Create one so others can pay you with your number.
           </p>
         )}
@@ -2496,7 +2496,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
               {/* Deregister proxy ID */}
               <ActionTile
-                leading={<Trash2 size={20} strokeWidth={1.8} className="text-destructive" />}
+                leading={<Trash2 size={20} className="text-destructive" />}
                 title="Deregister Proxy ID"
                 onClick={() => setProxyDeregisterOpen(true)}
                 className="p-4"
@@ -2534,7 +2534,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 Deregister your proxy ID?
               </DialogTitle>
             </DialogHeader>
-            <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground leading-relaxed">
+            <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground leading-relaxed">
               People will no longer be able to pay you using{" "}
               <span className="text-foreground tabular">{myProxy?.value}</span>. You can register a new
               one at any time.
@@ -3412,7 +3412,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                         label: "Save Beneficiary",
                         value: (
                           <span className="inline-flex items-center gap-2 text-success-text">
-                            <CheckCircle2 size={14} strokeWidth={1.9} className="shrink-0" />
+                            <CheckCircle2 size={14} className="shrink-0" />
                             <span>Yes {f.beneficiaryNickname ? `(“${f.beneficiaryNickname}”)` : ""}</span>
                           </span>
                         ),

@@ -31,14 +31,14 @@ export default function LanguageToggle({
       <SimpleTooltip content={t("header.language", "Language")} side="bottom">
         <DropdownMenuTrigger
           className={cn(
-            "flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg px-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground outline-none cursor-pointer",
+            "flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg px-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground outline-none cursor-pointer",
             className
           )}
           aria-label={t("header.language", "Change language")}
         >
           <Globe size={16} className="shrink-0" />
           {showLabel && (
-            <span className="text-[11.5px] tracking-wide text-foreground">
+            <span className="text-[11px] tracking-wide text-foreground">
               {current.shortLabel}
             </span>
           )}

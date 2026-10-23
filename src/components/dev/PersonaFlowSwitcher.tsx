@@ -185,7 +185,7 @@ function PersonaFlowSwitcherContent() {
         type="button"
         onClick={() => go(href)}
         className={cn(
-          "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13.5px] transition-colors cursor-pointer",
+          "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] transition-colors cursor-pointer",
           active ? "bg-muted text-foreground" : "text-foreground hover:bg-muted/60",
         )}
       >
@@ -203,7 +203,7 @@ function PersonaFlowSwitcherContent() {
           type="button"
           onClick={() => triggerWelcome(stage)}
           className={cn(
-            "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13.5px] transition-colors cursor-pointer",
+            "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] transition-colors cursor-pointer",
             active ? "bg-muted text-foreground" : "text-foreground hover:bg-muted/60",
           )}
         >
@@ -255,7 +255,7 @@ function PersonaFlowSwitcherContent() {
                   activeKind === "RETAIL" && "bg-muted",
                 )}
               >
-                <span className="text-[13.5px] text-foreground">Personal banking</span>
+                <span className="text-[13px] text-foreground">Personal banking</span>
                 <span className="flex items-center gap-3 text-[12px] text-muted-foreground">
                   <button type="button" onClick={() => switchApp("u-retail")} className="cursor-pointer hover:text-foreground hover:underline">
                     Signed in
@@ -272,7 +272,7 @@ function PersonaFlowSwitcherContent() {
                 )}
               >
                 <div className="flex flex-col gap-1">
-                  <span className="text-[13.5px] text-foreground">Business banking</span>
+                  <span className="text-[13px] text-foreground">Business banking</span>
                   <span className="flex items-center gap-3 text-[12px] text-muted-foreground">
                     <button type="button" onClick={() => switchApp(businessUser)} className="cursor-pointer hover:text-foreground hover:underline">
                       Signed in
@@ -387,7 +387,7 @@ function PersonaFlowSwitcherContent() {
                     <button
                       type="button"
                       onClick={goLinkAfterSignup}
-                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13.5px] text-foreground transition-colors hover:bg-muted/60 cursor-pointer"
+                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted/60 cursor-pointer"
                     >
                       <span className="w-3.5 shrink-0 text-right text-[12px] text-muted-foreground tabular">
                         {SIGNUP_STEPS.length + 1}
@@ -435,7 +435,7 @@ function PersonaFlowSwitcherContent() {
                       }}
                       className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
-                      <span className="text-[13.5px] text-foreground">Choose personal or business</span>
+                      <span className="text-[13px] text-foreground">Choose personal or business</span>
                       <span className="text-[12px] text-muted-foreground">The old landing screen</span>
                     </button>
                   </li>
@@ -445,7 +445,7 @@ function PersonaFlowSwitcherContent() {
                       onClick={() => goLogin("personal")}
                       className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
-                      <span className="text-[13.5px] text-foreground">Personal banking log in</span>
+                      <span className="text-[13px] text-foreground">Personal banking log in</span>
                       <span className="text-[12px] text-muted-foreground">The front door</span>
                     </button>
                   </li>
@@ -455,7 +455,7 @@ function PersonaFlowSwitcherContent() {
                       onClick={() => goLogin("business")}
                       className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
-                      <span className="text-[13.5px] text-foreground">Business banking log in</span>
+                      <span className="text-[13px] text-foreground">Business banking log in</span>
                       <span className="text-[12px] text-muted-foreground">With the way back to personal</span>
                     </button>
                   </li>
@@ -465,7 +465,7 @@ function PersonaFlowSwitcherContent() {
                       onClick={goPowerUser}
                       className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
-                      <span className="text-[13.5px] text-foreground">Welcome back screen</span>
+                      <span className="text-[13px] text-foreground">Welcome back screen</span>
                       <span className="text-[12px] text-muted-foreground">Trusted device, greeted by name, password only</span>
                     </button>
                   </li>
@@ -475,12 +475,12 @@ function PersonaFlowSwitcherContent() {
                       onClick={goFirstTimer}
                       className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
-                      <span className="text-[13.5px] text-foreground">First time, new device</span>
+                      <span className="text-[13px] text-foreground">First time, new device</span>
                       <span className="text-[12px] text-muted-foreground">Activation, remember device, welcome</span>
                     </button>
                   </li>
                 </ol>
-                <span className="mt-2 px-2 text-[12.5px] text-muted-foreground">Moving from old internet banking</span>
+                <span className="mt-2 px-2 text-[12px] text-muted-foreground">Moving from old internet banking</span>
                 <ol className="flex flex-col">
                   {MIGRATION_STEPS.map((s, i) =>
                     stepRow(

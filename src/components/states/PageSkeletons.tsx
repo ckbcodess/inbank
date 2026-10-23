@@ -22,7 +22,6 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import AuthLayout from "@/components/auth/AuthLayout";
 
 /** One grey block. Everything below is built from these. */
 export function Bone({ className, style }: { className?: string; style?: CSSProperties }) {

@@ -113,7 +113,7 @@ export function AuthorisePanel({
 
         {isPin ? (
           <div className="flex flex-col items-center gap-2 text-center">
-            <span className="text-[15.5px] font-medium text-foreground">Enter Transaction PIN</span>
+            <span className="text-[15px] font-medium text-foreground">Enter Transaction PIN</span>
             <span className="text-[13px] text-muted-foreground">Enter your 4-digit transaction PIN created during onboarding</span>
           </div>
         ) : (
@@ -122,7 +122,7 @@ export function AuthorisePanel({
             open={shortcodeOpen}
             title="Enter OTP Verification Code"
             description={`A 6-digit one-time code was sent to ${REGISTERED_PHONE}`}
-            titleClass="text-[15.5px] font-medium text-foreground"
+            titleClass="text-[15px] font-medium text-foreground"
             descClass="mt-2 text-[13px] text-muted-foreground"
           />
         )}
@@ -280,7 +280,7 @@ export function AuthorisePanel({
               <button
                 type="button"
                 onClick={() => onMethodChange("otp")}
-                className="group flex items-center justify-center gap-2 text-[13.5px] font-normal sm:font-medium text-muted-foreground hover:text-foreground dark:hover:text-white transition-colors cursor-pointer"
+                className="group flex items-center justify-center gap-2 text-[13px] font-normal sm:font-medium text-muted-foreground hover:text-foreground dark:hover:text-white transition-colors cursor-pointer"
               >
                 {/* 14x14 Phone Icon matching Figma Vector */}
                 <svg
@@ -329,7 +329,7 @@ export function AuthorisePanel({
               </>
             }
             titleClass="mt-5 text-[26px] font-medium leading-[32px] tracking-[var(--ls-heading)] text-foreground"
-            descClass="mt-2 text-[13.5px] text-muted-foreground max-w-xs"
+            descClass="mt-2 text-[13px] text-muted-foreground max-w-xs"
           />
 
           <div className="mt-10 flex justify-center w-full">
@@ -360,7 +360,7 @@ export function AuthorisePanel({
               <button
                 type="button"
                 onClick={() => onMethodChange("pin")}
-                className="mt-2 flex items-center justify-center gap-2 text-[13.5px] text-muted-foreground hover:text-foreground dark:hover:text-white transition-colors cursor-pointer"
+                className="mt-2 flex items-center justify-center gap-2 text-[13px] text-muted-foreground hover:text-foreground dark:hover:text-white transition-colors cursor-pointer"
               >
                 <KeyRound size={14} />
                 <span>Use 4-digit Transaction PIN instead</span>

@@ -70,10 +70,10 @@ export default function GetStartedPage() {
                   <UserCheck size={18} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
+                  <span className="text-[15px] sm:text-[16px] font-medium text-foreground tracking-[var(--ls-tight)]">
                     GCB Account Holder
                   </span>
-                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
+                  <span className="text-[13px] sm:text-[13px] text-muted-foreground leading-snug mt-0.5">
                     I already have a GCB account.
                   </span>
                 </div>
@@ -97,10 +97,10 @@ export default function GetStartedPage() {
                   <Plus size={19} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
+                  <span className="text-[15px] sm:text-[16px] font-medium text-foreground tracking-[var(--ls-tight)]">
                     New to GCB
                   </span>
-                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
+                  <span className="text-[13px] sm:text-[13px] text-muted-foreground leading-snug mt-0.5">
                     I do not have a GCB account.
                   </span>
                 </div>
@@ -138,10 +138,10 @@ export default function GetStartedPage() {
                   <Landmark size={18} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
+                  <span className="text-[15px] sm:text-[16px] font-medium text-foreground tracking-[var(--ls-tight)]">
                     Open a GCB Account
                   </span>
-                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
+                  <span className="text-[13px] sm:text-[13px] text-muted-foreground leading-snug mt-0.5">
                     Open an account and access Internet Banking.
                   </span>
                 </div>
@@ -164,10 +164,10 @@ export default function GetStartedPage() {
                   <Plus size={18} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
+                  <span className="text-[15px] sm:text-[16px] font-medium text-foreground tracking-[var(--ls-tight)]">
                     Use a Wallet or Card
                   </span>
-                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
+                  <span className="text-[13px] sm:text-[13px] text-muted-foreground leading-snug mt-0.5">
                     Use mobile money or a bank card.
                   </span>
                 </div>

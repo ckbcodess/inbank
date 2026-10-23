@@ -68,12 +68,12 @@ export default function TradeMonitoringPage() {
                   <Ship size={16} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[13.5px] text-foreground">{t.desc}</span>
+                  <span className="truncate text-[13px] text-foreground">{t.desc}</span>
                   <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
                     {t.ref} · {t.customer}
                   </span>
                 </span>
-                <span className="shrink-0 text-[13.5px] text-foreground tabular">
+                <span className="shrink-0 text-[13px] text-foreground tabular">
                   {formatMoney(t.amount, "USD")}
                 </span>
                 <Badge variant={t.tone}>{t.flag}</Badge>

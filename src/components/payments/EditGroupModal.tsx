@@ -389,7 +389,7 @@ export default function EditGroupModal({
                   size="sm"
                   variant="outline"
                   onClick={() => setShowAddMember((prev) => !prev)}
-                  className="h-7 gap-2 px-2 text-[12.5px] rounded-xl border-border/80 font-normal cursor-pointer"
+                  className="h-7 gap-2 px-2 text-[12px] rounded-xl border-border/80 font-normal cursor-pointer"
                 >
                   <UserPlus size={14} />
                   <span>{showAddMember ? "Close" : "+ Add Member"}</span>
@@ -473,7 +473,7 @@ export default function EditGroupModal({
                                   <span className="text-[13px] text-foreground font-normal truncate">
                                     {b.name}
                                   </span>
-                                  <span className="text-[11.5px] text-muted-foreground font-normal truncate tabular-nums numorainput">
+                                  <span className="text-[11px] text-muted-foreground font-normal truncate tabular-nums numorainput">
                                     {b.bankName || b.network} • {b.accountNumber || b.phoneNumber || b.proxyId}
                                   </span>
                                 </div>
@@ -483,14 +483,14 @@ export default function EditGroupModal({
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleAddSavedBeneficiary(b)}
-                                className="h-6 px-2 rounded-lg text-[11.5px] border-border/80 font-normal shrink-0"
+                                className="h-6 px-2 rounded-lg text-[11px] border-border/80 font-normal shrink-0"
                               >
                                 <Plus size={12} className="mr-1" /> Add
                               </Button>
                             </div>
                           ))
                         ) : (
-                          <div className="py-5 text-center text-muted-foreground text-[12.5px]">
+                          <div className="py-5 text-center text-muted-foreground text-[12px]">
                             {savedSearch
                               ? "No saved beneficiaries match your search."
                               : "All saved beneficiaries are already in this group."}
@@ -695,7 +695,7 @@ export default function EditGroupModal({
             <DialogTitle>Remove Member</DialogTitle>
           </DialogHeader>
 
-          <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground leading-relaxed">
+          <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground leading-relaxed">
             Are you sure you want to remove <span className="text-foreground font-medium">{memberToDelete?.name}</span> from <span className="text-foreground font-medium">{name || group.name}</span>? They will no longer receive disbursements when you send to this group.
           </div>
 
@@ -723,7 +723,7 @@ export default function EditGroupModal({
             <DialogTitle>Delete Payment Group</DialogTitle>
           </DialogHeader>
 
-          <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground leading-relaxed">
+          <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground leading-relaxed">
             Are you sure you want to delete <span className="text-foreground font-medium">{group.name}</span>? This action cannot be undone. All member contact details will remain safely saved in your individual beneficiaries directory.
           </div>
 

@@ -300,7 +300,7 @@ function SheetRow({
     <div
       data-slot="sheet-row"
       className={cn(
-        "flex items-start sm:items-center justify-between gap-2 py-2 first:pt-0 last:pb-0 text-[13.5px]",
+        "flex items-start sm:items-center justify-between gap-2 py-2 first:pt-0 last:pb-0 text-[13px]",
         className
       )}
       {...props}
@@ -386,10 +386,10 @@ function SheetButton({
       className={cn(
         "rounded-full font-medium transition-all cursor-pointer flex items-center justify-center select-none active:scale-[0.98]",
         (variant === "primary" || variant === "lime") && [
-          "bg-primary text-primary-foreground hover:bg-primary-hover h-10 text-[14.5px] shadow-xs",
+          "bg-primary text-primary-foreground hover:bg-primary-hover h-10 text-[14px] shadow-xs",
         ],
         variant === "secondary" && [
-          "bg-muted hover:bg-muted/80 text-foreground h-10 text-[14.5px]",
+          "bg-muted hover:bg-muted/80 text-foreground h-10 text-[14px]",
         ],
         variant === "ghost" && [
           "text-muted-foreground hover:text-foreground hover:bg-muted/50 h-9 text-[14px]",

@@ -123,7 +123,7 @@ export default function AdminEnrolmentsPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 flex-wrap">
             {/* Assignment segment */}
-            <div className="inline-flex rounded-xl bg-muted p-1 text-[12.5px]">
+            <div className="inline-flex rounded-xl bg-muted p-1 text-[12px]">
               <button
                 type="button"
                 onClick={() => setAssignmentFilter("all")}
@@ -157,7 +157,7 @@ export default function AdminEnrolmentsPage() {
             <select
               value={stageFilter}
               onChange={(e) => setStageFilter(e.target.value as StageFilter)}
-              className="h-8 rounded-lg border border-border bg-background px-2.5 text-[12.5px] text-foreground outline-hidden cursor-pointer"
+              className="h-8 rounded-lg border border-border bg-background px-2.5 text-[12px] text-foreground outline-hidden cursor-pointer"
             >
               <option value="all">All Stages</option>
               <option value="waiting-letter">Waiting on signed letter</option>
@@ -177,7 +177,7 @@ export default function AdminEnrolmentsPage() {
         </div>
 
         {/* Count summary */}
-        <div className="flex items-center justify-between text-[12.5px] text-muted-foreground pt-1 border-t border-border/50">
+        <div className="flex items-center justify-between text-[12px] text-muted-foreground pt-1 border-t border-border/50">
           <span>
             Showing <span className="text-foreground font-medium tabular">{displayRows.length}</span> of{" "}
             <span className="text-foreground font-medium tabular">{applications.length}</span> enrolments
@@ -199,7 +199,7 @@ export default function AdminEnrolmentsPage() {
 
       {effective === "empty" && (
         <TrueEmptyState
-          icon={<ClipboardCheck size={22} strokeWidth={1.8} />}
+          icon={<ClipboardCheck size={22} />}
           title="No enrolment applications"
           description="Submitted corporate enrolment requests will appear here for verification."
         />
@@ -227,7 +227,7 @@ export default function AdminEnrolmentsPage() {
 
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[14.5px] font-medium text-foreground truncate">
+                    <span className="text-[14px] font-medium text-foreground truncate">
                       {app.companyName}
                     </span>
                     <span className="text-[12px] text-muted-foreground tabular">
@@ -235,11 +235,11 @@ export default function AdminEnrolmentsPage() {
                     </span>
                   </div>
 
-                  <p className="text-[12.5px] text-muted-foreground mt-0.5">
+                  <p className="text-[12px] text-muted-foreground mt-0.5">
                     Applicant: <span className="text-foreground">{app.applicant.name}</span> ({app.applicant.mobile}) · {app.accounts.length} account{app.accounts.length === 1 ? "" : "s"} · {CHANNEL_LABEL[app.channel]}
                   </p>
 
-                  <div className="flex items-center gap-3 text-[11.5px] text-muted-foreground mt-1">
+                  <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-1">
                     <span>
                       Assigned: <span className="font-medium text-foreground">{app.assignedTo.name}</span>
                     </span>

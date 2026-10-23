@@ -100,7 +100,7 @@ export function DashboardCardsWidget() {
           <h2 className="text-[15px] font-medium text-foreground">Cards</h2>
           <Link
             href="/cards"
-            className="inline-flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
+            className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
           >
             <span>View all</span>
             <ChevronRight size={13} />
@@ -136,13 +136,13 @@ export function DashboardCardsWidget() {
                 {/* Card Details */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
-                    <span className="text-[13.5px] font-medium text-foreground">{card.type}</span>
-                    <span className="text-[11.5px] text-muted-foreground tabular">{card.maskedNumber}</span>
+                    <span className="text-[13px] font-medium text-foreground">{card.type}</span>
+                    <span className="text-[11px] text-muted-foreground tabular">{card.maskedNumber}</span>
                   </div>
                   {card.frozen ? (
                     <span className="text-[11px] font-medium text-destructive">Blocked</span>
                   ) : (
-                    <span className="text-[11.5px] text-muted-foreground tabular">Active · GHS {card.limit.toLocaleString()} limit</span>
+                    <span className="text-[11px] text-muted-foreground tabular">Active · GHS {card.limit.toLocaleString()} limit</span>
                   )}
                 </div>
               </div>
@@ -193,7 +193,7 @@ export function DashboardCardsWidget() {
                   <div className="text-[8px] font-medium text-white text-right">{managingCard.network}</div>
                 </div>
                 <div>
-                  <span className="text-[13.5px] font-medium text-foreground">{managingCard.maskedNumber}</span>
+                  <span className="text-[13px] font-medium text-foreground">{managingCard.maskedNumber}</span>
                   <p className="text-[12px] text-muted-foreground">Expires 09/29</p>
                 </div>
               </div>
@@ -207,7 +207,7 @@ export function DashboardCardsWidget() {
                       <Lock size={16} />
                     </div>
                     <div>
-                      <span className="text-[13.5px] font-medium text-foreground">Block card</span>
+                      <span className="text-[13px] font-medium text-foreground">Block card</span>
                       <p className="text-[12px] text-muted-foreground">Temporarily disable transactions</p>
                     </div>
                   </div>
@@ -233,7 +233,7 @@ export function DashboardCardsWidget() {
                       <Globe size={16} />
                     </div>
                     <div>
-                      <span className="text-[13.5px] font-medium text-foreground">Online purchases</span>
+                      <span className="text-[13px] font-medium text-foreground">Online purchases</span>
                       <p className="text-[12px] text-muted-foreground">Allow web and e-commerce payments</p>
                     </div>
                   </div>
@@ -259,7 +259,7 @@ export function DashboardCardsWidget() {
                       <Smartphone size={16} />
                     </div>
                     <div>
-                      <span className="text-[13.5px] font-medium text-foreground">Contactless POS</span>
+                      <span className="text-[13px] font-medium text-foreground">Contactless POS</span>
                       <p className="text-[12px] text-muted-foreground">Tap-to-pay on point of sale terminals</p>
                     </div>
                   </div>

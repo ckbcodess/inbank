@@ -218,7 +218,7 @@ export default function AddAccountDialog({
               <p className="text-[15px] tracking-[var(--ls-tight)] text-foreground">
                 We didn&apos;t find a GCB account under your Ghana Card
               </p>
-              <p className="max-w-[340px] text-[13.5px] leading-relaxed text-muted-foreground">
+              <p className="max-w-[340px] text-[13px] leading-relaxed text-muted-foreground">
                 You can open one at any GCB branch. Bring your Ghana Card, and it will show up here once it&apos;s open.
               </p>
             </div>
@@ -226,7 +226,7 @@ export default function AddAccountDialog({
 
           {view === "choose" && held.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-[13.5px] text-muted-foreground">Accounts held under your Ghana Card</p>
+              <p className="text-[13px] text-muted-foreground">Accounts held under your Ghana Card</p>
               <div role="group" aria-label="Accounts" className="flex flex-col gap-2">
                 {held.map((account) => {
                   const already = existingIds.includes(account.id);
@@ -302,7 +302,7 @@ export default function AddAccountDialog({
                 </span>
               </div>
 
-              <ul className="flex flex-col gap-2 text-[13.5px] leading-relaxed text-muted-foreground">
+              <ul className="flex flex-col gap-2 text-[13px] leading-relaxed text-muted-foreground">
                 {movesBalance && (
                   <li className="tabular">
                     Your wallet balance of {formatMoney(wallet.balance, "GHS", true)} moves to {picked.name}. No fees.
@@ -324,7 +324,7 @@ export default function AddAccountDialog({
                   ? `${pickedAccounts.length} Accounts Added`
                   : `${(added ?? pickedAccounts[0])?.name ?? "Account"} is added`}
               </p>
-              <p className="text-[13.5px] text-muted-foreground tabular">
+              <p className="text-[13px] text-muted-foreground tabular">
                 {wallet && movesBalance
                   ? `${formatMoney(wallet.balance, "GHS", true)} moved from your wallet`
                   : pickedAccounts.length > 1
@@ -347,7 +347,7 @@ export default function AddAccountDialog({
         )}
         {view === "no_match" && (
           <DialogFooter className="justify-between gap-3">
-            <p className="text-[12.5px] text-muted-foreground">
+            <p className="text-[12px] text-muted-foreground">
               <span className="tabular">{triesLeft}</span> {triesLeft === 1 ? "try" : "tries"} left before we ask you
               to visit a branch
             </p>

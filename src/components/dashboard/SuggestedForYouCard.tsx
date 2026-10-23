@@ -95,7 +95,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
           <button
             type="button"
             onClick={() => setShowEditModal(true)}
-            className="rounded-lg px-2 py-1 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
+            className="rounded-lg px-2 py-1 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
           >
             Customize
           </button>
@@ -115,7 +115,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                   data-ripple="true"
                   className="relative flex size-[52px] sm:size-[54px] items-center justify-center overflow-hidden rounded-2xl border border-border/80 bg-muted/40 text-foreground shadow-2xs transition-[background-color,border-color] duration-hover group-hover:bg-muted group-hover:border-border"
                 >
-                  <Icon size={19} strokeWidth={1.8} className="transition-transform" />
+                  <Icon size={19} className="transition-transform" />
                 </div>
                 <span className="text-[12px] font-normal leading-tight text-foreground truncate max-w-full px-1">
                   {action.label}
@@ -164,7 +164,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                     {activeBeneficiary.initial}
                   </div>
                   <div>
-                    <span className="text-[13.5px] font-medium text-foreground">{activeBeneficiary.name}</span>
+                    <span className="text-[13px] font-medium text-foreground">{activeBeneficiary.name}</span>
                     <p className="text-[12px] text-muted-foreground">{activeBeneficiary.detail} · {activeBeneficiary.phone}</p>
                   </div>
                 </div>
@@ -250,7 +250,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                     <div className="flex size-7 items-center justify-center rounded-full bg-muted text-foreground">
                       <action.icon size={15} />
                     </div>
-                    <span className="text-[13.5px] font-medium text-foreground">{action.label}</span>
+                    <span className="text-[13px] font-medium text-foreground">{action.label}</span>
                   </div>
                   <button
                     type="button"

@@ -117,7 +117,7 @@ export default function CardVerificationPage() {
                 <CheckCircle2 size={28} aria-hidden="true" />
               </div>
               <h1 className="text-[20px] font-medium tracking-tight">{isPayment ? "Payment approved" : "Card verified"}</h1>
-              <p className="flex items-center gap-2 text-[13.5px] text-muted-foreground mt-1">
+              <p className="flex items-center gap-2 text-[13px] text-muted-foreground mt-1">
                 <AppLoader size={14} />
                 Taking you back to GCB…
               </p>
@@ -135,7 +135,7 @@ export default function CardVerificationPage() {
               {/* Title & Description */}
               <div className="flex flex-col items-center gap-2 text-center mb-5">
                 <h1 className="text-[22px] font-medium tracking-tight text-foreground">Confirm it&apos;s you</h1>
-                <p className="text-[13px] sm:text-[13.5px] leading-relaxed text-muted-foreground">
+                <p className="text-[13px] sm:text-[13px] leading-relaxed text-muted-foreground">
                   A request to approve this payment has been created.
                   <br />
                   Enter the code to confirm.

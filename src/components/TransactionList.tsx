@@ -751,7 +751,7 @@ export default function TransactionList({
                   size="sm"
                   disabled={currentPage <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="h-7 gap-1 px-2 text-[12.5px] text-muted-foreground hover:text-foreground disabled:opacity-40"
+                  className="h-7 gap-1 px-2 text-[12px] text-muted-foreground hover:text-foreground disabled:opacity-40"
                 >
                   <ChevronLeft size={14} />
                   Previous
@@ -764,7 +764,7 @@ export default function TransactionList({
                   size="sm"
                   disabled={currentPage >= totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="h-7 gap-1 px-2 text-[12.5px] text-muted-foreground hover:text-foreground disabled:opacity-40"
+                  className="h-7 gap-1 px-2 text-[12px] text-muted-foreground hover:text-foreground disabled:opacity-40"
                 >
                   Next
                   <ChevronRight size={14} />

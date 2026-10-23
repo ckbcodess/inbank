@@ -43,7 +43,7 @@ export default function FindBranchDialog({ open, onOpenChange }: FindBranchDialo
         </DialogHeader>
 
         <DialogBody>
-          <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
             You will be redirected to gcbbank.com.gh to find your nearest branch.
           </p>
         </DialogBody>

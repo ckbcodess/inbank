@@ -65,7 +65,7 @@ export default function ExceptionsPage() {
                 className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
               >
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[13.5px] text-foreground">{t.description}</span>
+                  <span className="truncate text-[13px] text-foreground">{t.description}</span>
                   <span className="mt-0.5 truncate text-[12px] text-muted-foreground">
                     {t.failureReason ?? "Flagged for operational review"}
                   </span>
@@ -73,7 +73,7 @@ export default function ExceptionsPage() {
                     {t.reference} · {formatDate(t.date)}
                   </span>
                 </span>
-                <span className="shrink-0 text-[13.5px] text-foreground tabular">
+                <span className="shrink-0 text-[13px] text-foreground tabular">
                   {formatMoney(t.amount, t.currency)}
                 </span>
                 <TransactionStatusBadge state={t.state} />

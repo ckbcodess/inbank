@@ -348,7 +348,7 @@ export default function EagleStudio() {
           <button
             type="button"
             onClick={() => setPainting(true)}
-            className="flex h-8 items-center justify-center gap-2 rounded-lg border border-border text-[12.5px] text-foreground hover:bg-muted"
+            className="flex h-8 items-center justify-center gap-2 rounded-lg border border-border text-[12px] text-foreground hover:bg-muted"
           >
             <Brush size={15} aria-hidden="true" />
             Paint dots{cfg.edits.length ? ` · ${cfg.edits.length} edited` : ""}

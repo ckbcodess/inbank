@@ -20,7 +20,7 @@ export function payeeInitials(name: string): string {
 
 const SIZE = {
   sm: "size-8 text-[13px]",
-  md: "size-9 text-[13px] sm:size-10 sm:text-[13.5px]",
+  md: "size-9 text-[13px] sm:size-10 sm:text-[13px]",
   lg: "size-12 text-[16px]",
   xl: "size-17 text-[26px]",
 } as const;
@@ -55,7 +55,7 @@ export function PayeeAvatar({
       style={{ "--tint": `var(--avatar-${tintFor(name)})` } as React.CSSProperties}
       aria-hidden="true"
     >
-      {Icon ? <Icon size={size === "xl" ? 30 : size === "lg" ? 22 : 17} strokeWidth={1.7} /> : (initials ?? payeeInitials(name))}
+      {Icon ? <Icon size={size === "xl" ? 30 : size === "lg" ? 22 : 17} /> : (initials ?? payeeInitials(name))}
     </span>
   );
 }

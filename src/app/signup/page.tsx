@@ -347,7 +347,7 @@ function SignupContent() {
             >
               Continue
             </Button>
-            <p className="text-center text-[12.5px] leading-5 text-muted-foreground">
+            <p className="text-center text-[12px] leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
               <a href="#" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Terms</a>{" "}
               and{" "}
@@ -433,7 +433,7 @@ function SignupContent() {
                 onValueChange={setMobile}
                 placeholder="Enter mobile number"
               />
-              <p className="px-0.5 text-[12.5px] text-muted-foreground">We’ll send a verification code to this number.</p>
+              <p className="px-0.5 text-[12px] text-muted-foreground">We’ll send a verification code to this number.</p>
             </div>
           </div>
 
@@ -507,7 +507,7 @@ function SignupContent() {
           </div>
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
               <AppLoader size={16} />
               <span>Verifying code...</span>
             </div>
@@ -587,7 +587,7 @@ function SignupContent() {
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
               <AppLoader size={16} />
               <span>Saving your PIN…</span>
             </div>
@@ -634,7 +634,7 @@ function SignupContent() {
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
               <AppLoader size={16} />
               <span>Setting up account...</span>
             </div>

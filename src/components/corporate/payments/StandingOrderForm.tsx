@@ -151,6 +151,12 @@ export default function StandingOrderForm() {
             setOtpOpen(false);
             save();
           }}
+          summary={
+            <p className="text-[13px] text-foreground">
+              Start a standing order of <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} from {fromAccount.name},{" "}
+              {cadencePhrase(preview).toLowerCase()}.
+            </p>
+          }
         />
       </div>
     );

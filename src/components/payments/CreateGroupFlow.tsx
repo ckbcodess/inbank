@@ -366,7 +366,7 @@ export default function CreateGroupFlow({
             {showNewContact && (
               <div className="rounded-2xl border border-border/80 bg-card p-3 flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-150 shadow-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[13.5px] text-foreground font-medium">Add Unsaved Counterparty</span>
+                  <span className="text-[13px] text-foreground font-medium">Add Unsaved Counterparty</span>
                   <button
                     type="button"
                     onClick={() => setShowNewContact(false)}
@@ -551,7 +551,7 @@ export default function CreateGroupFlow({
             type="button"
             disabled={!name.trim() || members.length === 0}
             onClick={() => setStep(2)}
-            className="w-full h-10 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground text-[14.5px] font-normal cursor-pointer shadow-xs disabled:opacity-50 mt-1"
+            className="w-full h-10 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground text-[14px] font-normal cursor-pointer shadow-xs disabled:opacity-50 mt-1"
           >
             Proceed to Amount
           </Button>
@@ -605,7 +605,7 @@ export default function CreateGroupFlow({
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0 bg-field border border-field-border rounded-xl px-2 py-2 focus-within:border-field-border-focus focus-within:ring-0 transition">
-                      <span className="text-[12.5px] font-medium text-muted-foreground select-none">GHS</span>
+                      <span className="text-[12px] font-medium text-muted-foreground select-none">GHS</span>
                       <input
                         type="text"
                         inputMode="decimal"
@@ -642,7 +642,7 @@ export default function CreateGroupFlow({
               type="button"
               variant="outline"
               onClick={() => setStep(1)}
-              className="flex-1 h-10 rounded-xl border border-border/80 bg-background hover:bg-muted/40 text-foreground font-normal text-[14.5px] cursor-pointer"
+              className="flex-1 h-10 rounded-xl border border-border/80 bg-background hover:bg-muted/40 text-foreground font-normal text-[14px] cursor-pointer"
             >
               Back
             </Button>
@@ -666,7 +666,7 @@ export default function CreateGroupFlow({
           <DialogHeader>
             <DialogTitle>Discard unsaved changes?</DialogTitle>
           </DialogHeader>
-          <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground leading-relaxed">
+          <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground leading-relaxed">
             You have unsaved changes in this group. Leaving now will discard your entered data.
           </div>
           <DialogFooter>

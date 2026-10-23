@@ -20,7 +20,7 @@ export function PanelHeader({ title, href, cta = "View all" }: { title: string; 
     <div className="flex items-center justify-between">
       <span className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">{title}</span>
       {href && (
-        <Link href={href} className="-my-2 py-2 text-[12.5px] text-muted-foreground transition-colors duration-hover hover:text-foreground">
+        <Link href={href} className="-my-2 py-2 text-[12px] text-muted-foreground transition-colors duration-hover hover:text-foreground">
           {cta}
         </Link>
       )}

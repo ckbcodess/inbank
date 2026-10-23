@@ -730,7 +730,7 @@ export default function BeneficiariesPage() {
               render={<Link href="/beneficiaries/groups/new" />}
               className="shrink-0"
             >
-              <Plus size={15} strokeWidth={2} />
+              <Plus size={15} />
               Add new group
             </Button>
           ) : (
@@ -877,7 +877,7 @@ export default function BeneficiariesPage() {
                       const Icon = meta.icon;
                       return (
                         <>
-                          <Icon size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+                          <Icon size={16} className="text-muted-foreground shrink-0" />
                           <span className="text-foreground">{meta.label}</span>
                         </>
                       );
@@ -891,7 +891,7 @@ export default function BeneficiariesPage() {
                     return (
                       <SelectItem key={t} value={t} className="text-[13px] py-2">
                         <div className="flex items-center gap-2">
-                          <Icon size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+                          <Icon size={15} className="text-muted-foreground shrink-0" />
                           <span>{meta.label}</span>
                         </div>
                       </SelectItem>
@@ -1005,7 +1005,7 @@ export default function BeneficiariesPage() {
                               <SelectItem key={b.id} value={b.name} label={b.name} className="py-2 text-[13px]">
                                 <div className="flex items-center justify-between w-full gap-2">
                                   <span className="font-medium text-foreground">{b.name}</span>
-                                  <span className="text-[11.5px] text-muted-foreground/75 font-normal shrink-0">
+                                  <span className="text-[11px] text-muted-foreground/75 font-normal shrink-0">
                                     {b.reference}
                                   </span>
                                 </div>
@@ -1241,7 +1241,7 @@ export default function BeneficiariesPage() {
             <Button
               onClick={handleSaveBeneficiary}
               disabled={!form.name.trim()}
-              className="h-10 w-full rounded-full bg-primary text-primary-foreground hover:bg-primary-hover font-medium transition-all cursor-pointer text-[14.5px] disabled:opacity-40 shadow-xs"
+              className="h-10 w-full rounded-full bg-primary text-primary-foreground hover:bg-primary-hover font-medium transition-all cursor-pointer text-[14px] disabled:opacity-40 shadow-xs"
             >
               {form.id ? "Save Changes" : "Save Beneficiary"}
             </Button>
@@ -1291,7 +1291,7 @@ export default function BeneficiariesPage() {
               Remove Beneficiary
             </DialogTitle>
           </DialogHeader>
-          <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground">
+          <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground">
             Are you sure you want to remove <span className="text-foreground">{toRemove?.name}</span>? This will not affect past transactions.
           </div>
           <DialogFooter>
@@ -1312,7 +1312,7 @@ export default function BeneficiariesPage() {
               Delete Payment Group
             </DialogTitle>
           </DialogHeader>
-          <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground">
+          <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground">
             Are you sure you want to delete <span className="text-foreground">{toRemoveGroup?.name}</span>? Group members will remain in your individual beneficiaries directory.
           </div>
           <DialogFooter>

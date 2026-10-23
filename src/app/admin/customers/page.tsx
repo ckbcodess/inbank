@@ -84,7 +84,7 @@ export default function CustomerManagementPage() {
           />
         ) : (
           <TrueEmptyState
-            icon={<Building2 size={22} strokeWidth={1.8} />}
+            icon={<Building2 size={22} />}
             title="No customers found"
             description="Customers will appear here once onboarded to the system."
           />
@@ -102,7 +102,7 @@ export default function CustomerManagementPage() {
                     <Building2 size={16} aria-hidden="true" />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[13.5px] text-foreground">{c.name}</span>
+                    <span className="truncate text-[13px] text-foreground">{c.name}</span>
                     <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
                       {c.ref} · {c.users} users
                     </span>

@@ -34,7 +34,7 @@ export default function ChoiceTile({
         </div>
       </div>
       <ChevronRight
-        size={20}
+        size={20}
         className="shrink-0 text-foreground/70 transition duration-hover group-hover:text-foreground"
       />
     </button>

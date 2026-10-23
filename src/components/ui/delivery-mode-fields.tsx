@@ -74,7 +74,7 @@ export function DeliveryModeFields({
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-[14px] font-medium leading-tight">Branch pickup</span>
-            <span className="text-[11.5px] text-muted-foreground mt-0.5">
+            <span className="text-[11px] text-muted-foreground mt-0.5">
               Collect at branch
             </span>
           </div>
@@ -104,7 +104,7 @@ export function DeliveryModeFields({
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-[14px] font-medium leading-tight">Doorstep delivery</span>
-            <span className="text-[11.5px] text-muted-foreground mt-0.5">
+            <span className="text-[11px] text-muted-foreground mt-0.5">
               Courier delivery
             </span>
           </div>

@@ -735,7 +735,7 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_momo_code" && (
               <div className="flex flex-col items-center gap-4 py-2 text-center">
-                <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+                <p className="text-[13px] leading-relaxed text-muted-foreground">
                   Enter the 6-digit code sent to{" "}
                   <span className="text-foreground tabular">{displayGhanaMobile(newMomoNumber)}</span>.
                 </p>
@@ -750,7 +750,7 @@ export default function LinkSourceAccountModal({
                   invalid={momoCodeError}
                 />
                 {busy && (
-                  <div className="flex items-center gap-2 text-[13.5px] text-muted-foreground">
+                  <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
                     <AppLoader size={16} />
                     <span>Verifying code…</span>
                   </div>

@@ -85,7 +85,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
             <span className="text-[12px] text-muted-foreground font-mono">
               {primaryAccount.name} ∗∗∗∗ {primaryAccount.number.replace(/\s+/g, "").slice(-4)}
             </span>
-            <p className="text-[11.5px] text-muted-foreground/80 pt-2 max-w-[260px] text-center">
+            <p className="text-[11px] text-muted-foreground/80 pt-2 max-w-[260px] text-center">
               Scan with any GhQR, GhanaPay, or mobile banking app to receive instant payments.
             </p>
           </div>

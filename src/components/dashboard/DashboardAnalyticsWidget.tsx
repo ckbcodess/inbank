@@ -119,7 +119,7 @@ export function DashboardAnalyticsWidget() {
             <button
               type="button"
               onClick={() => setShowAccountMenu(!showAccountMenu)}
-              className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11.5px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+              className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
             >
               <span>{selectedAccount}</span>
               <ChevronDown size={12} className="text-muted-foreground" />
@@ -151,7 +151,7 @@ export function DashboardAnalyticsWidget() {
 
         <Link
           href="/reports"
-          className="inline-flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
+          className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
         >
           <span>View all</span>
           <ChevronRight size={13} />
@@ -218,7 +218,7 @@ export function DashboardAnalyticsWidget() {
                       )}`
                     : "GHS ∗∗∗∗"}
                 </span>
-                <span className="mt-0.5 text-[10.5px] text-muted-foreground tabular">
+                <span className="mt-0.5 text-[11px] text-muted-foreground tabular">
                   {activeItem ? `${activeItem.percentage}% of total` : activeDataset.trend}
                 </span>
               </div>
@@ -251,15 +251,15 @@ export function DashboardAnalyticsWidget() {
                       className="size-2 shrink-0 rounded-full transition-transform"
                       style={{ backgroundColor: cat.color }}
                     />
-                    <span className="truncate text-[12.5px] font-medium text-foreground">
+                    <span className="truncate text-[12px] font-medium text-foreground">
                       {cat.label}
                     </span>
-                    <span className="text-[11.5px] text-muted-foreground tabular">
+                    <span className="text-[11px] text-muted-foreground tabular">
                       {cat.percentage}%
                     </span>
                   </div>
                   <div className="flex items-center shrink-0 pl-2">
-                    <span className="text-[12.5px] font-medium text-foreground tabular">
+                    <span className="text-[12px] font-medium text-foreground tabular">
                       {showAmounts
                         ? `GHS ${new Intl.NumberFormat("en-GH").format(cat.amount)}`
                         : "GHS ∗∗∗∗"}

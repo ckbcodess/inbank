@@ -422,7 +422,7 @@ function ActivateContent() {
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
           {/* Demo persona picker — dev only, never in the live build */}
           {process.env.NODE_ENV !== "production" && (
-          <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-[12.5px] text-muted-foreground">
+          <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
             <span className="font-medium text-foreground">Interactive Demo Mode</span>
             <div className="flex items-center gap-2">
               {(["single", "multi", "joint", "mobile_sync"] as const).map((key) => (
@@ -472,7 +472,7 @@ function ActivateContent() {
             >
               Continue
             </Button>
-            <p className="text-center text-[12.5px] leading-5 text-muted-foreground">
+            <p className="text-center text-[12px] leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
               <a href="#" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Terms</a>{" "}
               and{" "}
@@ -549,7 +549,7 @@ function ActivateContent() {
                           <span className="font-medium text-foreground truncate">
                             {selectedPrimaryAccount.name}
                           </span>
-                          <span className="text-muted-foreground text-[12.5px] shrink-0">
+                          <span className="text-muted-foreground text-[12px] shrink-0">
                             **** {selectedPrimaryAccount.number.slice(-4)}
                           </span>
                           {selectedPrimaryAccount.isJoint && (
@@ -572,11 +572,11 @@ function ActivateContent() {
                         <div className="flex items-center justify-between w-full gap-2 py-0.5">
                           <div className="flex items-center gap-2 truncate">
                             <span className="font-medium text-foreground truncate">{acc.name}</span>
-                            <span className="rounded-lg bg-muted px-2 py-0.5 text-[10.5px] text-muted-foreground shrink-0">
+                            <span className="rounded-lg bg-muted px-2 py-0.5 text-[11px] text-muted-foreground shrink-0">
                               {acc.type}
                             </span>
                             {acc.isJoint && (
-                              <span className="inline-flex items-center gap-1 rounded-lg bg-primary/15 px-2 py-0.5 text-[10.5px] font-medium text-foreground shrink-0">
+                              <span className="inline-flex items-center gap-1 rounded-lg bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-foreground shrink-0">
                                 <Users size={11} className="text-primary" />
                                 Joint
                               </span>
@@ -598,10 +598,10 @@ function ActivateContent() {
                   <div className="flex items-start gap-2">
                     <Users size={15} className="text-primary mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-[12.5px] font-medium text-foreground block">
+                      <span className="text-[12px] font-medium text-foreground block">
                         Joint Mandate: {selectedPrimaryAccount.mandate || "Both Signatures Required"}
                       </span>
-                      <p className="text-[11.5px] text-muted-foreground mt-0.5 leading-relaxed">
+                      <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
                         Alerts will be sent to both signatories upon activation.
                       </p>
                     </div>
@@ -620,18 +620,18 @@ function ActivateContent() {
                   <span className="text-[14px] font-medium text-foreground block">
                     {activePersona.accounts[0]?.name}
                   </span>
-                  <span className="text-[12.5px] text-muted-foreground">
+                  <span className="text-[12px] text-muted-foreground">
                     **** {activePersona.accounts[0]?.number.slice(-4)}
                   </span>
                 </div>
               </div>
               <div className="flex items-center justify-between py-2">
                 <span className="text-[13px] text-muted-foreground">Registered Phone</span>
-                <span className="text-[13.5px] font-medium text-foreground">{activePersona.phone}</span>
+                <span className="text-[13px] font-medium text-foreground">{activePersona.phone}</span>
               </div>
               <div className="flex items-center justify-between pt-2">
                 <span className="text-[13px] text-muted-foreground">Registered Email</span>
-                <span className="text-[13.5px] font-medium text-foreground">{activePersona.email}</span>
+                <span className="text-[13px] font-medium text-foreground">{activePersona.email}</span>
               </div>
             </div>
           )}
@@ -651,7 +651,7 @@ function ActivateContent() {
           <button
             type="button"
             onClick={() => setStep("ghana_card")}
-            className="text-center text-[12.5px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
+            className="text-center text-[12px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
           >
             Use a different Ghana Card
           </button>
@@ -713,13 +713,13 @@ function ActivateContent() {
           </div>
 
           {isJoint && (
-            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3 text-[12.5px] text-muted-foreground">
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3 text-[12px] text-muted-foreground">
               <span className="font-medium text-foreground">Joint mandate notice:</span> Notice sent to co-holder Esther ({activePersona.coSignatoryPhone}).
             </div>
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
               <AppLoader size={16} />
               <span>Verifying code...</span>
             </div>
@@ -800,7 +800,7 @@ function ActivateContent() {
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
               <AppLoader size={16} />
               <span>Saving your PIN…</span>
             </div>
@@ -847,7 +847,7 @@ function ActivateContent() {
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
               <AppLoader size={16} />
               <span>Activating...</span>
             </div>

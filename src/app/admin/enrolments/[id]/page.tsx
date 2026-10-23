@@ -305,7 +305,7 @@ export default function AdminEnrolmentDetailPage({
           <Badge variant={application.assignedTo.type === "rm" ? "default" : "outline"}>
             {application.assignedTo.name}
           </Badge>
-          <Button variant="ghost" size="xs" onClick={handleReassign} className="text-[11.5px] h-7">
+          <Button variant="ghost" size="xs" onClick={handleReassign} className="text-[11px] h-7">
             <ArrowRightLeft size={12} className="mr-1" />
             Reassign
           </Button>
@@ -356,7 +356,7 @@ export default function AdminEnrolmentDetailPage({
             <p className="text-[12px] font-medium text-muted-foreground mb-2">
               Enrolled Accounts ({application.accounts.length})
             </p>
-            <div className="flex flex-col gap-1.5 text-[12.5px]">
+            <div className="flex flex-col gap-1.5 text-[12px]">
               {application.accounts.map((acc) => (
                 <div
                   key={acc.id}
@@ -364,7 +364,7 @@ export default function AdminEnrolmentDetailPage({
                 >
                   <div>
                     <p className="font-medium text-foreground">{acc.name}</p>
-                    <p className="text-[11.5px] text-muted-foreground tabular">
+                    <p className="text-[11px] text-muted-foreground tabular">
                       {acc.type} · {acc.number}
                     </p>
                   </div>
@@ -388,7 +388,7 @@ export default function AdminEnrolmentDetailPage({
                 Designated Users ({application.users.length})
               </h2>
             </div>
-            <span className="text-[11.5px] text-muted-foreground">
+            <span className="text-[11px] text-muted-foreground">
               Will receive activation links
             </span>
           </div>
@@ -408,12 +408,12 @@ export default function AdminEnrolmentDetailPage({
                       </span>
                     )}
                   </div>
-                  <p className="text-[11.5px] text-muted-foreground truncate">
+                  <p className="text-[11px] text-muted-foreground truncate">
                     {u.email} · {u.mobile}
                   </p>
                 </div>
 
-                <Badge variant="outline" className="shrink-0 text-[11.5px]">
+                <Badge variant="outline" className="shrink-0 text-[11px]">
                   {u.role}
                 </Badge>
               </div>
@@ -497,7 +497,7 @@ export default function AdminEnrolmentDetailPage({
                   <p className="text-[14px] font-medium text-foreground">
                     {check.signatoryName}
                   </p>
-                  <p className="text-[11.5px] text-muted-foreground">{check.role}</p>
+                  <p className="text-[11px] text-muted-foreground">{check.role}</p>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -531,7 +531,7 @@ export default function AdminEnrolmentDetailPage({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
                 {/* Column 1: Card on File */}
                 <div className="flex flex-col gap-1.5 rounded-xl border border-border/80 bg-background/50 p-3">
-                  <div className="flex items-center justify-between text-[11.5px] text-muted-foreground">
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                     <span>Registered Specimen Card</span>
                     <span className="tabular font-medium text-foreground">High St. Branch</span>
                   </div>
@@ -540,14 +540,14 @@ export default function AdminEnrolmentDetailPage({
                       <path d="M 10 40 Q 30 10 50 35 T 90 25 T 130 40 T 170 15 T 190 30" />
                     </svg>
                   </div>
-                  <p className="text-[10.5px] text-muted-foreground">
+                  <p className="text-[11px] text-muted-foreground">
                     Card ID: SIG-GCB-{check.signatoryName.slice(0, 3).toUpperCase()}-2021
                   </p>
                 </div>
 
                 {/* Column 2: Uploaded Document */}
                 <div className="flex flex-col gap-1.5 rounded-xl border border-border/80 bg-background/50 p-3">
-                  <div className="flex items-center justify-between text-[11.5px] text-muted-foreground">
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                     <span>Uploaded Request Pack</span>
                     <span className="tabular font-medium text-foreground">Page 2 Box {idx + 1}</span>
                   </div>
@@ -556,7 +556,7 @@ export default function AdminEnrolmentDetailPage({
                       <path d={check.status === "no_match" ? "M 15 20 Q 40 50 80 20 T 140 45" : "M 12 38 Q 32 12 52 34 T 92 24 T 132 39 T 168 17 T 188 31"} />
                     </svg>
                   </div>
-                  <p className="text-[10.5px] text-muted-foreground">
+                  <p className="text-[11px] text-muted-foreground">
                     Scanned 300 DPI · Wet-ink confirmed
                   </p>
                 </div>
@@ -659,7 +659,7 @@ export default function AdminEnrolmentDetailPage({
               variant="default"
               disabled={!canApprove}
               onClick={handleApprove}
-              className="h-10 text-[13.5px] px-5"
+              className="h-10 text-[13px] px-5"
             >
               <CheckCircle2 size={16} className="mr-1.5" />
               Approve & Issue User Links
@@ -668,7 +668,7 @@ export default function AdminEnrolmentDetailPage({
             <Button
               variant="outline"
               onClick={() => setReturnDialogOpen(true)}
-              className="h-10 text-[13.5px]"
+              className="h-10 text-[13px]"
             >
               <RotateCcw size={15} className="mr-1.5 text-warning-text" />
               Return for Clarification
@@ -677,7 +677,7 @@ export default function AdminEnrolmentDetailPage({
             <Button
               variant="destructive"
               onClick={() => setRejectionDialogOpen(true)}
-              className="h-10 text-[13.5px]"
+              className="h-10 text-[13px]"
             >
               <XCircle size={15} className="mr-1.5" />
               Reject Application

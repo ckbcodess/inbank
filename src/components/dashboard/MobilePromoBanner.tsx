@@ -47,7 +47,7 @@ export function MobilePromoBanner() {
                   className="h-full w-full object-contain"
                 />
               </div>
-              <span className="text-[11.5px] text-muted-foreground leading-tight">
+              <span className="text-[11px] text-muted-foreground leading-tight">
                 Available on<br />
                 <span className="font-medium text-foreground">iOS & Android</span>
               </span>
@@ -87,14 +87,14 @@ export function MobilePromoBanner() {
             <button
               type="button"
               onClick={() => setShowCalculator(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-success px-3 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-success px-3 py-2 text-[12px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer"
             >
               <Calculator size={14} />
               <span>Calculate Returns</span>
             </button>
             <Link
               href="/accounts"
-              className="inline-flex items-center gap-1 text-[12.5px] font-medium text-foreground hover:underline active:scale-[0.96] transition-transform"
+              className="inline-flex items-center gap-1 text-[12px] font-medium text-foreground hover:underline active:scale-[0.96] transition-transform"
             >
               <span>Open Account</span>
               <ArrowRight size={13} />
@@ -124,7 +124,7 @@ export function MobilePromoBanner() {
           <div className="mt-2 flex items-center gap-2">
             <Link
               href="/payments/send"
-              className="inline-flex items-center gap-2 rounded-xl bg-info px-3 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform"
+              className="inline-flex items-center gap-2 rounded-xl bg-info px-3 py-2 text-[12px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform"
             >
               <span>Send Money Now</span>
               <ArrowRight size={13} />
@@ -237,7 +237,7 @@ export function MobilePromoBanner() {
                     key={m}
                     type="button"
                     onClick={() => setTenureMonths(m)}
-                    className={`rounded-xl border py-2 text-[12.5px] font-medium transition-colors cursor-pointer ${
+                    className={`rounded-xl border py-2 text-[12px] font-medium transition-colors cursor-pointer ${
                       tenureMonths === m
                         ? "border-primary bg-primary/10 text-primary"
                         : "border-border bg-muted/40 text-foreground hover:bg-muted"

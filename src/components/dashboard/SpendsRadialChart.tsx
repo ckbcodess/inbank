@@ -158,7 +158,7 @@ export function SpendsRadialChart({
         </h2>
         <Link
           href={href}
-          className="text-[12.5px] text-muted-foreground transition-colors hover:text-foreground"
+          className="text-[12px] text-muted-foreground transition-colors hover:text-foreground"
         >
           Details
         </Link>

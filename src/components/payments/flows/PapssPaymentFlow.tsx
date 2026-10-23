@@ -302,7 +302,7 @@ export function PapssPaymentFlow({
             />
 
             {/* Exchange rate display underneath fields */}
-            <div className="flex items-center justify-end px-1 pt-0.5 text-[12.5px] text-muted-foreground font-medium">
+            <div className="flex items-center justify-end px-1 pt-0.5 text-[12px] text-muted-foreground font-medium">
               <span>Rate: 1 {state.wCurrency || "NGN"} = GHS {rate}</span>
             </div>
 

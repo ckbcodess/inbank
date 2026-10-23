@@ -189,7 +189,7 @@ export function CardlessWithdrawalFlow({
               error={overBalance ? <InsufficientFundsAlert /> : undefined}
             />
             {/* Where the code goes, and what it's good for, in one line */}
-            <p className="text-[12.5px] text-muted-foreground tabular">
+            <p className="text-[12px] text-muted-foreground tabular">
               {isSelf
                 ? `We'll text the code to ${maskMobile(selfPhone)}. It works at any GCB ATM.`
                 : `We'll text the code to ${verifiedName}. It works at any GCB ATM.`}

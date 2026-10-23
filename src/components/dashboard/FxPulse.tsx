@@ -143,10 +143,10 @@ export function FxPulse() {
               {valid ? format(result, toCurrency, showAmounts) : "—"}
             </p>
           </div>
-          <p className="mt-2 text-[11.5px] text-muted-foreground tabular">
+          <p className="mt-2 text-[11px] text-muted-foreground tabular">
             {direction === "to-ghs" ? "Bank buys" : "Bank sells"} at {appliedRate.toFixed(4)} ·{" "}
             <span className={rate.changePct >= 0 ? "text-success-text font-medium" : "text-destructive font-medium"}>
-              <RateTrend size={11} strokeWidth={2} aria-hidden="true" className="inline align-[-1px]" />{" "}
+              <RateTrend size={11} aria-hidden="true" className="inline align-[-1px]" />{" "}
               {rate.changePct >= 0 ? "+" : "−"}
               {Math.abs(rate.changePct).toFixed(2)}%
             </span>{" "}
@@ -154,7 +154,7 @@ export function FxPulse() {
           </p>
         </div>
 
-        <p className="text-[11.5px] leading-relaxed text-muted-foreground">
+        <p className="text-[11px] leading-relaxed text-muted-foreground">
           Indicative only. The rate applied to a transfer is struck when you submit it.
         </p>
 

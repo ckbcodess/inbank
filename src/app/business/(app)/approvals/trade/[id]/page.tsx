@@ -137,7 +137,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                   {clarificationNote}
                 </blockquote>
               )}
-              <p className="mt-2 text-[12.5px] text-muted-foreground">
+              <p className="mt-2 text-[12px] text-muted-foreground">
                 This is not a rejection — nothing has been cancelled and no new request is needed.
               </p>
             </div>
@@ -274,7 +274,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             ))}
           </ul>
 
-          <p className="border-t border-border px-4 py-2 text-[12.5px] text-muted-foreground">
+          <p className="border-t border-border px-4 py-2 text-[12px] text-muted-foreground">
             {VERSION_DIFF.filter((r) => r.changed).length} of {VERSION_DIFF.length} fields changed
             between these versions.
           </p>
@@ -313,7 +313,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                       />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[13px] text-foreground">{d.name}</span>
-                        <span className="block text-[11.5px] text-muted-foreground">
+                        <span className="block text-[11px] text-muted-foreground">
                           {isMissing ? "Not provided" : `${d.pages} pages · ${d.type}`}
                         </span>
                       </span>
@@ -327,7 +327,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             <div className="flex min-h-[320px] flex-col">
               <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2">
                 <div className="min-w-0">
-                  <p className="truncate text-[13.5px] text-foreground">{doc.name}</p>
+                  <p className="truncate text-[13px] text-foreground">{doc.name}</p>
                   <p className="text-[12px] text-muted-foreground tabular">
                     {doc.pages} pages · uploaded {doc.uploadedAt}
                   </p>
@@ -381,7 +381,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
           </Button>
 
           {decisionBlocked && (
-            <p className="w-full text-[12.5px] text-muted-foreground">
+            <p className="w-full text-[12px] text-muted-foreground">
               Approval is unavailable while required documents are missing. Returning for
               clarification is still available.
             </p>

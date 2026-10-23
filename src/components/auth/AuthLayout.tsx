@@ -193,7 +193,7 @@ export default function AuthLayout({
                 {Icon && (
                   <div className={cn("mb-5 flex", align === "center" ? "justify-center" : "justify-start sm:justify-center")}>
                     <div className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary shadow-xs">
-                      <Icon size={22} strokeWidth={2} aria-hidden="true" />
+                      <Icon size={22} aria-hidden="true" />
                     </div>
                   </div>
                 )}
@@ -229,7 +229,7 @@ export default function AuthLayout({
                           {description && (
                             <div
                               className={cn(
-                                "mt-2 text-[13.5px] leading-relaxed text-balance text-muted-foreground",
+                                "mt-2 text-[13px] leading-relaxed text-balance text-muted-foreground",
                                 descriptionClassName
                               )}
                             >
@@ -258,7 +258,7 @@ export default function AuthLayout({
                             {swap.description && (
                               <div
                                 className={cn(
-                                  "mt-2 text-[13.5px] leading-relaxed text-balance text-muted-foreground",
+                                  "mt-2 text-[13px] leading-relaxed text-balance text-muted-foreground",
                                   descriptionClassName
                                 )}
                               >

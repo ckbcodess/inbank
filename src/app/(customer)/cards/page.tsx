@@ -331,7 +331,7 @@ function CardsPageContent() {
               render={<Link href="/cards/request" />}
               className="shrink-0"
             >
-              <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
+              <Plus size={15} aria-hidden="true" />
               <span>Request a Card</span>
             </Button>
           )
@@ -342,7 +342,7 @@ function CardsPageContent() {
       {devState.simulation !== "clean" &&
         devState.simulation !== "all" &&
         activeSimulatedCard && (
-          <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-3 py-2 text-[12.5px]">
+          <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-3 py-2 text-[12px]">
             <div className="flex items-center gap-2 min-w-0">
               <Layers
                 size={14}
@@ -380,7 +380,7 @@ function CardsPageContent() {
         )}
 
       {devState.simulation === "all" && (
-        <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-3 py-2 text-[12.5px]">
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-3 py-2 text-[12px]">
           <div className="flex items-center gap-2 min-w-0">
             <Layers
               size={14}

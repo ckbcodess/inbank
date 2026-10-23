@@ -272,7 +272,7 @@ export function TransactionDetailSheet({
                 <h2 className="mt-4 text-[32px] sm:text-[40px] font-normal text-foreground tracking-[var(--ls-display)] leading-none tabular">
                   {formattedAmount}
                 </h2>
-                <span className="mt-4 text-[12.5px] text-muted-foreground/80 tracking-normal">
+                <span className="mt-4 text-[12px] text-muted-foreground/80 tracking-normal">
                   {dateTimeString}
                 </span>
               </div>
@@ -287,7 +287,7 @@ export function TransactionDetailSheet({
                     </div>
                   ))}
                 {detailStatus === "error" && (
-                  <div className="flex items-center justify-between gap-3 text-[13.5px]">
+                  <div className="flex items-center justify-between gap-3 text-[13px]">
                     <span className="text-muted-foreground">Couldn’t load the details of this payment.</span>
                     <button
                       type="button"
@@ -299,7 +299,7 @@ export function TransactionDetailSheet({
                   </div>
                 )}
                 {detailReady && detailFields.map((f, i) => (
-                  <div key={f.label} className="flex items-center justify-between gap-3 text-[13.5px]">
+                  <div key={f.label} className="flex items-center justify-between gap-3 text-[13px]">
                     <span className="text-muted-foreground font-normal">{f.label}</span>
                     <span
                       className={cn(
@@ -315,11 +315,11 @@ export function TransactionDetailSheet({
 
               {/* ── Section 2: Status / Transaction ID / From Account ── */}
               <div className="flex flex-col gap-3 relative py-5 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
-                <div className="flex items-center justify-between text-[13.5px]">
+                <div className="flex items-center justify-between text-[13px]">
                   <span className="text-muted-foreground font-normal">Status</span>
                   <span
                     className={cn(
-                      "inline-flex items-center px-2 py-0.5 rounded-full text-[11.5px] font-medium",
+                      "inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium",
                       isFailed
                         ? "bg-pill-destructive text-pill-destructive-text"
                         : isPending
@@ -331,7 +331,7 @@ export function TransactionDetailSheet({
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-[13.5px]">
+                <div className="flex items-center justify-between text-[13px]">
                   <span className="text-muted-foreground font-normal">Transaction ID</span>
                   {detailReady ? (
                     <button
@@ -356,7 +356,7 @@ export function TransactionDetailSheet({
                 </div>
 
                 {fromAccountLabel && (
-                  <div className="flex items-center justify-between text-[13.5px]">
+                  <div className="flex items-center justify-between text-[13px]">
                     <span className="text-muted-foreground font-normal">{fromLabel}</span>
                     <span className="text-foreground font-medium text-right">
                       {fromAccountLabel}
@@ -382,7 +382,7 @@ export function TransactionDetailSheet({
                   ) : (
                     <>
                       {narration && (
-                        <div className="flex items-center justify-between text-[13.5px]">
+                        <div className="flex items-center justify-between text-[13px]">
                           <span className="text-muted-foreground font-normal">Narration</span>
                           <span className="text-foreground font-medium text-right truncate max-w-[200px]">
                             {narration}
@@ -390,7 +390,7 @@ export function TransactionDetailSheet({
                         </div>
                       )}
                       {categoryLabel && (
-                        <div className="flex items-center justify-between text-[13.5px]">
+                        <div className="flex items-center justify-between text-[13px]">
                           <span className="text-muted-foreground font-normal">Category</span>
                           <span className="text-foreground font-medium text-right">
                             {categoryLabel}
@@ -414,19 +414,19 @@ export function TransactionDetailSheet({
                     ))
                   ) : (
                     <>
-                      <div className="flex items-center justify-between text-[13.5px]">
+                      <div className="flex items-center justify-between text-[13px]">
                         <span className="text-muted-foreground font-normal">Amount</span>
                         <span className="text-foreground font-medium tabular text-right">
                           {formattedAmount}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-[13.5px]">
+                      <div className="flex items-center justify-between text-[13px]">
                         <span className="text-muted-foreground font-normal">Fee</span>
                         <span className="text-foreground font-medium tabular text-right">
                           {formattedFee}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-[13.5px]">
+                      <div className="flex items-center justify-between text-[13px]">
                         <span className="text-muted-foreground font-normal">{totalLabel}</span>
                         <span className="text-foreground font-medium tabular text-right">
                           {formattedTotal}
@@ -453,7 +453,7 @@ export function TransactionDetailSheet({
                   <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
                     <Share2 size={20} />
                   </div>
-                  <span className="text-[12.5px] font-normal text-foreground tracking-tight">
+                  <span className="text-[12px] font-normal text-foreground tracking-tight">
                     Share
                   </span>
                 </button>
@@ -468,7 +468,7 @@ export function TransactionDetailSheet({
                   <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
                     <FileDown size={20} />
                   </div>
-                  <span className="text-[12.5px] font-normal text-foreground tracking-tight">
+                  <span className="text-[12px] font-normal text-foreground tracking-tight">
                     Save as PDF
                   </span>
                 </button>
@@ -484,7 +484,7 @@ export function TransactionDetailSheet({
                     <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
                       <RotateCw size={20} />
                     </div>
-                    <span className="text-[12.5px] font-normal text-foreground tracking-tight">
+                    <span className="text-[12px] font-normal text-foreground tracking-tight">
                       Repeat
                     </span>
                   </button>

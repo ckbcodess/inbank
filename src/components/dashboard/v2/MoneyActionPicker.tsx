@@ -93,7 +93,7 @@ export function MoneyActionPicker({
       <Link
         href={withFrom(MORE[kind].href, accountId)}
         onClick={() => onOpenChange(false)}
-        className="group -mb-1 flex items-center justify-center gap-1 rounded-xl py-2 text-[13.5px] text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+        className="group -mb-1 flex items-center justify-center gap-1 rounded-xl py-2 text-[13px] text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
       >
         {MORE[kind].label}
         <ChevronRight size={14} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />

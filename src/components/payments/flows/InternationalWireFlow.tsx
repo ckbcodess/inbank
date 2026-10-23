@@ -421,13 +421,13 @@ export function InternationalWireFlow({
                     <button
                       type="button"
                       onClick={() => setShowOptional(true)}
-                      className="cursor-pointer self-start text-[13.5px] text-muted-foreground hover:text-foreground hover:underline underline-offset-4"
+                      className="cursor-pointer self-start text-[13px] text-muted-foreground hover:text-foreground hover:underline underline-offset-4"
                     >
                       Add email or contact number
                     </button>
                   )}
                   {!emailOk && (
-                    <p className="text-[12.5px] text-warning">That email address doesn&apos;t look right.</p>
+                    <p className="text-[12px] text-warning">That email address doesn&apos;t look right.</p>
                   )}
                 </div>
               )}
@@ -489,7 +489,7 @@ export function InternationalWireFlow({
             />
 
             {/* Exchange rate display underneath fields */}
-            <div className="flex items-center justify-end px-1 pt-0.5 text-[12.5px] text-muted-foreground font-medium">
+            <div className="flex items-center justify-end px-1 pt-0.5 text-[12px] text-muted-foreground font-medium">
               <span>Rate: 1 {state.wCurrency || "USD"} = GHS {rate}</span>
             </div>
 

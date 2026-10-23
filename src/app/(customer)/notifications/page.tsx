@@ -183,12 +183,12 @@ export default function NotificationsPage() {
               const row = (
                 <>
                   <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted">
-                    <Icon size={16} strokeWidth={1.8} aria-hidden="true" className={meta.className} />
+                    <Icon size={16} aria-hidden="true" className={meta.className} />
                   </span>
 
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="flex items-center gap-2">
-                      <span className="truncate text-[13.5px] text-foreground">{n.title}</span>
+                      <span className="truncate text-[13px] text-foreground">{n.title}</span>
                       {!n.read && (
                         <span
                           className="size-1.5 rounded-full bg-primary"
@@ -196,7 +196,7 @@ export default function NotificationsPage() {
                         />
                       )}
                     </span>
-                    <span className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
+                    <span className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground">
                       {n.body}
                     </span>
                     <span className="mt-1 text-[11px] text-muted-foreground">{formatRelative(n.date)}</span>

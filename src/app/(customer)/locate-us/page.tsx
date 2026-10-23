@@ -280,7 +280,7 @@ export default function LocateUsPage() {
           />
         ) : (
           <TrueEmptyState illustration="no-results"
-            icon={<MapPin size={22} strokeWidth={1.8} />}
+            icon={<MapPin size={22} />}
             title="No locations found"
             description="Branch and ATM locations will appear here."
           />
@@ -303,7 +303,7 @@ export default function LocateUsPage() {
                       <span className="text-[15px] font-medium text-foreground tracking-tight">
                         {loc.name}
                       </span>
-                      <span className="text-[12.5px] text-muted-foreground mt-0.5">
+                      <span className="text-[12px] text-muted-foreground mt-0.5">
                         {loc.address}, {loc.city}
                       </span>
                     </div>
@@ -321,7 +321,7 @@ export default function LocateUsPage() {
                   </div>
 
                   {/* Hours & Contact */}
-                  <div className="flex flex-col gap-2 text-[12.5px] text-muted-foreground pt-1 border-t border-border/50">
+                  <div className="flex flex-col gap-2 text-[12px] text-muted-foreground pt-1 border-t border-border/50">
                     <div className="flex items-center gap-2">
                       <Clock size={14} className="shrink-0 text-muted-foreground" />
                       <span>{loc.hours}</span>
@@ -351,7 +351,7 @@ export default function LocateUsPage() {
 
                 {/* Actions Footer */}
                 <div className="flex items-center justify-between gap-2 pt-3 mt-2 border-t border-border/60">
-                  <div className="flex items-center gap-2 text-[11.5px] text-success-text">
+                  <div className="flex items-center gap-2 text-[11px] text-success-text">
                     <span className="size-1.5 rounded-full bg-success" />
                     <span>Open for Service</span>
                   </div>
@@ -360,7 +360,7 @@ export default function LocateUsPage() {
                     href={directionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-[12.5px] font-medium text-primary hover:underline"
+                    className="inline-flex items-center gap-2 text-[12px] font-medium text-primary hover:underline"
                   >
                     <Navigation size={13} />
                     <span>Get Directions</span>

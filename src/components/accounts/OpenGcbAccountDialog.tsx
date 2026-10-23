@@ -42,7 +42,7 @@ export default function OpenGcbAccountDialog({
         </DialogHeader>
 
         <DialogBody>
-          <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
             You will be redirected to{" "}
             <span className="font-medium text-foreground">
               accountopening.gcb.com.gh

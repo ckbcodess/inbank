@@ -487,7 +487,7 @@ export function Band({
   }[tone];
 
   return (
-    <section className={cn("rounded-2xl border p-3 text-[13.5px]", toneClasses)}>
+    <section className={cn("rounded-2xl border p-3 text-[13px]", toneClasses)}>
       <div className="flex items-start gap-2">
         <span className="mt-0.5 shrink-0">{icon}</span>
         <div className="min-w-0 flex-1">

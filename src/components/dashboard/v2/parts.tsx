@@ -150,7 +150,7 @@ export function CardHeader({ title, href, cta }: { title: string; href?: string;
       <span className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">{title}</span>
       {href && (
         // Taller hit area for a thumb without moving the text.
-        <Link href={href} className="-my-2 py-2 text-[12.5px] text-muted-foreground transition-colors hover:text-foreground">
+        <Link href={href} className="-my-2 py-2 text-[12px] text-muted-foreground transition-colors hover:text-foreground">
           {cta ?? t("dashboard.viewAll", "View all")}
         </Link>
       )}
@@ -171,7 +171,7 @@ export function PanelEmpty({
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 py-5 text-center sm:py-6">
       {/* Bare and thin: nothing around it, so an empty panel stays quiet. */}
-      {Icon && <Icon size={30} strokeWidth={1.3} className="mb-0.5 text-muted-foreground/70" />}
+      {Icon && <Icon size={30} className="mb-0.5 text-muted-foreground/70" />}
       <p className="text-[13px] text-muted-foreground">{text}</p>
       {action &&
         (action.href ? (
@@ -306,7 +306,7 @@ export function MoneyActions({
   }
 
   const buttonClass = cn(
-    "h-auto gap-2 px-4 py-2 text-[14px] leading-none max-sm:flex-1 max-sm:min-w-0 max-sm:h-9 max-sm:gap-1 max-sm:px-2 max-sm:py-2 max-sm:text-[11.5px] max-sm:font-semibold max-sm:tracking-tight",
+    "h-auto gap-2 px-4 py-2 text-[14px] leading-none max-sm:flex-1 max-sm:min-w-0 max-sm:h-9 max-sm:gap-1 max-sm:px-2 max-sm:py-2 max-sm:text-[11px] max-sm:font-semibold max-sm:tracking-tight",
     // The hero's glass buttons keep the variant's own top highlight; a plain shadow here would replace it.
     hero ? "rounded-xl" : "shadow-xs",
   );
@@ -322,7 +322,7 @@ export function MoneyActions({
           aria-haspopup="dialog"
           className={cn(buttonClass, hero && primary && HERO_PRIMARY_CLASS)}
         >
-          <Icon size={17} strokeWidth={1.8} className="size-[17px] shrink-0 max-sm:size-3" />
+          <Icon size={17} className="size-[17px] shrink-0 max-sm:size-3" />
           <span className="truncate">{label}</span>
         </Button>
       ))}
@@ -413,7 +413,7 @@ export function AccountSwitcher({
   const trigger = hero
     ? cn(
         buttonVariants({ variant: "glass" }),
-        "flex w-fit items-center gap-2 h-8 sm:h-9 px-3 rounded-xl text-[13.5px] sm:text-[15px] font-medium outline-none transition-[box-shadow,transform] cursor-pointer",
+        "flex w-fit items-center gap-2 h-8 sm:h-9 px-3 rounded-xl text-[13px] sm:text-[15px] font-medium outline-none transition-[box-shadow,transform] cursor-pointer",
       )
     : "-mx-2 flex w-fit items-center gap-2 rounded-lg px-2 py-2 text-[15px] leading-none text-foreground outline-none transition-colors hover:bg-muted";
   const chevron = hero ? "text-[var(--hero-foreground)]" : "text-muted-foreground";
@@ -631,12 +631,12 @@ export function UpcomingList({ items, showAmounts }: { items: UpcomingPayment[];
       {items.map((p) => (
         <li key={p.id} className="flex items-center gap-3 py-2 sm:py-2 rounded-xl px-2 -mx-2 transition-colors hover:bg-item-hover">
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="truncate text-[13.5px] font-medium text-foreground">{p.payee}</span>
+            <span className="truncate text-[13px] font-medium text-foreground">{p.payee}</span>
             <span className="text-[12px] text-muted-foreground tabular">
               {dayLabel(p.date)} · {p.frequencyLabel}
             </span>
           </span>
-          <span className="shrink-0 tabular text-[13.5px] font-medium text-foreground">
+          <span className="shrink-0 tabular text-[13px] font-medium text-foreground">
             − {formatMoney(p.amount, p.currency, showAmounts)}
           </span>
         </li>
@@ -726,7 +726,7 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
             >
               <PayeeAvatar name={p.name} size="sm" />
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="truncate text-[13.5px] font-medium text-foreground">
+                <span className="truncate text-[13px] font-medium text-foreground">
                   {p.name}
                 </span>
                 <span className="truncate text-[12px] text-muted-foreground">
@@ -897,7 +897,7 @@ export function AnalyticsCard({
           <h2 className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">
             {t("dashboard.mySpends", "My Spends")}
           </h2>
-          <span className="text-[12.5px] text-muted-foreground">{t("dashboard.details", "Details")}</span>
+          <span className="text-[12px] text-muted-foreground">{t("dashboard.details", "Details")}</span>
         </div>
         <div className="relative my-auto flex flex-col items-center justify-center">
           <div className="relative aspect-[400/225] w-full max-w-[280px]">

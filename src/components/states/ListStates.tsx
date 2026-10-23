@@ -75,9 +75,9 @@ export function FilteredEmptyState({
   return (
     <div className="flex flex-col items-center justify-center px-3 py-12 sm:py-12 text-center">
       <div className="mb-2 text-muted-foreground/60 flex items-center justify-center">
-        <StateIllustration id="no-results" fallback={<SearchX size={22} strokeWidth={1.5} />} />
+        <StateIllustration id="no-results" fallback={<SearchX size={22} />} />
       </div>
-      <p className="text-[14.5px] font-medium text-foreground">No results found</p>
+      <p className="text-[14px] font-medium text-foreground">No results found</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
       <Button variant="outline" size="sm" className="mt-3 h-7 px-2 text-[13px]" onClick={onReset}>
         <RefreshCw size={13} />
@@ -99,9 +99,9 @@ export function ListErrorState({
   return (
     <div className="flex flex-col items-center justify-center px-3 py-12 sm:py-12 text-center">
       <div className="mb-2 text-destructive/80 flex items-center justify-center">
-        <StateIllustration id="load-error" fallback={<AlertCircle size={22} strokeWidth={1.5} />} />
+        <StateIllustration id="load-error" fallback={<AlertCircle size={22} />} />
       </div>
-      <p className="text-[14.5px] font-medium text-foreground">Couldn&apos;t load records</p>
+      <p className="text-[14px] font-medium text-foreground">Couldn&apos;t load records</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
       <Button variant="outline" size="sm" className="mt-3 h-7 px-2 text-[13px]" onClick={onRetry}>
         <RefreshCw size={13} />

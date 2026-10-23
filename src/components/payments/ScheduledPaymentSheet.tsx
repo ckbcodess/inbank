@@ -31,7 +31,7 @@ function Facts({ rows, divided }: { rows: Array<[string, string]>; divided?: boo
   return (
     <div className={cn("flex flex-col gap-3 py-5", divided && DASHED)}>
       {rows.map(([label, value]) => (
-        <div key={label} className="flex items-center justify-between gap-3 text-[13.5px]">
+        <div key={label} className="flex items-center justify-between gap-3 text-[13px]">
           <span className="text-muted-foreground">{label}</span>
           <span className="tabular min-w-0 truncate text-right font-medium text-foreground">{value}</span>
         </div>
@@ -115,7 +115,7 @@ export function ScheduledPaymentSheet({
                 >
                   {formatMoney(si.amount, si.currency, showAmounts)}
                 </span>
-                <SheetDescription className="mt-4 text-[12.5px] text-muted-foreground/80">
+                <SheetDescription className="mt-4 text-[12px] text-muted-foreground/80">
                   {paused ? "Paused. Nothing will be paid until you resume." : cadencePhrase(si)}
                 </SheetDescription>
               </div>
@@ -136,7 +136,7 @@ export function ScheduledPaymentSheet({
                 <span className="flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xs transition-transform duration-fast group-hover:brightness-95 group-active:scale-95">
                   {paused ? <Play size={20} aria-hidden="true" /> : <Pause size={20} aria-hidden="true" />}
                 </span>
-                <span className="text-[12.5px] text-foreground">{paused ? "Resume" : "Pause"}</span>
+                <span className="text-[12px] text-foreground">{paused ? "Resume" : "Pause"}</span>
               </button>
               <button
                 type="button"
@@ -146,7 +146,7 @@ export function ScheduledPaymentSheet({
                 <span className="flex size-11 items-center justify-center rounded-full bg-destructive text-white shadow-xs transition-transform duration-fast group-hover:brightness-95 group-active:scale-95">
                   <Trash2 size={20} aria-hidden="true" />
                 </span>
-                <span className="text-[12.5px] text-foreground">Cancel</span>
+                <span className="text-[12px] text-foreground">Cancel</span>
               </button>
             </div>
             <p className="text-center text-[12px] text-muted-foreground">This pays automatically, and you can pause or cancel it anytime.</p>
@@ -160,7 +160,7 @@ export function ScheduledPaymentSheet({
             <DialogTitle>Cancel this scheduled payment?</DialogTitle>
           </DialogHeader>
           <DialogBody className="gap-3">
-            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
               &quot;{si.beneficiary}&quot; will stop running. You can set it up again anytime.
             </p>
             <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-2 text-[12.5px] text-muted-foreground">

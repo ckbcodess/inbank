@@ -265,9 +265,9 @@ export function DotLegend({
       {slices.map((s, i) => (
         <li key={`${s.label}-${i}`} className="flex items-center gap-2 py-3">
           <span className="size-2 shrink-0 rounded-full" style={{ background: s.color }} aria-hidden="true" />
-          <span className="flex-1 truncate text-[13.5px] text-foreground">{s.label}</span>
+          <span className="flex-1 truncate text-[13px] text-foreground">{s.label}</span>
           {!compact && <span className="tabular text-[12px] text-muted-foreground">{pct(s.share)}</span>}
-          <span className="tabular text-[13.5px] text-foreground">
+          <span className="tabular text-[13px] text-foreground">
             {fmtGHS(s.amount, showAmounts, { compact })}
           </span>
         </li>
@@ -485,8 +485,8 @@ export function AttentionBand({ items }: { items: AttentionItem[] }) {
               <span className={cn("size-1.5 shrink-0 rounded-full", TONE_DOT[it.tone])} aria-hidden="true" />
               {/* Title over detail on a phone; one line from sm up. */}
               <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:block">
-                <span className="text-[13.5px] text-foreground">{it.title}</span>
-                <span className="text-[12.5px] text-muted-foreground sm:ml-2">{it.detail}</span>
+                <span className="text-[13px] text-foreground">{it.title}</span>
+                <span className="text-[12px] text-muted-foreground sm:ml-2">{it.detail}</span>
               </span>
               <ChevronRight
                 size={15}
@@ -518,7 +518,7 @@ export function SectionHeader({
       {href && (
         <Link
           href={href}
-          className="text-[12.5px] text-muted-foreground transition-colors hover:text-foreground"
+          className="text-[12px] text-muted-foreground transition-colors hover:text-foreground"
         >
           {cta}
         </Link>
@@ -572,13 +572,13 @@ export function RecentTransactions({
               >
                 <TransactionMark transaction={t} />
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <span className="truncate text-[13.5px] font-medium text-foreground">
+                  <span className="truncate text-[13px] font-medium text-foreground">
                     {t.counterparty || t.description}
                   </span>
                   <span className="text-[12px] text-muted-foreground">{getTransactionType(t)} · <span className="tabular">{friendlyDate(t.date)}</span></span>
                 </span>
                 <span className="flex shrink-0 flex-col items-end gap-0.5">
-                  <span className={cn("tabular text-[13.5px]", amountStyling(t).colorClass)}>
+                  <span className={cn("tabular text-[13px]", amountStyling(t).colorClass)}>
                     {amountStyling(t).prefix}
                     {fmtGHS(Math.abs(t.amount), showAmounts)}
                   </span>
@@ -678,7 +678,7 @@ export function CardsMini({
               <NetworkLogo scheme={c.scheme} className="h-2" />
             </span>
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span className="truncate text-[13.5px] text-foreground">{c.name}</span>
+              <span className="truncate text-[13px] text-foreground">{c.name}</span>
               <span className="text-[12px] text-muted-foreground tabular">
                 {c.type} · {c.maskedNumber}
               </span>
@@ -749,7 +749,7 @@ export function FxRatesMini() {
       <ul className="flex flex-col">
         {rows.map((f) => (
           <li key={f.pair} className="flex items-center justify-between gap-3 py-2">
-            <span className="text-[13.5px] text-foreground tabular">{f.base} / {f.quote}</span>
+            <span className="text-[13px] text-foreground tabular">{f.base} / {f.quote}</span>
             <span className="flex items-baseline gap-2">
               <span
                 className={cn(
@@ -760,14 +760,14 @@ export function FxRatesMini() {
                 {f.changePct > 0 ? "+" : f.changePct < 0 ? "−" : ""}
                 {Math.abs(f.changePct).toFixed(2)}%
               </span>
-              <span className="w-[64px] text-right text-[13.5px] text-foreground tabular">{fmtRate(f.mid)}</span>
+              <span className="w-[64px] text-right text-[13px] text-foreground tabular">{fmtRate(f.mid)}</span>
             </span>
           </li>
         ))}
       </ul>
       <div className="flex items-center justify-between gap-3">
-        <span className="text-[11.5px] text-muted-foreground tabular">Mid-rate · published {published}</span>
-        <Link href="/fx-rates" className="text-[12.5px] text-muted-foreground transition-colors hover:text-foreground">
+        <span className="text-[11px] text-muted-foreground tabular">Mid-rate · published {published}</span>
+        <Link href="/fx-rates" className="text-[12px] text-muted-foreground transition-colors hover:text-foreground">
           {t("dashboard.allRates", "All rates")}
         </Link>
       </div>
