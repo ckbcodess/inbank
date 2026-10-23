@@ -20,6 +20,7 @@ export function transactionRail(t: Transaction): string {
     case "cardless":
     case "bulk":
     case "trade":
+    case "loan":
       return t.paymentMethod;
     default:
       // GIP, ACH, RTGS and any other bank transfer
@@ -49,6 +50,8 @@ export function getTransactionType(t: Transaction): string {
       return "Between My Accounts";
     case "term-deposit":
       return "Term Deposit";
+    case "loan":
+      return incoming ? "Loan Paid In" : "Loan Repayment";
     case "card":
       return "Card Payment";
     case "bill":

@@ -13,6 +13,7 @@ import {
   Wallet,
   Wifi,
   FileText,
+  HandCoins,
 } from "lucide-react";
 import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import Image from "next/image";
@@ -51,6 +52,8 @@ function iconFor(t: Pick<Transaction, "paymentMethod">): IconType {
       return FileText;
     case "term-deposit":
       return PiggyBank;
+    case "loan":
+      return HandCoins;
     default:
       // GIP, ACH, RTGS and any plain bank transfer
       return Landmark;

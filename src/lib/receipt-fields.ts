@@ -125,6 +125,11 @@ export function receiptFields(t: Transaction): ReceiptField[] {
       add("Deposit", name);
       break;
     }
+    case "loan": {
+      add("Loan", name);
+      add("Reference", acct);
+      break;
+    }
     default: {
       // A bank transfer (GIP, ACH, RTGS) or anything without a more specific kind
       add(who, name);

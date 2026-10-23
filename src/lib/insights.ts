@@ -340,9 +340,11 @@ function buildLedger(kind: ProfileKind): LedgerEntry[] {
   );
 
   for (const t of curated) {
-    // Money moved into or out of a term deposit is saving, not income or spend.
+    // Money moved into or out of a term deposit is saving, and borrowing or repaying an advance is a loan: neither is
+    // income or spend.
     const internal =
       t.paymentMethod === "term-deposit" ||
+      t.paymentMethod === "loan" ||
       ownAccounts.has(t.counterparty.toLowerCase()) ||
       ownAccounts.has(t.counterpartyAccount.replace(/\s/g, ""));
     entries.push({

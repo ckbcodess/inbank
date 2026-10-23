@@ -274,6 +274,20 @@ export default function HeaderBreadcrumbs() {
     }
   }
 
+  // Loans: an advance is "Advance", and its id is never shown. "salary-advance" is the request form.
+  if (segments[0] === "loans" && segments[1] && segments[1] !== "salary-advance") {
+    const repaying = segments[2] === "repay";
+    return (
+      <BreadcrumbView
+        list={[
+          { label: "Loans", href: "/loans", isLast: false },
+          { label: "Advance", href: `/loans/${segments[1]}`, isLast: !repaying },
+          ...(repaying ? [{ label: "Repay Now", href: pathname, isLast: true }] : []),
+        ]}
+      />
+    );
+  }
+
   const crumbs: Crumb[] = [];
   let currentPath = "";
 

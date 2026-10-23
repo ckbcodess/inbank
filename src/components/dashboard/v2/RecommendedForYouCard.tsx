@@ -15,6 +15,9 @@ import { cn } from "@/lib/utils";
 import { Bone } from "@/components/states/PageSkeletons";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { DURATION, EASE, SPRING } from "@/lib/motion";
+import { formatMoney } from "@/lib/mock-data";
+import { useLoansHydrated, useMyLoans } from "@/lib/loans";
+import { useTreasuryAccounts } from "@/lib/treasury";
 
 interface Recommendation {
   id: string;
@@ -42,13 +45,7 @@ const RECOMMENDATIONS: Recommendation[] = [
     ctaLabel: "Open deposit",
     ctaHref: "/invest/term-deposits/new",
   },
-  {
-    id: "salary-advance",
-    headline: "You qualify for a GHS 20,000 Salary Advance",
-    reason: "Your salary lands here monthly.",
-    ctaLabel: "Request advance",
-    ctaHref: "/loans/salary-advance",
-  },
+  // The salary advance is added from the customer's real offer (see `useRecommendations`), never a fixed figure.
   {
     id: "wealth-goal",
     headline: "You could save GHS 600 in a year",
@@ -144,6 +141,30 @@ function Chevrons({ i, total, onChange }: { i: number; total: number; onChange: 
   );
 }
 
+/**
+ * The list for this customer. The salary advance only appears when they actually qualify, hold no advance, and the
+ * account their income lands in isn't empty (CONSTITUTION §1: never surface a loan offer as a balance hits zero). Its
+ * figure is their real limit.
+ */
+function useRecommendations(): Recommendation[] {
+  const hydrated = useLoansHydrated();
+  const { income, open, limit, product } = useMyLoans();
+  const accounts = useTreasuryAccounts();
+  const incomeAccount = accounts.find((a) => a.id === income?.accountId);
+  const offer: Recommendation | null =
+    hydrated && income && product && !open && limit > 0 && (incomeAccount?.available ?? 0) > 0
+      ? {
+          id: "salary-advance",
+          headline: `You qualify for a ${formatMoney(limit, "GHS", true)} ${product.name}`,
+          reason: "It’s repaid from your next credit.",
+          ctaLabel: "Request advance",
+          ctaHref: "/loans/salary-advance",
+        }
+      : null;
+  // Bills the customer already pays come first, then the bank's offers (credit last but one, as before).
+  return offer ? [...RECOMMENDATIONS.slice(0, 2), offer, ...RECOMMENDATIONS.slice(2)] : RECOMMENDATIONS;
+}
+
 export function RecommendedForYouCard({
   loading = false,
   className,
@@ -152,7 +173,9 @@ export function RecommendedForYouCard({
   className?: string;
 }) {
   const { t } = useTranslation();
-  const [index, setIndex] = useState(0);
+  const recommendations = useRecommendations();
+  const [picked, setIndex] = useState(0);
+  const index = Math.min(picked, recommendations.length - 1);
 
   const shell = cn(
     "group/rec relative flex h-[260px] flex-col gap-2 overflow-hidden rounded-2xl border border-border bg-panel p-3 sm:p-4",
@@ -172,7 +195,7 @@ export function RecommendedForYouCard({
     );
   }
 
-  const r = RECOMMENDATIONS[index];
+  const r = recommendations[index];
   const words = r.headline.split(" ");
   const reasonAt = words.length * WORD_STEP + 0.05;
 
@@ -184,7 +207,7 @@ export function RecommendedForYouCard({
         <span className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">
           {t("dashboard.recommendedForYou", "Recommended for you")}
         </span>
-        <Chevrons i={index} total={RECOMMENDATIONS.length} onChange={setIndex} />
+        <Chevrons i={index} total={recommendations.length} onChange={setIndex} />
       </div>
 
       {/* The old text fades out, then the new one arrives word by word, then the reason, then the link. */}
