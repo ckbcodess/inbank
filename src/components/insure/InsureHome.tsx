@@ -5,36 +5,86 @@
  *
  *  - Your Policies: every policy the customer holds, across plans, with anything that needs them (a missed premium, a
  *    medical assessment) said on the row. Only there when they hold one.
- *  - Plans: the four plans on offer, each opening its own page to look at before starting. Plans the bank hasn't
- *    opened yet are listed quietly as "Coming soon", so the customer knows they exist rather than wondering.
+ *  - Plans: the four plans on offer as cards. A card opens the plan in a side panel over the list, so the customer can
+ *    look at one plan after another without leaving the page.
+ *    Plans the bank hasn't opened yet are left off for now.
+ *
+ * `/insure/plans/[id]` renders this same page with that plan's panel already open, so a link, a refresh and Back from
+ * the buy flow all land where the customer was.
  *
  * Browsing never needs an insurance profile. Without one, a line and one button explain that buying a plan does, and
  * that it is done once.
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { ListCard } from "@/components/ui/list-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ListErrorState } from "@/components/states/ListStates";
 import { InvestRowBones, ListPageSkeleton } from "@/components/states/PageSkeletons";
-import { InsureDevTools, PlanIcon, PolicyRow } from "@/components/insure/parts";
+import type { DevStateGroup } from "@/components/providers/DevStateProvider";
+import { InsureDevTools, PolicyRow } from "@/components/insure/parts";
+import { PlanCard } from "@/components/insure/PlanCards";
+import { PlanSheet } from "@/components/insure/PlanSheet";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
-import { INSURANCE_PLANS } from "@/lib/insurance-plans";
+import { INSURANCE_PLANS, INSURE_HOME, type PlanId } from "@/lib/insurance-plans";
 import { useInsuranceHydrated, useMyInsurance } from "@/lib/insurance";
+import { useInsureCards, type PlanCardLayout, type PlanCardLook } from "@/lib/insure-cards-store";
+import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
+import { cn } from "@/lib/utils";
 
 const STATES = ["populated", "loading", "error"] as const;
 type PageState = (typeof STATES)[number];
 const STATE_LABELS: Record<PageState, string> = { populated: "Loaded", loading: "Loading", error: "Error" };
 
-export function InsureHome() {
+const CARD_LOOKS = [
+  { id: "plain", label: "Plain" },
+  { id: "colour", label: "Coloured" },
+  { id: "art", label: "With art" },
+  { id: "price", label: "With price" },
+];
+const CARD_LAYOUTS = [
+  { id: "grid", label: "Two columns" },
+  { id: "single", label: "One column" },
+];
+
+export function InsureHome({ openPlanId }: { openPlanId?: PlanId }) {
+  const router = useRouter();
   const hydrated = useInsuranceHydrated();
   const { profile, policies } = useMyInsurance();
   const { showAmounts } = useAmountVisibility();
   const [state, setState] = useState<PageState>("populated");
+  const [openId, setOpenId] = useState<PlanId | null>(openPlanId ?? null);
+  // The panel keeps showing the plan it just had while it slides away.
+  const [shownId, setShownId] = useState<PlanId | null>(openPlanId ?? null);
+
+  // Scaffolding: production builds always show the plain two-column cards.
+  const storedLook = useInsureCards((s) => s.look);
+  const storedLayout = useInsureCards((s) => s.layout);
+  const setLook = useInsureCards((s) => s.setLook);
+  const setLayout = useInsureCards((s) => s.setLayout);
+  const look: PlanCardLook = SHOW_DEMO_TOOLS ? storedLook : "plain";
+  const layout: PlanCardLayout = SHOW_DEMO_TOOLS ? storedLayout : "grid";
+  const cardGroups = useMemo<DevStateGroup[]>(
+    () => [
+      { label: "Plan cards", states: CARD_LOOKS, value: storedLook, onChange: (v) => setLook(v as PlanCardLook) },
+      { label: "Card layout", states: CARD_LAYOUTS, value: storedLayout, onChange: (v) => setLayout(v as PlanCardLayout) },
+    ],
+    [storedLook, storedLayout, setLook, setLayout],
+  );
+
+  const openPlan = (id: PlanId) => {
+    setShownId(id);
+    setOpenId(id);
+  };
+  const closePlan = () => {
+    setOpenId(null);
+    // Opened from a plan's own link: go back to the plain list address.
+    if (openPlanId) router.replace(INSURE_HOME);
+  };
 
   if (!hydrated) return <ListPageSkeleton rows={4} toolbar={false} />;
 
@@ -69,8 +119,8 @@ export function InsureHome() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader title="Insure" />
-      <InsureDevTools states={STATES} value={state} onChange={(v) => setState(v as PageState)} labels={STATE_LABELS} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-10">
+      <InsureDevTools states={STATES} value={state} onChange={(v) => setState(v as PageState)} labels={STATE_LABELS} extraGroups={cardGroups} />
+      <div className="mx-auto flex w-full max-w-[720px] flex-col gap-10">
         {!profile && (
           <section className="flex flex-col gap-3 px-1">
             <h2 className="text-[17px] font-medium tracking-[var(--ls-tight)] text-foreground">Insurance with your bank account</h2>
@@ -89,40 +139,15 @@ export function InsureHome() {
 
         <section className="flex flex-col gap-3">
           <SectionHeading title="Plans" />
-          <ListCard>
-            {INSURANCE_PLANS.map((plan) => {
-              const inner = (
-                <>
-                  <PlanIcon planId={plan.id} muted={!plan.available} />
-                  <span className="flex min-w-0 flex-1 flex-col">
-                    <span className={plan.available ? "truncate text-[14px] text-foreground" : "truncate text-[14px] text-muted-foreground"}>{plan.name}</span>
-                    {plan.line && <span className="truncate text-[12px] text-muted-foreground">{plan.line}</span>}
-                  </span>
-                  {plan.available ? (
-                    <ChevronRight size={15} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
-                  ) : (
-                    <span className="shrink-0 text-[12px] text-muted-foreground">Coming soon</span>
-                  )}
-                </>
-              );
-              return (
-                <li key={plan.id}>
-                  {plan.available ? (
-                    <Link
-                      href={`/insure/plans/${plan.id}`}
-                      className="flex items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
-                    >
-                      {inner}
-                    </Link>
-                  ) : (
-                    <div className="flex items-center gap-3 rounded-xl px-2 py-3 sm:px-3">{inner}</div>
-                  )}
-                </li>
-              );
-            })}
-          </ListCard>
+          <div className={cn("grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
+            {INSURANCE_PLANS.filter((p) => p.available).map((plan) => (
+              <PlanCard key={plan.id} plan={plan} look={look} layout={layout} onOpen={() => openPlan(plan.id)} />
+            ))}
+          </div>
         </section>
       </div>
+
+      {shownId && <PlanSheet planId={shownId} open={openId !== null} onClose={closePlan} />}
     </div>
   );
 }

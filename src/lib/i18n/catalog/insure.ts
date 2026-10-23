@@ -9,6 +9,7 @@ const insure: Entry[] = [
   ["Insure", "Assurance", "Seguros", "保险"],
   ["To access the insurance plans below, we need to create your insurance profile. You only do it once.", "Pour accéder aux plans d’assurance ci-dessous, nous devons créer votre profil d’assurance. Vous ne le faites qu’une fois.", "Para acceder a los planes de seguro de abajo, debemos crear tu perfil de seguros. Solo lo haces una vez.", "要使用下列保险计划，我们需要先为您创建保险档案，只需创建一次。"],
   ["Coming soon", "Bientôt disponible", "Próximamente", "即将推出"],
+  ["a month", "par mois", "al mes", "每月"],
   ["Create Profile", "Créer le profil", "Crear perfil", "创建档案"],
   ["Child Education Plan", "Plan d’éducation de l’enfant", "Plan de educación infantil", "子女教育计划"],
   ["HomeCall Plan", "Plan HomeCall", "Plan HomeCall", "HomeCall 计划"],

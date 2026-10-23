@@ -41,6 +41,54 @@ export function PlanIcon({ planId, muted = false }: { planId: PlanId; muted?: bo
   );
 }
 
+/**
+ * Each plan has a colour of its own from the categorical set, so a plan is recognisable on the cards and in its panel.
+ * None is red: red means an error here, and a protection plan is not one.
+ */
+const PLAN_TONES: Partial<Record<PlanId, string>> = {
+  "child-education": "var(--cat-1)",
+  homecall: "var(--cat-2)",
+  wealthmaster: "var(--cat-4)",
+  "ultimate-protection": "var(--cat-5)",
+};
+
+/** The CSS variable a card or panel sets as `--plan`; plans without a colour yet fall back to the muted fill. */
+export const planToneStyle = (planId: PlanId) => ({ "--plan": PLAN_TONES[planId] ?? "var(--muted)" }) as React.CSSProperties;
+
+/** The plan's icon on a disc of its colour. Dark glyph, as on any filled amber button. */
+export function PlanDisc({ planId, size = 48, onColour = false, className }: { planId: PlanId; size?: number; onColour?: boolean; className?: string }) {
+  const Icon = PLAN_ICONS[planId];
+  return (
+    <span
+      style={{ ...planToneStyle(planId), width: size, height: size }}
+      className={cn(
+        "flex shrink-0 items-center justify-center rounded-full text-primary-foreground",
+        // On a card already filled with the plan's colour the disc is a quiet circle of the dark glyph colour.
+        onColour ? "bg-primary-foreground/12" : "bg-[var(--plan)]",
+        className,
+      )}
+    >
+      <Icon size={Math.round(size * 0.42)} strokeWidth={1.8} aria-hidden="true" />
+    </span>
+  );
+}
+
+/**
+ * The picture slot on an "art" card. Until StarLife's illustrations arrive it is the plan's icon, large, on a tint of its
+ * colour. Swap the contents here and every card follows.
+ */
+export function PlanArt({ planId, className }: { planId: PlanId; className?: string }) {
+  const Icon = PLAN_ICONS[planId];
+  return (
+    <div
+      style={planToneStyle(planId)}
+      className={cn("flex items-center justify-center bg-[color-mix(in_srgb,var(--plan)_28%,var(--tile))] text-foreground", className)}
+    >
+      <Icon size={56} strokeWidth={1.4} aria-hidden="true" />
+    </div>
+  );
+}
+
 /** "GHS 500.00 a month" or "GHS 6,000.00 a year": one whole phrase per frequency, so each translates on its own. */
 export function perPeriod(amount: number, frequency: Frequency, showAmounts = true) {
   const m = formatMoney(amount, "GHS", showAmounts);
@@ -171,12 +219,15 @@ export function InsureDevTools({
   value,
   onChange,
   labels,
+  extraGroups,
 }: {
   /** A page with a list passes its own list states (stable references). Without them the primary switch is the profile. */
   states?: readonly string[];
   value?: string;
   onChange?: (next: string) => void;
   labels?: Record<string, string>;
+  /** Switches that belong to one page (memoised by the caller), shown after the customer switches. */
+  extraGroups?: DevStateGroup[];
 }) {
   const { ownerId, profile, policies } = useMyInsurance();
   const saveProfile = useInsurance((s) => s.saveProfile);
@@ -243,8 +294,9 @@ export function InsureDevTools({
         value: failRequests ? "fail" : "succeed",
         onChange: (v) => setFailRequests(v === "fail"),
       },
+      ...(extraGroups ?? []),
     ];
-  }, [ownerId, accountId, profile, count, inArrears, failRequests, saveProfile, clearProfile, seedPolicies, setFailRequests]);
+  }, [ownerId, accountId, profile, count, inArrears, failRequests, saveProfile, clearProfile, seedPolicies, setFailRequests, extraGroups]);
 
   if (states && onChange && value !== undefined) {
     return <StateSwitcher section="Insure" states={states} value={value} onChange={onChange} labels={labels} groups={groups} />;

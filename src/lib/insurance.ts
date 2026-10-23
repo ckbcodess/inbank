@@ -22,11 +22,14 @@ import { useSession } from "@/lib/session-store";
 import { roundMoney, sumMoney } from "@/lib/money";
 import { addMonths, daysBetween, MOCK_TODAY } from "@/lib/treasury";
 import {
+  COVER_TIERS,
   DEDUCTION_WINDOWS,
   findTier,
   MEMBER_RULES,
+  MIN_MONTHLY_PREMIUM,
   NON_MEDICAL_LIMIT,
   PROTECTION_RATE_PER_1000,
+  PROTECTION_SUMS,
   SAVINGS_GROWTH,
   type ClaimTypeId,
   type CoverTierId,
@@ -372,6 +375,17 @@ export function savingsAnnualFor(sumAssured: number, years: number, increment: n
 export function protectionAnnual(sumAssured: number, age: number, years: number): number {
   const loading = (1 + Math.max(0, age - 30) * 0.04) * (1 + years * 0.01);
   return roundMoney((sumAssured / 1000) * PROTECTION_RATE_PER_1000 * loading);
+}
+
+/**
+ * The least a plan costs a month, for the plan cards: the cheapest cover level, for a 30-year-old on the shortest term.
+ * It is a "from" price, so the quote on the buy screen (which uses the customer's own age) can only be higher.
+ */
+export function planFromMonthly(plan: { kind?: "savings" | "protection" | "funeral"; term?: { min: number } }): number | null {
+  if (plan.kind === "savings") return MIN_MONTHLY_PREMIUM;
+  if (plan.kind === "funeral") return COVER_TIERS[0].monthly;
+  if (plan.kind === "protection") return roundMoney(protectionAnnual(PROTECTION_SUMS[0], 30, plan.term?.min ?? 8) / 12);
+  return null;
 }
 
 /** HomeCall: the monthly premium for one person at a cover level. */
