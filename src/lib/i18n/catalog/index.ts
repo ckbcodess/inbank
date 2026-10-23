@@ -25,6 +25,7 @@ import recent from "./recent";
 import invest from "./invest";
 import settings from "./settings";
 import schedule from "./schedule";
+import insure from "./insure";
 
 const ALL: Entry[][] = [
   common,
@@ -42,6 +43,7 @@ const ALL: Entry[][] = [
   invest,
   settings,
   schedule,
+  insure,
 ];
 
 const COLUMN: Record<Exclude<SupportedLanguage, "en">, 1 | 2 | 3> = { fr: 1, es: 2, zh: 3 };

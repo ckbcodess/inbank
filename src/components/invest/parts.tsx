@@ -54,8 +54,8 @@ export function SecurityIcon({ kind, muted = false }: { kind: SecurityKind; mute
 export function FactsPanel({ rows }: { rows: Array<[string, React.ReactNode]> }) {
   return (
     <div className="flex flex-col rounded-2xl border border-border bg-card p-2 text-[14px]">
-      {rows.map(([label, value]) => (
-        <div key={label} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
+      {rows.map(([label, value], i) => (
+        <div key={`${i}-${label}`} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
           <span className="shrink-0 text-muted-foreground">{label}</span>
           <span className="tabular min-w-0 text-right text-foreground">{value}</span>
         </div>

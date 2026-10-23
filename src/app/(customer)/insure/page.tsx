@@ -1,5 +1,5 @@
-import { WorkInProgress } from "@/components/states/WorkInProgress";
+import { InsureHome } from "@/components/insure/InsureHome";
 
 export default function InsurePage() {
-  return <WorkInProgress title="Insure" />;
+  return <InsureHome />;
 }

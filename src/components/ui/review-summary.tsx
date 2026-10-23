@@ -29,8 +29,9 @@ export function ReviewSummary({
 }) {
   return (
     <ListCard as="div">
-      {details.map((row) => (
-        <Row key={row.label} row={row} />
+      {/* A label can repeat (two beneficiaries, two children covered), so rows are keyed by position too. */}
+      {details.map((row, i) => (
+        <Row key={`${i}-${row.label}`} row={row} />
       ))}
 
       {/* One box: what it is above, what it costs below, parted by a dashed line */}
@@ -39,8 +40,8 @@ export function ReviewSummary({
         className="mx-3 my-2 h-px bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]"
       />
 
-      {breakdown.map((row) => (
-        <Row key={row.label} row={row} />
+      {breakdown.map((row, i) => (
+        <Row key={`${i}-${row.label}`} row={row} />
       ))}
       <div className="flex items-baseline justify-between gap-4 px-3 py-3">
         <span className="text-[16px] font-medium text-foreground">{totalLabel}</span>

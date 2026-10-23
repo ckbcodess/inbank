@@ -185,6 +185,19 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-10-23
+- Decision: Insure is built from the Bancassurance Figma (section 6253:3), one feature per row: profile, buy (4 plans), policy, statement, beneficiaries, pay outstanding, cancel, claims. Code: `components/insure/`, `lib/insurance.ts` (store, pricing math, Dev Mode seeds), `lib/insurance-plans.ts` (every plan fact, server-safe). Dev Mode: Insure presets, profile, policies, arrears, failing requests.
+- Decision: buying a policy takes nothing that day. The first premium is deducted in the month and window chosen (Mid-Month 12th–16th / End of Month 26th–31st), and the review says so. Paying arrears is the only Insure action that posts to the ledger now (Bills rail, Bills category, policy number as reference).
+- Decision: departures from the Figma. Code instead of PIN everywhere. No Calculate button (the premium appears once inputs are valid). From Account sits at the top of the quote. One policies list on Insure, not a "View & Manage Policies" list per plan. Edit and Delete beneficiaries are one editor (removal is an Undo toast). Pay Outstanding only shows when something is owed. The "have these ready" claim screen is a list at the top of the claim form. Cancel has no code.
+- Decision: a trustee is asked for only when a beneficiary is under 18, one per policy, on any plan (Figma shows it on Child Education, and "Trustee 2" per child). Beneficiaries and trustees are kept per customer (`people` in the insurance store) and offered as Saved on the next policy.
+- Decision: claim types that can't succeed aren't offered: Maturity before maturity, Surrender Value and Policy Loan before the policy has a cash value, Death without a covered member (a policyholder's own death is claimed by beneficiaries, at a branch). Child Education's Figma "Death" type is replaced by "School Fees" (its school and class fields).
+- Question: every price and rule in `insurance-plans.ts` is a placeholder for StarLife: tier premiums, the savings growth (25%), the protection rate, member price factors, the GHS 500,000 non-medical limit, the 90-day waiting period, the surrender rule (nothing in 2 years, then 70% rising to 95%), the 80% loan limit, and what Retrenchment and Policy Cashback pay.
+- Question: what happens when a customer answers Yes to being a politically exposed person, or declares a medical condition? The profile records it; nothing else changes yet.
+- Gap: Savings Protection, Vehicle, Travel and Personal Accident are listed as Coming soon; the Figma has no flows for them.
+- Gap: seeded premium payments live on the policy, not in the account ledger, so they don't show in Transactions. Only arrears paid in the app do.
+- Gap: cancellation can't be withdrawn once requested, and claims stay "Under review" (no approved, paid or declined states yet). A declined claim will need its reason and a way back (CONSTITUTION §1).
+- Reuse: `BeneficiaryEditor` (shares to 100%, saved people, minors and trustees) fits any future nominee flow, such as pension or a term deposit nominee.
+
 ### 2026-10-21
 - Decision: the transaction sheet shows what the row knows at once and fills the rest through `useTransactionDetail` (lib/transaction-detail.ts), with a skeleton and a retry. In the prototype it only simulates the call; swap in `GET /transactions/:id`. Dev switches on the list (detail instant/slow/fail) live in lib/transaction-dev.ts. A 5,000-row stress switch was tried and removed; it held up in the browser.
 - Decision: the sheet leaves out rows with no data instead of inventing them (time, narration, category, account, fee). A missing fee is unknown, not zero, so the Amount / Fee / Total block shows only when `fee` is recorded.

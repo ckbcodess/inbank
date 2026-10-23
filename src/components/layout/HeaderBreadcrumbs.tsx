@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { findOffer } from "@/components/invest/offers";
+import { findPlan } from "@/lib/insurance-plans";
 
 /** The full name of each Send & Pay flow, as the person knows it, never a clipped form of it. */
 const RAIL_BREADCRUMB_LABELS: Record<string, string> = {
@@ -75,6 +76,15 @@ const HOLDING_SUB_LABELS: Record<string, string> = {
   advice: "Advice",
   maturity: "When It Matures",
   rediscount: "Rediscount",
+};
+
+/** The pages under one insurance policy. The policy itself is "Policy". */
+const POLICY_SUB_LABELS: Record<string, string> = {
+  beneficiaries: "Update Beneficiaries",
+  statement: "Statement",
+  pay: "Pay Outstanding",
+  cancel: "Cancel Policy",
+  claim: "File a Claim",
 };
 
 /** What a record page under each list is called: "Account Details", never a bare "Details". */
@@ -230,6 +240,38 @@ export default function HeaderBreadcrumbs() {
         ]}
       />
     );
+  }
+
+  // Insure: a plan is named for itself, a policy is "Policy", and neither "plans" nor "policies" is a page.
+  if (segments[0] === "insure" && (segments[1] === "plans" || segments[1] === "policies" || segments[1] === "profile")) {
+    const home = { label: "Insure", href: "/insure", isLast: false };
+    if (segments[1] === "profile") {
+      return <BreadcrumbView list={[home, { label: "Insurance Profile", href: pathname, isLast: true }]} />;
+    }
+    if (segments[1] === "plans" && segments[2]) {
+      const buying = segments[3] === "buy";
+      return (
+        <BreadcrumbView
+          list={[
+            home,
+            { label: findPlan(segments[2])?.name ?? "Plan", href: `/insure/plans/${segments[2]}`, isLast: !buying },
+            ...(buying ? [{ label: "Get Started", href: pathname, isLast: true }] : []),
+          ]}
+        />
+      );
+    }
+    if (segments[1] === "policies" && segments[2]) {
+      const sub = segments[3] ? POLICY_SUB_LABELS[segments[3]] : undefined;
+      return (
+        <BreadcrumbView
+          list={[
+            home,
+            { label: "Policy", href: `/insure/policies/${segments[2]}`, isLast: !sub },
+            ...(sub ? [{ label: sub, href: pathname, isLast: true }] : []),
+          ]}
+        />
+      );
+    }
   }
 
   const crumbs: Crumb[] = [];
