@@ -8,11 +8,10 @@
  */
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ChevronRight, PiggyBank, ShieldCheck } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
+import { ChevronRight, PiggyBank } from "@/components/ui/icons";
 import { ListCard } from "@/components/ui/list-card";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { ProductBanner } from "@/components/ui/product-banner";
 import { SecurityIcon, TREASURY_HOME } from "@/components/invest/parts";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { formatDate, formatMoney } from "@/lib/mock-data";
@@ -110,44 +109,33 @@ export function YourTreasury({ kind }: { kind: "bill" | "bond" }) {
 
 /** The securities account, only while it has something to say: being set up, or ready to carry on with the choice made before. */
 export function TreasuryAccountStatus() {
-  const router = useRouter();
   const { ownerId, csd, intent } = useMyTreasury();
   const clearIntent = useTreasury((s) => s.clearIntent);
 
   if (csd?.status === "pending") {
     return (
-      <section className="flex items-start gap-3 rounded-2xl border border-border bg-card p-3 sm:p-4">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
-          <ShieldCheck size={20} aria-hidden="true" />
-        </span>
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <h2 className="text-[15px] font-medium text-foreground">Securities account being set up</h2>
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
-            {intent
-              ? `Your securities account for Treasury Bills & Bonds will be ready within 7 working days. Your choice, ${intent.label}, is saved. You can still open Term Deposits right away.`
-              : `Your securities account for Treasury Bills & Bonds will be ready within 7 working days of ${formatDate(csd.requestedOn)}. You can open Term Deposits right away.`}
-          </p>
-        </div>
-      </section>
+      <ProductBanner
+        alert={{
+          tone: "act",
+          headline: "Securities account being set up",
+          detail: intent
+            ? `Ready within 7 working days. We’ve saved your choice, ${intent.label}. Term Deposits are open now.`
+            : `Ready within 7 working days of ${formatDate(csd.requestedOn)}. Term Deposits are open now.`,
+        }}
+      />
     );
   }
   if (csd?.status === "active" && intent) {
     return (
-      <section className="flex flex-col gap-2 px-1">
-        <h2 className="text-[18px] tracking-[var(--ls-tight)] text-foreground">Your securities account is ready</h2>
-        <p className="text-[14px] text-muted-foreground">{`Carry on with ${intent.label}.`}</p>
-        <div>
-          <Button
-            type="button"
-            onClick={() => {
-              clearIntent(ownerId);
-              router.push(intent.href);
-            }}
-          >
-            Continue
-          </Button>
-        </div>
-      </section>
+      <ProductBanner
+        alert={{
+          tone: "act",
+          success: true,
+          headline: "Your securities account is ready",
+          detail: `You’ll carry on with ${intent.label}, the investment you chose first.`,
+          action: { label: "Continue", href: intent.href, onClick: () => clearIntent(ownerId) },
+        }}
+      />
     );
   }
   return null;

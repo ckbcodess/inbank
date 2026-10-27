@@ -313,7 +313,7 @@ interface TreasuryState {
   /** The customer applied: the account is pending until the CSD sets it up. */
   requestAccount: (ownerId: string, linkedAccountId: string, intent?: AccountIntent) => void;
   /** Dev Mode: jump the account to a state. */
-  setAccountStatus: (ownerId: string, status: OwnerAccountStatus, linkedAccountId: string) => void;
+  setAccountStatus: (ownerId: string, status: OwnerAccountStatus, linkedAccountId: string, intent?: AccountIntent | null) => void;
   /** Dev Mode: give the customer this many treasury holdings (0 to 3), whatever they have now. */
   setHoldingsSeed: (ownerId: string, linkedAccountId: string, count: number) => void;
   placeOrder: (order: Omit<Order, "id" | "placedOn">) => Order;
@@ -420,7 +420,7 @@ export const useTreasury = create<TreasuryState>()(
           intent: intent ? { ...s.intent, [ownerId]: intent } : s.intent,
         })),
 
-      setAccountStatus: (ownerId, status, linkedAccountId) =>
+      setAccountStatus: (ownerId, status, linkedAccountId, nextIntent) =>
         set((s) => {
           const csd = { ...s.csd };
           if (status === "none") {
@@ -443,7 +443,12 @@ export const useTreasury = create<TreasuryState>()(
             requestedOn: csd[ownerId]?.requestedOn ?? addDays(MOCK_TODAY, -10),
             linkedAccountId: csd[ownerId]?.linkedAccountId ?? linkedAccountId,
           };
-          return { csd };
+          // An intent given sets the saved choice; null clears it; leaving it out keeps what is there.
+          if (nextIntent === undefined) return { csd };
+          const intent = { ...s.intent };
+          if (nextIntent === null) delete intent[ownerId];
+          else intent[ownerId] = nextIntent;
+          return { csd, intent };
         }),
 
       setHoldingsSeed: (ownerId, linkedAccountId, count) =>

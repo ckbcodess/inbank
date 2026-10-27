@@ -58,9 +58,9 @@ export function InvestHome() {
     const mineSoon = mine.filter((h) => soon(h.maturity)).length;
     if (mine.length === 0 && waiting === 0) {
       return ready
-        ? { text: "Your securities account is ready", attention: true }
+        ? { text: "Your securities account is ready" }
         : csd?.status === "pending"
-          ? { text: "Securities account being set up" }
+          ? { text: "Securities account being set up", attention: true }
           : undefined;
     }
     return {

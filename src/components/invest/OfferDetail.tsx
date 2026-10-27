@@ -11,7 +11,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { SearchX } from "@/components/ui/icons";
+import { Info, SearchX } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -19,7 +19,6 @@ import { OfferDetailSkeleton } from "@/components/states/PageSkeletons";
 import { TrueEmptyState } from "@/components/states/ListStates";
 import { BILLS_PRODUCTS_HREF, BONDS_PRODUCTS_HREF, TERM_PRODUCTS_HREF } from "@/components/invest/parts";
 import { findOffer, type Offer } from "@/components/invest/offers";
-import { SecuritiesAccountDialog } from "@/components/invest/SecuritiesAccountDialog";
 import { ProductPitchBody, type PitchPrice } from "@/components/insure/ProductPitch";
 import type { ProductKey } from "@/components/insure/parts";
 import { formatDate, formatMoney } from "@/lib/mock-data";
@@ -90,7 +89,6 @@ export function OfferDetail() {
   const hydrated = useTreasuryHydrated();
   const { csd, marketOpen } = useMyTreasury();
   const offer = findOffer(key);
-  const [needsCsd, setNeedsCsd] = useState(false);
   const [terms, setTerms] = useState(false);
 
   if (!hydrated) return <OfferDetailSkeleton />;
@@ -115,23 +113,26 @@ export function OfferDetail() {
   const product = productOf(offer);
   const closed = offer.group !== "term" && !marketOpen;
 
-  // Term Deposits need no securities account and have no market hours; bills and bonds check both.
+  // Term Deposits need no securities account and have no market hours; bills and bonds check both. Without a securities
+  // account the main button opens one (it carries on to this offer afterwards), so there is nothing to confirm in a popup.
   const isTerm = offer.group === "term";
+  const needsAccount = !isTerm && !csd;
   const note = isTerm
     ? null
-    : closed
-      ? "The market is closed right now."
-      : csd?.status === "pending"
-        ? "Your securities account is being set up. You can invest once it’s ready."
-        : !csd
-          ? "To start investing in securities, you need a securities account."
+    : needsAccount
+      ? "You can start investing within 7 working days of creating your securities account."
+      : closed
+        ? "The market is closed right now."
+        : csd?.status === "pending"
+          ? "Your securities account is being set up. You can invest once it’s ready."
           : null;
 
-  const canStart = isTerm ? true : !closed && csd?.status !== "pending";
+  const canStart = isTerm || needsAccount || (!closed && csd?.status !== "pending");
   const hasAccess = isTerm || Boolean(csd && csd.status === "active");
   const startHref = hasAccess
     ? offer.href
     : `/invest/profile?next=${encodeURIComponent(offer.href)}&label=${encodeURIComponent(offer.label)}`;
+  const goes = canStart && (hasAccess || needsAccount);
 
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
@@ -139,20 +140,24 @@ export function OfferDetail() {
       <div className="flex flex-col gap-6">
         <ProductPitchBody productId={product.id} highlights={highlightsOf(offer)} price={priceOf(offer)} />
         <div className="flex flex-col gap-2">
-          {note && <p className="px-1 text-center text-[13px] text-muted-foreground">{note}</p>}
           <Button
             type="button"
             className="h-11 w-full text-[16px]"
             disabled={!canStart}
-            nativeButton={!(canStart && hasAccess)}
-            render={canStart && hasAccess ? <Link href={startHref} /> : undefined}
-            onClick={canStart && !hasAccess ? () => setNeedsCsd(true) : undefined}
+            nativeButton={!goes}
+            render={goes ? <Link href={startHref} /> : undefined}
           >
-            Invest
+            {needsAccount ? "Open a Securities Account" : "Invest"}
           </Button>
           <Button type="button" variant="outline" className="h-11 w-full text-[14px]" onClick={() => setTerms(true)}>
             Terms and Conditions
           </Button>
+          {note && (
+            <p className="mt-1 flex items-center justify-center gap-2 px-1 text-[13px] text-muted-foreground">
+              <Info size={16} aria-hidden="true" className="shrink-0" />
+              {note}
+            </p>
+          )}
         </div>
       </div>
 
@@ -176,7 +181,6 @@ export function OfferDetail() {
         </DialogContent>
       </Dialog>
 
-      <SecuritiesAccountDialog open={needsCsd} onOpenChange={setNeedsCsd} next={{ href: offer.href, label: offer.label }} />
     </div>
   );
 }

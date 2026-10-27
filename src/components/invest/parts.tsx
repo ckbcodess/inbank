@@ -176,7 +176,10 @@ const ACCOUNT_STATES = [
   { id: "none", label: "Not set up" },
   { id: "pending", label: "Being set up" },
   { id: "active", label: "Active" },
+  /** Set up after the customer chose an investment first: Invest says it is ready and offers to carry on. */
+  { id: "ready", label: "Active, choice saved" },
 ];
+const SAMPLE_INTENT = { href: "/invest/treasury/buy?id=p-1500", label: "91-day Treasury Bill" };
 const MARKET_STATES = [
   { id: "open", label: "Open" },
   { id: "closed", label: "Closed" },
@@ -220,7 +223,7 @@ export function InvestDevTools({
   onChange?: (next: string) => void;
   labels?: Record<string, string>;
 }) {
-  const { ownerId, csd, marketOpen, holdings } = useMyTreasury();
+  const { ownerId, csd, intent, marketOpen, holdings } = useMyTreasury();
   const { active: deposits } = useMyDeposits();
   const setAccountStatus = useTreasury((s) => s.setAccountStatus);
   const setMarketOpen = useTreasury((s) => s.setMarketOpen);
@@ -232,7 +235,7 @@ export function InvestDevTools({
   const setFailRequests = useTermDeposits((s) => s.setFailRequests);
   const accounts = useTreasuryAccounts();
   const linkedId = accounts[0]?.id ?? "";
-  const accountValue = csd?.status ?? "none";
+  const accountValue = csd?.status === "active" && intent ? "ready" : (csd?.status ?? "none");
   const depositCount = Math.min(deposits.length, 2);
   const treasuryCount = Math.min(holdings.length, 3);
   const hasList = Boolean(states && onChange);
@@ -242,7 +245,10 @@ export function InvestDevTools({
       label: "Securities account",
       states: ACCOUNT_STATES,
       value: accountValue,
-      onChange: (v) => setAccountStatus(ownerId, v as "none" | "pending" | "active", linkedId),
+      onChange: (v) =>
+        v === "ready"
+          ? setAccountStatus(ownerId, "active", linkedId, SAMPLE_INTENT)
+          : setAccountStatus(ownerId, v as "none" | "pending" | "active", linkedId, v === "active" ? null : undefined),
     };
     const market: DevStateGroup = {
       label: "Market",

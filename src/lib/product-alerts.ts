@@ -20,8 +20,12 @@ export interface ProductAlert {
   tone: AlertTone;
   /** Up to six words. */
   headline: string;
+  /** One quiet line under the headline, when the headline alone leaves a question (shown on a record's own banner only). */
+  detail?: string;
+  /** Good news rather than a to-do: drawn in the success colour with a tick (the securities account is ready). */
+  success?: boolean;
   /** The one thing to do, when there is one. */
-  action?: { label: string; href: string };
+  action?: { label: string; href: string; /** Runs first, when the link has something to tidy up on the way. */ onClick?: () => void };
 }
 
 /** A holding is flagged this many days before it matures. */

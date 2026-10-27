@@ -22,6 +22,7 @@ import { useInsureCards, type GatePromptStyle, type PlanCardLayout, type PlanCar
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { PlanDisc, PlanImage, PlanMark, planToneStyle, type ProductKey } from "@/components/insure/parts";
+import { Badge } from "@/components/ui/badge";
 import { GLASS_TILE_CLASS, GLASS_TILE_HOVER_CLASS } from "@/components/ui/list-card";
 import { cn } from "@/lib/utils";
 
@@ -96,12 +97,9 @@ export function ProductCard({
   const chips = status && (
     <span className="mt-3 flex flex-wrap gap-2">
       {parts.map((t, i) => (
-        <span
-          key={t}
-          className={cn("tabular rounded-full px-3 py-1 text-[13px]", status.attention && (i > 0 || parts.length === 1) ? "bg-warning/15 text-warning-text" : "bg-success/15 text-success-text")}
-        >
+        <Badge key={t} size="md" variant={status.attention && (i > 0 || parts.length === 1) ? "warning" : "success"} className="tabular">
           {t}
-        </span>
+        </Badge>
       ))}
     </span>
   );
