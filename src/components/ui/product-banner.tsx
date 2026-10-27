@@ -18,7 +18,7 @@ export function AlertMark({ tone, success = false, className }: { tone: ProductA
         className,
       )}
     >
-      {success ? <Check size={12} /> : act ? "!" : <Clock size={12} />}
+      {success ? <Check size={12} className="stroke-current [stroke-linejoin:round] [stroke-width:55]" /> : act ? "!" : <Clock size={12} />}
     </span>
   );
 }
