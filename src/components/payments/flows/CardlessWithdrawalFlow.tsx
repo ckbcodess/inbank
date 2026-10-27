@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Smartphone } from "lucide-react";
+import { Smartphone } from "@/components/ui/icons";
 import { Account } from "@/lib/mock-data";
 import {
   FromAccountSelector,

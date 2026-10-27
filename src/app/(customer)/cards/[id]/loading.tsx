@@ -11,7 +11,7 @@ export default function CardDetailsLoading() {
       <span className="sr-only">Loading</span>
 
       {/* Back arrow and the card's name */}
-      <div className="flex min-w-0 items-center gap-2">
+      <div data-page-header className="flex min-w-0 items-center gap-2">
         <Bone className="size-8 shrink-0 rounded-lg" />
         <Bone className="h-5 w-38 rounded-lg" />
       </div>

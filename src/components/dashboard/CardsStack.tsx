@@ -11,7 +11,7 @@
  */
 
 import Link from "next/link";
-import { CreditCard } from "lucide-react";
+import { CreditCard } from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { type PaymentCard } from "@/lib/mock-data";
 
@@ -86,7 +86,7 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
             {top.map((card) => (
               <li key={card.id} className="flex items-center gap-2 px-3 py-2">
                 <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <CreditCard size={15} strokeWidth={1.8} aria-hidden="true" />
+                  <CreditCard size={15} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-[12.5px] text-foreground">{card.name}</span>

@@ -51,9 +51,9 @@ export function PolicyStatement({ policyId }: { policyId: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Statement" backTo={{ href: `/insure/policies/${policy.id}`, label: plan?.name ?? "Policy" }} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <p className="tabular px-1 text-[13px] text-muted-foreground">{`${plan?.name} · ${policy.number}`}</p>
 
         {yearsHeld.length > 0 ? (

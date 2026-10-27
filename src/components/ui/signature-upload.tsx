@@ -7,7 +7,7 @@
  */
 
 import { useRef, useState } from "react";
-import { FileText, Upload, X } from "lucide-react";
+import { FileText, Upload, X } from "@/components/ui/icons";
 import { Field } from "@/components/ui/field";
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
@@ -56,7 +56,7 @@ export function SignatureUpload({
         <div className="flex min-h-[58px] items-center justify-between gap-2 rounded-2xl border border-field-border bg-field px-3 py-2">
           <div className="flex min-w-0 items-center gap-2">
             <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground">
-              <FileText size={16} strokeWidth={1.8} aria-hidden="true" />
+              <FileText size={16} aria-hidden="true" />
             </span>
             <span className="flex min-w-0 flex-col">
               <span className="truncate text-[14px] text-foreground">{file.name}</span>
@@ -69,7 +69,7 @@ export function SignatureUpload({
             aria-label={`Remove ${label.toLowerCase()}`}
             className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
-            <X size={16} strokeWidth={1.8} aria-hidden="true" />
+            <X size={16} aria-hidden="true" />
           </button>
         </div>
       ) : (
@@ -78,7 +78,7 @@ export function SignatureUpload({
           onClick={() => input.current?.click()}
           className="flex min-h-[96px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-field-border bg-field px-3 py-4 text-center transition-colors hover:bg-field-hover"
         >
-          <Upload size={18} strokeWidth={1.8} className="text-muted-foreground" aria-hidden="true" />
+          <Upload size={18} className="text-muted-foreground" aria-hidden="true" />
           <span className="text-[13px] text-muted-foreground">Upload a JPG, PNG or PDF, up to 5 MB</span>
         </button>
       )}

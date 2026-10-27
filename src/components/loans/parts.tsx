@@ -7,7 +7,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { FileText } from "lucide-react";
+import { FileText } from "@/components/ui/icons";
 import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,9 @@ import { advanceFees, ADVANCE_PRODUCTS, useLoans, useMyLoans, type Advance, type
 import { MOCK_TODAY, useTreasuryAccounts } from "@/lib/treasury";
 
 export const LOANS_HOME = "/loans";
+/** The advance's own page: the customer's loans under it, what it is, and one button to apply. */
+export const ADVANCE_PRODUCT_HREF = "/loans/products/salary-advance";
+/** The apply flow. */
 export const ADVANCE_HREF = "/loans/salary-advance";
 
 /**
@@ -65,7 +68,7 @@ export function postLoanEntry({
 /** An advance that isn't there (another customer's, or reset from Dev Mode). Says so and goes back to Loans. */
 export function AdvanceNotFound({ title = "Salary Advance" }: { title?: string }) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={{ href: LOANS_HOME, label: "Loans" }} />
       <TrueEmptyState
         icon={<FileText size={22} strokeWidth={1.8} />}
@@ -102,6 +105,7 @@ const REQUEST_STATES = [
   { id: "succeed", label: "Go through" },
   { id: "fail", label: "Fail" },
 ];
+const WELCOME_STATES = [{ id: "again", label: "Show it again" }];
 const CUSTOMER_KEYS = CUSTOMER_STATES.map((s) => s.id);
 const CUSTOMER_LABELS = Object.fromEntries(CUSTOMER_STATES.map((s) => [s.id, s.label])) as Record<IncomeScenario, string>;
 
@@ -116,10 +120,11 @@ function scenarioOf(income: ReturnType<typeof useMyLoans>["income"]): IncomeScen
  * Dev Mode for Loans: who the customer is (what the bank sees credited to them), an advance they already hold, the
  * bank's decision on a pending request (approving pays it in), and whether new requests fail.
  */
-export function LoansDevTools() {
+export function LoansDevTools({ extraGroups }: { extraGroups?: DevStateGroup[] } = {}) {
   const { ownerId, income, open, advances } = useMyLoans();
   const seed = useLoans((s) => s.seed);
   const decide = useLoans((s) => s.decide);
+  const markWelcomed = useLoans((s) => s.markWelcomed);
   const failRequests = useLoans((s) => s.failRequests);
   const setFailRequests = useLoans((s) => s.setFailRequests);
   const accounts = useTreasuryAccounts();
@@ -159,8 +164,15 @@ export function LoansDevTools() {
         value: failRequests ? "fail" : "succeed",
         onChange: (v) => setFailRequests(v === "fail"),
       },
+      {
+        label: "Welcome",
+        states: WELCOME_STATES,
+        value: "",
+        onChange: () => markWelcomed(ownerId, false),
+      },
+      ...(extraGroups ?? []),
     ],
-    [advanceValue, ownerId, accountId, scenario, pending, failRequests, seed, decide, setFailRequests],
+    [advanceValue, ownerId, accountId, scenario, pending, failRequests, seed, decide, setFailRequests, markWelcomed, extraGroups],
   );
 
   return (

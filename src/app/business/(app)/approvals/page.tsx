@@ -17,7 +17,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, FileText, Send } from "lucide-react";
+import { ChevronRight, FileText, Send } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
@@ -161,9 +161,9 @@ export default function ApprovalQueuePage() {
                   >
                     <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                       {item.type === "payment" ? (
-                        <Send size={16} strokeWidth={1.8} aria-hidden="true" />
+                        <Send size={16} aria-hidden="true" />
                       ) : (
-                        <FileText size={16} strokeWidth={1.8} aria-hidden="true" />
+                        <FileText size={16} aria-hidden="true" />
                       )}
                     </span>
 
@@ -182,7 +182,7 @@ export default function ApprovalQueuePage() {
                       {formatMoney(item.amount, item.currency, true)}
                     </span>
 
-                    <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                    <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                   </Link>
                 </li>
               );

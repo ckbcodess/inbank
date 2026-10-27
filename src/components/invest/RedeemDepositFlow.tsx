@@ -10,7 +10,7 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Receipt, XCircle } from "lucide-react";
+import { Receipt, XCircle } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { InlineError } from "@/components/ui/inline-error";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary, INVEST_HOME } from "@/components/invest/parts";
+import { INVEST_HOME } from "@/components/invest/parts";
 import { DEPOSITS_HOME, OutcomeFailure, postDepositEntry } from "@/components/invest/term-deposit-parts";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
@@ -52,7 +52,7 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
   if (!hydrated) return <FormPageSkeleton fields={2} />;
   if (!d || d.status !== "active") {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title={title} backTo={{ href: INVEST_HOME, label: "Invest" }} />
         <TrueEmptyState
           icon={<XCircle size={22} strokeWidth={1.8} />}
@@ -125,9 +125,9 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5 animate-in fade-in duration-200">
+      <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
           {whole
             ? `You’re taking all ${money(d.principal)} out of this deposit and closing it. It would have matured on ${formatDate(d.maturity)}.`
@@ -180,16 +180,6 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
         open={authOpen}
         onOpenChange={setAuthOpen}
         onSuccess={authorised}
-        summary={
-          <AuthSummary
-            headline={whole ? "Close your term deposit" : "Redeem part of your term deposit"}
-            amount={money(cost.receive)}
-            rows={[
-              ["To", to ? `${to.name} · ${to.number}` : ""],
-              ["Interest you give up", money(cost.interestGivenUp)],
-            ]}
-          />
-        }
       />
     </div>
   );

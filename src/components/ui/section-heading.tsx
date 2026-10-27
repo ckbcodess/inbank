@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Info } from "lucide-react";
+import { Info } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -45,14 +45,14 @@ export function SectionHeading({
                 delay={0}
                 render={<button type="button" aria-label={label} className={cn(iconButton, "max-sm:hidden")} />}
               >
-                <Info size={15} strokeWidth={1.8} aria-hidden="true" />
+                <Info size={15} aria-hidden="true" />
               </TooltipTrigger>
               <TooltipContent side="bottom" align="start" className="w-64 whitespace-normal text-[12px] font-normal leading-relaxed">
                 {hint}
               </TooltipContent>
             </Tooltip>
             <button type="button" aria-label={label} onClick={() => setHintOpen(true)} className={cn(iconButton, "sm:hidden")}>
-              <Info size={15} strokeWidth={1.8} aria-hidden="true" />
+              <Info size={15} aria-hidden="true" />
             </button>
             <Dialog open={hintOpen} onOpenChange={setHintOpen}>
               <DialogContent size="sm" showCloseButton>

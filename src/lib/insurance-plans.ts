@@ -40,6 +40,9 @@ export type ClaimTypeId =
   | "accident"
   | "hospital-cash";
 
+export type { HighlightIcon, PlanHighlight } from "@/lib/product-highlights";
+import type { PlanHighlight } from "@/lib/product-highlights";
+
 export interface InsurancePlan {
   id: PlanId;
   name: string;
@@ -50,6 +53,10 @@ export interface InsurancePlan {
   /** The plan page's opening paragraph. */
   description?: string;
   benefits?: readonly string[];
+  /** A picture of the plan for the top of its page, as a path under `public/` (for example `/plans/homecall.webp`). Until one is supplied the page draws a flat scene. */
+  image?: string;
+  /** The benefits again as icon, label and short value. Shown on the picture; `benefits` is the full wording. */
+  highlights?: readonly PlanHighlight[];
   kind?: PlanKind;
   /** Policy term, in whole years. Funeral cover has no term: it runs while premiums are paid. */
   term?: { min: number; max: number };
@@ -64,9 +71,14 @@ export const INSURANCE_PLANS: readonly InsurancePlan[] = [
     name: "Child Education Plan",
     available: true,
     line: "Save for school fees with life protection.",
+    image: "/plans/child-education.webp",
     description:
       "Save towards your child’s education, with cover that keeps the plan going if something happens to you.",
-    benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "School fees are paid even if you can’t", "Premiums from GHS 50 a month"],
+    benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "School fees are paid even if you can’t"],
+    highlights: [
+      { icon: "payout", label: "Fast payout", value: "Within 48 to 72 hours of an approved claim" },
+      { icon: "school", label: "School fees stay covered", value: "Paid even if you’re no longer able to" },
+    ],
     kind: "savings",
     term: { min: 10, max: 25 },
     claimTypes: ["school-fees", "maturity", "surrender", "loan", "refund", "disability", "retrenchment"],
@@ -77,8 +89,14 @@ export const INSURANCE_PLANS: readonly InsurancePlan[] = [
     name: "HomeCall Plan",
     available: true,
     line: "Financial support for funeral expenses.",
+    image: "/plans/homecall.webp",
     description: "Help your family cover funeral expenses in a difficult time. Cover yourself, and add the people close to you.",
-    benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "Cover your spouse, children and parents too", "Premiums from GHS 8 a month"],
+    benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "Cover your spouse, children and parents too", "Accidental deaths are covered from day one"],
+    highlights: [
+      { icon: "payout", label: "Fast payout", value: "Within 48 to 72 hours of an approved claim" },
+      { icon: "family", label: "Your family", value: "Cover your spouse, children and parents too" },
+      { icon: "accident", label: "Accidental death", value: "Covered from day one" },
+    ],
     kind: "funeral",
     claimTypes: ["death", "accident", "hospital-cash", "cashback", "refund"],
     claimChecklist: [
@@ -93,8 +111,13 @@ export const INSURANCE_PLANS: readonly InsurancePlan[] = [
     name: "WealthMaster Plan",
     available: true,
     line: "Save regularly with insurance cover.",
+    image: "/plans/wealthmaster.webp",
     description: "Save regularly and grow a lump sum, with life cover for the people who depend on you.",
-    benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "Your loved ones are paid if something happens to you", "Premiums from GHS 50 a month"],
+    benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "Your loved ones are paid if something happens to you"],
+    highlights: [
+      { icon: "payout", label: "Fast payout", value: "Within 48 to 72 hours of an approved claim" },
+      { icon: "family", label: "Your loved ones", value: "Paid if something happens to you" },
+    ],
     kind: "savings",
     term: { min: 4, max: 10 },
     claimTypes: ["maturity", "surrender", "loan", "refund", "disability"],
@@ -105,8 +128,14 @@ export const INSURANCE_PLANS: readonly InsurancePlan[] = [
     name: "Ultimate Protection Plan",
     available: true,
     line: "Total protection for you and your loved ones.",
+    image: "/plans/ultimate-protection.webp",
     description: "Keep an income if illness or disability stops you working, and leave your family a lump sum.",
     benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "Covers total and permanent disability", "Covers critical illness"],
+    highlights: [
+      { icon: "payout", label: "Fast payout", value: "Within 48 to 72 hours of an approved claim" },
+      { icon: "disability", label: "Disability cover", value: "If you can no longer work, for good" },
+      { icon: "illness", label: "Critical illness cover", value: "If you’re diagnosed with a serious illness" },
+    ],
     kind: "protection",
     term: { min: 8, max: 20 },
     claimTypes: ["critical-illness", "disability", "maturity", "refund"],

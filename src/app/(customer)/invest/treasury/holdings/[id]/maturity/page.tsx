@@ -16,9 +16,9 @@ import { OptionTile } from "@/components/ui/option-tile";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
-import { AuthSummary, HoldingNotFound, TREASURY_HOME } from "@/components/invest/parts";
+import { HoldingNotFound, TREASURY_HOME } from "@/components/invest/parts";
 import { formatDate } from "@/lib/mock-data";
-import { instructionLabel, isRollover, MATURITY_INSTRUCTIONS, useHolding, useTreasury, type MaturityInstructionId } from "@/lib/treasury";
+import { isRollover, MATURITY_INSTRUCTIONS, useHolding, useTreasury, type MaturityInstructionId } from "@/lib/treasury";
 
 export default function ChangeMaturityPage() {
   const { id } = useParams<{ id: string }>();
@@ -67,9 +67,9 @@ export default function ChangeMaturityPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="When It Matures" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
           {`Your ${h.title} matures on ${formatDate(h.maturity)}. Choose what happens then. You can change it any time before.`}
         </p>
@@ -104,15 +104,6 @@ export default function ChangeMaturityPage() {
           setInstruction(h.id, selected);
           setDone(true);
         }}
-        summary={
-          <AuthSummary
-            headline={`Change what happens when ${h.title} matures`}
-            rows={[
-              ["Now", instructionLabel(current)],
-              ["Change to", instructionLabel(selected)],
-            ]}
-          />
-        }
       />
     </div>
   );

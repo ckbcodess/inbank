@@ -11,7 +11,6 @@ const nextConfig: NextConfig = {
   // to the single-icon subpath, so a compile touches one file, not the barrel.
   experimental: {
     optimizePackageImports: [
-      "lucide-react",
       "@hugeicons/core-free-icons",
       "@hugeicons/react",
       "recharts",

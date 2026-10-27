@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Before You Have A Profile: 8 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--side:#fafafa;--main:#fff;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff3cf;--ok:#15803d;--shadow:0 24px 60px -24px rgba(0,0,0,.28);--scrim:rgba(0,0,0,.35);--edge:linear-gradient(160deg,rgba(0,0,0,.10),rgba(0,0,0,.03) 40%,rgba(0,0,0,.08))}
+  [data-theme=dark]{--page:#050505;--side:#121212;--main:#0f0f0f;--surf:#151515;--tile:#171717;--tileh:#1d1d1d;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#3a2f0e;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:rgba(0,0,0,.6);--edge:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04) 40%,rgba(255,255,255,.10))}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul,ol{margin:0;padding:0} ul,ol{list-style:none}
+  .tab{font-variant-numeric:tabular-nums}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px} .s14{font-size:14px}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .bar-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;align-items:center;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 16px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}
+  .stage{padding:32px 24px 80px;display:flex;flex-direction:column;gap:40px;align-items:center;overflow-x:auto}
+  .wrap{width:100%;max-width:1440px;min-width:1100px;scroll-margin-top:130px}
+  .cap{font-size:12px;color:var(--mu);margin:0 0 12px 8px}
+  .win{position:relative;display:flex;height:860px;border:1px solid var(--bd);border-radius:16px;background:var(--side);box-shadow:var(--shadow);overflow:hidden}
+  .side{width:232px;flex:none;padding:16px 12px;display:flex;flex-direction:column;gap:2px;font-size:14px}
+  .logo{display:flex;align-items:center;border-bottom:1px solid var(--bd);margin:0 -12px 24px;padding:2px 12px 20px 24px}
+  .logo b{color:var(--am);font-size:20px;font-weight:500;letter-spacing:-.04em;font-style:italic}
+  .nav{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;color:var(--mu);min-height:44px}
+  .nav.on{background:var(--am);color:#111;font-weight:500}
+  .gap{height:24px}
+  .mainwrap{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;background:var(--main);border:1px solid var(--bd);border-radius:20px;margin:8px 8px 8px 0;overflow:hidden}
+  .top{height:56px;flex:none;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:flex-end;gap:20px;padding:0 24px;color:var(--mu)}
+  .top .me{display:flex;align-items:center;gap:12px;margin-left:8px}
+  .av{width:32px;height:32px;border-radius:50%;background:#1a73e8;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
+  .content{flex:1;overflow-y:auto;padding:40px 32px 72px;scrollbar-width:thin}
+  .col{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+  .pt{font-size:22px;font-weight:500;letter-spacing:-.02em}
+  h2{font-size:16px;font-weight:500}
+  .glass{border:1px solid transparent;background:linear-gradient(var(--tile),var(--tile)) padding-box,var(--edge) border-box}
+  .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .card{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-height:176px;padding:28px;border-radius:20px;width:100%;transition:filter .15s}
+  .card:hover{filter:brightness(1.12)}
+  .card .ct{font-size:18px;font-weight:500;letter-spacing:-.015em}
+  .card .cd{font-size:13px;line-height:1.5;color:var(--mu)}
+  .card .lk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mu);margin-top:10px}
+  .disc{position:absolute;top:24px;right:24px;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0b0b0c}
+  .btn{height:44px;padding:0 28px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)} .btn.sm{height:40px;padding:0 20px;font-size:14px;border-radius:12px} .btn.full{width:100%}
+  .btn.ghost{background:var(--tileh);color:var(--tx)}
+  .note{font-size:13px;color:var(--mu)}
+  .check{display:flex;flex-direction:column;gap:12px}
+  .check li{display:flex;gap:12px;font-size:14px;line-height:1.5}
+  .check svg{flex:none;margin-top:3px;color:var(--ok)}
+  .num{width:28px;height:28px;border-radius:50%;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mu);flex:none;background:var(--main)}
+  .num.now{background:var(--am);border-color:var(--am);color:#111}
+  .steps li{display:flex;gap:14px;align-items:flex-start}
+  .steps .t{font-size:14px;font-weight:500} .steps .w{font-size:13px;color:var(--mu);line-height:1.5}
+  .scrim{position:absolute;inset:0;background:var(--scrim)}
+  .dlg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:500px;max-height:calc(100% - 48px);background:var(--surf);border:1px solid var(--bd);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow)}
+  .dlg .dh{padding:24px 56px 8px 24px;display:flex;flex-direction:column;gap:14px}
+  .dlg .db{padding:12px 24px;overflow:auto;display:flex;flex-direction:column;gap:20px}
+  .dlg .df{padding:12px 24px 24px;display:flex;flex-direction:column;gap:10px}
+  .x{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;background:var(--tile);color:var(--mu);display:flex;align-items:center;justify-content:center}
+  .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--am)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--main);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-top">
+    <h1>Before you have a profile · 8 ways to present the page · shown for Insure, and the same pattern for Loans</h1>
+    <div class="seg" id="prod"></div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage">
+  <section class="wrap"><p class="cap" id="cap1">The page</p><div class="win" id="w1"></div></section>
+  <section class="wrap" id="w2wrap"><p class="cap" id="cap2">After tapping an item</p><div class="win" id="w2"></div></section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ---------- helpers ---------- */
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ICON={
+ ce:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+ hc:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+ wm:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+ up:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/>',
+ sal:'<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M16 13h2"/>',
+ ns:'<path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.7L7.1 18.2 8 12.7 4 8.8 9.5 8z"/>',
+ pen:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'};
+const lock=svg('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',14,1.8);
+const tick=svg('<path d="M5 12l4 4 10-10"/>',16,1.8);
+const arrow=svg('<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',16,1.8);
+const NAVS=[['Home','<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'],['Accounts',ICON.sal],['Cards','<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 11h18"/>'],null,['Send & Pay','<path d="M21 3L3 10l7 3 3 7z"/>'],['Loans',ICON.sal],['Invest',ICON.sal],['Insure',ICON.sal],null,['Transactions','<path d="M4 8h16M16 4l4 4-4 4M20 16H4M8 12l-4 4 4 4"/>'],['Reports','<path d="M5 20V10M12 20V4M19 20v-7"/>']];
+const shell=(inner,active)=>`<aside class="side"><div class="logo"><b>GCB</b></div>${NAVS.map(n=>n?`<span class="nav ${n[0]===active?'on':''}">${svg(n[1],18,1.6)}${n[0]}</span>`:'<div class="gap"></div>').join('')}</aside>
+ <div class="mainwrap"><header class="top">${svg('<path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M10 21h4"/>',18)}${svg('<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',18)}<button data-a="theme" aria-label="Toggle theme" style="color:inherit;display:flex">${svg('<path d="M21 13A9 9 0 1111 3a7 7 0 0010 10z"/>',18)}</button><span class="me"><span class="av">AS</span><span style="display:flex;flex-direction:column;line-height:1.3"><span class="s14" style="color:var(--tx)">Ama Serwaa</span><span class="s12">Retail Customer</span></span></span></header>${inner}</div>`;
+const page=(inner,extra='')=>`<div class="content">${'<div class="col">'+inner+'</div>'}</div>${extra}`;
+
+/* ---------- the two products ---------- */
+const CTX={
+ insure:{nav:'Insure',title:'Insure',section:'Plans',gate:'Set up your insurance profile',
+  why:'Every plan uses it, so you only do this once. Looking around never needs it.',
+  short:'Create your insurance profile to buy a plan. You only do it once.',
+  heroHead:'Cover that’s paid from your account',heroBody:'Plans from StarLife Assurance, paid straight from your account. Look around freely, and set up your profile when you’re ready to buy.',
+  steps:[['About you','Title, marital status, occupation and addresses.'],['Lifestyle','A few questions on alcohol and smoking.'],['Medical history','A short health history StarLife uses to assess your cover.'],['Confirm','Check your answers and approve with one code.']],
+  known:'We already hold your name, date of birth, ID and contact details, so we won’t ask for them.',
+  cta:'Create Profile',progressLabel:'Insurance profile',progressNow:'Not started',
+  items:[
+   {id:'ce',col:'#3b82f6',name:'Child Education Plan',line:'Save for school fees with life protection.',desc:'Save towards your child’s education, with cover that keeps the plan going if something happens to you.',pts:['Lump sum paid within 48 to 72 hours of an approved claim','School fees are paid even if you can’t','Premiums from GHS 50 a month'],from:'GHS 50.00 a month'},
+   {id:'hc',col:'#ea580c',name:'HomeCall Plan',line:'Financial support for funeral expenses.',desc:'Help your family cover funeral expenses in a difficult time. Cover yourself, and add the people close to you.',pts:['Lump sum paid within 48 to 72 hours of an approved claim','Cover your spouse, children and parents too','Accidental deaths are covered from day one'],from:'GHS 8.00 a month'},
+   {id:'wm',col:'#d97706',name:'WealthMaster Plan',line:'Save regularly with insurance cover.',desc:'Save regularly and grow a lump sum, with life cover for the people who depend on you.',pts:['Lump sum paid within 48 to 72 hours of an approved claim','Your loved ones are paid if something happens to you','Premiums from GHS 50 a month'],from:'GHS 50.00 a month'},
+   {id:'up',col:'#db2777',name:'Ultimate Protection Plan',line:'Total protection for you and your loved ones.',desc:'Keep an income if illness or disability stops you working, and leave your family a lump sum.',pts:['Lump sum paid within 48 to 72 hours of an approved claim','Covers total and permanent disability','Covers critical illness'],from:'GHS 40.50 a month'}],
+  locked:false},
+ loans:{nav:'Loans',title:'Loans',section:'Advances',gate:'Get paid into your GCB account to unlock advances',
+  why:'You can take up to 80% of your salary, national service allowance or pension once it’s paid into a GCB account.',
+  short:'Advances open once your pay arrives in a GCB account.',
+  heroHead:'Advances against what you’re paid',heroBody:'Take up to 80% of your salary, national service allowance or pension once it’s paid into a GCB account.',
+  steps:[['Get paid into GCB','Ask your employer or pension office to pay into Savings Account 4001 9922 1100.'],['Your first credit arrives','Your first advance is available after it lands.'],['Take an advance','Up to 80% of what’s paid in.']],
+  known:'',cta:'Copy Account Number',progressLabel:'Advances',progressNow:'Waiting for your first credit',
+  items:[
+   {id:'sal',col:'#3b82f6',name:'Salary Advance',line:'For customers paid a salary.',desc:'Take up to 80% of your salary once it’s paid into a GCB account.',pts:['Up to 80% of your salary','Available after your first salary credit'],from:''},
+   {id:'ns',col:'#ea580c',name:'National Service Advance',line:'For national service personnel.',desc:'Take up to 80% of your national service allowance once it’s paid into a GCB account.',pts:['Up to 80% of your allowance','Available after your first allowance credit'],from:''},
+   {id:'pen',col:'#d97706',name:'Pension Advance',line:'For pensioners.',desc:'Take up to 80% of your pension once it’s paid into a GCB account.',pts:['Up to 80% of your pension','Available after your first pension credit'],from:''}],
+  locked:true}
+};
+const C=()=>CTX[S.prod];
+const S={v:1,prod:'insure',sel:'hc',dark:true};
+const item=()=>C().items.find(i=>i.id===S.sel)||C().items[0];
+
+/* ---------- pieces ---------- */
+const disc=(it,s=52)=>`<span class="disc" style="background:${it.col};width:${s}px;height:${s}px">${svg(ICON[it.id],Math.round(s*.43))}</span>`;
+const itemCard=(it)=>`<button class="card glass" data-a="sel:${it.id}">${disc(it)}<span class="ct">${it.name}</span><span class="cd">${it.line}</span>${C().locked?`<span class="lk">${lock}After your first credit</span>`:''}</button>`;
+const grid=(cols=2)=>`<div style="display:grid;grid-template-columns:repeat(${cols},minmax(0,1fr));gap:16px">${C().items.map(itemCard).join('')}</div>`;
+const sectionGrid=(cols=2)=>`<div style="display:flex;flex-direction:column;gap:12px"><h2>${C().section}</h2>${grid(cols)}</div>`;
+const cta=(c='')=>`<button class="btn ${c}" data-a="start">${C().cta}</button>`;
+const stepsList=(c,compact)=>`<ol class="steps" style="display:flex;flex-direction:column;gap:${compact?12:18}px">${C().steps.map((s,i)=>`<li><span class="num ${i===0?'now':''}">${i+1}</span><span style="display:flex;flex-direction:column;gap:2px"><span class="t">${s[0]}</span>${compact?'':`<span class="w">${s[1]}</span>`}</span></li>`).join('')}</ol>`;
+const stepsRow=()=>`<ol class="steps" style="display:grid;grid-template-columns:repeat(${C().steps.length},minmax(0,1fr));gap:16px">${C().steps.map((s,i)=>`<li style="flex-direction:column;gap:10px"><span class="num ${i===0?'now':''}">${i+1}</span><span style="display:flex;flex-direction:column;gap:2px"><span class="t">${s[0]}</span><span class="w s13">${s[1]}</span></span></li>`).join('')}</ol>`;
+const head=()=>`<h1 class="pt">${C().title}</h1>`;
+const knownLine=()=>C().known?`<p class="note" style="line-height:1.55">${C().known}</p>`:'';
+
+/* ---------- 8 page layouts ---------- */
+const V={};
+V[1]={name:'1. Setup Card',note:'One calm card above the plans: what the profile is, the four steps laid out so nothing is a surprise, what we already know so we don’t ask, and one button. The plans stay fully browsable underneath.',
+ page:()=>head()+`<div class="glass" style="border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:24px"><div style="display:flex;flex-direction:column;gap:6px"><h2 style="font-size:18px">${C().gate}</h2><p class="mu s14" style="line-height:1.6;max-width:560px">${C().why}</p></div>${stepsRow()}<div style="display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">${knownLine()}${cta()}</div></div>`+sectionGrid()};
+V[2]={name:'2. Slim Row',note:'The lightest touch. A single line with one button sits above the plans, so the page is mostly the plans. The detail waits for the profile screen itself.',
+ page:()=>head()+`<div class="glass" style="border-radius:16px;padding:14px 14px 14px 20px;display:flex;align-items:center;gap:16px"><span class="dot"></span><p class="s14" style="flex:1;line-height:1.5">${C().short}</p>${cta('sm')}</div>`+sectionGrid()};
+V[3]={name:'3. First Card In The Grid',note:'The setup step is the first card of the grid, full width and tinted with the brand colour, so it reads as the thing to do first and the plans as the things to explore.',
+ page:()=>head()+`<div style="display:flex;flex-direction:column;gap:12px"><h2>${C().section}</h2><div class="grid2"><div style="grid-column:1/-1;border-radius:20px;padding:28px 32px;background:color-mix(in srgb,var(--am) 14%,var(--tile));border:1px solid color-mix(in srgb,var(--am) 35%,transparent);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:center"><div style="display:flex;flex-direction:column;gap:14px"><div><h3 style="font-size:17px;font-weight:500">${C().gate}</h3><p class="mu s13" style="margin-top:4px;line-height:1.55">${C().why}</p></div><div style="display:flex;gap:20px;flex-wrap:wrap">${C().steps.map((s,i)=>`<span style="display:flex;align-items:center;gap:8px" class="s13"><span class="num ${i===0?'now':''}" style="width:22px;height:22px;font-size:11px">${i+1}</span>${s[0]}</span>`).join('')}</div></div>${cta()}</div>${C().items.map(itemCard).join('')}</div></div>`};
+V[4]={name:'4. Checklist Rail',note:'Two columns. A checklist stays in view on the left, so the customer always knows what is needed and where they are. The plans scroll on the right, one per row with more room to read.',
+ page:()=>head()+`<div style="display:grid;grid-template-columns:300px minmax(0,1fr);gap:32px;align-items:start;margin:0 -80px"><div class="glass" style="position:sticky;top:0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:24px"><div><h2 style="font-size:16px">${C().gate}</h2><p class="mu s13" style="margin-top:6px;line-height:1.55">${C().why}</p></div>${stepsList(C(),false)}${knownLine()}${cta('full')}</div><div style="display:flex;flex-direction:column;gap:12px"><h2>${C().section}</h2><div style="display:flex;flex-direction:column;gap:12px">${C().items.map(it=>`<button class="card glass" data-a="sel:${it.id}" style="min-height:120px;justify-content:center;padding:24px 100px 24px 28px">${disc(it,48)}<span class="ct">${it.name}</span><span class="cd">${it.line}</span>${C().locked?`<span class="lk">${lock}After your first credit</span>`:''}</button>`).join('')}</div></div></div>`};
+V[5]={name:'5. Plans Only, Hand-off In The Dialog',note:'The page says nothing about a profile at all. It is just the plans. The explanation arrives at the one moment it matters: when the customer taps Get Started, the dialog shows the steps and starts the profile. Look at the second window.',
+ page:()=>head()+sectionGrid(), handoff:true};
+V[6]={name:'6. Welcome Panel',note:'A proper first-visit welcome: a headline, one sentence, the button, and the steps stacked beside it. More presence than the setup card, so it suits a customer’s very first visit to the area.',
+ page:()=>head()+`<div class="glass" style="border-radius:28px;padding:40px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:center"><div style="display:flex;flex-direction:column;gap:20px"><h2 style="font-size:28px;letter-spacing:-.025em;font-weight:500;line-height:1.2">${C().heroHead}</h2><p class="mu s14" style="line-height:1.65">${C().heroBody}</p><div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">${cta()}${C().known?`<p class="note">${C().known}</p>`:''}</div></div><div style="background:var(--main);border-radius:20px;padding:24px;border:1px solid var(--bd)">${stepsList(C(),false)}</div></div>`+sectionGrid()};
+V[7]={name:'7. Bottom Bar',note:'Plans first, nothing above them. A bar pinned to the bottom of the page carries the profile step and its progress. It stays within reach while the customer browses, and never sits between them and the content.',
+ page:()=>head()+sectionGrid(),
+ extra:()=>`<div style="position:absolute;left:24px;right:24px;bottom:20px;display:flex;align-items:center;gap:20px;padding:14px 14px 14px 22px;border-radius:20px;background:var(--surf);border:1px solid var(--bd);box-shadow:var(--shadow)"><div style="display:flex;flex-direction:column;gap:6px;min-width:180px"><span class="s13">${C().progressLabel}</span><span style="display:flex;gap:4px">${C().steps.map(()=>`<span style="width:36px;height:4px;border-radius:99px;background:var(--bd)"></span>`).join('')}</span></div><p class="mu s13" style="flex:1;line-height:1.5">${C().short}</p>${cta('sm')}</div>`};
+V[8]={name:'8. Progress Header',note:'The profile is shown as a short progress track under the page title: empty now, filling as the customer completes it. It makes the setup feel small and finite, and it is the same control they see again inside the flow.',
+ page:()=>head()+`<div class="glass" style="border-radius:20px;padding:24px 28px;display:flex;flex-direction:column;gap:18px"><div style="display:flex;align-items:center;justify-content:space-between;gap:24px"><div><h2 style="font-size:15px">${C().progressLabel}</h2><p class="mu s13" style="margin-top:2px">${C().progressNow} · 0 of ${C().steps.length} steps</p></div>${cta('sm')}</div><div style="display:grid;grid-template-columns:repeat(${C().steps.length},minmax(0,1fr));gap:8px">${C().steps.map((s,i)=>`<div style="display:flex;flex-direction:column;gap:8px"><span style="height:4px;border-radius:99px;background:${i===0?'color-mix(in srgb,var(--am) 40%,var(--bd))':'var(--bd)'}"></span><span class="s12 mu">${s[0]}</span></div>`).join('')}</div></div>`+sectionGrid()};
+
+/* ---------- second window: what an item shows ---------- */
+function dialog(){
+  const it=item(),c=C();
+  const hand=V[S.v].handoff;
+  const head=`<div class="dh">${`<span style="background:${it.col};width:48px;height:48px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#0b0b0c">${svg(ICON[it.id],20)}</span>`}<div style="display:flex;flex-direction:column;gap:6px"><h3 style="font-size:20px;font-weight:500;letter-spacing:-.02em">${it.name}</h3><p class="mu s14" style="line-height:1.6">${it.desc}</p></div></div>`;
+  const body=`<div class="db">${it.from?`<div style="display:flex;flex-direction:column;gap:4px"><span class="mu s12">From</span><span class="tab" style="font-size:30px;letter-spacing:-.03em;line-height:1">${it.from}</span></div>`:''}<ul class="check">${it.pts.map(p=>`<li>${tick}<span>${p}</span></li>`).join('')}</ul>${hand?`<div style="background:var(--tile);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:14px"><div><h4 style="margin:0;font-size:14px;font-weight:500">${S.prod==='insure'?'One quick step first':'Before you can take this'}</h4><p class="mu s13" style="margin-top:2px">${c.why}</p></div>${stepsList(c,true)}</div>`:''}</div>`;
+  let foot;
+  if(S.prod==='insure') foot=hand?`<div class="df"><button class="btn full" data-a="start">Create Profile And Continue</button><p class="note" style="text-align:center">We’ll bring you back to ${it.name} when it’s done.</p></div>`:`<div class="df"><p class="note" style="text-align:center">You’ll create your insurance profile first. You only do it once.</p><button class="btn full" data-a="start">Get Started</button></div>`;
+  else foot=`<div class="df"><p class="note" style="text-align:center">${C().short}</p><button class="btn full" data-a="start">${C().cta}</button></div>`;
+  return `<div class="scrim"></div><div class="dlg" role="dialog" aria-label="${it.name}"><span class="x">${svg('<path d="M6 6l12 12M18 6L6 18"/>',14,1.8)}</span>${head}${body}${foot}</div>`;
+}
+
+/* ---------- engine ---------- */
+const $=s=>document.querySelector(s);
+function render(){
+  const v=V[S.v];
+  if(!C().items.find(i=>i.id===S.sel))S.sel=C().items[0].id;
+  $('#prod').innerHTML=[['insure','Insure'],['loans','Loans']].map(([k,l])=>`<button class="${S.prod===k?'on':''}" data-a="prod:${k}">${l}</button>`).join('');
+  $('#pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('#vnote').textContent=v.note;
+  const extra=v.extra?v.extra():'';
+  const pageHtml=shell(`<div class="content">${'<div class="col">'+v.page()+'</div>'}</div>`+extra,C().nav);
+  $('#w1').innerHTML=pageHtml;
+  $('#w2').innerHTML=pageHtml+`<div style="position:absolute;inset:0">${dialog()}</div>`;
+  $('#cap1').textContent=`${C().title} · customer with no ${S.prod==='insure'?'insurance profile':'salary paid into GCB'} yet`;
+  $('#cap2').textContent=`After tapping ${item().name}`+(v.handoff?' · the hand-off lives here':'');
+}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2400)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,arg]=el.dataset.a.split(':');let go=false;
+  if(a==='v')S.v=+arg;
+  else if(a==='prod'){S.prod=arg;S.sel=CTX[arg].items[0].id}
+  else if(a==='sel'){S.sel=arg;go=true}
+  else if(a==='theme'){const d=document.documentElement;d.dataset.theme=d.dataset.theme==='dark'?'light':'dark'}
+  else if(a==='start'){toast(S.prod==='insure'?'Next: step 1 of 4, About you':'Account number copied');return}
+  render();if(go)setTimeout(()=>$('#w2wrap').scrollIntoView({behavior:'smooth',block:'start'}),30);
+});
+render();
+</script>
+</body>
+</html>

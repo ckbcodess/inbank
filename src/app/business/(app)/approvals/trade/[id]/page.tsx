@@ -30,7 +30,7 @@ import {
   GitCompare,
   MessageSquareWarning,
   XCircle,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -115,7 +115,6 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
           <div className="flex items-start gap-2">
             <MessageSquareWarning
               size={18}
-              strokeWidth={1.8}
               aria-hidden="true"
               className="mt-px shrink-0 text-warning-text"
             />
@@ -154,11 +153,10 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
           }`}
         >
           {outcome === "rejected" ? (
-            <XCircle size={17} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-destructive" />
+            <XCircle size={17} aria-hidden="true" className="mt-px shrink-0 text-destructive" />
           ) : (
             <CheckCircle2
               size={17}
-              strokeWidth={1.8}
               aria-hidden="true"
               className="mt-px shrink-0 text-success-text"
             />
@@ -185,7 +183,6 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
         <div className="flex items-start gap-2 rounded-2xl border border-warning/40 bg-warning/5 p-4">
           <FileWarning
             size={17}
-            strokeWidth={1.8}
             aria-hidden="true"
             className="mt-px shrink-0 text-warning-text"
           />
@@ -225,7 +222,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
         <section className="rounded-2xl border border-border bg-card">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
             <div className="flex items-center gap-2">
-              <GitCompare size={16} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+              <GitCompare size={16} aria-hidden="true" className="text-muted-foreground" />
               <h2 className="text-[15px] text-foreground">
                 Comparing v{previousVersion.version} → v{currentVersion.version}
               </h2>
@@ -260,7 +257,6 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                   </span>
                   <ArrowRight
                     size={14}
-                    strokeWidth={1.8}
                     aria-hidden="true"
                     className={row.changed ? "text-warning-text" : "text-muted-foreground/40"}
                   />
@@ -287,7 +283,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
             <h2 className="text-[15px] text-foreground">Documents</h2>
             <Button variant="outline" size="sm" onClick={() => setState("version-comparison")}>
-              <GitCompare size={14} strokeWidth={1.9} aria-hidden="true" />
+              <GitCompare size={14} aria-hidden="true" />
               Compare v{previousVersion.version} → v{currentVersion.version}
             </Button>
           </div>
@@ -310,7 +306,6 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                     >
                       <FileText
                         size={15}
-                        strokeWidth={1.8}
                         aria-hidden="true"
                         className={isMissing ? "text-warning-text" : "text-muted-foreground"}
                       />
@@ -336,7 +331,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                   </p>
                 </div>
                 <Button variant="ghost" size="icon-sm" aria-label="Download document">
-                  <Download size={15} strokeWidth={1.9} aria-hidden="true" />
+                  <Download size={15} aria-hidden="true" />
                 </Button>
               </div>
 
@@ -363,7 +358,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       {!isTerminal && (
         <div className="flex flex-wrap items-center gap-2">
           <Button onClick={() => submitDecision("approved")} disabled={decisionBlocked}>
-            <CheckCircle2 size={15} strokeWidth={1.9} aria-hidden="true" />
+            <CheckCircle2 size={15} aria-hidden="true" />
             Approve Trade
           </Button>
 
@@ -373,13 +368,13 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             onClick={() => setReturnOpen(true)}
             className="border-warning/40 text-warning-text hover:bg-warning/10"
           >
-            <MessageSquareWarning size={15} strokeWidth={1.9} aria-hidden="true" />
+            <MessageSquareWarning size={15} aria-hidden="true" />
             Return for Clarification
           </Button>
 
           {/* Terminal path */}
           <Button variant="destructive" onClick={() => setRejectOpen(true)}>
-            <XCircle size={15} strokeWidth={1.9} aria-hidden="true" />
+            <XCircle size={15} aria-hidden="true" />
             Reject
           </Button>
 

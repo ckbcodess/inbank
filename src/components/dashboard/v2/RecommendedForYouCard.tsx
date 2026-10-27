@@ -10,7 +10,7 @@
 import { Fragment, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { Bone } from "@/components/states/PageSkeletons";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
@@ -132,10 +132,10 @@ function Chevrons({ i, total, onChange }: { i: number; total: number; onChange: 
     // Contextual: shown while the pointer is over the card or keyboard focus is on a control in it (not after a mouse click, which leaves focus behind). Touch screens can't hover, so they keep them.
     <div className="-my-2 flex items-center opacity-0 pointer-events-none transition-opacity duration-hover group-hover/rec:pointer-events-auto group-hover/rec:opacity-100 group-has-[:focus-visible]/rec:pointer-events-auto group-has-[:focus-visible]/rec:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100">
       <button type="button" aria-label="Previous recommendation" disabled={i === 0} onClick={() => onChange(i - 1)} className={btn}>
-        <ChevronLeft size={16} strokeWidth={1.8} />
+        <ChevronLeft size={16} />
       </button>
       <button type="button" aria-label="Next recommendation" disabled={i >= total - 1} onClick={() => onChange(i + 1)} className={btn}>
-        <ChevronRight size={16} strokeWidth={1.8} />
+        <ChevronRight size={16} />
       </button>
     </div>
   );
@@ -239,7 +239,7 @@ export function RecommendedForYouCard({
               className="group -my-2 inline-flex items-center gap-2 py-2 text-[13px] text-foreground transition-colors duration-hover hover:text-foreground/80"
             >
               {r.ctaLabel}
-              <ArrowRight size={14} strokeWidth={1.8} className="transition-transform duration-hover group-hover:translate-x-0.5" />
+              <ArrowRight size={14} className="transition-transform duration-hover group-hover:translate-x-0.5" />
             </Link>
           </motion.div>
         </motion.div>

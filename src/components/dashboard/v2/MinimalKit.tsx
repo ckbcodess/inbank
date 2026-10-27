@@ -23,7 +23,7 @@ import {
   ChevronDown,
   ChevronRight,
   Lock,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
@@ -137,7 +137,7 @@ export function DeltaLine({
           up ? "text-success" : "text-muted-foreground",
         )}
       >
-        {up ? <ArrowUpRight size={15} strokeWidth={1.9} /> : <ArrowDownRight size={15} strokeWidth={1.9} />}
+        {up ? <ArrowUpRight size={15} /> : <ArrowDownRight size={15} />}
         {fmtGHS(Math.abs(delta), showAmounts, { compact: true })}
       </span>
       <span className="text-muted-foreground tabular">
@@ -447,7 +447,6 @@ export function AccountsDisclosure({
         </span>
         <ChevronDown
           size={16}
-          strokeWidth={1.8}
           className={cn("shrink-0 text-muted-foreground transition-transform", open && "rotate-180")}
         />
       </button>
@@ -491,7 +490,6 @@ export function AttentionBand({ items }: { items: AttentionItem[] }) {
               </span>
               <ChevronRight
                 size={15}
-                strokeWidth={1.8}
                 className="shrink-0 text-muted-foreground transition-transform"
               />
             </Link>
@@ -696,7 +694,7 @@ export function CardsMini({
                   : "border-border text-muted-foreground hover:text-foreground",
               )}
             >
-              <Lock size={12} strokeWidth={1.8} />
+              <Lock size={12} />
               {isBlocked ? t("dashboard.blocked", "Blocked") : t("dashboard.block", "Block")}
             </button>
           </li>

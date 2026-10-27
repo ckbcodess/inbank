@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Product Hub: one flow for Insure, Invest and Loans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ok:#15803d;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,h4,p,ul,ol{margin:0;padding:0} ul,ol{list-style:none}
+  .tab{font-variant-numeric:tabular-nums}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .s12{font-size:12px} .s13{font-size:13px} .s14{font-size:14px}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .col{display:flex;flex-direction:column;gap:12px;width:390px;max-width:100%}
+  .cap{font-size:13px;color:var(--mu);line-height:1.5}
+  .cap b{color:var(--tx);font-weight:500}
+  .ph{height:780px;background:var(--surf);border:1px solid var(--bd);border-radius:32px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+  .body{flex:1;overflow:auto;padding:20px 20px 24px;display:flex;flex-direction:column;gap:24px}
+  .foot{padding:12px 20px 20px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--bd);background:var(--surf)}
+  .back{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--mu);min-height:40px}
+  .back:hover{color:var(--tx)}
+  .title{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .disc{width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#0b0b0c;flex:none}
+  .card{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:20px;background:var(--tile);width:100%}
+  .card:hover{background:var(--tileh)}
+  .card.sel{outline:2px solid var(--am)}
+  .clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .status{font-size:13px;display:flex;align-items:center;gap:8px}
+  .lead{display:flex;flex-direction:column;gap:4px;padding:4px 4px 0}
+  .big{letter-spacing:-.03em;line-height:1.05}
+  .btn{height:44px;padding:0 28px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%;text-align:center}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)}
+  .btn.ghost:hover{background:var(--tile);filter:none}
+  .note{font-size:12px;color:var(--mu);text-align:center}
+  .sec{display:flex;flex-direction:column;gap:8px}
+  .sec>h4{font-size:16px;font-weight:500}
+  .list{display:flex;flex-direction:column}
+  .li{display:flex;align-items:center;gap:12px;padding:12px;margin:0 -12px;border-radius:12px;width:calc(100% + 24px)}
+  .li:hover{background:var(--tile)}
+  .li .t{font-size:14px} .li .m{font-size:12px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .check{display:flex;flex-direction:column;gap:12px}
+  .check li{display:flex;gap:12px;font-size:14px;line-height:1.5}
+  .check svg{flex:none;margin-top:3px;color:var(--ok)}
+  .facts>div{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-top:1px solid var(--bd);font-size:13px}
+  .facts>div:last-child{border-bottom:1px solid var(--bd)}
+  .facts span:first-child{color:var(--mu)} .facts span:last-child{text-align:right}
+  .empty{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mu);font-size:13px;padding:32px;line-height:1.6}
+  .steps{display:flex;flex-direction:column;gap:12px;counter-reset:s}
+  .steps li{display:flex;gap:12px;font-size:14px;align-items:center;counter-increment:s}
+  .steps li::before{content:counter(s);width:24px;height:24px;border-radius:50%;background:var(--tile);display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:var(--mu);flex:none}
+  .act{margin-left:12px;text-decoration:underline;text-underline-offset:3px;color:var(--tx);font-size:13px}
+  .kept{padding:12px 16px;border-radius:12px;background:var(--tile);font-size:13px;line-height:1.5}
+  .wide{width:min(1100px,100%)}
+  table{border-collapse:collapse;width:100%;font-size:13px;background:var(--surf);border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+  th,td{text-align:left;padding:14px 16px;border-top:1px solid var(--bd);vertical-align:top;line-height:1.5}
+  th{font-weight:500;color:var(--mu);border-top:0;background:var(--tile)} td:first-child{color:var(--mu);white-space:nowrap}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Product hub · one shelf, one product page, one item · the same skeleton for Insure, Invest and Loans</h1>
+    <div class="ctrls">
+      <div class="seg" id="prodsel"></div>
+      <div class="seg" id="statesel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage" id="stage"></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ICON={
+ ce:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+ hc:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+ wm:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+ up:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/>',
+ td:'<rect x="4" y="9" width="16" height="11" rx="2"/><path d="M8 9V6a4 4 0 018 0v3"/>',
+ tb:'<path d="M4 20h16M6 20V10M10 20V10M14 20V10M18 20V10M3 10l9-6 9 6"/>',
+ sa:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>',
+ pl:'<circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10.5c0-1 1-1.5 2.5-1.5s2.5.6 2.5 1.6-1 1.4-2.5 1.9-2.5.9-2.5 1.9 1 1.6 2.5 1.6 2.5-.5 2.5-1.5"/>'
+};
+const tick=svg('<path d="M5 12l4 4 10-10"/>',16,1.8);
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const back=svg('<path d="M15 6l-6 6 6 6"/>',16,1.8);
+
+/* ---------- content: the only thing that differs between products ---------- */
+const PROD={
+ insure:{label:'Insure',one:'policy',many:'policies',list:'Your Policies',more:'Apply for Another',first:'Apply',
+  gate:'Create a Profile',gateTitle:'Create your insurance profile',gateSteps:['Your details and ID','Your next of kin','Who your policy pays'],
+  leadNote:'Insure has no lead figure. Ownership sits quietly until something needs you, so the shelf stays first.',
+  cards:[
+   {id:'ce',name:'Child Education Plan',col:'#3b82f6',desc:'Save towards your child’s education, with cover that keeps the plan going if something happens to you.',from:'From GHS 50 a month',gate:true,pts:['Lump sum paid within 48 to 72 hours of an approved claim','School fees are paid even if you can’t'],facts:[['Policy term','10 to 25 years'],['Provider','StarLife Assurance']]},
+   {id:'hc',name:'HomeCall Plan',col:'#ea580c',desc:'Help your family cover funeral expenses in a difficult time. Cover yourself, and add the people close to you.',from:'From GHS 8 a month',gate:true,pts:['Lump sum paid within 48 to 72 hours of an approved claim','Cover your spouse, children and parents too','Accidental deaths are covered from day one'],facts:[['Cover','GHS 2,500 to GHS 30,000'],['Provider','StarLife Assurance']]},
+   {id:'wm',name:'WealthMaster Plan',col:'#d97706',desc:'Save regularly and grow a lump sum, with life cover for the people who depend on you.',from:'From GHS 50 a month',gate:true,pts:['Lump sum paid within 48 to 72 hours of an approved claim','Your loved ones are paid if something happens to you'],facts:[['Policy term','4 to 10 years'],['Provider','StarLife Assurance']]},
+   {id:'up',name:'Ultimate Protection Plan',col:'#db2777',desc:'Keep an income if illness or disability stops you working, and leave your family a lump sum.',from:'From GHS 40.50 a month',gate:true,pts:['Covers total and permanent disability','Covers critical illness'],facts:[['Sum assured','GHS 50,000 to GHS 300,000'],['Policy term','8 to 20 years']]}
+  ]},
+ invest:{label:'Invest',one:'investment',many:'investments',list:'Your Investments',more:'Invest Again',first:'Start',
+  gate:'Open a Securities Account',gateTitle:'Open your securities account',gateSteps:['Confirm your details','Fill in your CSD account form','Ready within 7 working days'],
+  leadNote:'Invest leads with what you have invested, because people come here to see their money. It only appears once there is something to show.',
+  cards:[
+   {id:'td',name:'Term Deposits',col:'#0d9488',desc:'Lock money away for a set time at a rate that is fixed when you start.',from:'The rate is shown before you start',gate:false,pts:['You see exactly what you get back, and when','Choose what happens when it matures'],facts:[['Terms','30 to 365 days'],['Early exit','Allowed, with the cost shown first']]},
+   {id:'tb',name:'Treasury Bills & Bonds',col:'#4f46e5',desc:'Lend to the government for a fixed period and get paid back with interest.',from:'Prices shown before you buy',gate:true,pts:['Backed by the government','Sell early through rediscount if you need the cash'],facts:[['Held at','The CSD, in your own account'],['Settles','On the date shown with each offer']]}
+  ]},
+ loans:{label:'Loans',one:'loan',many:'loans',list:'Your Loans',more:'Apply for Another',first:'Apply',
+  gate:'Create a Profile',gateTitle:'Create your borrowing profile',gateSteps:['Your employer and income','Your repayment account','Review your limit'],
+  leadNote:'Loans leads with what you owe and the next payment, because that is the one thing with a date on it. It is never an offer.',
+  cards:[
+   {id:'sa',name:'Salary Advance',col:'#7c3aed',desc:'Get part of your salary early, and have it taken back on payday.',from:'Your limit is shown before you apply',gate:true,pts:['Paid out in minutes once approved','Repaid from your salary, nothing else to remember'],facts:[['For','Salaried customers'],['Repaid','On your next payday']]},
+   {id:'pl',name:'Personal Loan',col:'#c026d3',desc:'Borrow a set amount and spread the repayments over months.',from:'Your limit is shown before you apply',gate:true,pts:['See every repayment before you accept','Pay it off early whenever you like'],facts:[['Repaid','Monthly, from your account'],['Early payoff','Allowed, with the cost shown first']]}
+  ]}
+};
+
+/* what the customer owns, by product and by state. "new" and "profile" own nothing. */
+const A=(t,m,attn)=>[t,m,!!attn];
+const OWN={
+ insure:{
+  owns:{hc:[{id:'hc1',title:'HomeCall Plan',sub:'HC-20418 · GHS 8 a month',big:'GHS 10,000',bigL:'Sum assured',status:'Active. Next premium on 1 Nov.',actions:[A('Statement','Every premium you’ve paid'),A('File a Claim','Tell us what happened'),A('Update Beneficiaries','Who it pays'),A('Cancel Policy','End your cover')]}],
+        wm:[{id:'wm1',title:'WealthMaster Plan',sub:'WM-30911 · GHS 100 a month',big:'GHS 12,400',bigL:'Paid in so far',status:'Active. Next premium on 3 Nov.',actions:[A('Statement','Every premium you’ve paid'),A('File a Claim','Tell us what happened'),A('Update Beneficiaries','Who it pays'),A('Cancel Policy','End your cover')]},
+            {id:'wm2',title:'WealthMaster Plan',sub:'WM-31877 · GHS 50 a month',big:'GHS 1,800',bigL:'Paid in so far',status:'Active. Next premium on 3 Nov.',actions:[A('Statement','Every premium you’ve paid'),A('File a Claim','Tell us what happened'),A('Update Beneficiaries','Who it pays'),A('Cancel Policy','End your cover')]}]},
+  attention:{hc:[{id:'hc1',title:'HomeCall Plan',sub:'HC-20418 · GHS 8 a month',attn:'GHS 16 to pay · 2 premiums missed',big:'GHS 10,000',bigL:'Sum assured',status:'Two premiums were missed. Pay GHS 16 to keep your cover going.',actions:[A('Pay Outstanding','GHS 16 · 2 premiums missed',1),A('Statement','Every premium you’ve paid'),A('File a Claim','Tell us what happened'),A('Update Beneficiaries','Who it pays'),A('Cancel Policy','End your cover')]}],
+        wm:[{id:'wm1',title:'WealthMaster Plan',sub:'WM-30911 · GHS 100 a month',big:'GHS 12,400',bigL:'Paid in so far',status:'Active. Next premium on 3 Nov.',actions:[A('Statement','Every premium you’ve paid'),A('File a Claim','Tell us what happened'),A('Update Beneficiaries','Who it pays'),A('Cancel Policy','End your cover')]}]}
+ },
+ invest:{
+  owns:{td:[{id:'td1',title:'90-day Term Deposit',sub:'Matures 12 Jan',big:'GHS 20,000',bigL:'Principal',status:'Earning at the rate fixed when you started.',actions:[A('Change What Happens at Maturity','Choose what happens when it matures'),A('Redeem Part of the Deposit','Take some of it out early'),A('Close the Deposit','Take it all out and close it')]},
+            {id:'td2',title:'180-day Term Deposit',sub:'Matures 10 Mar',big:'GHS 15,000',bigL:'Principal',status:'Earning at the rate fixed when you started.',actions:[A('Change What Happens at Maturity','Choose what happens when it matures'),A('Redeem Part of the Deposit','Take some of it out early'),A('Close the Deposit','Take it all out and close it')]}],
+        tb:[{id:'tb1',title:'91-day Treasury Bill',sub:'Matures 9 Dec',big:'GHS 10,000',bigL:'Face value',status:'Held in your securities account.',actions:[A('Advice','Your investment confirmation'),A('Maturity','What happens when it matures'),A('Rediscount','Cash in all or part of it early')]}]},
+  attention:{td:[{id:'td1',title:'90-day Term Deposit',sub:'Matures 12 Jan',big:'GHS 20,000',bigL:'Principal',status:'Earning at the rate fixed when you started.',actions:[A('Change What Happens at Maturity','Choose what happens when it matures'),A('Redeem Part of the Deposit','Take some of it out early'),A('Close the Deposit','Take it all out and close it')]},
+            {id:'td2',title:'180-day Term Deposit',sub:'Matures 10 Mar',big:'GHS 15,000',bigL:'Principal',status:'Earning at the rate fixed when you started.',actions:[A('Change What Happens at Maturity','Choose what happens when it matures'),A('Redeem Part of the Deposit','Take some of it out early'),A('Close the Deposit','Take it all out and close it')]}],
+        tb:[{id:'tb1',title:'91-day Treasury Bill',sub:'Matures 27 Oct',attn:'Matures in 3 days · choose what happens',big:'GHS 10,000',bigL:'Face value',status:'It matures in 3 days. Choose whether to roll it over or take the cash.',actions:[A('Maturity','Choose what happens in 3 days',1),A('Advice','Your investment confirmation'),A('Rediscount','Cash in all or part of it early')]}]}
+ },
+ loans:{
+  owns:{sa:[{id:'sa1',title:'Salary Advance',sub:'Taken 2 Oct',big:'GHS 1,200',bigL:'Left to repay',status:'GHS 400 comes off on 28 Oct, from your salary account.',actions:[A('Make a Repayment','Pay some or all of it now'),A('Statement','Every payment so far'),A('Settle Early','Pay it off and close')]}]},
+  attention:{sa:[{id:'sa1',title:'Salary Advance',sub:'Taken 2 Oct',attn:'GHS 400 due in 4 days',big:'GHS 1,200',bigL:'Left to repay',status:'GHS 400 is due on 28 Oct. Pay now, or we take it from your salary account.',actions:[A('Make a Repayment','Pay some or all of it now',1),A('Statement','Every payment so far'),A('Settle Early','Pay it off and close')]}]}
+ }
+};
+/* Item pages: the balances (lead-in over a figure), the rows, and the one row that needs the customer. */
+const BAL={td1:'You have invested',td2:'You have invested',tb1:'You have invested',sa1:'You owe'};
+const FACTS={
+ hc1:[['Next premium','GHS 8 on 1 Nov'],['Paid from','Main Account'],['Policy number','HC-20418']],
+ wm1:[['Next premium','GHS 100 on 3 Nov'],['Paid from','Main Account'],['Policy number','WM-30911']],
+ wm2:[['Next premium','GHS 50 on 3 Nov'],['Paid from','Main Account'],['Policy number','WM-31877']],
+ td1:[['Matures','12 Jan'],['Rate','Fixed when you started'],['Paid out to','Main Account']],
+ td2:[['Matures','10 Mar'],['Rate','Fixed when you started'],['Paid out to','Main Account']],
+ tb1:[['Matures','9 Dec'],['Held in','Your securities account']],
+ sa1:[['Next payment','GHS 400 on 28 Oct'],['Taken','2 Oct'],['Repaid from','Salary Account']]
+};
+const ATT={
+ hc1:{l:'2 premiums missed',v:'GHS 16',a:'Pay now'},
+ tb1:{l:'Matures in 3 days',v:'27 Oct',a:'Choose',drop:'Matures'},
+ sa1:{l:'Due 28 Oct',v:'GHS 400',a:'Pay now',drop:'Next payment'}
+};
+const LEAD={
+ invest:{L:'Invested',v:'GHS 45,000',s:'Across 3 investments',sa:'One matures in 3 days'},
+ loans:{L:'You owe',v:'GHS 1,200',s:'Next payment GHS 400 on 28 Oct',sa:'Next payment GHS 400 is due in 4 days'}
+};
+const STATES=[['new','New customer'],['profile','Has a profile'],['owns','Owns some'],['attention','Needs attention']];
+
+const S={v:1,prod:'insure',state:'owns',sel:null,c:null,profile:true,dark:true};
+const P=()=>PROD[S.prod];
+const card=id=>P().cards.find(c=>c.id===id);
+const ownedMap=()=>(OWN[S.prod][S.state])||{};
+const ownedOf=id=>ownedMap()[id]||[];
+const allOwned=()=>Object.values(ownedMap()).flat();
+const hasProfile=()=>S.profile;
+const findItem=id=>allOwned().find(i=>i.id===id);
+function resetFlow(){S.c=null;S.profile=S.state!=='new'}
+
+/* ---------- pieces ---------- */
+const disc=(c,s=44)=>`<span class="disc" style="background:${c.col};width:${s}px;height:${s}px">${svg(ICON[c.id],Math.round(s*.42))}</span>`;
+const checks=l=>`<ul class="check">${l.map(b=>`<li>${tick}<span>${b}</span></li>`).join('')}</ul>`;
+const facts=r=>`<div class="facts">${r.map(x=>`<div><span>${x[0]}</span><span class="tab">${x[1]}</span></div>`).join('')}</div>`;
+const stateLine=c=>{
+  const o=ownedOf(c.id);if(!o.length)return '';
+  const n=o.length,att=o.filter(i=>i.attn).length,P_=P();
+  return `<div class="status"><span class="mu">${n} ${n===1?P_.one:P_.many}</span>${att?`<span class="am">· ${att} needs attention</span>`:''}</div>`;
+};
+const ownedRow=i=>`<button class="li" data-a="item:${i.id}"><span class="g"><span class="t">${i.title}</span><span class="m tab ${i.attn?'am':''}">${i.attn||i.sub}</span></span><span class="mu">${chev}</span></button>`;
+
+/* ---------- frame 1: the hub (the shelf) ---------- */
+function hub(){
+  const p=P(),L=LEAD[S.prod],owned=allOwned();
+  let lead='';
+  if(L&&owned.length){
+    const att=owned.some(i=>i.attn);
+    lead=`<div class="lead"><span class="mu s13">${L.L}</span><span class="big tab" style="font-size:40px">${L.v}</span><span class="s13 ${att?'am':'mu'}">${att?L.sa:L.s}</span></div>`;
+  }
+  return `<div class="ph"><div class="body"><div style="display:flex;flex-direction:column;gap:4px"><h2 class="title" style="font-size:22px">${p.label}</h2></div>${lead}
+   <div style="display:flex;flex-direction:column;gap:12px">${p.cards.map(c=>`<button class="card ${S.sel===c.id?'sel':''}" data-a="sel:${c.id}">
+     <div style="display:flex;gap:12px;align-items:center">${disc(c)}<div style="min-width:0"><div class="s14" style="font-weight:500">${c.name}</div><div class="s12 mu tab">${c.from}</div></div></div>
+     <p class="s13 mu clamp" style="line-height:1.5">${c.desc}</p>${stateLine(c)}</button>`).join('')}</div></div></div>`;
+}
+
+/* ---------- frame 2: the product page ---------- */
+function page(){
+  if(!S.sel)return `<div class="ph"><div class="empty">Tap a card on the left.<br>The page for that product opens here.</div></div>`;
+  const p=P(),c=card(S.sel),o=ownedOf(c.id),gated=c.gate&&!hasProfile();
+  const ctaLabel=gated?p.gate:(o.length?p.more:p.first);
+  const ctaA=gated?'gate':'apply';
+  const hero=`<div style="display:flex;flex-direction:column;gap:16px"><button class="back" data-a="home">${back}${p.label}</button>${disc(c,52)}<div><h2 class="title">${c.name}</h2><p class="mu s14" style="margin-top:6px;line-height:1.6">${c.desc}</p></div></div>`;
+  const about=`<div class="sec">${checks(c.pts)}</div>${facts(c.facts)}`;
+  const owned1=o.length?`<div class="sec"><h4>${p.list}</h4><div class="list">${o.map(ownedRow).join('')}</div></div>`:'';
+  let body,foot;
+  if(S.v===1){
+    body=hero+owned1+about;
+    foot=`${gated?`<p class="note">You only do it once. We keep ${c.name} for you.</p>`:''}<button class="btn" data-a="${ctaA}">${ctaLabel}</button>`;
+  }else{
+    body=hero+about;
+    foot=o.length?`<button class="btn ghost" data-a="list">View ${p.list.replace('Your ','Your ')}</button><button class="btn" data-a="apply">${p.more}</button>`
+      :`${gated?`<p class="note">You only do it once. We keep ${c.name} for you.</p>`:''}<button class="btn" data-a="${ctaA}">${ctaLabel}</button>`;
+  }
+  return `<div class="ph"><div class="body">${body}</div><div class="foot">${foot}</div></div>`;
+}
+
+/* ---------- frame 3: an item, the list, or a step ---------- */
+function third(){
+  const p=P(),c=S.sel?card(S.sel):null,k=S.c;
+  if(!k)return `<div class="ph"><div class="empty">${S.v===1?'Tap a row, or the button, on the page.':'Tap View, or Apply for Another, on the page.'}<br>What happens next opens here.</div></div>`;
+  if(k.type==='list'){
+    const o=ownedOf(c.id);
+    return `<div class="ph"><div class="body"><div><button class="back" data-a="close">${back}${c.name}</button><h2 class="title" style="margin-top:8px">${p.list}</h2></div><div class="list">${o.map(ownedRow).join('')}</div></div></div>`;
+  }
+  if(k.type==='item'){
+    const i=findItem(k.id);if(!i)return '';
+    /* The rule (CONSTITUTION §3): a figure only for a balance, with a lead-in. Everything else is rows, and what needs
+       the customer is the first row, in amber, with its action as a text link. */
+    const bal=BAL[i.id],att=i.attn&&ATT[i.id];
+    let rows=(FACTS[i.id]||[]).filter(r=>!(att&&att.drop===r[0]));
+    if(!bal)rows=[[i.bigL,`<span style="font-size:20px">${i.big}</span>`],...rows];
+    if(att)rows=[[`<span class="am">${att.l}</span>`,`${att.v}<button class="act" data-a="act:${att.a}">${att.a}</button>`],...rows];
+    const acts=i.actions.filter(a=>!a[2]);
+    return `<div class="ph"><div class="body"><div><button class="back" data-a="${k.from==='list'?'list':'close'}">${back}${k.from==='list'?p.list:c.name}</button><h2 class="title" style="margin-top:8px;font-size:16px">${i.title}</h2></div>
+     ${bal?`<div style="display:flex;flex-direction:column;gap:2px"><span class="mu s14">${bal}</span><span class="big tab" style="font-size:32px;line-height:1.1">${i.big}</span></div>`:''}
+     <div class="facts">${rows.map(r=>`<div><span>${r[0]}</span><span class="tab">${r[1]}</span></div>`).join('')}</div>
+     <div class="list">${acts.map(a=>`<button class="li" data-a="act:${a[0]}"><span class="g"><span class="t">${a[0]}</span><span class="m">${a[1]}</span></span><span class="mu">${chev}</span></button>`).join('')}</div>
+     <p class="note" style="text-align:left">Anything that moves money ends with a one-time code.</p></div></div>`;
+  }
+  if(k.type==='gate'){
+    return `<div class="ph"><div class="body"><div><button class="back" data-a="close">${back}${c.name}</button><h2 class="title" style="margin-top:8px">${p.gateTitle}</h2><p class="mu s14" style="margin-top:6px;line-height:1.6">Three short steps, once. After that it’s one tap to apply.</p></div>
+     <ol class="steps">${p.gateSteps.map(s=>`<li>${s}</li>`).join('')}</ol>
+     <div class="kept"><span class="mu">Your choice is kept: </span>${c.name}</div></div>
+     <div class="foot"><button class="btn" data-a="mkprofile">${S.prod==='invest'?'Open Account':'Create Profile'}</button></div></div>`;
+  }
+  return `<div class="ph"><div class="body"><div><button class="back" data-a="close">${back}${c.name}</button><h2 class="title" style="margin-top:8px">${p.first==='Start'?'Start':'Apply'}: ${c.name}</h2><p class="mu s14" style="margin-top:6px;line-height:1.6">The existing ${p.label} flow takes over from here, with this choice already made. The prototype stops at this point.</p></div></div>
+   <div class="foot"><button class="btn" data-a="toast:The product’s own flow starts here">Continue</button></div></div>`;
+}
+
+/* ---------- variations ---------- */
+const V={};
+V[1]={name:'1. Recommended',note:'The shelf is the same for everyone and each card carries one quiet line about what you own. The product page lists what you own right there, then the explanation, then one button. Check my policy is two taps. Switch the product and the customer state above to see the same skeleton hold.',
+ r:()=>`<div class="col">${hub()}<p class="cap"><b>1 · The shelf.</b> Same layout for every customer. Only the quiet line on each card changes.${LEAD[S.prod]?' The lead figure above the shelf appears when you own something.':''}</p></div>
+  <div class="col">${page()}<p class="cap"><b>2 · The product page.</b> Owned items first, then what the product is, then one button that changes with the customer: ${P().gate}, ${P().first}, or ${P().more}.</p></div>
+  <div class="col">${third()}<p class="cap"><b>3 · Item or step.</b> An owned item: a figure only if it is a balance, otherwise rows, with anything that needs you as the first amber row. Or the one-time gate with the choice kept.</p></div>`};
+V[2]={name:'2. As described',note:'Your version: the product page explains the product and offers two buttons, View and Apply. It is cleaner when you own several, but check my policy takes three taps, and the View button opens a list that the page itself could have shown.',
+ r:()=>`<div class="col">${hub()}<p class="cap"><b>1 · The shelf.</b> Same as the recommended version.</p></div>
+  <div class="col">${page()}<p class="cap"><b>2 · The product page.</b> Two buttons when you own something, one when you don’t. The owned list lives one tap away.</p></div>
+  <div class="col">${third()}<p class="cap"><b>3 · List, item or step.</b> The extra list screen is the cost of this version.</p></div>`};
+V[3]={name:'3. The skeleton',note:'What stays fixed and what each product fills in. If a new product fits this table, it fits the pattern. If it doesn’t, the pattern has a gap.',
+ r:()=>`<div class="col wide"><table>
+  <tr><th></th><th>Insure</th><th>Invest</th><th>Loans</th></tr>
+  <tr><td>Shelf</td><td>Four plan cards</td><td>Term deposits, treasury</td><td>Salary advance, personal loan</td></tr>
+  <tr><td>Quiet line on a card</td><td>“1 policy”, “1 needs attention”</td><td>“2 investments”, “1 needs attention”</td><td>“1 loan”, “1 needs attention”</td></tr>
+  <tr><td>Lead figure on the shelf</td><td>None</td><td>What you have invested</td><td>What you owe, and the next payment</td></tr>
+  <tr><td>Owned item</td><td>A policy</td><td>A deposit or a holding</td><td>A loan</td></tr>
+  <tr><td>What needs attention</td><td>Missed premium, medical assessment</td><td>Maturing soon</td><td>Payment coming up</td></tr>
+  <tr><td>The gate</td><td>Create a Profile</td><td>Open a Securities Account, treasury only</td><td>Create a Profile</td></tr>
+  <tr><td>Button when you own something</td><td>Apply for Another</td><td>Invest Again</td><td>Apply for Another</td></tr>
+  <tr><td>Always true</td><td colspan="3">The shelf looks the same for everyone. Owned items sit above the explanation. One button at the bottom. The gate appears only at the button, keeps the chosen product, and never blocks browsing. Attention is amber, never red.</td></tr>
+ </table></div>`};
+
+/* ---------- chrome ---------- */
+const $=id=>document.getElementById(id);
+function chrome(){
+  $('prodsel').innerHTML=Object.entries(PROD).map(([k,v])=>`<button class="${S.prod===k?'on':''}" data-a="prod:${k}">${v.label}</button>`).join('');
+  $('statesel').innerHTML=STATES.map(s=>`<button class="${S.state===s[0]?'on':''}" data-a="state:${s[0]}">${s[1]}</button>`).join('');
+  $('themesel').innerHTML=['Dark','Light'].map(t=>`<button class="${(t==='Dark')===S.dark?'on':''}" data-a="theme:${t}">${t}</button>`).join('');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note+(S.v!==3?' '+P().leadNote:'');
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+}
+function render(){chrome();$('stage').innerHTML=V[S.v].r()}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2400)}
+
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='v')S.v=+arg;
+  else if(a==='prod'){S.prod=arg;S.sel=null;resetFlow()}
+  else if(a==='state'){S.state=arg;resetFlow()}
+  else if(a==='theme')S.dark=arg==='Dark';
+  else if(a==='sel'){S.sel=arg;S.c=null}
+  else if(a==='home'){S.sel=null;S.c=null}
+  else if(a==='item')S.c={type:'item',id:arg,from:S.c&&S.c.type==='list'?'list':'page'};
+  else if(a==='list')S.c={type:'list'};
+  else if(a==='close')S.c=null;
+  else if(a==='gate')S.c={type:'gate'};
+  else if(a==='apply')S.c={type:'apply'};
+  else if(a==='mkprofile'){S.profile=true;S.c=null;toast((S.prod==='invest'?'Securities account requested. ':'Profile created. ')+(card(S.sel).name+' is ready to '+P().first.toLowerCase()+'.'))}
+  else if(a==='act'){toast(arg+' opens its own flow')}
+  else if(a==='toast'){toast(arg);return}
+  render();
+});
+render();
+</script>
+</body>
+</html>

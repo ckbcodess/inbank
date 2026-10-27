@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flow Steps and Cost or Face Value: 10 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--ok:#15803d;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--tile:#1a1a1a;--tileh:#232323;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button,input{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0}
+  .mu{color:var(--mu)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note{font-size:13px;color:var(--mu);line-height:1.55;max-width:1000px} .note b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .cell{display:flex;flex-direction:column;gap:12px;width:560px;max-width:100%}
+  .cap{font-size:13px;color:var(--mu);padding:0 4px;line-height:1.5} .cap b{color:var(--tx);font-weight:500}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:24px;box-shadow:var(--shadow);min-height:640px;padding:24px;display:flex;flex-direction:column;gap:20px}
+  .hd{display:flex;align-items:center;gap:10px;min-height:32px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em;flex:1}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .lbl{font-size:13px;font-weight:500}
+  .help{font-size:12px;color:var(--mu);line-height:1.5}
+  .field{height:44px;border-radius:12px;background:var(--tile);border:1px solid transparent;padding:0 14px;display:flex;align-items:center;font-size:14px;color:var(--mu);width:100%}
+  .fg{display:flex;flex-direction:column;gap:8px}
+  .btn{height:44px;padding:0 18px;border-radius:12px;background:var(--am);color:#111;font-weight:500;font-size:14px;display:flex;align-items:center;justify-content:center;width:100%;margin-top:auto}
+  .btn.off{background:var(--tile);color:var(--mu);cursor:default}
+  /* steps */
+  .s-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px}
+  .s-seg i{height:4px;border-radius:2px;background:var(--tileh)} .s-seg i.d{background:var(--am)}
+  .s-dots{display:flex;align-items:flex-start}
+  .s-dots .n{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;font-size:12px;color:var(--mu)}
+  .s-dots .n:before{content:"";position:absolute;top:5px;left:-50%;right:50%;height:2px;background:var(--tileh)}
+  .s-dots .n:first-child:before{display:none} .s-dots .n.d:before,.s-dots .n.c:before{background:var(--am)}
+  .s-dots b{width:12px;height:12px;border-radius:50%;background:var(--tileh);position:relative;z-index:1}
+  .s-dots .d b,.s-dots .c b{background:var(--am)} .s-dots .c{color:var(--tx);font-weight:500} .s-dots .c b{box-shadow:0 0 0 4px color-mix(in srgb,var(--am) 25%,transparent)}
+  .s-num{display:flex;align-items:center;gap:8px}
+  .s-num .c{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--tileh);color:var(--mu);flex:none}
+  .s-num .d .c{background:var(--am);color:#111} .s-num .a .c{background:var(--tx);color:var(--surf);font-weight:500}
+  .s-num .ln{flex:1;height:1px;background:var(--bd)}
+  .ring{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex:none}
+  .hair{height:2px;background:var(--tileh);border-radius:1px;overflow:hidden;margin:0 -24px} .hair i{display:block;height:100%;background:var(--am);transition:width .25s}
+  .trail{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--mu)} .trail .a{color:var(--tx);text-decoration:underline;text-underline-offset:5px} .trail .d{color:var(--tx)}
+  .rail{display:flex;gap:20px} .rail ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;width:120px;flex:none;font-size:13px;color:var(--mu);border-left:1px solid var(--bd)}
+  .rail li{padding-left:12px;margin-left:-1px;border-left:2px solid transparent} .rail li.a{color:var(--tx);border-color:var(--am);font-weight:500} .rail li.d{color:var(--tx)}
+  .big1{font-size:36px;font-weight:400;letter-spacing:-.03em;color:var(--mu);line-height:1} .big1 b{color:var(--tx);font-weight:400}
+  .acc{display:flex;flex-direction:column;gap:2px;background:var(--tile);border-radius:16px;padding:6px}
+  .acc button{display:flex;justify-content:space-between;gap:12px;padding:10px;border-radius:10px;font-size:13px;width:100%} .acc button:hover{background:var(--tileh)}
+  /* basis */
+  .tgl{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px;width:max-content}
+  .tgl button{padding:8px 16px;border-radius:8px;font-size:13px;color:var(--mu)} .tgl button.on{background:var(--tileh);color:var(--tx);font-weight:500}
+  .amt{background:var(--tile);border-radius:16px;height:72px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:32px;letter-spacing:-.02em}
+  .amt input{background:none;border:0;outline:0;width:150px;font-size:32px;text-align:left;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .amt span{color:var(--mu);font-size:20px}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .oc{border-radius:16px;padding:14px;background:var(--tile);border:1px solid transparent;display:flex;flex-direction:column;gap:4px;font-size:14px} .oc small{font-size:12px;color:var(--mu);line-height:1.45}
+  .oc.on{border-color:var(--am);background:color-mix(in srgb,var(--am) 10%,var(--tile))}
+  .rd{display:flex;gap:12px;padding:12px;border-radius:14px;background:var(--tile);border:1px solid transparent;align-items:flex-start;width:100%}
+  .rd i{width:18px;height:18px;border-radius:50%;border:2px solid var(--bd);flex:none;margin-top:2px} .rd.on{border-color:var(--am)} .rd.on i{border-color:var(--am);background:radial-gradient(var(--am) 45%,transparent 50%)}
+  .rd div{display:flex;flex-direction:column;gap:2px;font-size:14px} .rd small{font-size:12px;color:var(--mu)}
+  .sum{display:flex;justify-content:space-between;gap:16px;font-size:14px;padding:12px 4px;border-top:1px dashed var(--bd)} .sum b{font-weight:400}
+  .sentence{font-size:20px;line-height:1.6;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .sentence .sel{background:var(--tile);border-radius:10px;padding:2px 12px;border-bottom:2px solid var(--am)} .sentence input{background:var(--tile);border:0;outline:0;border-radius:10px;padding:4px 12px;width:150px;font-size:20px;font-variant-numeric:tabular-nums}
+  .pair{display:grid;grid-template-columns:1fr 36px 1fr;gap:8px;align-items:center}
+  .pf{background:var(--tile);border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px;border:1px solid transparent} .pf.on{border-color:var(--am)} .pf small{font-size:12px;color:var(--mu)} .pf input{background:none;border:0;outline:0;font-size:18px;width:100%;font-variant-numeric:tabular-nums}
+  .sw{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px}
+  .sw i{width:36px;height:20px;border-radius:10px;background:var(--tileh);position:relative;flex:none} .sw i:after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--mu);transition:.15s} .sw.on i{background:var(--am)} .sw.on i:after{left:18px;background:#111}
+  .ul{display:flex;gap:20px;border-bottom:1px solid var(--bd)} .ul button{padding:8px 0;font-size:14px;color:var(--mu);border-bottom:2px solid transparent;margin-bottom:-1px} .ul button.on{color:var(--tx);border-color:var(--am);font-weight:500}
+  .strip{display:grid;grid-template-columns:1fr 1fr;gap:8px} .strip button{background:var(--tile);border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px;border:1px solid transparent} .strip button.on{border-color:var(--am)} .strip small{font-size:12px;color:var(--mu)} .strip b{font-weight:400;font-size:16px}
+  .chipin{display:inline-flex;align-items:center;gap:4px;background:var(--tileh);border-radius:8px;padding:4px 8px;font-size:12px;color:var(--tx);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Flow steps, and the Cost or Face Value choice: 10 variations</h1>
+    <div class="row" style="gap:8px">
+      <div class="seg" id="surface"></div>
+      <div class="seg" id="theme"><button data-t="dark" class="on">Dark</button><button data-t="light">Light</button></div>
+    </div>
+  </div>
+  <div class="pills" id="pills"></div>
+  <p class="note" id="note"></p>
+</div>
+<div class="stage"><div class="cell" id="cell"></div></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const STEPS=["About you","Contact","Documents","Review"];
+let surface="steps", v=0, step=0, basis="cost", amount="2000", sw=false;
+const PRICE=0.874; // GHS paid per GHS 1 of face value (a 15-year bond sold at a discount)
+const fmt=n=>"GHS "+Number(n).toLocaleString("en-GH",{minimumFractionDigits:2,maximumFractionDigits:2});
+const calc=()=>{const a=parseFloat(amount)||0;return basis==="cost"?{pay:a,get:a/PRICE}:{pay:a*PRICE,get:a};};
+
+const STEP_V=[
+ ["Segmented bar","Four thin bars, one per step, filled as you go. The name of the step is the title. The count is a quiet line, not the headline."],
+ ["Dots on a line","Four dots joined by a line, with the step names beneath. The current dot has a soft halo. Shows what is coming at a glance."],
+ ["Numbered circles","Numbered circles with ticks for finished steps. Familiar, and a finished step is something you can go back to."],
+ ["Ring in the header","A small ring at the right of the title, with 1/4 inside it. Costs no vertical space at all."],
+ ["Hairline under the header","A 2px line across the top of the page, and the step's name as the title. Nothing else added to the screen."],
+ ["Trail of names","A text trail: About you, Contact, Documents, Review. The current one is underlined. No graphics, only words."],
+ ["Rail on the side","A vertical rail with the step names beside the form. Reads best on desktop. It folds to a single line under 640px."],
+ ["Name now, next one named","The title is the step. Under it: Next, Contact. Tells the customer exactly what comes after this screen."],
+ ["Large fraction","A big thin 1/4 on the left of the title, like a balance figure. Typographic and calm."],
+ ["Steps fold into a summary","Finished steps fold into one-line summaries above the current one, so the customer sees what they entered and can reopen it."],
+];
+const BASIS_V=[
+ ["Segmented toggle + live sentence","Keeps the control they know, but adds one sentence that restates it in money: You pay GHS 2,000.00 today."],
+ ["Two option cards","Two cards that say what each choice means: I want to pay, I want to receive. The choice reads as a decision, not a unit."],
+ ["Radio rows with a definition","The question first: What do you want to enter? Each row has its one-line meaning inside it."],
+ ["Unit inside the amount field","The unit sits in the field as a small chip: GHS, cost. Tap to switch. Least chrome of all."],
+ ["Sentence you complete","I want to [pay] GHS ___ today. The choice is a word in a sentence. Natural for first-time investors."],
+ ["Two linked fields","Cost and face value are both fields. Type in either and the other follows. There is no mode to pick."],
+ ["Result beside the input","Type one amount. The other value sits right beside it, so the toggle becomes a read-out."],
+ ["Underline tabs","Cost | Face Value as tabs above the field. The helper text under the tabs changes with the choice."],
+ ["Switch, default cost","Cost is the default. One switch, Enter face value instead, with the consequence on the line below it."],
+ ["Pay and Receive strip","A strip showing Pay today and Receive at maturity, always. Tap either number to make it the one you type."],
+];
+
+function stepHeader(n){
+ const name=STEPS[step], cnt=`Step ${step+1} of 4`;
+ const hd=(t,extra="")=>`<div class="hd"><span class="bk">‹</span><h2>${t}</h2>${extra}</div>`;
+ switch(n){
+ case 0:return hd(name)+`<div class="s-seg">${STEPS.map((_,i)=>`<i class="${i<=step?"d":""}"></i>`).join("")}</div><p class="help">${cnt}</p>`;
+ case 1:return hd("Create Profile")+`<div class="s-dots">${STEPS.map((s,i)=>`<div class="n ${i<step?"d":i===step?"c":""}"><b></b>${s}</div>`).join("")}</div>`;
+ case 2:return hd("Create Profile")+`<div class="s-num">${STEPS.map((s,i)=>`<div class="s-num ${i<step?"d":i===step?"a":""}" style="gap:8px;${i<3?"flex:1":""}"><span class="c">${i<step?"✓":i+1}</span>${i<3?'<span class="ln"></span>':""}</div>`).join("")}</div><p class="help">${name}</p>`;
+ case 3:{const p=(step+1)*25;return hd(name,`<div class="ring" style="background:conic-gradient(var(--am) ${p}%,var(--tileh) 0)"><span style="background:var(--surf);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">${step+1}/4</span></div>`);}
+ case 4:return `<div class="hair"><i style="width:${(step+1)*25}%"></i></div>`+hd(name);
+ case 5:return hd("Create Profile")+`<div class="trail">${STEPS.map((s,i)=>`<span class="${i<step?"d":i===step?"a":""}">${s}${i<3?'<span class="mu" style="margin-left:8px">›</span>':""}</span>`).join("")}</div>`;
+ case 6:return hd("Create Profile");
+ case 7:return hd(name)+`<p class="help">${step<3?"Next: "+STEPS[step+1]:"Last step. Nothing is sent until you confirm."}</p>`;
+ case 8:return `<div class="hd"><span class="bk">‹</span><span class="big1"><b>${step+1}</b>/4</span><h2>${name}</h2></div>`;
+ case 9:return hd("Create Profile")+(step>0?`<div class="acc">${STEPS.slice(0,step).map(s=>`<button><span>${s}</span><span class="mu">Edit</span></button>`).join("")}</div>`:"");
+ }
+}
+function stepBody(){
+ const f=(l,p)=>`<div class="fg"><span class="lbl">${l}</span><div class="field">${p}</div></div>`;
+ const sets=[[f("Title","Mr."),f("Marital Status","Single"),f("Occupation","Accountant / Auditor"),f("Residential Address","House No. 14, 5th Avenue")],
+  [f("Phone","024 412 3456"),f("Email","ama@example.com"),f("Postal Address","P.O. Box CT 1234")],
+  [f("Ghana Card","GHA-000000000-0"),f("Signature","Upload a JPG, PNG or PDF")],
+  [`<p class="help">Everything you entered is on the steps above. Nothing is sent until you confirm.</p>`]];
+ return sets[step].join("");
+}
+function renderSteps(){
+ let body=stepHeader(v)+stepBody();
+ if(v===6) body=`<div class="hd"><span class="bk">‹</span><h2>Create Profile</h2></div><div class="rail"><ol>${STEPS.map((s,i)=>`<li class="${i<step?"d":i===step?"a":""}">${s}</li>`).join("")}</ol><div style="flex:1;display:flex;flex-direction:column;gap:20px">${stepBody()}</div></div>`;
+ return `<div class="frame">${body}<button class="btn" id="next">${step<3?"Continue":"Create profile"}</button></div>`;
+}
+function renderBasis(n){
+ const {pay,get}=calc(); const cost=basis==="cost";
+ const input=(suffix="GHS")=>`<div class="amt"><span>${suffix}</span><input id="amt" inputmode="decimal" value="${amount}" /></div>`;
+ const acct=`<div class="fg"><span class="lbl">From Account</span><div class="field" style="justify-content:space-between;color:var(--tx)"><span>Savings Account · 4001 9922 1100</span><span class="mu">GHS 14,250.00</span></div></div>`;
+ const yp=`You pay ${fmt(pay)} today and get ${fmt(get)} back at maturity.`;
+ let m="";
+ switch(n){
+ case 0:m=`<div class="tgl" data-b>${["cost","face"].map(k=>`<button data-k="${k}" class="${basis===k?"on":""}">${k==="cost"?"Cost":"Face Value"}</button>`).join("")}</div>${input()}<p class="help">${cost?"Cost is what you pay today.":"Face value is what you get back at maturity."} ${yp}</p>`;break;
+ case 1:m=`<div class="cards" data-b><button data-k="cost" class="oc ${cost?"on":""}">I want to pay<small>Enter what leaves your account today.</small></button><button data-k="face" class="oc ${!cost?"on":""}">I want to receive<small>Enter what you get back at maturity.</small></button></div>${input()}<div class="sum"><span class="mu">Pay today</span><b class="tab">${fmt(pay)}</b></div><div class="sum" style="border:0;padding-top:0"><span class="mu">Receive at maturity</span><b class="tab">${fmt(get)}</b></div>`;break;
+ case 2:m=`<span class="lbl">What do you want to enter?</span><div data-b style="display:flex;flex-direction:column;gap:8px"><button data-k="cost" class="rd ${cost?"on":""}"><i></i><div>Cost<small>What you pay today, debited from your account.</small></div></button><button data-k="face" class="rd ${!cost?"on":""}"><i></i><div>Face value<small>What the bond pays at maturity. We work out the cost.</small></div></button></div>${input()}<p class="help">${yp}</p>`;break;
+ case 3:m=`<div class="amt"><span>GHS</span><input id="amt" inputmode="decimal" value="${amount}" /><button class="chipin" id="flip">${cost?"cost":"face value"} ⇅</button></div><p class="help">${yp}</p>`;break;
+ case 4:m=`<div class="sentence"><span>I want to</span><button class="sel" id="flip">${cost?"pay":"receive"} ⌄</button><span>GHS</span><input id="amt" value="${amount}" /><span>${cost?"today.":"at maturity."}</span></div><p class="help">${cost?`You will get ${fmt(get)} back at maturity.`:`It will cost ${fmt(pay)} today.`}</p>`;break;
+ case 5:m=`<div class="pair"><div class="pf ${cost?"on":""}"><small>Cost (pay today)</small><input data-lk="cost" value="${cost?amount:pay.toFixed(2)}"/></div><span class="mu" style="text-align:center">⇄</span><div class="pf ${!cost?"on":""}"><small>Face value (at maturity)</small><input data-lk="face" value="${!cost?amount:get.toFixed(2)}"/></div></div><p class="help">Type in either. The other follows. Nothing to switch.</p>`;break;
+ case 6:m=`<div class="tgl" data-b><button data-k="cost" class="${cost?"on":""}">Cost</button><button data-k="face" class="${!cost?"on":""}">Face Value</button></div><div style="display:grid;grid-template-columns:1.2fr 1fr;gap:8px">${input()}<div class="amt" style="flex-direction:column;gap:2px;font-size:16px;align-items:center;justify-content:center"><span style="font-size:12px">${cost?"You get":"You pay"}</span><b style="font-weight:400" class="tab">${fmt(cost?get:pay)}</b></div></div>`;break;
+ case 7:m=`<div class="ul" data-b><button data-k="cost" class="${cost?"on":""}">Cost</button><button data-k="face" class="${!cost?"on":""}">Face Value</button></div><p class="help">${cost?"Cost is what you pay today, debited from your account.":"Face value is what the bond pays you at maturity. The cost is worked out for you."}</p>${input()}<p class="help">${yp}</p>`;break;
+ case 8:m=`${input()}<button class="sw ${sw?"on":""}" id="swt"><span>Enter face value instead</span><i></i></button><p class="help">${sw?"You are entering what the bond pays at maturity. The cost is worked out for you.":"You are entering what you pay today."}</p><p class="help">${yp}</p>`;break;
+ case 9:m=`<div class="strip" data-b><button data-k="cost" class="${cost?"on":""}"><small>Pay today</small><b class="tab">${fmt(pay)}</b></button><button data-k="face" class="${!cost?"on":""}"><small>Receive at maturity</small><b class="tab">${fmt(get)}</b></button></div>${input()}<p class="help">Tap a number above to type that one instead.</p>`;break;
+ }
+ return `<div class="frame"><div class="hd"><span class="bk">‹</span><h2>15-Year Bond</h2></div>${acct}${m}<div class="btn ${amount&&+amount>0?"":"off"}">Proceed</div></div>`;
+}
+function render(){
+ $("#surface").innerHTML=`<button data-s="steps" class="${surface==="steps"?"on":""}">Steps</button><button data-s="basis" class="${surface==="basis"?"on":""}">Cost or Face Value</button>`;
+ const L=surface==="steps"?STEP_V:BASIS_V;
+ $("#pills").innerHTML=L.map((x,i)=>`<button class="pill ${i===v?"on":""}" data-v="${i}">${i+1}. ${x[0]}</button>`).join("");
+ $("#note").innerHTML=`<b>${L[v][0]}.</b> ${L[v][1]}`;
+ $("#cell").innerHTML=(surface==="steps"?renderSteps():renderBasis(v))+`<p class="cap">${surface==="steps"?"Press Continue to move through the four steps. Applies to Create Profile and every other multi-step flow.":"Type an amount and switch the choice. The numbers are mocked: GHS 0.874 pays GHS 1.00 of face value."}</p>`;
+ bind();
+}
+function bind(){
+ const a=$("#amt"); if(a){a.oninput=e=>{amount=e.target.value.replace(/[^\d.]/g,"");const p=e.target.selectionStart;render();const n=$("#amt");n.focus();n.setSelectionRange(p,p);}}
+ document.querySelectorAll("[data-b] [data-k]").forEach(b=>b.onclick=()=>{const {pay,get}=calc();const k=b.dataset.k;if(k!==basis){amount=String((k==="cost"?pay:get).toFixed(2).replace(/\.00$/,""));}basis=k;render();});
+ const fl=$("#flip"); if(fl)fl.onclick=()=>{const {pay,get}=calc();basis=basis==="cost"?"face":"cost";amount=String((basis==="cost"?pay:get).toFixed(2).replace(/\.00$/,""));render();};
+ const st=$("#swt"); if(st)st.onclick=()=>{sw=!sw;const {pay,get}=calc();basis=sw?"face":"cost";amount=String((basis==="cost"?pay:get).toFixed(2).replace(/\.00$/,""));render();};
+ document.querySelectorAll("[data-lk]").forEach(i=>i.oninput=e=>{basis=e.target.dataset.lk;amount=e.target.value.replace(/[^\d.]/g,"");const k=basis,p=e.target.selectionStart;render();const n=document.querySelector(`[data-lk=${k}]`);n.focus();n.setSelectionRange(p,p);});
+ const nx=$("#next"); if(nx)nx.onclick=()=>{step=(step+1)%4;render();};
+}
+document.addEventListener("click",e=>{
+ const s=e.target.closest("[data-s]"); if(s){surface=s.dataset.s;v=0;render();}
+ const p=e.target.closest("[data-v]"); if(p){v=+p.dataset.v;render();}
+ const t=e.target.closest("[data-t]"); if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll("#theme button").forEach(b=>b.classList.toggle("on",b===t));}
+});
+render();
+</script>
+</body>
+</html>

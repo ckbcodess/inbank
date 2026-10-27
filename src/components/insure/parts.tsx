@@ -6,8 +6,9 @@
  */
 
 import { useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { Car, ChevronRight, FileText, GraduationCap, HandHeart, PiggyBank, Plane, ShieldCheck, ShieldPlus, Umbrella } from "lucide-react";
+import { Car, ChevronRight, FileText, GraduationCap, HandCoins, HandHeart, Landmark, PiggyBank, Plane, ShieldCheck, ShieldPlus, Umbrella } from "@/components/ui/icons";
 import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,14 @@ import { sampleProfile, useInsurance, useMyInsurance, type Policy } from "@/lib/
 import { useTreasuryAccounts } from "@/lib/treasury";
 import { cn } from "@/lib/utils";
 
-const PLAN_ICONS: Record<PlanId, typeof ShieldCheck> = {
+/** Anything that gets a card: an insurance plan, the salary advance on Loans, or a kind of investment on Invest. */
+export type ProductKey = PlanId | "advance" | "term-deposits" | "treasury-bills" | "bonds";
+
+const PLAN_ICONS: Record<ProductKey, typeof ShieldCheck> = {
+  advance: HandCoins,
+  "term-deposits": PiggyBank,
+  "treasury-bills": FileText,
+  bonds: Landmark,
   "child-education": GraduationCap,
   homecall: HandHeart,
   wealthmaster: PiggyBank,
@@ -45,26 +53,31 @@ export function PlanIcon({ planId, muted = false }: { planId: PlanId; muted?: bo
  * Each plan has a colour of its own from the categorical set, so a plan is recognisable on the cards and in its dialog.
  * None is red: red means an error here, and a protection plan is not one.
  */
-const PLAN_TONES: Partial<Record<PlanId, string>> = {
-  "child-education": "var(--cat-1)",
-  homecall: "var(--cat-2)",
-  wealthmaster: "var(--cat-4)",
-  "ultimate-protection": "var(--cat-5)",
+const PLAN_TONES: Partial<Record<ProductKey, string>> = {
+  advance: "var(--plan-art-advance-1)",
+  "term-deposits": "var(--plan-art-term-deposits-1)",
+  "treasury-bills": "var(--plan-art-treasury-bills-1)",
+  bonds: "var(--plan-art-bonds-1)",
+  // The insurance plans take the light stop of their picture's gradient, so the icons match the art.
+  "child-education": "var(--plan-art-child-education-1)",
+  homecall: "var(--plan-art-homecall-1)",
+  wealthmaster: "var(--plan-art-wealthmaster-1)",
+  "ultimate-protection": "var(--plan-art-ultimate-protection-1)",
 };
 
 /** The CSS variable a card or dialog sets as `--plan`; plans without a colour yet fall back to the muted fill. */
-export const planToneStyle = (planId: PlanId) => ({ "--plan": PLAN_TONES[planId] ?? "var(--muted)" }) as React.CSSProperties;
+export const planToneStyle = (planId: ProductKey) => ({ "--plan": PLAN_TONES[planId] ?? "var(--muted)" }) as React.CSSProperties;
 
 /** The plan's icon on a disc of its colour. Dark glyph, as on any filled amber button. */
-export function PlanDisc({ planId, size = 48, onColour = false, className }: { planId: PlanId; size?: number; onColour?: boolean; className?: string }) {
+export function PlanDisc({ planId, size = 48, onColour = false, className }: { planId: ProductKey; size?: number; onColour?: boolean; className?: string }) {
   const Icon = PLAN_ICONS[planId];
   return (
     <span
-      style={{ ...planToneStyle(planId), width: size, height: size }}
+      style={{ ...planToneStyle(planId), "--tint": "var(--plan)", width: size, height: size } as React.CSSProperties}
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-full text-primary-foreground",
+        "flex shrink-0 items-center justify-center rounded-full on-tint",
         // On a card already filled with the plan's colour the disc is a quiet circle of the dark glyph colour.
-        onColour ? "bg-primary-foreground/12" : "bg-[var(--plan)]",
+        onColour ? "bg-current/12" : "bg-[var(--plan)]",
         className,
       )}
     >
@@ -74,17 +87,130 @@ export function PlanDisc({ planId, size = 48, onColour = false, className }: { p
 }
 
 /**
- * The picture slot on an "art" card. Until StarLife's illustrations arrive it is the plan's icon, large, on a tint of its
- * colour. Swap the contents here and every card follows.
+ * The product's icon, large and faint, to crop into a card's corner (the card places it with `className`). It is the
+ * product's own mark and sits behind the text, never under it: the card keeps its text clear of it.
  */
-export function PlanArt({ planId, className }: { planId: PlanId; className?: string }) {
+export function PlanMark({ planId, size = 150, className }: { planId: ProductKey; size?: number; className?: string }) {
   const Icon = PLAN_ICONS[planId];
+  return <Icon size={size} strokeWidth={1.2} aria-hidden="true" className={cn("pointer-events-none absolute text-[var(--plan)]", className)} />;
+}
+
+/** Plans whose picture is a transparent cut-out on a gradient of its own (`--plan-art-<id>-1` and `-2` in globals.css). */
+const PLAN_ART: Partial<Record<ProductKey, true>> = {
+  "child-education": true,
+  homecall: true,
+  wealthmaster: true,
+  "ultimate-protection": true,
+  "treasury-bills": true,
+  bonds: true,
+  "term-deposits": true,
+  advance: true,
+};
+
+const SCENES: Partial<Record<ProductKey, React.ReactNode>> = {
+  advance: (
+    <>
+      <rect x="86" y="62" width="136" height="76" rx="8" className="fill-[var(--plan)]" />
+      <rect x="98" y="74" width="112" height="52" rx="4" className="fill-none stroke-foreground/70" strokeWidth="2" />
+      <circle cx="154" cy="100" r="16" className="fill-foreground/85" />
+      <circle cx="114" cy="100" r="4" className="fill-foreground" />
+      <circle cx="194" cy="100" r="4" className="fill-foreground" />
+      <ellipse cx="256" cy="132" rx="24" ry="7" className="fill-foreground" />
+      <ellipse cx="256" cy="120" rx="24" ry="7" className="fill-[var(--plan)]" />
+      <ellipse cx="256" cy="108" rx="24" ry="7" className="fill-foreground" />
+    </>
+  ),
+  "child-education": (
+    <>
+      <rect x="96" y="116" width="128" height="22" rx="4" className="fill-[var(--plan)]" />
+      <rect x="104" y="96" width="112" height="20" rx="4" className="fill-foreground/80" />
+      <rect x="92" y="76" width="120" height="20" rx="4" className="fill-[var(--plan)] opacity-70" />
+      <path d="M152 22l56 20-56 20-56-20z" className="fill-foreground" />
+      <path d="M124 54v12c18 10 42 10 60 0V54l-30 11z" className="fill-foreground/70" />
+      <path d="M208 42v22" className="fill-none stroke-foreground" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="208" cy="68" r="4" className="fill-foreground" />
+    </>
+  ),
+  homecall: (
+    <>
+      <rect x="108" y="88" width="104" height="52" className="fill-[var(--plan)]" />
+      <path d="M92 90L160 32l68 58z" className="fill-foreground" />
+      <rect x="148" y="104" width="24" height="36" rx="3" className="fill-foreground" />
+      <path d="M160 78c-9-7-14-11-14-16a7 7 0 0114-2 7 7 0 0114 2c0 5-5 9-14 16z" className="fill-[var(--plan)]" />
+    </>
+  ),
+  wealthmaster: (
+    <>
+      <rect x="88" y="112" width="32" height="28" rx="4" className="fill-[var(--plan)] opacity-60" />
+      <rect x="132" y="92" width="32" height="48" rx="4" className="fill-[var(--plan)] opacity-80" />
+      <rect x="176" y="68" width="32" height="72" rx="4" className="fill-[var(--plan)]" />
+      <rect x="220" y="40" width="32" height="100" rx="4" className="fill-foreground" />
+      <circle cx="270" cy="40" r="16" className="fill-foreground" />
+      <circle cx="270" cy="40" r="8" className="fill-none stroke-[var(--plan)]" strokeWidth="3" />
+    </>
+  ),
+  "ultimate-protection": (
+    <>
+      <path d="M160 20l56 20v38c0 32-24 50-56 62-32-12-56-30-56-62V40z" className="fill-[var(--plan)]" />
+      <path d="M160 20l56 20v38c0 32-24 50-56 62z" className="fill-foreground/15" />
+      <path d="M134 78l18 18 34-36" className="fill-none stroke-foreground" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  "term-deposits": (
+    <>
+      <rect x="96" y="40" width="128" height="100" rx="10" className="fill-[var(--plan)]" />
+      <rect x="108" y="52" width="104" height="76" rx="6" className="fill-none stroke-foreground/70" strokeWidth="2" />
+      <circle cx="160" cy="90" r="20" className="fill-foreground/85" />
+      <circle cx="160" cy="90" r="6" className="fill-[var(--plan)]" />
+      <rect x="104" y="140" width="12" height="6" className="fill-foreground" />
+      <rect x="204" y="140" width="12" height="6" className="fill-foreground" />
+    </>
+  ),
+  "treasury-bills": (
+    <>
+      <rect x="96" y="34" width="128" height="92" rx="6" className="fill-foreground/90" />
+      <rect x="106" y="44" width="108" height="72" rx="3" className="fill-none stroke-[var(--plan)]" strokeWidth="3" />
+      <path d="M122 64h76M122 80h76M122 96h44" className="fill-none stroke-[var(--plan)]" strokeWidth="4" strokeLinecap="round" />
+      <circle cx="196" cy="102" r="12" className="fill-[var(--plan)]" />
+      <rect x="104" y="136" width="112" height="4" rx="2" className="fill-foreground/60" />
+    </>
+  ),
+  bonds: (
+    <>
+      <path d="M96 70l64-36 64 36z" className="fill-foreground" />
+      <rect x="108" y="76" width="16" height="52" className="fill-[var(--plan)]" />
+      <rect x="138" y="76" width="16" height="52" className="fill-[var(--plan)]" />
+      <rect x="168" y="76" width="16" height="52" className="fill-[var(--plan)]" />
+      <rect x="198" y="76" width="16" height="52" className="fill-[var(--plan)]" />
+      <rect x="96" y="128" width="128" height="10" rx="2" className="fill-foreground" />
+    </>
+  ),
+};
+
+/**
+ * The picture on an "image" card: a flat scene for each product, drawn from the product's colour and the page ink so it is
+ * right in light and dark. It fills whatever box it is given. When StarLife's photographs or illustrations arrive,
+ * replace the contents here and every card follows.
+ */
+export function PlanImage({ planId, className, src }: { planId: ProductKey; className?: string; src?: string }) {
+  if (src) {
+    const hasArt = planId in PLAN_ART;
+    return (
+      <div
+        style={hasArt ? { backgroundImage: `linear-gradient(to bottom, var(--plan-art-${planId}-1), var(--plan-art-${planId}-2))` } : undefined}
+        className={cn("relative overflow-hidden", !hasArt && "bg-muted", className)}
+      >
+        {/* The art is a transparent cut-out: shown whole, centred, with a little air round it. */}
+        <Image src={src} alt="" fill sizes="560px" className={hasArt ? "object-contain p-2" : "object-cover"} />
+      </div>
+    );
+  }
   return (
-    <div
-      style={planToneStyle(planId)}
-      className={cn("flex items-center justify-center bg-[color-mix(in_srgb,var(--plan)_28%,var(--tile))] text-foreground", className)}
-    >
-      <Icon size={56} strokeWidth={1.4} aria-hidden="true" />
+    <div style={planToneStyle(planId)} className={cn("relative overflow-hidden bg-[color-mix(in_srgb,var(--plan)_24%,var(--tile))] text-foreground", className)}>
+      <svg viewBox="0 0 320 160" preserveAspectRatio="xMidYMid meet" aria-hidden="true" className="absolute inset-0 size-full">
+        <rect x="56" y="140" width="208" height="2" className="fill-foreground/20" />
+        {SCENES[planId]}
+      </svg>
     </div>
   );
 }
@@ -99,12 +225,17 @@ export function premiumLine(p: Pick<Policy, "premium" | "frequency">, showAmount
   return perPeriod(p.premium, p.frequency, showAmounts);
 }
 
-/** What the row says under the plan name: anything that needs attention first, otherwise the policy number. */
-function policyMeta(p: Policy): string {
+/** What needs the customer on a policy, if anything: a medical assessment, a cancellation, missed premiums. */
+function attentionOf(p: Policy): string | undefined {
   if (p.status === "pending-medical") return "Waiting for a medical assessment";
   if (p.status === "cancel-requested") return "Cancellation requested";
   if (p.arrears.length > 0) return p.arrears.length === 1 ? "1 premium missed" : `${p.arrears.length} premiums missed`;
-  return p.number;
+  return undefined;
+}
+
+/** What the row says under the plan name: anything that needs attention first, otherwise the policy number. */
+function policyMeta(p: Policy): string {
+  return attentionOf(p) ?? p.number;
 }
 
 export function PolicyRow({ policy, showAmounts }: { policy: Policy; showAmounts: boolean }) {
@@ -124,7 +255,39 @@ export function PolicyRow({ policy, showAmounts }: { policy: Policy; showAmounts
           <span className="tabular text-[14px] text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
           <span className="tabular text-[12px] text-muted-foreground">{premiumLine(policy, showAmounts)}</span>
         </span>
-        <ChevronRight size={15} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+        <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+      </Link>
+    </li>
+  );
+}
+
+/**
+ * A policy on its own plan's page, where every row is the same plan, so the plan name would say nothing: the policy
+ * number leads, then what needs the customer (amber) or who it covers, then the sum assured and the premium.
+ */
+export function PlanPolicyRow({ policy, showAmounts }: { policy: Policy; showAmounts: boolean }) {
+  const attention = attentionOf(policy);
+  const covers =
+    findPlan(policy.planId)?.kind === "funeral"
+      ? policy.members.length > 0
+        ? `Covers you and ${policy.members.length === 1 ? "1 other" : `${policy.members.length} others`}`
+        : "Covers you"
+      : premiumLine(policy, showAmounts);
+  return (
+    <li>
+      <Link
+        href={`/insure/policies/${policy.id}`}
+        className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
+      >
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className="tabular truncate text-[14px] text-foreground">{policy.number}</span>
+          <span className={cn("truncate text-[12px]", attention ? "text-warning-text" : "text-muted-foreground")}>{attention ?? covers}</span>
+        </span>
+        <span className="flex shrink-0 flex-col items-end">
+          <span className="tabular text-[14px] text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
+          <span className="tabular text-[12px] text-muted-foreground">{premiumLine(policy, showAmounts)}</span>
+        </span>
+        <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
       </Link>
     </li>
   );
@@ -133,7 +296,7 @@ export function PolicyRow({ policy, showAmounts }: { policy: Policy; showAmounts
 /** A policy that isn't there (another customer's, or reset from Dev Mode). Says so and goes back to Insure. */
 export function PolicyNotFound({ title = "Policy" }: { title?: string }) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={{ href: INSURE_HOME, label: "Insure" }} />
       <TrueEmptyState
         icon={<FileText size={22} strokeWidth={1.8} />}
@@ -211,6 +374,7 @@ const REQUEST_STATES = [
   { id: "succeed", label: "Go through" },
   { id: "fail", label: "Fail" },
 ];
+const WELCOME_STATES = [{ id: "again", label: "Show it again" }];
 const PROFILE_KEYS = ["none", "done"] as const;
 const PROFILE_LABELS = { none: "No profile", done: "Profile created" };
 
@@ -233,6 +397,7 @@ export function InsureDevTools({
   const saveProfile = useInsurance((s) => s.saveProfile);
   const clearProfile = useInsurance((s) => s.clearProfile);
   const seedPolicies = useInsurance((s) => s.seedPolicies);
+  const markWelcomed = useInsurance((s) => s.markWelcomed);
   const failRequests = useInsurance((s) => s.failRequests);
   const setFailRequests = useInsurance((s) => s.setFailRequests);
   const accounts = useTreasuryAccounts();
@@ -294,9 +459,15 @@ export function InsureDevTools({
         value: failRequests ? "fail" : "succeed",
         onChange: (v) => setFailRequests(v === "fail"),
       },
+      {
+        label: "Welcome",
+        states: WELCOME_STATES,
+        value: "",
+        onChange: () => markWelcomed(ownerId, false),
+      },
       ...(extraGroups ?? []),
     ];
-  }, [ownerId, accountId, profile, count, inArrears, failRequests, saveProfile, clearProfile, seedPolicies, setFailRequests, extraGroups]);
+  }, [ownerId, accountId, profile, count, inArrears, failRequests, saveProfile, clearProfile, seedPolicies, setFailRequests, markWelcomed, extraGroups]);
 
   if (states && onChange && value !== undefined) {
     return <StateSwitcher section="Insure" states={states} value={value} onChange={onChange} labels={labels} groups={groups} />;

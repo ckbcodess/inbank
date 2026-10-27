@@ -2,7 +2,7 @@
 
 import { SavedSuggestions } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search } from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import { Account, BILLERS } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -233,7 +233,7 @@ export function BillsPaymentFlow({
         <span className="text-success-text text-[12px] font-medium">Verified</span>
       ) : (
         <span className="flex items-center gap-1">
-          <Search size={13} strokeWidth={2} />
+          <Search size={13} />
           <span>Verify</span>
         </span>
       )}

@@ -13,7 +13,7 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { AlertCircle, Check, FileText } from "lucide-react";
+import { AlertCircle, Check, FileText } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import LetterUpload, { type AttachedFile } from "@/components/corporate/onboarding/LetterUpload";
@@ -261,7 +261,7 @@ function StatusContent() {
         {openReturn && (
           <section className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <AlertCircle size={16} strokeWidth={1.8} className="shrink-0 text-warning-text" aria-hidden="true" />
+              <AlertCircle size={16} className="shrink-0 text-warning-text" aria-hidden="true" />
               <h2 className="text-[14px] font-medium text-foreground">{openReturn.reason}</h2>
             </div>
             <p className="text-[13px] leading-relaxed text-muted-foreground">{openReturn.details}</p>
@@ -282,7 +282,7 @@ function StatusContent() {
                       openRequestLetter({ reference: app.reference, company, accounts: app.accounts, users: app.users })
                     }
                   >
-                    <FileText size={16} strokeWidth={1.8} />
+                    <FileText size={16} />
                     Open Letter to Print
                   </Button>
                 )}
@@ -377,7 +377,7 @@ function StatusContent() {
                       }`}
                       aria-hidden="true"
                     >
-                      {item.done && <Check size={10} strokeWidth={3} />}
+                      {item.done && <Check size={10} />}
                     </span>
                     {!last && <span className="w-px flex-1 bg-border" aria-hidden="true" />}
                   </div>

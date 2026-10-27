@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Smartphone } from "lucide-react";
+import { Smartphone } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { operatorFromName, OPERATORS, type Operator } from "@/lib/operators";
 
@@ -29,7 +29,7 @@ export function OperatorLogo({
         style={box}
         className={cn("flex shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground", className)}
       >
-        <Smartphone size={Math.round(size * 0.47)} strokeWidth={1.8} aria-hidden="true" />
+        <Smartphone size={Math.round(size * 0.47)} aria-hidden="true" />
       </span>
     );
   }

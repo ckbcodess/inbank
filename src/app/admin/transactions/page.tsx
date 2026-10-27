@@ -11,7 +11,7 @@
 import { transactionRail } from "@/lib/transaction-type";
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
@@ -407,7 +407,7 @@ export default function TransactionMonitoringPage() {
                       {formatMoney(t.amount, t.currency)}
                     </span>
                     <TransactionStatusBadge state={t.state} />
-                    <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                    <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                   </Link>
                 </li>
               );

@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Laptop, MapPin } from "lucide-react";
+import { Laptop, MapPin } from "@/components/ui/icons";
 import { AlertToast } from "@/components/ui/alert-toast";
 import { InlineError } from "@/components/ui/inline-error";
 import { AppLoader } from "@/components/ui/loader";

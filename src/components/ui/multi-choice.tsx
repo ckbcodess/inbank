@@ -5,7 +5,7 @@
  * pills use the shared active fill and border. For one choice only, use `SegmentedControl` or `RangePills`.
  */
 
-import { Check } from "lucide-react";
+import { Check } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 interface MultiChoiceProps {
@@ -39,7 +39,7 @@ export function MultiChoice({ options, value, onChange, className, ...rest }: Mu
                 : "border-border bg-card text-muted-foreground hover:bg-muted/50 hover:text-foreground",
             )}
           >
-            {chosen && <Check size={14} strokeWidth={1.9} aria-hidden="true" className="shrink-0" />}
+            {chosen && <Check size={14} aria-hidden="true" className="shrink-0" />}
             {option}
           </button>
         );

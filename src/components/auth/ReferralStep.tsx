@@ -13,7 +13,7 @@
 
 import { AlertToast } from "@/components/ui/alert-toast";
 import { useState } from "react";
-import { PartyPopper } from "lucide-react";
+import { PartyPopper } from "@/components/ui/icons";
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,7 +82,7 @@ export default function ReferralStep({
       {/* Middle area: Centered icon and optional code input */}
       <div className="flex flex-1 flex-col items-center justify-center py-5 my-auto gap-3">
         <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-xs">
-          <PartyPopper size={28} strokeWidth={1.7} aria-hidden="true" />
+          <PartyPopper size={28} aria-hidden="true" />
         </div>
 
         {entering && (

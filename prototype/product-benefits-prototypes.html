@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Product Card Info, “You get”: 10 Ways</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0f0f0f;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;max-width:100%}
+  .pg{padding:28px 32px 40px;display:flex;flex-direction:column;gap:24px}
+  .phone .pg{padding:20px 20px 32px}
+  .col{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+  .hd{display:flex;align-items:center;gap:12px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .pic{aspect-ratio:16/6;border-radius:24px;background:color-mix(in srgb,var(--p) 28%,var(--tile));display:flex;align-items:center;justify-content:center;color:var(--p)}
+  .btn{height:46px;padding:0 28px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%}
+  /* the one list card */
+  .card{background:var(--tile);border-radius:16px;padding:8px}
+  .kv{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 8px;font-size:14px}
+  .kv .l{color:var(--mu);flex:none} .kv .v{text-align:right;min-width:0}
+  .kv.key .v{font-size:20px}
+  .zone{padding:12px 8px;display:flex;flex-direction:column;gap:12px}
+  .zone.rule{border-top:1px solid var(--bd);margin-top:4px;padding-top:16px}
+  .zh{font-size:13px;color:var(--mu)}
+  .st{font-size:14px;line-height:1.5}
+  .sub{font-size:13px;color:var(--mu);line-height:1.5}
+  .item{display:flex;flex-direction:column;gap:2px}
+  .ico{width:32px;height:32px;border-radius:10px;background:var(--surf);display:flex;align-items:center;justify-content:center;flex:none;color:var(--tx)}
+  .dg{display:grid;grid-template-columns:38% minmax(0,1fr);gap:0 16px;padding:12px 8px;font-size:14px;align-items:start}
+  .dg .l{color:var(--mu);padding:2px 0} .dg .v{line-height:1.5} .dg .gap{height:0}
+  .dgrow{display:contents}
+  .phone .dg{grid-template-columns:34% minmax(0,1fr)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>The “You get” row · 10 ways · three or more benefits do not belong in one right-aligned value</h1>
+    <div class="ctrls">
+      <div class="seg" id="plansel"></div>
+      <div class="seg" id="ctxsel"></div>
+      <div class="seg" id="widthsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage"><div class="frame" id="frame"></div></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+ money:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M9.8 10c0-.9.9-1.4 2.2-1.4s2.2.5 2.2 1.4-.9 1.2-2.2 1.6-2.2.7-2.2 1.6.9 1.4 2.2 1.4 2.2-.5 2.2-1.4"/>',
+ people:'<circle cx="9" cy="9" r="3"/><path d="M3.5 19c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="10" r="2.3"/><path d="M16 14.6c2.6-.2 4.2 1.1 4.6 3.9"/>',
+ shield:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/>',
+ school:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+ heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 017-2.5A4 4 0 0119 10c0 5.500-7 10-7 10z"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>'
+};
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const caret=o=>svg(o?'<path d="M6 15l6-6 6 6"/>':'<path d="M6 9l6 6 6-6"/>',16,1.8);
+const back=svg('<path d="M15 6l-6 6 6 6"/>',18,1.8);
+
+/* One benefit, said four ways: as a sentence, as a label and a short value, as a title and a line, and with an icon. */
+const mk=(s,l,v,t,sub,ic)=>({s,l,v,t,sub,ic});
+const D={
+ hc:{label:'HomeCall',title:'HomeCall Plan',col:'#ea580c',icon:'home',
+  key:['Premiums from','GHS 8.00 a month'],
+  b:[mk('Lump sum paid within 48 to 72 hours of an approved claim','Pays out','A lump sum within 48 to 72 hours of an approved claim','Paid within 48 to 72 hours','Of an approved claim','money'),
+     mk('Cover your spouse, children and parents too','Your family','Spouse, children and parents can be added','Your family too','Spouse, children and parents','people'),
+     mk('Accidental deaths are covered from day one','Accidents','Covered from day one','Accidents from day one','Accidental deaths are covered','shield')],
+  facts:[['Cover','GHS 2,500.00 to GHS 30,000.00'],['Who it covers','You, and family you add'],['Provider','StarLife Assurance']],
+  sentence:'Pays a lump sum within 48 to 72 hours of an approved claim, covers your spouse, children and parents too, and covers accidental deaths from day one.'},
+ ce:{label:'Child Education',title:'Child Education Plan',col:'#3b82f6',icon:'school',
+  key:['Premiums from','GHS 50.00 a month'],
+  b:[mk('Lump sum paid within 48 to 72 hours of an approved claim','Pays out','A lump sum within 48 to 72 hours of an approved claim','Paid within 48 to 72 hours','Of an approved claim','money'),
+     mk('School fees are paid even if you can’t','School fees','Paid even if you can’t','School fees are covered','Paid even if you can’t','school')],
+  facts:[['Policy term','10 to 25 years'],['Provider','StarLife Assurance']],
+  sentence:'Pays a lump sum within 48 to 72 hours of an approved claim, and school fees are paid even if you can’t.'},
+ up:{label:'Ultimate Protection',title:'Ultimate Protection Plan',col:'#db2777',icon:'shield',
+  key:['Premiums from','GHS 40.50 a month'],
+  b:[mk('Lump sum paid within 48 to 72 hours of an approved claim','Pays out','A lump sum within 48 to 72 hours of an approved claim','Paid within 48 to 72 hours','Of an approved claim','money'),
+     mk('Covers total and permanent disability','Disability','Total and permanent disability','Disability covered','Total and permanent','heart'),
+     mk('Covers critical illness','Illness','Critical illness','Critical illness covered','If you are diagnosed','plus')],
+  facts:[['Sum assured','GHS 50,000.00 to GHS 300,000.00'],['Policy term','8 to 20 years'],['Disability income','Up to age 70'],['Provider','StarLife Assurance']],
+  sentence:'Pays a lump sum within 48 to 72 hours of an approved claim, and covers total and permanent disability and critical illness.'}
+};
+const S={v:1,plan:'hc',ctx:0,phone:false,dark:true,open:{}};
+const P=()=>D[S.plan];
+
+const kv=(l,v,key)=>`<div class="kv ${key?'key':''}"><span class="l">${l}</span><span class="v tab">${v}</span></div>`;
+const keyRow=()=>kv(P().key[0],P().key[1],1);
+const factRows=()=>P().facts.map(f=>kv(f[0],f[1])).join('');
+const card=x=>`<div class="card">${x}</div>`;
+
+const V={};
+
+V[1]={name:'1. One row each',note:'Each benefit gets its own row and its own breathing room; the label “You get” sits on the first one and the rest are blank. It fixes the cramming with the least change, but the sentences are still right-aligned, so three long lines are still awkward to read.',
+ r:()=>card(keyRow()+P().b.map((b,i)=>kv(i===0?'You get':'',b.s)).join('')+factRows())};
+
+V[2]={name:'2. Two zones',note:'The label-and-value rows stay as they are, and the benefits move to their own zone under a hairline: a small heading, then short statements left-aligned across the full width. Long sentences read left to right again. The card has two kinds of content, which is honest because it does.',
+ r:()=>card(keyRow()+factRows()+`<div class="zone rule"><span class="zh">You get</span>${P().b.map(b=>`<p class="st">${b.s}</p>`).join('')}</div>`)};
+
+V[3]={name:'3. Benefits as facts',note:'Each benefit becomes a short label and a short value, like every other row: Pays out, Your family, Accidents. The card is then one consistent kind of row and there is no “You get” at all. It needs the benefits rewritten as structured facts, not sentences.',
+ r:()=>card(keyRow()+P().b.map(b=>kv(b.l,b.v)).join('')+factRows())};
+
+V[4]={name:'4. Title and line',note:'Each benefit is a two-line item, a short title and a muted line under it, left-aligned like a list row. It gives each benefit a clear headline and a place for the detail. It is the most scannable and the tallest.',
+ r:()=>card(keyRow()+factRows()+`<div class="zone rule"><span class="zh">You get</span>${P().b.map(b=>`<div class="item"><span class="st">${b.t}</span><span class="sub">${b.sub}</span></div>`).join('')}</div>`)};
+
+V[5]={name:'5. Definition grid',note:'Every row, facts and benefits alike, uses the same two columns with the value left-aligned. “You get” holds its three benefits stacked under one another, left-aligned, so they read as a list. The whole card changes from right-aligned values to left, which is a bigger change but it is consistent.',
+ r:()=>card(`<div class="dg"><span class="l">${P().key[0]}</span><span class="v tab" style="font-size:20px">${P().key[1]}</span></div><div class="dg"><span class="l">You get</span><span class="v" style="display:flex;flex-direction:column;gap:10px">${P().b.map(b=>`<span>${b.s}</span>`).join('')}</span></div>${P().facts.map(f=>`<div class="dg"><span class="l">${f[0]}</span><span class="v tab">${f[1]}</span></div>`).join('')}`)};
+
+V[6]={name:'6. With icons',note:'Each benefit has a small icon and a left-aligned statement. The icon tells you what kind of benefit it is before you read it (money, family, protection). Friendlier and slower: it adds a mark per row and needs an icon chosen for every benefit.',
+ r:()=>card(keyRow()+factRows()+`<div class="zone rule" style="gap:14px"><span class="zh">You get</span>${P().b.map(b=>`<div style="display:flex;gap:12px;align-items:center"><span class="ico">${svg(IC[b.ic],16,1.7)}</span><span class="st">${b.s}</span></div>`).join('')}</div>`)};
+
+V[7]={name:'7. One sentence',note:'The benefits are one sentence in a single full-width row, left-aligned. It is the shortest the card can be and reads like a person talking. The three benefits stop being separable, so it only suits two or three short ones.',
+ r:()=>card(keyRow()+factRows()+`<div class="zone rule"><span class="zh">You get</span><p class="st" style="line-height:1.6">${P().sentence}</p></div>`)};
+
+V[8]={name:'8. Headline, then the rest',note:'The first benefit is the headline, larger and in full colour; the others sit under it smaller and muted. It adds a hierarchy inside the benefits: what the plan mainly does, then the extras. It needs the benefits to be in order of importance, which they are.',
+ r:()=>card(keyRow()+factRows()+`<div class="zone rule"><span class="zh">You get</span><p style="font-size:17px;line-height:1.4;letter-spacing:-.01em">${P().b[0].s}</p>${P().b.slice(1).map(b=>`<p class="sub" style="font-size:14px">${b.s}</p>`).join('')}</div>`)};
+
+V[9]={name:'9. Folded',note:'One row, “You get” with a count and a chevron, that opens the benefits left-aligned beneath it. The card stays as short as the facts and the benefits are one tap away. They are hidden by default, which is the cost; for a plan whose benefits are why you buy it, that may be wrong.',
+ r:()=>{const o=S.open.get;return card(keyRow()+factRows()+`<button class="kv" style="width:100%;border-top:1px solid var(--bd);margin-top:4px" data-a="acc:get"><span class="l" style="color:var(--tx)">You get</span><span class="mu" style="display:flex;align-items:center;gap:8px">${P().b.length} things ${caret(o)}</span></button>${o?`<div class="zone" style="padding-top:4px">${P().b.map(b=>`<p class="st">${b.s}</p>`).join('')}</div>`:''}`)}};
+
+V[10]={name:'10. Benefits first',note:'The order flips: the benefits lead the card as statements, left-aligned with no label, then the price and the facts under a hairline. You read what you get before what it costs. It puts the reason to buy first and the number second.',
+ r:()=>card(`<div class="zone" style="padding-bottom:4px">${P().b.map(b=>`<p class="st">${b.s}</p>`).join('')}</div><div class="zone rule" style="padding:4px 0 0;gap:0;margin-top:8px;padding-top:8px">${keyRow()}${factRows()}</div>`)};
+
+/* ---------- page ---------- */
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('plansel',Object.entries(D).map(([k,v])=>[k,v.label]),S.plan,'plan');
+  seg('ctxsel',[[0,'Card only'],[1,'In the page']],S.ctx,'ctx');
+  seg('widthsel',[[0,'Desktop'],[1,'Phone']],S.phone?1:0,'width');
+  seg('themesel',[['dark','Dark'],['light','Light']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  const f=$('frame');f.className='frame'+(S.phone?' phone':'');f.style.width=(S.phone?390:760)+'px';f.style.setProperty('--p',P().col);
+  const body=V[S.v].r();
+  f.innerHTML=S.ctx?`<div class="pg"><div class="col"><div class="hd"><span class="bk">${back}</span><h2>${P().title}</h2></div><div class="pic">${svg(IC[P().icon],70,1)}</div>${body}<button class="btn" data-a="go">Get Started</button></div></div>`
+    :`<div class="pg"><div class="col">${body}</div></div>`;
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='go'){toast('Opens the buy flow');return}
+  if(a==='v'){S.v=+arg;S.open={}}
+  else if(a==='plan'){S.plan=arg;S.open={}}
+  else if(a==='ctx')S.ctx=+arg;
+  else if(a==='width')S.phone=arg==='1';
+  else if(a==='theme')S.dark=arg==='dark';
+  else if(a==='acc')S.open[arg]=!S.open[arg];
+  render();
+});
+render();
+</script>
+</body>
+</html>

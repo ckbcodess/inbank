@@ -4,7 +4,7 @@ import { AlertToast } from "@/components/ui/alert-toast";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, ShieldCheck, User } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, User } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -328,7 +328,7 @@ function ReturningSignIn({
           <span className="flex min-w-0 flex-col">
             <span className="truncate text-[14px] text-foreground">{trusted.name}</span>
             <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
-              <ShieldCheck size={13} strokeWidth={1.9} aria-hidden="true" />
+              <ShieldCheck size={13} aria-hidden="true" />
               <span className="tabular">Trusted device until {until}</span>
             </span>
           </span>

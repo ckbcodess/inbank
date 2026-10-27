@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight } from "@/components/ui/icons";
 import { findOffer } from "@/components/invest/offers";
 import { findPlan } from "@/lib/insurance-plans";
 
@@ -128,7 +128,6 @@ function BreadcrumbView({ list }: { list: Crumb[] }) {
           {idx > 0 && (
             <ChevronRight
               size={13}
-              strokeWidth={1.7}
               className="text-muted-foreground/40 shrink-0"
               aria-hidden="true"
             />
@@ -221,7 +220,9 @@ export default function HeaderBreadcrumbs() {
           { label: "Invest", href: "/invest", isLast: false },
           term
             ? { label: "Term Deposits", href: "/invest/products/term-deposits", isLast: false }
-            : { label: "Treasury Bills & Bonds", href: "/invest/products/treasury", isLast: false },
+            : offer?.security?.kind === "bond"
+              ? { label: "Bonds", href: "/invest/products/bonds", isLast: false }
+              : { label: "Treasury Bills", href: "/invest/products/treasury-bills", isLast: false },
           { label: offer?.title ?? "Details", href: pathname, isLast: true },
         ]}
       />

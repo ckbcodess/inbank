@@ -18,7 +18,7 @@ import {
   Tv,
   Wifi,
   Zap,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { OperatorLogo } from "@/components/ui/operator-logo";
 import { operatorFromName } from "@/lib/operators";
 import type { Transaction } from "@/lib/mock-data";
@@ -269,7 +269,7 @@ export function TransactionIcon({
           className="absolute -bottom-0.5 -right-0.5 flex size-3.5 items-center justify-center rounded-full bg-card border border-border/80 shadow-2xs"
           title="Incoming credit"
         >
-          <ArrowDownLeft size={9} strokeWidth={2.4} className="text-success" />
+          <ArrowDownLeft size={9} className="text-success" />
         </span>
       )}
     </div>

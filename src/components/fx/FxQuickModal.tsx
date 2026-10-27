@@ -11,7 +11,7 @@ import {
   Search,
   TrendingDown,
   TrendingUp,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
 import { TextMorph } from "torph/react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -216,7 +216,7 @@ export function FxQuickModal() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/70 px-4 pt-3 pb-3 sm:px-5 gap-2 shrink-0">
           <div className="flex items-center gap-2">
             <span className="flex size-6 items-center justify-center rounded-lg bg-primary/10 text-foreground">
-              <ArrowLeftRight size={15} strokeWidth={2} />
+              <ArrowLeftRight size={15} />
             </span>
             <div>
               <DialogTitle className="text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">
@@ -294,7 +294,7 @@ export function FxQuickModal() {
                       >
                         <CurrencyLogo currency={fromCcy} size={19} />
                         <span>{fromCcy}</span>
-                        <ChevronDown size={13} strokeWidth={2} className="text-muted-foreground" />
+                        <ChevronDown size={13} className="text-muted-foreground" />
                       </button>
 
                       {showFromPicker && (
@@ -333,7 +333,7 @@ export function FxQuickModal() {
                     aria-label="Swap currencies"
                     className="flex size-7 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-transform hover:text-foreground active:scale-95 cursor-pointer"
                   >
-                    <ArrowLeftRight size={13} strokeWidth={2} />
+                    <ArrowLeftRight size={13} />
                   </button>
                 </div>
 
@@ -364,7 +364,7 @@ export function FxQuickModal() {
                       >
                         <CurrencyLogo currency={toCcy} size={19} />
                         <span>{toCcy}</span>
-                        <ChevronDown size={13} strokeWidth={2} className="text-muted-foreground" />
+                        <ChevronDown size={13} className="text-muted-foreground" />
                       </button>
 
                       {showToPicker && (
@@ -416,7 +416,7 @@ export function FxQuickModal() {
                 className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
               >
                 <span>Transfer {toCcy}</span>
-                <ArrowUpRight size={15} strokeWidth={2} />
+                <ArrowUpRight size={15} />
               </Button>
               <p className="text-center text-[11px] text-muted-foreground">
                 Select any currency on the right to load its rate into the converter.
@@ -431,7 +431,6 @@ export function FxQuickModal() {
               <div className="relative flex-1">
                 <Search
                   size={14}
-                  strokeWidth={2}
                   className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
                 <Input
@@ -515,9 +514,9 @@ export function FxQuickModal() {
                             )}
                           >
                             {r.changePct >= 0 ? (
-                              <TrendingUp size={10} strokeWidth={2.2} />
+                              <TrendingUp size={10} />
                             ) : (
-                              <TrendingDown size={10} strokeWidth={2.2} />
+                              <TrendingDown size={10} />
                             )}
                             <span>
                               {r.changePct >= 0 ? "+" : ""}
@@ -542,7 +541,7 @@ export function FxQuickModal() {
                 className="flex items-center gap-1 text-foreground hover:underline"
               >
                 <span>bog.gov.gh</span>
-                <ExternalLink size={11} strokeWidth={2} />
+                <ExternalLink size={11} />
               </a>
             </div>
           </div>

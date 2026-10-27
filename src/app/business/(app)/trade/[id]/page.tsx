@@ -9,7 +9,7 @@
  */
 
 import { useState, use } from "react";
-import { Check, Circle, FileText, History } from "lucide-react";
+import { Check, Circle, FileText, History } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Badge } from "@/components/ui/badge";
@@ -79,9 +79,9 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
                   }`}
                 >
                   {step.done ? (
-                    <Check size={13} strokeWidth={2.4} aria-hidden="true" />
+                    <Check size={13} aria-hidden="true" />
                   ) : (
-                    <Circle size={7} strokeWidth={2} aria-hidden="true" className="text-muted-foreground" />
+                    <Circle size={7} aria-hidden="true" className="text-muted-foreground" />
                   )}
                 </span>
                 {i < LIFECYCLE.length - 1 && (
@@ -99,7 +99,7 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <section className="rounded-2xl border border-border bg-card">
           <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
-            <FileText size={16} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+            <FileText size={16} aria-hidden="true" className="text-muted-foreground" />
             Documents
           </h2>
           <ul className="divide-y divide-border">
@@ -118,7 +118,7 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
 
         <section className="rounded-2xl border border-border bg-card">
           <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
-            <History size={16} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+            <History size={16} aria-hidden="true" className="text-muted-foreground" />
             Version history
           </h2>
           <ul className="divide-y divide-border">

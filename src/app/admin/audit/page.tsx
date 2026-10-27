@@ -15,7 +15,7 @@
  */
 
 import { useMemo, useState } from "react";
-import { Lock, ShieldCheck } from "lucide-react";
+import { Lock, ShieldCheck } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
@@ -154,7 +154,7 @@ export default function AuditLogPage() {
             {rows.map((event) => (
               <li key={event.id} className="flex items-start gap-3 px-3 py-3">
                 <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <Lock size={15} strokeWidth={1.8} aria-hidden="true" />
+                  <Lock size={15} aria-hidden="true" />
                 </span>
 
                 <div className="flex min-w-0 flex-1 flex-col">

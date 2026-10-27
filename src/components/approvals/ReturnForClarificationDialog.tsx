@@ -15,7 +15,7 @@
  */
 
 import { useState } from "react";
-import { MessageSquareWarning } from "lucide-react";
+import { MessageSquareWarning } from "@/components/ui/icons";
 import {
   Dialog,
   DialogBody,
@@ -64,7 +64,7 @@ export default function ReturnForClarificationDialog({
       <DialogContent size="md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <MessageSquareWarning size={18} strokeWidth={1.9} className="text-warning-text" />
+            <MessageSquareWarning size={18} className="text-warning-text" />
             <span>Return for Clarification</span>
           </DialogTitle>
         </DialogHeader>

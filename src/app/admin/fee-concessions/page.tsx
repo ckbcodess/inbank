@@ -13,7 +13,7 @@
  */
 
 import { useMemo, useState } from "react";
-import { Percent, Plus } from "lucide-react";
+import { Percent, Plus } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
@@ -116,7 +116,7 @@ export default function FeeConcessionsPage() {
           description="Standard tariffs apply to every customer until a concession is created and approved."
           action={
             <Button className="rounded-lg">
-              <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
+              <Plus size={14} aria-hidden="true" />
               New concession
             </Button>
           }

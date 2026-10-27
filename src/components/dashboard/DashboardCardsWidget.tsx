@@ -1,7 +1,7 @@
 import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import { useState } from "react";
 import Link from "next/link";
-import { Lock, Smartphone, Globe, ChevronRight } from "lucide-react";
+import { Lock, Smartphone, Globe, ChevronRight } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -103,7 +103,7 @@ export function DashboardCardsWidget() {
             className="inline-flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
           >
             <span>View all</span>
-            <ChevronRight size={13} strokeWidth={1.8} />
+            <ChevronRight size={13} />
           </Link>
         </div>
 
@@ -158,7 +158,7 @@ export function DashboardCardsWidget() {
                       : "border-border bg-muted/60 text-foreground hover:bg-muted"
                   }`}
                 >
-                  <Lock size={13} strokeWidth={1.8} />
+                  <Lock size={13} />
                   <span>{card.frozen ? "Unblock" : "Block"}</span>
                 </button>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "@/components/ui/icons";
 
 /**
  * A row that scrolls sideways when it doesn't fit, with a round chevron at whichever end has more to show. The
@@ -65,7 +65,7 @@ export function HorizontalScrollStrip({
             className="pointer-events-auto flex size-7 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition active:scale-95 cursor-pointer -ml-1"
             aria-label="Scroll left"
           >
-            <ChevronLeft size={16} strokeWidth={2.2} />
+            <ChevronLeft size={16} />
           </button>
         </div>
       )}
@@ -89,7 +89,7 @@ export function HorizontalScrollStrip({
             className="pointer-events-auto flex size-7 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition active:scale-95 cursor-pointer -mr-1"
             aria-label="Scroll right"
           >
-            <ChevronRight size={16} strokeWidth={2.2} />
+            <ChevronRight size={16} />
           </button>
         </div>
       )}

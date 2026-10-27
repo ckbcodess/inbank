@@ -8,7 +8,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Building2, ChevronRight } from "lucide-react";
+import { Building2, ChevronRight } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
@@ -99,7 +99,7 @@ export default function CustomerManagementPage() {
                   className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
                 >
                   <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                    <Building2 size={16} strokeWidth={1.8} aria-hidden="true" />
+                    <Building2 size={16} aria-hidden="true" />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-[13.5px] text-foreground">{c.name}</span>
@@ -109,7 +109,7 @@ export default function CustomerManagementPage() {
                   </span>
                   <Badge variant="outline">{c.segment}</Badge>
                   <Badge variant={c.status === "Active" ? "success" : "warning"}>{c.status}</Badge>
-                  <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                  <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                 </Link>
               </li>
             ))}

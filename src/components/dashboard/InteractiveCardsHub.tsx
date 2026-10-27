@@ -12,7 +12,7 @@ import {
   Plus,
   Sparkles,
   ChevronRight
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { setCardStatus, type PaymentCard } from "@/lib/mock-data";
 import { getCardTheme } from "@/components/cards/card-themes";

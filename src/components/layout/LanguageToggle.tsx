@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Globe } from "lucide-react";
+import { Check, Globe } from "@/components/ui/icons";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,7 +36,7 @@ export default function LanguageToggle({
           )}
           aria-label={t("header.language", "Change language")}
         >
-          <Globe size={16} strokeWidth={1.8} className="shrink-0" />
+          <Globe size={16} className="shrink-0" />
           {showLabel && (
             <span className="text-[11.5px] tracking-wide text-foreground">
               {current.shortLabel}
@@ -72,7 +72,7 @@ export default function LanguageToggle({
                 </span>
               </div>
               {isSelected && (
-                <Check size={14} strokeWidth={2.2} className="text-foreground shrink-0" />
+                <Check size={14} className="text-foreground shrink-0" />
               )}
             </DropdownMenuItem>
           );

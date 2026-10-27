@@ -10,7 +10,7 @@ import { use, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ChevronRight,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import CardDetailsLoading from "./loading";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";

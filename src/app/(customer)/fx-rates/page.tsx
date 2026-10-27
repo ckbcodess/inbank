@@ -18,7 +18,7 @@ import {
   ChevronDown,
   TrendingDown,
   TrendingUp,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/layout/PageHeader";
 import {
@@ -219,7 +219,7 @@ export default function FxRatesPage() {
                         <span className="text-[15px] font-bold text-foreground tabular tracking-tight">
                           {fromCcy}
                         </span>
-                        <ChevronDown size={15} strokeWidth={2.2} className="text-muted-foreground" />
+                        <ChevronDown size={15} className="text-muted-foreground" />
                       </div>
                     </SelectTrigger>
                     <SelectContent align="end">
@@ -247,7 +247,7 @@ export default function FxRatesPage() {
                     title="Swap currencies"
                     className="size-9 rounded-full border border-border bg-background shadow-xs hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer transition-transform active:scale-95"
                   >
-                    <ArrowUpDown size={19} strokeWidth={2.2} aria-hidden="true" />
+                    <ArrowUpDown size={19} aria-hidden="true" />
                   </Button>
                 </div>
 
@@ -269,7 +269,7 @@ export default function FxRatesPage() {
                         <span className="text-[15px] font-bold text-foreground tabular tracking-tight">
                           {toCcy}
                         </span>
-                        <ChevronDown size={15} strokeWidth={2.2} className="text-muted-foreground" />
+                        <ChevronDown size={15} className="text-muted-foreground" />
                       </div>
                     </SelectTrigger>
                     <SelectContent align="end">
@@ -326,9 +326,9 @@ export default function FxRatesPage() {
                         }`}
                       >
                         {up ? (
-                          <TrendingUp size={12} strokeWidth={2} aria-hidden="true" />
+                          <TrendingUp size={12} aria-hidden="true" />
                         ) : (
-                          <TrendingDown size={12} strokeWidth={2} aria-hidden="true" />
+                          <TrendingDown size={12} aria-hidden="true" />
                         )}
                         {up ? "+" : ""}
                         {rate.changePct.toFixed(2)}%
@@ -386,9 +386,9 @@ export default function FxRatesPage() {
                             }`}
                           >
                             {up ? (
-                              <TrendingUp size={13} strokeWidth={2} aria-hidden="true" />
+                              <TrendingUp size={13} aria-hidden="true" />
                             ) : (
-                              <TrendingDown size={13} strokeWidth={2} aria-hidden="true" />
+                              <TrendingDown size={13} aria-hidden="true" />
                             )}
                             {up ? "+" : ""}
                             {rate.changePct.toFixed(2)}%

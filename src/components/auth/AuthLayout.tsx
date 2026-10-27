@@ -3,7 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "@/components/ui/icons";
 import Link from "next/link";
 import AuthHeader from "./AuthHeader";
 import { GCBLogo } from "@/components/ui/GCBLogo";
@@ -15,6 +15,7 @@ import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { useDevToolsHidden } from "@/lib/dev-tools-visibility";
 import { useCaptureMode } from "@/lib/capture-mode";
 import { SPRING } from "@/lib/motion";
+import { StepBar } from "@/components/ui/step-bar";
 
 interface AuthLayoutProps {
   title?: string;
@@ -163,7 +164,7 @@ export default function AuthLayout({
                         className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95"
                       >
                         <div className={newLayout ? "flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground" : "flex size-7 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border"}>
-                          <ChevronLeft size={16} strokeWidth={2.2} className="transition-transform" />
+                          <ChevronLeft size={16} className="transition-transform" />
                         </div>
                         <span>Back</span>
                       </Link>
@@ -175,7 +176,7 @@ export default function AuthLayout({
                         className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95 cursor-pointer"
                       >
                         <div className={newLayout ? "flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground" : "flex size-7 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border"}>
-                          <ChevronLeft size={16} strokeWidth={2.2} className="transition-transform" />
+                          <ChevronLeft size={16} className="transition-transform" />
                         </div>
                         <span>Back</span>
                       </button>
@@ -185,24 +186,7 @@ export default function AuthLayout({
 
                 {/* Step Progress Segments (Full Width across the card) */}
                 {stepProgress && (
-                  <div className={cn("flex items-center gap-2 px-0.5", newLayout ? "mb-6" : "mb-5")}>
-                    {Array.from({ length: stepProgress.total }).map((_, i) => {
-                      const isActive = i + 1 <= stepProgress.current;
-                      const isCurrent = i + 1 === stepProgress.current;
-                      return (
-                        <div
-                          key={i}
-                          className={`h-1.5 flex-1 rounded-full transition duration-300 ${
-                            isCurrent
-                              ? "bg-primary"
-                              : isActive
-                              ? "bg-primary/60"
-                              : "bg-muted"
-                          }`}
-                        />
-                      );
-                    })}
-                  </div>
+                  <StepBar current={stepProgress.current} total={stepProgress.total} className={newLayout ? "mb-6" : "mb-5"} />
                 )}
 
                 {/* Optional Step Icon */}

@@ -11,7 +11,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -125,14 +125,14 @@ export function SchedulePaymentFlow() {
   }
 
   const header = (title: string, onBack: () => void, label: string) => (
-    <div className="flex min-w-0 items-center gap-2">
+    <div data-page-header className="flex min-w-0 items-center gap-2">
       <button
         type="button"
         onClick={onBack}
         className="relative -ml-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:ml-0 sm:size-8"
         aria-label={label}
       >
-        <ChevronLeft size={20} strokeWidth={1.8} />
+        <ChevronLeft size={20} />
       </button>
       <h1 className="truncate text-[18px] font-medium leading-[24px] tracking-[var(--ls-heading)] text-foreground sm:text-[20px] sm:leading-[28px] lg:text-[22px]">
         {title}

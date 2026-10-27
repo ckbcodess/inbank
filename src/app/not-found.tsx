@@ -1,5 +1,5 @@
 ﻿import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "@/components/ui/icons";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { Button } from "@/components/ui/button";
 
@@ -17,7 +17,7 @@ export default function NotFound() {
         </p>
         <div className="mt-5 flex justify-center">
           <Button nativeButton={false} render={<Link href="/" />} className="gap-2">
-            <ChevronLeft size={16} strokeWidth={2} />
+            <ChevronLeft size={16} />
             Return home
           </Button>
         </div>

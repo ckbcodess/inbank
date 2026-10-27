@@ -11,7 +11,7 @@
 import { AlertToast } from "@/components/ui/alert-toast";
 import { InlineError } from "@/components/ui/inline-error";
 import React, { useEffect, useId, useState } from "react";
-import { Smartphone } from "lucide-react";
+import { Smartphone } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import OtpInput from "@/components/auth/OtpInput";
@@ -28,8 +28,6 @@ export interface TransactionOtpModalProps {
   phone?: string;
   isUssd?: boolean;
   amount?: string | number;
-  /** What is being approved (amount, who, from where), restated above the code boxes so a bare code prompt can't be phished. */
-  summary?: React.ReactNode;
 }
 
 export default function TransactionOtpModal({
@@ -40,7 +38,6 @@ export default function TransactionOtpModal({
   phone = REGISTERED_PHONE,
   isUssd = false,
   amount,
-  summary,
 }: TransactionOtpModalProps) {
   const displayPhone = maskMobile(phone);
   const auth = useAuthorisation();
@@ -109,7 +106,7 @@ export default function TransactionOtpModal({
 
           <div className="flex flex-col items-center text-center gap-3 px-5 py-6">
             <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
-              <Smartphone size={24} strokeWidth={1.8} />
+              <Smartphone size={24} />
             </div>
             <div className="flex flex-col gap-1">
               {formattedAmount && (
@@ -145,9 +142,8 @@ export default function TransactionOtpModal({
         </DialogHeader>
 
         <form id={formId} onSubmit={handleConfirm} className="flex flex-col items-center justify-center px-5 py-10 text-center sm:py-10">
-          {summary && <div className="mb-6 w-full text-left">{summary}</div>}
           <div className="flex size-10 items-center justify-center rounded-full bg-muted text-foreground">
-            <Smartphone size={22} strokeWidth={1.9} />
+            <Smartphone size={22} />
           </div>
 
           <OtpPrompt

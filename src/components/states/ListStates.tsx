@@ -7,7 +7,7 @@
  */
 
 import type { ReactNode } from "react";
-import { AlertCircle, Inbox, RefreshCw, SearchX } from "lucide-react";
+import { AlertCircle, Inbox, RefreshCw, SearchX } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { StateIllustration } from "@/components/states/StateIllustration";
 import type { StateIllustrationId } from "@/lib/state-illustrations";
@@ -45,7 +45,7 @@ export function TrueEmptyState({
   /** Registered drawing for this situation; the icon shows until it's been drawn. */
   illustration?: StateIllustrationId;
 }) {
-  const fallbackIcon = icon ?? <Inbox size={22} strokeWidth={1.5} />;
+  const fallbackIcon = icon ?? <Inbox size={22} />;
   return (
     <div className="flex flex-col items-center justify-center px-3 py-12 sm:py-12 text-center">
       <div className="mb-6 text-muted-foreground/60 flex items-center justify-center">
@@ -80,7 +80,7 @@ export function FilteredEmptyState({
       <p className="text-[14.5px] font-medium text-foreground">No results found</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
       <Button variant="outline" size="sm" className="mt-3 h-7 px-2 rounded-lg text-[13px]" onClick={onReset}>
-        <RefreshCw size={13} strokeWidth={1.8} />
+        <RefreshCw size={13} />
         Reset filters
       </Button>
       {action && <div className="mt-2">{action}</div>}
@@ -104,7 +104,7 @@ export function ListErrorState({
       <p className="text-[14.5px] font-medium text-foreground">Couldn&apos;t load records</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
       <Button variant="outline" size="sm" className="mt-3 h-7 px-2 rounded-lg text-[13px]" onClick={onRetry}>
-        <RefreshCw size={13} strokeWidth={1.8} />
+        <RefreshCw size={13} />
         Retry
       </Button>
     </div>
@@ -118,7 +118,7 @@ export function ListErrorState({
 export function PartialLoadFooter() {
   return (
     <div className="flex items-center justify-center gap-2 border-t border-border/60 px-3 py-3 text-[13px] text-muted-foreground">
-      <RefreshCw size={13} strokeWidth={1.8} className="animate-spin" />
+      <RefreshCw size={13} className="animate-spin" />
       Loading more records…
     </div>
   );

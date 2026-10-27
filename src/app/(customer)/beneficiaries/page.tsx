@@ -28,7 +28,7 @@ import {
   Trash2,
   User,
   Wallet,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/layout/PageHeader";
@@ -93,7 +93,7 @@ const TYPE_CONFIG: Record<TransactionType, TypeMeta> = {
   bank: { label: "Bank Transfer", plural: "Bank Transfers", rail: "bank", icon: Landmark },
   wallet: { label: "Mobile Wallet", plural: "Mobile Wallets", rail: "wallet", icon: Wallet },
   proxy: { label: "Proxy Pay", plural: "Proxy Pay", rail: "proxy", icon: User },
-  bill: { label: "Bills & Utilities", plural: "Bills & Utilities", rail: "bill", icon: CediReceiptIcon },
+  bill: { label: "Utilities", plural: "Utilities", rail: "bill", icon: CediReceiptIcon },
   airtime: { label: "Airtime & Data", plural: "Airtime & Data", rail: "airtime", icon: Smartphone },
   swift: { label: "SWIFT International Wire", plural: "SWIFT Wire Transfers", rail: "swift", icon: Globe },
   papss: { label: "PAPSS Cross-Border", plural: "PAPSS Cross-Border", rail: "papss", icon: Globe },
@@ -596,7 +596,7 @@ export default function BeneficiariesPage() {
               aria-label={`Send to ${b.name}`}
               title={`Send to ${b.name}`}
             >
-              <Send size={15} strokeWidth={1.6} />
+              <Send size={15} />
             </Link>
           </SimpleTooltip>
 
@@ -608,7 +608,7 @@ export default function BeneficiariesPage() {
               aria-label={`Edit ${b.name}`}
               title={`Edit ${b.name}`}
             >
-              <Pencil size={15} strokeWidth={1.6} />
+              <Pencil size={15} />
             </button>
           </SimpleTooltip>
 
@@ -620,11 +620,11 @@ export default function BeneficiariesPage() {
               aria-label={`Remove ${b.name}`}
               title={`Remove ${b.name}`}
             >
-              <Trash2 size={15} strokeWidth={1.6} />
+              <Trash2 size={15} />
             </button>
           </SimpleTooltip>
         </div>
-        <ChevronRight size={18} strokeWidth={1.7} className="shrink-0 text-muted-foreground [@media(hover:hover)]:hidden" aria-hidden />
+        <ChevronRight size={18} className="shrink-0 text-muted-foreground [@media(hover:hover)]:hidden" aria-hidden />
       </li>
     );
   }
@@ -681,7 +681,7 @@ export default function BeneficiariesPage() {
                 aria-label={`Send to ${g.name}`}
                 title={`Send to ${g.name}`}
               >
-                <Send size={15} strokeWidth={1.6} />
+                <Send size={15} />
               </Link>
             </SimpleTooltip>
 
@@ -696,7 +696,7 @@ export default function BeneficiariesPage() {
                 aria-label={`Edit ${g.name}`}
                 title={`Edit ${g.name}`}
               >
-                <Pencil size={15} strokeWidth={1.6} />
+                <Pencil size={15} />
               </button>
             </SimpleTooltip>
 
@@ -708,12 +708,12 @@ export default function BeneficiariesPage() {
                 aria-label={`Delete ${g.name}`}
                 title={`Delete ${g.name}`}
               >
-                <Trash2 size={15} strokeWidth={1.6} />
+                <Trash2 size={15} />
               </button>
             </SimpleTooltip>
           </div>
         </div>
-        <ChevronRight size={18} strokeWidth={1.7} className="shrink-0 text-muted-foreground [@media(hover:hover)]:hidden" aria-hidden />
+        <ChevronRight size={18} className="shrink-0 text-muted-foreground [@media(hover:hover)]:hidden" aria-hidden />
       </li>
     );
   }
@@ -741,7 +741,7 @@ export default function BeneficiariesPage() {
               }}
               className="shrink-0"
             >
-              <Plus size={15} strokeWidth={2} />
+              <Plus size={15} />
               Add beneficiary
             </Button>
           )

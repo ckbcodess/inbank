@@ -25,7 +25,7 @@ import {
   Info,
   ShieldAlert,
   XCircle,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import Link from "next/link";
 import PageHeader from "@/components/layout/PageHeader";
@@ -118,9 +118,9 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
           }`}
         >
           {outcome === "rejected" ? (
-            <XCircle size={17} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-destructive" />
+            <XCircle size={17} aria-hidden="true" className="mt-px shrink-0 text-destructive" />
           ) : (
-            <CheckCircle2 size={17} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-success-text" />
+            <CheckCircle2 size={17} aria-hidden="true" className="mt-px shrink-0 text-success-text" />
           )}
           <div>
             <p className="text-[14px] text-foreground">
@@ -137,7 +137,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
       {/* Authority band — 13.4 within-limit vs exceeds-limit */}
       {state === "exceeds-limit" && (
         <div className="flex items-start gap-2 rounded-2xl border border-destructive/30 bg-destructive/5 p-4">
-          <ShieldAlert size={17} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-destructive" />
+          <ShieldAlert size={17} aria-hidden="true" className="mt-px shrink-0 text-destructive" />
           <div className="min-w-0">
             <p className="text-[14px] text-destructive">This is above your approval limit</p>
             <p className="mt-2 text-[13px] leading-relaxed text-foreground/90">
@@ -146,7 +146,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
               it upward, but you can&apos;t approve it yourself.
             </p>
             <p className="mt-2 flex items-start gap-2 text-[12.5px] text-muted-foreground">
-              <Info size={13} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
+              <Info size={13} aria-hidden="true" className="mt-px shrink-0" />
               Exact behaviour above an approver&apos;s limit is an open item in the consolidation doc
               (13.4) — to be confirmed against the BRD.
             </p>
@@ -156,7 +156,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
 
       {state === "within-limit" && (
         <div className="flex items-start gap-2 rounded-2xl border border-border bg-muted/40 p-3">
-          <CheckCircle2 size={16} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-muted-foreground" />
+          <CheckCircle2 size={16} aria-hidden="true" className="mt-px shrink-0 text-muted-foreground" />
           <p className="text-[13px] text-muted-foreground">
             Within your approval authority of {formatMoney(item.approvalLimit, item.currency)}.
           </p>
@@ -188,7 +188,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
             className="inline-flex items-center gap-2 text-[13px] text-primary underline-offset-4 hover:underline"
           >
             View full transaction record
-            <ArrowUpRight size={14} strokeWidth={1.8} aria-hidden="true" />
+            <ArrowUpRight size={14} aria-hidden="true" />
           </Link>
         </div>
       </section>
@@ -198,16 +198,16 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
       {state !== "decision-submitted" && (
         <div className="flex flex-wrap items-center gap-2">
           <Button onClick={() => submitDecision("approved")} disabled={exceeds}>
-            <CheckCircle2 size={15} strokeWidth={1.9} aria-hidden="true" />
+            <CheckCircle2 size={15} aria-hidden="true" />
             Approve Payment
           </Button>
           <Button variant="destructive" onClick={() => setRejectOpen(true)}>
-            <XCircle size={15} strokeWidth={1.9} aria-hidden="true" />
+            <XCircle size={15} aria-hidden="true" />
             Reject
           </Button>
           {exceeds && (
             <Button variant="outline">
-              <AlertTriangle size={15} strokeWidth={1.9} aria-hidden="true" />
+              <AlertTriangle size={15} aria-hidden="true" />
               Refer to Senior Approver
             </Button>
           )}

@@ -15,7 +15,7 @@ import {
   Building2,
   ChevronRight,
   ClipboardCheck,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Badge } from "@/components/ui/badge";
@@ -222,7 +222,7 @@ export default function AdminEnrolmentsPage() {
             >
               <div className="flex items-start gap-3 min-w-0">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary mt-0.5">
-                  <Building2 size={19} strokeWidth={1.8} />
+                  <Building2 size={19} />
                 </span>
 
                 <div className="flex flex-col min-w-0">
@@ -280,7 +280,6 @@ export default function AdminEnrolmentsPage() {
 
                 <ChevronRight
                   size={16}
-                  strokeWidth={1.8}
                   className="text-muted-foreground group-hover:translate-x-0.5 transition-transform"
                 />
               </div>

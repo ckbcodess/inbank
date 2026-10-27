@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Users, Bell, Receipt } from "lucide-react";
+import { Users, Bell, Receipt } from "@/components/ui/icons";
 import { useGroupsStore } from "@/lib/groups-store";
 import { formatMoney } from "@/lib/mock-data";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";

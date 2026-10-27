@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useEffect, useReducer, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { AlertTriangle, CheckCircle2, Pause, Play, Trash2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Pause, Play, Trash2 } from "@/components/ui/icons";
 import { Button, buttonVariants } from "@/components/ui/button";
 import PageHeader from "@/components/layout/PageHeader";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -45,7 +45,7 @@ export default function BusinessStandingOrderDetailPage() {
       <div className="flex flex-col gap-6">
         <PageHeader title="Standing Order" backTo={back} />
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-start gap-3 px-1">
-          <CheckCircle2 size={22} strokeWidth={1.8} className="text-success-text" aria-hidden="true" />
+          <CheckCircle2 size={22} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
             <span className="text-[18px] text-foreground">Cancelled</span>
             <span className="text-[13.5px] text-muted-foreground">{cancelled} won&apos;t be paid again. You can set it up again anytime.</span>
@@ -135,16 +135,16 @@ export default function BusinessStandingOrderDetailPage() {
             <Button variant="outline" onClick={togglePause}>
               {paused ? (
                 <>
-                  <Play size={14} strokeWidth={2} aria-hidden="true" /> Resume
+                  <Play size={14} aria-hidden="true" /> Resume
                 </>
               ) : (
                 <>
-                  <Pause size={14} strokeWidth={2} aria-hidden="true" /> Pause
+                  <Pause size={14} aria-hidden="true" /> Pause
                 </>
               )}
             </Button>
             <Button variant="destructive" onClick={() => setConfirmCancel(true)}>
-              <Trash2 size={14} strokeWidth={1.8} aria-hidden="true" /> Cancel Order
+              <Trash2 size={14} aria-hidden="true" /> Cancel Order
             </Button>
           </div>
         </section>
@@ -160,7 +160,7 @@ export default function BusinessStandingOrderDetailPage() {
               &quot;{si.beneficiary}&quot; will stop running. You can set it up again anytime.
             </p>
             <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-2 text-[12.5px] text-muted-foreground">
-              <AlertTriangle size={15} strokeWidth={1.8} className="mt-0.5 shrink-0 text-warning-text" aria-hidden="true" />
+              <AlertTriangle size={15} className="mt-0.5 shrink-0 text-warning-text" aria-hidden="true" />
               <span>If you just want to pause it temporarily, use Pause instead.</span>
             </div>
           </DialogBody>
@@ -169,7 +169,7 @@ export default function BusinessStandingOrderDetailPage() {
               Keep It
             </Button>
             <Button variant="destructive" onClick={handleCancel}>
-              <Trash2 size={14} strokeWidth={1.8} aria-hidden="true" className="mr-2" />
+              <Trash2 size={14} aria-hidden="true" className="mr-2" />
               Cancel Order
             </Button>
           </DialogFooter>

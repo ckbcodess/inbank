@@ -16,7 +16,7 @@
  */
 
 import { useState } from "react";
-import { AlertCircle, ShieldAlert } from "lucide-react";
+import { AlertCircle, ShieldAlert } from "@/components/ui/icons";
 import {
   Dialog,
   DialogBody,
@@ -101,7 +101,6 @@ export default function ComplianceActionDialog({
               <DialogTitle className="flex items-center gap-2">
                 <ShieldAlert
                   size={18}
-                  strokeWidth={1.9}
                   className={destructive ? "text-destructive" : "text-muted-foreground"}
                 />
                 <span>{title}</span>
@@ -147,7 +146,6 @@ export default function ComplianceActionDialog({
               <DialogTitle className="flex items-center gap-2">
                 <AlertCircle
                   size={18}
-                  strokeWidth={1.9}
                   className={destructive ? "text-destructive" : "text-muted-foreground"}
                 />
                 <span>Confirm with Authenticator</span>

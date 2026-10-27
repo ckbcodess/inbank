@@ -9,7 +9,7 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
@@ -82,7 +82,7 @@ export default function BusinessOverviewPage() {
                     <span className="tabular text-[14px] text-foreground">
                       <RevealingAmount amount={account.available} currency={account.currency} />
                     </span>
-                    <ChevronRight size={16} strokeWidth={1.7} className="text-muted-foreground" aria-hidden="true" />
+                    <ChevronRight size={16} className="text-muted-foreground" aria-hidden="true" />
                   </span>
                 </Link>
               </li>

@@ -11,7 +11,7 @@
  * looks tappable that isn't, and "on" never reads as greyed-out "off".
  */
 
-import { Check } from "lucide-react";
+import { Check } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { TileChip } from "@/components/ui/action-tile";
@@ -63,7 +63,7 @@ export function ToggleTile({
       <div className={frame}>
         {body}
         <Badge className="shrink-0 gap-1">
-          <Check size={12} strokeWidth={2.2} aria-hidden="true" />
+          <Check size={12} aria-hidden="true" />
           {lockedBadge}
         </Badge>
       </div>

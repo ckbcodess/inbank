@@ -9,7 +9,7 @@ import {
   ShoppingCart,
   UtensilsCrossed,
   X,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Account } from "@/lib/mock-data";
 import {
@@ -362,7 +362,7 @@ export function ScanAndPayFlow({
                   className="flex size-6 items-center justify-center rounded-full bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
                   aria-label="Close"
                 >
-                  <X size={15} strokeWidth={2} />
+                  <X size={15} />
                 </button>
               </div>
 
@@ -370,7 +370,7 @@ export function ScanAndPayFlow({
               <div className="flex flex-col items-center px-5 pt-6 pb-5">
                 {/* Green store badge */}
                 <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 shadow-sm mb-3">
-                  <Store size={22} strokeWidth={1.75} />
+                  <Store size={22} />
                 </div>
 
                 {/* Headline */}
@@ -443,7 +443,7 @@ export function ScanAndPayFlow({
               <div className="flex items-center justify-between rounded-xl border border-success/30 bg-success/5 p-3">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-success/15 text-success">
-                    <Store size={20} strokeWidth={1.8} />
+                    <Store size={20} />
                   </div>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2">
@@ -451,7 +451,7 @@ export function ScanAndPayFlow({
                         {state.qrMerchant}
                       </span>
                       <span className="flex size-3 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground shadow-xs">
-                        <Check size={9} strokeWidth={3} className="shrink-0" />
+                        <Check size={9} className="shrink-0" />
                       </span>
                     </div>
                     <span className="text-[11.5px] text-muted-foreground font-mono">

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, Send, Trash2 } from "lucide-react";
+import { Pencil, Send, Trash2 } from "@/components/ui/icons";
 import { Sheet, SheetContent, SheetTitle, SheetDescription, SheetCard } from "@/components/ui/sheet";
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import { RoundAction } from "@/components/ui/round-action";

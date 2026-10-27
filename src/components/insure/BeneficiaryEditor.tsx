@@ -13,7 +13,7 @@
  */
 
 import { useState } from "react";
-import { Plus, UserRound, X } from "lucide-react";
+import { Plus, UserRound, X } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -293,7 +293,7 @@ export function BeneficiaryEditor({
                       aria-label={`Remove ${p.fullName}`}
                       className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >
-                      <X size={16} strokeWidth={1.8} aria-hidden="true" />
+                      <X size={16} aria-hidden="true" />
                     </button>
                   </li>
                 );
@@ -322,7 +322,7 @@ export function BeneficiaryEditor({
                           </span>
                           <span className="truncate text-[12px] text-muted-foreground">{p.relationship}</span>
                         </span>
-                        <Plus size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                        <Plus size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                       </button>
                     </li>
                   ))}
@@ -334,7 +334,7 @@ export function BeneficiaryEditor({
           </div>
         ) : (
           <Button type="button" variant="outline" className="h-10 w-full rounded-xl" onClick={() => setAdding(true)}>
-            <Plus size={16} strokeWidth={1.8} aria-hidden="true" />
+            <Plus size={16} aria-hidden="true" />
             {value.length === 0 ? "Add Beneficiary" : "Add Another Beneficiary"}
           </Button>
         )}
@@ -373,7 +373,7 @@ export function BeneficiaryEditor({
             />
           ) : (
             <Button type="button" variant="outline" className="h-10 w-full rounded-xl" onClick={() => setAddingTrustee(true)}>
-              <UserRound size={16} strokeWidth={1.8} aria-hidden="true" />
+              <UserRound size={16} aria-hidden="true" />
               {trusteeChoices.length > 0 ? "Someone Else" : "Add Trustee"}
             </Button>
           )}

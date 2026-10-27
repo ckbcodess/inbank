@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Camera, CameraOff, Check, RefreshCw, Upload } from "lucide-react";
+import { Camera, CameraOff, Check, RefreshCw, Upload } from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 
@@ -351,7 +351,7 @@ export default function SelfieCapture({
               <Image src={capturedImage} alt="Captured selfie" fill unoptimized className="object-cover" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/15">
                 <div className="flex size-10 items-center justify-center rounded-full bg-success text-white shadow-sm">
-                  <Check size={22} strokeWidth={2.8} />
+                  <Check size={22} />
                 </div>
               </div>
             </div>
@@ -390,7 +390,7 @@ export default function SelfieCapture({
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 p-4 text-center text-muted-foreground">
-              <CameraOff size={32} strokeWidth={1.8} className="text-muted-foreground/80" />
+              <CameraOff size={32} className="text-muted-foreground/80" />
               <span className="text-[12px] leading-tight">
                 {errorMessage || "Camera unavailable"}
               </span>
@@ -410,7 +410,7 @@ export default function SelfieCapture({
             }`}
           >
             {facePosition === "centered" ? (
-              <Check size={13} strokeWidth={2.5} className="text-success-text" />
+              <Check size={13} className="text-success-text" />
             ) : (
               <div
                 className={`size-1.5 rounded-full ${

@@ -9,14 +9,13 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Receipt } from "lucide-react";
+import { Receipt } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { ReviewSummary } from "@/components/ui/review-summary";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { FromAccountSelector, InsufficientFundsAlert, ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary } from "@/components/invest/parts";
 import { OutcomeFailure } from "@/components/invest/term-deposit-parts";
 import { AdvanceNotFound, postLoanEntry } from "@/components/loans/parts";
 import { formatMoney } from "@/lib/mock-data";
@@ -98,9 +97,9 @@ export function RepayAdvanceFlow({ advanceId }: { advanceId: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Repay Now" backTo={{ href: base, label: name }} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} />
           {overBalance && <InsufficientFundsAlert />}
@@ -126,16 +125,6 @@ export function RepayAdvanceFlow({ advanceId }: { advanceId: string }) {
           setAuthOpen(false);
           authorised();
         }}
-        summary={
-          <AuthSummary
-            headline={`Repay your ${name}`}
-            amount={money(total)}
-            rows={[
-              ["Reference", advance.reference],
-              ["From", from ? `${from.name} · ${from.number}` : ""],
-            ]}
-          />
-        }
       />
     </div>
   );

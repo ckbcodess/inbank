@@ -16,7 +16,7 @@ import { GCBLogo } from "@/components/ui/GCBLogo";
 import { toast } from "sonner";
 import { accountsForProfile } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
-import { ScanLine, Share2, Download } from "lucide-react";
+import { ScanLine, Share2, Download } from "@/components/ui/icons";
 
 interface PersonalQrModalProps {
   open: boolean;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowUpDown, ChevronDown, RefreshCw } from "lucide-react";
+import { ArrowUpDown, ChevronDown, RefreshCw } from "@/components/ui/icons";
 import { CurrencyLogo } from "@/components/ui/currency-logo";
 
 const CURRENCIES = [
@@ -169,7 +169,7 @@ export function FxRatesWidget() {
             className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background active:scale-[0.96] transition-transform cursor-pointer shadow-2xs"
             aria-label="Swap currencies"
           >
-            <ArrowUpDown size={14} strokeWidth={2} />
+            <ArrowUpDown size={14} />
           </button>
 
           {/* To Input */}
@@ -275,7 +275,7 @@ export function FxRatesWidget() {
 
       {/* Symmetrical Footer */}
       <div className="flex items-center justify-center gap-2 border-t border-border/50 pt-2 text-[12px] text-muted-foreground">
-        <RefreshCw size={12} strokeWidth={1.8} />
+        <RefreshCw size={12} />
         <span>Updated 2 mins ago</span>
       </div>
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X } from "@/components/ui/icons";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
@@ -116,7 +116,7 @@ export function ExpandableSearch({
               className="absolute right-2 flex size-4 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               aria-label="Clear search"
             >
-              <X size={13} strokeWidth={2} />
+              <X size={13} />
             </button>
           )}
         </div>
@@ -128,7 +128,7 @@ export function ExpandableSearch({
             className="flex size-8 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 transition cursor-pointer"
             aria-label={label}
           >
-            <Search size={18} strokeWidth={1.8} />
+            <Search size={18} />
           </button>
         </SimpleTooltip>
       )}

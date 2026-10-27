@@ -9,7 +9,7 @@ import {
   Landmark,
   Plus,
   UserCheck,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OpenGcbAccountDialog from "@/components/accounts/OpenGcbAccountDialog";
 
@@ -67,7 +67,7 @@ export default function GetStartedPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <UserCheck size={18} strokeWidth={2.2} />
+                  <UserCheck size={18} />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
@@ -81,7 +81,6 @@ export default function GetStartedPage() {
 
               <ChevronRight
                 size={20}
-                strokeWidth={2.2}
                 className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
               />
             </button>
@@ -95,7 +94,7 @@ export default function GetStartedPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Plus size={19} strokeWidth={2.4} />
+                  <Plus size={19} />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
@@ -109,7 +108,6 @@ export default function GetStartedPage() {
 
               <ChevronRight
                 size={20}
-                strokeWidth={2.2}
                 className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
               />
             </button>
@@ -137,7 +135,7 @@ export default function GetStartedPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Landmark size={18} strokeWidth={2} />
+                  <Landmark size={18} />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
@@ -150,7 +148,7 @@ export default function GetStartedPage() {
               </div>
 
               <div className="flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition duration-200 group-hover:text-foreground">
-                <ExternalLink size={18} strokeWidth={2} />
+                <ExternalLink size={18} />
               </div>
             </button>
 
@@ -163,7 +161,7 @@ export default function GetStartedPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Plus size={18} strokeWidth={2} />
+                  <Plus size={18} />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
@@ -177,7 +175,6 @@ export default function GetStartedPage() {
 
               <ChevronRight
                 size={20}
-                strokeWidth={2.2}
                 className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
               />
             </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { CreditCard } from "lucide-react";
+import { CreditCard } from "@/components/ui/icons";
 import { Account, cardsForProfile, formatMoney } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { getEffectiveCardsForProfile, useCardsDevStore } from "@/lib/cards-dev-store";
@@ -170,7 +170,7 @@ export function CardTopUpFlow({
                   {!selectedCard ? (
                     <div className="flex items-center gap-2 min-w-0 flex-1">
                       <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
-                        <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
+                        <CreditCard size={20} className="shrink-0" />
                       </span>
                       <span className="text-[14px] text-muted-foreground font-normal">
                         Select your GCB card
@@ -180,7 +180,7 @@ export function CardTopUpFlow({
                     <div className="flex items-center justify-between min-w-0 flex-1 gap-2">
                       <div className="flex items-center gap-2 min-w-0">
                         <span className="flex size-8 shrink-0 items-center justify-center text-foreground">
-                          <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
+                          <CreditCard size={20} className="shrink-0" />
                         </span>
                         <div className="flex flex-col min-w-0 text-left gap-0.5">
                           <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">

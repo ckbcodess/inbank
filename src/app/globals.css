@@ -42,9 +42,45 @@
 @utility duration-toast { transition-duration: var(--dur-toast); }
 @utility duration-sweep { transition-duration: var(--dur-sweep); }
 
+/* Ink for something sitting on a tint: the tint's own hue, dark. Set `--tint` to the background colour (avatars, icon
+   discs) and the glyph or initials follow it, so blue gets a deep blue, green a deep green, and none turn muddy brown. A pale
+   tint carries little chroma, so it is lifted to stay visibly the same hue. Not for the amber button, whose label stays
+   `--primary-foreground`. */
+@utility on-tint { color: oklch(from var(--tint) 0.28 min(calc(c * 4), 0.09) h); }
+
 /* Type scale: sizes that step up at breakpoints. One name per step, so the numbers live here only.
    Named type-*, not text-*, so tailwind-merge doesn't mistake it for a colour. */
 @utility type-page-title { @apply text-[18px] sm:text-[20px] lg:text-[22px]; }
+
+/* Page header to first content: 40px on a phone, 48px from sm, on every page. The header (`data-page-header`, set by
+   PageHeader and the skeletons' header bones) sits in the page's flex column, whose gap would add to any margin. So the
+   column publishes its gap step as --page-gap and the header's margin makes up only the rest. */
+:root { --page-header-gap: calc(var(--spacing) * 10); }
+@variant sm { :root { --page-header-gap: calc(var(--spacing) * 12); } }
+[data-page-header]:not(:last-child) { margin-bottom: calc(var(--page-header-gap) - var(--page-gap, 0px)); }
+
+:where(.gap-0\.5, .gap-y-0\.5):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 0.5); }
+:where(.gap-1, .gap-y-1):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 1); }
+:where(.gap-2, .gap-y-2):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 2); }
+:where(.gap-3, .gap-y-3):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 3); }
+:where(.gap-4, .gap-y-4):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 4); }
+:where(.gap-5, .gap-y-5):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 5); }
+:where(.gap-6, .gap-y-6):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 6); }
+:where(.gap-8, .gap-y-8):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 8); }
+:where(.gap-10, .gap-y-10):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 10); }
+:where(.gap-12, .gap-y-12):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 12); }
+:where(.gap-16, .gap-y-16):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 16); }
+@variant sm {
+  :where(.sm\:gap-2, .sm\:gap-y-2):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 2); }
+  :where(.sm\:gap-3, .sm\:gap-y-3):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 3); }
+  :where(.sm\:gap-4, .sm\:gap-y-4):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 4); }
+  :where(.sm\:gap-5, .sm\:gap-y-5):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 5); }
+  :where(.sm\:gap-6, .sm\:gap-y-6):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 6); }
+  :where(.sm\:gap-8, .sm\:gap-y-8):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 8); }
+  :where(.sm\:gap-10, .sm\:gap-y-10):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 10); }
+  :where(.sm\:gap-12, .sm\:gap-y-12):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 12); }
+  :where(.sm\:gap-16, .sm\:gap-y-16):has(> [data-page-header]) { --page-gap: calc(var(--spacing) * 16); }
+}
 
 /* People who ask for less motion get none from transitions or the shared enter/exit animations.
    (Spinners and skeleton pulses keep running: they are status, not decoration.) */
@@ -406,6 +442,25 @@
   /* The phone mock-up in the welcome card is dark in both modes. */
   --device-frame: #2a2a2a;
   --device-screen: #141414;
+  /* Insurance plan pictures sit on a two-point gradient, top to bottom, the same in both themes. */
+  --plan-art-child-education-1: #22a6c9;
+  --plan-art-child-education-2: #0a7aa4;
+  --plan-art-homecall-1: #ff9b5e;
+  --plan-art-homecall-2: #ff6a00;
+  --plan-art-wealthmaster-1: #ffd24a;
+  --plan-art-wealthmaster-2: #ffbd1f;
+  --plan-art-ultimate-protection-1: #0fb34c;
+  --plan-art-ultimate-protection-2: #07691d;
+  /* The same for the Invest products. */
+  --plan-art-treasury-bills-1: #9a8cf8;
+  --plan-art-treasury-bills-2: #5f43d6;
+  --plan-art-bonds-1: #38c9ba;
+  --plan-art-bonds-2: #0b7c77;
+  --plan-art-term-deposits-1: #f595b8;
+  --plan-art-term-deposits-2: #d1407f;
+  /* And the salary advance on Loans. */
+  --plan-art-advance-1: #5f93ff;
+  --plan-art-advance-2: #2447c4;
   /* Dashboard promo banners (gold, green, blue) and the total balance card: three stops each. */
   --banner-gold-1: #fefbf2;
   --banner-gold-2: #fbf3db;

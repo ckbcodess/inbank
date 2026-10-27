@@ -17,7 +17,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check } from "lucide-react";
+import { Check } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -34,7 +34,7 @@ import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary, FactsPanel } from "@/components/invest/parts";
+import { FactsPanel } from "@/components/invest/parts";
 import { OutcomeFailure } from "@/components/invest/term-deposit-parts";
 import { PolicyNotFound } from "@/components/insure/parts";
 import { formatDate, formatMoney } from "@/lib/mock-data";
@@ -260,9 +260,9 @@ function ClaimForm({ policy }: { policy: Policy }) {
       { label: "Paid into", value: to ? `${to.name} · ${to.number}` : "" },
     ];
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ href: base, label: "File a Claim", onClick: () => setScreen("form") }} />
-        <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+        <div className="flex flex-col gap-5">
           <ReviewSummary
             details={rows}
             total={claimAmount ? money(claimAmount) : "To be confirmed"}
@@ -291,17 +291,6 @@ function ClaimForm({ policy }: { policy: Policy }) {
             setAuthOpen(false);
             authorised();
           }}
-          summary={
-            <AuthSummary
-              headline="Submit your claim"
-              amount={claimAmount ? money(claimAmount) : undefined}
-              rows={[
-                ["Claim", CLAIM_TYPES[type].label],
-                ["Policy", policy.number],
-                ["Paid into", to ? `${to.name} · ${to.number}` : ""],
-              ]}
-            />
-          }
         />
       </div>
     );
@@ -310,15 +299,15 @@ function ClaimForm({ policy }: { policy: Policy }) {
   const children = policy.beneficiaries.map((b) => personOf(b.personId)).filter((p) => p !== undefined);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="File a Claim" backTo={{ href: base, label: plan?.name ?? "Policy" }} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <section className="flex flex-col gap-2 px-1">
           <p className="text-[13px] text-foreground">{type === "death" ? "We’re sorry for your loss. To make this claim, have these ready:" : "To make a claim, have these ready:"}</p>
           <ul className="flex flex-col gap-2">
             {(type ? ["A valid ID", ...requiredDocs] : (plan?.claimChecklist ?? [])).map((item) => (
               <li key={item} className="flex items-start gap-2 text-[13px] text-muted-foreground">
-                <Check size={15} strokeWidth={1.8} aria-hidden="true" className="mt-0.5 shrink-0" />
+                <Check size={15} aria-hidden="true" className="mt-0.5 shrink-0" />
                 {item}
               </li>
             ))}
@@ -521,7 +510,7 @@ export function ClaimFlow({ policyId }: { policyId: string }) {
   if (!policy) return <PolicyNotFound title="File a Claim" />;
   if (policy.status === "pending-medical") {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="File a Claim" backTo={{ href: `/insure/policies/${policy.id}`, label: "Policy" }} />
         <TrueEmptyState
           title="This policy hasn’t started yet"

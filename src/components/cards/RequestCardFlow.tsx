@@ -12,7 +12,7 @@ import {
   Sparkles,
   Wifi,
   Check,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { SmoothCollapse } from "@/components/ui/smooth-height";
 import {
@@ -353,7 +353,7 @@ export function RequestCardFlow() {
             className="w-full max-w-[540px] mx-auto flex flex-col gap-5"
           >
           {/* Header Row: Back Link & Title */}
-          <div className="flex items-center gap-2">
+          <div data-page-header className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleBackNavigation}
@@ -361,7 +361,7 @@ export function RequestCardFlow() {
               title="Back"
               aria-label="Back"
             >
-              <ChevronLeft size={22} strokeWidth={1.8} />
+              <ChevronLeft size={22} />
             </button>
             <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               Request a Card
@@ -408,7 +408,7 @@ export function RequestCardFlow() {
           className="w-full max-w-[540px] mx-auto flex flex-col gap-5"
         >
           {/* Header Row: Back to Step 1 & Title */}
-          <div className="flex items-center gap-2">
+          <div data-page-header className="flex items-center gap-2">
             <button
               type="button"
               onClick={() =>
@@ -417,7 +417,7 @@ export function RequestCardFlow() {
               className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
             >
-              <ChevronLeft size={22} strokeWidth={1.8} />
+              <ChevronLeft size={22} />
             </button>
             <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               {isReplacement ? "Replace" : "Configure"} {cardType} Card
@@ -614,14 +614,14 @@ export function RequestCardFlow() {
           className="w-full max-w-[540px] mx-auto flex flex-col items-center gap-5"
         >
           {/* Header Row: Back to Step 2 & Title */}
-          <div className="flex items-center gap-2 w-full">
+          <div data-page-header className="flex items-center gap-2 w-full">
             <button
               type="button"
               onClick={() => setStep("details")}
               className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
             >
-              <ChevronLeft size={22} strokeWidth={1.8} />
+              <ChevronLeft size={22} />
             </button>
             <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               Customize card
@@ -674,7 +674,7 @@ export function RequestCardFlow() {
                 ) : (
                   <div className="relative z-10 my-auto py-2 flex items-center gap-3">
                     <EmvChip />
-                    <Wifi size={22} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0 transition-colors duration-300" />
+                    <Wifi size={22} className="rotate-90 opacity-85 shrink-0 transition-colors duration-300" />
                   </div>
                 )}
 
@@ -740,7 +740,6 @@ export function RequestCardFlow() {
                         >
                           <Check
                             size={15}
-                            strokeWidth={2.6}
                             className={isDarkIcon ? "text-primary-foreground" : "text-white"}
                           />
                         </motion.div>
@@ -777,14 +776,14 @@ export function RequestCardFlow() {
           className="w-full max-w-[540px] mx-auto flex flex-col gap-5"
         >
           {/* Header Row: Back to Customize & Title */}
-          <div className="flex items-center gap-2">
+          <div data-page-header className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setStep("customize")}
               className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
             >
-              <ChevronLeft size={22} strokeWidth={1.8} />
+              <ChevronLeft size={22} />
             </button>
             <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               {isReplacement ? "Review replacement" : "Review request"}

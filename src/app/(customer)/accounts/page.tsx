@@ -37,7 +37,7 @@ import {
   Trash2,
   Wallet,
   X,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -97,7 +97,7 @@ const SCENARIO_LABEL = Object.fromEntries(ACCOUNTS_SCENARIOS.map((s) => [s.id, s
 function SectionAction({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
     <Button type="button" variant="ghost" onClick={onClick} className="shrink-0">
-      <Plus size={15} strokeWidth={1.8} aria-hidden="true" />
+      <Plus size={15} aria-hidden="true" />
       {children}
     </Button>
   );
@@ -114,7 +114,7 @@ function RowMenu({ label, children }: { label: string; children: React.ReactNode
         aria-label={label}
         className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring"
       >
-        <MoreHorizontal size={17} strokeWidth={1.8} />
+        <MoreHorizontal size={17} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-45">
         {children}
@@ -147,9 +147,9 @@ function AccountRow({
       >
         <TileChip tone="onCard">
           {isWallet ? (
-            <Wallet size={20} strokeWidth={1.8} aria-hidden="true" />
+            <Wallet size={20} aria-hidden="true" />
           ) : (
-            <Landmark size={20} strokeWidth={1.8} aria-hidden="true" />
+            <Landmark size={20} aria-hidden="true" />
           )}
         </TileChip>
         <span className="flex min-w-0 flex-1 flex-col gap-1">
@@ -165,7 +165,7 @@ function AccountRow({
           </span>
           {pending && (
             <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
-              <Clock size={13} strokeWidth={1.8} className="shrink-0 text-warning" aria-hidden="true" />
+              <Clock size={13} className="shrink-0 text-warning" aria-hidden="true" />
               <span className="tabular">
                 {formatMoney(pending.amount, "GHS", true)} from {pending.from} on its way · usually arrives within minutes
               </span>
@@ -174,7 +174,6 @@ function AccountRow({
         </span>
         <ChevronRight
           size={20}
-          strokeWidth={1.8}
           aria-hidden="true"
           className="shrink-0 text-muted-foreground transition-transform duration-150 group-hover:text-foreground"
         />
@@ -209,7 +208,7 @@ function SourceRow({ source, onOpen, onRemove }: { source: LinkedSource; onOpen:
       </button>
       <RowMenu label={`More actions for ${source.title}`}>
         <DropdownMenuItem onClick={onRemove} className="gap-2 text-[13px]">
-          <Trash2 size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+          <Trash2 size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
           Remove
         </DropdownMenuItem>
       </RowMenu>
@@ -397,7 +396,7 @@ function AccountsContent() {
       {/* Just moved from wallet to a GCB account */}
       {migratedAmount !== null && defaultAccount && screenState === "populated" && (
         <div className="flex items-start gap-2 rounded-2xl border border-border bg-card p-3 sm:p-4" role="status">
-          <CheckCircle2 size={18} strokeWidth={1.8} className="mt-0.5 shrink-0 text-success" aria-hidden="true" />
+          <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-success" aria-hidden="true" />
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <p className="text-[14.5px] text-foreground">Your GCB account is ready</p>
             <p className="text-[13px] leading-relaxed text-muted-foreground tabular">
@@ -411,7 +410,7 @@ function AccountsContent() {
             aria-label="Dismiss"
             className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
-            <X size={16} strokeWidth={1.8} />
+            <X size={16} />
           </button>
         </div>
       )}
@@ -528,7 +527,7 @@ function AccountsContent() {
           <DialogBody>
             <div className="flex flex-col items-center gap-3 pt-3 text-center">
               <div className="flex size-21 items-center justify-center rounded-full bg-primary/15 text-foreground shadow-[0_0_60px_20px_color-mix(in_oklab,var(--primary)_18%,transparent)]">
-                <HandCoins size={40} strokeWidth={1.5} aria-hidden="true" />
+                <HandCoins size={40} aria-hidden="true" />
               </div>
               <DialogTitle className="text-[22px] tracking-[var(--ls-heading)]">You&apos;re Almost There…</DialogTitle>
               <p className="max-w-[320px] text-[14px] leading-relaxed text-muted-foreground">
@@ -619,7 +618,7 @@ function AccountsContent() {
           </DialogHeader>
           <DialogBody>
             <div className="flex items-start gap-2">
-              <AlertTriangle size={18} strokeWidth={1.8} aria-hidden="true" className="mt-0.5 shrink-0 text-warning" />
+              <AlertTriangle size={18} aria-hidden="true" className="mt-0.5 shrink-0 text-warning" />
               <p className="text-[13.5px] leading-relaxed text-muted-foreground tabular">
                 {removing?.type === "card"
                   ? `You will no longer be able to add money using card ending ${removing.subtitle.replace(/\D/g, "") || "1111"} until you link it again. Money already in your accounts will not be affected.`

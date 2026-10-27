@@ -47,12 +47,12 @@ export function PayeeAvatar({
   return (
     <span
       className={cn(
-        "flex shrink-0 select-none items-center justify-center rounded-full border border-black/5 text-primary-foreground tracking-[var(--ls-label)] transition-[filter] duration-150 dark:border-white/10",
+        "flex shrink-0 select-none items-center justify-center rounded-full border border-black/5 bg-[var(--tint)] on-tint tracking-[var(--ls-label)] transition-[filter] duration-150 dark:border-white/10",
         "group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]",
         SIZE[size],
         className,
       )}
-      style={{ backgroundColor: `var(--avatar-${tintFor(name)})` }}
+      style={{ "--tint": `var(--avatar-${tintFor(name)})` } as React.CSSProperties}
       aria-hidden="true"
     >
       {Icon ? <Icon size={size === "xl" ? 30 : size === "lg" ? 22 : 17} strokeWidth={1.7} /> : (initials ?? payeeInitials(name))}

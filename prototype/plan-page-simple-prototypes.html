@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plan Page, Just Image and Benefits: 16 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ink:#0b0b0c;--ok:#15803d;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.55;max-width:1100px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;max-width:100%}
+  .pg{padding:36px 32px 48px;display:flex;flex-direction:column;min-height:800px}
+  .phone .pg{padding:22px 20px 36px;min-height:780px}
+  .col{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:36px;flex:1}
+  .col.wide{max-width:none}
+  .hd{display:flex;align-items:center;gap:10px}
+  .hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .btn{height:50px;padding:0 24px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)} .btn.auto{width:auto;flex:none}
+  .note{font-size:13px;color:var(--mu);text-align:center;line-height:1.5}
+  .sec{display:flex;flex-direction:column}
+  /* the image: a product shot on an off-white ground, like a photograph */
+  .photo{position:relative;overflow:hidden;border-radius:24px;background:#f6f6f3;width:100%}
+  .photo svg{position:absolute;inset:0;width:100%;height:100%}
+  .photo.tint{background:color-mix(in srgb,var(--p) 22%,#f6f6f3)}
+  /* benefits */
+  .ben{display:flex;flex-direction:column;gap:26px}
+  .bi{display:flex;gap:16px;align-items:center}
+  .ic{width:44px;height:44px;border-radius:50%;background:var(--p);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
+  .ic.dark{background:var(--tile);color:var(--tx)}
+  .ic.bare{background:none;width:auto;height:auto;color:var(--p)}
+  .bi .t{font-size:17px;line-height:1.35;letter-spacing:-.01em} .bi .s{font-size:14px;color:var(--mu);margin-top:3px;line-height:1.4}
+  .b3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .b3.n2{grid-template-columns:repeat(2,1fr)}
+  .b3>div{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+  .b3 .t{font-size:16px;font-weight:500} .b3 .s{font-size:14px;color:var(--mu);line-height:1.4}
+  .phone .b3{grid-template-columns:1fr;gap:20px} .phone .b3>div{flex-direction:row;text-align:left;gap:16px}
+  .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center;width:100%}
+  .phone .split{grid-template-columns:1fr;gap:28px}
+  .obj{background:var(--tile);border-radius:28px;overflow:hidden}
+  .obj .in{padding:26px 24px 30px}
+  .lap{position:relative;margin-top:-56px;background:var(--surf);border:1px solid var(--bd);border-radius:24px;padding:26px 22px;box-shadow:0 18px 40px -24px rgba(0,0,0,.6)}
+  .sticky{position:sticky;bottom:0;background:var(--surf);border-top:1px solid var(--bd);margin:auto -32px -48px;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .phone .sticky{margin:auto -20px -36px;padding:14px 20px}
+  /* 9-16: bringing the price back */
+  .ptag{position:absolute;left:16px;bottom:16px;background:#111;color:#f5f5f5;border-radius:12px;padding:9px 14px;font-size:14px;line-height:1.2;font-variant-numeric:tabular-nums}
+  .ptag b{font-weight:500;font-size:17px}
+  .cap{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:0 4px}
+  .perfrow{display:flex;align-items:center;gap:14px;font-size:14px;color:var(--mu);font-variant-numeric:tabular-nums}
+  .perfrow::before,.perfrow::after{content:"";flex:1;border-top:1px dashed var(--bd)}
+  .perfrow b{color:var(--tx);font-weight:500;font-size:18px}
+  .lnk{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 4px;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);width:100%;font-size:15px}
+  .lnk:hover{background:var(--tile)}
+  .btn2{height:62px;border-radius:16px;background:var(--am);color:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;font-weight:500;font-size:15px}
+  .btn2 small{font-size:12px;font-weight:400;opacity:.72;font-variant-numeric:tabular-nums}
+  .btn2:hover{filter:brightness(1.06)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Plan page · an image and the benefits · 1 to 8 without the price · 9 to 16 bring the price back</h1>
+    <div class="ctrls">
+      <div class="seg" id="plansel"></div>
+      <div class="seg" id="statesel"></div>
+      <div class="seg" id="pricesel"></div>
+      <div class="seg" id="widthsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage"><div class="frame" id="frame"></div></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+ money:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M9.8 10c0-.9.9-1.4 2.2-1.4s2.2.5 2.2 1.4-.9 1.2-2.2 1.6-2.2.7-2.2 1.6.9 1.4 2.2 1.4 2.2-.5 2.2-1.4"/>',
+ people:'<circle cx="9" cy="9" r="3"/><path d="M3.5 19c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="10" r="2.3"/><path d="M16 14.6c2.6-.2 4.2 1.1 4.6 3.9"/>',
+ shield:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/>',
+ school:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+ heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 017-2.5A4 4 0 0119 10c0 5.5-7 10-7 10z"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ check:'<path d="M5 12l4 4 10-10"/>',
+ wallet:'<path d="M4 7a2 2 0 012-2h11v4"/><rect x="4" y="7" width="16" height="12" rx="2"/><circle cx="16" cy="13" r="1.2"/>'
+};
+const back=svg('<path d="M15 6l-6 6 6 6"/>',20,1.8);
+/* flat product shots, drawn on a 320 x 180 sheet */
+const INK='#2a2a2a';
+const SCENE={
+ ce:`<ellipse cx="160" cy="150" rx="86" ry="9" fill="#000" opacity=".1"/><rect x="96" y="112" width="128" height="26" rx="4" fill="var(--p)"/><rect x="104" y="88" width="112" height="24" rx="4" fill="${INK}"/><rect x="92" y="64" width="120" height="24" rx="4" fill="var(--p)" opacity=".7"/><path d="M152 28l58 22-58 22-58-22z" fill="${INK}"/><path d="M122 58v14c18 11 44 11 62 0V58l-31 12z" fill="${INK}" opacity=".7"/>`,
+ hc:`<ellipse cx="160" cy="150" rx="90" ry="9" fill="#000" opacity=".1"/><rect x="106" y="86" width="108" height="56" fill="var(--p)"/><path d="M88 90L160 30l72 60z" fill="${INK}"/><rect x="146" y="106" width="26" height="36" rx="3" fill="${INK}"/><path d="M160 78c-9-7-14-11-14-16a7 7 0 0114-2 7 7 0 0114 2c0 5-5 9-14 16z" fill="var(--p)"/>`,
+ wm:`<ellipse cx="160" cy="150" rx="96" ry="9" fill="#000" opacity=".1"/><rect x="84" y="112" width="34" height="38" rx="4" fill="var(--p)" opacity=".55"/><rect x="128" y="90" width="34" height="60" rx="4" fill="var(--p)" opacity=".8"/><rect x="172" y="62" width="34" height="88" rx="4" fill="var(--p)"/><rect x="216" y="32" width="34" height="118" rx="4" fill="${INK}"/><circle cx="268" cy="40" r="16" fill="${INK}"/><circle cx="268" cy="40" r="8" fill="none" stroke="var(--p)" stroke-width="3"/>`,
+ up:`<ellipse cx="160" cy="152" rx="70" ry="8" fill="#000" opacity=".1"/><path d="M160 24l58 21v40c0 33-25 53-58 65-33-12-58-32-58-65V45z" fill="var(--p)"/><path d="M160 24l58 21v40c0 33-25 53-58 65z" fill="#000" opacity=".12"/><path d="M133 84l19 19 36-38" fill="none" stroke="${INK}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>`
+};
+const B=(ic,t,s)=>({ic,t,s});
+const D={
+ ce:{label:'Child Education',title:'Child Education Plan',col:'#3b82f6',intro:'Save towards your child’s education, with cover that keeps the plan going.',price:'From GHS 50.00 a month',
+  b:[B('money','Lump sum payout within 48 to 72 hours','Of an approved claim'),B('school','School fees are paid','Even if you can’t pay them')]},
+ hc:{label:'HomeCall',title:'HomeCall Plan',col:'#ea580c',intro:'Help your family cover funeral expenses in a difficult time.',price:'From GHS 8.00 a month',
+  b:[B('money','Lump sum payout within 48 to 72 hours','Of an approved claim'),B('people','Cover your family too','Spouse, children and parents'),B('shield','Accidents covered from day one','Accidental deaths included')]},
+ wm:{label:'WealthMaster',title:'WealthMaster Plan',col:'#d97706',intro:'Save regularly and grow a lump sum, with life cover for the people who depend on you.',price:'From GHS 50.00 a month',
+  b:[B('money','Lump sum payout within 48 to 72 hours','Of an approved claim'),B('people','Your loved ones are paid','If something happens to you')]},
+ up:{label:'Ultimate Protection',title:'Ultimate Protection Plan',col:'#db2777',intro:'Keep an income if illness or disability stops you working.',price:'From GHS 40.50 a month',
+  b:[B('money','Lump sum payout within 48 to 72 hours','Of an approved claim'),B('shield','Disability covered','Total and permanent'),B('heart','Critical illness covered','If you are diagnosed')]}
+};
+const STATES=[['profile','Needs a profile'],['ready','Ready to apply']];
+const S={v:1,plan:'hc',state:'ready',price:false,phone:false,dark:true};
+const P=()=>D[S.plan];
+
+/* ---------- pieces ---------- */
+const hd=()=>`<div class="hd"><span class="bk">${back}</span><h2>${P().title}</h2></div>`;
+const photo=(ratio,extra='',cls='')=>`<div class="photo ${cls}" style="aspect-ratio:${ratio};${extra}"><svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${SCENE[S.plan]}</svg></div>`;
+const bi=(b,icls='')=>`<div class="bi"><span class="ic ${icls}">${svg(IC[b.ic],20,1.7)}</span><div><div class="t">${b.t}</div><div class="s">${b.s}</div></div></div>`;
+const ben=(icls='')=>`<div class="ben">${P().b.map(b=>bi(b,icls)).join('')}</div>`;
+const priceLine=()=>S.price?`<p class="note" style="margin-bottom:-4px">${P().price}</p>`:'';
+const cta=()=>S.state==='profile'?`<div style="display:flex;flex-direction:column;gap:10px">${priceLine()}<button class="btn" data-a="go">Create a Profile</button><p class="note">You only do it once. We keep ${P().title} for you.</p></div>`:`<div style="display:flex;flex-direction:column;gap:10px">${priceLine()}<button class="btn" data-a="go">Apply for ${P().title}</button></div>`;
+const col=(x,cls='')=>`<div class="col ${cls}">${x}</div>`;
+const pg=x=>`<div class="pg">${x}</div>`;
+
+/* ---------- the 8 ---------- */
+const V={};
+
+V[1]={name:'1. Your sketch, refined',
+ note:'Your layout as drawn: the image across the top, the benefits as three rows, one button. Refined: the icons are discs of the plan’s colour instead of empty circles, the title is one size above the muted line with a clear gap, and the spacing between benefits is even. The photograph sits on an off-white ground so it reads as a product shot, as yours does.',
+ r:()=>pg(col(hd()+photo('16/9')+ben()+cta()))};
+
+V[2]={name:'2. Image beside the benefits',
+ note:'On a wide screen the image takes the left half and the benefits and the button the right, so the whole page is one screen with no scrolling. Image and message are read together, side by side. On a phone it stacks as in 1. It needs width, so it is a desktop decision.',
+ r:()=>pg(col(hd()+`<div class="split">${photo('1/1')}<div style="display:flex;flex-direction:column;gap:32px">${ben()}${cta()}</div></div>`,'wide'))};
+
+V[3]={name:'3. One object',
+ note:'The image and the benefits are one rounded object: the picture on top, the benefits under it in the same container, then the button outside. It reads as one product card rather than a picture and a list, which gives the benefits a clear owner. The container is a card, so it is the one place the page has a box.',
+ r:()=>pg(col(hd()+`<div class="obj">${photo('16/8','border-radius:0')}<div class="in">${ben()}</div></div>`+cta()))};
+
+V[4]={name:'4. Big statements',
+ note:'The benefits become the loudest thing on the page: large statements with a small bare icon, the image reduced to a wide banner above them. The hierarchy is by size alone, the benefits first and the image as context. Simplest of all, and the most text-led; it leans on the wording being good.',
+ r:()=>pg(col(hd()+photo('3/1')+`<div class="ben" style="gap:34px">${P().b.map(b=>`<div class="bi" style="gap:14px;align-items:flex-start"><span class="ic bare" style="margin-top:4px">${svg(IC[b.ic],22,1.6)}</span><div><div class="t" style="font-size:22px;line-height:1.3">${b.t}</div><div class="s" style="font-size:15px">${b.s}</div></div></div>`).join('')}</div>`+cta()))};
+
+V[5]={name:'5. Benefits over the image',
+ note:'A tall image runs across the top and the benefits sit in a panel that overlaps its lower edge, so the two are layered, not stacked. It gives the image more room and ties the benefits to it. The overlap is a deliberate depth effect, which the rest of the app does not use, so it would be new.',
+ r:()=>pg(col(hd()+`<div style="display:flex;flex-direction:column"><div class="photo tint" style="aspect-ratio:16/10"><svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${SCENE[S.plan]}</svg></div><div class="lap" style="margin:-56px 16px 0">${ben()}</div></div>`+cta(),''))};
+
+V[6]={name:'6. Three columns',
+ note:'The benefits sit in three columns under the image, each an icon over a title and a line, as in your earlier layout but with nothing else on the page. Each benefit is a small equal block, so three benefits read as three things at a glance. It suits short titles; your long ones (“Lump sum payout within 48 to 72 hours”) wrap to three lines.',
+ r:()=>pg(col(hd()+photo('16/9')+`<div class="b3 ${P().b.length===2?'n2':''}">${P().b.map(b=>`<div><span class="ic">${svg(IC[b.ic],20,1.7)}</span><div><div class="t">${b.t}</div><div class="s">${b.s}</div></div></div>`).join('')}</div>`+cta()))};
+
+V[7]={name:'7. Small image, plain list',
+ note:'The image shrinks to a thumbnail beside the plan’s one-line introduction, and the benefits are a plain list of ticked lines with no icons and no second line. The page is almost all text and loads fast. It gives up the image’s weight, so the plan has the least identity of the eight.',
+ r:()=>pg(col(hd()+`<div style="display:flex;gap:18px;align-items:center">${photo('1/1','width:96px;flex:none;border-radius:20px')}<p style="font-size:16px;line-height:1.45;letter-spacing:-.01em">${P().intro}</p></div><div class="ben" style="gap:18px">${P().b.map(b=>`<div class="bi" style="gap:12px;align-items:flex-start"><span style="color:var(--ok);margin-top:2px;display:flex">${svg(IC.check,20,2)}</span><div class="t" style="font-size:17px">${b.t}. <span class="mu">${b.s}.</span></div></div>`).join('')}</div>`+cta()))};
+
+V[8]={name:'8. The action stays put',
+ note:'The image and the benefits scroll as in 1, and the action is fixed to the bottom of the screen with the price beside it. The price, which this layout otherwise drops, sits exactly where the decision is made, and the button can never be pushed off. The only variation that shows the cost without a details card.',
+ r:()=>pg(`<div class="col">${hd()+photo('16/9')+ben()}</div><div class="sticky"><div style="display:flex;flex-direction:column"><span class="mu" style="font-size:12px">${S.state==='profile'?'First, your profile':'From'}</span><span class="tab" style="font-size:17px">${S.state==='profile'?'Once, for every plan':P().price.replace('From ','')}</span></div><button class="btn auto" data-a="go">${S.state==='profile'?'Create a Profile':'Apply for '+P().title}</button></div>`)};
+
+/* ---------- 9-16: the price, brought back ---------- */
+const PRICE=()=>P().price;
+const FIG=()=>PRICE().replace('From ','').replace(' a month','');
+const ctaLabel=()=>S.state==='profile'?'Create a Profile':'Apply for '+P().title;
+const ctaNote=()=>S.state==='profile'?'<p class="note">You only do it once. We keep '+P().title+' for you.</p>':'';
+const ctaPlain=()=>'<div style="display:flex;flex-direction:column;gap:10px"><button class="btn" data-a="go">'+ctaLabel()+'</button>'+ctaNote()+'</div>';
+
+V[9]={name:'9. Price tag on the image',
+ note:'The price is printed on the picture itself, bottom left, as a small dark tag, like a label on a product shot. It costs the page nothing: no row, no card, no extra line, and the figure is the first thing the eye meets after the image. The tag sits on the photograph, so it needs a contrast that works on any picture, which a solid dark tag gives.',
+ r:()=>pg(col(hd()+'<div class="photo" style="aspect-ratio:16/9"><svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+SCENE[S.plan]+'</svg><span class="ptag">From <b>'+FIG()+'</b> a month</span></div>'+ben()+ctaPlain()))};
+
+V[10]={name:'10. The price is the first benefit',
+ note:'The price is simply the first line of the list, in the same shape as the benefits (an icon, a statement, a muted line) but with the figure larger. There is nothing new on the page; the cost is one of the things the plan tells you, said first. Reads as “you pay this, you get that”.',
+ r:()=>pg(col(hd()+photo('16/9')+'<div class="ben"><div class="bi"><span class="ic">'+svg(IC.wallet,20,1.7)+'</span><div><div class="t tab" style="font-size:24px;letter-spacing:-.02em">'+FIG()+' <span class="mu" style="font-size:16px">a month</span></div><div class="s">The most you pay, from</div></div></div>'+P().b.map(b=>bi(b)).join('')+'</div>'+ctaPlain()))};
+
+V[11]={name:'11. The price in the button',
+ note:'The button carries the price as a second line: “Apply for Child Education Plan” over “From GHS 50.00 a month”. The cost is exactly where the commitment is made, there is no separate element for it, and nothing else on the page changes. The button is a little taller and the price is small, so it is quiet.',
+ r:()=>pg(col(hd()+photo('16/9')+ben()+'<div style="display:flex;flex-direction:column;gap:10px"><button class="btn2" data-a="go"><span>'+ctaLabel()+'</span>'+(S.state==='profile'?'':'<small>'+PRICE()+'</small>')+'</button>'+(S.state==='profile'?'<p class="note">'+PRICE()+'. You only do it once. We keep '+P().title+' for you.</p>':'')+'</div>'))};
+
+V[12]={name:'12. The price under the title',
+ note:'The price becomes the page’s subtitle: a muted line directly under the plan’s name in the header, so name and cost are read together before the image. The page below is unchanged. It is the quietest way to keep the price and it needs a header that can carry a second line.',
+ r:()=>pg(col('<div class="hd"><span class="bk">'+back+'</span><div><h2>'+P().title+'</h2><div class="mu tab" style="font-size:14px;margin-top:2px">'+PRICE()+'</div></div></div>'+photo('16/9')+ben()+ctaPlain()))};
+
+V[13]={name:'13. A caption under the image',
+ note:'One caption row directly under the picture: “Premiums from” on the left, the figure on the right, like the caption under a photograph. Image and price are one unit, then the benefits, then the button. It is the plainest, most readable arrangement and the figure gets a line to itself.',
+ r:()=>pg(col(hd()+'<div style="display:flex;flex-direction:column;gap:14px">'+photo('16/9')+'<div class="cap"><span class="mu" style="font-size:14px">Premiums from</span><span class="big" style="font-size:24px">'+FIG()+' <span class="mu" style="font-size:14px;letter-spacing:0">a month</span></span></div></div>'+ben()+ctaPlain()))};
+
+V[14]={name:'14. The price on the divider',
+ note:'Between the benefits and the button runs a dashed line with the price set into it: “— From GHS 50.00 a month —”. It keeps your dashed divider and gives it a job: what you get above, what it costs on the line, the action below. No row and no card, and the price sits at the point of decision.',
+ r:()=>pg(col(hd()+photo('16/9')+ben()+'<div class="perfrow"><span>From <b>'+FIG()+'</b> a month</span></div>'+ctaPlain()))};
+
+V[15]={name:'15. One row to the terms',
+ note:'A single ruled row above the button: “Cost and terms” on the left, the price and a chevron on the right. The price is visible, and one tap opens the full terms (term, provider, cover) in a sheet for anyone who wants them. The details leave the page without leaving the product behind.',
+ r:()=>pg(col(hd()+photo('16/9')+ben()+'<div style="display:flex;flex-direction:column;gap:14px"><button class="lnk" data-a="sheet"><span class="mu">Cost and terms</span><span class="tab" style="display:flex;align-items:center;gap:8px">'+PRICE()+'<span class="mu" style="display:flex">'+svg('<path d="M9 6l6 6-6 6"/>',16,1.8)+'</span></span></button>'+ctaPlain()+'</div>'))};
+
+V[16]={name:'16. A poster',
+ note:'The price is the poster’s headline: the figure large on the left of the image, the product drawn on the right, all in one picture. The price is the biggest thing on the page and the image is no longer decoration. It makes the cost the lead, so it suits a product that is chosen on price.',
+ r:()=>pg(col(hd()+'<div class="photo tint" style="aspect-ratio:16/9"><svg style="inset:auto;right:0;top:0;width:60%;height:100%" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+SCENE[S.plan]+'</svg><div style="position:absolute;left:24px;bottom:22px;color:#111"><div style="font-size:14px;opacity:.7">From</div><div class="big" style="font-size:'+(S.phone?30:40)+'px">'+FIG()+'</div><div style="font-size:14px;opacity:.7">a month</div></div></div>'+ben()+ctaPlain()))};
+
+/* ---------- chrome ---------- */
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('plansel',Object.entries(D).map(([k,v])=>[k,v.label]),S.plan,'plan');
+  seg('statesel',STATES,S.state,'state');
+  seg('pricesel',[[0,'No price'],[1,'Price line']],S.price?1:0,'price');
+  seg('widthsel',[[0,'Desktop'],[1,'Phone']],S.phone?1:0,'width');
+  seg('themesel',[['dark','Dark'],['light','Light']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  const f=$('frame');f.className='frame'+(S.phone?' phone':'');f.style.width=(S.phone?390:820)+'px';f.style.setProperty('--p',P().col);
+  f.innerHTML=V[S.v].r();
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='go'){toast('Opens its own flow');return}
+  if(a==='sheet'){toast('Opens a sheet with the term, cover and provider');return}
+  if(a==='v')S.v=+arg;
+  else if(a==='plan')S.plan=arg;
+  else if(a==='state')S.state=arg;
+  else if(a==='price')S.price=arg==='1';
+  else if(a==='width')S.phone=arg==='1';
+  else if(a==='theme')S.dark=arg==='dark';
+  render();
+});
+render();
+</script>
+</body>
+</html>

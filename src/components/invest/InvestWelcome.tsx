@@ -1,13 +1,12 @@
 "use client";
 
 /**
- * "Welcome to Invest", shown once to someone who has no securities account yet. Three short benefits and one button.
- * "Get Started" only closes it: nothing opens, nothing is created, the person simply lands on Invest and looks around.
+ * "Welcome to Invest", shown once to someone who has no securities account yet. "Get Started" only closes it: nothing
+ * opens, nothing is created, the person simply lands on Invest and looks around.
  */
 
-import { CalendarClock, Landmark, TrendingUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CalendarClock, Landmark, TrendingUp } from "@/components/ui/icons";
+import { ProductWelcome } from "@/components/ui/product-welcome";
 import { useMyTreasury, useTreasury, useTreasuryHydrated } from "@/lib/treasury";
 
 const BENEFITS = [
@@ -21,34 +20,12 @@ export function InvestWelcome() {
   const { ownerId, welcomed } = useMyTreasury();
   const markWelcomed = useTreasury((s) => s.markWelcomed);
 
-  const open = hydrated && ownerId !== "guest" && !welcomed;
-  const close = () => markWelcomed(ownerId);
-
   return (
-    <Dialog open={open} onOpenChange={(next) => !next && close()}>
-      <DialogContent size="md">
-        <DialogHeader showCloseButton={false}>
-          <DialogTitle>Welcome to Invest</DialogTitle>
-        </DialogHeader>
-        <DialogBody className="gap-5 py-5">
-          {BENEFITS.map(({ icon: Icon, title, detail }) => (
-            <div key={title} className="flex items-start gap-3">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
-                <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
-              </span>
-              <div className="flex min-w-0 flex-col gap-0.5">
-                <span className="text-[14px] text-foreground">{title}</span>
-                <span className="text-[13px] leading-relaxed text-muted-foreground">{detail}</span>
-              </div>
-            </div>
-          ))}
-        </DialogBody>
-        <DialogFooter>
-          <Button type="button" className="w-full" onClick={close}>
-            Get Started
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ProductWelcome
+      title="Welcome to Invest"
+      benefits={BENEFITS}
+      open={hydrated && ownerId !== "guest" && !welcomed}
+      onClose={() => markWelcomed(ownerId)}
+    />
   );
 }

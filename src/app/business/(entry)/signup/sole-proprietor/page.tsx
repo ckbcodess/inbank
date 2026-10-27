@@ -9,7 +9,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Building2, Check, ExternalLink, SearchX, ShieldAlert, User } from "lucide-react";
+import { Building2, Check, ExternalLink, SearchX, ShieldAlert, User } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
@@ -306,7 +306,7 @@ function SoleProprietorSignupContent() {
             onClick={() => window.open(GHANA_CARD_LINKAGE_URL, "_blank")}
           >
             Link Your Ghana Card
-            <ExternalLink size={15} strokeWidth={1.8} />
+            <ExternalLink size={15} />
           </Button>
           <Button
             variant="outline"
@@ -528,7 +528,7 @@ function SoleProprietorSignupContent() {
               </div>
             </div>
             <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-[11px] font-medium text-pill-success-text">
-              <Check size={12} strokeWidth={2.5} />
+              <Check size={12} />
               Verified
             </span>
           </div>

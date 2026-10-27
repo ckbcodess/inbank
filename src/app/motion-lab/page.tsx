@@ -14,7 +14,7 @@ import {
   Code,
   RefreshCw,
   Eye,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 // Types
 export interface CubicBezierCurve {

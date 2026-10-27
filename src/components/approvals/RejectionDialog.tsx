@@ -13,7 +13,7 @@
  */
 
 import { useState } from "react";
-import { XCircle } from "lucide-react";
+import { XCircle } from "@/components/ui/icons";
 import {
   Dialog,
   DialogBody,
@@ -47,7 +47,7 @@ export default function RejectionDialog({
       <DialogContent size="md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <XCircle size={18} strokeWidth={1.9} className="text-destructive" />
+            <XCircle size={18} className="text-destructive" />
             <span>Reject Transaction</span>
           </DialogTitle>
         </DialogHeader>

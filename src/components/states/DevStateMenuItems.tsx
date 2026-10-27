@@ -7,7 +7,7 @@
  */
 
 import { Fragment } from "react";
-import { Check } from "lucide-react";
+import { Check } from "@/components/ui/icons";
 import type { DevStateData, DevStateOption } from "@/components/providers/DevStateProvider";
 import {
   DropdownMenuItem,
@@ -34,7 +34,7 @@ function OptionList({
           className="flex cursor-pointer items-center justify-between text-[13px]"
         >
           <span>{st.label}</span>
-          {value === st.id && <Check size={14} strokeWidth={2} className="text-primary" />}
+          {value === st.id && <Check size={14} className="text-primary" />}
         </DropdownMenuItem>
       ))}
     </>
@@ -88,7 +88,7 @@ export function DemoUserSwitcherSection() {
                 {u.subtitle}
               </span>
             </div>
-            {isSelected && <Check size={14} strokeWidth={2.2} className="text-primary shrink-0 mt-0.5" />}
+            {isSelected && <Check size={14} className="text-primary shrink-0 mt-0.5" />}
           </DropdownMenuItem>
         );
       })}

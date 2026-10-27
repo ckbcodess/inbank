@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, X } from 'lucide-react';
+import { Search, X } from '@/components/ui/icons';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -27,7 +27,7 @@ export function SearchBar({ value, onChange, placeholder = 'Search...', classNam
         className,
       )}
     >
-      <Search size={16} className="text-muted-foreground shrink-0" strokeWidth={1.8} />
+      <Search size={16} className="text-muted-foreground shrink-0" />
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}

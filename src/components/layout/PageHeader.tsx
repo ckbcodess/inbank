@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "@/components/ui/icons";
 import { BackLink } from "@/components/layout/BackLink";
 
 export interface BreadcrumbItem {
@@ -20,7 +20,8 @@ interface PageHeaderProps {
 
 export default function PageHeader({ title, badge, actions, backTo }: PageHeaderProps) {
   return (
-    <div className="flex items-center justify-between gap-2 w-full">
+    // data-page-header gives the 40px (phone) / 48px gap down to the page's first content; see globals.css.
+    <div data-page-header className="flex items-center justify-between gap-2 w-full">
       <div className="flex items-center gap-2 sm:gap-2 min-w-0 flex-1">
         {backTo && (
           backTo.onClick ? (
@@ -31,7 +32,7 @@ export default function PageHeader({ title, badge, actions, backTo }: PageHeader
               title={`Back to ${backTo.label}`}
               aria-label={`Back to ${backTo.label}`}
             >
-              <ChevronLeft size={20} strokeWidth={1.8} />
+              <ChevronLeft size={20} />
             </button>
           ) : (
             <BackLink
@@ -39,7 +40,7 @@ export default function PageHeader({ title, badge, actions, backTo }: PageHeader
               className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer after:absolute after:-inset-1 after:content-['']"
               title={`Back to ${backTo.label}`}
             >
-              <ChevronLeft size={20} strokeWidth={1.8} />
+              <ChevronLeft size={20} />
             </BackLink>
           )
         )}

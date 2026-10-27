@@ -8,7 +8,7 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Building2, ChevronRight, Store } from "lucide-react";
+import { Building2, ChevronRight, Store } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Button } from "@/components/ui/button";
 import FindBranchDialog from "@/components/corporate/FindBranchDialog";
@@ -98,7 +98,7 @@ function BusinessSignupContent() {
           >
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                <Store size={18} strokeWidth={2} />
+                <Store size={18} />
               </div>
               <div className="flex flex-col">
                 <span className="text-[15.5px] font-medium tracking-[var(--ls-tight)] text-foreground sm:text-[16.5px]">
@@ -112,7 +112,6 @@ function BusinessSignupContent() {
 
             <ChevronRight
               size={20}
-              strokeWidth={2.2}
               className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
             />
           </button>
@@ -125,7 +124,7 @@ function BusinessSignupContent() {
           >
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                <Building2 size={18} strokeWidth={2} />
+                <Building2 size={18} />
               </div>
               <div className="flex flex-col">
                 <span className="text-[15.5px] font-medium tracking-[var(--ls-tight)] text-foreground sm:text-[16.5px]">
@@ -139,7 +138,6 @@ function BusinessSignupContent() {
 
             <ChevronRight
               size={20}
-              strokeWidth={2.2}
               className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
             />
           </button>

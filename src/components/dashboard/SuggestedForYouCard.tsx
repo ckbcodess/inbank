@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Send, CreditCard, Zap, Check, ArrowRight, ShieldCheck } from "lucide-react";
+import { Send, CreditCard, Zap, Check, ArrowRight, ShieldCheck } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
@@ -223,7 +223,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                   className="gap-2"
                 >
                   Confirm & send
-                  <ArrowRight size={14} strokeWidth={1.8} />
+                  <ArrowRight size={14} />
                 </Button>
               </DialogFooter>
             </form>
@@ -265,7 +265,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                         : "border-border bg-muted/40 text-transparent"
                     }`}
                   >
-                    <Check size={12} strokeWidth={2.5} />
+                    <Check size={12} />
                   </button>
                 </div>
               ))}

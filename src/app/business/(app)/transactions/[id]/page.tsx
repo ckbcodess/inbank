@@ -9,7 +9,7 @@
 
 import { use } from "react";
 import Link from "next/link";
-import { ArrowRight, FileWarning, History, Layers, RotateCcw } from "lucide-react";
+import { ArrowRight, FileWarning, History, Layers, RotateCcw } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Band, TransactionReceipt } from "@/components/transactions/TransactionReceipt";
 import { TRADE_VERSIONS } from "@/lib/corporate/approvals";
@@ -32,7 +32,7 @@ function renderBusinessBand(state: TransactionState, txn: Transaction) {
             nativeButton={false}
             render={<Link href={`/business/payments/bulk/${txn.batchId ?? "batch-0090"}`} />}
           >
-            <ArrowRight size={14} strokeWidth={1.8} className="mr-2" />
+            <ArrowRight size={14} className="mr-2" />
             Open Batch Correction
           </Button>
         </div>
@@ -46,7 +46,7 @@ function renderBusinessBand(state: TransactionState, txn: Transaction) {
         <p>{txn.failureReason ?? "This trade request was returned for correction."}</p>
         <div className="mt-2 rounded-xl border border-border bg-card">
           <p className="flex items-center gap-2 border-b border-border px-2 py-2 text-[12px] text-muted-foreground">
-            <History size={13} strokeWidth={1.8} />
+            <History size={13} />
             Version history
           </p>
           <ul className="divide-y divide-border">
@@ -60,7 +60,7 @@ function renderBusinessBand(state: TransactionState, txn: Transaction) {
         </div>
         <div className="mt-2 flex gap-2">
           <Button size="sm" nativeButton={false} render={<Link href={`/business/trade/${txn.tradeId ?? "trade-0417"}`} />}>
-            <RotateCcw size={14} strokeWidth={1.8} className="mr-2" />
+            <RotateCcw size={14} className="mr-2" />
             Resubmit as v{TRADE_VERSIONS.length + 1}
           </Button>
         </div>

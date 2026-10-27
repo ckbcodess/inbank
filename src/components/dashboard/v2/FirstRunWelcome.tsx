@@ -26,7 +26,7 @@ import {
   CreditCard,
   Smartphone,
   X,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -415,7 +415,7 @@ export function FirstRunWelcome({
           title={moneyInFlight ? "Available once your payment finishes" : undefined}
           className="absolute right-3.5 top-3.5 z-20 flex size-7 cursor-pointer items-center justify-center rounded-full border border-border/60 bg-card/85 text-foreground backdrop-blur transition-colors hover:bg-card active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"
         >
-          <X size={15} strokeWidth={1.9} aria-hidden="true" />
+          <X size={15} aria-hidden="true" />
         </button>
         <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)] min-h-[440px] max-h-[calc(92vh-2rem)] overflow-hidden">
           {/* Left Column: Interactive sliding view */}
@@ -479,7 +479,7 @@ export function FirstRunWelcome({
                           className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-2"
                           aria-label="Back to welcome"
                         >
-                          <ChevronLeft size={18} strokeWidth={2} />
+                          <ChevronLeft size={18} />
                         </button>
                         <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">
                           Choose a Funding Method
@@ -544,7 +544,7 @@ export function FirstRunWelcome({
                           className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-2"
                           aria-label="Back to methods"
                         >
-                          <ChevronLeft size={18} strokeWidth={2} />
+                          <ChevronLeft size={18} />
                         </button>
                         <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">
                           Mobile Money
@@ -618,7 +618,7 @@ export function FirstRunWelcome({
                           className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-2"
                           aria-label="Back"
                         >
-                          <ChevronLeft size={18} strokeWidth={2} />
+                          <ChevronLeft size={18} />
                         </button>
                         <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">
                           {method === "momo" ? "Mobile Money" : "Card deposit"}
@@ -738,7 +738,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                           className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-2"
                           aria-label="Back to form"
                         >
-                          <ChevronLeft size={18} strokeWidth={2} />
+                          <ChevronLeft size={18} />
                         </button>
                         <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">
                           Confirm mobile number
@@ -805,7 +805,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 {step === "ussd" && (
                   <div className="flex flex-1 flex-col items-center justify-center text-center gap-3 py-5">
                     <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
-                      <Smartphone size={26} strokeWidth={1.8} className="animate-pulse" />
+                      <Smartphone size={26} className="animate-pulse" />
                     </div>
                     <div className="flex flex-col gap-1">
                       <span className="tabular-nums text-[22px] font-medium tracking-tight text-foreground">
@@ -827,7 +827,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                   <div className="flex flex-1 flex-col justify-between h-full">
                     <div className="my-auto flex flex-1 flex-col items-center justify-center gap-3 py-6 text-center">
                       <div className="flex size-14 items-center justify-center rounded-2xl bg-success/15 text-success-text shadow-2xs">
-                        <CheckCircle2 size={32} strokeWidth={1.9} />
+                        <CheckCircle2 size={32} />
                       </div>
 
                       <div className="flex max-w-[320px] flex-col gap-2">

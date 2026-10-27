@@ -196,7 +196,7 @@ consolidate.
   - Explorations live behind Dev Mode switches (layout variants, look toggles) until one is chosen.
   - Then delete the others. Track the cleanup in WORKING_LOG until it's done.
 - When implementing from Figma, follow the frame. If it conflicts with the constitution (for example,
-  Material icons versus Lucide only), the constitution wins. Note the deviation in your reply.
+  a frame using a different icon family), the constitution wins. Note the deviation in your reply.
 - After shipping a capability, record where else it could be reused as a `Reuse` item. Don't build
   speculative reuse without the user.
 

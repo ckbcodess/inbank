@@ -46,7 +46,7 @@ import {
   Unlock,
   Plus,
   Landmark,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -158,7 +158,7 @@ export default function FigmaDesignFidelityDashboard() {
                     : "text-[#5d7079] hover:text-[#18181b] hover:bg-[#f8f9fa]"
                 }`}
               >
-                <Send size={16} strokeWidth={1.75} className="text-[#71717a]" />
+                <Send size={16} className="text-[#71717a]" />
                 {!sidebarCollapsed && <span>Payments</span>}
               </button>
             </div>
@@ -174,14 +174,14 @@ export default function FigmaDesignFidelityDashboard() {
                 onClick={() => setActiveNav("Reports")}
                 className="w-full flex items-center gap-2 px-2 py-2 rounded-lg font-medium text-xs text-[#5d7079] hover:text-[#18181b] hover:bg-[#f8f9fa] transition-colors"
               >
-                <FileText size={16} strokeWidth={1.75} className="text-[#71717a]" />
+                <FileText size={16} className="text-[#71717a]" />
                 {!sidebarCollapsed && <span>Reports</span>}
               </button>
               <button
                 onClick={() => setActiveNav("FX rates")}
                 className="w-full flex items-center gap-2 px-2 py-2 rounded-lg font-medium text-xs text-[#5d7079] hover:text-[#18181b] hover:bg-[#f8f9fa] transition-colors"
               >
-                <Zap size={16} strokeWidth={1.75} className="text-[#71717a]" />
+                <Zap size={16} className="text-[#71717a]" />
                 {!sidebarCollapsed && <span>FX rates</span>}
               </button>
             </div>

@@ -40,12 +40,14 @@ import {
   UserCheck,
   Users,
   Wallet,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import type { NavItem } from "@/lib/navigation";
 import type { Shell } from "@/lib/roles";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { NavAlertDot } from "@/components/ui/product-banner";
+import { useProductAlertTones } from "@/lib/product-alerts";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   LayoutDashboard,
@@ -157,6 +159,8 @@ export default function Sidebar({
   };
   const showExpandHint = collapsed && isSidebarHovered && pointerSeen && !resizing;
 
+  const alertTones = useProductAlertTones();
+
   // A single nav link — shared by flat groups and dropdown children.
   const renderNavLink = (item: NavItem, indent = false) => {
     const Icon = ICON_MAP[item.icon] ?? Wallet;
@@ -195,6 +199,7 @@ export default function Sidebar({
           >
             {label}
           </span>
+          {shell === "customer" && alertTones[item.key as keyof typeof alertTones] === "act" && <NavAlertDot label={`${label}: needs you`} />}
         </Link>
       </SimpleTooltip>
     );
@@ -248,7 +253,7 @@ export default function Sidebar({
               }`}
             >
               {shell === "admin" ? (
-                <ShieldCheck size={18} strokeWidth={2.1} className="text-primary" />
+                <ShieldCheck size={18} className="text-primary" />
               ) : (
                 <GCBLogo className="h-5 w-auto shrink-0" />
               )}
@@ -258,7 +263,7 @@ export default function Sidebar({
                 showExpandHint ? "opacity-100" : "opacity-0"
               }`}
             >
-              <PanelLeftOpen className="size-4.5" strokeWidth={1.8} />
+              <PanelLeftOpen className="size-4.5" />
             </span>
           </button>
         </SimpleTooltip>
@@ -280,7 +285,7 @@ export default function Sidebar({
           aria-label="Collapse sidebar"
           aria-hidden={collapsed}
         >
-          <PanelLeftClose className="size-4.5" strokeWidth={1.8} />
+          <PanelLeftClose className="size-4.5" />
         </button>
       </div>
 
@@ -316,7 +321,6 @@ export default function Sidebar({
                     </span>
                     <ChevronDown
                       size={15}
-                      strokeWidth={1.9}
                       className={`ml-auto shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
                     />
                   </button>

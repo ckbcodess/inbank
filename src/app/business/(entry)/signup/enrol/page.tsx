@@ -12,7 +12,7 @@
 
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Building2, CheckCircle2, FileText, Mail, Plus, SearchX, X } from "lucide-react";
+import { Building2, CheckCircle2, FileText, Mail, Plus, SearchX, X } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import FindBranchDialog from "@/components/corporate/FindBranchDialog";
@@ -667,7 +667,7 @@ function CorporateEnrolmentFlow() {
                       aria-label={`Remove ${u.name}`}
                       onClick={() => setUsers((prev) => prev.filter((x) => x.id !== u.id))}
                     >
-                      <X size={16} strokeWidth={1.8} />
+                      <X size={16} />
                     </Button>
                   </div>
                 </li>
@@ -719,7 +719,7 @@ function CorporateEnrolmentFlow() {
               </form>
             ) : (
               <Button variant="outline" size="lg" className="h-10 w-full text-[14px]" onClick={() => setAdding(true)}>
-                <Plus size={16} strokeWidth={1.8} />
+                <Plus size={16} />
                 Add a User
               </Button>
             )}
@@ -785,7 +785,7 @@ function CorporateEnrolmentFlow() {
                 className="h-10 w-full text-[14px]"
                 onClick={() => openRequestLetter({ reference, company, accounts, users })}
               >
-                <FileText size={16} strokeWidth={1.8} />
+                <FileText size={16} />
                 Open Letter to Print
               </Button>
               <p className="tabular text-center text-[12px] text-muted-foreground">

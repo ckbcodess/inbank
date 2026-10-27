@@ -13,7 +13,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, MousePointerClick, X } from "lucide-react";
+import { ArrowLeft, MousePointerClick, X } from "@/components/ui/icons";
 import { useTour } from "@/lib/tour-store";
 import { findTour } from "@/lib/tours";
 

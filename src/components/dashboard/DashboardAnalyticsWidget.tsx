@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight } from "@/components/ui/icons";
 import { RangePills } from "@/components/ui/range-pills";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 
@@ -154,7 +154,7 @@ export function DashboardAnalyticsWidget() {
           className="inline-flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
         >
           <span>View all</span>
-          <ChevronRight size={13} strokeWidth={1.8} />
+          <ChevronRight size={13} />
         </Link>
       </div>
 

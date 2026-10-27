@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Invest: 8 Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ink:#0b0b0c;--ok:#15803d;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  input{font:inherit;color:inherit}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.55;max-width:1100px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  .cell{display:flex;flex-direction:column;gap:12px;width:390px;max-width:100%}
+  .cell.wide{width:760px}
+  .cap{font-size:13px;color:var(--mu);padding:0 4px;line-height:1.5} .cap b{color:var(--tx);font-weight:500}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;height:780px;display:flex;flex-direction:column}
+  .scroll{flex:1;overflow:auto;padding:20px 20px 28px;display:flex;flex-direction:column;gap:22px}
+  .hd{display:flex;align-items:center;gap:10px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .btn{height:48px;padding:0 24px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)} .btn.ghost:hover{background:var(--tile);filter:none}
+  .btn.sm{height:36px;width:auto;padding:0 14px;font-size:13px;border-radius:12px}
+  .h3{font-size:16px;font-weight:500}
+  .big{letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--bd);color:var(--mu)}
+  .chip.on{background:var(--tx);color:var(--surf);border-color:var(--tx)}
+  .li{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--bd);width:100%}
+  .li:last-child{border-bottom:1px solid var(--bd)} .li:hover{background:var(--tile)} .li.sel{background:var(--tile)}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:15px} .li .m{font-size:12px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:15px} .li .e small{font-size:12px;color:var(--mu)}
+  .rate{font-size:18px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .sec{display:flex;flex-direction:column;gap:10px}
+  .grp{font-size:13px;color:var(--mu);padding:6px 0 2px}
+  .rows>div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:13px 0;border-top:1px solid var(--bd);font-size:14px}
+  .rows>div:last-child{border-bottom:1px solid var(--bd)} .rows .l{color:var(--mu);font-size:13px}
+  .lnk{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);width:100%;font-size:14px}
+  .tbl{width:100%;border-collapse:collapse;font-size:14px}
+  .tbl th{font-weight:400;color:var(--mu);font-size:12px;text-align:left;padding:8px 0;border-bottom:1px solid var(--bd)}
+  .tbl td{padding:13px 0;border-bottom:1px solid var(--bd);vertical-align:middle} .tbl tr.r{cursor:pointer} .tbl tr.r:hover td{background:var(--tile)}
+  .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+  .tile{background:var(--tile);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px;width:100%}
+  .tile:hover{background:var(--tileh)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .inp{display:flex;align-items:baseline;gap:8px;border-bottom:2px solid var(--bd);padding:6px 0}
+  .inp input{background:none;border:0;outline:0;font-size:34px;letter-spacing:-.03em;width:100%;font-variant-numeric:tabular-nums}
+  .inp:focus-within{border-color:var(--am)}
+  .sheet{background:var(--surf);border-top:1px solid var(--bd);border-radius:24px 24px 0 0;padding:20px;display:flex;flex-direction:column;gap:14px;margin-top:auto;box-shadow:0 -20px 40px -20px rgba(0,0,0,.6)}
+  .dim{background:rgba(0,0,0,.45);flex:1}
+  .split{display:grid;grid-template-columns:330px 1fr;flex:1;min-height:0}
+  .split>div{overflow:auto;padding:20px}
+  .split>div:first-child{border-right:1px solid var(--bd)}
+  .tag{font-size:11px;color:var(--mu);border:1px solid var(--bd);border-radius:999px;padding:2px 8px;white-space:nowrap}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Invest · 8 directions · deposits, bills and bonds are products inside a product, and the page has to stay short</h1>
+    <div class="ctrls">
+      <div class="seg" id="stsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Directions"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage" id="stage"></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const back=svg('<path d="M15 6l-6 6 6 6"/>',20,1.8);
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const plus=svg('<path d="M12 5v14M5 12h14"/>',16,2);
+
+/* ---- what the bank offers, and what a customer holds (from the app's own tables) ---- */
+const M=[
+ {id:0,kind:'deposit',name:'91-day Term Deposit',src:'GCB',rate:12.5,days:91,line:'Matures 07 Jan',lbl:'Deposit'},
+ {id:1,kind:'deposit',name:'182-day Term Deposit',src:'GCB',rate:13.5,days:182,line:'Matures 08 Apr',lbl:'Deposit'},
+ {id:2,kind:'deposit',name:'364-day Term Deposit',src:'GCB',rate:15,days:364,line:'Matures 07 Oct',lbl:'Deposit'},
+ {id:3,kind:'bill',name:'91-day Treasury Bill',src:'Primary',rate:13.304,days:91,line:'Settles 30 Oct',lbl:'Bill'},
+ {id:4,kind:'bill',name:'182-day Treasury Bill',src:'Primary',rate:15,days:182,line:'Settles 30 Oct',lbl:'Bill'},
+ {id:5,kind:'bond',name:'15-Year Bond',src:'Primary',rate:14.23,days:5475,line:'Settles 16 Nov',lbl:'Bond'},
+ {id:6,kind:'bond',name:'15-Year Bond',src:'Secondary',rate:13.304,days:470,line:'Matures 02 Feb 2028 · price 99.2',lbl:'Bond'},
+ {id:7,kind:'bill',name:'364-day Bill',src:'Secondary',rate:14.23,days:28,line:'Matures in 28 days',lbl:'Bill'}
+];
+const HOLD=[
+ {t:'91-day Term Deposit',sub:'Matures 19 Nov',fig:'GHS 10,311.64',left:'5 days left',soon:1,kind:'deposit'},
+ {t:'91-day Treasury Bill',sub:'Bill · Matures 20 Dec',fig:'GHS 10,000.00',left:'56 days left',kind:'bill'},
+ {t:'364-day Treasury Bill',sub:'Bill · Matures 08 Apr',fig:'GHS 20,000.00',left:'164 days left',kind:'bill'},
+ {t:'6-Year Fixed Bond',sub:'Bond · Matures 17 Feb 2031',fig:'GHS 15,000.00',left:'4 yrs left',kind:'bond'}
+];
+const pct=r=>(Math.round(r*100)/100).toString()+'%';
+const GHS=n=>'GHS '+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const S={v:1,st:'has',dark:true,sel:3,chip:'all',period:1,amt:10000,dur:182,sort:'rate',term:'all'};
+const has=()=>S.st==='has';
+const sel=()=>M[S.sel];
+
+/* ---- pieces ---- */
+const hd=(t,b=true)=>`<div class="hd">${b?`<span class="bk">${back}</span>`:''}<h2>${t}</h2></div>`;
+const holdRow=h=>`<button class="li" data-a="toast:Opens the holding"><span class="g"><span class="t">${h.t}</span><span class="m ${h.soon?'am':''}">${h.sub}</span></span><span class="e tab">${h.fig}<small class="${h.soon?'am':''}">${h.left}</small></span><span class="mu">${chev}</span></button>`;
+const mrow=(m,ranked)=>`<button class="li ${S.sel===m.id?'sel':''}" data-a="sel:${m.id}"><span class="g"><span class="t">${m.name}</span><span class="m">${m.src==='GCB'?'GCB':m.src+' market'} · ${m.line}</span></span><span class="e"><span class="rate">${pct(m.rate)}</span><small>a year</small></span></button>`;
+const chips=(list,cur,key)=>`<div class="chips">${list.map(([k,l])=>`<button class="chip ${cur===k?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')}</div>`;
+const KINDS=[['all','All'],['deposit','Deposits'],['bill','Bills'],['bond','Bonds']];
+const mlist=kind=>M.filter(m=>kind==='all'||m.kind===kind);
+const frame=(inner,cls='')=>`<div class="frame ${cls}">${inner}</div>`;
+const scroll=x=>`<div class="scroll">${x}</div>`;
+const cell=(cap,html,wide)=>`<div class="cell ${wide?'wide':''}"><div class="cap">${cap}</div>${html}</div>`;
+const detailBody=m=>`<div class="sec" style="gap:6px"><span class="mu" style="font-size:13px">${m.lbl} · ${m.src==='GCB'?'GCB':m.src+' market'}</span><span class="big" style="font-size:44px">${pct(m.rate)}</span><span class="mu" style="font-size:14px">a year · ${m.line}</span></div><div class="rows"><div><span class="l">Term</span><span class="tab">${m.days>=5475?'15 years':m.days+' days'}</span></div><div><span class="l">You get at the end</span><span>Your money and the interest</span></div><div><span class="l">Early exit</span><span>${m.kind==='deposit'?'Allowed. The cost is shown first':'Sell back through a rediscount'}</span></div></div>`;
+const buyBtn=m=>`<button class="btn" data-a="toast:Opens the ${m.kind==='deposit'?'new deposit':'buy'} flow">${m.kind==='deposit'?'Open this deposit':'Buy this '+m.lbl.toLowerCase()}</button>`;
+const detail=(m,withBack=true)=>frame(scroll(hd(m.name,withBack)+detailBody(m)+buyBtn(m)));
+const newEmpty=`<p class="mu" style="font-size:14px;line-height:1.5">You don’t hold any investments yet.</p>`;
+
+/* ---------- the 8 ---------- */
+const V={};
+
+V[1]={name:'1. One page: yours, then the market',
+ note:'There are no product pages. Invest is one short page: what you hold on top (the soonest to mature first), then the market below as one board with chips for deposits, bills and bonds. The two products become a filter, not a place, so there is nothing to go into and come back out of. A row opens its details, then the buy flow.',
+ f:()=>[cell('<b>Invest.</b> Holdings, then the whole market, filtered by chips.',frame(scroll(hd('Invest',false)+(has()?`<div class="sec"><div class="row"><span class="h3">Your Investments</span><button class="btn ghost sm" data-a="toast:Opens the statement">Statement</button></div><div>${HOLD.slice(0,3).map(holdRow).join('')}<button class="lnk" data-a="toast:Opens all holdings"><span class="mu">See all 4</span><span class="mu">${chev}</span></button></div></div>`:'')+`<div class="sec"><span class="h3">${has()?'Invest in something new':'What would you like to invest in?'}</span>${chips(KINDS,S.chip,'chip')}<div>${mlist(S.chip).map(m=>mrow(m)).join('')}</div></div>`))),
+  cell('<b>A row opens its details.</b> The buy flow is next.',detail(sel()))]};
+
+V[2]={name:'2. Two tabs: Mine | Market',
+ note:'One switch splits the page by intent. Mine holds the investments grouped by kind with the maturity that needs you on top; Market is the board of everything you can buy. A new investor opens on Market; someone who holds something opens on Mine. Each tab is short and does one job.',
+ f:()=>[cell('<b>Mine.</b> What you hold, soonest maturity first.',frame(scroll(hd('Invest',false)+`<div class="seg" style="align-self:flex-start"><button class="on">Mine</button><button>Market</button></div>`+(has()?`<div class="sec"><span class="grp">Maturing soon</span>${holdRow(HOLD[0])}<span class="grp" style="margin-top:8px">Treasury bills and bonds</span><div>${HOLD.slice(1).map(holdRow).join('')}</div></div>`:newEmpty+`<button class="btn" data-a="toast:Switches to Market">See the market</button>`)))),
+  cell('<b>Market.</b> Everything you can buy, chips to narrow.',frame(scroll(hd('Invest',false)+`<div class="seg" style="align-self:flex-start"><button>Mine</button><button class="on">Market</button></div>`+chips(KINDS,S.chip,'chip')+`<div>${mlist(S.chip).map(m=>mrow(m)).join('')}</div>`))),
+  cell('<b>Details.</b>',detail(sel()))]};
+
+V[3]={name:'3. A rate board',
+ note:'Invest is a comparison. One board lists every instrument with its term and rate, sortable by rate or by term, filterable by how long you can lock money away. It answers the question people actually have (what pays most for the time I have) in one table, and the product pages are not needed. Your holdings are one row above it.',
+ f:()=>{const rows=[...M].filter(m=>S.term==='all'||(S.term==='short'?m.days<=182:S.term==='mid'?m.days>182&&m.days<=730:m.days>730)).sort((a,b)=>S.sort==='rate'?b.rate-a.rate:a.days-b.days);
+  return [cell('<b>The board.</b> Sort by rate or term; filter by how long.',frame(scroll(hd('Invest',false)+(has()?`<button class="lnk" data-a="toast:Opens your investments"><span>Your investments</span><span class="mu" style="display:flex;gap:8px;align-items:center"><span class="am tab">1 matures in 5 days</span>${chev}</span></button>`:'')+`<div class="row"><span class="h3">Rates</span><div class="seg"><button class="${S.sort==='rate'?'on':''}" data-a="sort:rate">Highest rate</button><button class="${S.sort==='term'?'on':''}" data-a="sort:term">Shortest</button></div></div>`+chips([['all','Any term'],['short','Under 6 months'],['mid','Up to 2 years'],['long','Long term']],S.term,'term')+`<table class="tbl"><tr><th>Investment</th><th class="num">Term</th><th class="num">Rate</th></tr>${rows.map(m=>`<tr class="r" data-a="sel:${m.id}"><td><div>${m.name}</div><div class="mu" style="font-size:12px">${m.src==='GCB'?'GCB':m.src+' market'}</div></td><td class="num mu">${m.days>=5475?'15 yrs':m.days>=365*2?Math.round(m.days/365)+' yrs':m.days+' d'}</td><td class="num"><span class="rate">${pct(m.rate)}</span></td></tr>`).join('')}</table>`))),
+   cell('<b>Details.</b>',detail(sel()))]}};
+
+V[4]={name:'4. Start from the amount',
+ note:'No browsing. You say how much and for how long, and the page ranks what fits, with what you would earn on each, best first. The product names matter less than the answer. It suits someone who knows their money and their time, and a poor place to look at one instrument by itself, so your holdings stay a row above.',
+ f:()=>{const fit=M.filter(m=>m.days>=S.dur*.85&&m.days<=S.dur*1.35).sort((a,b)=>b.rate-a.rate);const res=(fit.length?fit:[...M].sort((a,b)=>Math.abs(a.days-S.dur)-Math.abs(b.days-S.dur)).slice(0,3));
+  const earn=m=>S.amt*m.rate/100*Math.min(m.days,S.dur)/365;
+  return [cell('<b>Ask.</b> Amount and time, then the best fits.',frame(scroll(hd('Invest',false)+(has()?`<button class="lnk" data-a="toast:Opens your investments"><span>Your investments</span><span class="mu" style="display:flex;gap:8px;align-items:center"><span class="am">1 matures in 5 days</span>${chev}</span></button>`:'')+`<div class="sec" style="gap:14px"><span style="font-size:24px;letter-spacing:-.02em;line-height:1.25">How much, and for how long?</span><div class="inp"><span class="mu" style="font-size:18px">GHS</span><input id="amt" inputmode="numeric" value="${S.amt.toLocaleString('en-US')}" data-q="1"></div>${chips([['91','3 months'],['182','6 months'],['364','1 year'],['1000','Longer']],String(S.dur),'dur')}</div><div class="sec"><span class="h3">Best for ${GHS(S.amt)}</span><div>${res.map((m,i)=>`<button class="li ${S.sel===m.id?'sel':''}" data-a="sel:${m.id}"><span class="g"><span class="t">${m.name}</span><span class="m">${pct(m.rate)} a year · ${m.src==='GCB'?'GCB':m.src+' market'}</span></span><span class="e tab"><span class="${i===0?'':'mu'}" style="font-size:16px">+${GHS(earn(m))}</span><small>${i===0?'best fit':'you earn'}</small></span></button>`).join('')}</div></div>`))),
+   cell('<b>Details.</b>',detail(sel()))]}};
+
+V[5]={name:'5. Segments inside each product',
+ note:'Keep the two products as pages, but stop them being long. Treasury shows a short intro and a Primary | Secondary switch, so it is one list at a time. Term Deposits has only three options, so it is not a list at all: a picker of the three periods with the rate large and one button. Each page is one screen.',
+ f:()=>[cell('<b>Shelf.</b> Two products, each with its range of rates.',frame(scroll(hd('Invest',false)+(has()?`<button class="lnk" data-a="toast:Opens your investments"><span>Your investments</span><span class="mu" style="display:flex;gap:8px;align-items:center"><span class="am">1 matures in 5 days</span>${chev}</span></button>`:'')+`<button class="tile" data-a="toast:Opens Term Deposits"><span style="font-size:17px">Term Deposits</span><span class="mu" style="font-size:13px">Fixed rate, 91 to 364 days</span><span class="tab" style="margin-top:8px">12.5% to 15%</span></button><button class="tile" data-a="toast:Opens Treasury"><span style="font-size:17px">Treasury Bills & Bonds</span><span class="mu" style="font-size:13px">Lend to the government</span><span class="tab" style="margin-top:8px">13.3% to 15%</span></button>`))),
+  cell('<b>Treasury.</b> One market at a time.',frame(scroll(hd('Treasury Bills & Bonds')+`<p class="mu" style="font-size:14px;line-height:1.5">Lend to the government for a fixed period. Sell early through a rediscount.</p><div class="seg" style="align-self:flex-start"><button class="on">Primary</button><button>Secondary</button></div><div>${M.filter(m=>m.src==='Primary').map(m=>mrow(m)).join('')}</div>`))),
+  cell('<b>Term Deposits.</b> Three options, so a picker, not a list.',frame(scroll(hd('Term Deposits')+`<div class="seg" style="align-self:flex-start">${M.slice(0,3).map((m,i)=>`<button class="${S.period===i?'on':''}" data-a="period:${i}">${m.days} days</button>`).join('')}</div><div class="sec" style="gap:6px"><span class="mu" style="font-size:13px">A fixed rate, set when you start</span><span class="big" style="font-size:56px">${pct(M[S.period].rate)}</span><span class="mu" style="font-size:14px">a year · ${M[S.period].line}</span></div><div class="rows"><div><span class="l">You get at the end</span><span>Your money and the interest</span></div><div><span class="l">Early exit</span><span>Allowed. The cost is shown first</span></div></div><button class="btn" data-a="toast:Opens the new deposit flow">Open a ${M[S.period].days}-day deposit</button>`)))]};
+
+V[6]={name:'6. List and details together',
+ note:'On a desktop the list is a column on the left and the selected investment’s details and Buy button are on the right, so you compare by clicking down the list and never leave the page. The long list scrolls in its own column, and the button never moves. On a phone it falls back to list, then details.',
+ f:()=>[cell('<b>Desktop.</b> The list scrolls; the details and the button stay put.',frame(`<div style="padding:20px 24px 0">${hd('Invest',false)}</div><div class="split"><div>${(has()?`<div class="sec" style="margin-bottom:18px"><span class="h3">Yours</span>${HOLD.slice(0,2).map(holdRow).join('')}</div>`:'')+chips(KINDS,S.chip,'chip')+`<div style="margin-top:12px">${mlist(S.chip).map(m=>mrow(m)).join('')}</div>`}</div><div style="display:flex;flex-direction:column;gap:22px"><div style="display:flex;flex-direction:column;gap:22px;flex:1">${detailBody(sel())}</div>${buyBtn(sel())}</div></div>`),true),
+  cell('<b>Phone.</b> The same list; a row opens the details.',frame(scroll(hd('Invest',false)+chips(KINDS,S.chip,'chip')+`<div>${mlist(S.chip).map(m=>mrow(m)).join('')}</div>`)))]};
+
+V[7]={name:'7. Yours first, and an Invest sheet',
+ note:'The page is about what you hold: the one that matures soonest on top and the rest ordered by date. Buying is one prominent Invest button that opens a two-step sheet: what kind (deposit, bill, bond), then the instruments of that kind. The market is never a page, so the home page stays short however many instruments the bank adds.',
+ f:()=>[cell('<b>Home.</b> Your investments, and one Invest button.',frame(scroll(`<div class="row">${hd('Invest',false)}<button class="btn sm" data-a="toast:Opens the sheet">${plus} Invest</button></div>`+(has()?`<div class="sec"><span class="grp">Matures soonest</span>${holdRow(HOLD[0])}<span class="grp" style="margin-top:8px">Later</span><div>${HOLD.slice(1).map(holdRow).join('')}</div></div>`:`<div class="sec" style="gap:16px;padding-top:40px;align-items:flex-start"><span style="font-size:24px;letter-spacing:-.02em;line-height:1.3">Put your money to work.</span><span class="mu" style="font-size:14px;line-height:1.5">Fixed rates, from 91 days.</span><button class="btn" data-a="toast:Opens the sheet">Invest</button></div>`))),),
+  cell('<b>Step 1.</b> What kind?',frame(`<div class="dim"></div><div class="sheet"><span class="h3">What would you like to invest in?</span>${[['Term deposit','GCB · fixed rate · 12.5% to 15%'],['Treasury bill','Government · 91 or 182 days · 13.3% to 15%'],['Bond','Government · long term · 13.3% to 14.2%']].map(x=>`<button class="lnk" data-a="toast:Goes to step 2"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px">${x[0]}</span><span class="mu" style="font-size:12px">${x[1]}</span></span><span class="mu">${chev}</span></button>`).join('')}</div>`)),
+  cell('<b>Step 2.</b> The bills on offer.',frame(`<div class="dim"></div><div class="sheet"><div class="hd"><span class="bk">${back}</span><span class="h3">Treasury bills</span></div><div>${M.filter(m=>m.kind==='bill').map(m=>mrow(m)).join('')}</div></div>`))]};
+
+V[8]={name:'8. A shelf of instruments',
+ note:'The shelf itself is the market, but as cards of instruments with the rate as the headline, not the two products. Chips narrow it, a strip above says what you hold and what needs you, and a card opens the instrument’s details. It is the most visual way to browse, and works while the number of instruments stays small.',
+ f:()=>[cell('<b>Shelf.</b> Instruments as cards, rate first.',frame(scroll(hd('Invest',false)+(has()?`<button class="lnk" data-a="toast:Opens your investments"><span>Your investments · 4</span><span class="mu" style="display:flex;gap:8px;align-items:center"><span class="am">1 matures in 5 days</span>${chev}</span></button>`:'')+chips(KINDS,S.chip,'chip')+`<div class="grid2">${mlist(S.chip).map(m=>`<button class="tile" data-a="sel:${m.id}" style="${S.sel===m.id?'outline:2px solid var(--am)':''}"><span class="mu" style="font-size:12px">${m.lbl} · ${m.src==='GCB'?'GCB':m.src}</span><span class="big" style="font-size:30px;margin-top:6px">${pct(m.rate)}</span><span style="font-size:14px">${m.name.replace(' Term Deposit','').replace(' Treasury Bill',' Bill')}</span><span class="mu" style="font-size:12px">${m.line.split(' · ')[0]}</span></button>`).join('')}</div>`))),
+  cell('<b>Details.</b>',detail(sel()))]};
+
+/* ---------- chrome ---------- */
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('stsel',[['new','New investor'],['has','Holds 4 investments']],S.st,'st');
+  seg('themesel',[['dark','Dark'],['light','Light']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  $('stage').innerHTML=V[S.v].f().join('');
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='toast'){toast(arg);return}
+  if(a==='v'){S.v=+arg}
+  else if(a==='st')S.st=arg;
+  else if(a==='theme')S.dark=arg==='dark';
+  else if(a==='sel')S.sel=+arg;
+  else if(a==='chip')S.chip=arg;
+  else if(a==='period')S.period=+arg;
+  else if(a==='dur')S.dur=+arg;
+  else if(a==='sort')S.sort=arg;
+  else if(a==='term')S.term=arg;
+  render();
+});
+document.addEventListener('input',e=>{if(e.target.dataset.q){S.amt=Number(String(e.target.value).replace(/[^0-9]/g,''))||0;const a=e.target.selectionStart;render();const n=document.getElementById('amt');if(n){n.focus();try{n.setSelectionRange(n.value.length,n.value.length)}catch(_){}}}});
+render();
+</script>
+</body>
+</html>

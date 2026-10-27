@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeftRight, CreditCard, Home, LayoutGrid, Send, Wallet } from "lucide-react";
+import { ArrowLeftRight, CreditCard, Home, LayoutGrid, Send, Wallet } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { homePathForProfile } from "@/lib/navigation";
 import { isBusinessProfile } from "@/lib/profile";

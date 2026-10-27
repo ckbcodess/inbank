@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { format, parse, isValid } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon } from "@/components/ui/icons"
 
 import { cn } from "@/lib/utils"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"

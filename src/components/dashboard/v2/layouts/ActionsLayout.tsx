@@ -10,7 +10,7 @@
  */
 
 import { motion } from "framer-motion";
-import { ArrowLeftRight, CalendarClock, CreditCard, Send, Smartphone } from "lucide-react";
+import { ArrowLeftRight, CalendarClock, CreditCard, Send, Smartphone } from "@/components/ui/icons";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { ActionTile } from "@/components/ui/action-tile";
 import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";

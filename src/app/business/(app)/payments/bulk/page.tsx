@@ -11,7 +11,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AlertCircle, CheckCircle2, FileSpreadsheet, Upload } from "lucide-react";
+import { AlertCircle, CheckCircle2, FileSpreadsheet, Upload } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
@@ -56,14 +56,14 @@ export default function BulkUploadPage() {
       <section className="rounded-2xl border border-border bg-card p-4">
         <div className="flex items-center gap-2 border-b border-border pb-3">
           <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-            <FileSpreadsheet size={17} strokeWidth={1.8} aria-hidden="true" />
+            <FileSpreadsheet size={17} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-[14px] text-foreground">payroll-august-2026.csv</p>
             <p className="mt-0.5 text-[12px] text-muted-foreground tabular">140 records · 48 KB</p>
           </div>
           <Button variant="outline" size="sm">
-            <Upload size={14} strokeWidth={1.9} aria-hidden="true" />
+            <Upload size={14} aria-hidden="true" />
             Replace file
           </Button>
         </div>

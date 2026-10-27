@@ -6,8 +6,10 @@
  */
 
 import { useParams } from "next/navigation";
-import { CalendarClock, FileText, Undo2 } from "lucide-react";
+import { CalendarClock, FileText, Undo2 } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
+import { ProductBanner } from "@/components/ui/product-banner";
+import { holdingAlert } from "@/lib/product-alerts";
 import { Badge } from "@/components/ui/badge";
 import { ActionTile } from "@/components/ui/action-tile";
 import { InvestmentDetailSkeleton } from "@/components/states/PageSkeletons";
@@ -27,43 +29,37 @@ export default function HoldingDetailPage() {
 
   const base = `${TREASURY_HOME}/holdings/${h.id}`;
   const cashing = h.status === "rediscount-pending";
+  // A holding is a balance, so it has the figure. A cash-in in progress is the first row; the figure goes quiet (CONSTITUTION §3).
   const rows: Array<[string, React.ReactNode]> = [
+    ...(cashing && h.rediscount
+      ? ([["Paid to your account", `${formatMoney(h.rediscount.receive, "GHS", showAmounts)} once it’s processed`]] as Array<[string, React.ReactNode]>)
+      : []),
     ["Cost", formatMoney(h.cost, "GHS", showAmounts)],
     [h.kind === "bill" ? "Interest rate" : "Coupon rate", formatRate(h.rate)],
     ...(h.kind === "bond" ? ([["Interest every 6 months", formatMoney(couponPerPeriod(h.face, h.rate), "GHS", showAmounts)]] as Array<[string, React.ReactNode]>) : []),
     ["Bought", formatDate(h.boughtOn)],
-    ["Matures", formatDate(h.maturity)],
+    ["Matures", `${formatDate(h.maturity)} · ${daysLeftLabel(h.maturity)}`],
     ["When it matures", instructionLabel(h.instruction)],
     ["Reference", h.code],
     ...(csd ? ([["Securities account", csd.csid]] as Array<[string, React.ReactNode]>) : []),
   ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader
         title={h.title}
         badge={<Badge variant="secondary">{kindLabel(h.kind)}</Badge>}
         backTo={{ href: INVEST_HOME, label: "Invest" }}
       />
+      <ProductBanner alert={holdingAlert(h)} />
 
-      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
-        <section className="flex flex-col gap-2 px-1">
-          <span className="text-[13px] text-muted-foreground">Face value, paid at maturity</span>
-          <span className={cn("tabular text-[40px] leading-none tracking-[var(--ls-heading)]", cashing ? "text-muted-foreground" : "text-foreground")}>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-1 px-1">
+          <span className="text-[14px] text-muted-foreground">Paid at maturity</span>
+          <span className={cn("tabular text-[32px] leading-none tracking-[var(--ls-heading)]", cashing ? "text-muted-foreground" : "text-foreground")}>
             {formatMoney(h.face, "GHS", showAmounts)}
           </span>
-          {cashing && h.rediscount ? (
-            <span className="tabular text-[14px] text-muted-foreground">
-              {`Cash-in requested: ${formatMoney(h.rediscount.receive, "GHS", showAmounts)} will be paid to your account once it’s processed.`}
-            </span>
-          ) : (
-            <span className="tabular flex gap-2 text-[14px] text-muted-foreground">
-              <span>{formatDate(h.maturity)}</span>
-              <span aria-hidden="true">·</span>
-              <span>{daysLeftLabel(h.maturity)}</span>
-            </span>
-          )}
-        </section>
+        </div>
 
         <FactsPanel rows={rows} />
 

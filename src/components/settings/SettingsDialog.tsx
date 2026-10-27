@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, ChevronRight, Lock, SlidersHorizontal, User, X } from "lucide-react";
+import { Bell, ChevronRight, Lock, SlidersHorizontal, User, X } from "@/components/ui/icons";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { maskMobile } from "@/lib/auth-shared";
 import { useSession } from "@/lib/session-store";
@@ -83,7 +83,7 @@ export default function SettingsDialog() {
                 aria-label="Close settings"
                 className="flex size-11 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors duration-hover hover:text-foreground"
               >
-                <X size={18} strokeWidth={1.8} />
+                <X size={18} />
               </DialogClose>
             </div>
 
@@ -115,7 +115,7 @@ export default function SettingsDialog() {
                         )}
                       </span>
                     </span>
-                    <ChevronRight size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground sm:hidden" aria-hidden="true" />
+                    <ChevronRight size={16} className="shrink-0 text-muted-foreground sm:hidden" aria-hidden="true" />
                   </button>
                 ))}
               </div>
@@ -128,7 +128,7 @@ export default function SettingsDialog() {
               aria-label="Close settings"
               className="absolute right-4 top-4 z-10 flex size-10 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors duration-hover hover:text-foreground max-sm:hidden"
             >
-              <X size={18} strokeWidth={1.8} />
+              <X size={18} />
             </DialogClose>
 
             {active === "profile" && <ProfilePane key="profile" name={actor.name} {...paneProps} />}

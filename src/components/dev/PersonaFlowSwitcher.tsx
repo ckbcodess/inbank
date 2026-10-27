@@ -19,7 +19,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown } from "@/components/ui/icons";
 import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
@@ -33,7 +33,7 @@ import { ACTIVATION_STEPS, SIGNUP_STEPS, parseOnboardingStep } from "@/lib/onboa
 import { forgetThisDevice, setFirstRun, setPendingFundPrompt, setPendingReferral, trustThisDevice } from "@/lib/device-trust";
 import { LEGACY_DEMO_MOBILE, MIGRATION_STEPS, parseMigrationStep } from "@/lib/migration";
 import { setDevToolsHidden, useDevToolsHidden } from "@/lib/dev-tools-visibility";
-import { EyeOff } from "lucide-react";
+import { EyeOff } from "@/components/ui/icons";
 
 const PERSONAS = [
   { id: "multi", label: "Several accounts" },
@@ -224,7 +224,7 @@ function PersonaFlowSwitcherContent() {
         className="fixed bottom-4 left-1/2 z-40 flex h-8 -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-3 text-[13px] text-foreground shadow-lg transition-colors hover:bg-muted"
       >
         Demo
-        <ChevronDown size={14} strokeWidth={1.8} className="text-muted-foreground" aria-hidden="true" />
+        <ChevronDown size={14} className="text-muted-foreground" aria-hidden="true" />
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -240,7 +240,7 @@ function PersonaFlowSwitcherContent() {
               className="mr-5 flex items-center gap-2 rounded-lg border border-border/80 px-2 py-1 text-[12px] text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
               title="Hide all floating dev tools. Press Ctrl+Shift+D to show them again anytime."
             >
-              <EyeOff size={13} strokeWidth={1.8} />
+              <EyeOff size={13} />
               <span>Hide floating tools <span className="opacity-60 text-[10px] font-mono">(Ctrl+Shift+D)</span></span>
             </button>
           </DialogHeader>

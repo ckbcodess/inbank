@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Globe, Calculator } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Globe, Calculator } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -74,7 +74,7 @@ export function MobilePromoBanner() {
         <div className="relative z-10 flex flex-col justify-between min-h-[175px] w-full">
           <div className="flex flex-col gap-1">
             <div className="inline-flex items-center gap-2 rounded-full bg-pill-success border border-success/20 px-2 py-0.5 text-[11px] font-medium text-pill-success-text w-fit">
-              <Sparkles size={12} strokeWidth={1.8} /> High Yield Savings
+              <Sparkles size={12} /> High Yield Savings
             </div>
             <h3 className="mt-1 text-[17px] font-medium leading-snug tracking-tight text-foreground sm:text-[19px]">
               Earn up to 14.5% p.a. on Fixed Deposits.
@@ -89,7 +89,7 @@ export function MobilePromoBanner() {
               onClick={() => setShowCalculator(true)}
               className="inline-flex items-center gap-2 rounded-xl bg-success px-3 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer"
             >
-              <Calculator size={14} strokeWidth={1.8} />
+              <Calculator size={14} />
               <span>Calculate Returns</span>
             </button>
             <Link
@@ -97,7 +97,7 @@ export function MobilePromoBanner() {
               className="inline-flex items-center gap-1 text-[12.5px] font-medium text-foreground hover:underline active:scale-[0.96] transition-transform"
             >
               <span>Open Account</span>
-              <ArrowRight size={13} strokeWidth={1.8} />
+              <ArrowRight size={13} />
             </Link>
           </div>
         </div>
@@ -112,7 +112,7 @@ export function MobilePromoBanner() {
         <div className="relative z-10 flex flex-col justify-between min-h-[175px] w-full">
           <div className="flex flex-col gap-1">
             <div className="inline-flex items-center gap-2 rounded-full bg-pill-info border border-info/20 px-2 py-0.5 text-[11px] font-medium text-pill-info-text w-fit">
-              <Globe size={12} strokeWidth={1.8} /> Global Payments
+              <Globe size={12} /> Global Payments
             </div>
             <h3 className="mt-1 text-[17px] font-medium leading-snug tracking-tight text-foreground sm:text-[19px]">
               Zero-fee international money transfers.
@@ -127,7 +127,7 @@ export function MobilePromoBanner() {
               className="inline-flex items-center gap-2 rounded-xl bg-info px-3 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform"
             >
               <span>Send Money Now</span>
-              <ArrowRight size={13} strokeWidth={1.8} />
+              <ArrowRight size={13} />
             </Link>
           </div>
         </div>
@@ -147,7 +147,7 @@ export function MobilePromoBanner() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-2 rounded-full border border-warning/25 bg-pill-warning px-2 py-0.5 text-[11.5px] font-medium text-pill-warning-text">
-              <Sparkles size={12} strokeWidth={1.8} />
+              <Sparkles size={12} />
               Featured
             </span>
             <span className="text-[12px] text-muted-foreground tabular">{currentSlide + 1} of {slides.length}</span>
@@ -161,7 +161,7 @@ export function MobilePromoBanner() {
               className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
               aria-label="Previous slide"
             >
-              <ChevronLeft size={16} strokeWidth={1.8} />
+              <ChevronLeft size={16} />
             </button>
             <button
               type="button"
@@ -169,7 +169,7 @@ export function MobilePromoBanner() {
               className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
               aria-label="Next slide"
             >
-              <ChevronRight size={16} strokeWidth={1.8} />
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>

@@ -14,7 +14,7 @@ import {
   Wifi,
   FileText,
   HandCoins,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -117,7 +117,7 @@ export function TransactionMark({
           aria-label="Money in"
           className="absolute -bottom-1 -right-1 flex size-[17px] items-center justify-center rounded-full bg-success text-card ring-2 ring-card"
         >
-          <ArrowDownLeft size={10} strokeWidth={2.2} aria-hidden="true" />
+          <ArrowDownLeft size={10} aria-hidden="true" />
         </span>
       )}
     </div>

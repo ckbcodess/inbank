@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Building2, ChevronRight, User } from "lucide-react";
+import { Building2, ChevronRight, User } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 
 /**
@@ -55,7 +55,6 @@ export default function SelectBankingChooser() {
             </div>
             <ChevronRight
               size={20}
-              strokeWidth={2.2}
               className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
             />
           </button>

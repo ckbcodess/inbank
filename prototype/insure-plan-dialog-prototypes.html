@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plan Dialog: 8 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--ok:#15803d;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--scrim:#cfcfcc}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:#0a0a0a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,h4,p,ul,ol{margin:0;padding:0} ul,ol{list-style:none}
+  .tab{font-variant-numeric:tabular-nums}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px} .s14{font-size:14px}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .backdrop{width:100%;max-width:1100px;min-height:900px;background:var(--scrim);border:1px solid var(--bd);border-radius:20px;display:flex;align-items:center;justify-content:center;padding:32px;box-shadow:var(--shadow)}
+  /* the dialog */
+  .dlg{position:relative;width:520px;max-width:100%;background:var(--surf);border:1px solid var(--bd);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+  .dlg.wide{width:820px}
+  .dlg.phone{width:390px;border-radius:24px 24px 0 0}
+  .x{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,var(--tx) 10%,transparent);color:var(--mu);display:flex;align-items:center;justify-content:center;z-index:3}
+  .pad{padding:24px}
+  .disc{width:48px;height:48px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#0b0b0c;flex:none}
+  .h{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .big{letter-spacing:-.03em;line-height:1.05}
+  .btn{height:44px;padding:0 28px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%}
+  .btn:hover{filter:brightness(1.06)}
+  .note{font-size:13px;color:var(--mu);text-align:center}
+  .check{display:flex;flex-direction:column;gap:12px}
+  .check li{display:flex;gap:12px;font-size:14px;line-height:1.5}
+  .check svg{flex:none;margin-top:3px;color:var(--ok)}
+  .facts>div{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-top:1px solid var(--bd);font-size:13px}
+  .facts>div:last-child{border-bottom:1px solid var(--bd)}
+  .facts span:first-child{color:var(--mu)} .facts span:last-child{text-align:right}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .sec>h4{font-size:13px;font-weight:500;color:var(--mu)}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--bd);padding:0 24px}
+  .tabs button{padding:12px 14px;font-size:14px;color:var(--mu);border-bottom:2px solid transparent;min-height:44px}
+  .tabs button.on{color:var(--tx);border-color:var(--am)}
+  .acc{border-top:1px solid var(--bd)} .acc:last-child{border-bottom:1px solid var(--bd)}
+  .acc>button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:14px 0;font-size:14px;font-weight:500;min-height:48px}
+  .acc>div{padding:0 0 16px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{padding:8px 14px;border-radius:999px;border:1px solid var(--bd);font-size:13px;min-height:36px}
+  .chip.on{border-color:var(--tx);background:var(--tile)}
+  input[type=range]{width:100%;accent-color:#d99b00}
+  .ctl{display:flex;flex-direction:column;gap:8px} .cl{display:flex;justify-content:space-between;font-size:13px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Plan dialog · 8 ways to present a plan · the price appears once, and nothing repeats</h1>
+    <div class="ctrls">
+      <div class="seg" id="plansel"></div>
+      <div class="seg" id="devsel"></div>
+      <div class="seg" id="profsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage"><div class="backdrop" id="bd"></div></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ICON={ce:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',hc:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',wm:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',up:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/>'};
+const tick=svg('<path d="M5 12l4 4 10-10"/>',16,1.8);
+const caret=o=>svg(o?'<path d="M6 15l6-6 6 6"/>':'<path d="M6 9l6 6 6-6"/>',16,1.8);
+const X=svg('<path d="M6 6l12 12M18 6L6 18"/>',14,1.8);
+const money=n=>'GHS '+(Math.round(n*100)%100===0?Math.round(n).toLocaleString('en-US'):n.toLocaleString('en-US',{minimumFractionDigits:2}));
+
+/* Benefits here leave out the "Premiums from" line, because the price is already shown once. */
+const plans={
+ ce:{col:'#3b82f6',name:'Child Education Plan',desc:'Save towards your child’s education, with cover that keeps the plan going if something happens to you.',from:50,kind:'save',term:[10,25],
+  pays:'A lump sum, and school fees',runs:'10 to 25 years',
+  pts:['Lump sum paid within 48 to 72 hours of an approved claim','School fees are paid even if you can’t'],
+  facts:[['Policy term','10 to 25 years'],['Provider','StarLife Assurance']],
+  claim:['Your child’s details','Proof of school enrolment, for school fees','A valid ID'],
+  story:[['You save','From GHS 50 a month, for 10 to 25 years.'],['You’re protected','Cover keeps the plan going if something happens to you.'],['You’re paid','School fees or a lump sum, within 48 to 72 hours of an approved claim.']]},
+ hc:{col:'#ea580c',name:'HomeCall Plan',desc:'Help your family cover funeral expenses in a difficult time. Cover yourself, and add the people close to you.',from:8,kind:'funeral',
+  pays:'GHS 2,500 to GHS 30,000',runs:'While you pay',
+  pts:['Lump sum paid within 48 to 72 hours of an approved claim','Cover your spouse, children and parents too','Accidental deaths are covered from day one'],
+  facts:[['Cover','GHS 2,500 to GHS 30,000'],['Who it covers','You, and family you add'],['Provider','StarLife Assurance']],
+  claim:['The death certificate','The medical certificate of cause of death','A police report, if the death was accidental','A valid ID'],
+  story:[['You pay monthly','From GHS 8 a month, for you. Add the family you want covered.'],['Cover starts','Accidents at once. Deaths from natural causes after 90 days.'],['Your family is paid','A lump sum within 48 to 72 hours of an approved claim.']]},
+ wm:{col:'#d97706',name:'WealthMaster Plan',desc:'Save regularly and grow a lump sum, with life cover for the people who depend on you.',from:50,kind:'save',term:[4,10],
+  pays:'A lump sum',runs:'4 to 10 years',
+  pts:['Lump sum paid within 48 to 72 hours of an approved claim','Your loved ones are paid if something happens to you'],
+  facts:[['Policy term','4 to 10 years'],['Provider','StarLife Assurance']],
+  claim:['Your policy details','Proof of the event, for disability','A valid ID'],
+  story:[['You save','From GHS 50 a month, for 4 to 10 years.'],['Your family is covered','They are paid if something happens to you.'],['You’re paid','What you paid in, plus growth, when the term ends.']]},
+ up:{col:'#db2777',name:'Ultimate Protection Plan',desc:'Keep an income if illness or disability stops you working, and leave your family a lump sum.',from:40.5,kind:'protection',term:[8,20],
+  pays:'GHS 50,000 to GHS 300,000',runs:'8 to 20 years',
+  pts:['Lump sum paid within 48 to 72 hours of an approved claim','Covers total and permanent disability','Covers critical illness'],
+  facts:[['Sum assured','GHS 50,000 to GHS 300,000'],['Policy term','8 to 20 years'],['Disability income','Up to age 70'],['Provider','StarLife Assurance']],
+  claim:['A medical report for the illness or disability','A valid ID'],
+  story:[['You choose a sum','GHS 50,000 to GHS 300,000, for 8 to 20 years.'],['You’re covered','Critical illness and total and permanent disability, with income up to age 70.'],['Your family is paid','A lump sum to the people you leave it to.']]}
+};
+const TIERS=[['Basic',2500,8],['Standard',5000,15],['Prestige',10000,22],['Elite',15000,32],['Ultimate',30000,60]];
+const SUMS=[50000,100000,200000,300000];
+const S={v:1,p:'ce',phone:false,profile:false,dark:true,tab:'overview',acc:0,prem:100,years:10,tier:1,sum:0};
+const P=()=>plans[S.p];
+
+/* pieces */
+const disc=(p,id,s=48)=>`<span class="disc" style="background:${p.col};width:${s}px;height:${s}px">${svg(ICON[id],Math.round(s*.42))}</span>`;
+const checks=l=>`<ul class="check">${l.map(b=>`<li>${tick}<span>${b}</span></li>`).join('')}</ul>`;
+const facts=r=>`<div class="facts">${r.map(x=>`<div><span>${x[0]}</span><span class="tab">${x[1]}</span></div>`).join('')}</div>`;
+const note=()=>S.profile?'':`<p class="note">You’ll create your insurance profile first. You only do it once.</p>`;
+const foot=(c='')=>`<div style="display:flex;flex-direction:column;gap:8px;${c}">${note()}<button class="btn" data-a="start">${S.profile?'Get Started':'Get Started'}</button></div>`;
+const price=(p,size=32)=>`<span class="tab big" style="font-size:${size}px">${money(p.from)}</span><span class="mu s14"> a month</span>`;
+const dlg=(inner,cls='')=>`<div class="dlg ${S.phone?'phone':''} ${cls}" role="dialog"><span class="x">${X}</span>${inner}</div>`;
+const sizeCls=()=>S.phone?'':'';
+
+/* calculator pieces (variation 6) */
+function controls(p){
+  if(p.kind==='save'){S.years=Math.min(Math.max(S.years,p.term[0]),p.term[1]);return `<div class="ctl"><div class="cl"><label for="prem">I can save</label><span class="tab" id="premV"></span></div><input id="prem" data-r="prem" type="range" min="50" max="1000" step="50" value="${S.prem}"></div><div class="ctl"><div class="cl"><label for="yrs">For</label><span class="tab" id="yrsV"></span></div><input id="yrs" data-r="years" type="range" min="${p.term[0]}" max="${p.term[1]}" value="${S.years}"></div>`}
+  if(p.kind==='funeral')return `<div class="ctl"><span class="s13">Choose a cover level</span><div class="chips">${TIERS.map((x,i)=>`<button class="chip ${S.tier===i?'on':''}" data-a="tier:${i}">${x[0]}</button>`).join('')}</div></div>`;
+  return `<div class="ctl"><span class="s13">Choose a sum assured</span><div class="chips">${SUMS.map((x,i)=>`<button class="chip tab ${S.sum===i?'on':''}" data-a="sum:${i}">${money(x)}</button>`).join('')}</div></div>`;
+}
+function result(p){
+  if(p.kind==='save')return `<div><span class="mu s12">You get back about</span><div class="big tab" id="outV" style="font-size:34px"></div><p class="mu s12" id="outN" style="margin-top:4px"></p></div>`;
+  if(p.kind==='funeral'){const t=TIERS[S.tier];return `<div><span class="mu s12">Your family receives</span><div class="big tab" style="font-size:34px">${money(t[1])}</div><p class="mu s12" style="margin-top:4px">for ${money(t[2])} a month, for you.</p></div>`}
+  const s=SUMS[S.sum];return `<div><span class="mu s12">It would cost about</span><div class="big tab" style="font-size:34px">${money(s/1000*9*1.08/12)} <span class="mu s14" style="letter-spacing:0">a month</span></div><p class="mu s12" style="margin-top:4px">At age 30. Your price depends on your age and health.</p></div>`;
+}
+function upd(){
+  const set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t};
+  const paid=S.prem*12*S.years;
+  set('premV',money(S.prem)+' a month');set('yrsV',S.years+' years');set('outV',money(paid*1.25));set('outN','You pay in '+money(paid)+'. Illustration only.');
+}
+
+/* ---------- variations ---------- */
+const V={};
+V[1]={name:'1. Tinted Header',note:'The plan’s colour lives in the top of the dialog, with the name and the price in one block. Nothing repeats: the price is not in the list or the facts. Body below is just what it pays and the facts.',
+ r:()=>{const p=P();return dlg(`<div style="background:color-mix(in srgb,${p.col} 20%,var(--surf));padding:28px 24px 24px;display:flex;flex-direction:column;gap:18px">${disc(p,S.p,52)}<div><h2 class="h">${p.name}</h2><p class="mu s14" style="margin-top:6px;line-height:1.6;max-width:420px">${p.desc}</p></div><div><span class="mu s12">From</span><div>${price(p,36)}</div></div></div>
+  <div class="pad" style="display:flex;flex-direction:column;gap:22px">${checks(p.pts)}${facts(p.facts)}${foot()}</div>`)}};
+
+V[2]={name:'2. Three-Fact Strip',note:'The three things a customer decides on, side by side: what it pays, what it costs, how long it runs. Reads in two seconds. The benefits list drops to what the strip can’t say.',
+ r:()=>{const p=P();return dlg(`<div class="pad" style="display:flex;flex-direction:column;gap:22px;padding-top:28px">${disc(p,S.p)}<div><h2 class="h">${p.name}</h2><p class="mu s14" style="margin-top:6px;line-height:1.6">${p.desc}</p></div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--bd);border-radius:16px">${[['Pays',p.pays],['Costs from',money(p.from)+' a month'],['Runs for',p.runs]].map((c,i)=>`<div style="padding:14px 16px;display:flex;flex-direction:column;gap:4px;${i?'border-left:1px solid var(--bd)':''}"><span class="mu s12">${c[0]}</span><span class="s14 tab" style="line-height:1.4">${c[1]}</span></div>`).join('')}</div>
+  ${checks(p.pts.slice(1))}${foot()}</div>`)}};
+
+V[3]={name:'3. Tabs',note:'A short dialog that never scrolls. The first view is the pitch and the price; Cover and Claims hold the rest for anyone who wants it. The button stays in the same place on every tab.',
+ r:()=>{const p=P(),t=S.tab;const body={overview:`<p class="s14" style="line-height:1.65">${p.desc}</p>${checks(p.pts)}`,cover:facts(p.facts)+`<p class="mu s13" style="line-height:1.6">${p.pays} is paid out. Premiums are taken from your account.</p>`,claims:`<p class="s14">Have these ready if you ever need to claim:</p>${checks(p.claim)}`}[t];
+  return dlg(`<div style="padding:24px 24px 16px;display:flex;align-items:center;gap:16px">${disc(p,S.p)}<div style="flex:1;min-width:0"><h2 class="h" style="padding-right:32px">${p.name}</h2><div style="margin-top:2px">${price(p,18)}</div></div></div>
+  <div class="tabs">${[['overview','Overview'],['cover','Cover'],['claims','To Claim']].map(x=>`<button class="${t===x[0]?'on':''}" data-a="tab:${x[0]}">${x[1]}</button>`).join('')}</div>
+  <div class="pad" style="display:flex;flex-direction:column;gap:20px;min-height:260px">${body}</div><div class="pad" style="padding-top:0">${foot()}</div>`)}};
+
+V[4]={name:'4. Two Columns',note:'Uses the width a desktop dialog can have. The plan’s colour, name, price and button sit in a fixed panel on the left, so the button never scrolls away. The detail reads on the right.',
+ r:()=>{const p=P(),w=S.phone;return dlg(`<div style="display:grid;grid-template-columns:${w?'1fr':'300px minmax(0,1fr)'}"><div style="background:color-mix(in srgb,${p.col} 20%,var(--surf));padding:28px 24px;display:flex;flex-direction:column;justify-content:space-between;gap:32px;min-height:${w?'0':'560px'}"><div style="display:flex;flex-direction:column;gap:18px">${disc(p,S.p,56)}<h2 class="h" style="font-size:22px">${p.name}</h2><div><span class="mu s12">From</span><div class="tab big" style="font-size:40px">${money(p.from)}</div><span class="mu s14">a month</span></div></div>${foot()}</div>
+  <div class="pad" style="display:flex;flex-direction:column;gap:24px;padding:28px 28px 28px;padding-right:56px"><p class="s14" style="line-height:1.65">${p.desc}</p><div class="sec"><h4>What it pays</h4>${checks(p.pts)}</div><div class="sec"><h4>The facts</h4>${facts(p.facts)}</div><div class="sec"><h4>To make a claim</h4>${checks(p.claim)}</div></div></div>`,'wide')}};
+
+V[5]={name:'5. Money First',note:'The cost is the headline, in plain words: “GHS 50 a month, for 10 to 25 years”. Then one sentence on what it is, and what you get. No facts table: the facts that matter are already in the headline.',
+ r:()=>{const p=P();return dlg(`<div class="pad" style="padding-top:28px;display:flex;flex-direction:column;gap:24px"><div style="display:flex;align-items:center;gap:12px">${disc(p,S.p,36)}<span class="s14 mu">${p.name}</span></div>
+  <div style="display:flex;flex-direction:column;gap:6px"><span class="mu s12">You pay from</span><div><span class="tab big" style="font-size:48px">${money(p.from)}</span></div><p class="s14">a month${p.term?`, for ${p.runs}`:p.kind==='funeral'?', for as long as you pay':''}</p></div>
+  <p class="mu s14" style="line-height:1.65">${p.desc}</p><div class="sec"><h4>What you get</h4>${checks(p.pts)}</div>${foot()}</div>`)}};
+
+V[6]={name:'6. Try The Numbers',note:'The dialog lets the customer play before committing: pick an amount or a cover level and see what comes back. Replaces the facts table with something they can act on. Uses the prototype’s placeholder rates.',
+ r:()=>{const p=P();return dlg(`<div class="pad" style="padding-top:28px;display:flex;flex-direction:column;gap:22px"><div style="display:flex;align-items:center;gap:14px">${disc(p,S.p,44)}<h2 class="h" style="padding-right:32px">${p.name}</h2></div><p class="mu s14" style="line-height:1.6">${p.desc}</p>
+  <div style="background:var(--tile);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:20px">${controls(p)}${result(p)}</div>${checks(p.pts.slice(0,2))}${foot()}</div>`)}};
+
+V[7]={name:'7. How It Works',note:'Three steps in the order the customer will live them: pay, be protected, be paid. It answers “what happens” instead of listing features. The facts fold into the steps.',
+ r:()=>{const p=P();return dlg(`<div class="pad" style="padding-top:28px;display:flex;flex-direction:column;gap:24px">${disc(p,S.p)}<div><h2 class="h">${p.name}</h2><p class="mu s14" style="margin-top:6px;line-height:1.6">${p.desc}</p></div>
+  <ol style="display:flex;flex-direction:column">${p.story.map((s,i)=>`<li style="display:flex;gap:16px"><span style="display:flex;flex-direction:column;align-items:center"><span style="width:12px;height:12px;border-radius:50%;margin-top:5px;background:${i===2?'var(--am)':'var(--tx)'}"></span>${i<2?'<span style="flex:1;width:1px;background:var(--bd);margin:4px 0"></span>':''}</span><span style="padding-bottom:${i<2?20:0}px;display:flex;flex-direction:column;gap:2px"><span class="s14" style="font-weight:500">${s[0]}</span><span class="mu s13" style="line-height:1.5">${s[1]}</span></span></li>`).join('')}</ol>
+  <div style="display:flex;align-items:baseline;justify-content:space-between;border-top:1px solid var(--bd);padding-top:16px"><span class="mu s13">From</span><span>${price(p,22)}</span></div>${foot()}</div>`)}};
+
+V[8]={name:'8. Short, With Folds',note:'The shortest version: name, price and button are all visible at once without scrolling. The reading is folded into three sections that open on tap, one at a time.',
+ r:()=>{const p=P();const secs=[['What it pays',checks(p.pts)],['The facts',facts(p.facts)],['To make a claim',checks(p.claim)]];
+  return dlg(`<div class="pad" style="padding-top:28px;display:flex;flex-direction:column;gap:20px"><div style="display:flex;align-items:center;gap:14px">${disc(p,S.p)}<div style="padding-right:32px"><h2 class="h">${p.name}</h2><div style="margin-top:2px">${price(p,18)}</div></div></div><p class="mu s14" style="line-height:1.6">${p.desc}</p>
+  <div>${secs.map((s,i)=>`<div class="acc"><button data-a="acc:${i}">${s[0]}${caret(S.acc===i)}</button>${S.acc===i?`<div>${s[1]}</div>`:''}</div>`).join('')}</div>${foot()}</div>`)}};
+
+/* ---------- engine ---------- */
+const $=s=>document.querySelector(s);
+function render(){
+  $('#plansel').innerHTML=[['ce','Child Education'],['hc','HomeCall'],['wm','WealthMaster'],['up','Ultimate']].map(([k,l])=>`<button class="${S.p===k?'on':''}" data-a="plan:${k}">${l}</button>`).join('');
+  $('#devsel').innerHTML=[[false,'Desktop'],[true,'Phone']].map(([k,l])=>`<button class="${S.phone===k?'on':''}" data-a="phone:${k}">${l}</button>`).join('');
+  $('#profsel').innerHTML=[[false,'No profile'],[true,'Has profile']].map(([k,l])=>`<button class="${S.profile===k?'on':''}" data-a="prof:${k}">${l}</button>`).join('');
+  $('#themesel').innerHTML=[[true,'Dark'],[false,'Light']].map(([k,l])=>`<button class="${S.dark===k?'on':''}" data-a="dark:${k}">${l}</button>`).join('');
+  $('#pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('#vnote').textContent=V[S.v].note;
+  $('#bd').style.alignItems=S.phone?'flex-end':'center';$('#bd').style.paddingBottom=S.phone?'0':'32px';
+  $('#bd').innerHTML=V[S.v].r();
+  upd();
+}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2200)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,arg]=el.dataset.a.split(':');
+  if(a==='v'){S.v=+arg;S.tab='overview';S.acc=0}
+  else if(a==='plan'){S.p=arg;S.tab='overview';S.acc=0}
+  else if(a==='phone')S.phone=arg==='true';
+  else if(a==='prof')S.profile=arg==='true';
+  else if(a==='dark'){S.dark=arg==='true';document.documentElement.dataset.theme=S.dark?'dark':'light'}
+  else if(a==='tab')S.tab=arg;
+  else if(a==='acc')S.acc=S.acc===+arg?-1:+arg;
+  else if(a==='tier')S.tier=+arg;
+  else if(a==='sum')S.sum=+arg;
+  else if(a==='start'){toast(S.profile?'Next: choose your cover':'Next: create your insurance profile');return}
+  render();
+});
+document.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.r;if(!k)return;S[k]=+e.target.value;upd()});
+render();
+</script>
+</body>
+</html>

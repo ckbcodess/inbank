@@ -22,7 +22,7 @@ import {
   ArrowDownToLine,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
@@ -580,7 +580,7 @@ export default function TransactionList({
       )}
 
       {/* ── Page Header: Title & Export Action (no description underneath) ── */}
-      <div className="flex items-center justify-between gap-2 w-full">
+      <div data-page-header className="flex items-center justify-between gap-2 w-full">
         <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
           Transaction History
         </h1>

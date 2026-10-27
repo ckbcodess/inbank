@@ -12,7 +12,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Receipt } from "lucide-react";
+import { CheckCircle2, Receipt } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { ReviewSummary } from "@/components/ui/review-summary";
@@ -21,7 +21,6 @@ import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { FromAccountSelector, InsufficientFundsAlert, ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary } from "@/components/invest/parts";
 import { OutcomeFailure } from "@/components/invest/term-deposit-parts";
 import { PolicyNotFound, dueLabel, postPremiumEntry } from "@/components/insure/parts";
 import { formatMoney } from "@/lib/mock-data";
@@ -90,7 +89,7 @@ export function PayArrearsFlow({ policyId }: { policyId: string }) {
   const owed = outstanding(policy);
   if (owed <= 0) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Pay Outstanding" backTo={back} />
         <TrueEmptyState
           icon={<CheckCircle2 size={22} strokeWidth={1.8} />}
@@ -120,9 +119,9 @@ export function PayArrearsFlow({ policyId }: { policyId: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Pay Outstanding" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} />
           {overBalance && <InsufficientFundsAlert />}
@@ -149,16 +148,6 @@ export function PayArrearsFlow({ policyId }: { policyId: string }) {
           setAuthOpen(false);
           authorised();
         }}
-        summary={
-          <AuthSummary
-            headline={`Pay missed premiums to ${PROVIDER}`}
-            amount={money(owed)}
-            rows={[
-              ["Policy", policy.number],
-              ["From", from ? `${from.name} · ${from.number}` : ""],
-            ]}
-          />
-        }
       />
     </div>
   );

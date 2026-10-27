@@ -1,5 +1,5 @@
-import { DetailPageSkeleton } from "@/components/states/PageSkeletons";
+import { FactsPageSkeleton } from "@/components/states/PageSkeletons";
 
 export default function Loading() {
-  return <DetailPageSkeleton />;
+  return <FactsPageSkeleton figure facts={6} actions={0} />;
 }

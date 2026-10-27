@@ -18,10 +18,11 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { HandCoins } from "lucide-react";
+import { HandCoins } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { TermsAgreement, TermsHint } from "@/components/ui/terms-agreement";
+import { advanceTerms } from "@/lib/terms";
 import { InlineError } from "@/components/ui/inline-error";
 import { ReviewSummary } from "@/components/ui/review-summary";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
@@ -29,7 +30,6 @@ import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary } from "@/components/invest/parts";
 import { OutcomeFailure } from "@/components/invest/term-deposit-parts";
 import { LOANS_HOME, LoansDevTools } from "@/components/loans/parts";
 import { formatDate, formatMoney } from "@/lib/mock-data";
@@ -133,7 +133,7 @@ export function AdvanceFlow() {
   /* ── Can't take one ─────────────────────────────────────────────────── */
   if (!income || !product) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title={title} backTo={back} />
         <LoansDevTools />
         <TrueEmptyState
@@ -151,7 +151,7 @@ export function AdvanceFlow() {
   }
   if (open) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title={title} backTo={back} />
         <LoansDevTools />
         <TrueEmptyState
@@ -173,7 +173,7 @@ export function AdvanceFlow() {
   }
   if (accounts.length === 0) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title={title} backTo={back} />
         <TrueEmptyState title="You need an account to receive the advance" description="It’s paid in cedis into an active current or savings account." />
       </div>
@@ -204,9 +204,9 @@ export function AdvanceFlow() {
   /* ── Review ─────────────────────────────────────────────────────────── */
   if (screen === "review" && valid) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ ...back, label: title, onClick: () => setScreen("form") }} />
-        <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+        <div className="flex flex-col gap-5">
           <ReviewSummary
             details={[
               { label: "Paid into", value: to ? `${to.name} · ${to.number}` : "" },
@@ -230,14 +230,16 @@ export function AdvanceFlow() {
           <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
             {product.repaySentence(formatDate(dueOn), money(repay.total), money(num), money(repay.interest), repay.days)}
           </p>
+          <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject={`the ${title}`} terms={advanceTerms(needsSwitch)} also={needsSwitch ? "and to switching my account to a Salary Account" : undefined} />
           <div className="flex gap-2">
             <Button type="button" variant="outline" className="h-11 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("form")}>
               Back to Edit
             </Button>
-            <Button type="button" className="h-11 flex-1 rounded-2xl text-[16px]" onClick={() => setAuthOpen(true)}>
+            <Button type="button" className="h-11 flex-1 rounded-2xl text-[16px]" disabled={!accepted} onClick={() => setAuthOpen(true)}>
               Confirm
             </Button>
           </div>
+          <TermsHint agreed={accepted} />
         </div>
         <TransactionOtpModal
           open={authOpen}
@@ -246,16 +248,6 @@ export function AdvanceFlow() {
             setAuthOpen(false);
             authorised();
           }}
-          summary={
-            <AuthSummary
-              headline={`Request a ${title}`}
-              amount={money(num)}
-              rows={[
-                ["Paid into", to ? `${to.name} · ${to.number}` : ""],
-                ["Repaid", `${money(repay.total)} on ${formatDate(dueOn)}`],
-              ]}
-            />
-          }
         />
       </div>
     );
@@ -263,10 +255,10 @@ export function AdvanceFlow() {
 
   /* ── Form ───────────────────────────────────────────────────────────── */
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={back} />
       <LoansDevTools />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5 animate-in fade-in duration-200">
+      <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <div className="flex flex-col gap-2">
           <FromAccountSelector accounts={accounts} value={toId} onChange={setPickedTo} label="Pay Into" />
           <p className="px-1 text-[12px] text-muted-foreground">We pay the advance into this account.</p>
@@ -334,18 +326,10 @@ export function AdvanceFlow() {
               </section>
             )}
 
-            <label className="flex cursor-pointer items-start gap-2 px-1 py-2 text-[13px] leading-relaxed text-foreground">
-              <Checkbox checked={accepted} onCheckedChange={(v) => setAccepted(Boolean(v))} aria-label="Accept the Terms and Conditions" className="mt-0.5" />
-              <span>
-                {needsSwitch
-                  ? `I have read and agree to the Terms & Conditions of the ${title}, and to switching my account to a Salary Account.`
-                  : `I have read and agree to the Terms & Conditions of the ${title}.`}
-              </span>
-            </label>
           </div>
         )}
 
-        <ProceedButton disabled={!valid || !accepted} onClick={() => setScreen("review")} />
+        <ProceedButton disabled={!valid} onClick={() => setScreen("review")} />
       </div>
     </div>
   );

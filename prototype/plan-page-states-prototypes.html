@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plan Page by State: 5 Architectures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ok:#15803d;--ink:#0b0b0c;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0f0f0f;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.55;max-width:1100px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  .cell{display:flex;flex-direction:column;gap:12px;width:400px;max-width:100%}
+  .cap{font-size:13px;color:var(--mu);padding:0 4px}
+  .cap b{color:var(--tx);font-weight:500}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;height:800px;display:flex;flex-direction:column}
+  .scroll{flex:1;overflow:auto;padding:20px 20px 28px;display:flex;flex-direction:column;gap:24px}
+  .hd{display:flex;align-items:center;gap:10px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .btn{height:46px;padding:0 24px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)} .btn.ghost:hover{background:var(--tile);filter:none}
+  .btn.sm{height:36px;width:auto;padding:0 14px;font-size:13px;border-radius:12px}
+  .note{font-size:13px;color:var(--mu);text-align:center;line-height:1.5}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .sec>h3,.h3{font-size:16px;font-weight:500}
+  .mk{position:absolute;pointer-events:none;color:var(--p)}
+  .band{position:relative;overflow:hidden;border-radius:20px;background:color-mix(in srgb,var(--p) 28%,var(--tile));height:96px}
+  .tilepanel{position:relative;overflow:hidden;border-radius:24px;background:color-mix(in srgb,var(--p) 28%,var(--tile));padding:24px;display:flex;flex-direction:column;gap:16px}
+  .tilepanel>*{position:relative}
+  .hl{display:flex;flex-direction:column;gap:14px}
+  .hl>div{display:flex;gap:12px;align-items:center}
+  .hl .ic{width:32px;height:32px;border-radius:10px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none}
+  .hl b{font-weight:500;font-size:14px} .hl span.v{font-size:13px;color:var(--mu)}
+  .hl .t{display:flex;flex-direction:column;gap:1px}
+  .rows>div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:13px 0;border-top:1px solid var(--bd);font-size:14px}
+  .rows>div:last-child{border-bottom:1px solid var(--bd)}
+  .rows .l{color:var(--mu);font-size:13px}
+  .li{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--bd);width:100%}
+  .li:last-child{border-bottom:1px solid var(--bd)}
+  .li:hover{background:var(--tile)}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:14px} .li .m{font-size:12px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:14px} .li .e small{font-size:12px;color:var(--mu)}
+  .lnk{display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-size:14px;border-top:1px solid var(--bd);width:100%}
+  .lnk:last-of-type{border-bottom:1px solid var(--bd)}
+  .big{letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+  .act{text-decoration:underline;text-underline-offset:3px;font-size:13px;margin-left:10px;color:var(--tx)}
+  .step{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--bd)}
+  .step:last-of-type{border-bottom:1px solid var(--bd)}
+  .step .n{width:28px;height:28px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:13px;flex:none;color:var(--mu)}
+  .step.cur .n{background:var(--am);color:#111} .step.done .n{background:var(--tile);color:var(--ok)}
+  .step .b{display:flex;flex-direction:column;gap:2px;flex:1;font-size:14px} .step.dim{opacity:.55}
+  .fixed{border-top:1px solid var(--bd);padding:12px 20px 16px;display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--surf)}
+  .lead{background:var(--tile);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:6px;width:100%}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Plan page by state · 5 architectures · three states side by side: no profile · ready to apply · 3 policies running</h1>
+    <div class="ctrls">
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage" id="stage"></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+ money:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M9.8 10c0-.9.9-1.4 2.2-1.4s2.2.5 2.2 1.4-.9 1.2-2.2 1.6-2.2.7-2.2 1.6.9 1.4 2.2 1.4 2.2-.5 2.2-1.4"/>',
+ people:'<circle cx="9" cy="9" r="3"/><path d="M3.5 19c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="10" r="2.3"/><path d="M16 14.6c2.6-.2 4.2 1.1 4.6 3.9"/>',
+ shield:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/>',
+ home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+ check:'<path d="M5 12l4 4 10-10"/>'
+};
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const back=svg('<path d="M15 6l-6 6 6 6"/>',18,1.8);
+const caret=svg('<path d="M6 9l6 6 6-6"/>',16,1.8);
+
+/* ---- one plan, three situations ---- */
+const PLAN={title:'HomeCall Plan',col:'#ea580c',
+ key:['From','GHS 8.00','a month'],
+ hl:[['money','Pays out','Within 48 to 72 hours'],['people','Your family','Spouse, children, parents'],['shield','Accidents','Covered from day one']],
+ facts:[['Cover','GHS 2,500.00 to GHS 30,000.00'],['Who it covers','You, and family you add'],['Provider','StarLife Assurance']]};
+const POL=[
+ {n:'HC-20733',covers:'Your mother',prem:'GHS 8.00 a month',sum:'GHS 10,000.00',attn:'2 premiums missed · GHS 16.00'},
+ {n:'HC-20418',covers:'You, Ama and Kofi',prem:'GHS 15.00 a month',sum:'GHS 20,000.00',next:'Next premium 1 Nov'},
+ {n:'HC-21190',covers:'You',prem:'GHS 8.00 a month',sum:'GHS 10,000.00',next:'Next premium 1 Nov'}];
+const STATES=[['profile','Needs a profile'],['ready','Ready to apply'],['own','3 policies running']];
+const CAPS={profile:'<b>No insurance profile yet.</b> The one thing to do is create it; the plan is kept for them.',ready:'<b>Has a profile, no policy under this plan.</b> The one thing to do is start.',own:'<b>3 policies running</b>, one needs attention. The policies are the page.'};
+const S={v:1,dark:true,open:{}};
+
+/* ---- pieces ---- */
+const hd=()=>`<div class="hd"><span class="bk">${back}</span><h2>${PLAN.title}</h2></div>`;
+const hlList=()=>`<div class="hl">${PLAN.hl.map(h=>`<div><span class="ic">${svg(IC[h[0]],16,1.7)}</span><span class="t"><b>${h[1]}</b><span class="v">${h[2]}</span></span></div>`).join('')}</div>`;
+const factRows=()=>`<div class="rows">${PLAN.facts.map(f=>`<div><span class="l">${f[0]}</span><span class="tab">${f[1]}</span></div>`).join('')}</div>`;
+const priceLine=()=>`<div style="display:flex;align-items:baseline;gap:8px"><span class="mu" style="font-size:14px">${PLAN.key[0]}</span><span class="big" style="font-size:30px">${PLAN.key[1]}</span><span class="mu" style="font-size:14px">${PLAN.key[2]}</span></div>`;
+const pitchCta=st=>st==='profile'?`<div class="sec" style="gap:8px"><button class="btn" data-a="go">Create a Profile</button><p class="note">You only do it once. We keep ${PLAN.title} for you.</p></div>`:`<button class="btn" data-a="go">Get Started</button>`;
+const pol=(p,i)=>`<button class="li" data-a="item"><span class="g"><span class="t">Covers ${p.covers}</span><span class="m tab ${p.attn?'am':''}">${p.attn||p.next}</span></span><span class="e tab">${p.sum}<small>${p.prem}</small></span><span class="mu">${chev}</span></button>`;
+const polList=()=>`<div>${POL.map(pol).join('')}</div>`;
+const link=(t,id)=>`<button class="lnk" data-a="acc:${id}"><span>${t}</span><span class="mu">${chev}</span></button>`;
+const acc=(id,t,inner)=>`<div><button class="lnk" data-a="acc:${id}"><span>${t}</span><span class="mu">${caret}</span></button>${S.open[id]?`<div style="padding:8px 0 16px;display:flex;flex-direction:column;gap:20px">${inner}</div>`:''}</div>`;
+const mark=(s,pos)=>`<span class="mk" style="${pos}">${svg(IC.home,s,1.1)}</span>`;
+const scroll=x=>`<div class="scroll">${x}</div>`;
+
+/* ---- the 5 ---- */
+const V={};
+
+V[1]={name:'1. Two pages, never both',
+ note:'The page is one thing for a customer with no policy and a different thing for one with policies. Without a policy it is a short pitch: a band, three benefits, the price, one button. With policies the product disappears: the page is only their policies, one small “Apply for another” beside the heading, and “About this plan” is a row at the bottom that opens the explanation. A fourth or tenth policy just lengthens the list; nothing else moves.',
+ r:st=>{if(st==='own')return scroll(hd()+`<div class="sec"><div class="row"><h3 class="h3">Your Policies</h3><button class="btn ghost sm" data-a="go">Apply for Another</button></div>${polList()}</div>${link('About this plan','about')}`);
+  return scroll(hd()+`<div class="band" style="--p:${PLAN.col}">${mark(170,'right:-14px;bottom:-34px;opacity:.5')}</div>${hlList()}${priceLine()}${pitchCta(st)}${acc('d','Details',factRows())}`)}};
+
+V[2]={name:'2. A number first',
+ note:'Every state opens on one number, so the page always answers “where do I stand?”. Without a policy it is the price. With policies it is how many and what they cost together, with the problem as one amber row under it. Then the list, then one button at the end. The skeleton is the same in all three states, so the page never feels like a different screen.',
+ r:st=>{
+  if(st==='own')return scroll(hd()+`<div class="sec" style="gap:6px"><span class="big" style="font-size:44px">3 policies</span><span class="mu tab" style="font-size:14px">GHS 31.00 a month · GHS 40,000.00 cover</span></div><div class="rows"><div><span class="am">2 premiums missed</span><span class="tab">GHS 16.00<button class="act" data-a="go">Pay now</button></span></div></div>${polList()}<button class="btn ghost" data-a="go">Apply for Another</button>${link('About this plan','about')}`);
+  return scroll(hd()+`<div class="sec" style="gap:6px"><span class="mu" style="font-size:14px">From</span><span class="big" style="font-size:44px">GHS 8.00</span><span class="mu" style="font-size:14px">a month</span></div>${hlList()}${pitchCta(st)}${acc('d','Details',factRows())}`)}};
+
+V[3]={name:'3. The way in',
+ note:'For someone who has not started, the page shows the way in, not the product: three steps, the current one with its button inside it. “Create a profile” is step 1; once they have one that step is ticked and the current one is “Choose your cover”. The product explanation is a closed row. For a customer with policies it is a plain ruled list with the button beside the heading.',
+ r:st=>{
+  if(st==='own')return scroll(hd()+`<div class="sec"><div class="row"><h3 class="h3">Your Policies</h3><button class="btn ghost sm" data-a="go">Apply for Another</button></div>${polList()}</div>${acc('d','About this plan',hlList()+factRows())}`);
+  const steps=[['Create your profile','Once, for every plan'],['Choose your cover','The amount and who is covered'],['Confirm','With one code']];
+  const cur=st==='profile'?0:1;
+  return scroll(hd()+`<p style="font-size:17px;line-height:1.45;letter-spacing:-.01em">${st==='profile'?'Three steps to your first policy.':'You’re one step from your first policy.'}</p><div>${steps.map((s,i)=>`<div class="step ${i<cur?'done':i===cur?'cur':'dim'}"><span class="n">${i<cur?svg(IC.check,14,2):i+1}</span><div class="b"><span style="font-size:15px">${s[0]}</span><span class="mu" style="font-size:13px">${s[1]}</span>${i===cur?`<button class="btn" style="margin-top:12px" data-a="go">${i===0?'Create a Profile':'Get Started'}</button>`:''}</div></div>`).join('')}</div>${priceLine()}${acc('d','About this plan',hlList()+factRows())}`)}};
+
+V[4]={name:'4. The button never moves',
+ note:'The action is fixed to the bottom of the screen in every state, with the number it relates to beside it, so it can never be pushed down by a long list. The page above is only content: for a new customer the benefits and facts, for a customer the policies, scrolling on their own. This is the direct answer to “the section beneath gets pushed down and down”.',
+ r:st=>{
+  if(st==='own')return scroll(hd()+`<div class="sec" style="gap:4px"><span class="h3">Your Policies</span><span class="mu tab" style="font-size:13px">3 policies · 1 needs attention</span></div>${polList()}${link('About this plan','about')}`)+`<div class="fixed"><div style="display:flex;flex-direction:column"><span class="mu" style="font-size:12px">Together</span><span class="tab" style="font-size:16px">GHS 31.00 a month</span></div><button class="btn" style="width:auto;flex:none" data-a="go">Apply for Another</button></div>`;
+  return scroll(hd()+`<p style="font-size:17px;line-height:1.45;letter-spacing:-.01em">Help your family cover funeral expenses in a difficult time.</p>${hlList()}${factRows()}`)+`<div class="fixed"><div style="display:flex;flex-direction:column"><span class="mu" style="font-size:12px">From</span><span class="tab" style="font-size:16px">GHS 8.00 a month</span></div><button class="btn" style="width:auto;flex:none" data-a="go">${st==='profile'?'Create a Profile':'Get Started'}</button></div>`}};
+
+V[5]={name:'5. One thing in a panel',
+ note:'Each state has exactly one thing on a tinted panel and everything else is quiet. New customer: the offer, with its button inside the panel. Customer: the policy that most needs them (the one with missed premiums) as the lead, its figure large and its action in the panel, and the other policies as quiet rows below. The most important policy is the largest thing on the page, whatever the count.',
+ r:st=>{
+  if(st==='own'){const p=POL[0];return scroll(hd()+`<div class="lead"><span class="am" style="font-size:13px">Needs you</span><span class="mu" style="font-size:14px">Covers ${p.covers}</span><span class="big" style="font-size:32px">${p.sum}</span><span class="mu tab" style="font-size:13px">${p.prem}</span><div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:10px"><span class="am tab" style="font-size:14px">${p.attn}</span><button class="btn sm" data-a="go">Pay now</button></div></div><div class="sec"><span class="h3">Your other policies</span><div>${POL.slice(1).map(pol).join('')}</div></div><button class="btn ghost" data-a="go">Apply for Another</button>${link('About this plan','about')}`)}
+  return scroll(hd()+`<div class="tilepanel" style="--p:${PLAN.col}">${mark(220,'right:-30px;top:-40px;opacity:.4')}<div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;opacity:.7">From</span><span class="big" style="font-size:40px">GHS 8.00</span><span style="font-size:13px;opacity:.7">a month</span></div><div class="mu" style="font-size:14px;line-height:1.6;color:inherit;opacity:.85">${PLAN.hl.map(h=>`${h[1]}: ${h[2]}`).join('<br>')}</div>${pitchCta(st)}</div>${acc('d','Details',factRows())}`)}};
+
+/* ---- page ---- */
+const $=id=>document.getElementById(id);
+function render(){
+  $('themesel').innerHTML=[['dark','Dark'],['light','Light']].map(([k,l])=>`<button class="${(S.dark?'dark':'light')===k?'on':''}" data-a="theme:${k}">${l}</button>`).join('');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  $('stage').innerHTML=STATES.map(([k,l])=>`<div class="cell"><div class="cap"><span style="color:var(--tx)">${l}</span> · ${CAPS[k]}</div><div class="frame" style="--p:${PLAN.col}">${V[S.v].r(k)}</div></div>`).join('');
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='go'){toast('Opens its own flow');return}
+  if(a==='item'){toast('Opens the policy');return}
+  if(a==='v'){S.v=+arg;S.open={}}
+  else if(a==='theme')S.dark=arg==='dark';
+  else if(a==='acc')S.open[arg]=!S.open[arg];
+  render();
+});
+render();
+</script>
+</body>
+</html>

@@ -7,7 +7,7 @@
  */
 
 import Link from "next/link";
-import { ChevronRight, FileText, Landmark, PiggyBank } from "lucide-react";
+import { ChevronRight, FileText, Landmark, PiggyBank } from "@/components/ui/icons";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { addDays, daysLeftLabel, formatRate, MOCK_TODAY, securitiesFor, type Security } from "@/lib/treasury";
 import { TENURES } from "@/lib/term-deposits";
@@ -81,10 +81,10 @@ export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: bo
     offer.group === "term" ? (
       <span className="truncate">{`Matures ${formatDate(addDays(MOCK_TODAY, offer.tenureDays ?? 0))}`}</span>
     ) : s && offer.group === "primary" ? (
-      <span className="truncate">{`Settles ${formatDate(s.settlement ?? s.maturity)}`}</span>
+      <span className="truncate">{`Primary · Settles ${formatDate(s.settlement ?? s.maturity)}`}</span>
     ) : s ? (
       <>
-        <span className="shrink-0">{`Matures ${formatDate(s.maturity)}`}</span>
+        <span className="shrink-0">{`Secondary · Matures ${formatDate(s.maturity)}`}</span>
         <span aria-hidden="true">·</span>
         <span className="truncate">{daysLeftLabel(s.maturity)}</span>
       </>
@@ -110,7 +110,7 @@ export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: bo
           <span className="tabular text-[14px] text-foreground">{formatRate(offer.rate)}</span>
           {sub && <span className="tabular text-[12px] text-muted-foreground">{sub}</span>}
         </span>
-        <ChevronRight size={15} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+        <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
       </Link>
     </li>
   );

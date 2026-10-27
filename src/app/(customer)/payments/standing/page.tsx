@@ -12,7 +12,7 @@ import { ListCard } from "@/components/ui/list-card";
 import { useReducer, useState } from "react";
 import Link from "next/link";
 import { ScheduledPaymentSheet } from "@/components/payments/ScheduledPaymentSheet";
-import { ChevronRight, Plus, Repeat } from "lucide-react";
+import { ChevronRight, Plus, Repeat } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { TrueEmptyState } from "@/components/states/ListStates";
 import PageHeader from "@/components/layout/PageHeader";
@@ -55,7 +55,7 @@ export default function StandingOrdersPage() {
               isPaused ? "text-muted-foreground" : "text-foreground",
             )}
           >
-            <Repeat size={16} strokeWidth={1.8} aria-hidden="true" />
+            <Repeat size={16} aria-hidden="true" />
           </span>
           <span className="flex min-w-0 flex-1 flex-col">
             <span className={cn("truncate text-[14px]", isPaused ? "text-muted-foreground" : "text-foreground")}>{orderTitle(si)}</span>
@@ -69,7 +69,7 @@ export default function StandingOrdersPage() {
             </span>
             <span className="tabular text-[12px] text-muted-foreground">{isPaused ? "Paused" : dayLabel(si.nextRun)}</span>
           </span>
-          <ChevronRight size={15} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+          <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
         </button>
       </li>
     );

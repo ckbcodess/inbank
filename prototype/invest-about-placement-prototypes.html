@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Invest: Where About Goes on the Holdings Page: 8 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ink:#0b0b0c;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.55;max-width:1100px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  .cell{display:flex;flex-direction:column;gap:12px;width:620px;max-width:100%}
+  .cap{font-size:13px;color:var(--mu);padding:0 4px;line-height:1.5} .cap b{color:var(--tx);font-weight:500}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;min-height:520px;display:flex;flex-direction:column;position:relative}
+  .scroll{flex:1;padding:28px 32px 32px;display:flex;flex-direction:column;gap:24px;width:100%;max-width:560px;margin:0 auto}
+  .hd{display:flex;align-items:center;gap:10px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .btn{height:44px;padding:0 20px;border-radius:14px;background:var(--am);color:#111;font-weight:500;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)} .btn.ghost:hover{background:var(--tile);filter:none}
+  .btn.sm{height:36px;padding:0 14px;font-size:13px;border-radius:12px}
+  .btn.full{width:100%}
+  .h3{font-size:16px;font-weight:500}
+  .big{font-size:44px;letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+  .sech{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:36px}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .grp{background:var(--tile);border-radius:20px;padding:8px}
+  .li{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:12px;width:100%}
+  .li:hover{background:var(--tileh)}
+  .li .ic{width:36px;height:36px;border-radius:10px;background:var(--tileh);display:flex;align-items:center;justify-content:center;color:var(--mu);flex:none}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:14px} .li .m{font-size:12px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:14px} .li .e small{font-size:12px;color:var(--mu)}
+  .li .e.am small{color:var(--amt)}
+  .lnk{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 12px;border-radius:12px;width:100%;font-size:14px}
+  .lnk:hover{background:var(--tileh)}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tile{background:var(--tile);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:104px}
+  .tile:hover{background:var(--tileh)}
+  .tile.pri{background:var(--am);color:#111} .tile.pri:hover{filter:brightness(1.06)}
+  .tile .d{width:36px;height:36px;border-radius:50%;background:var(--tileh);display:flex;align-items:center;justify-content:center}
+  .tile.pri .d{background:rgba(0,0,0,.12)}
+  .tile .n{font-size:14px;font-weight:500} .tile .s{font-size:12px;color:var(--mu);margin-top:2px} .tile.pri .s{color:rgba(0,0,0,.6)}
+  .add{display:flex;align-items:center;gap:12px;padding:14px 12px;border:1px dashed var(--bd);border-radius:12px;width:100%;color:var(--mu);font-size:14px;margin-top:4px}
+  .add:hover{background:var(--tileh);color:var(--tx)}
+  .u{text-decoration:underline;text-underline-offset:3px}
+  .dock{position:sticky;bottom:0;margin-top:auto;padding:16px 0 0;background:linear-gradient(transparent,var(--surf) 30%);display:flex;gap:8px}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--bd)}
+  .tabs button{padding:10px 14px;font-size:14px;color:var(--mu);border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tabs button.on{color:var(--tx);border-color:var(--am)}
+  .tab2{display:flex;gap:4px;border-bottom:1px solid var(--bd)}.tab2 button{padding:10px 14px;font-size:14px;color:var(--mu);border-bottom:2px solid transparent;margin-bottom:-1px}.tab2 button.on{color:var(--tx);border-color:var(--am)}
+  .ibtn{width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border:1px solid var(--bd)}.ibtn:hover{background:var(--tile);color:var(--tx)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Invest · holdings page, buttons fixed · 8 places for About</h1>
+    <div class="ctrls">
+      <div class="seg" id="prodsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage" id="stage"></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',bond:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8"/>',vault:'<path d="M4 11h13a3 3 0 013 3v2a3 3 0 01-3 3H8a4 4 0 01-4-4z"/><path d="M8 11V8a2 2 0 014 0v3"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 .5c0 1.7-2.5 2-2.5 3.5M12 17h.01"/>'};
+const back=svg('<path d="M15 6l-6 6 6 6"/>',20,1.8);
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const PROD={
+ td:{name:'Term Deposits',title:'Your Term Deposits',buy:'Open Another',icon:'vault',low:'term deposits',
+  h:[{t:'182-day Term Deposit',sub:'Matures 08 Apr 2027',fig:2000000,left:'164 days left'},{t:'91-day Term Deposit',sub:'Matures 19 Nov 2026',fig:1031164,left:'5 days left',soon:1}],
+  ab:[['A fixed rate','Set when you start'],['You choose how long','91, 182 or 364 days'],['Your choice at the end','Take it out or roll it over']]},
+ bl:{name:'Treasury Bills',title:'Your Treasury Bills',buy:'Buy Another',icon:'doc',low:'treasury bills',
+  h:[{t:'91-day Treasury Bill',sub:'Bill · Matures 03 Dec 2026',fig:1000000,left:'56 days left'},{t:'91-day Treasury Bill',sub:'Bill · Matures 15 Jan 2027',fig:51658,left:'99 days left'}],
+  ab:[['Lend to the government','Government of Ghana Treasury Bills'],['Buy new or from others','At auction, or from other investors'],['Sell early if you need to','Through a rediscount']]},
+ bn:{name:'Bonds',title:'Your Bonds',buy:'Buy Another',icon:'bond',low:'bonds',
+  h:[{t:'6-Year Fixed Bond',sub:'Bond · Matures 17 Feb 2031',fig:1500000,left:'4 years left'}],
+  ab:[['Lend to the government','Government of Ghana Bonds'],['Interest every 6 months','A coupon until it matures'],['Sell early if you need to','Through a rediscount']]}
+};
+const ghs=c=>'GHS '+(c/100).toLocaleString('en-GH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const S={v:1,prod:'td',dark:true,tab:'yours'};
+const P=()=>PROD[S.prod];
+const hold=x=>`<button class="li" data-a="toast:Opens the holding"><span class="ic">${svg(IC[P().icon],16)}</span><span class="g"><span class="t">${x.t}</span><span class="m ${x.soon?'am':''}">${x.sub}</span></span><span class="e"><span class="tab">${ghs(x.fig)}</span><small>${x.left}</small></span><span class="mu">${chev}</span></button>`;
+const aboutRow=()=>`<button class="lnk" data-a="toast:Opens About ${P().low}"><span>About ${P().low}</span><span class="mu">${chev}</span></button>`;
+const list=(extra='')=>`<div class="grp">${P().h.map(hold).join('')}${extra}</div>`;
+const sech=(t,right='')=>`<div class="sech"><h3 class="h3">${t}</h3>${right}</div>`;
+const hd=(t,right='')=>`<div class="hd" style="justify-content:space-between"><span style="display:flex;align-items:center;gap:10px"><span class="bk">${back}</span><h2>${t}</h2></span>${right}</div>`;
+const acts=()=>`<div style="display:flex;flex-direction:column;gap:12px"><button class="btn full" style="height:44px;border-radius:16px" data-a="toast:Opens the list">${P().buy}</button><button class="btn ghost full" style="height:44px;border-radius:16px" data-a="toast:Opens the statement request">View Statements</button></div>`;
+const frame=h=>`<div class="frame"><div class="scroll">${h}</div></div>`;
+const cell=(c,h)=>`<div class="cell"><p class="cap">${c}</p>${h}</div>`;
+const aboutBody=()=>`<div style="display:flex;flex-direction:column;gap:18px">${P().ab.map(b=>`<div style="display:flex;gap:14px;align-items:center"><span style="width:40px;height:40px;border-radius:50%;background:var(--am);color:#111;display:flex;align-items:center;justify-content:center;flex:none">${svg(IC.info,18)}</span><div><div style="font-size:16px">${b[0]}</div><div class="mu" style="font-size:13px;margin-top:2px">${b[1]}</div></div></div>`).join('')}</div>`;
+const base=(mid='',bottom='',right='')=>frame(hd(P().name,right)+`<div class="sec">${sech(P().title,mid)}${list()}</div>`+acts()+bottom);
+
+const V={};
+V[1]={name:'1. A text link under the buttons',note:'The quietest: a centred, underlined text link under the two buttons. It is the last thing on the page, never competes with the actions, and reads as "more, if you want it". One tap to the About page.',
+ f:()=>[cell('<b>Link under the buttons.</b>',base('',`<button class="u" style="align-self:center;font-size:14px;color:var(--mu)" data-a="toast:Opens About ${P().low}">About ${P().low}</button>`))]};
+V[2]={name:'2. An info button beside the title',note:'The title row gets a small round info button on the right. The body of the page is only holdings and the two buttons, and About is a tap away at the top where "what is this?" is usually looked for.',
+ f:()=>[cell('<b>Info in the header.</b>',base('','',`<button class="ibtn" aria-label="About ${P().low}" data-a="toast:Opens About ${P().low}">${svg(IC.info,16)}</button>`))]};
+V[3]={name:'3. The last row of the list',note:'About joins the holdings list as its final row, divided from them, in the same row style. Nothing new is introduced: it is a row you tap. It sits inside the card so the page keeps one block, then two buttons.',
+ f:()=>[cell('<b>A row inside the list card.</b>',frame(hd(P().name)+`<div class="sec">${sech(P().title)}<div class="grp">${P().h.map(hold).join('')}<div style="border-top:1px solid var(--bd);margin:4px 12px 0"></div>${aboutRow()}</div></div>`+acts()))]};
+V[4]={name:'4. A link on the section heading',note:'The heading row of the holdings carries a plain "About" text link on the right, beside what it describes. It is the same place the old small buttons lived, but a text link is far lighter than two pills.',
+ f:()=>[cell('<b>Text link in the heading row.</b>',base(`<button class="u" style="font-size:14px;color:var(--mu)" data-a="toast:Opens About ${P().low}">About</button>`))]};
+V[5]={name:'5. A third, plain button',note:'A third full-width button, with no border and no fill, under the two. The three actions share one column and one width, in a clear order: Buy, Statements, About. Still plain enough that it does not compete.',
+ f:()=>[cell('<b>Third text button.</b>',base('',`<button class="btn full" style="background:transparent;color:var(--tx);height:44px" data-a="toast:Opens About ${P().low}">About ${P().low}</button>`))]};
+V[6]={name:'6. A help icon at the top right',note:'A question-mark icon in the corner of the header, the place most banking apps put help. It reads as "explain this page" rather than a feature, and it keeps the page body completely clean.',
+ f:()=>[cell('<b>Help icon, top right.</b>',base('','',`<button class="ibtn" aria-label="How ${P().low} work" data-a="toast:Opens About ${P().low}">${svg(IC.help,16)}</button>`))]};
+V[7]={name:'7. A quiet line at the bottom',note:'A single small muted line at the very bottom: "New to term deposits? See how they work". It speaks to the one customer who needs it and disappears for everyone else.',
+ f:()=>[cell('<b>Footnote line.</b>',base('',`<p style="text-align:center;font-size:12px;color:var(--mu)">New to ${P().low}? <button class="u" style="font-size:12px;color:var(--tx)" data-a="toast:Opens About ${P().low}">See how they work</button></p>`))]};
+V[8]={name:'8. Two tabs: Yours and About',note:'The page becomes two tabs under the title. Yours is the holdings and the two buttons; About shows the benefits on the same page, with no new route. Nothing is added to the first screen, and About is one tap and a tap back.',
+ f:()=>{const tabs=`<div class="tab2"><button class="${S.tab==='yours'?'on':''}" data-a="tab:yours">Yours</button><button class="${S.tab==='about'?'on':''}" data-a="tab:about">About</button></div>`;
+  return [cell('<b>Tabs on the page.</b> Tap About.',frame(hd(P().name)+tabs+(S.tab==='yours'?`<div class="sec">${sech(P().title)}${list()}</div>`+acts():aboutBody())))]}};
+
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('prodsel',[['td','Term Deposits'],['bl','Treasury Bills'],['bn','Bonds']],S.prod,'prod');
+  seg('themesel',[['dark','Dark'],['light','Light']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  $('stage').innerHTML=V[S.v].f().join('');
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='toast'){toast(arg);return}
+  if(a==='v'){S.v=+arg;S.tab='yours'}
+  else if(a==='prod')S.prod=arg;
+  else if(a==='theme')S.dark=arg==='dark';
+  else if(a==='tab')S.tab=arg;
+  render();
+});
+render();
+</script>
+</body>
+</html>

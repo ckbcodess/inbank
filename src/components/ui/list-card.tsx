@@ -10,6 +10,17 @@ export const LIST_CARD_CLASS =
   "flex flex-col gap-0.5 overflow-hidden rounded-2xl border border-transparent border-[length:var(--edge-glass-width)] p-2 " +
   "[background:linear-gradient(var(--card),var(--card))_padding-box,linear-gradient(var(--edge-glass-angle),var(--edge-glass-start),var(--edge-glass-mid)_var(--edge-glass-mid-at),var(--edge-glass-end))_border-box]";
 
+/**
+ * The same glass edge around a tile (a card that holds one thing, not rows): the tile fill, and the edge the ListCard has.
+ * The hover version lifts the fill to the hover tile. Written out whole because Tailwind only reads class names it can see.
+ */
+export const GLASS_TILE_CLASS =
+  "border border-transparent border-[length:var(--edge-glass-width)] " +
+  "[background:linear-gradient(var(--tile),var(--tile))_padding-box,linear-gradient(var(--edge-glass-angle),var(--edge-glass-start),var(--edge-glass-mid)_var(--edge-glass-mid-at),var(--edge-glass-end))_border-box]";
+export const GLASS_TILE_HOVER_CLASS =
+  GLASS_TILE_CLASS +
+  " hover:[background:linear-gradient(var(--tile-hover),var(--tile-hover))_padding-box,linear-gradient(var(--edge-glass-angle),var(--edge-glass-start),var(--edge-glass-mid)_var(--edge-glass-mid-at),var(--edge-glass-end))_border-box]";
+
 export function ListCard({
   as = "ul",
   className,

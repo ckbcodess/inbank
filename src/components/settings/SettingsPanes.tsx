@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Monitor, Moon, Sun } from "lucide-react";
+import { ChevronLeft, Monitor, Moon, Sun } from "@/components/ui/icons";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -55,7 +55,7 @@ function PaneHeader({ title, onBack }: { title: string; onBack: () => void }) {
         aria-label="Back to settings"
         className="-ml-3 flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors duration-hover hover:text-foreground sm:hidden"
       >
-        <ChevronLeft size={18} strokeWidth={1.8} />
+        <ChevronLeft size={18} />
       </button>
       <h2 className="text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground sm:text-[16px]">{title}</h2>
     </div>
@@ -71,7 +71,7 @@ function StepHeader({ back, title, onBack }: { back: string; title: string; onBa
         onClick={onBack}
         className="-ml-1 inline-flex h-10 w-fit cursor-pointer items-center gap-1 rounded-lg pr-2 text-[13px] text-muted-foreground transition-colors duration-hover hover:text-foreground"
       >
-        <ChevronLeft size={16} strokeWidth={1.8} />
+        <ChevronLeft size={16} />
         <span>{back}</span>
       </button>
       <h2 className="text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground sm:text-[16px]">{title}</h2>

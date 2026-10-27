@@ -213,6 +213,9 @@ interface InsuranceState {
   serial: number;
   /** Dev Mode: the next requests fail, so the failure screen can be walked through. */
   failRequests: boolean;
+  /** Customers who have seen the welcome to insurance. */
+  welcomed: Record<string, boolean>;
+  markWelcomed: (ownerId: string, seen?: boolean) => void;
 
   saveProfile: (ownerId: string, profile: InsuranceProfile) => void;
   clearProfile: (ownerId: string) => void;
@@ -238,6 +241,8 @@ export const useInsurance = create<InsuranceState>()(
       claims: [],
       serial: 1,
       failRequests: false,
+      welcomed: {},
+      markWelcomed: (ownerId, seen = true) => set((s) => ({ welcomed: { ...s.welcomed, [ownerId]: seen } })),
 
       saveProfile: (ownerId, profile) => set((s) => ({ profiles: { ...s.profiles, [ownerId]: profile } })),
       clearProfile: (ownerId) =>
@@ -406,6 +411,10 @@ export const maturityOf = (p: Pick<Policy, "startMonth" | "termYears">) =>
 /** Premiums paid in so far. */
 export const premiumsPaid = (p: Pick<Policy, "payments">) => sumMoney(p.payments.map((x) => x.amount));
 export const outstanding = (p: Pick<Policy, "arrears">) => sumMoney(p.arrears.map((a) => a.amount));
+
+/** A policy that needs the customer: missed premiums, a medical assessment to wait for, or a cancellation in progress. */
+export const needsAttention = (p: Pick<Policy, "arrears" | "status">) =>
+  p.arrears.length > 0 || p.status === "pending-medical" || p.status === "cancel-requested";
 
 /**
  * Savings plans: what cashing the policy in would pay today. Placeholder rule until StarLife confirms its own: nothing
@@ -583,6 +592,7 @@ export function useMyInsurance() {
   const allPolicies = useInsurance((s) => s.policies);
   const allPeople = useInsurance((s) => s.people);
   const allClaims = useInsurance((s) => s.claims);
+  const welcomedAll = useInsurance((s) => s.welcomed);
   return useMemo(() => {
     const policies = allPolicies.filter((p) => p.ownerId === ownerId);
     const people = allPeople.filter((p) => p.ownerId === ownerId);
@@ -592,9 +602,10 @@ export function useMyInsurance() {
       policies,
       people,
       claims: allClaims.filter((c) => c.ownerId === ownerId),
+      welcomed: Boolean(welcomedAll[ownerId]),
       personOf: (id: string | undefined) => people.find((p) => p.id === id),
     };
-  }, [ownerId, profiles, allPolicies, allPeople, allClaims]);
+  }, [ownerId, profiles, allPolicies, allPeople, allClaims, welcomedAll]);
 }
 
 /** One policy by id, with its claims, for the policy screens. */
