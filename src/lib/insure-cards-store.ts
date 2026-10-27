@@ -28,13 +28,13 @@ interface InsureCardsState {
 export const useInsureCards = create<InsureCardsState>()(
   persist(
     (set) => ({
-      look: "corner",
+      look: "image",
       layout: "grid",
       gate: "row",
       setLook: (look) => set({ look }),
       setLayout: (layout) => set({ layout }),
       setGate: (gate) => set({ gate }),
     }),
-    { name: "nibs-insure-cards-v2" },
+    { name: "nibs-insure-cards-v3" },
   ),
 );

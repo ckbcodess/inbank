@@ -203,7 +203,7 @@ const GATE_STYLES = [
 
 /**
  * The card look, the layout and the "before you can use this" prompt, with the Dev Mode switches that change them.
- * Scaffolding: production builds always show the corner look, two to a row, with the slim row. Insure, Invest and Loans
+ * Scaffolding: production builds always show the image look, two to a row, with the slim row. Insure, Invest and Loans
  * share it.
  */
 export function useCardLooks(): { look: PlanCardLook; layout: PlanCardLayout; gate: GatePromptStyle; groups: DevStateGroup[] } {
@@ -222,7 +222,7 @@ export function useCardLooks(): { look: PlanCardLook; layout: PlanCardLayout; ga
     [storedLook, storedLayout, storedGate, setLook, setLayout, setGate],
   );
   return {
-    look: SHOW_DEMO_TOOLS ? storedLook : "corner",
+    look: SHOW_DEMO_TOOLS ? storedLook : "image",
     layout: SHOW_DEMO_TOOLS ? storedLayout : "grid",
     gate: SHOW_DEMO_TOOLS ? storedGate : "row",
     groups,
