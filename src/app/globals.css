@@ -954,6 +954,32 @@ a,
   .page-stagger > *:not(:only-child):nth-child(n+9) { animation-delay: 150ms; }
 }
 
+/* The page header (title, back arrow, its actions) is the frame the page arrives in, so it never staggers: it is there
+   from the first frame and only the content under it rises in. */
+.page-stagger > [data-page-header],
+.page-stagger > * > [data-page-header] { animation: none !important; }
+
+/* While the first-load splash covers the app, the page's entrance animations wait (held at their starting frame), so they
+   play once the splash has gone instead of finishing unseen underneath it. */
+.splash-hold * { animation-play-state: paused !important; }
+
+/* Items inside a landing page's list (the product cards on Insure, Invest and Loans): each rises in after the one before
+   it, once the page's own sections are in. Opt in with `stagger-items` on the parent. Uses the `reveal` duration and the
+   settle curve; the step is 60ms and stops growing after the eighth, so a long list never takes long to land. */
+@media (prefers-reduced-motion: no-preference) {
+  .stagger-items > * {
+    animation: page-stagger-in var(--dur-reveal) var(--ease-settle) both;
+    animation-delay: 120ms;
+  }
+  .stagger-items > :nth-child(2) { animation-delay: 180ms; }
+  .stagger-items > :nth-child(3) { animation-delay: 240ms; }
+  .stagger-items > :nth-child(4) { animation-delay: 300ms; }
+  .stagger-items > :nth-child(5) { animation-delay: 360ms; }
+  .stagger-items > :nth-child(6) { animation-delay: 420ms; }
+  .stagger-items > :nth-child(7) { animation-delay: 480ms; }
+  .stagger-items > :nth-child(n+8) { animation-delay: 540ms; }
+}
+
 /* Opt-out: the payment success screen runs its own framer-motion entrance.
    Cancel the shell's inherited CSS page-stagger on its sections so the two
    don't fight (the CSS fill:both was pinning elements visible, overriding

@@ -168,6 +168,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
               <div
                 key={pathname}
                 className={cn(
+                  splash !== "off" && "splash-hold",
                   "@container page-stagger mx-auto w-full px-3 pt-5 pb-28 transition-[padding] duration-move ease-settle sm:px-6 sm:pt-10 sm:pb-12 lg:px-10 lg:pt-10 lg:pb-12 xl:px-10",
                   pathname === "/overview" || pathname === "/business/overview" ? "max-w-[1440px]" : "max-w-[960px]",
                 )}

@@ -233,7 +233,7 @@ export default function SendAndPayPage() {
       />
 
       {/* Action Sections */}
-      <div className="flex flex-col gap-10">
+      <div className="stagger-items flex flex-col gap-10">
         <ActionSection title="Send" actions={SEND_ACTIONS} look={look} />
         <ActionSection title="Pay" actions={PAY_ACTIONS} look={look} />
       </div>

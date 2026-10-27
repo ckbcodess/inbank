@@ -79,7 +79,7 @@ export function InvestHome() {
         {state === "error" ? (
           <ListErrorState onRetry={() => setState("populated")} />
         ) : (
-          <div className={cn("grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
+          <div className={cn("stagger-items grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
             <ProductCard
               id="term-deposits"
               name="Term Deposits"

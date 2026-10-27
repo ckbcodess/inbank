@@ -59,7 +59,7 @@ export function InsureHome() {
         {state === "error" ? (
           <ListErrorState onRetry={() => setState("populated")} />
         ) : (
-          <div className={cn("grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
+          <div className={cn("stagger-items grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
             {INSURANCE_PLANS.filter((p) => p.available).map((plan) => (
               <PlanCard key={plan.id} plan={plan} look={look} layout={layout} status={statusOf(plan.id)} />
             ))}

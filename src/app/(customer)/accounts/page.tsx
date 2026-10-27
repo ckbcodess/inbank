@@ -416,88 +416,90 @@ function AccountsContent() {
       )}
 
       {/* ── My accounts — the page title is the heading; Add Account sits with it ── */}
-      <section aria-label="My accounts">
-        <div className={LIST}>
-          {screenState === "loading" && <ListSkeleton rows={Math.max(accounts.length, 2)} />}
+      <div className="stagger-items flex flex-col gap-10">
+        <section aria-label="My accounts">
+          <div className={LIST}>
+            {screenState === "loading" && <ListSkeleton rows={Math.max(accounts.length, 2)} />}
 
-          {screenState === "error" && (
-            <ListErrorState
-              onRetry={() => setScreenState("populated")}
-              description="We couldn't load your accounts. Your money is safe — try again."
-            />
-          )}
-
-          {screenState !== "loading" && screenState !== "error" && (
-              <ul className="flex flex-col gap-0.5 p-2">
-                {accounts.map((account) => (
-                  <AccountRow
-                    key={account.id}
-                    account={account}
-                    isDefault={account.id === defaultId}
-                    showDefault={multiple}
-                    pending={account.id === defaultId ? scenario.pending : undefined}
-                  />
-                ))}
-              </ul>
-          )}
-        </div>
-      </section>
-
-      {/* ── Sources of funds (linked wallets & cards) ── */}
-      {screenState !== "error" && (
-        <section className="flex flex-col gap-3" aria-labelledby="sources-heading">
-          <SectionHeading
-            id="sources-heading"
-            title="Other Funding Sources"
-            hint="Mobile money wallets and bank cards you've linked, so you can add money to your accounts from them. Your money stays with them, and you can remove one any time."
-            action={
-              sources.length > 0 && screenState === "populated" ? (
-                <SectionAction onClick={() => setLinkOpen(true)}>Link a Wallet or Card</SectionAction>
-              ) : undefined
-            }
-          />
-
-          {/* The empty state sits straight on the page, with no card behind it. */}
-          <div className={screenState === "populated" && sources.length === 0 ? undefined : LIST}>
-            {screenState === "loading" && <ListSkeleton rows={2} />}
-
-            {screenState === "sources-error" && (
+            {screenState === "error" && (
               <ListErrorState
                 onRetry={() => setScreenState("populated")}
-                description="We couldn't load your linked cards and wallets. Your accounts aren't affected."
+                description="We couldn't load your accounts. Your money is safe — try again."
               />
             )}
 
-            {screenState === "populated" && sources.length === 0 && (
-              <TrueEmptyState illustration="empty-sources"
-                title="No cards or wallets linked"
-                description="Link mobile money or a bank card to add money."
-                action={
-                  <Button onClick={() => setLinkOpen(true)}>
-                    <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-                    Link a Wallet or Card
-                  </Button>
-                }
-              />
-            )}
-
-            {screenState === "populated" && sources.length > 0 && (
-              <ul className="flex flex-col gap-0.5 p-2">
-                {sources.map((source) => (
-                  <SourceRow key={source.id} source={source} onOpen={() => {
-                      setViewing(source);
-                      setViewOpen(true);
-                    }}
-                    onRemove={() => {
-                      setRemoving(source);
-                      setRemoveOpen(true);
-                    }} />
-                ))}
-              </ul>
+            {screenState !== "loading" && screenState !== "error" && (
+                <ul className="flex flex-col gap-0.5 p-2">
+                  {accounts.map((account) => (
+                    <AccountRow
+                      key={account.id}
+                      account={account}
+                      isDefault={account.id === defaultId}
+                      showDefault={multiple}
+                      pending={account.id === defaultId ? scenario.pending : undefined}
+                    />
+                  ))}
+                </ul>
             )}
           </div>
         </section>
-      )}
+
+        {/* ── Sources of funds (linked wallets & cards) ── */}
+        {screenState !== "error" && (
+          <section className="flex flex-col gap-3" aria-labelledby="sources-heading">
+            <SectionHeading
+              id="sources-heading"
+              title="Other Funding Sources"
+              hint="Mobile money wallets and bank cards you've linked, so you can add money to your accounts from them. Your money stays with them, and you can remove one any time."
+              action={
+                sources.length > 0 && screenState === "populated" ? (
+                  <SectionAction onClick={() => setLinkOpen(true)}>Link a Wallet or Card</SectionAction>
+                ) : undefined
+              }
+            />
+
+            {/* The empty state sits straight on the page, with no card behind it. */}
+            <div className={screenState === "populated" && sources.length === 0 ? undefined : LIST}>
+              {screenState === "loading" && <ListSkeleton rows={2} />}
+
+              {screenState === "sources-error" && (
+                <ListErrorState
+                  onRetry={() => setScreenState("populated")}
+                  description="We couldn't load your linked cards and wallets. Your accounts aren't affected."
+                />
+              )}
+
+              {screenState === "populated" && sources.length === 0 && (
+                <TrueEmptyState illustration="empty-sources"
+                  title="No cards or wallets linked"
+                  description="Link mobile money or a bank card to add money."
+                  action={
+                    <Button onClick={() => setLinkOpen(true)}>
+                      <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
+                      Link a Wallet or Card
+                    </Button>
+                  }
+                />
+              )}
+
+              {screenState === "populated" && sources.length > 0 && (
+                <ul className="flex flex-col gap-0.5 p-2">
+                  {sources.map((source) => (
+                    <SourceRow key={source.id} source={source} onOpen={() => {
+                        setViewing(source);
+                        setViewOpen(true);
+                      }}
+                      onRemove={() => {
+                        setRemoving(source);
+                        setRemoveOpen(true);
+                      }} />
+                  ))}
+                </ul>
+              )}
+            </div>
+          </section>
+        )}
+      </div>
 
       {/* Link only — same store, so the new source appears in the list above */}
       <LinkSourceAccountModal

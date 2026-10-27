@@ -51,7 +51,7 @@ export function LoansHome() {
       <LoansWelcome />
       <div className="mx-auto flex w-full max-w-[720px] flex-col gap-10">
         <ProductBanner items={alerts} noun="advances" />
-        <div className={layout === "grid" ? "grid grid-cols-1 min-[480px]:grid-cols-2" : "grid grid-cols-1"}>
+        <div className={layout === "grid" ? "stagger-items grid grid-cols-1 min-[480px]:grid-cols-2" : "stagger-items grid grid-cols-1"}>
           <ProductCard
             id="advance"
             name={shown.name}
