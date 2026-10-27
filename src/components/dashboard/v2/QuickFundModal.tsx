@@ -9,7 +9,7 @@ import {
   ChevronLeft,
   CreditCard,
   Smartphone,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -214,7 +214,7 @@ export function QuickFundFlow({
         className="flex size-6 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
         aria-label="Back"
       >
-        <ChevronLeft size={18} strokeWidth={2} />
+        <ChevronLeft size={18} />
       </button>
     ) : stage === "select" && onBack ? (
       <button
@@ -223,7 +223,7 @@ export function QuickFundFlow({
         className="flex size-6 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
         aria-label="Back"
       >
-        <ChevronLeft size={18} strokeWidth={2} />
+        <ChevronLeft size={18} />
       </button>
     ) : null;
 
@@ -407,7 +407,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
           {stage === "ussd" && (
             <div className="flex flex-col items-center text-center gap-3 py-3">
               <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
-                <Smartphone size={24} strokeWidth={1.8} />
+                <Smartphone size={24} />
               </div>
               <div className="flex flex-col gap-1">
                 <span className="tabular-nums text-[20px] font-medium tracking-tight text-foreground">
@@ -428,7 +428,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
           {stage === "success" && (
             <div className="flex flex-col items-center text-center gap-3 py-3">
               <div className="flex size-12 items-center justify-center rounded-2xl bg-success/15 text-success-text shadow-2xs">
-                <CheckCircle2 size={24} strokeWidth={1.9} />
+                <CheckCircle2 size={24} />
               </div>
 
               <div className="flex flex-col gap-1">
@@ -445,7 +445,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 variant="default"
                 size="lg"
                 onClick={handleFinish}
-                className="mt-2 h-9 w-full text-[13.5px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+                className="mt-2 h-9 w-full text-[13.5px] active:scale-[0.96] transition-transform duration-hover cursor-pointer"
               >
                 <span>Continue</span>
               </Button>

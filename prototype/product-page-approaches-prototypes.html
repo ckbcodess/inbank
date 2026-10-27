@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Product Page, Other Approaches: 18 Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ink:#0b0b0c;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0f0f0f;--tile:#1a1a1a;--tileh:#222;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul,ol{margin:0;padding:0} ul,ol{list-style:none}
+  input{font:inherit;color:inherit}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;max-width:100%}
+  .pg{padding:28px 32px 40px;display:flex;flex-direction:column;gap:32px;min-height:720px}
+  .phone .pg{padding:20px 20px 32px}
+  .col{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:32px;flex:1}
+  .hd{display:flex;align-items:center;gap:12px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .bk:hover{background:var(--tile)}
+  .btn{height:46px;padding:0 28px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%;text-align:center;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)} .btn.sm{height:38px;width:auto;padding:0 18px;font-size:13px;border-radius:12px}
+  .note{font-size:13px;color:var(--mu);text-align:center;line-height:1.5}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .sec>h3{font-size:16px;font-weight:500}
+  .lc{background:var(--tile);border-radius:16px;padding:4px}
+  .li{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;width:100%}
+  .li:hover{background:var(--tileh)}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:14px} .li .m{font-size:12px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:14px} .li .e small{font-size:12px;color:var(--mu)}
+  .rows>div{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding:14px 0;border-top:1px solid var(--bd);font-size:14px}
+  .rows>div:last-child{border-bottom:1px solid var(--bd)}
+  .rows .l{color:var(--mu);font-size:13px;flex:none} .rows .v{text-align:right;line-height:1.5}
+  .rows.spec{border-top:2px solid var(--tx)} .rows.spec>div:first-child{border-top:0} .rows.spec .l{color:var(--tx);font-weight:500;width:150px}
+  .rows.spec .v{text-align:left;flex:1}
+  .meta{font-size:13px;color:var(--mu);line-height:1.6}
+  .big{letter-spacing:-.03em;line-height:1.02;font-variant-numeric:tabular-nums}
+  .act{text-decoration:underline;text-underline-offset:3px;font-size:14px;margin-left:12px;color:var(--tx);white-space:nowrap}
+  .attn{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);font-size:14px}
+  .attn .l{color:var(--amt)}
+  .acc{display:flex;justify-content:space-between;align-items:center;width:100%;padding:16px 0;font-size:14px;border-top:1px solid var(--bd)}
+  .acc:last-of-type{border-bottom:1px solid var(--bd)}
+  .flow{display:flex;align-items:stretch;gap:20px}
+  .flow .side{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+  .flow .arrow{display:flex;align-items:center;color:var(--mu)}
+  .phone .flow{flex-direction:column;gap:12px} .phone .flow .arrow{transform:rotate(90deg);align-self:flex-start}
+  .tl{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative}
+  .tl .stop{display:flex;flex-direction:column;gap:6px;padding-right:12px}
+  .tl .dotrow{display:flex;align-items:center;height:12px;position:relative}
+  .tl .dot{width:12px;height:12px;border-radius:50%;background:var(--am);flex:none;z-index:1}
+  .tl .line{position:absolute;left:0;right:0;top:5px;height:2px;background:var(--bd)}
+  .phone .tl{grid-template-columns:1fr;gap:20px}
+  .phone .tl .dotrow{display:none}
+  .qa{display:flex;flex-direction:column;gap:6px}
+  .qa h3{font-size:14px;font-weight:500;color:var(--mu)} .qa p{font-size:17px;line-height:1.5;letter-spacing:-.01em}
+  .range{width:100%;accent-color:#d99b00}
+  .step{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--bd)}
+  .step:last-of-type{border-bottom:1px solid var(--bd)}
+  .step .n{width:28px;height:28px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:13px;flex:none;color:var(--mu)}
+  .step.cur .n{background:var(--am);color:#111}
+  .step .b{display:flex;flex-direction:column;gap:2px;flex:1;font-size:14px} .step.dim{opacity:.6}
+  .opt{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 4px;border-top:1px solid var(--bd);width:100%}
+  .opt:last-of-type{border-bottom:1px solid var(--bd)} .opt:hover{background:var(--tile)}
+  .ev{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--bd);font-size:14px}
+  .ev:last-child{border-bottom:1px solid var(--bd)} .ev .d{color:var(--mu);font-size:13px;width:92px;flex:none}
+  .ev .w{flex:1}
+  .vis{aspect-ratio:16/9;border-radius:28px;background:color-mix(in srgb,var(--p) 28%,var(--tile));display:flex;align-items:center;justify-content:center;color:var(--p)}
+  /* 11-18: the picture, iterated */
+  .pic{position:relative;overflow:hidden;border-radius:28px;background:color-mix(in srgb,var(--p) 28%,var(--tile));color:var(--p)}
+  .pic .mk{position:absolute;pointer-events:none;color:var(--p)}
+  .pic>.in{position:relative;z-index:1}
+  .fb{position:relative;overflow:hidden;background:color-mix(in srgb,var(--p) 28%,var(--tile));border-radius:0 0 36px 36px;min-height:300px;padding:20px 32px 28px;display:flex;flex-direction:column;justify-content:space-between;color:var(--tx)}
+  .phone .fb{padding:16px 20px 24px;min-height:260px}
+  .fb .mk{position:absolute;right:-30px;bottom:-40px;color:var(--p);opacity:.5;pointer-events:none}
+  .fb>*{position:relative}
+  .fb>.mk{position:absolute}
+  .tilepic{width:120px;height:120px;border-radius:28px;background:color-mix(in srgb,var(--p) 28%,var(--tile));display:flex;align-items:center;justify-content:center;color:var(--p);flex:none}
+  .pgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;padding:22px;justify-items:center;color:var(--p)}
+  .phone .pgrid{grid-template-columns:repeat(5,1fr)}
+  .linkrow{font-size:13px;color:var(--mu);text-decoration:underline;text-underline-offset:3px;align-self:center}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Product page · 18 approaches · none opens with a summary sentence · 11 to 18 iterate on the picture</h1>
+    <div class="ctrls">
+      <div class="seg" id="prodsel"></div>
+      <div class="seg" id="statesel"></div>
+      <div class="seg" id="widthsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage"><div class="frame" id="frame"></div></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+ insure:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+ invest:'<path d="M4 11h13a3 3 0 013 3v2a3 3 0 01-3 3H8a4 4 0 01-4-4z"/><path d="M20 12l1-2"/><circle cx="16" cy="14" r=".6"/><path d="M8 11V8a2 2 0 014 0v3"/>',
+ loans:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5c0-1 1-1.5 2.5-1.5s2.5.6 2.5 1.6-1 1.4-2.5 1.9-2.5.9-2.5 1.9 1 1.6 2.5 1.6 2.5-.5 2.5-1.5"/>'
+};
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const back=svg('<path d="M15 6l-6 6 6 6"/>',18,1.8);
+const arrowR=svg('<path d="M5 12h14M13 6l6 6-6 6"/>',22,1.5);
+const caret=o=>svg(o?'<path d="M6 15l6-6 6 6"/>':'<path d="M6 9l6 6 6-6"/>',16,1.8);
+const GHS=n=>'GHS '+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const own=(t,sub,fig,fig2)=>({t,sub,fig,fig2});
+
+/* Everything a page might say about a product, each fact once. A variation picks what it needs. */
+const D={
+ insure:{label:'Insure',title:'Child Education Plan',col:'#3b82f6',noun:'policy',nouns:'policies',list:'Your Policies',
+  key:['Premiums from','GHS 50.00 a month'],keyBig:'GHS 50.00',keySub:'a month, from',
+  rows:[['Policy term','10 to 25 years'],['Provider','StarLife Assurance']],
+  l:{label:'You pay',big:'GHS 50.00',sub:'a month, from'}, r:{label:'You get',big:'A lump sum',sub:'within 48 to 72 hours of an approved claim, and school fees even if you can’t pay'},
+  tl:[['Today','You start paying'],['Each month','Cover keeps the plan going'],['If you claim','Paid within 48 to 72 hours']],
+  qa:[['What is it?','Savings for your child’s education, with cover that keeps the plan going if something happens to you.'],['What does it cost?','From GHS 50.00 a month, for 10 to 25 years.'],['What do I get?','A lump sum within 48 to 72 hours of an approved claim. School fees are paid even if you can’t.'],['What do I need?','An insurance profile, once. It takes a few minutes.']],
+  path:[['Create your profile','Once, for every plan'],['Choose your cover','The amount and the term'],['Confirm','With one code']],
+  opts:[['10 years','GHS 120.00 a month'],['15 years','GHS 80.00 a month'],['25 years','GHS 50.00 a month']],
+  spec:[['Costs from','GHS 50.00 a month'],['Term','10 to 25 years'],['Pays','A lump sum, and school fees'],['Provider','StarLife Assurance']],
+  att:{l:'2 premiums missed',v:'GHS 600.00',a:'Pay now'},
+  act:{owns:[['3 Nov','Next premium','GHS 300.00'],['3 Oct','Premium paid','GHS 300.00'],['3 Sep','Premium paid','GHS 300.00']],attention:[['3 Oct','Premium missed','GHS 300.00'],['3 Sep','Premium missed','GHS 300.00'],['3 Aug','Premium paid','GHS 300.00']]},
+  owned:{owns:[own('Child Education Plan','CEP/2023/040318 · GHS 300.00 a month','GHS 67,500.00','')],attention:[own('Child Education Plan','CEP/2023/040318 · GHS 300.00 a month','GHS 67,500.00','')]}},
+ invest:{label:'Invest',title:'Term Deposits',col:'#0d9488',noun:'deposit',nouns:'deposits',list:'Your Term Deposits',
+  key:['Rates from','12.5% a year'],keyBig:'12.5%',keySub:'a year, from',
+  rows:[['Terms','91 to 364 days'],['Early exit','Allowed. The cost is shown first']],
+  l:{label:'You lock',big:'Your money',sub:'for 91 to 364 days'}, r:{label:'You earn',big:'12.5%',sub:'a year, from. The rate is fixed when you start'},
+  tl:[['Today','You lock your money away'],['Every day','Interest builds'],['At maturity','You’re paid, or it rolls over']],
+  qa:[['What is it?','Money locked away for a set time at a rate that is fixed when you start.'],['What does it cost?','Nothing. You put in what you choose.'],['What do I get?','Your money and the interest on the maturity date, or rolled into a new deposit.'],['What do I need?','A GCB account to take the money from.']],
+  path:[['Choose a period','91, 182 or 364 days'],['Choose an amount','From one of your accounts'],['Confirm','With one code']],
+  opts:[['91 days','12.5% a year'],['182 days','13.5% a year'],['364 days','15% a year']],
+  spec:[['Rates from','12.5% a year'],['Terms','91 to 364 days'],['Early exit','Allowed. The cost is shown first'],['Paid at maturity','Your money and the interest']],
+  att:{l:'Matures in 3 days',v:'19 Nov',a:'Choose'},
+  act:{owns:[['19 Nov','Matures','GHS 10,311.64'],['Today','Interest so far','GHS 311.64'],['20 Aug','Opened','GHS 10,000.00']],attention:[['19 Nov','Matures','GHS 10,311.64'],['Today','Interest so far','GHS 311.64'],['20 Aug','Opened','GHS 10,000.00']]},
+  owned:{owns:[own('91-day Term Deposit','Matures 19 Nov 2026','GHS 10,311.64','42 days left')],attention:[own('91-day Term Deposit','Matures 19 Nov 2026','GHS 10,311.64','3 days left')]}},
+ loans:{label:'Loans',title:'Salary Advance',col:'#16a34a',noun:'loan',nouns:'loans',list:'Your Loans',
+  key:['Up to','GHS 20,000.00'],keyBig:'GHS 20,000.00',keySub:'the most you can take',
+  rows:[['Based on','80% of one month’s salary'],['Interest','2.17% a month, for each day it is out'],['Fees','1.5%, taken up front']],
+  l:{label:'You take',big:'GHS 20,000.00',sub:'at most. 80% of one month’s salary'}, r:{label:'You repay',big:'On payday',sub:'automatically, with 2.17% a month for each day it was out'},
+  tl:[['Today','You ask. Paid in minutes once approved'],['Until payday','Interest builds each day'],['Payday','Taken automatically']],
+  qa:[['What is it?','Part of your salary, early.'],['What does it cost?','2.17% a month for the days it is out, and 1.5% in fees up front.'],['What do I get?','Up to GHS 20,000.00, paid in minutes once approved.'],['What do I need?','Your salary paid into a GCB account.']],
+  path:[['Check your salary account','Paid into GCB'],['Choose an amount','Up to your limit'],['Confirm','With one code']],
+  opts:[['Until your next payday','Up to GHS 20,000.00']],
+  spec:[['Up to','GHS 20,000.00'],['Based on','80% of one month’s salary'],['Interest','2.17% a month, for each day it is out'],['Fees','1.5%, taken up front']],
+  att:{l:'Overdue since 20 Oct',v:'GHS 8,412.00',a:'Repay now'},
+  act:{owns:[['Today','Waiting for approval','GHS 8,000.00']],attention:[['20 Oct','Payment due','GHS 8,412.00'],['2 Oct','Paid out','GHS 7,880.00']]},
+  owned:{owns:[own('Salary Advance','Waiting for approval','GHS 8,000.00','')],attention:[own('Salary Advance','Taken 2 Oct','GHS 8,412.00','Owed today')]}}
+};
+const STATES=[['new','New customer'],['owns','Owns some'],['attention','Needs attention']];
+const S={v:1,prod:'insure',state:'new',phone:false,dark:false,open:{},c:{m:150,y:15,a:10000,l:5000}};
+const P=()=>D[S.prod];
+const owned=()=>P().owned[S.state]||[];
+
+function cta(){
+  const p=P(),o=owned();
+  if(S.prod==='insure')return S.state==='new'?{label:'Create a Profile',note:`You only do it once. We keep ${p.title} for you.`}:{label:'Apply for Another'};
+  if(S.prod==='invest')return {label:o.length?'Invest Again':'Open a Deposit'};
+  if(S.state==='new')return {label:'Apply'};
+  if(S.state==='owns')return {note:'You can take another once this request is decided and repaid.'};
+  return {label:'Repay Now',note:'Repay your current advance to take another.'};
+}
+const ctaHtml=()=>{const c=cta();return `<div class="sec" style="gap:8px">${c.label?`<button class="btn" data-a="go">${c.label}</button>`:''}${c.note?`<p class="note">${c.note}</p>`:''}</div>`};
+
+/* ---------- pieces ---------- */
+const hdr=()=>`<div class="hd"><button class="bk" data-a="back">${back}</button><h2>${P().title}</h2></div>`;
+const ownedItem=i=>`<button class="li" data-a="item"><span class="g"><span class="t">${i.t}</span><span class="m tab">${i.sub}</span></span><span class="e tab">${i.fig}${i.fig2?`<small>${i.fig2}</small>`:''}</span><span class="mu">${chev}</span></button>`;
+const ownedList=()=>owned().length?`<div class="sec"><h3>${P().list}</h3><div class="lc">${owned().map(ownedItem).join('')}</div></div>`:'';
+const attRow=()=>S.state==='attention'?`<div class="attn"><span class="l">${P().att.l}</span><span class="tab">${P().att.v}<button class="act" data-a="go">${P().att.a}</button></span></div>`:'';
+const rowsOf=(list,cls='')=>`<div class="rows ${cls}">${list.map(r=>`<div><span class="l">${r[0]}</span><span class="v tab">${r[1]}</span></div>`).join('')}</div>`;
+const acc=(id,label,inner)=>`<button class="acc" data-a="acc:${id}"><span>${label}</span>${caret(S.open[id])}</button>${S.open[id]?`<div style="padding:4px 0 20px">${inner}</div>`:''}`;
+const col=x=>`<div class="col">${x}</div>`;
+const pg=x=>`<div class="pg">${x}</div>`;
+
+/* ---------- the 10 approaches ---------- */
+const V={};
+
+V[1]={name:'1. The number is the page',goal:'Open on the one number.',
+ note:'Opens on the one number a customer is deciding on, very large, with its label above and a few words under it. No sentence, no hero block, no picture. What needs the customer is a single amber row above it. The simplest top there is; it only works while the product has one number that matters.',
+ r:()=>pg(col(`${hdr()}${attRow()}<div class="sec" style="gap:8px"><span class="meta">${P().key[0]}</span><span class="big" style="font-size:${S.phone?40:60}px">${P().keyBig}</span><span class="meta">${P().keySub}</span></div>${ownedList()}${rowsOf(P().rows)}${ctaHtml()}`))};
+
+V[2]={name:'2. The exchange',goal:'Show the trade: what goes in, what comes out.',
+ note:'Opens on the deal as two figures with an arrow between: what you give and what you get. It is the whole product in one glance and it needs no sentence. Below it only the facts that are not in the exchange. The arrow stacks vertically on a phone.',
+ r:()=>{const p=P();return pg(col(`${hdr()}${attRow()}<div class="flow"><div class="side"><span class="meta">${p.l.label}</span><span class="big" style="font-size:28px">${p.l.big}</span><span class="meta">${p.l.sub}</span></div><div class="arrow">${arrowR}</div><div class="side"><span class="meta">${p.r.label}</span><span class="big" style="font-size:28px">${p.r.big}</span><span class="meta">${p.r.sub}</span></div></div>${ownedList()}${rowsOf(p.rows)}${ctaHtml()}`))}};
+
+V[3]={name:'3. The timeline',goal:'Show what happens, and when.',
+ note:'Opens on a three-stop timeline: today, the middle, the end. It answers “what happens to my money and when?” without words about the product, and it is the most visual of the ten. It is a diagram, so it is best where timing is the point (Invest, Loans) and weaker for Insure.',
+ r:()=>{const p=P();return pg(col(`${hdr()}${attRow()}<div class="tl"><div class="line" style="position:absolute;left:0;right:0;top:5px;height:2px;background:var(--bd)"></div>${p.tl.map(s=>`<div class="stop"><div class="dotrow"><span class="dot"></span></div><span style="font-size:14px;font-weight:500">${s[0]}</span><span class="meta">${s[1]}</span></div>`).join('')}</div>${ownedList()}${rowsOf([p.key,...p.rows])}${ctaHtml()}`))}};
+
+V[4]={name:'4. Questions',goal:'Answer what a person asks, in their order.',
+ note:'No summary: four questions, each with a one-line answer. What is it, what does it cost, what do I get, what do I need. It follows the order a customer thinks in, and the headings do the hierarchy. There is no number to point at, so it is slower for someone who only wants the price.',
+ r:()=>pg(col(`${hdr()}${attRow()}${ownedList()}<div class="sec" style="gap:24px">${P().qa.map(q=>`<div class="qa"><h3>${q[0]}</h3><p>${q[1]}</p></div>`).join('')}</div>${ctaHtml()}`))};
+
+V[5]={name:'5. The calculator is the page',goal:'Let me try it before I read anything.',
+ note:'Opens on a control and its answer: move a slider and the result is the large figure. The product is explained by using it. The result is an illustration, so it has to say so. It suits Insure and Loans; for a fixed-rate deposit the answer is simple and the slider adds little.',
+ r:()=>{const c=S.c,p=S.prod;let ctl='',lab='',out='';
+  if(p==='insure'){const paid=c.m*c.y*12;lab='You get back about';out=GHS(paid*1.25);ctl=`<div class="sec" style="gap:6px"><div class="row"><span style="font-size:13px">I can save</span><span class="tab" id="o1">${GHS(c.m)} a month</span></div><input class="range" type="range" min="50" max="1000" step="50" value="${c.m}" data-r="m"></div><div class="sec" style="gap:6px"><div class="row"><span style="font-size:13px">For</span><span class="tab" id="o2">${c.y} years</span></div><input class="range" type="range" min="10" max="25" value="${c.y}" data-r="y"></div>`}
+  if(p==='invest'){lab='You get back at maturity (91 days)';out=GHS(c.a+c.a*.125*91/365);ctl=`<div class="sec" style="gap:6px"><div class="row"><span style="font-size:13px">I want to lock away</span><span class="tab" id="o1">${GHS(c.a)}</span></div><input class="range" type="range" min="1000" max="50000" step="500" value="${c.a}" data-r="a"></div>`}
+  if(p==='loans'){lab='You repay on payday';out=GHS(c.l+c.l*.0217/30*20);ctl=`<div class="sec" style="gap:6px"><div class="row"><span style="font-size:13px">I need</span><span class="tab" id="o1">${GHS(c.l)}</span></div><input class="range" type="range" min="100" max="20000" step="100" value="${c.l}" data-r="l"></div>`}
+  return pg(col(`${hdr()}${attRow()}<div class="sec" style="gap:24px"><div class="sec" style="gap:6px"><span class="meta" id="clab">${lab}</span><span class="big" id="cout" style="font-size:${S.phone?36:48}px">${out}</span><span class="meta">An illustration. The review shows the real figures.</span></div>${ctl}</div>${ownedList()}${rowsOf(P().rows)}${ctaHtml()}`))}};
+
+V[6]={name:'6. The path to start',goal:'Show what starting involves.',
+ note:'Opens on the path itself: three steps, the first one current, with the button inside it. The page is a doorway, not a brochure, and it is honest about how long starting takes. Facts sit underneath as a closed row. Poor for a returning customer, who gets their holdings first.',
+ r:()=>{const p=P(),first=S.state==='new';const c=cta();
+  return pg(col(`${hdr()}${attRow()}${ownedList()}<div><div class="meta" style="margin-bottom:10px">${first?'To get started':'To apply for another'}</div>${p.path.map((s,i)=>`<div class="step ${i===0?'cur':'dim'}"><span class="n">${i+1}</span><div class="b"><span style="font-size:15px">${s[0]}</span><span class="meta">${s[1]}</span>${i===0&&c.label?`<button class="btn sm" style="margin-top:12px;align-self:flex-start" data-a="go">${c.label}</button>`:''}</div></div>`).join('')}</div>${c.note?`<p class="note" style="text-align:left">${c.note}</p>`:''}<div>${acc('facts','The facts',rowsOf([p.key,...p.rows]))}</div>`))}};
+
+V[7]={name:'7. Activity first',goal:'For a customer, the page is their account of it.',
+ note:'Once you hold something, the page opens on what is happening with it: the next event, then the recent ones, with the problem as the amber first row. What the product is moves to a closed row below. A new customer sees the pitch instead. The page changes character with the customer, which is the point and the cost.',
+ r:()=>{const p=P();
+  if(S.state==='new')return pg(col(`${hdr()}<div class="sec" style="gap:8px"><span class="meta">${p.key[0]}</span><span class="big" style="font-size:${S.phone?36:48}px">${p.keyBig}</span><span class="meta">${p.keySub}</span></div>${rowsOf(p.rows)}${ctaHtml()}`));
+  const ev=p.act[S.state]||[];
+  return pg(col(`${hdr()}${attRow()}${ownedList()}<div class="sec"><h3>Recent activity</h3><div>${ev.map((e,i)=>`<div class="ev"><span class="d">${e[0]}</span><span class="w ${S.state==='attention'&&i===0&&S.prod!=='invest'?'am':''}">${e[1]}</span><span class="tab">${e[2]}</span></div>`).join('')}</div></div>${ctaHtml()}<div>${acc('about','About this product',rowsOf([p.key,...p.rows]))}</div>`))}};
+
+V[8]={name:'8. The options are the page',goal:'No separate button: choosing is starting.',
+ note:'The page is a short list of options, each with the figure that matters and a chevron. Tapping one starts. There is no summary and no separate button, so the page has one job and one gesture. It needs real options, so Loans has a single row and reads thin.',
+ r:()=>{const p=P();return pg(col(`${hdr()}${attRow()}${ownedList()}<div class="sec"><h3>${S.prod==='invest'?'Choose a period':S.prod==='insure'?'Choose a term':'Take an advance'}</h3><div>${p.opts.map(o=>`<button class="opt" data-a="go"><span style="font-size:15px">${o[0]}</span><span style="display:flex;align-items:center;gap:12px"><span class="tab" style="font-size:15px">${o[1]}</span><span class="mu">${chev}</span></span></button>`).join('')}</div></div>${cta().note?`<p class="note" style="text-align:left">${cta().note}</p>`:''}<p class="meta">${p.rows.map(r=>r[1]).join(' · ')}</p>`))}};
+
+V[9]={name:'9. The spec sheet',goal:'Look like the product label.',
+ note:'A label-and-value sheet under a heavy top rule, labels in medium weight on the left, values left-aligned beside them. It reads like a product label or a rate card, trustworthy and plain, and nothing is bigger than anything else. It has no hierarchy on purpose, so it is only right when every fact matters equally.',
+ r:()=>pg(col(`${hdr()}${attRow()}${ownedList()}${rowsOf(P().spec,'spec')}${ctaHtml()}`))};
+
+V[10]={name:'10. The picture',goal:'Identity first, then almost nothing.',
+ note:'A large tinted picture with the product’s mark is the whole top of the page; under it the name and the one figure, the button, and the facts folded away. The most visual and the lightest on text. The picture carries no information, so it is brand rather than content.',
+ r:()=>{const p=P();return pg(col(`${hdr()}${attRow()}<div class="vis" style="--p:${p.col}">${svg(IC[S.prod],150,1)}</div><div class="sec" style="gap:4px"><span class="meta">${p.key[0]}</span><span class="big" style="font-size:30px">${p.key[1]}</span></div>${ownedList()}${ctaHtml()}<div>${acc('d','Details',rowsOf(p.rows))}</div>`))}};
+
+/* ---------- 11-18: the picture, iterated ---------- */
+const SCENE={
+ insure:'<path d="M160 26l56 20v38c0 32-24 50-56 62-32-12-56-30-56-62V46z" fill="var(--p)"/><path d="M160 26l56 20v38c0 32-24 50-56 62z" fill="rgba(0,0,0,.12)"/><path d="M134 82l18 18 34-36" fill="none" stroke="var(--tx)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>',
+ invest:'<rect x="88" y="112" width="32" height="40" rx="4" fill="var(--p)" opacity=".6"/><rect x="132" y="92" width="32" height="60" rx="4" fill="var(--p)" opacity=".8"/><rect x="176" y="66" width="32" height="86" rx="4" fill="var(--p)"/><rect x="220" y="40" width="32" height="112" rx="4" fill="var(--tx)"/>',
+ loans:'<rect x="86" y="62" width="136" height="76" rx="8" fill="var(--p)"/><rect x="98" y="74" width="112" height="52" rx="4" fill="none" stroke="var(--tx)" stroke-width="2" opacity=".7"/><circle cx="154" cy="100" r="16" fill="var(--tx)" opacity=".85"/><ellipse cx="256" cy="132" rx="24" ry="7" fill="var(--tx)"/><ellipse cx="256" cy="120" rx="24" ry="7" fill="var(--p)"/><ellipse cx="256" cy="108" rx="24" ry="7" fill="var(--tx)"/>'
+};
+const mk=(sz,pos)=>'<span class="mk" style="'+pos+'">'+svg(IC[S.prod],sz,1.1)+'</span>';
+const figBlock=(size=40)=>'<div style="display:flex;flex-direction:column;gap:4px"><span class="meta" style="color:inherit;opacity:.7">'+P().key[0]+'</span><span class="big" style="font-size:'+size+'px">'+P().keyBig+'</span><span class="meta" style="color:inherit;opacity:.7">'+P().keySub+'</span></div>';
+const detailsFold=(id='d')=>'<div>'+acc(id,'Details',rowsOf([P().key,...P().rows]))+'</div>';
+const nameBig=(n=30)=>'<h2 style="font-size:'+n+'px;font-weight:500;letter-spacing:-.02em">'+P().title+'</h2>';
+const keyLine=()=>'<div class="sec" style="gap:4px"><span class="meta">'+P().key[0]+'</span><span class="big" style="font-size:30px">'+P().key[1]+'</span></div>';
+
+V[11]={name:'11. Figure on the picture',goal:'The picture carries the information.',
+ note:'Fixes the weakness of 10: the picture is no longer decoration. The key figure sits on it, bottom left, with the product mark cropped bottom right. Below it only holdings, the button and a folded details row. It is the fewest elements of any version that still tells you the price.',
+ r:()=>pg(col(hdr()+attRow()+'<div class="pic" style="min-height:260px;display:flex;align-items:flex-end;padding:28px;color:var(--tx)">'+mk(210,'right:-30px;bottom:-44px;opacity:.5')+'<div class="in">'+figBlock(44)+'</div></div>'+ownedList()+ctaHtml()+detailsFold()))};
+
+V[12]={name:'12. The name on the picture',goal:'Title and picture are one thing.',
+ note:'The page title is not a header above the picture: it is the picture. Only a back arrow sits above, the name is large on the picture, and the figure sits under it as one quiet line. Saves a whole row of header and puts the identity first.',
+ r:()=>pg(col('<div class="hd"><button class="bk" data-a="back">'+back+'</button></div>'+attRow()+'<div class="pic" style="min-height:240px;display:flex;align-items:flex-end;padding:28px;color:var(--tx)">'+mk(200,'right:-24px;top:-30px;opacity:.5')+'<div class="in" style="max-width:70%">'+nameBig(34)+'</div></div>'+keyLine()+ownedList()+ctaHtml()+detailsFold()))};
+
+V[13]={name:'13. A drawn scene',goal:'Make the picture specific to the product.',
+ note:'The picture is a simple flat drawing of the product (a shield, rising bars, a note and coins) rather than a cropped icon. It says what the product is without words. It needs one drawing per product, which is fine for a handful and a cost for many.',
+ r:()=>pg(col(hdr()+attRow()+'<div class="pic" style="aspect-ratio:16/9"><svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%" aria-hidden="true"><rect x="48" y="156" width="224" height="2" fill="var(--tx)" opacity=".15"/>'+SCENE[S.prod]+'</svg></div>'+keyLine()+ownedList()+ctaHtml()+detailsFold()))};
+
+V[14]={name:'14. A small picture beside the figure',goal:'Shrink the picture, keep the identity.',
+ note:'The picture becomes a 120px tile beside the figure, so the whole top is one compact row instead of a block. The page is much shorter and the button is higher. Identity is there but quieter, which suits a customer who already knows the product.',
+ r:()=>pg(col(hdr()+attRow()+'<div style="display:flex;gap:20px;align-items:center"><div class="tilepic">'+svg(IC[S.prod],56,1.3)+'</div>'+figBlock(S.phone?26:32)+'</div>'+ownedList()+ctaHtml()+detailsFold()))};
+
+V[15]={name:'15. Full width, back arrow on it',goal:'Let the picture be the top of the screen.',
+ note:'The picture runs edge to edge across the top with the back arrow sitting on it, and the name and figure at its bottom. There is no separate header at all. The strongest identity and the most native-app feel, but it breaks the app shared page header, so it needs a header variant.',
+ r:()=>'<div style="--p:'+P().col+'"><div class="fb">'+mk(240,'')+'<div class="hd"><button class="bk" data-a="back" style="background:rgba(0,0,0,.08);color:var(--tx)">'+back+'</button></div><div>'+nameBig(32)+'<div style="margin-top:14px">'+figBlock(26)+'</div></div></div><div class="pg" style="min-height:420px;padding-top:32px">'+col(attRow()+ownedList()+ctaHtml()+detailsFold())+'</div></div>'};
+
+V[16]={name:'16. A field of marks',goal:'Pattern instead of a single object.',
+ note:'The picture is the product mark repeated in a grid, in the product colour, like a wallpaper. It reads as identity without any one drawing, and it is neutral about the product, so it can be generated for any new one. Busier than the others, so it is the first to look wrong in dark mode.',
+ r:()=>pg(col(hdr()+attRow()+'<div class="pic"><div class="pgrid">'+Array.from({length:S.phone?15:18}).map((_,i)=>'<span style="opacity:'+[.25,.5,.9,.4,.7,.3][i%6]+'">'+svg(IC[S.prod],34,1.4)+'</span>').join('')+'</div></div>'+keyLine()+ownedList()+ctaHtml()+detailsFold()))};
+
+V[17]={name:'17. Shrinks when you hold something',goal:'Sell with the picture, then get out of the way.',
+ note:'For a new customer the picture is large. Once they hold something it shrinks to a slim strip carrying their own figure, and when something needs them it goes away so the amber row can lead. The picture is for persuading, so it steps back once you are a customer.',
+ r:()=>{const o=owned()[0];
+  if(S.state==='new')return pg(col(hdr()+'<div class="pic" style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center">'+svg(IC[S.prod],130,1)+'</div>'+keyLine()+ctaHtml()+detailsFold()));
+  if(S.state==='owns')return pg(col(hdr()+'<div class="pic" style="min-height:104px;display:flex;align-items:center;padding:20px 24px;color:var(--tx)">'+mk(150,'right:-10px;bottom:-34px;opacity:.5')+'<div class="in" style="display:flex;flex-direction:column;gap:2px"><span class="meta">'+o.t+'</span><span class="big tab" style="font-size:26px">'+o.fig+'</span></div></div>'+ownedList()+ctaHtml()+detailsFold()));
+  return pg(col(hdr()+attRow()+ownedList()+ctaHtml()+detailsFold()))}};
+
+V[18]={name:'18. Picture, caption, button',goal:'As little as a page can be.',
+ note:'The extreme: a picture, one caption line with the price, the button, and a quiet Details link. Nothing else is on the page. It is the lightest possible product page and puts the whole decision in one screen, at the cost of hiding everything else behind one tap.',
+ r:()=>pg(col(hdr()+attRow()+'<div class="pic" style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center">'+svg(IC[S.prod],130,1)+'</div><p style="font-size:17px;line-height:1.4;letter-spacing:-.01em"><span class="mu">'+P().key[0]+'</span> <span class="tab">'+P().key[1]+'</span></p>'+ownedList()+ctaHtml()+'<button class="linkrow" data-a="acc:d">'+(S.open.d?'Hide details':'Details')+'</button>'+(S.open.d?rowsOf([P().key,...P().rows]):'')))};
+
+/* ---------- chrome ---------- */
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('prodsel',Object.entries(D).map(([k,v])=>[k,v.label]),S.prod,'prod');
+  seg('statesel',STATES,S.state,'state');
+  seg('widthsel',[[0,'Desktop'],[1,'Phone']],S.phone?1:0,'width');
+  seg('themesel',[['light','Light'],['dark','Dark']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').innerHTML=`<span style="color:var(--tx)">${V[S.v].goal}</span> ${V[S.v].note}`;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  const f=$('frame');f.className='frame'+(S.phone?' phone':'');f.style.width=(S.phone?390:900)+'px';f.style.setProperty('--p',P().col);
+  f.innerHTML=V[S.v].r();
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='go'){toast('Opens its own flow');return}
+  if(a==='item'){toast('Opens the item');return}
+  if(a==='back'){toast('Back to the shelf');return}
+  if(a==='v'){S.v=+arg;S.open={}}
+  else if(a==='prod'){S.prod=arg;S.open={}}
+  else if(a==='state')S.state=arg;
+  else if(a==='width')S.phone=arg==='1';
+  else if(a==='theme')S.dark=arg==='dark';
+  else if(a==='acc')S.open[arg]=!S.open[arg];
+  render();
+});
+document.addEventListener('input',e=>{
+  const t=e.target;if(!t.dataset.r)return;
+  S.c[t.dataset.r]=+t.value;const c=S.c,set=(id,x)=>{const n=$(id);if(n)n.textContent=x};
+  if(S.prod==='insure'){set('o1',GHS(c.m)+' a month');set('o2',c.y+' years');set('cout',GHS(c.m*c.y*12*1.25))}
+  if(S.prod==='invest'){set('o1',GHS(c.a));set('cout',GHS(c.a+c.a*.125*91/365))}
+  if(S.prod==='loans'){set('o1',GHS(c.l));set('cout',GHS(c.l+c.l*.0217/30*20))}
+});
+render();
+</script>
+</body>
+</html>

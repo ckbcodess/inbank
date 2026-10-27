@@ -10,7 +10,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { FileCheck, FileText, Landmark, Receipt } from "lucide-react";
+import { FileCheck, FileText, Landmark, Receipt } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
@@ -93,7 +93,7 @@ export default function TradeTypeSelectionPage() {
 
       <section className="rounded-2xl border border-border bg-card p-4">
         <h2 className="flex items-center gap-2 text-[15px] text-foreground">
-          <FileText size={16} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+          <FileText size={16} aria-hidden="true" className="text-muted-foreground" />
           Remaining steps
         </h2>
         <ol className="mt-2 flex flex-col gap-2 text-[13px] text-muted-foreground">

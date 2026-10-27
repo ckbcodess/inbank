@@ -16,7 +16,7 @@
 
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useMemo, useState } from "react";
-import { Calendar, ChevronDown } from "lucide-react";
+import { Calendar, ChevronDown } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -115,7 +115,7 @@ export function AccountExpensesView({
             description="Payments and card spend will show here."
             action={
               period !== "12m" ? (
-                <Button variant="outline" className="rounded-lg" onClick={() => changePeriod("12m")}>
+                <Button variant="outline" onClick={() => changePeriod("12m")}>
                   Look at the last 12 months
                 </Button>
               ) : undefined
@@ -199,10 +199,9 @@ export function AccountExpensesView({
                         {expandable && (
                           <ChevronDown
                             size={16}
-                            strokeWidth={1.8}
                             aria-hidden="true"
                             className={cn(
-                              "shrink-0 text-muted-foreground transition-transform duration-200",
+                              "shrink-0 text-muted-foreground transition-transform duration-hover",
                               isActive && "rotate-180",
                             )}
                           />
@@ -254,10 +253,10 @@ function PeriodMenu({ value, onChange }: { value: ExpensePeriod; onChange: (p: E
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="outline" className="h-8 gap-2 rounded-lg px-2 text-[13.5px]">
+          <Button variant="outline" className="h-8 gap-2 px-2 text-[13.5px]">
             <Calendar size={15} strokeWidth={1.8} className="text-muted-foreground" />
             <span className="tabular">{`Last ${EXPENSE_PERIOD_LABEL[value]}`}</span>
-            <ChevronDown size={15} strokeWidth={1.8} className="text-muted-foreground" />
+            <ChevronDown size={15} className="text-muted-foreground" />
           </Button>
         }
       />

@@ -16,7 +16,7 @@ import { GCBLogo } from "@/components/ui/GCBLogo";
 import { toast } from "sonner";
 import { accountsForProfile } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
-import { ScanLine, Share2, Download } from "lucide-react";
+import { ScanLine, Share2, Download } from "@/components/ui/icons";
 
 interface PersonalQrModalProps {
   open: boolean;
@@ -96,7 +96,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
             <Button
               type="button"
               variant="outline"
-              className="flex-1 h-9 rounded-xl"
+              className="flex-1 h-9"
               onClick={handleShare}
             >
               <Share2 size={14} className="mr-2" />
@@ -104,7 +104,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
             </Button>
             <Button
               type="button"
-              className="flex-1 h-9 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs"
+              className="flex-1 h-9 bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs"
               onClick={handleDownload}
             >
               <Download size={14} className="mr-2" />

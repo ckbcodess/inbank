@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 /**
@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 export function CheckBadge({ className }: { className?: string }) {
   return (
     <span className={cn("flex size-4 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground", className)}>
-      <Check size={12} strokeWidth={2.5} aria-hidden="true" />
+      <Check size={12} aria-hidden="true" />
     </span>
   );
 }

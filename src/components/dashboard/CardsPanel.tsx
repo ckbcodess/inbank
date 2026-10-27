@@ -15,7 +15,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Lock, Plus, Unlock } from "lucide-react";
+import { ChevronRight, Lock, Plus, Unlock } from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -94,7 +94,6 @@ export function CardsPanel({
                   ) : (
                     <ChevronRight
                       size={15}
-                      strokeWidth={1.8}
                       aria-hidden="true"
                       className="shrink-0 text-muted-foreground"
                     />
@@ -111,9 +110,9 @@ export function CardsPanel({
                     aria-label={blocked ? `Unblock ${card.name}` : `Block ${card.name}`}
                   >
                     {blocked ? (
-                      <Unlock size={13} strokeWidth={1.9} aria-hidden="true" />
+                      <Unlock size={13} aria-hidden="true" />
                     ) : (
-                      <Lock size={13} strokeWidth={1.9} aria-hidden="true" />
+                      <Lock size={13} aria-hidden="true" />
                     )}
                     {blocked ? "Unblock" : "Block"}
                   </Button>
@@ -126,7 +125,7 @@ export function CardsPanel({
                       onClick={() => onTopUp(card.id)}
                       aria-label={`Fund ${card.name}`}
                     >
-                      <Plus size={13} strokeWidth={1.9} aria-hidden="true" />
+                      <Plus size={13} aria-hidden="true" />
                       Fund card
                     </Button>
                   )}

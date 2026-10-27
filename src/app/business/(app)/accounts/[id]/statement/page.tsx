@@ -6,7 +6,7 @@
  */
 
 import { use, useState } from "react";
-import { Download, FileText } from "lucide-react";
+import { Download, FileText } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -93,7 +93,7 @@ export default function BusinessStatementPage({ params }: { params: Promise<{ id
 
             <div className="mt-4 flex items-center gap-2">
               <Button onClick={() => setShowPreview(true)}>
-                <FileText size={15} strokeWidth={1.9} aria-hidden="true" />
+                <FileText size={15} aria-hidden="true" />
                 Preview Statement
               </Button>
               {showPreview && (
@@ -117,7 +117,7 @@ export default function BusinessStatementPage({ params }: { params: Promise<{ id
                   </p>
                 </div>
                 <Button size="sm" disabled={rows.length === 0}>
-                  <Download size={14} strokeWidth={1.9} aria-hidden="true" />
+                  <Download size={14} aria-hidden="true" />
                   Download PDF
                 </Button>
               </div>

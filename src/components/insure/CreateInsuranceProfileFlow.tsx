@@ -13,7 +13,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -22,6 +22,7 @@ import { ListCard } from "@/components/ui/list-card";
 import { MultiChoice } from "@/components/ui/multi-choice";
 import { OccupationCombobox } from "@/components/ui/occupation-combobox";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { StepBar } from "@/components/ui/step-bar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SignatureUpload } from "@/components/ui/signature-upload";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
@@ -29,7 +30,6 @@ import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary } from "@/components/invest/parts";
 import { useSession } from "@/lib/session-store";
 import { INSURE_HOME } from "@/lib/insurance-plans";
 import {
@@ -167,7 +167,7 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
 
   if (existing && step !== "success") {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Your Insurance Profile" backTo={back} />
         <TrueEmptyState
           icon={<ShieldCheck size={22} strokeWidth={1.8} />}
@@ -284,12 +284,10 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
   ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={STEP_TITLE[step]} backTo={{ ...back, onClick: goBack }} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
-        <p className="px-1 text-[12px] text-muted-foreground tabular">
-          Step {STEPS_SHOWN.indexOf(step) + 1} of {STEPS_SHOWN.length}
-        </p>
+      <div className="flex flex-col gap-5">
+        <StepBar current={STEPS_SHOWN.indexOf(step) + 1} total={STEPS_SHOWN.length} showCount />
 
         {step === "about" && (
           <>
@@ -426,15 +424,6 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
           setAuthOpen(false);
           setStep("success");
         }}
-        summary={
-          <AuthSummary
-            headline="Create your insurance profile"
-            rows={[
-              ["Name", actor?.name ?? ""],
-              ["Mobile Number", actor?.phone ?? ""],
-            ]}
-          />
-        }
       />
     </div>
   );

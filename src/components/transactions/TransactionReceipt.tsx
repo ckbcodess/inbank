@@ -30,7 +30,7 @@ import {
   RotateCcw,
   Share,
   ShieldQuestion,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { SimpleTooltip } from "@/components/ui/tooltip";
@@ -316,7 +316,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
                           className="cursor-pointer rounded-lg p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                           aria-label="Copy reference"
                         >
-                          {copied ? <Check size={13} className="text-success-text" /> : <Copy size={13} strokeWidth={1.8} />}
+                          {copied ? <Check size={13} className="text-success-text" /> : <Copy size={13} />}
                         </button>
                       </SimpleTooltip>
                     </span>
@@ -425,7 +425,7 @@ function StateBand({
           {repeatTo && (
             <div className="mt-2">
               <Button size="sm" nativeButton={false} render={<Link href={repeatTo} />}>
-                <Copy size={14} strokeWidth={1.8} className="mr-2" />
+                <Copy size={14} className="mr-2" />
                 Duplicate &amp; Edit
               </Button>
             </div>

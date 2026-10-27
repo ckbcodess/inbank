@@ -1,4 +1,4 @@
-import { CreditCard } from "lucide-react";
+import { CreditCard } from "@/components/ui/icons";
 import { NetworkChip } from "@/components/cards/NetworkLogo";
 import { OperatorLogo } from "@/components/ui/operator-logo";
 import { schemeFromText } from "@/lib/card-schemes";
@@ -51,7 +51,7 @@ export function SourceMark({
           : "flex h-8 w-10 shrink-0 items-center justify-center rounded-lg border border-black/5 bg-muted/60 text-foreground dark:border-white/10"
       }
     >
-      <CreditCard size={large ? 28 : 18} strokeWidth={1.8} aria-hidden="true" />
+      <CreditCard size={large ? 28 : 18} aria-hidden="true" />
     </span>
   );
 }

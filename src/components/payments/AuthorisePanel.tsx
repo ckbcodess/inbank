@@ -15,7 +15,7 @@
 import { AlertToast } from "@/components/ui/alert-toast";
 import { InlineError } from "@/components/ui/inline-error";
 import React, { useRef, useEffect, useState } from "react";
-import { ShieldCheck, KeyRound, Smartphone } from "lucide-react";
+import { ShieldCheck, KeyRound, Smartphone } from "@/components/ui/icons";
 import OtpInput from "@/components/auth/OtpInput";
 import { REGISTERED_PHONE, type AuthMethod, type AuthState, PIN_LENGTH } from "./useAuthorisation";
 import { OtpHelp, OtpPrompt } from "./OtpHelp";
@@ -175,12 +175,12 @@ export function AuthorisePanel({
             >
               {isPin ? (
                 <>
-                  <Smartphone size={14} strokeWidth={1.8} />
+                  <Smartphone size={14} />
                   <span>Request OTP via SMS instead</span>
                 </>
               ) : (
                 <>
-                  <KeyRound size={14} strokeWidth={1.8} />
+                  <KeyRound size={14} />
                   <span>Use 6-digit Transaction PIN instead</span>
                 </>
               )}
@@ -189,7 +189,7 @@ export function AuthorisePanel({
         </div>
 
         <div className="flex items-center justify-center gap-2 pt-1 text-[12px] text-muted-foreground">
-          <ShieldCheck size={14} strokeWidth={1.8} className="shrink-0 text-success-text" />
+          <ShieldCheck size={14} className="shrink-0 text-success-text" />
           <span>Secured by End-to-End Encryption · Never share your PIN or OTP</span>
         </div>
       </div>
@@ -259,7 +259,7 @@ export function AuthorisePanel({
                 <div
                   key={i}
                   className={cn(
-                    "size-12 rounded-full transition duration-150 flex items-center justify-center",
+                    "size-12 rounded-full transition duration-hover flex items-center justify-center",
                     state === "error"
                       ? "border-2 border-destructive/70 bg-destructive/10 dark:bg-destructive/15"
                       : isFilled
@@ -316,7 +316,7 @@ export function AuthorisePanel({
         /* OTP View */
         <>
           <div className="flex items-center justify-center text-foreground dark:text-white">
-            <Smartphone size={44} strokeWidth={1.8} />
+            <Smartphone size={44} />
           </div>
 
           <OtpPrompt
@@ -362,7 +362,7 @@ export function AuthorisePanel({
                 onClick={() => onMethodChange("pin")}
                 className="mt-2 flex items-center justify-center gap-2 text-[13.5px] text-muted-foreground hover:text-foreground dark:hover:text-white transition-colors cursor-pointer"
               >
-                <KeyRound size={14} strokeWidth={1.8} />
+                <KeyRound size={14} />
                 <span>Use 4-digit Transaction PIN instead</span>
               </button>
             )}

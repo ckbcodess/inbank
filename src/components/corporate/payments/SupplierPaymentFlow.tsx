@@ -15,7 +15,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -162,7 +162,7 @@ export default function SupplierPaymentFlow() {
     return (
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6 pt-6">
         <div className="flex flex-col items-start gap-3">
-          <CheckCircle2 size={24} strokeWidth={1.8} className="text-success-text" aria-hidden="true" />
+          <CheckCircle2 size={24} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
             <h1 className="text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground">
               {direct ? "Payment on its way" : "Submitted for approval"}
@@ -250,19 +250,6 @@ export default function SupplierPaymentFlow() {
             setOtpOpen(false);
             confirm();
           }}
-          summary={
-            <p className="text-[13.5px] text-foreground">
-              {direct ? (
-                <>
-                  Pay <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} from {fromAccount.name}.
-                </>
-              ) : (
-                <>
-                  Submit <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} from {fromAccount.name} for approval.
-                </>
-              )}
-            </p>
-          }
         />
       </div>
     );

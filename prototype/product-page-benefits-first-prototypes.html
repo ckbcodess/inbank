@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Product Page: Benefits First, With Icons: 10 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ink:#0b0b0c;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0f0f0f;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;max-width:100%}
+  .pg{padding:28px 32px 40px;display:flex;flex-direction:column;gap:24px;min-height:760px}
+  .phone .pg{padding:20px 20px 32px}
+  .col{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:28px;flex:1}
+  .hd{display:flex;align-items:center;gap:12px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .pic{aspect-ratio:16/7;border-radius:24px;background:color-mix(in srgb,var(--p) 28%,var(--tile));display:flex;align-items:center;justify-content:center;color:var(--p)}
+  .btn{height:46px;padding:0 28px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)} .btn.auto{width:auto}
+  .note{font-size:13px;color:var(--mu);text-align:center;line-height:1.5}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .sec>h3{font-size:16px;font-weight:500}
+  .lc{background:var(--tile);border-radius:16px;padding:4px}
+  .li{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;width:100%}
+  .li:hover{background:var(--tileh)}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:14px} .li .m{font-size:12px;color:var(--mu)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:14px}
+  /* the one list card */
+  .card{background:var(--tile);border-radius:16px;padding:8px}
+  .kv{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 8px;font-size:14px}
+  .kv .l{color:var(--mu);flex:none} .kv .v{text-align:right;min-width:0}
+  .kv.key .v{font-size:20px}
+  .kv.att .l{color:var(--amt)}
+  .act{text-decoration:underline;text-underline-offset:3px;margin-left:12px;color:var(--tx);white-space:nowrap}
+  .zone{padding:12px 8px;display:flex;flex-direction:column;gap:14px}
+  .rule{border-top:1px solid var(--bd);margin-top:6px;padding-top:6px}
+  .st{font-size:14px;line-height:1.5} .sub{font-size:13px;color:var(--mu);line-height:1.5}
+  .ico{width:32px;height:32px;border-radius:10px;background:var(--surf);display:flex;align-items:center;justify-content:center;flex:none;color:var(--tx)}
+  .ico.lg{width:40px;height:40px;border-radius:12px}
+  .ico.disc{border-radius:50%;background:var(--p);color:var(--ink)}
+  .brow{display:flex;gap:12px;align-items:center}
+  .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .phone .cols3{grid-template-columns:1fr}
+  .cols3>div{display:flex;flex-direction:column;gap:8px}
+  .phone .cols3>div{flex-direction:row;align-items:center;gap:12px}
+  .triple{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;padding:0 8px}
+  .phone .triple{grid-template-columns:1fr;gap:16px}
+  .triple>div{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+  .phone .triple>div{flex-direction:row;text-align:left;gap:12px}
+  .sticky{position:sticky;bottom:0;background:var(--surf);border-top:1px solid var(--bd);margin:auto -32px -40px;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .phone .sticky{margin:auto -20px -32px;padding:14px 20px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Product page · benefits first, with icons · 10 variations of the whole page</h1>
+    <div class="ctrls">
+      <div class="seg" id="plansel"></div>
+      <div class="seg" id="statesel"></div>
+      <div class="seg" id="widthsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage"><div class="frame" id="frame"></div></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+ money:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M9.8 10c0-.9.9-1.4 2.2-1.4s2.2.5 2.2 1.4-.9 1.2-2.2 1.6-2.2.7-2.2 1.6.9 1.4 2.2 1.4 2.2-.5 2.2-1.4"/>',
+ people:'<circle cx="9" cy="9" r="3"/><path d="M3.5 19c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="10" r="2.3"/><path d="M16 14.6c2.6-.2 4.2 1.1 4.6 3.9"/>',
+ shield:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/>',
+ school:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+ heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 017-2.5A4 4 0 0119 10c0 5.5-7 10-7 10z"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>'
+};
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const back=svg('<path d="M15 6l-6 6 6 6"/>',18,1.8);
+
+const b=(s,lab,short,t,sub,ic)=>({s,lab,short,t,sub,ic});
+const D={
+ hc:{label:'HomeCall',title:'HomeCall Plan',col:'#ea580c',icon:'home',
+  key:['Premiums from','GHS 8.00 a month'],
+  b:[b('Lump sum paid within 48 to 72 hours of an approved claim','Pays out','Within 48 to 72 hours','Paid within 48 to 72 hours','Of an approved claim','money'),
+     b('Cover your spouse, children and parents too','Your family','Spouse, children, parents','Your family too','Spouse, children and parents','people'),
+     b('Accidental deaths are covered from day one','Accidents','From day one','Accidents from day one','Accidental deaths are covered','shield')],
+  facts:[['Cover','GHS 2,500.00 to GHS 30,000.00'],['Who it covers','You, and family you add'],['Provider','StarLife Assurance']],
+  owned:{t:'HomeCall Plan',sub:'HC-20418 · GHS 8.00 a month',fig:'GHS 10,000.00'},att:{l:'2 premiums missed',v:'GHS 16.00',a:'Pay now'}},
+ ce:{label:'Child Education',title:'Child Education Plan',col:'#3b82f6',icon:'school',
+  key:['Premiums from','GHS 50.00 a month'],
+  b:[b('Lump sum paid within 48 to 72 hours of an approved claim','Pays out','Within 48 to 72 hours','Paid within 48 to 72 hours','Of an approved claim','money'),
+     b('School fees are paid even if you can’t','School fees','Paid even if you can’t','School fees are covered','Paid even if you can’t','school')],
+  facts:[['Policy term','10 to 25 years'],['Provider','StarLife Assurance']],
+  owned:{t:'Child Education Plan',sub:'CEP/2023/040318 · GHS 300.00 a month',fig:'GHS 67,500.00'},att:{l:'2 premiums missed',v:'GHS 600.00',a:'Pay now'}},
+ up:{label:'Ultimate Protection',title:'Ultimate Protection Plan',col:'#db2777',icon:'shield',
+  key:['Premiums from','GHS 40.50 a month'],
+  b:[b('Lump sum paid within 48 to 72 hours of an approved claim','Pays out','Within 48 to 72 hours','Paid within 48 to 72 hours','Of an approved claim','money'),
+     b('Covers total and permanent disability','Disability','Total and permanent','Disability covered','Total and permanent','heart'),
+     b('Covers critical illness','Illness','Critical illness','Critical illness covered','If you are diagnosed','plus')],
+  facts:[['Sum assured','GHS 50,000.00 to GHS 300,000.00'],['Policy term','8 to 20 years'],['Disability income','Up to age 70'],['Provider','StarLife Assurance']],
+  owned:{t:'Ultimate Protection Plan',sub:'UPP/2024/010942 · GHS 40.50 a month',fig:'GHS 100,000.00'},att:{l:'1 premium missed',v:'GHS 40.50',a:'Pay now'}}
+};
+const STATES=[['new','New customer'],['owns','Owns some'],['attention','Needs attention']];
+const S={v:1,plan:'hc',state:'owns',phone:false,dark:true};
+const P=()=>D[S.plan];
+
+/* ---------- pieces ---------- */
+const cta=()=>S.state==='new'?{label:'Create a Profile',note:`You only do it once. We keep ${P().title} for you.`}:{label:'Apply for Another'};
+const ctaHtml=()=>{const c=cta();return `<div class="sec" style="gap:8px"><button class="btn" data-a="go">${c.label}</button>${c.note?`<p class="note">${c.note}</p>`:''}</div>`};
+const hdr=()=>`<div class="hd"><span class="bk">${back}</span><h2>${P().title}</h2></div>`;
+const pic=(extra='')=>`<div class="pic" ${extra}>${svg(IC[P().icon],80,1)}</div>`;
+const holds=()=>S.state==='new'?'':`<div class="sec"><h3>Your Policies</h3><div class="lc"><button class="li" data-a="item"><span class="g"><span class="t">${P().owned.t}</span><span class="m tab">${P().owned.sub}</span></span><span class="e tab">${P().owned.fig}</span><span class="mu">${chev}</span></button></div></div>`;
+const kv=(l,v,key)=>`<div class="kv ${key?'key':''}"><span class="l">${l}</span><span class="v tab">${v}</span></div>`;
+const attRow=()=>S.state==='attention'?`<div class="kv att"><span class="l">${P().att.l}</span><span class="v tab">${P().att.v}<button class="act" data-a="go">${P().att.a}</button></span></div>`:'';
+const keyRow=()=>kv(P().key[0],P().key[1],1);
+const facts=()=>P().facts.map(f=>kv(f[0],f[1])).join('');
+const card=x=>`<div class="card">${x}</div>`;
+const ico=(n,cls='',sz=16)=>`<span class="ico ${cls}">${svg(IC[n],sz,1.7)}</span>`;
+const benefitsIcons=(cls='')=>`<div class="zone">${P().b.map(x=>`<div class="brow">${ico(x.ic,cls)}<span class="st">${x.s}</span></div>`).join('')}</div>`;
+const col=x=>`<div class="col">${x}</div>`;
+const pg=x=>`<div class="pg">${x}</div>`;
+
+/* ---------- the 10 ---------- */
+const V={};
+
+V[1]={name:'1. Icons, benefits first',note:'The two ideas together, plainly: the card opens on the benefits, each with a small icon and a left-aligned statement, then a hairline, then the price and the facts. What needs you is the first row of the facts. The baseline for the rest.',
+ r:()=>pg(col(hdr()+pic()+holds()+card(benefitsIcons()+`<div class="rule">${attRow()}${keyRow()}${facts()}</div>`)+ctaHtml()))};
+
+V[2]={name:'2. Icon, title and line',note:'Each benefit is a larger icon with a short title and a muted line. The most readable benefits and the clearest hierarchy inside them (title, then detail), at the cost of height: three benefits take about as much room as the facts.',
+ r:()=>pg(col(hdr()+pic()+holds()+card(`<div class="zone" style="gap:18px">${P().b.map(x=>`<div class="brow">${ico(x.ic,'lg',20)}<span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px">${x.t}</span><span class="sub">${x.sub}</span></span></div>`).join('')}</div><div class="rule">${attRow()}${keyRow()}${facts()}</div>`)+ctaHtml()))};
+
+V[3]={name:'3. Colour discs',note:'The icons sit in discs of the plan’s own colour, the same colour as the picture and the shelf card. It ties the benefits to the product and makes the page feel one piece. It adds a coloured element per benefit, so it is the loudest of the icon treatments.',
+ r:()=>pg(col(hdr()+pic()+holds()+card(benefitsIcons('disc')+`<div class="rule">${attRow()}${keyRow()}${facts()}</div>`)+ctaHtml()))};
+
+V[4]={name:'4. The picture is the benefits',note:'The picture block carries the benefits: three icons with a label and a short value under each, on the plan’s colour. There is no separate benefits zone at all, so the card is only the price and the facts. The most distinctive, and the picture now says something.',
+ r:()=>pg(col(hdr()+`<div class="pic" style="aspect-ratio:auto;padding:28px 12px;color:var(--tx)"><div class="triple">${P().b.map(x=>`<div><span class="ico disc" style="width:44px;height:44px">${svg(IC[x.ic],20,1.7)}</span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:500">${x.lab}</span><span class="sub" style="color:inherit;opacity:.75">${x.short}</span></span></div>`).join('')}</div></div>`+holds()+card(attRow()+keyRow()+facts())+ctaHtml()))};
+
+V[5]={name:'5. Benefits above the card',note:'The benefits leave the card and sit above it as a plain list with icons, no container. The card is then only the price and facts. It gives the benefits more room and more weight, but it breaks the one-card rule and makes two blocks again.',
+ r:()=>pg(col(hdr()+pic()+holds()+`<div class="zone" style="padding:0 8px;gap:16px">${P().b.map(x=>`<div class="brow">${ico(x.ic,'',16)}<span class="st">${x.s}</span></div>`).join('')}</div>`+card(attRow()+keyRow()+facts())+ctaHtml()))};
+
+V[6]={name:'6. The price beside the button',note:'The card is the benefits then the facts, and the price moves to sit directly above the button as one row: what it costs, then act. You read what you get, what to know, and then what you pay with the button under your thumb.',
+ r:()=>pg(col(hdr()+pic()+holds()+card(benefitsIcons()+`<div class="rule">${attRow()}${facts()}</div>`)+`<div class="sec" style="gap:12px"><div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 8px"><span class="mu" style="font-size:14px">${P().key[0]}</span><span class="tab" style="font-size:20px">${P().key[1]}</span></div>${ctaHtml()}</div>`))};
+
+V[7]={name:'7. Compact icons',note:'Bare 16px icons with no tile, tighter rows. The benefits take the least space of the icon versions and the card stays calm. The icons are small enough to read as bullets, so they help less than the tiles.',
+ r:()=>pg(col(hdr()+pic()+holds()+card(`<div class="zone" style="gap:10px">${P().b.map(x=>`<div class="brow" style="gap:10px"><span style="color:var(--mu);display:flex">${svg(IC[x.ic],16,1.7)}</span><span class="st">${x.s}</span></div>`).join('')}</div><div class="rule">${attRow()}${keyRow()}${facts()}</div>`)+ctaHtml()))};
+
+V[8]={name:'8. Three columns',note:'On desktop the benefits sit side by side, each an icon with a label and a short line, like three feature columns; on a phone they stack. The card’s top is a compact band and the benefits read together as three things. Needs short labels, not sentences.',
+ r:()=>pg(col(hdr()+pic()+holds()+card(`<div class="zone"><div class="cols3">${P().b.map(x=>`<div>${ico(x.ic,'',16)}<span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:500">${x.lab}</span><span class="sub">${x.short}</span></span></div>`).join('')}</div></div><div class="rule">${attRow()}${keyRow()}${facts()}</div>`)+ctaHtml()))};
+
+V[9]={name:'9. Icon rows with values',note:'The benefits become the same kind of row as the facts: an icon and a label on the left, a short value on the right. The whole card is one row type, with no sentences. It needs each benefit as a label and a short value, which is the data change from before.',
+ r:()=>pg(col(hdr()+pic()+holds()+card(P().b.map(x=>`<div class="kv"><span style="display:flex;align-items:center;gap:12px">${ico(x.ic,'',16)}<span>${x.lab}</span></span><span class="v">${x.short}</span></div>`).join('')+`<div class="rule">${attRow()}${keyRow()}${facts()}</div>`)+ctaHtml()))};
+
+V[10]={name:'10. Price in the bar',note:'The benefits lead the card with icons, the facts follow, and the price lives in a bar fixed at the bottom beside the button. The page above is only reasons and facts; the number you decide on is always next to the action.',
+ r:()=>pg(`<div class="col">${hdr()}${pic()}${holds()}${card(benefitsIcons()+`<div class="rule">${attRow()}${facts()}</div>`)}</div><div class="sticky"><div style="display:flex;flex-direction:column"><span class="mu" style="font-size:12px">${P().key[0]}</span><span class="tab" style="font-size:18px">${P().key[1]}</span></div><button class="btn auto" data-a="go">${cta().label}</button></div>`)};
+
+/* ---------- chrome ---------- */
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('plansel',Object.entries(D).map(([k,v])=>[k,v.label]),S.plan,'plan');
+  seg('statesel',STATES,S.state,'state');
+  seg('widthsel',[[0,'Desktop'],[1,'Phone']],S.phone?1:0,'width');
+  seg('themesel',[['dark','Dark'],['light','Light']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  const f=$('frame');f.className='frame'+(S.phone?' phone':'');f.style.width=(S.phone?390:820)+'px';f.style.setProperty('--p',P().col);
+  f.innerHTML=V[S.v].r();
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='go'){toast('Opens its own flow');return}
+  if(a==='item'){toast('Opens the policy');return}
+  if(a==='v')S.v=+arg;
+  else if(a==='plan')S.plan=arg;
+  else if(a==='state')S.state=arg;
+  else if(a==='width')S.phone=arg==='1';
+  else if(a==='theme')S.dark=arg==='dark';
+  render();
+});
+render();
+</script>
+</body>
+</html>

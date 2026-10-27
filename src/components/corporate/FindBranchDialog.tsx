@@ -6,7 +6,7 @@
  */
 
 import { useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -64,7 +64,7 @@ export default function FindBranchDialog({ open, onOpenChange }: FindBranchDialo
             className="gap-2"
           >
             Continue to website
-            <ExternalLink size={15} strokeWidth={1.8} />
+            <ExternalLink size={15} />
           </Button>
         </DialogFooter>
       </DialogContent>

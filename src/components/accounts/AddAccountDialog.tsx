@@ -22,7 +22,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, ChevronLeft, Landmark, MapPin, ScanFace, Wallet } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronLeft, Landmark, MapPin, ScanFace, Wallet } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -156,7 +156,7 @@ export default function AddAccountDialog({
                 className="-ml-1 mr-1 flex size-6 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 aria-label="Back"
               >
-                <ChevronLeft size={18} strokeWidth={1.8} />
+                <ChevronLeft size={18} />
               </button>
             )}
             <DialogTitle>{view === "choose" && held.length === 0 ? "No Accounts Found" : TITLE[view]}</DialogTitle>
@@ -167,7 +167,7 @@ export default function AddAccountDialog({
           {view === "confirm" && (
             <div className="flex flex-col items-center gap-3 py-2 text-center">
               <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
-                <ScanFace size={28} strokeWidth={1.7} aria-hidden="true" />
+                <ScanFace size={28} aria-hidden="true" />
               </div>
               <p className="max-w-[340px] text-[14px] leading-relaxed text-muted-foreground">
                 To add an account, we&apos;ll ask you to take a quick selfie. We match it to your Ghana Card, then
@@ -189,7 +189,7 @@ export default function AddAccountDialog({
           {view === "no_match" && (
             <div className="flex flex-col items-center gap-3 py-2 text-center">
               <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
-                <ScanFace size={28} strokeWidth={1.7} aria-hidden="true" />
+                <ScanFace size={28} aria-hidden="true" />
               </div>
               <p className="max-w-[340px] text-[14px] leading-relaxed text-muted-foreground">
                 This usually comes down to light, glare, or something covering part of your face. Find even light,
@@ -201,7 +201,7 @@ export default function AddAccountDialog({
           {view === "branch" && (
             <div className="flex flex-col items-center gap-3 py-2 text-center">
               <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
-                <Landmark size={26} strokeWidth={1.7} aria-hidden="true" />
+                <Landmark size={26} aria-hidden="true" />
               </div>
               <p className="max-w-[340px] text-[14px] leading-relaxed text-muted-foreground">
                 Your selfie still didn&apos;t match, so we&apos;ve paused selfie checks for now. Bring your Ghana Card
@@ -213,7 +213,7 @@ export default function AddAccountDialog({
           {view === "choose" && held.length === 0 && (
             <div className="flex flex-col items-center gap-2 py-2 text-center">
               <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
-                <Landmark size={26} strokeWidth={1.7} aria-hidden="true" />
+                <Landmark size={26} aria-hidden="true" />
               </div>
               <p className="text-[15px] tracking-[var(--ls-tight)] text-foreground">
                 We didn&apos;t find a GCB account under your Ghana Card
@@ -248,7 +248,7 @@ export default function AddAccountDialog({
                       )}
                     >
                       <TileChip>
-                        <Landmark size={20} strokeWidth={1.8} aria-hidden="true" />
+                        <Landmark size={20} aria-hidden="true" />
                       </TileChip>
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">
@@ -285,17 +285,17 @@ export default function AddAccountDialog({
               <div className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-transparent p-3">
                 <span className="flex min-w-0 flex-1 flex-col items-start gap-1">
                   <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
-                    <Wallet size={14} strokeWidth={1.8} aria-hidden="true" />
+                    <Wallet size={14} aria-hidden="true" />
                     GCB Virtual Account
                   </span>
                   <span className="text-[20px] tracking-[var(--ls-heading)] text-foreground tabular">
                     {formatMoney(wallet.balance, "GHS", true)}
                   </span>
                 </span>
-                <ArrowRight size={18} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                <ArrowRight size={18} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                 <span className="flex min-w-0 flex-1 flex-col items-end gap-1 text-right">
                   <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
-                    <Landmark size={14} strokeWidth={1.8} aria-hidden="true" />
+                    <Landmark size={14} aria-hidden="true" />
                     {picked.type}
                   </span>
                   <span className="truncate text-[15px] text-foreground">{picked.name}</span>
@@ -317,7 +317,7 @@ export default function AddAccountDialog({
           {view === "done" && (added || pickedAccounts.length > 0) && (
             <div className="flex flex-col items-center gap-2 py-2 text-center" role="status">
               <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success">
-                <CheckCircle2 size={30} strokeWidth={1.8} aria-hidden="true" />
+                <CheckCircle2 size={30} aria-hidden="true" />
               </div>
               <p className="text-[17px] tracking-[var(--ls-tight)] text-foreground">
                 {pickedAccounts.length > 1
@@ -372,7 +372,7 @@ export default function AddAccountDialog({
               render={<Link href="/locate-us" onClick={close} />}
              
             >
-              <MapPin size={15} strokeWidth={1.8} aria-hidden="true" />
+              <MapPin size={15} aria-hidden="true" />
               Find a Branch
             </Button>
           </DialogFooter>
@@ -384,7 +384,7 @@ export default function AddAccountDialog({
               render={<Link href="/locate-us" onClick={close} />}
              
             >
-              <MapPin size={15} strokeWidth={1.8} aria-hidden="true" />
+              <MapPin size={15} aria-hidden="true" />
               Find a Branch
             </Button>
           </DialogFooter>

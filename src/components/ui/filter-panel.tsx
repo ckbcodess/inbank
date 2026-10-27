@@ -15,7 +15,7 @@ import {
   Tag,
   User,
   X,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -140,13 +140,13 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
           <Button
             variant="outline"
             className={cn(
-              "h-8 shrink-0 gap-2 rounded-xl px-3 text-[13px] transition-transform duration-150 active:scale-[0.98]",
+              "h-8 shrink-0 gap-2 rounded-xl px-3 text-[13px] transition-transform duration-hover active:scale-[0.98]",
               className
             )}
           />
         }
       >
-        <SlidersHorizontal size={15} strokeWidth={1.8} className="text-muted-foreground" aria-hidden="true" />
+        <SlidersHorizontal size={15} className="text-muted-foreground" aria-hidden="true" />
         <span>Filters</span>
         {active > 0 && (
           <span className="flex size-3.5 items-center justify-center rounded-full bg-foreground text-[10px] leading-none text-background tabular">
@@ -217,7 +217,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                     >
                       <span className="truncate">{anyLabel}</span>
                       {anyOn && (
-                        <Check size={14} strokeWidth={2.2} className="shrink-0 text-foreground" aria-hidden="true" />
+                        <Check size={14} className="shrink-0 text-foreground" aria-hidden="true" />
                       )}
                     </DropdownMenuItem>
 
@@ -235,7 +235,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                         >
                           <span className="truncate">{o.label}</span>
                           {isSelected && (
-                            <Check size={14} strokeWidth={2.2} className="shrink-0 text-foreground" aria-hidden="true" />
+                            <Check size={14} className="shrink-0 text-foreground" aria-hidden="true" />
                           )}
                         </DropdownMenuItem>
                       );
@@ -263,7 +263,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                   onClick={onClear}
                   className="gap-2 px-2 py-2 text-[12px] text-muted-foreground hover:text-foreground justify-center cursor-pointer"
                 >
-                  <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                  <X size={13} aria-hidden="true" />
                   Clear all filters
                 </DropdownMenuItem>
               </>
@@ -299,7 +299,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                   >
                     <span className="truncate">{anyLabel}</span>
                     {anyOn && (
-                      <Check size={14} strokeWidth={2.2} className="shrink-0 text-foreground" aria-hidden="true" />
+                      <Check size={14} className="shrink-0 text-foreground" aria-hidden="true" />
                     )}
                   </DropdownMenuItem>
 
@@ -317,7 +317,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                       >
                         <span className="truncate">{o.label}</span>
                         {isSelected && (
-                          <Check size={14} strokeWidth={2.2} className="shrink-0 text-foreground" aria-hidden="true" />
+                          <Check size={14} className="shrink-0 text-foreground" aria-hidden="true" />
                         )}
                       </DropdownMenuItem>
                     );
@@ -340,7 +340,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                         onClick={onClear}
                         className="gap-2 px-2 py-2 text-[12px] text-muted-foreground hover:text-foreground justify-center cursor-pointer"
                       >
-                        <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                        <X size={13} aria-hidden="true" />
                         Clear filter
                       </DropdownMenuItem>
                     </>
@@ -388,10 +388,10 @@ export function AppliedFilters({ groups, className }: { groups: FilterGroup[]; c
             type="button"
             onClick={c.remove}
             aria-label={`Remove filter: ${c.label}`}
-            className="flex h-6 cursor-pointer items-center gap-2 rounded-full bg-muted pl-2 pr-2 text-[12px] text-foreground transition-colors duration-hover ease-settle hover:bg-muted/70"
+            className="flex h-6 cursor-pointer items-center gap-2 rounded-full bg-muted pl-2 pr-2 text-[12px] text-foreground transition-colors duration-hover hover:bg-muted/70"
           >
             <span>{c.label}</span>
-            <X size={12} strokeWidth={1.9} className="text-muted-foreground" aria-hidden="true" />
+            <X size={12} className="text-muted-foreground" aria-hidden="true" />
           </button>
         </li>
       ))}

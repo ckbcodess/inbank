@@ -18,7 +18,7 @@ import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary, HoldingNotFound, TREASURY_HOME, INVEST_HOME } from "@/components/invest/parts";
+import { HoldingNotFound, TREASURY_HOME, INVEST_HOME } from "@/components/invest/parts";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { roundMoney } from "@/lib/money";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
@@ -94,9 +94,9 @@ export default function RediscountPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Rediscount" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5 animate-in fade-in duration-200">
+      <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
           {`Rediscounting means cashing in before it matures on ${formatDate(h.maturity)}. You’re paid today’s value, which is less than the face value.`}
         </p>
@@ -154,16 +154,6 @@ export default function RediscountPage() {
           requestRediscount(h.id, { full, face: redeem, receive: net, toAccountId: to.id });
           setDone(true);
         }}
-        summary={
-          <AuthSummary
-            headline={full ? `Cash in all of ${h.title}` : `Cash in part of ${h.title}`}
-            amount={money(net)}
-            rows={[
-              ["To", to ? `${to.name} · ${to.number}` : ""],
-              ["Cost of cashing in early", money(costOfEarly)],
-            ]}
-          />
-        }
       />
     </div>
   );

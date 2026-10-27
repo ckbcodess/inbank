@@ -7,7 +7,7 @@
  */
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -16,9 +16,10 @@ import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { ProceedButton } from "@/components/payments/flows/shared";
-import { AccountRequired, AuthSummary, INVEST_HOME } from "@/components/invest/parts";
+import { AccountRequired, INVEST_HOME } from "@/components/invest/parts";
 import { useSession } from "@/lib/session-store";
 import { useMyTreasury, useTreasuryHydrated } from "@/lib/treasury";
+import { useMyDeposits } from "@/lib/term-deposits";
 
 type Type = "active" | "closed";
 const TYPES: readonly { value: Type; label: string }[] = [
@@ -31,6 +32,8 @@ export default function TreasuryStatementPage() {
   const router = useRouter();
   const hydrated = useTreasuryHydrated();
   const { csd, holdings, closed } = useMyTreasury();
+  const deposits = useMyDeposits();
+  const forDeposits = useSearchParams().get("product") === "term-deposits";
   const actor = useSession((s) => s.actor);
 
   const [type, setType] = useState<Type>("active");
@@ -39,14 +42,14 @@ export default function TreasuryStatementPage() {
   const [authOpen, setAuthOpen] = useState(false);
   const [done, setDone] = useState(false);
 
-  const back = { href: INVEST_HOME, label: "Invest" };
+  const back = forDeposits ? { href: "/invest/products/term-deposits", label: "Term Deposits" } : { href: INVEST_HOME, label: "Invest" };
   if (!hydrated) return <FormPageSkeleton fields={2} />;
   if (csd?.status !== "active") return <AccountRequired status={csd?.status} title="Statement" backTo={back} />;
 
-  const count = type === "active" ? holdings.length : closed.length;
+  const [activeCount, closedCount] = forDeposits ? [deposits.active.length, deposits.closed.length] : [holdings.length, closed.length];
+  const count = type === "active" ? activeCount : closedCount;
   const emailOk = EMAIL.test(email.trim());
   const valid = emailOk && count > 0;
-  const typeLabel = TYPES.find((t) => t.value === type)?.label ?? "";
 
   if (done) {
     return (
@@ -62,9 +65,9 @@ export default function TreasuryStatementPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Statement" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <Field label="Email Address" htmlFor="treasury-statement-email" error={email.trim() !== "" && !emailOk && "Enter a valid email address."}>
           <Input id="treasury-statement-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
         </Field>
@@ -85,7 +88,6 @@ export default function TreasuryStatementPage() {
         open={authOpen}
         onOpenChange={setAuthOpen}
         onSuccess={() => setDone(true)}
-        summary={<AuthSummary headline="Email a treasury statement" rows={[["Statement", typeLabel], ["To", email.trim()]]} />}
       />
     </div>
   );

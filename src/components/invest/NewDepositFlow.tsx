@@ -10,7 +10,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Receipt } from "lucide-react";
+import { Receipt } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { InlineError } from "@/components/ui/inline-error";
@@ -22,10 +22,12 @@ import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, InsufficientFundsAlert, ProceedButton } from "@/components/payments/flows/shared";
 import { ReviewSummary } from "@/components/ui/review-summary";
-import { AuthSummary, INVEST_HOME } from "@/components/invest/parts";
+import { INVEST_HOME } from "@/components/invest/parts";
 import { DepositInstructionField, OutcomeFailure, postDepositEntry } from "@/components/invest/term-deposit-parts";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { sumMoney } from "@/lib/money";
+import { TermsAgreement, TermsHint } from "@/components/ui/terms-agreement";
+import { depositTerms } from "@/lib/terms";
 import { useSession } from "@/lib/session-store";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import { addDays, MOCK_TODAY, useTreasuryAccounts } from "@/lib/treasury";
@@ -61,6 +63,7 @@ export function NewDepositFlow() {
   const [amount, setAmount] = useState(initialAmount);
   const [instruction, setInstruction] = useState<DepositInstruction>("close");
   const [authOpen, setAuthOpen] = useState(false);
+  const [accepted, setAccepted] = useState(false);
   const [result, setResult] = useState<{ trn: string; maturity: string } | null>(null);
 
   const fromId = useMemo(() => {
@@ -83,7 +86,7 @@ export function NewDepositFlow() {
 
   if (accounts.length === 0) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="New Term Deposit" backTo={back} />
         <TrueEmptyState
           title="You don’t have an account to deposit from"
@@ -151,9 +154,9 @@ export function NewDepositFlow() {
   /* ── Review ──────────────────────────────────────────────────────────── */
   if (screen === "review" && tenure) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ href: back.href, label: "New Term Deposit", onClick: () => setScreen("form") }} />
-        <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
+        <div className="flex flex-col gap-6">
           <ReviewSummary
             details={[
               ["From", from ? `${from.name} · ${from.number}` : ""],
@@ -167,29 +170,21 @@ export function NewDepositFlow() {
             total={money(num)}
             totalLabel="You deposit"
           />
+          <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject="term deposits" terms={depositTerms(tenure)} />
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="h-11 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("form")}>
+            <Button type="button" variant="outline" className="h-11 flex-1 text-[15px]" onClick={() => setScreen("form")}>
               Back to Edit
             </Button>
-            <Button type="button" className="h-11 flex-1 rounded-2xl text-[16px]" onClick={() => setAuthOpen(true)}>
+            <Button type="button" className="h-11 flex-1 text-[16px]" disabled={!accepted} onClick={() => setAuthOpen(true)}>
               Confirm
             </Button>
           </div>
+          <TermsHint agreed={accepted} />
         </div>
         <TransactionOtpModal
           open={authOpen}
           onOpenChange={setAuthOpen}
           onSuccess={authorised}
-          summary={
-            <AuthSummary
-              headline={`Open a ${tenure}-day term deposit`}
-              amount={money(num)}
-              rows={[
-                ["From", from ? `${from.name} · ${from.number}` : ""],
-                ["Matures", formatDate(maturity)],
-              ]}
-            />
-          }
         />
       </div>
     );
@@ -197,9 +192,9 @@ export function NewDepositFlow() {
 
   /* ── Form ────────────────────────────────────────────────────────────── */
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="New Term Deposit" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5 animate-in fade-in duration-200">
+      <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <div className="flex flex-col gap-2">
           <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} />
           <p className="px-1 text-[12px] text-muted-foreground">This account is debited now, and credited at maturity.</p>

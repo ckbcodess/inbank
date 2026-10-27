@@ -1,5 +1,5 @@
-import { ListPageSkeleton } from "@/components/states/PageSkeletons";
+import { ShelfPageSkeleton } from "@/components/states/PageSkeletons";
 
 export default function Loading() {
-  return <ListPageSkeleton rows={3} toolbar={false} />;
+  return <ShelfPageSkeleton cards={1} />;
 }

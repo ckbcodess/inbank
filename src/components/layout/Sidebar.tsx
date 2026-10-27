@@ -40,12 +40,14 @@ import {
   UserCheck,
   Users,
   Wallet,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import type { NavItem } from "@/lib/navigation";
 import type { Shell } from "@/lib/roles";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { NavAlertDot } from "@/components/ui/product-banner";
+import { useProductAlertTones } from "@/lib/product-alerts";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   LayoutDashboard,
@@ -157,6 +159,8 @@ export default function Sidebar({
   };
   const showExpandHint = collapsed && isSidebarHovered && pointerSeen && !resizing;
 
+  const alertTones = useProductAlertTones();
+
   // A single nav link — shared by flat groups and dropdown children.
   const renderNavLink = (item: NavItem, indent = false) => {
     const Icon = ICON_MAP[item.icon] ?? Wallet;
@@ -178,7 +182,7 @@ export default function Sidebar({
           href={item.path}
           onClick={onClose}
           aria-label={collapsed ? label : undefined}
-          className={`relative flex h-8 items-center gap-2 overflow-hidden rounded-lg px-2 text-[13px] font-medium transition duration-150 ${
+          className={`relative flex h-8 items-center gap-2 overflow-hidden rounded-lg px-2 text-[13px] font-medium transition duration-hover ${
             indent ? "ml-2 w-[calc(100%-8px)]" : "w-full"
           } ${
             active
@@ -189,12 +193,13 @@ export default function Sidebar({
           <Icon size={16} strokeWidth={active ? 2.1 : 1.8} className="shrink-0" />
           {/* A fixed max width (not min-w-0 truncation) so the ellipsis can't move while the sidebar animates. */}
           <span
-            className={`max-w-[11rem] shrink-0 truncate leading-normal whitespace-nowrap transition-opacity duration-150 ${
+            className={`max-w-[11rem] shrink-0 truncate leading-normal whitespace-nowrap transition-opacity duration-hover ${
               collapsed ? "opacity-0" : "opacity-100"
             }`}
           >
             {label}
           </span>
+          {shell === "customer" && alertTones[item.key as keyof typeof alertTones] === "act" && <NavAlertDot label={`${label}: needs you`} />}
         </Link>
       </SimpleTooltip>
     );
@@ -243,27 +248,27 @@ export default function Sidebar({
             }`}
           >
             <span
-              className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ease-in-out ${
+              className={`absolute inset-0 flex items-center justify-center transition-opacity duration-hover ${
                 showExpandHint ? "opacity-0" : "opacity-100"
               }`}
             >
               {shell === "admin" ? (
-                <ShieldCheck size={18} strokeWidth={2.1} className="text-primary" />
+                <ShieldCheck size={18} className="text-primary" />
               ) : (
                 <GCBLogo className="h-5 w-auto shrink-0" />
               )}
             </span>
             <span
-              className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-150 ease-in-out ${
+              className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-hover ${
                 showExpandHint ? "opacity-100" : "opacity-0"
               }`}
             >
-              <PanelLeftOpen className="size-4.5" strokeWidth={1.8} />
+              <PanelLeftOpen className="size-4.5" />
             </span>
           </button>
         </SimpleTooltip>
         <span
-          className={`min-w-0 max-w-[9rem] shrink-0 truncate text-[14px] font-medium leading-tight tracking-tight text-foreground transition-opacity duration-150 ${
+          className={`min-w-0 max-w-[9rem] shrink-0 truncate text-[14px] font-medium leading-tight tracking-tight text-foreground transition-opacity duration-hover ${
             collapsed ? "opacity-0" : "opacity-100"
           }`}
           aria-hidden={collapsed}
@@ -274,13 +279,13 @@ export default function Sidebar({
           type="button"
           onClick={toggleCollapse}
           tabIndex={collapsed ? -1 : 0}
-          className={`ml-auto hidden size-8 flex-shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-[color,background-color,opacity] duration-150 hover:bg-muted/70 hover:text-foreground lg:flex ${
+          className={`ml-auto hidden size-8 flex-shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-[color,background-color,opacity] duration-hover hover:bg-muted/70 hover:text-foreground lg:flex ${
             collapsed ? "pointer-events-none opacity-0" : "cursor-pointer opacity-100"
           }`}
           aria-label="Collapse sidebar"
           aria-hidden={collapsed}
         >
-          <PanelLeftClose className="size-4.5" strokeWidth={1.8} />
+          <PanelLeftClose className="size-4.5" />
         </button>
       </div>
 
@@ -306,7 +311,7 @@ export default function Sidebar({
                     type="button"
                     onClick={() => setOpenGroups((p) => ({ ...p, [name]: !open }))}
                     aria-expanded={open}
-                    className={`relative flex h-8 items-center gap-2 rounded-lg px-2 text-[13px] font-medium transition duration-150 cursor-pointer hover:bg-muted/50 hover:text-foreground ${
+                    className={`relative flex h-8 items-center gap-2 rounded-lg px-2 text-[13px] font-medium transition duration-hover cursor-pointer hover:bg-muted/50 hover:text-foreground ${
                       hasActiveChild && !open ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >
@@ -316,8 +321,7 @@ export default function Sidebar({
                     </span>
                     <ChevronDown
                       size={15}
-                      strokeWidth={1.9}
-                      className={`ml-auto shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                      className={`ml-auto shrink-0 transition-transform duration-hover ${open ? "rotate-180" : ""}`}
                     />
                   </button>
                   {open && (

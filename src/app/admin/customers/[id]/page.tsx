@@ -13,7 +13,7 @@
 import { Fact } from "@/components/ui/fact";
 import { use, useState } from "react";
 import Link from "next/link";
-import { Building2, CreditCard, ShieldAlert, UserCog } from "lucide-react";
+import { Building2, CreditCard, ShieldAlert, UserCog } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import SuspensionDialog from "@/components/SuspensionDialog";
@@ -62,7 +62,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
       <section className="rounded-2xl border border-border bg-card p-4">
         <div className="flex items-center gap-2 border-b border-border pb-3">
           <span className="flex size-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-            <Building2 size={19} strokeWidth={1.8} aria-hidden="true" />
+            <Building2 size={19} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-[15px] text-foreground">Corporate relationship</p>
@@ -94,7 +94,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
       {/* Issued Payment Cards */}
       <section className="rounded-2xl border border-border bg-card">
         <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
-          <CreditCard size={16} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+          <CreditCard size={16} aria-hidden="true" className="text-muted-foreground" />
           Issued payment cards
         </h2>
         <ul className="divide-y divide-border">
@@ -123,7 +123,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
       {/* User Access — a section within Customer Details, not its own screen */}
       <section className="rounded-2xl border border-border bg-card">
         <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
-          <UserCog size={16} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+          <UserCog size={16} aria-hidden="true" className="text-muted-foreground" />
           User access
         </h2>
         <ul className="divide-y divide-border">

@@ -10,7 +10,7 @@ import {
   Bike,
   Phone,
   ShieldCheck,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import {
   Dialog,
   DialogBody,
@@ -192,7 +192,7 @@ export function CardDeliveryTracker({
                 )}
               >
                 {isCompleted ? (
-                  <Check size={15} strokeWidth={2.4} />
+                  <Check size={15} />
                 ) : (
                   <span className="text-[12px] font-medium tabular-nums">{step.stepNum}</span>
                 )}
@@ -236,7 +236,7 @@ export function CardDeliveryTracker({
       {isBranchPickup && isReadyForPickup && (
         <div className="flex items-center gap-2 pt-2">
           <div className="size-9 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 text-foreground">
-            <Building2 size={20} strokeWidth={1.8} />
+            <Building2 size={20} />
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-[15px] font-medium text-foreground leading-tight">
@@ -254,7 +254,7 @@ export function CardDeliveryTracker({
         <div className="rounded-2xl border border-border/80 bg-muted/40 p-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <div className="size-9 rounded-full bg-primary/15 text-foreground flex items-center justify-center shrink-0">
-              <Bike size={20} strokeWidth={1.8} />
+              <Bike size={20} />
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-2">
@@ -276,7 +276,7 @@ export function CardDeliveryTracker({
             title={`Call rider: ${card.courierRider.phone}`}
             aria-label="Call dispatch rider"
           >
-            <Phone size={16} strokeWidth={1.8} />
+            <Phone size={16} />
           </a>
         </div>
       )}
@@ -358,7 +358,7 @@ export function CardDeliveryTrackerModal({
                 aria-label="Back to timeline"
                 title="Back to timeline"
               >
-                <ChevronLeft size={20} strokeWidth={2} />
+                <ChevronLeft size={20} />
               </button>
             )}
             <h2 className="text-[18px] font-medium text-foreground tracking-[var(--ls-tight)]">
@@ -376,7 +376,7 @@ export function CardDeliveryTrackerModal({
             className="flex size-8 items-center justify-center rounded-full bg-tile dark:bg-muted text-muted-foreground hover:text-foreground hover:bg-tile-hover dark:hover:bg-muted/80 transition-colors cursor-pointer"
             aria-label="Close dialog"
           >
-            <X size={18} strokeWidth={2} />
+            <X size={18} />
           </button>
         </div>
 

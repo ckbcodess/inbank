@@ -26,7 +26,7 @@ import {
   History,
   PieChart,
   Timer,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { Button, GLASS_CLASS, buttonVariants } from "@/components/ui/button";
 import { RoundAction } from "@/components/ui/round-action";
@@ -366,7 +366,7 @@ export function RefreshControl({
       className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-default cursor-pointer shrink-0"
       aria-label={`${t("dashboard.refresh", "Refresh dashboard")} (${timeLabel})`}
     >
-      <RefreshCw size={18} strokeWidth={1.8} className={cn(refreshing && "animate-spin")} />
+      <RefreshCw size={18} className={cn(refreshing && "animate-spin")} />
     </button>
   );
 }
@@ -377,7 +377,7 @@ function AccountLabel({ account, bare = false, full = false }: { account: Accoun
   const { t } = useTranslation();
   return (
     <>
-      {!bare && <Landmark size={17} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />}
+      {!bare && <Landmark size={17} className="shrink-0 text-muted-foreground" />}
       <span>{t(`accounts.type.${account.type}`, account.type)}</span>
       <span className={cn("tabular", !bare && "text-muted-foreground")}>
         {full ? account.number : `∗∗∗∗${last4(account.number)}`}
@@ -422,7 +422,7 @@ export function AccountSwitcher({
     return (
       <Link href={`/accounts/${account.id}`} className={trigger} aria-label={t("dashboard.accountDetails", "Account details")}>
         <AccountLabel account={account} bare={hero} />
-        <ChevronRight size={16} strokeWidth={1.8} className={chevron} />
+        <ChevronRight size={16} className={chevron} />
       </Link>
     );
   }
@@ -434,7 +434,7 @@ export function AccountSwitcher({
         aria-label={t("dashboard.switchAccount", "Switch account")}
       >
         <AccountLabel account={account} bare={hero} />
-        <ChevronDown size={16} strokeWidth={1.8} className={chevron} />
+        <ChevronDown size={16} className={chevron} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align={align} sideOffset={6} className="w-[320px] p-2">
         <DropdownMenuRadioGroup value={account.id} onValueChange={(id) => onSelect(id as string)}>
@@ -497,7 +497,7 @@ export function BalanceFigure({
         className="flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
         aria-label={showBalance ? t("header.hideAmounts", "Hide balances") : t("header.showAmounts", "Show balances")}
       >
-        {showBalance ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
+        {showBalance ? <Eye size={18} /> : <EyeOff size={18} />}
       </button>
     </div>
   );
@@ -574,7 +574,7 @@ export function BalanceMeta({
 export function RefreshFailed({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card px-3 py-3 sm:px-5">
-      <AlertCircle size={17} strokeWidth={1.8} className="shrink-0 text-warning" />
+      <AlertCircle size={17} className="shrink-0 text-warning" />
       <span className="min-w-0 flex-1 text-[13.5px] text-foreground">
         Couldn&apos;t refresh your dashboard.{" "}
         <span className="text-muted-foreground">You&apos;re seeing your last update — your money hasn&apos;t moved.</span>
@@ -956,8 +956,7 @@ export function FxBar({ defaultOpen = false, className }: { defaultOpen?: boolea
           {!open && <span className="text-[13px] text-muted-foreground tabular">{fxPeek()}</span>}
           <ChevronDown
             size={16}
-            strokeWidth={1.8}
-            className={cn("shrink-0 text-muted-foreground transition-transform duration-200", open && "rotate-180")}
+            className={cn("shrink-0 text-muted-foreground transition-transform duration-hover", open && "rotate-180")}
           />
         </span>
       </button>

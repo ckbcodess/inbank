@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown, MapPin, X } from "lucide-react";
+import { Check, ChevronDown, MapPin, X } from "@/components/ui/icons";
 import type { GcbBranch } from "@/lib/mock-data";
 
 interface BranchComboboxProps {
@@ -161,7 +161,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
             : "border-field-border bg-field hover:bg-field-hover"
         }`}
       >
-        <MapPin size={18} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+        <MapPin size={18} className="shrink-0 text-muted-foreground" />
         <input
           ref={inputRef}
           type="text"
@@ -179,7 +179,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
             className="size-5 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
             aria-label="Clear branch"
           >
-            <X size={14} strokeWidth={2} />
+            <X size={14} />
           </button>
         )}
         <button
@@ -194,7 +194,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
         >
           <ChevronDown
             size={18}
-            className={`transition-transform duration-200 ${open ? "rotate-180 text-foreground" : ""}`}
+            className={`transition-transform duration-hover ${open ? "rotate-180 text-foreground" : ""}`}
           />
         </button>
       </div>
@@ -230,7 +230,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
                   >
                     <span className="truncate">{branch.name}</span>
                     {isSelected && (
-                      <Check size={16} strokeWidth={2.2} className="shrink-0 ml-2 text-foreground" />
+                      <Check size={16} className="shrink-0 ml-2 text-foreground" />
                     )}
                   </button>
                 );

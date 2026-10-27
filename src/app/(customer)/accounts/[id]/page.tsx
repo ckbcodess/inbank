@@ -28,7 +28,7 @@ import {
   Plus,
   Repeat,
   Share,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -361,7 +361,7 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
 
       <div className="relative flex flex-col gap-2 text-[14px] leading-5 tracking-[-0.005em] text-muted-foreground">
         <span className="flex items-center gap-1">
-          <Landmark size={15} strokeWidth={1.8} aria-hidden="true" />
+          <Landmark size={15} aria-hidden="true" />
           {account.type}
           {needsAttention && (
             <>

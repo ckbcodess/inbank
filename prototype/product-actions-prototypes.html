@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Loans, Invest, Insure: Telling You What Needs You: 8 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ok:#15803d;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.55;max-width:1100px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--mu);align-items:center}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  .cell{display:flex;flex-direction:column;gap:12px;width:560px;max-width:100%}
+  .cap{font-size:13px;color:var(--mu);padding:0 4px;line-height:1.5} .cap b{color:var(--tx);font-weight:500}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;min-height:600px;display:flex;flex-direction:column;position:relative}
+  .scroll{flex:1;padding:20px 24px 24px;display:flex;flex-direction:column;gap:20px;width:100%}
+  .hd{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px}
+  .hd .l{display:flex;align-items:center;gap:10px;min-width:0}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .btn{height:40px;padding:0 18px;border-radius:12px;background:var(--am);color:#111;font-weight:500;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)} .btn.sm{height:32px;padding:0 12px;font-size:13px;border-radius:10px}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)} .btn.full{width:100%}
+  .u{text-decoration:underline;text-underline-offset:3px;color:var(--tx)}
+  .h3{font-size:16px;font-weight:500}
+  .big{font-size:36px;letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .grp{background:var(--tile);border-radius:20px;padding:8px}
+  .li{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;width:100%}
+  .li:hover{background:var(--tileh)}
+  .li .ic{width:36px;height:36px;border-radius:10px;background:var(--tileh);display:flex;align-items:center;justify-content:center;color:var(--mu);flex:none}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:14px} .li .m{font-size:12px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:14px} .li .e small{font-size:12px;color:var(--mu)} .li .e.am small{color:var(--amt)}
+  .facts{display:flex;flex-direction:column;background:var(--tile);border-radius:20px;padding:8px;font-size:14px}
+  .facts>div{display:flex;justify-content:space-between;gap:16px;padding:12px;border-radius:12px;align-items:center}
+  .facts .k{color:var(--mu)}
+  /* the mini nav */
+  .nav{display:flex;gap:4px;background:var(--tile);border-radius:14px;padding:4px}
+  .ni{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 6px;border-radius:10px;font-size:13px;color:var(--mu);position:relative;white-space:nowrap}
+  .ni.on{background:var(--surf);color:var(--tx);font-weight:500}
+  /* alert marks: icon + shape, never colour alone */
+  .mk{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;flex:none;font-size:12px;font-weight:500;line-height:1}
+  .mk.act{background:var(--am);color:#111}
+  .mk.wait{background:var(--tileh);color:var(--mu);border:1px solid var(--bd)}
+  .mk.done{background:color-mix(in srgb,var(--ok) 20%,var(--surf));color:var(--ok)}
+  .mk.lg{width:28px;height:28px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--am);display:inline-block}
+  .cnt{min-width:18px;height:18px;border-radius:9px;background:var(--am);color:#111;font-size:11px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:999px}
+  .chip.act{background:color-mix(in srgb,var(--am) 18%,var(--surf));color:var(--amt)}
+  .chip.wait{background:var(--tileh);color:var(--mu)}
+  .chip.done{background:color-mix(in srgb,var(--ok) 14%,var(--surf));color:var(--ok)}
+  /* banners */
+  .bn{display:flex;gap:12px;align-items:center;border-radius:16px;padding:12px 14px;border:1px solid transparent}
+  .bn.act{background:color-mix(in srgb,var(--am) 15%,var(--surf));border-color:color-mix(in srgb,var(--am) 40%,transparent)}
+  .bn.wait{background:var(--tile)} .bn.done{background:color-mix(in srgb,var(--ok) 11%,var(--surf))}
+  .bn .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .bn .hh{font-size:14px;font-weight:500} .bn .mm{font-size:12px;color:var(--mu);line-height:1.45}
+  .bn .x{width:28px;height:28px;border-radius:8px;color:var(--mu);display:flex;align-items:center;justify-content:center}
+  .bn .x:hover{background:var(--tileh)}
+  .bn.tall{flex-direction:column;align-items:stretch;gap:14px;padding:16px}
+  .bn.tall .top{display:flex;gap:12px;align-items:flex-start}
+  .bn.tall .hh{font-size:16px}
+  .bn.urgent{border-width:1.5px;border-color:var(--am)}
+  /* product shelves */
+  .card{background:var(--tile);border-radius:20px;padding:18px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;position:relative}
+  .card .nm{font-size:16px;font-weight:500;letter-spacing:-.01em} .card .ln{font-size:13px;color:var(--mu);margin-top:4px}
+  .card .tr{position:absolute;top:14px;right:14px}
+  .card.q{opacity:.55}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .stat{font-size:12px;color:var(--mu)} .stat.act{color:var(--amt)}
+  /* tracker */
+  .trk{display:flex;align-items:flex-start}
+  .trk .s{flex:1;display:flex;flex-direction:column;gap:8px;position:relative;font-size:12px;color:var(--mu)}
+  .trk .s:before{content:"";position:absolute;top:9px;left:22px;right:-4px;height:2px;background:var(--bd)}
+  .trk .s:last-child:before{display:none}
+  .trk .s.done:before{background:var(--ok)}
+  .trk .n{width:20px;height:20px;border-radius:50%;border:2px solid var(--bd);background:var(--surf);display:flex;align-items:center;justify-content:center;position:relative;z-index:1;font-size:11px}
+  .trk .s.done .n{background:var(--ok);border-color:var(--ok);color:#111}
+  .trk .s.cur{color:var(--tx);font-weight:500} .trk .s.cur .n{border-color:var(--tx)}
+  .trk .s.flag .n{border-color:var(--am);background:var(--am);color:#111}
+  .trk .s.flag{color:var(--amt)}
+  /* sticky bar */
+  .dock{position:sticky;bottom:0;margin-top:auto;margin-inline:-24px;margin-bottom:-24px;padding:12px 24px;background:var(--surf);border-top:1px solid var(--bd);display:flex;gap:12px;align-items:center}
+  .dock .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .dock .hh{font-size:14px;font-weight:500} .dock .mm{font-size:12px;color:var(--mu)}
+  /* popover + tray */
+  .pop{background:var(--surf);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:10px;width:300px}
+  .pop .hh{font-size:14px;font-weight:500} .pop .mm{font-size:12px;color:var(--mu);line-height:1.45}
+  .tray{background:var(--tile);border-radius:20px;padding:8px}
+  .tray .li{padding:12px}
+  .actbtn{position:relative;width:40px;height:40px;border-radius:12px;background:var(--tile);display:flex;align-items:center;justify-content:center;color:var(--tx)}
+  .actbtn .cnt{position:absolute;top:-4px;right:-4px}
+  .ladder{display:flex;flex-direction:column;gap:8px}
+  .ladder .r{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--mu);padding:8px 12px;border-radius:12px;background:var(--tile)}
+  .ladder b{color:var(--tx);font-weight:500}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--tx);color:var(--surf);padding:10px 16px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+  .toast.on{opacity:1}
+  @media(max-width:600px){.stage{padding:20px 12px 60px}.scroll{padding:16px}.cards{grid-template-columns:1fr}.dock{margin-inline:-16px;margin-bottom:-16px;padding-inline:16px}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Loans · Invest · Insure: telling you what needs you</h1>
+    <div class="ctrls">
+      <div class="seg" id="prod"></div>
+      <div class="seg" id="st"></div>
+      <div class="seg" id="theme"><button data-th="dark" class="on">Dark</button><button data-th="light">Light</button></div>
+    </div>
+  </div>
+  <div class="pills" id="pills"></div>
+  <div class="legend">
+    <span><span class="mk act">!</span>Needs you</span>
+    <span><span class="mk wait" id="lgw"></span>Waiting on us</span>
+    <span><span class="mk done" id="lgd"></span>Done</span>
+    <span>Nothing shown = all clear</span>
+    <span>Every message: a headline of up to 6 words, one line of why, one action.</span>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage" id="stage"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+ back:'<path d="M15 6l-6 6 6 6"/>', chev:'<path d="M9 6l6 6-6 6"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>', tick:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ coin:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.6 10c0-1 1-1.6 2.4-1.6s2.4.6 2.4 1.6-1 1.3-2.4 1.8-2.4.8-2.4 1.8 1 1.6 2.4 1.6 2.4-.6 2.4-1.6"/>',
+ chart:'<path d="M4 19V5M4 19h16M8 15l3.5-4 3 2.5L19 8"/>',
+ shield:'<path d="M12 3l7 3v5.5c0 4.2-2.9 7.7-7 9.5-4.1-1.8-7-5.3-7-9.5V6z"/><path d="M9 12l2 2 4-4"/>',
+ bell:'<path d="M6 16.5V11a6 6 0 0112 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 004 0"/>',
+ doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/>', vault:'<path d="M4 11h13a3 3 0 013 3v2a3 3 0 01-3 3H8a4 4 0 01-4-4z"/><path d="M8 11V8a2 2 0 014 0v3"/>'
+};
+const ic=(n,s=16,sw=1.7)=>svg(IC[n],s,sw);
+
+/* ── the three products, and the four things that can be true of each ── */
+const T={
+ loans:{
+  name:'Loans',nav:'coin',
+  shelf:{title:'Loans',card:{nm:'Salary Advance',ln:'Up to 80% of your salary'}},
+  status:{act:'Overdue · GHS 2,142.50',wait:'Waiting for approval',done:'Repaid 24 Oct',clear:'Up to GHS 2,400.00'},
+  page:{title:'Salary Advance',back:'Loans',
+    fig:{act:['To clear it today','GHS 2,142.50'],wait:['Requested','GHS 2,000.00'],done:['Repaid','GHS 2,042.50'],clear:['Available to you','GHS 2,400.00']},
+    facts:st=>[['Amount','GHS 2,000.00'],[st==='act'?'Was due':'Due','20 Oct 2026'],['Paid into','Current ••4821']],
+    acts:{act:['Repay Now','Repaying early costs less'],wait:null,done:['Statement','Every payment you made'],clear:['Apply','Up to GHS 2,400.00']}},
+  s:{
+   act:{head:'Advance overdue',meta:'Clear GHS 2,142.50 to stop the late charge growing.',cta:'Repay now',row:'Overdue since 20 Oct'},
+   wait:{head:'Waiting for approval',meta:'We’ll tell you when it’s decided.',row:'Waiting for approval'},
+   done:{head:'Advance repaid',meta:'GHS 2,042.50 paid on 24 Oct.',cta:'View receipt',row:'Repaid 24 Oct'}},
+  steps:{act:{l:['Requested','Paid in','Repaid'],cur:1,flag:1},wait:{l:['Requested','Approved','Paid in'],cur:0},done:{l:['Requested','Paid in','Repaid'],cur:2}}
+ },
+ invest:{
+  name:'Invest',nav:'chart',
+  shelf:{title:'Invest'},
+  status:{act:'Matures in 6 days',wait:'Cash-in requested',done:'Paid out 22 Oct',clear:'Matures 02 Nov'},
+  page:{title:'91-Day Treasury Bill',back:'Invest',
+    fig:{act:['Face value','GHS 10,000.00'],wait:['Cash-in value','GHS 9,412.30'],done:['Paid out','GHS 10,000.00'],clear:['Face value','GHS 10,000.00']},
+    facts:st=>[['Bought','03 Aug 2026'],['Matures','02 Nov 2026'],['At maturity',st==='act'?'Not chosen yet':'Paid to Current ••4821']],
+    acts:{act:['Choose What Happens','Pay out or roll over'],wait:null,done:['Statement','What you earned'],clear:['Cash In Early','See what you’d get today']}},
+  s:{
+   act:{head:'Matures in 6 days',meta:'Choose a payout, or GHS 10,000.00 goes to Current ••4821.',cta:'Choose',row:'Matures in 6 days'},
+   wait:{head:'Cash-in requested',meta:'GHS 9,412.30 on its way. We’ll tell you when it lands.',row:'Cash-in requested'},
+   done:{head:'Paid out',meta:'GHS 10,000.00 reached Current ••4821 on 22 Oct.',cta:'View',row:'Paid out 22 Oct'}},
+  steps:{act:{l:['Bought','Matures','Paid out'],cur:1,flag:1},wait:{l:['Bought','Cash-in requested','In your account'],cur:1},done:{l:['Bought','Matured','Paid out'],cur:2}}
+ },
+ insure:{
+  name:'Insure',nav:'shield',
+  shelf:{title:'Insure'},
+  status:{act:'1 policy · 1 needs you',wait:'1 policy · Waiting',done:'1 policy',clear:'Apply in minutes'},
+  page:{title:'HomeCall Plan',back:'Insure',
+    fig:null,
+    facts:st=>[['Premium','GHS 120.00 monthly'],['Cover','GHS 50,000.00'],['Policy number','HC-204815'],['Paid from','Current ••4821']],
+    acts:{act:['Pay Now','GHS 120.00 for September'],wait:['Withdraw Application','End your cover'],done:['Statement','Every premium you’ve paid'],clear:['Cancel Policy','End your cover']}},
+  s:{
+   act:{head:'1 premium missed',meta:'GHS 120.00 due 28 Sep wasn’t taken.',cta:'Pay now',row:'1 premium missed'},
+   wait:{head:'Waiting for a medical assessment',meta:'StarLife will call you.',row:'Waiting for a medical assessment'},
+   done:{head:'Cover is active',meta:'Medical cleared. Cover started 1 Oct.',cta:'View policy',row:'Cover is active'}},
+  steps:{act:{l:['Applied','Assessed','Covered'],cur:2,flag:2},wait:{l:['Applied','Assessed','Covered'],cur:1},done:{l:['Applied','Assessed','Covered'],cur:2}}
+ }
+};
+const ORDER=['loans','invest','insure'];
+const STATES=[['act','Needs you'],['wait','Waiting'],['done','Done'],['clear','All clear']];
+const ghsRe=/GHS/;
+
+const S={v:1,prod:'loans',st:'act',pop:true,tray:true,gone:{}};
+const cur=()=>T[S.prod];
+const sd=()=>cur().s[S.st]||null;           // the message for the chosen state, or none when clear
+const mkI=k=>k==='act'?'!':k==='wait'?ic('clock',11,2):ic('tick',11,2.4);
+const mk=(k,lg='')=>`<span class="mk ${k} ${lg}" aria-label="${k==='act'?'Needs you':k==='wait'?'Waiting on us':'Done'}">${mkI(k)}</span>`;
+const chev=`<span class="mu">${ic('chev',16,1.8)}</span>`;
+const back=`<span class="bk">${ic('back',20,1.8)}</span>`;
+const lnk=t=>`<button class="u" data-a="toast:${t}">${t}</button>`;
+const btn=(t,c='')=>`<button class="btn ${c}" data-a="toast:${t}">${t}</button>`;
+
+/* the shared nav, with one of three ways to show an alert on the product that has one */
+function nav(style){
+  return `<div class="nav">${ORDER.map(k=>{
+    const on=k===S.prod, a=on&&(S.st==='act'||S.st==='wait')?S.st:null;
+    let m='';
+    if(a&&style==='dot'&&a==='act') m=`<span class="dot" aria-label="Needs you"></span>`;
+    if(a&&style==='count'&&a==='act') m=`<span class="cnt" aria-label="1 needs you">1</span>`;
+    if(a&&style==='icon') m=mk(a);
+    return `<span class="ni ${on?'on':''}">${ic(T[k].nav,16)}${T[k].name}${m}</span>`;
+  }).join('')}</div>`;
+}
+
+/* the shelf: what you see when you open Loans, Invest or Insure */
+function shelf(o={}){
+  const k=S.prod,t=T[k],st=S.st,show=st!=='clear';
+  const tag=(where)=>o.mark===where&&show&&st!=='done'?mk(st):'';   // the alert icon on the card / row
+  const statTxt=t.status[st];
+  const cardStat=`<span class="stat ${st==='act'?'act':''}">${statTxt}</span>`;
+  let body='';
+  if(k==='loans'){
+    body=`<div class="cards"><div class="card">${o.mark==='corner'&&show&&st!=='done'?`<span class="tr">${mk(st)}</span>`:''}<div><div class="nm">Salary Advance</div><div class="ln">Up to 80% of your salary</div></div>${o.chip&&show?`<span class="chip ${st}">${mkSm(st)}${o.chip(st)}</span>`:cardStat}</div></div>`;
+  }else if(k==='invest'){
+    const row=(ico,tt,sub,fig,left,hl)=>`<button class="li" data-a="toast:Opens the holding"><span class="ic">${ic(ico,16)}</span><span class="g"><span class="t">${tt}</span><span class="m ${hl?'am':''}">${sub}</span></span>${hl&&(o.mark==='row'||o.mark==='corner')&&show&&st!=='done'?mk(st):''}<span class="e"><span class="tab">${fig}</span><small>${left}</small></span>${chev}</button>`;
+    body=`<div class="sec"><h3 class="h3">Your investments</h3><div class="grp">${row('doc','91-Day Treasury Bill',o.chip&&show?`<span class="chip ${st}" style="margin-top:4px">${mkSm(st)}${o.chip(st)}</span>`:statTxt,'GHS 10,000.00','Face value',st==='act')}${row('vault','182-Day Term Deposit','Matures 08 Apr 2027','GHS 20,000.00','Principal',false)}</div></div>`;
+  }else{
+    const plans=[['Child Education Plan',null],['HomeCall Plan',true],['WealthMaster Plan',null],['Ultimate Protection Plan',null]];
+    body=`<div class="cards">${plans.map(([n,mine])=>`<div class="card" style="min-height:130px">${mine&&o.mark==='corner'&&show&&st!=='done'?`<span class="tr">${mk(st)}</span>`:''}<div class="nm">${n}</div>${mine?(o.chip&&show?`<span class="chip ${st}" style="align-self:flex-start">${mkSm(st)}${o.chip(st)}</span>`:cardStat):''}</div>`).join('')}</div>`;
+  }
+  const hdR=o.header||'';
+  return `<div class="hd"><div class="l"><h2>${t.shelf.title}</h2></div>${hdR}</div>${o.nav!==null?nav(o.nav||'none'):''}${o.aboveList||''}${body}${o.after||''}`;
+}
+const mkSm=s=>s==='act'?`<span class="mk act" style="width:14px;height:14px;font-size:10px">!</span>`:s==='wait'?ic('clock',13,2):ic('tick',13,2.4);
+
+/* the product page: the page you open from the shelf */
+function page(o={}){
+  const t=cur(),p=t.page,st=S.st,m=sd();
+  const fig=p.fig?`<div class="sec" style="gap:6px"><span class="mu" style="font-size:13px">${p.fig[st][0]}</span><span class="big">${p.fig[st][1]}</span></div>`:'';
+  const facts=p.facts(st);
+  const first=o.firstRow||'';
+  const rows=facts.map(([a,b],i)=>`<div><span class="k">${a}</span><span class="tab ${st==='act'&&b==='Not chosen yet'?'am':''}">${b}</span></div>`).join('');
+  const a=p.acts[st];
+  const act=a?`<div class="grp"><button class="li" data-a="toast:${a[0]}"><span class="ic">${ic('doc',16)}</span><span class="g"><span class="t">${a[0]}</span><span class="m">${a[1]}</span></span>${chev}</button></div>`:'';
+  return `<div class="hd"><div class="l">${back}<h2>${p.title}</h2>${o.titleExtra||''}</div>${o.hdRight||''}</div>${o.top||''}${fig}${o.mid||''}<div class="facts">${first}${rows}</div>${act}${o.bottom||''}`;
+}
+const frame=h=>`<div class="frame"><div class="scroll">${h}</div></div>`;
+const cell=(c,h)=>`<div class="cell"><p class="cap">${c}</p>${frame(h)}</div>`;
+
+/* a banner in three sizes */
+function banner(kind='slim'){
+  const m=sd(); if(!m) return '';
+  const st=S.st, id=S.prod+st;
+  if(S.gone[id]) return '';
+  const x=st==='done'?`<button class="x" data-a="gone" aria-label="Dismiss">${ic('x',14,2)}</button>`:'';
+  if(kind==='slim') return `<div class="bn ${st}">${mk(st)}<div class="tx"><span class="hh">${m.head}</span></div>${m.cta&&st!=='wait'?`<button class="u" style="font-size:13px;white-space:nowrap" data-a="toast:${m.cta}">${m.cta}</button>`:''}${x}</div>`;
+  return `<div class="bn tall ${st} ${o_urgent(st)}"><div class="top">${mk(st,'lg')}<div class="tx"><span class="hh">${m.head}</span><span class="mm">${m.meta}</span></div>${x}</div>${m.cta&&st==='act'?`<button class="btn full" data-a="toast:${m.cta}">${m.cta}</button>`:''}${m.cta&&st==='done'?`<button class="u" style="font-size:13px" data-a="toast:${m.cta}">${m.cta}</button>`:''}</div>`;
+}
+const o_urgent=st=>st==='act'?'urgent':'';
+
+/* ── the 8 variations ── */
+const V={};
+
+V[1]={name:'1. A row, not a banner',
+ note:'<b>Follows today’s rule.</b> The constitution says what needs you is an amber row at the top of the page with an underlined link, never a banner. The alert icon lives only on the nav, and the shelf shows the same words as the row.',
+ draw(){
+  const m=sd(), st=S.st;
+  return [
+   cell('<b>Shelf.</b> Alert icon on the nav. The card’s own status line carries the words.',shelf({nav:'icon'})),
+   cell('<b>Page.</b> The first fact row is the message, in amber when it needs you. No block above the page.',page({firstRow:m?`<div>${rowInner(m,st)}</div>`:''}))
+  ];
+ }};
+const rowInner=(m,st)=>`<span class="${st==='act'?'am':'k'}" style="display:inline-flex;align-items:center;gap:8px;flex:1">${mk(st)}${m.row}</span>${m.cta&&st!=='wait'?`<span>${lnk(m.cta)}</span>`:st==='wait'?'<span class="mu" style="font-size:13px">Nothing to do</span>':''}`;
+
+V[2]={name:'2. Slim banner',
+ note:'<b>Overrides the no-banner rule.</b> One line under the title: icon, headline, one text action. Nothing else on the page changes. The shelf keeps just a dot on the nav.',
+ draw(){return [
+   cell('<b>Shelf.</b> A dot on the nav for the product that needs you. Quiet.',shelf({nav:'dot'})),
+   cell('<b>Page.</b> A single line under the title. Done ones can be dismissed; needs-you ones can’t be hidden.',page({top:banner('slim')}))];}};
+
+V[3]={name:'3. Banner with the number',
+ note:'<b>Overrides the no-banner rule.</b> A fuller card for when the number matters (what to clear, what lands). The button is the one primary action. The shelf shows a count on the nav and a chip on the card.',
+ draw(){return [
+   cell('<b>Shelf.</b> A count on the nav, and a chip on the card that says the same words as the banner.',shelf({nav:'count',chip:s=>({act:'Needs you',wait:'Waiting',done:'Done'}[s])})),
+   cell('<b>Page.</b> Headline, one line of why, one button. Amber border only when it needs you.',page({top:banner('tall')}))];}};
+
+V[4]={name:'4. The alert icon, no banner',
+ note:'<b>Closest to what you described.</b> The icon is the system. It sits on the nav, on the card and next to the page title. Tapping it opens a small card with the one line and the action. Nothing pushes the page down.',
+ draw(){
+  const m=sd(),st=S.st;
+  const popup=m&&S.pop?`<div class="pop"><span class="hh">${m.head}</span><span class="mm">${m.meta}</span>${m.cta&&st!=='wait'?btn(m.cta,'sm'):''}</div>`:'';
+  const ic2=m?`<button data-a="pop" aria-label="${m.head}">${mk(st,'lg')}</button>`:'';
+  return [
+   cell('<b>Shelf.</b> The icon on the nav and in the corner of the card.',shelf({nav:'icon',mark:'corner'})),
+   cell('<b>Page.</b> The icon beside the title. Tap it to read the line. It opens by default here.',page({titleExtra:ic2,top:popup?`<div style="display:flex;justify-content:flex-start;margin-top:-8px">${popup}</div>`:''}))];}};
+
+V[5]={name:'5. Tracker',
+ note:'<b>Overrides the no-banner rule, replaces words with steps.</b> A three-step line says where you are in one glance, so there is less to read. The step that needs you turns amber and carries the one action.',
+ draw(){
+  const t=cur(),s=t.steps[S.st],m=sd(),st=S.st;
+  const trk=s?`<div class="trk">${s.l.map((l,i)=>`<div class="s ${i<s.cur?'done':''} ${i===s.cur?'cur':''} ${s.flag===i&&st==='act'?'flag':''}"><span class="n">${i<s.cur||(st==='done'&&i===s.cur)?ic('tick',11,3):(s.flag===i&&st==='act'?'!':'')}</span>${l}</div>`).join('')}</div>`:'';
+  const cta=m&&m.cta&&st==='act'?`<div>${btn(m.cta,'full')}</div>`:'';
+  const chipT=m?`<span class="chip ${st}">${mkSm(st)}${{act:'Needs you',wait:'Waiting',done:'Done'}[st]}</span>`:'';
+  return [
+   cell('<b>Shelf.</b> The card shows its step in a short chip. The nav carries the icon.',shelf({nav:'icon',chip:s2=>{const x=cur().steps[s2];return x?`Step ${x.cur+1} of 3`:''}})),
+   cell('<b>Page.</b> A status chip by the title, the tracker, and the action under it when it needs you.',page({titleExtra:chipT,top:`${trk?`<div class="sec" style="gap:16px">${trk}${cta}</div>`:''}`}))];}};
+
+V[6]={name:'6. Action bar at the bottom',
+ note:'<b>Overrides the no-banner rule.</b> The message sits at the bottom of the page, where a thumb already is, so the top stays calm. One line and one button. The shelf only shows how many actions the product has.',
+ draw(){
+  const m=sd(),st=S.st;
+  const dock=m?`<div class="dock">${mk(st,'lg')}<div class="tx"><span class="hh">${m.head}</span><span class="mm">${m.meta}</span></div>${m.cta&&st!=='wait'?btn(m.cta,'sm'):''}</div>`:'';
+  return [
+   cell('<b>Shelf.</b> A small pill under the card: “1 action”, “Waiting”, “Done”.',shelf({nav:'dot',chip:s=>({act:'1 action',wait:'Waiting',done:'Done'}[s])})),
+   cell('<b>Page.</b> The bar is docked to the bottom while the page scrolls under it.',page({bottom:dock}))];}};
+
+V[7]={name:'7. One Actions tray',
+ note:'<b>A cross-product inbox.</b> One Actions icon in the header of all three products, with a count. It lists every open item across Loans, Invest and Insure, one line each. A product page shows its own line as a row.',
+ draw(){
+  const items=ORDER.map(k=>{const mm=(k===S.prod&&S.st!=='clear')?T[k].s[S.st]:null;return mm?[k,mm,S.st]:null}).filter(Boolean);
+  const demo=[['loans',T.loans.s.act,'act'],['invest',T.invest.s.wait,'wait'],['insure',T.insure.s.act,'act']];
+  const list=(S.st==='clear'?[]:demo).filter(([,,s])=>s!=='done');
+  const n=list.filter(x=>x[2]==='act').length;
+  const bell=`<button class="actbtn" data-a="tray" aria-label="Actions">${ic('bell',18)}${n?`<span class="cnt">${n}</span>`:''}</button>`;
+  const tray=S.tray?`<div class="sec"><h3 class="h3">Needs you</h3><div class="tray">${list.map(([k,mm,s])=>`<button class="li" data-a="toast:${mm.cta||'Opens'}"><span class="ic">${ic(T[k].nav,16)}</span><span class="g"><span class="t">${mm.head}</span><span class="m">${T[k].name}${s==='wait'?' · Nothing to do':''}</span></span>${mk(s)}${chev}</button>`).join('')||'<div style="padding:16px" class="mu">Nothing needs you.</div>'}</div></div>`:'';
+  const m=sd(),st=S.st;
+  return [
+   cell('<b>Shelf.</b> The tray opens from the header icon. Same list wherever you are.',shelf({nav:'none',header:bell,after:tray})),
+   cell('<b>Page.</b> The same icon in the header, and the page’s own message as one row.',page({hdRight:bell,firstRow:m?`<div>${rowInner(m,st)}</div>`:''}))];}};
+
+V[8]={name:'8. Severity ladder',
+ note:'<b>One component, four volumes.</b> Quiet text for good news, grey for waiting, amber for needs you, amber with a border and the cost of waiting for when it has already gone wrong. Louder only when the money is at stake.',
+ draw(){
+  const m=sd(),st=S.st;
+  let b='';
+  if(m){
+    const over=S.prod==='loans'&&st==='act';
+    b=st==='done'?`<div class="bn done" style="background:none;padding:0 4px">${mk('done')}<div class="tx"><span class="mm" style="font-size:13px">${m.head}. ${m.meta}</span></div></div>`
+     :st==='wait'?`<div class="bn wait">${mk('wait')}<div class="tx"><span class="hh">${m.head}</span><span class="mm">${m.meta}</span></div></div>`
+     :`<div class="bn tall act ${over?'urgent':''}"><div class="top">${mk('act','lg')}<div class="tx"><span class="hh">${m.head}</span><span class="mm">${m.meta}</span></div></div>${over?`<div class="mm" style="padding:8px 12px;border-radius:10px;background:color-mix(in srgb,var(--am) 18%,var(--surf));color:var(--tx)">The late charge is 5% of the advance for each month it stays unpaid.</div>`:''}${btn(m.cta,'full')}</div>`;
+  }
+  const lad=`<div class="ladder"><div class="r">${mk('done')}<b>Done</b> one quiet line, no box</div><div class="r">${mk('wait')}<b>Waiting</b> grey box, no button</div><div class="r">${mk('act')}<b>Needs you</b> amber box, one button</div><div class="r">${mk('act')}<b>Gone wrong</b> amber border and the cost of waiting (loans overdue only)</div></div>`;
+  return [
+   cell('<b>Shelf.</b> The card’s foot repeats the tone: amber text for needs you, grey for the rest.',shelf({nav:'icon',mark:'corner'})),
+   cell('<b>Page.</b> The same message at the volume the situation needs.',page({top:b,bottom:lad}))];}};
+
+/* ── chrome ── */
+const $=s=>document.querySelector(s);
+function render(){
+  $('#lgw').innerHTML=ic('clock',11,2); $('#lgd').innerHTML=ic('tick',11,2.4);
+  $('#pills').innerHTML=Object.keys(V).map(n=>`<button class="pill ${+n===S.v?'on':''}" data-v="${n}">${V[n].name}</button>`).join('');
+  $('#prod').innerHTML=ORDER.map(k=>`<button data-p="${k}" class="${k===S.prod?'on':''}">${T[k].name}</button>`).join('');
+  $('#st').innerHTML=STATES.map(([k,l])=>`<button data-s="${k}" class="${k===S.st?'on':''}">${l}</button>`).join('');
+  $('#note').innerHTML=V[S.v].note;
+  $('#stage').innerHTML=V[S.v].draw().join('');
+}
+let tt;
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),1600)}
+document.addEventListener('click',e=>{
+  const v=e.target.closest('[data-v]'),p=e.target.closest('[data-p]'),s=e.target.closest('[data-s]'),th=e.target.closest('[data-th]'),a=e.target.closest('[data-a]');
+  if(v){S.v=+v.dataset.v;render();return}
+  if(p){S.prod=p.dataset.p;render();return}
+  if(s){S.st=s.dataset.s;render();return}
+  if(th){document.documentElement.dataset.theme=th.dataset.th;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===th));return}
+  if(a){const d=a.dataset.a;
+    if(d==='pop'){S.pop=!S.pop;render();return}
+    if(d==='tray'){S.tray=!S.tray;render();return}
+    if(d==='gone'){S.gone[S.prod+S.st]=1;render();return}
+    if(d.startsWith('toast:'))toast(d.slice(6));}
+});
+render();
+</script>
+</body>
+</html>

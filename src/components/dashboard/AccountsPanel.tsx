@@ -9,7 +9,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Building2, Check, ChevronRight, Copy, Send } from "lucide-react";
+import { Building2, Check, ChevronRight, Copy, Send } from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SimpleTooltip } from "@/components/ui/tooltip";
@@ -31,9 +31,9 @@ function CopyAccountNumberButton({ number }: { number: string }) {
         aria-label="Copy account number"
       >
         {copied ? (
-          <Check size={11} strokeWidth={2.2} className="text-success-text" />
+          <Check size={11} className="text-success-text" />
         ) : (
-          <Copy size={11} strokeWidth={1.8} />
+          <Copy size={11} />
         )}
       </button>
     </SimpleTooltip>
@@ -73,7 +73,7 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                        <Building2 size={16} strokeWidth={1.8} aria-hidden="true" />
+                        <Building2 size={16} aria-hidden="true" />
                       </span>
                       <div className="min-w-0">
                         <p className="truncate text-[13px] font-medium text-foreground">{acc.name}</p>

@@ -12,7 +12,7 @@ import {
   Check,
   User,
   Users,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -522,7 +522,7 @@ function ActivateContent() {
             </div>
 
             <span className="inline-flex items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-[11px] font-medium text-pill-success-text shrink-0">
-              <Check size={12} strokeWidth={2.5} />
+              <Check size={12} />
               Verified
             </span>
           </div>

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Camera, CameraOff, Check, RefreshCw, Upload } from "lucide-react";
+import { Camera, CameraOff, Check, RefreshCw, Upload } from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 
@@ -330,7 +330,7 @@ export default function SelfieCapture({
       {/* Circular Viewfinder */}
       <div className="flex flex-col items-center gap-2">
         <div
-          className={`relative flex size-42 sm:size-49 items-center justify-center overflow-hidden rounded-full border-4 transition-colors duration-200 bg-muted/40 shadow-inner ${
+          className={`relative flex size-42 sm:size-49 items-center justify-center overflow-hidden rounded-full border-4 transition-colors duration-hover bg-muted/40 shadow-inner ${
             capturedImage
               ? "border-success/80"
               : facePosition === "centered"
@@ -342,7 +342,7 @@ export default function SelfieCapture({
         >
           {/* Shutter flash effect */}
           {flash && (
-            <div className="absolute inset-0 z-30 bg-white/80 pointer-events-none transition-opacity duration-150" />
+            <div className="absolute inset-0 z-30 bg-white/80 pointer-events-none transition-opacity duration-hover" />
           )}
 
           {capturedImage ? (
@@ -351,7 +351,7 @@ export default function SelfieCapture({
               <Image src={capturedImage} alt="Captured selfie" fill unoptimized className="object-cover" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/15">
                 <div className="flex size-10 items-center justify-center rounded-full bg-success text-white shadow-sm">
-                  <Check size={22} strokeWidth={2.8} />
+                  <Check size={22} />
                 </div>
               </div>
             </div>
@@ -366,7 +366,7 @@ export default function SelfieCapture({
               />
               {/* Dynamic face centering target ring */}
               <div
-                className={`pointer-events-none absolute inset-2.5 rounded-full border-2 transition duration-200 ${
+                className={`pointer-events-none absolute inset-2.5 rounded-full border-2 transition duration-hover ${
                   facePosition === "centered"
                     ? "border-success/90 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                     : facePosition === "off_center" || facePosition === "too_close"
@@ -390,7 +390,7 @@ export default function SelfieCapture({
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 p-4 text-center text-muted-foreground">
-              <CameraOff size={32} strokeWidth={1.8} className="text-muted-foreground/80" />
+              <CameraOff size={32} className="text-muted-foreground/80" />
               <span className="text-[12px] leading-tight">
                 {errorMessage || "Camera unavailable"}
               </span>
@@ -410,7 +410,7 @@ export default function SelfieCapture({
             }`}
           >
             {facePosition === "centered" ? (
-              <Check size={13} strokeWidth={2.5} className="text-success-text" />
+              <Check size={13} className="text-success-text" />
             ) : (
               <div
                 className={`size-1.5 rounded-full ${

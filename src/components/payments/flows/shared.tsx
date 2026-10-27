@@ -2,7 +2,7 @@
 
 import { InlineError } from "@/components/ui/inline-error";
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { ArrowLeftRight, Landmark, AlertCircle, Check, ChevronDown, User } from "lucide-react";
+import { ArrowLeftRight, Landmark, AlertCircle, Check, ChevronDown, User } from "@/components/ui/icons";
 import { BankMark } from "@/components/ui/bank-mark";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AppLoader } from "@/components/ui/loader";
@@ -629,7 +629,7 @@ export function AccountSelectTriggerContent({
     return (
       <div className="flex items-center gap-2 min-w-0 flex-1">
         <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
-          <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
+          <Landmark size={20} className="shrink-0" />
         </span>
         <span className="text-[14px] text-muted-foreground font-normal truncate">
           {placeholder}
@@ -643,7 +643,7 @@ export function AccountSelectTriggerContent({
       {/* Left: Icon + Account Name + Account Number */}
       <div className="flex items-center gap-2 min-w-0">
         <span className="flex size-8 shrink-0 items-center justify-center text-foreground">
-          <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
+          <Landmark size={20} className="shrink-0" />
         </span>
         <div className="flex flex-col min-w-0 text-left gap-0.5">
           <span className="text-[14.5px] text-foreground font-medium tracking-[var(--ls-tight)] truncate leading-tight">
@@ -717,28 +717,41 @@ const asNumber = (v: string) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
  * down, so they are never promised more than was paid.
  *
  * `ghs` is "" while the foreign box is the source; `onChange` always gets both.
+ *
+ * It is not only for currencies: any two amounts joined by a one-way sum can use it (a bond's cost and its face value),
+ * by passing the two conversions and the labels. The left box is always the one the customer pays.
  */
 export function DualAmountFields({
   foreign,
   ghs,
-  rate,
+  rate = 1,
   foreignCurrency,
   sendCurrency = "GHS",
+  toForeign,
+  toGhs,
+  labels = { send: "You Send", get: "Recipient Gets" },
   onChange,
   onFocus,
   hasError,
 }: {
   foreign: string;
   ghs: string;
-  rate: number;
+  rate?: number;
   foreignCurrency: string;
   sendCurrency?: string;
+  /** What the right box holds for this much in the left box. Defaults to the rate, rounded down. */
+  toForeign?: (ghs: number) => number;
+  /** What the left box holds for this much in the right box. Defaults to the rate, rounded. */
+  toGhs?: (foreign: number) => number;
+  labels?: { send: string; get: string };
   onChange: (next: { foreign: string; ghs: string }) => void;
   onFocus?: () => void;
   hasError?: boolean;
 }) {
   const numForeign = asNumber(foreign);
-  const ghsShown = ghs !== "" ? ghs : numForeign > 0 ? String(Math.round(numForeign * rate * 100) / 100) : "";
+  const ghsFor = toGhs ?? ((f: number) => Math.round(f * rate * 100) / 100);
+  const foreignFor = toForeign ?? ((n: number) => Math.floor((n / rate) * 100 + 1e-9) / 100);
+  const ghsShown = ghs !== "" ? ghs : numForeign > 0 ? String(ghsFor(numForeign)) : "";
 
   return (
     <div className="relative grid grid-cols-1 items-center gap-2 md:grid-cols-2">
@@ -746,18 +759,18 @@ export function DualAmountFields({
         value={ghsShown}
         onChange={(val) => {
           const n = asNumber(val);
-          const recipientGets = n > 0 && rate > 0 ? String(Math.floor((n / rate) * 100 + 1e-9) / 100) : "";
+          const recipientGets = n > 0 && rate > 0 ? String(foreignFor(n)) : "";
           onChange({ ghs: val, foreign: recipientGets });
         }}
         currency={sendCurrency}
-        label="You Send"
+        label={labels.send}
         onFocus={onFocus}
         hasError={hasError}
       />
 
       <div className="absolute left-1/2 top-[calc(50%+14px)] z-10 hidden -translate-x-1/2 -translate-y-1/2 md:flex">
         <div className="flex size-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm">
-          <ArrowLeftRight size={15} strokeWidth={2} />
+          <ArrowLeftRight size={15} />
         </div>
       </div>
 
@@ -765,7 +778,7 @@ export function DualAmountFields({
         value={foreign}
         onChange={(val) => onChange({ foreign: val, ghs: "" })}
         currency={foreignCurrency}
-        label="Recipient Gets"
+        label={labels.get}
         onFocus={onFocus}
         hasError={hasError}
       />
@@ -1172,7 +1185,7 @@ export function ProceedButton({
       <Button
         type="button"
         data-proceed-cta="true"
-        className="w-full h-11 rounded-2xl text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
+        className="w-full h-11 text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
         disabled={disabled}
         loading={loading}
         onClick={onClick}
@@ -1214,7 +1227,7 @@ export function AccountVerificationStatus({
     return (
       <div className={cn("flex items-center gap-2 pt-2 text-[13.5px] text-foreground select-none animate-verify-in", className)}>
         <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
-          <Check size={10} strokeWidth={3} className="shrink-0" />
+          <Check size={10} className="shrink-0" />
         </span>
         <span className="truncate font-normal animate-in fade-in-0 duration-200">
           {name}
@@ -1231,7 +1244,7 @@ export function VerifiedAccountBadge({ name, className }: { name: string; classN
   return (
     <div className={cn("flex items-center gap-2 pt-2 text-[13.5px] text-foreground select-none animate-verify-in", className)}>
       <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
-        <Check size={10} strokeWidth={3} className="shrink-0" />
+        <Check size={10} className="shrink-0" />
       </span>
       <span className="truncate font-normal animate-in fade-in-0 duration-200">
         {name}
@@ -1317,7 +1330,7 @@ export function CollapsedDetailsBadge({
           <BankMark name={provider} size={32} />
         ) : (
           <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12px] text-muted-foreground font-medium">
-            {initials || <User size={16} strokeWidth={1.8} aria-hidden="true" />}
+            {initials || <User size={16} aria-hidden="true" />}
           </span>
         )}
         <div className="flex min-w-0 flex-col gap-0.5 text-left">
@@ -1328,7 +1341,7 @@ export function CollapsedDetailsBadge({
                 className="flex size-3 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop"
                 title={`Name confirmed${nameCheck.by ? ` by ${nameCheck.by}` : ""}`}
               >
-                <Check size={9} strokeWidth={3} className="shrink-0" />
+                <Check size={9} className="shrink-0" />
                 <span className="sr-only">Name confirmed{nameCheck.by ? ` by ${nameCheck.by}` : ""}</span>
               </span>
             )}
@@ -1339,7 +1352,7 @@ export function CollapsedDetailsBadge({
           {nameCheck &&
             !nameCheck.confirmed && (
               <span className="flex items-center gap-1 text-[12px] leading-tight text-warning">
-                <AlertCircle size={12} strokeWidth={2} className="shrink-0" aria-hidden="true" />
+                <AlertCircle size={12} className="shrink-0" aria-hidden="true" />
                 <span className="truncate">Name not confirmed — check the details before you send</span>
               </span>
             )}
@@ -1576,10 +1589,16 @@ export function BankSelect({
         className="flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 rounded-xl border border-field-border bg-field px-3 py-2 text-[14px] text-foreground outline-none transition-all hover:bg-field-hover focus-visible:border-field-border-focus focus-visible:ring-1 focus-visible:ring-field-border-focus aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive"
       >
         <span className="flex min-w-0 items-center gap-2">
-          <BankMark name={value} size={28} />
+          {value ? (
+            <BankMark name={value} size={28} />
+          ) : (
+            <span className="flex size-7 shrink-0 items-center justify-center text-muted-foreground">
+              <Landmark size={20} className="shrink-0" />
+            </span>
+          )}
           <span className={cn("truncate", !value && "text-muted-foreground")}>{value || "Select bank"}</span>
         </span>
-        <ChevronDown aria-hidden="true" className="pointer-events-none ml-1 size-3 shrink-0 stroke-[1.75] text-muted-foreground" />
+        <ChevronDown aria-hidden="true" className="pointer-events-none ml-1 size-3 shrink-0 text-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent align="start" className="w-(--anchor-width) min-w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-border p-2">
         <Input
@@ -1608,7 +1627,7 @@ export function BankSelect({
                 >
                   <BankMark name={b} size={28} />
                   <span className="flex-1 truncate">{b}</span>
-                  {b === value && <Check size={14} strokeWidth={2} className="shrink-0" aria-hidden="true" />}
+                  {b === value && <Check size={14} className="shrink-0" aria-hidden="true" />}
                 </button>
               </li>
             ))}

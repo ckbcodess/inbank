@@ -22,7 +22,7 @@ import {
   Plus,
   Search,
   UserPlus,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore, type BeneficiaryRecord } from "@/lib/beneficiaries-store";
 import { cn } from "@/lib/utils";
@@ -320,7 +320,7 @@ export default function EditGroupModal({
               className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer shrink-0"
               aria-label="Close"
             >
-              <X size={17} strokeWidth={1.8} />
+              <X size={17} />
             </button>
           </div>
 
@@ -549,7 +549,7 @@ export default function EditGroupModal({
                           type="button"
                           size="sm"
                           onClick={handleAddCustomMember}
-                          className="h-8 px-3 rounded-xl text-[12.5px] bg-primary text-primary-foreground font-normal shrink-0 cursor-pointer"
+                          className="h-8 px-3 text-[12.5px] bg-primary text-primary-foreground font-normal shrink-0 cursor-pointer"
                         >
                           Add to Group
                         </Button>
@@ -596,9 +596,9 @@ export default function EditGroupModal({
                     <div className="flex items-center gap-2 min-w-0">
                       <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
                         {m.type === "wallet" ? (
-                          <Smartphone size={16} strokeWidth={1.8} />
+                          <Smartphone size={16} />
                         ) : (
-                          <Landmark size={16} strokeWidth={1.8} />
+                          <Landmark size={16} />
                         )}
                       </div>
                       <div className="flex flex-col min-w-0">
@@ -680,7 +680,7 @@ export default function EditGroupModal({
               type="button"
               onClick={handleSaveChanges}
               disabled={!name.trim() || members.length === 0}
-              className="h-10 px-5 rounded-xl text-[13.5px] cursor-pointer"
+              className="h-10 px-5 text-[13.5px] cursor-pointer"
             >
               Save changes
             </Button>

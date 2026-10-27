@@ -19,10 +19,11 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, ShieldCheck, X } from "lucide-react";
+import { Plus, ShieldCheck, X } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { TermsAgreement, TermsHint } from "@/components/ui/terms-agreement";
+import { insuranceTerms } from "@/lib/terms";
 import { Field } from "@/components/ui/field";
 import { InlineError } from "@/components/ui/inline-error";
 import { Input } from "@/components/ui/input";
@@ -37,7 +38,6 @@ import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary } from "@/components/invest/parts";
 import { OutcomeFailure } from "@/components/invest/term-deposit-parts";
 import { BeneficiaryEditor, beneficiariesReady } from "@/components/insure/BeneficiaryEditor";
 import { perPeriod } from "@/components/insure/parts";
@@ -192,12 +192,12 @@ function MemberForm({ onAdd, onCancel }: { onAdd: (m: CoveredMember) => void; on
         </div>
       )}
       <div className="flex gap-2">
-        <Button type="button" variant="outline" className="h-10 flex-1 rounded-xl" onClick={onCancel}>
+        <Button type="button" variant="outline" className="h-10 flex-1" onClick={onCancel}>
           Cancel
         </Button>
         <Button
           type="button"
-          className="h-10 flex-1 rounded-xl"
+          className="h-10 flex-1"
           disabled={!ready}
           onClick={() =>
             relationship &&
@@ -267,7 +267,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
   if (!profile) {
     const next = `/insure/plans/${planId}/buy`;
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title={plan.name} backTo={back} />
         <TrueEmptyState
           icon={<ShieldCheck size={22} strokeWidth={1.8} />}
@@ -285,7 +285,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
 
   if (accounts.length === 0) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title={plan.name} backTo={back} />
         <TrueEmptyState
           title="You need an account to pay premiums from"
@@ -340,7 +340,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
   const coverChosen = kind === "funeral" ? Boolean(tier) : kind === "protection" ? Boolean(term && protectionSum) : Boolean(term && asNumber(amount) > 0);
   const priced = coverChosen && annual > 0 && !amountError && !holderTooOld;
   const scheduled = Boolean(startMonth && window);
-  const quoteReady = priced && scheduled && accepted && Boolean(from) && !addingMember;
+  const quoteReady = priced && scheduled && Boolean(from) && !addingMember;
   const needsMedical = sumAssured > NON_MEDICAL_LIMIT;
   const monthly = payFrequency === "monthly";
   const premiumLabel = monthly ? "Premium a month" : "Premium a year";
@@ -432,9 +432,9 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
   /* ── Beneficiaries ──────────────────────────────────────────────────── */
   if (screen === "beneficiaries") {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Beneficiaries" backTo={{ ...back, label: plan.name, onClick: () => setScreen("quote") }} />
-        <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+        <div className="flex flex-col gap-5">
           <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
             {kind === "funeral"
               ? "Who should receive the benefit if you die? You can change this at any time."
@@ -474,9 +474,9 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
       ...(trusteeId && beneficiaries.length ? [{ label: "Trustee", value: personName(trusteeId) }] : []),
     ];
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ ...back, label: "Beneficiaries", onClick: () => setScreen("beneficiaries") }} />
-        <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+        <div className="flex flex-col gap-5">
           <ReviewSummary details={details} total={money(premium)} totalLabel={premiumLabel} />
           <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
             {needsMedical
@@ -485,14 +485,16 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                 ? `Nothing is taken today. Your first premium of ${money(premium)} is deducted between ${firstDeduction}, then every month. You can cancel at any time.`
                 : `Nothing is taken today. Your first premium of ${money(premium)} is deducted between ${firstDeduction}, then every year. You can cancel at any time.`}
           </p>
+          <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject={`the ${plan.name}, provided by ${PROVIDER}`} terms={insuranceTerms(PROVIDER)} />
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="h-11 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("quote")}>
+            <Button type="button" variant="outline" className="h-11 flex-1 text-[15px]" onClick={() => setScreen("quote")}>
               Back to Edit
             </Button>
-            <Button type="button" className="h-11 flex-1 rounded-2xl text-[16px]" onClick={() => setAuthOpen(true)}>
+            <Button type="button" className="h-11 flex-1 text-[16px]" disabled={!accepted} onClick={() => setAuthOpen(true)}>
               Confirm
             </Button>
           </div>
+          <TermsHint agreed={accepted} />
         </div>
         <TransactionOtpModal
           open={authOpen}
@@ -501,16 +503,6 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
             setAuthOpen(false);
             authorised();
           }}
-          summary={
-            <AuthSummary
-              headline={`Buy the ${plan.name}`}
-              amount={perPeriod(premium, payFrequency)}
-              rows={[
-                ["From", from ? `${from.name} · ${from.number}` : ""],
-                ["First deduction", firstDeduction],
-              ]}
-            />
-          }
         />
       </div>
     );
@@ -531,9 +523,9 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
     : [];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={plan.name} backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5 animate-in fade-in duration-200">
+      <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <div className="flex flex-col gap-2">
           <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} label="Pay Premiums From" />
           <p className="px-1 text-[12px] text-muted-foreground">Nothing is taken today. Premiums start in the month you choose below.</p>
@@ -667,7 +659,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                           aria-label={`Remove ${m.fullName}`}
                           className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                         >
-                          <X size={16} strokeWidth={1.8} aria-hidden="true" />
+                          <X size={16} aria-hidden="true" />
                         </button>
                       </li>
                     ))}
@@ -682,8 +674,8 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                     onCancel={() => setAddingMember(false)}
                   />
                 ) : (
-                  <Button type="button" variant="outline" className="h-10 w-full rounded-xl" onClick={() => setAddingMember(true)}>
-                    <Plus size={16} strokeWidth={1.8} aria-hidden="true" />
+                  <Button type="button" variant="outline" className="h-10 w-full" onClick={() => setAddingMember(true)}>
+                    <Plus size={16} aria-hidden="true" />
                     {members.length === 0 ? "Add Someone to This Cover" : "Add Another Person"}
                   </Button>
                 )}
@@ -751,15 +743,10 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                 {`This sum assured is above the ${money(NON_MEDICAL_LIMIT)} we can cover without a medical. You can still apply: a ${PROVIDER} representative will call you to arrange a medical assessment.`}
               </p>
             )}
-            <label className="flex cursor-pointer items-start gap-2 px-1 py-2 text-[13px] leading-relaxed text-foreground">
-              <Checkbox checked={accepted} onCheckedChange={(v) => setAccepted(Boolean(v))} aria-label="Accept the Terms and Conditions" className="mt-0.5" />
-              <span>{`I have read and agree to the Terms & Conditions of the ${plan.name}, provided by ${PROVIDER}.`}</span>
-            </label>
           </div>
         )}
 
         <ProceedButton disabled={!quoteReady} onClick={() => setScreen("beneficiaries")} />
-        {priced && scheduled && !accepted && <p className="-mt-2 px-1 text-center text-[12px] text-muted-foreground">Agree to the terms to continue.</p>}
       </div>
     </div>
   );

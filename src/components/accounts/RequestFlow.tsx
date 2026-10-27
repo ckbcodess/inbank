@@ -21,7 +21,7 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useContextualBack } from "@/lib/contextual-back";
-import { BookOpen, FileText, Mail, Minus, Plus } from "lucide-react";
+import { BookOpen, FileText, Mail, Minus, Plus } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { ActionTile } from "@/components/ui/action-tile";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
@@ -613,7 +613,7 @@ function Stepper({
         aria-label={`Fewer ${label}`}
         className={btn}
       >
-        <Minus size={17} strokeWidth={1.8} aria-hidden="true" />
+        <Minus size={17} aria-hidden="true" />
       </button>
       <span className="text-[15px] text-foreground tabular" aria-live="polite">
         {value}
@@ -625,7 +625,7 @@ function Stepper({
         aria-label={`More ${label}`}
         className={btn}
       >
-        <Plus size={17} strokeWidth={1.8} aria-hidden="true" />
+        <Plus size={17} aria-hidden="true" />
       </button>
     </div>
   );

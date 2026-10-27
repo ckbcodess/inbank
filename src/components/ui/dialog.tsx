@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
-import { X } from "lucide-react"
+import { X } from "@/components/ui/icons"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -160,7 +160,7 @@ function DialogHeader({
             className="relative flex size-6 shrink-0 items-center justify-center rounded-full bg-muted after:absolute after:-inset-1.5 after:content-[''] text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-2"
             aria-label="Close"
           >
-            <X size={15} strokeWidth={1.8} />
+            <X size={15} />
           </button>
         ) : (
           <DialogClose

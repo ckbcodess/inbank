@@ -9,7 +9,7 @@
  * Hidden in capture mode so it stays out of Figma captures.
  */
 
-import { Copy, Pause, Play, RotateCcw, Waves } from "lucide-react";
+import { Copy, Pause, Play, RotateCcw, Waves } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useCaptureMode } from "@/lib/capture-mode";
@@ -64,7 +64,7 @@ export function HeroWaveTuner() {
             : "border-border bg-card text-foreground hover:bg-muted",
         )}
       >
-        <Waves size={18} strokeWidth={1.8} />
+        <Waves size={18} />
       </button>
     </div>
   );
@@ -97,7 +97,7 @@ function TunerPanel() {
             className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             aria-label={wave.moving ? "Pause the wave" : "Play the wave"}
           >
-            {wave.moving ? <Pause size={16} strokeWidth={1.8} /> : <Play size={16} strokeWidth={1.8} />}
+            {wave.moving ? <Pause size={16} /> : <Play size={16} />}
           </button>
         </div>
       </div>
@@ -138,7 +138,7 @@ function TunerPanel() {
           onClick={resetHeroWave}
           className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-2 py-2 text-[13px] text-foreground transition-colors hover:bg-muted cursor-pointer"
         >
-          <RotateCcw size={15} strokeWidth={1.8} />
+          <RotateCcw size={15} />
           Reset
         </button>
         <button
@@ -146,7 +146,7 @@ function TunerPanel() {
           onClick={copy}
           className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-2 py-2 text-[13px] text-primary-foreground transition-colors hover:bg-primary-hover cursor-pointer"
         >
-          <Copy size={15} strokeWidth={1.8} />
+          <Copy size={15} />
           Copy values
         </button>
       </div>

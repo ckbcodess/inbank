@@ -33,7 +33,7 @@ import {
   Users,
   X,
   XCircle,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -284,7 +284,7 @@ export default function AdminEnrolmentDetailPage({
 
       {feedbackMsg && (
         <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-3 text-[13px] text-emerald-800 dark:text-emerald-300 animate-in fade-in">
-          <Check size={16} strokeWidth={2.5} />
+          <Check size={16} />
           {feedbackMsg}
         </div>
       )}
@@ -292,7 +292,7 @@ export default function AdminEnrolmentDetailPage({
       {/* Assist / Review Notice banner */}
       <div className="flex items-start justify-between gap-3 rounded-2xl border border-border bg-muted/30 p-3.5">
         <div className="flex items-start gap-2.5">
-          <Eye size={17} strokeWidth={1.8} className="mt-0.5 text-muted-foreground shrink-0" />
+          <Eye size={17} className="mt-0.5 text-muted-foreground shrink-0" />
           <div className="text-[13px] leading-relaxed text-muted-foreground">
             <span className="font-medium text-foreground">Staff Review Mode: </span>
             Verify wet signatures against cards on file and complete the security callback verification before issuing corporate access.
@@ -467,7 +467,7 @@ export default function AdminEnrolmentDetailPage({
           </div>
           {allSignaturesMatch ? (
             <Badge variant="success" className="gap-1">
-              <Check size={12} strokeWidth={2.5} /> All Signatures Matched
+              <Check size={12} /> All Signatures Matched
             </Badge>
           ) : (
             <Badge variant="warning">Verification Incomplete</Badge>
@@ -504,7 +504,7 @@ export default function AdminEnrolmentDetailPage({
                     onClick={() => handleSignatureDecision(idx, "match")}
                     className={`h-7 text-[12px] ${check.status === "match" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}
                   >
-                    <Check size={12} strokeWidth={2.5} className="mr-1" />
+                    <Check size={12} className="mr-1" />
                     Match
                   </Button>
                   <Button
@@ -515,7 +515,7 @@ export default function AdminEnrolmentDetailPage({
                     onClick={() => handleSignatureDecision(idx, "no_match")}
                     className="h-7 text-[12px]"
                   >
-                    <X size={12} strokeWidth={2.5} className="mr-1" />
+                    <X size={12} className="mr-1" />
                     No match
                   </Button>
                 </div>
@@ -576,7 +576,7 @@ export default function AdminEnrolmentDetailPage({
           </div>
           {isCallVerified ? (
             <Badge variant="success" className="gap-1">
-              <Check size={12} strokeWidth={2.5} /> Callback Verified
+              <Check size={12} /> Callback Verified
             </Badge>
           ) : (
             <Badge variant="outline">Pending Call</Badge>

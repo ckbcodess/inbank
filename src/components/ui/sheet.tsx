@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
-import { X } from "lucide-react";
+import { X } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
@@ -198,7 +198,7 @@ function SheetContent({
             className="absolute top-4 right-4 z-20 flex size-7 items-center justify-center rounded-full bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Close"
           >
-            <X size={15} strokeWidth={2} />
+            <X size={15} />
           </SheetPrimitive.Close>
         )}
       </SheetPrimitive.Popup>

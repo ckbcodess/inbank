@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Insure Plans, Desktop: 8 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#ececea;--surf:#fff;--tile:#f4f4f5;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff3cf;--ok:#15803d;--sel:#f1f1f2;--shadow:0 24px 60px -24px rgba(0,0,0,.28)}
+  [data-theme=dark]{--bg:#060607;--surf:#111113;--tile:#1a1a1d;--bd:#27272a;--tx:#f5f5f6;--mu:#a1a1aa;--amsoft:#3a2f0e;--ok:#4ade80;--sel:#1f1f23;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul,ol{margin:0;padding:0} ul,ol{list-style:none}
+  .tab{font-variant-numeric:tabular-nums}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px} .s14{font-size:14px}
+  /* controller */
+  .bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .bar-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;align-items:center;overflow-x:auto;padding:2px 0}
+  .grp{flex:none;font-size:12px;color:var(--mu);padding:0 8px 0 12px}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .theme{font-size:13px;color:var(--mu);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;min-height:36px}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:960px}
+  /* stage */
+  .stage{padding:32px 24px 80px;display:flex;flex-direction:column;gap:40px;align-items:center;overflow-x:auto}
+  .wrap{width:100%;max-width:1280px;min-width:1040px;scroll-margin-top:120px}
+  .cap{font-size:12px;color:var(--mu);margin:0 0 12px 8px}
+  .win{display:flex;height:780px;border:1px solid var(--bd);border-radius:16px;background:var(--surf);box-shadow:var(--shadow);overflow:hidden}
+  .side{width:200px;flex:none;border-right:1px solid var(--bd);padding:20px 12px;display:flex;flex-direction:column;gap:4px;font-size:13px}
+  .brand{padding:4px 12px 20px;font-weight:500;font-size:15px;letter-spacing:-.01em}
+  .brand span{color:var(--mu);font-weight:400}
+  .nav{padding:8px 12px;border-radius:8px;color:var(--mu)} .nav.on{background:var(--sel);color:var(--tx);font-weight:500}
+  .content{flex:1;min-width:0;overflow-y:auto;padding:32px 48px 48px;display:flex;flex-direction:column;gap:32px;scrollbar-width:thin}
+  .ph{display:flex;flex-direction:column;gap:4px}
+  .ph h1{font-size:22px;font-weight:500;letter-spacing:-.02em}
+  .back{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--mu);min-height:32px}
+  h2{font-size:16px;font-weight:500}
+  .ico{border-radius:8px;background:var(--amsoft);display:inline-flex;align-items:center;justify-content:center;flex:none;color:var(--tx)}
+  .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .row{display:flex;align-items:center;gap:16px;padding:14px 12px;border-radius:12px;width:100%;transition:background .15s}
+  .row:hover,.row.on{background:var(--sel)}
+  .btn{height:44px;padding:0 28px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;text-align:center;display:inline-flex;align-items:center;justify-content:center}
+  .btn:hover{filter:brightness(1.05)} .btn.full{width:100%}
+  .btn.ghost{background:var(--tile);color:var(--tx)}
+  .note{font-size:13px;color:var(--mu)}
+  .check{display:flex;flex-direction:column;gap:12px}
+  .check li{display:flex;gap:12px;font-size:14px;line-height:1.5}
+  .check svg{flex:none;margin-top:3px;color:var(--ok)}
+  .facts>div{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-top:1px solid var(--bd);font-size:13px}
+  .facts>div:last-child{border-bottom:1px solid var(--bd)}
+  .facts span:first-child{color:var(--mu)} .facts span:last-child{text-align:right}
+  .panel{background:var(--tile);border-radius:16px;padding:24px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{padding:8px 14px;border-radius:999px;border:1px solid var(--bd);font-size:13px;min-height:36px;background:var(--surf)}
+  .chip.on{border-color:var(--tx);background:var(--sel)}
+  .ctl{display:flex;flex-direction:column;gap:8px}
+  .cl{display:flex;justify-content:space-between;font-size:13px}
+  input[type=range]{width:100%;accent-color:#d99b00}
+  .big{letter-spacing:-.03em;line-height:1.1}
+  .acc{border-top:1px solid var(--bd)} .acc:last-child{border-bottom:1px solid var(--bd)}
+  .acc>button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:18px 0;font-size:15px;font-weight:500;min-height:56px}
+  .acc>div{padding:0 0 20px;font-size:14px;line-height:1.7;color:var(--mu);max-width:640px}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 16px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--surf);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--bg);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .bar-row{display:flex;align-items:center;gap:16px;padding:12px 16px;border-radius:12px;border:1px solid var(--bd);width:100%;transition:border-color .15s}
+  .bar-row.on{border-color:var(--tx);background:var(--sel)}
+  .bar-track{flex:1;height:8px;border-radius:999px;background:var(--tile);overflow:hidden}
+  .bar-fill{height:100%;background:var(--am);border-radius:999px}
+  svg text{font-family:'Open Sans',sans-serif}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-top">
+    <h1>Insure plans · desktop · built on 6 (Try The Numbers) and 9 (Plain Questions)</h1>
+    <button class="theme" id="themeBtn">Dark mode</button>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage">
+  <section class="wrap"><p class="cap">Plans page · click a plan</p><div class="win" id="listWin"></div></section>
+  <section class="wrap" id="detWrap"><p class="cap" id="detCap">Plan page</p><div class="win" id="detWin"></div></section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ---------- data (from src/lib/insurance-plans.ts) ---------- */
+const PROVIDER='StarLife Assurance';
+const plans=[
+ {id:'ce',name:'Child Education Plan',short:'Child Education',line:'Save for school fees with life protection.',
+  desc:'Save towards your child’s education, with cover that keeps the plan going if something happens to you.',
+  benefits:['Lump sum paid within 48 to 72 hours of an approved claim','School fees are paid even if you can’t','Premiums from GHS 50 a month'],
+  from:50,fromTxt:'GHS 50',runs:'10 to 25 years',runsShort:'10–25 yrs',kind:'save',pays:'Lump sum, school fees',term:[10,25],
+  pitch:'Set school fees aside, and keep them safe',
+  facts:[['Policy term','10 to 25 years'],['Premiums from','GHS 50 a month'],['Provider',PROVIDER]],
+  cost:'From GHS 50 a month. You choose the premium, or the amount you want at the end, and the other follows.',
+  claim:['Your child’s details','Proof of school enrolment, for school fees','A valid ID'],
+  who:'Parents who want fees set aside early, with the plan protected if the unexpected happens.'},
+ {id:'hc',name:'HomeCall Plan',short:'HomeCall',line:'Financial support for funeral expenses.',
+  desc:'Help your family cover funeral expenses in a difficult time. Cover yourself, and add the people close to you.',
+  benefits:['Lump sum paid within 48 to 72 hours of an approved claim','Cover your spouse, children and parents too','Accidental deaths are covered from day one'],
+  from:8,fromTxt:'GHS 8',runs:'While you pay',runsShort:'While paying',kind:'protect',pays:'GHS 2,500 to 30,000',
+  pitch:'Pay for a funeral without borrowing',
+  facts:[['Cover','GHS 2,500 to GHS 30,000'],['Premiums from','GHS 8 a month'],['Who it covers','You, and family you add'],['Provider',PROVIDER]],
+  cost:'From GHS 8 a month for you. Children cost less, parents more.',
+  claim:['The death certificate','The medical certificate of cause of death','A police report, if the death was accidental','A valid ID'],
+  who:'Anyone who wants their family spared a funeral bill. Add your spouse, children and parents.'},
+ {id:'wm',name:'WealthMaster Plan',short:'WealthMaster',line:'Save regularly with insurance cover.',
+  desc:'Save regularly and grow a lump sum, with life cover for the people who depend on you.',
+  benefits:['Lump sum paid within 48 to 72 hours of an approved claim','Your loved ones are paid if something happens to you','Premiums from GHS 50 a month'],
+  from:50,fromTxt:'GHS 50',runs:'4 to 10 years',runsShort:'4–10 yrs',kind:'save',pays:'Lump sum',term:[4,10],
+  pitch:'Save a lump sum, with cover for the people who depend on you',
+  facts:[['Policy term','4 to 10 years'],['Premiums from','GHS 50 a month'],['Provider',PROVIDER]],
+  cost:'From GHS 50 a month. You choose the premium, or the amount you want at the end, and the other follows.',
+  claim:['Your policy details','Proof of the event, for disability','A valid ID'],
+  who:'Regular savers who also want the people who depend on them looked after.'},
+ {id:'up',name:'Ultimate Protection Plan',short:'Ultimate Protection',line:'Total protection for you and your loved ones.',
+  desc:'Keep an income if illness or disability stops you working, and leave your family a lump sum.',
+  benefits:['Lump sum paid within 48 to 72 hours of an approved claim','Covers total and permanent disability','Covers critical illness'],
+  from:38,fromTxt:'GHS 38',runs:'8 to 20 years',runsShort:'8–20 yrs',kind:'protect',pays:'GHS 50,000 to 300,000',
+  pitch:'Keep an income if you can’t work',
+  facts:[['Sum assured','GHS 50,000 to GHS 300,000'],['Policy term','8 to 20 years'],['Disability income','Up to age 70'],['Provider',PROVIDER]],
+  cost:'You pick the sum assured and the premium follows. About GHS 38 a month for GHS 50,000 at 30.',
+  claim:['A medical report for the illness or disability','A valid ID'],
+  who:'People whose income their household relies on.'}
+];
+const TIERS=[['Basic',2500,8],['Standard',5000,15],['Prestige',10000,22],['Elite',15000,32],['Ultimate',30000,60]];
+const SUMS=[50000,100000,200000,300000];
+const sumMonthly=s=>s/1000*9/12;
+const money=n=>'GHS '+Math.round(n).toLocaleString('en-US');
+const compact=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'k':String(Math.round(n));
+
+/* ---------- helpers ---------- */
+const I={ce:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',hc:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',wm:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',up:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/>'};
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ico=(id,s=40)=>`<span class="ico" style="width:${s}px;height:${s}px">${svg(I[id],Math.round(s*.45))}</span>`;
+const chev=svg('<path d="M9 6l6 6-6 6"/>',15,1.8);
+const arrow=svg('<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',16,1.8);
+const caret=o=>svg(o?'<path d="M6 15l6-6 6 6"/>':'<path d="M6 9l6 6 6-6"/>',16,1.8);
+const tick=svg('<path d="M5 12l4 4 10-10"/>',16,1.8);
+const backBtn=`<span class="back">${svg('<path d="M15 6l-6 6 6 6"/>',16,1.8)}Insure</span>`;
+const P=id=>plans.find(p=>p.id===id);
+const cur=()=>P(S.sel);
+const checks=l=>`<ul class="check">${l.map(b=>`<li>${tick}<span>${b}</span></li>`).join('')}</ul>`;
+const facts=rows=>`<div class="facts">${rows.map(r=>`<div><span>${r[0]}</span><span class="tab">${r[1]}</span></div>`).join('')}</div>`;
+const NAV=['Overview','Accounts','Send & Pay','Invest','Insure','Loans','Settings'];
+const shell=inner=>`<aside class="side"><div class="brand">NIBS <span>GCB</span></div>${NAV.map(n=>`<span class="nav ${n==='Insure'?'on':''}">${n}</span>`).join('')}</aside><div class="content">${inner}</div>`;
+const listHead=sub=>`<div class="ph"><h1>Insure</h1>${sub?`<p class="mu s13">${sub}</p>`:''}</div>`;
+const SOON='Coming soon: Savings Protection, Vehicle, Travel and Personal Accident.';
+
+/* ---------- state ---------- */
+const S={v:1,sel:'hc',dark:false,prem:100,years:10,tier:1,sum:0,budget:100,faq:0,qnav:0,qone:0};
+const clampYears=p=>{if(p.kind==='save')S.years=Math.min(Math.max(S.years,p.term[0]),p.term[1])};
+const saveOut=()=>{const paid=S.prem*12*S.years;return{paid,out:paid*1.25}};
+
+/* ---------- calculator pieces (shared by the 6-based variations) ---------- */
+function controls(p){
+  if(p.kind==='save'){clampYears(p);return `<div class="ctl"><div class="cl"><label for="prem">I can save</label><span class="tab" id="premV"></span></div><input id="prem" data-r="prem" type="range" min="50" max="1000" step="50" value="${S.prem}"></div>
+   <div class="ctl"><div class="cl"><label for="yrs">For</label><span class="tab" id="yrsV"></span></div><input id="yrs" data-r="years" type="range" min="${p.term[0]}" max="${p.term[1]}" step="1" value="${S.years}"></div>`}
+  if(p.id==='hc')return `<div class="ctl"><span class="s13">Choose a cover level</span><div class="chips">${TIERS.map((x,i)=>`<button class="chip ${S.tier===i?'on':''}" data-a="tier:${i}">${x[0]}</button>`).join('')}</div></div>`;
+  return `<div class="ctl"><span class="s13">Choose a sum assured</span><div class="chips">${SUMS.map((x,i)=>`<button class="chip tab ${S.sum===i?'on':''}" data-a="sum:${i}">${money(x)}</button>`).join('')}</div></div>`;
+}
+function result(p,size=44){
+  const f=`font-size:${size}px`;
+  if(p.kind==='save')return `<div><span class="mu s12">You get back about</span><div class="big tab" id="outV" style="${f}"></div><p class="mu s12" id="outN" style="margin-top:4px;line-height:1.5"></p></div>`;
+  if(p.id==='hc'){const t=TIERS[S.tier];return `<div><span class="mu s12">Your family receives</span><div class="big tab" style="${f}">${money(t[1])}</div><p class="mu s13" style="margin-top:4px;line-height:1.5">for <span class="tab">${money(t[2])}</span> a month, for you. Add family and each person gets their own level.</p></div>`}
+  const s=SUMS[S.sum],yr=s/1000*9;
+  return `<div><span class="mu s12">It would cost about</span><div class="big tab" style="${f}">${money(sumMonthly(s))} <span class="mu s14" style="letter-spacing:0">a month</span></div><p class="mu s12" style="margin-top:4px;line-height:1.5">${money(yr)} a year, at age 30. Your price depends on your age and health.</p></div>`;
+}
+function chartSave(){
+  const {paid,out}=saveOut();const W=640,H=300,L=64,B=44,T=28,R=40,max=out*1.08;
+  const x=v=>L+(v/S.years)*(W-L-R),y=v=>H-B-(v/max)*(H-B-T);
+  const grid=[0,.5,1].map(f=>{const v=out*f;return `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--bd)"/><text x="${L-10}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="var(--mu)">${compact(v)}</text>`}).join('');
+  const xs=[0,Math.round(S.years/2),S.years].map(v=>`<text x="${x(v)}" y="${H-16}" text-anchor="middle" font-size="12" fill="var(--mu)">${v===0?'Now':'Year '+v}</text>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="What you pay in each year, and what you get back at the end">${grid}${xs}
+   <path d="M${x(0)} ${y(0)} L${x(S.years)} ${y(paid)} L${x(S.years)} ${y(0)} Z" fill="var(--amsoft)"/>
+   <line x1="${x(0)}" y1="${y(0)}" x2="${x(S.years)}" y2="${y(paid)}" stroke="var(--tx)" stroke-width="2"/>
+   <line x1="${x(S.years)}" y1="${y(paid)}" x2="${x(S.years)}" y2="${y(out)}" stroke="var(--am)" stroke-width="3" stroke-dasharray="2 5" stroke-linecap="round"/>
+   <circle cx="${x(S.years)}" cy="${y(paid)}" r="5" fill="var(--tx)"/><circle cx="${x(S.years)}" cy="${y(out)}" r="7" fill="var(--am)" stroke="var(--tx)" stroke-width="1.5"/>
+   <text x="${x(S.years)-12}" y="${y(paid)+20}" text-anchor="end" font-size="12" fill="var(--tx)">You pay in ${money(paid)}</text>
+   <text x="${x(S.years)-14}" y="${y(out)+4}" text-anchor="end" font-size="12" fill="var(--tx)">You get back ${money(out)}</text></svg>`;
+}
+function ladder(p){
+  if(p.id==='hc')return `<div style="display:flex;flex-direction:column;gap:8px">${TIERS.map((t,i)=>`<button class="bar-row ${S.tier===i?'on':''}" data-a="tier:${i}"><span class="s13" style="width:80px">${t[0]}</span><span class="bar-track"><span class="bar-fill" style="display:block;width:${t[1]/300}%"></span></span><span class="s13 tab" style="width:150px;text-align:right">${money(t[1])}</span><span class="s13 mu tab" style="width:90px;text-align:right">${money(t[2])} a month</span></button>`).join('')}</div>`;
+  return `<div style="display:flex;flex-direction:column;gap:8px">${SUMS.map((s,i)=>`<button class="bar-row ${S.sum===i?'on':''}" data-a="sum:${i}"><span class="s13 tab" style="width:110px">${money(s)}</span><span class="bar-track"><span class="bar-fill" style="display:block;width:${s/3000}%"></span></span><span class="s13 mu tab" style="width:130px;text-align:right">about ${money(sumMonthly(s))} a month</span></button>`).join('')}</div>`;
+}
+function upd(){
+  const set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t};
+  const {paid,out}=saveOut();
+  set('premV',money(S.prem)+' a month');set('yrsV',S.years+' years');set('outV',money(out));
+  set('outN','You pay in '+money(paid)+'. Illustration only: StarLife confirms the final figures.');
+  const c=document.getElementById('chart');if(c&&cur().kind==='save')c.innerHTML=chartSave();
+}
+function startBtn(cls=''){return `<button class="btn ${cls}" data-a="start">Get Started</button>`}
+const profileNote=`<p class="note">You’ll create your insurance profile first. You only do it once.</p>`;
+
+/* budget helpers (variation 3) */
+const bestTier=b=>{let r=-1;TIERS.forEach((t,i)=>{if(t[2]<=b)r=i});return r};
+const bestSum=b=>{let r=-1;SUMS.forEach((s,i)=>{if(sumMonthly(s)<=b)r=i});return r};
+function buys(p,b){
+  if(p.kind==='save'){if(b<50)return{ok:false,t:'Needs at least GHS 50 a month'};return{ok:true,t:`${money(b*12*p.term[0]*1.25)} after ${p.term[0]} years`}}
+  if(p.id==='hc'){const i=bestTier(b);return i<0?{ok:false,t:'Needs at least GHS 8 a month'}:{ok:true,t:`${money(TIERS[i][1])} of cover for you`}}
+  const i=bestSum(b);return i<0?{ok:false,t:'Needs about GHS 38 a month'}:{ok:true,t:`${money(SUMS[i])} of cover`}
+}
+function fromBudget(p){const b=S.budget;S.prem=Math.min(1000,Math.max(50,Math.round(b/50)*50));S.tier=Math.max(0,bestTier(b));S.sum=Math.max(0,bestSum(b))}
+function rows3(){return plans.map(p=>{const r=buys(p,S.budget);return `<button class="row ${S.sel===p.id?'on':''}" data-a="sel:${p.id}" style="padding:18px 16px">${ico(p.id,44)}<span class="grow" style="max-width:340px"><span style="font-size:15px">${p.name}</span><span class="mu s12">${p.line}</span></span><span class="tab" style="flex:1;font-size:${r.ok?18:14}px;color:${r.ok?'var(--tx)':'var(--mu)'}">${r.t}</span>${chev}</button>`}).join('')}
+
+/* plain questions (variations 5 to 8) */
+const qa=p=>[['What does it cover?',p.desc+' '+p.benefits[0]+'.'],['What will it cost me?',p.cost],['When do I get paid?','Within 48 to 72 hours of an approved claim.'],['Can I stop whenever I want?','Yes. You can cancel from the policy page at any time. If a plan pays out when you stop, we show you the exact amount before you confirm.'],['What do I need to make a claim?',p.claim.join(', ')+'.']];
+
+/* ---------- variations ---------- */
+const V={};
+const GROUP_A='From Try The Numbers',GROUP_B='From Plain Questions';
+
+/* 1 */
+const railDetail=(p,banner)=>shell(`<div class="ph">${backBtn}<h1>${p.name}</h1></div>
+ <div style="display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:56px;align-items:start">
+  <div style="display:flex;flex-direction:column;gap:32px;max-width:560px"><p style="font-size:16px;line-height:1.7">${p.desc}</p>${checks(p.benefits)}${facts(p.facts)}</div>
+  <div class="panel" style="position:sticky;top:0;display:flex;flex-direction:column;gap:24px;padding:28px">${banner||''}<h2>See what it gets you</h2>${controls(p)}${result(p)}<div style="display:flex;flex-direction:column;gap:8px">${startBtn('full')}${profileNote.replace('class="note"','class="note" style="text-align:center"')}</div></div></div>`);
+V[1]={g:GROUP_A,name:'1. Calculator Rail',note:'The plan page keeps the reading on the left and pins the calculator on the right, so the customer sees the plan and plays with the numbers without scrolling. The list groups plans by what they do.',
+ list:()=>shell(`${listHead('Plans from StarLife Assurance, paid straight from your account. Look around freely.')}
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:56px">${[['Save','save'],['Protect','protect']].map(([t,k])=>`<div style="display:flex;flex-direction:column;gap:8px"><h2 style="margin-bottom:4px">${t}</h2>${plans.filter(p=>p.kind===k).map(p=>`<button class="row ${S.sel===p.id?'on':''}" data-a="sel:${p.id}">${ico(p.id,44)}<span class="grow"><span style="font-size:15px">${p.name}</span><span class="mu s12">${p.line}</span></span><span class="s13 tab" style="text-align:right">from ${p.fromTxt}<br><span class="mu s12">a month</span></span>${chev}</button>`).join('')}</div>`).join('')}</div>
+  <p class="mu s13">${SOON}</p>`),
+ detail:()=>railDetail(cur())};
+
+/* 2 */
+V[2]={g:GROUP_A,name:'2. Result First',note:'Leads with the answer: the figure the customer gets, in very large type, with the controls beside it. What the plan includes sits underneath in three quiet columns.',
+ list:()=>shell(`${listHead('Pick a plan to see what it gets you.')}
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">${plans.map(p=>`<button data-a="sel:${p.id}" style="padding:24px;border-radius:20px;background:var(--tile);border:1px solid ${S.sel===p.id?'var(--tx)':'transparent'};display:flex;flex-direction:column;justify-content:space-between;gap:48px;min-height:300px">
+   <span style="display:flex;flex-direction:column;gap:16px">${ico(p.id,48)}<span style="display:flex;flex-direction:column;gap:6px"><span style="font-size:17px;font-weight:500">${p.name}</span><span class="mu s13" style="line-height:1.6">${p.line}</span></span></span>
+   <span style="display:flex;flex-direction:column;gap:2px"><span class="mu s12">From</span><span class="tab big" style="font-size:36px">${p.fromTxt}</span><span class="mu s12">a month</span></span></button>`).join('')}</div>
+  <p class="mu s13">${SOON}</p>`),
+ detail:()=>{const p=cur();return shell(`<div class="ph">${backBtn}<h1>${p.name}</h1></div>
+  <div class="panel" style="padding:40px;border-radius:24px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:56px;align-items:center">
+   <div style="display:flex;flex-direction:column;gap:24px">${result(p,72)}<div style="display:flex;gap:16px;align-items:center">${startBtn()}${profileNote}</div></div>
+   <div style="display:flex;flex-direction:column;gap:28px">${controls(p)}</div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px"><div style="display:flex;flex-direction:column;gap:16px"><h2>What it pays</h2>${checks(p.benefits)}</div><div style="display:flex;flex-direction:column;gap:16px"><h2>The facts</h2>${facts(p.facts)}</div><div style="display:flex;flex-direction:column;gap:16px"><h2>To make a claim</h2>${checks(p.claim)}</div></div>`)}};
+
+/* 3 */
+V[3]={g:GROUP_A,name:'3. Start From My Budget',note:'Flips the order: the customer says what they can set aside, and every plan answers with what that amount buys. Choosing a plan carries the amount into its calculator.',
+ list:()=>shell(`${listHead()}
+  <div class="panel" style="padding:32px;border-radius:24px;display:flex;flex-direction:column;gap:20px">
+   <label for="bud" class="s14">What can you set aside each month?</label>
+   <div style="display:flex;align-items:baseline;gap:12px"><span class="mu" style="font-size:24px">GHS</span><input id="bud" data-r="budget" type="number" min="0" max="2000" step="10" value="${S.budget}" class="tab" style="font:inherit;font-size:56px;letter-spacing:-.03em;width:240px;border:0;border-bottom:1px solid var(--bd);background:none;color:var(--tx);outline:none;padding:0 0 4px"><span class="mu s14">a month</span></div>
+   <input type="range" data-r="budget" min="0" max="500" step="10" value="${Math.min(S.budget,500)}" aria-label="Monthly amount" style="max-width:560px"></div>
+  <div id="rows3" style="display:flex;flex-direction:column">${rows3()}</div><p class="mu s13">${SOON}</p>`),
+ detail:()=>railDetail(cur(),`<span class="s13 mu" style="line-height:1.5">Set up for <span class="tab" style="color:var(--tx)">${money(S.budget)}</span> a month. Change anything below.</span>`)};
+
+/* 4 */
+V[4]={g:GROUP_A,name:'4. See It Grow',note:'Shows the plan instead of describing it. Savings plans draw what you pay in against what you get back at the end. Protection plans line up every cover level with its price.',
+ list:()=>shell(`${listHead('Compare what each plan pays, costs and runs for.')}
+  <div><div style="display:grid;grid-template-columns:minmax(0,2.2fr) 1.2fr 1fr 1fr 24px;gap:16px;padding:0 16px 12px;font-size:12px;color:var(--mu)"><span>Plan</span><span>Pays</span><span>From</span><span>Runs</span><span></span></div>
+  ${plans.map(p=>`<button data-a="sel:${p.id}" class="row" style="display:grid;grid-template-columns:minmax(0,2.2fr) 1.2fr 1fr 1fr 24px;gap:16px;border-top:1px solid var(--bd);border-radius:0;padding:20px 16px;${S.sel===p.id?'background:var(--sel)':''}"><span style="display:flex;align-items:center;gap:16px">${ico(p.id,40)}<span class="grow"><span style="font-size:15px">${p.name}</span><span class="mu s12">${p.line}</span></span></span><span class="s13 tab">${p.pays}</span><span class="s13 tab">${p.fromTxt} a month</span><span class="s13 tab">${p.runs}</span>${chev}</button>`).join('')}<div style="border-top:1px solid var(--bd)"></div></div>
+  <p class="mu s13">${SOON}</p>`),
+ detail:()=>{const p=cur();return shell(`<div class="ph">${backBtn}<h1>${p.name}</h1><p class="mu s14" style="max-width:640px;line-height:1.6;margin-top:4px">${p.desc}</p></div>
+  <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:56px;align-items:start">
+   <div style="display:flex;flex-direction:column;gap:20px"><h2>${p.kind==='save'?'What you pay in, and what you get back':p.id==='hc'?'Cover levels, and what each costs':'Sums assured, and what each costs'}</h2>${p.kind==='save'?`<div id="chart">${chartSave()}</div>`:ladder(p)}</div>
+   <div class="panel" style="display:flex;flex-direction:column;gap:24px;padding:28px">${p.kind==='save'?controls(p):''}${result(p,40)}<div style="display:flex;flex-direction:column;gap:8px">${startBtn('full')}${profileNote.replace('class="note"','class="note" style="text-align:center"')}</div></div></div>
+  <div style="max-width:560px">${facts(p.facts)}</div>`)}};
+
+/* 5 */
+V[5]={g:GROUP_B,name:'5. Answers Rail',note:'The plan page keeps a summary and the button fixed on the left, and answers the five questions people ask on the right, one open at a time. The list is four large sentences.',
+ list:()=>shell(`<div class="ph"><h1>Insure</h1><p class="mu s14">What would you like to take care of?</p></div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">${plans.map(p=>`<button data-a="sel:${p.id}" style="padding:32px;border-radius:24px;background:var(--tile);border:1px solid ${S.sel===p.id?'var(--tx)':'transparent'};display:flex;flex-direction:column;gap:32px;min-height:200px;justify-content:space-between"><span style="font-size:24px;line-height:1.3;letter-spacing:-.015em;max-width:420px">${p.pitch}</span><span style="display:flex;justify-content:space-between;align-items:center" class="mu s13"><span>${p.name} · from <span class="tab">${p.fromTxt}</span> a month</span>${arrow}</span></button>`).join('')}</div>
+  <p class="mu s13">${SOON}</p>`),
+ detail:()=>{const p=cur();return shell(`<div class="ph">${backBtn}</div>
+  <div style="display:grid;grid-template-columns:340px minmax(0,1fr);gap:72px;align-items:start;margin-top:-16px">
+   <div style="position:sticky;top:0;display:flex;flex-direction:column;gap:24px">${ico(p.id,48)}<div style="display:flex;flex-direction:column;gap:8px"><h1 style="font-size:22px;font-weight:500;letter-spacing:-.02em">${p.name}</h1><p class="mu s14" style="line-height:1.6">${p.pitch}.</p></div>
+    <div><span class="mu s12">From</span><div class="tab big" style="font-size:44px">${p.fromTxt} <span class="mu s14" style="letter-spacing:0">a month</span></div></div>
+    <div style="display:flex;flex-direction:column;gap:8px">${startBtn('full')}${profileNote}</div></div>
+   <div>${qa(p).map((x,i)=>`<div class="acc"><button data-a="faq:${i}">${x[0]}${caret(S.faq===i)}</button>${S.faq===i?`<div>${x[1]}</div>`:''}</div>`).join('')}</div></div>`)}};
+
+/* 6 */
+V[6]={g:GROUP_B,name:'6. Question Picker',note:'The list is a picker with a live preview: hover-style selection on the left, the chosen plan on the right, so the customer can try several before opening one. The plan page is one long read with a question index that follows along.',
+ list:()=>{const p=cur();return shell(`<div class="ph"><h1>Insure</h1></div>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:64px;align-items:start">
+   <div style="display:flex;flex-direction:column;gap:24px"><h2 style="font-size:24px;letter-spacing:-.02em">What would you like to take care of?</h2><div>${plans.map((x,i)=>`<button data-a="pre:${x.id}" style="display:flex;align-items:center;gap:16px;padding:22px 12px;border-top:1px solid var(--bd);${i===3?'border-bottom:1px solid var(--bd);':''}width:100%;${S.sel===x.id?'background:var(--sel)':''}"><span style="flex:1;font-size:19px;letter-spacing:-.01em;line-height:1.3">${x.pitch}</span>${chev}</button>`).join('')}</div><p class="mu s13">${SOON}</p></div>
+   <div class="panel" style="padding:32px;border-radius:24px;display:flex;flex-direction:column;gap:24px;position:sticky;top:0">${ico(p.id,48)}<div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:20px;font-weight:500">${p.name}</span><p class="mu s14" style="line-height:1.6">${p.desc}</p></div><div><span class="mu s12">From</span><div class="tab big" style="font-size:36px">${p.fromTxt} <span class="mu s14" style="letter-spacing:0">a month</span></div></div>${checks(p.benefits.slice(0,2))}<button class="btn" data-a="open">See This Plan</button></div></div>`)},
+ detail:()=>{const p=cur();return shell(`<div class="ph">${backBtn}<h1>${p.name}</h1></div>
+  <div style="display:grid;grid-template-columns:220px minmax(0,1fr);gap:72px;align-items:start">
+   <nav style="position:sticky;top:0;display:flex;flex-direction:column;gap:2px" aria-label="Questions">${qa(p).map((x,i)=>`<button data-a="qnav:${i}" style="padding:10px 12px;border-radius:8px;font-size:13px;color:${S.qnav===i?'var(--tx)':'var(--mu)'};background:${S.qnav===i?'var(--sel)':'none'};line-height:1.4">${x[0]}</button>`).join('')}<div style="padding:16px 12px 0;display:flex;flex-direction:column;gap:8px">${startBtn('full')}</div></nav>
+   <div style="display:flex;flex-direction:column;gap:48px;max-width:640px">${qa(p).map((x,i)=>`<section id="q${i}" style="scroll-margin-top:16px;display:flex;flex-direction:column;gap:12px"><h2 style="font-size:20px;letter-spacing:-.01em">${x[0]}</h2><p style="font-size:15px;line-height:1.75" class="${i?'':''}">${x[1]}</p>${i===1?`<div class="tab big" style="font-size:36px;margin-top:4px">${p.fromTxt} <span class="mu s14" style="letter-spacing:0">a month, to start</span></div>`:''}</section>`).join('')}<div style="padding:8px 0 32px;display:flex;flex-direction:column;gap:8px;align-items:flex-start">${startBtn()}${profileNote}</div></div></div>`)}};
+
+/* 7 */
+V[7]={g:GROUP_B,name:'7. Ask One At A Time',note:'A calmer read: one question and one answer at a time, in large type, with the other questions listed beside it. Good when the customer is anxious or new to insurance.',
+ list:()=>shell(`<div class="ph"><h1>Insure</h1></div>
+  <div style="max-width:880px;display:flex;flex-direction:column"><h2 style="font-size:24px;letter-spacing:-.02em;margin-bottom:24px">What would you like to take care of?</h2>
+  ${plans.map((p,i)=>`<button data-a="sel:${p.id}" style="display:flex;align-items:center;gap:24px;padding:28px 12px;border-top:1px solid var(--bd);${i===3?'border-bottom:1px solid var(--bd);':''}width:100%;${S.sel===p.id?'background:var(--sel)':''}"><span style="flex:1;font-size:26px;letter-spacing:-.02em;line-height:1.25">${p.pitch}</span><span style="text-align:right;width:140px;flex:none"><span class="tab" style="font-size:18px">${p.fromTxt}</span><br><span class="mu s12">a month · ${p.short}</span></span>${chev}</button>`).join('')}</div>
+  <p class="mu s13">${SOON}</p>`),
+ detail:()=>{const p=cur(),q=qa(p),i=S.qone;return shell(`<div class="ph">${backBtn}<h1>${p.name}</h1><p class="mu s14" style="margin-top:4px">${p.pitch}.</p></div>
+  <div style="display:grid;grid-template-columns:280px minmax(0,1fr);gap:72px;align-items:start">
+   <div style="display:flex;flex-direction:column">${q.map((x,k)=>`<button data-a="qone:${k}" style="display:flex;gap:12px;align-items:baseline;padding:14px 12px;border-radius:12px;font-size:14px;line-height:1.4;background:${i===k?'var(--sel)':'none'};color:${i===k?'var(--tx)':'var(--mu)'}"><span class="tab s12" style="width:16px">${k+1}</span><span>${x[0]}</span></button>`).join('')}</div>
+   <div style="display:flex;flex-direction:column;gap:32px;min-height:440px;justify-content:space-between;max-width:700px">
+    <div style="display:flex;flex-direction:column;gap:20px"><span class="mu s12">Question ${i+1} of ${q.length}</span><h2 style="font-size:28px;letter-spacing:-.02em;font-weight:500;line-height:1.25">${q[i][0]}</h2><p style="font-size:20px;line-height:1.65">${q[i][1]}</p></div>
+    <div style="display:flex;align-items:center;gap:12px"><button class="btn ghost" data-a="qprev" ${i===0?'disabled style="opacity:.4;cursor:default"':''}>Back</button>${i<q.length-1?`<button class="btn ghost" data-a="qnext">Next Question</button>`:''}<span style="flex:1"></span>${startBtn()}</div></div></div>`)}};
+
+/* 8 */
+V[8]={g:GROUP_B,name:'8. Editorial Q&A',note:'Everything answered and visible at once, laid out like a short article: question on the left, answer on the right. The header carries the price and the button, so they never scroll away.',
+ list:()=>shell(`${listHead('What would you like to take care of?')}
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">${plans.map(p=>`<button data-a="sel:${p.id}" style="padding:28px 24px;border-radius:24px;border:1px solid ${S.sel===p.id?'var(--tx)':'var(--bd)'};display:flex;flex-direction:column;gap:40px;justify-content:space-between;min-height:340px;background:${S.sel===p.id?'var(--sel)':'none'}"><span style="font-size:23px;line-height:1.3;letter-spacing:-.015em">“${p.pitch}”</span><span style="display:flex;flex-direction:column;gap:4px"><span class="s14" style="font-weight:500">${p.name}</span><span class="mu s13">from <span class="tab">${p.fromTxt}</span> a month</span></span></button>`).join('')}</div>
+  <p class="mu s13">${SOON}</p>`),
+ detail:()=>{const p=cur();return shell(`<div class="ph">${backBtn}</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:48px;margin-top:-16px;padding-bottom:32px;border-bottom:1px solid var(--bd)">
+   <div style="display:flex;flex-direction:column;gap:8px;max-width:620px"><h1 style="font-size:32px;letter-spacing:-.025em;font-weight:500">${p.name}</h1><p class="mu" style="font-size:16px;line-height:1.6">${p.pitch}.</p></div>
+   <div style="display:flex;align-items:center;gap:32px"><div style="text-align:right"><span class="mu s12">From</span><div class="tab big" style="font-size:32px">${p.fromTxt} <span class="mu s14" style="letter-spacing:0">a month</span></div></div><div style="display:flex;flex-direction:column;gap:6px;align-items:center">${startBtn()}</div></div></div>
+  <div style="display:flex;flex-direction:column">${qa(p).map((x,i)=>`<div style="display:grid;grid-template-columns:300px minmax(0,1fr);gap:64px;padding:28px 0;${i?'border-top:1px solid var(--bd)':''}"><h2 style="font-size:17px;line-height:1.4">${x[0]}</h2><p style="font-size:15px;line-height:1.75;max-width:620px">${x[1]}</p></div>`).join('')}</div>
+  <div style="display:flex;gap:16px;align-items:center">${profileNote}</div>`)}};
+
+/* ---------- engine ---------- */
+const $=s=>document.querySelector(s);
+function render(){
+  const v=V[S.v];
+  let html='',last='';
+  Object.keys(V).forEach(k=>{if(V[k].g!==last){last=V[k].g;html+=`<span class="grp">${last}</span>`}html+=`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`});
+  $('#pills').innerHTML=html;
+  $('#vnote').textContent=v.note;
+  $('#listWin').innerHTML=v.list();
+  $('#detWin').innerHTML=v.detail();
+  $('#detCap').textContent='Plan page · '+cur().name;
+  upd();
+}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2200)}
+const toDetail=()=>setTimeout(()=>$('#detWrap').scrollIntoView({behavior:'smooth',block:'start'}),30);
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el||el.disabled)return;
+  const [a,arg]=el.dataset.a.split(':');
+  let go=false;
+  if(a==='v'){S.v=+arg;S.faq=0;S.qnav=0;S.qone=0;if(S.v===3)fromBudget(cur())}
+  else if(a==='sel'){S.sel=arg;S.faq=0;S.qnav=0;S.qone=0;if(S.v===3)fromBudget(cur());go=true}
+  else if(a==='pre'){S.sel=arg;S.faq=0;S.qnav=0;S.qone=0}
+  else if(a==='open')go=true;
+  else if(a==='tier')S.tier=+arg;
+  else if(a==='sum')S.sum=+arg;
+  else if(a==='faq')S.faq=S.faq===+arg?-1:+arg;
+  else if(a==='qnav'){S.qnav=+arg;render();const t=document.getElementById('q'+arg);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});return}
+  else if(a==='qone')S.qone=+arg;
+  else if(a==='qnext')S.qone=Math.min(4,S.qone+1);
+  else if(a==='qprev')S.qone=Math.max(0,S.qone-1);
+  else if(a==='start'){toast('Next: create your insurance profile, then choose your cover');return}
+  render();if(go)toDetail();
+});
+document.addEventListener('input',e=>{
+  const k=e.target.dataset&&e.target.dataset.r;if(!k)return;
+  S[k]=Math.max(0,+e.target.value||0);
+  if(k==='budget'){
+    document.querySelectorAll('[data-r=budget]').forEach(n=>{if(n!==e.target)n.value=n.type==='range'?Math.min(S.budget,500):S.budget});
+    const r=document.getElementById('rows3');if(r)r.innerHTML=rows3();
+    fromBudget(cur());
+  }
+  upd();
+});
+$('#themeBtn').addEventListener('click',()=>{
+  document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  $('#themeBtn').textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode';
+});
+render();
+</script>
+</body>
+</html>

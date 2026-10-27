@@ -21,7 +21,7 @@ import {
   Tv,
   Wallet,
   Wifi,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import type { BillerCategory } from "@/lib/mock-data";
 
@@ -57,7 +57,7 @@ export function withFrom(href: string, accountId: string | null): string {
 }
 
 export const GCB_PAY_CATEGORIES: { id: BillerCategory; title: string; icon: OptionIcon }[] = [
-  { id: "Bills & Utilities", title: "Bills & Utilities", icon: CediReceiptIcon },
+  { id: "Bills & Utilities", title: "Utilities", icon: CediReceiptIcon },
   { id: "Education", title: "Education", icon: GraduationCap },
   { id: "Giving & Donations", title: "Giving & Donations", icon: Church },
   { id: "Government Services", title: "Government Services", icon: Building2 },

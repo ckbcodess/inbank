@@ -12,7 +12,7 @@
  * Figma captures.
  */
 
-import { Layers } from "lucide-react";
+import { Layers } from "@/components/ui/icons";
 import { useDevState } from "@/components/providers/DevStateProvider";
 import { useCaptureMode } from "@/lib/capture-mode";
 import {
@@ -34,7 +34,7 @@ export default function DevStatePanel() {
     <div className="fixed bottom-4 right-4 z-50">
       <DropdownMenu>
         <DropdownMenuTrigger className="flex h-7 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2 text-[12px] font-medium text-warning-text outline-none transition-colors hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text">
-          <Layers size={13} strokeWidth={2} />
+          <Layers size={13} />
           <span>Dev Mode</span>
           {active && (
             <span className="hidden max-w-[180px] truncate sm:inline">· {active.label}</span>

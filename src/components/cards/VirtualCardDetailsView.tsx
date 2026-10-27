@@ -29,7 +29,7 @@ import {
   ArrowLeftRight,
   Lock,
   Unlock,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import {
   Dialog,
   DialogBody,
@@ -162,7 +162,7 @@ function DetailLine({ label, value, onCopy }: { label: string; value: string; on
           aria-label={`Copy ${label.toLowerCase()}`}
           className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors duration-hover hover:bg-muted hover:text-foreground"
         >
-          <Copy size={16} strokeWidth={1.8} aria-hidden="true" />
+          <Copy size={16} aria-hidden="true" />
         </button>
       )}
     </div>
@@ -721,7 +721,6 @@ export function VirtualCardDetailsView({
                     <span>Track Delivery</span>
                     <ChevronRight
                       size={16}
-                      strokeWidth={1.8}
                       className="text-foreground transition-transform"
                     />
                   </div>
@@ -737,7 +736,7 @@ export function VirtualCardDetailsView({
                     onClick={handleOpenActivate}
                     className="w-full bg-primary text-primary-foreground hover:bg-primary-hover rounded-lg py-2 px-3 flex items-center justify-center gap-2 font-medium text-[14px] shadow-2xs cursor-pointer transition-colors"
                   >
-                    <Sparkles size={17} strokeWidth={1.8} />
+                    <Sparkles size={17} />
                     Activate Card
                   </button>
                 </div>
@@ -778,7 +777,7 @@ export function VirtualCardDetailsView({
                 <div className="rounded-2xl border border-border/80 bg-card p-5 flex flex-col gap-3">
                   <div className="flex items-center gap-2">
                     <div className="size-9 rounded-full bg-primary/15 text-primary-foreground flex items-center justify-center shrink-0">
-                      <CreditCard size={18} strokeWidth={1.8} className="text-foreground" />
+                      <CreditCard size={18} className="text-foreground" />
                     </div>
                     <div>
                       <h3 className="text-[15px] font-medium text-foreground">Card Activation Required</h3>
@@ -871,7 +870,7 @@ export function VirtualCardDetailsView({
       <span className="truncate text-foreground group-hover:underline group-hover:underline-offset-4">
         {fundsAccount.name} {fundsAccount.number ? `∗∗∗∗${fundsAccount.number.replace(/\D/g, "").slice(-4) || fundsAccount.number.slice(-4)}` : ""}
       </span>
-      <ChevronRight size={15} strokeWidth={1.8} className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" aria-hidden="true" />
+      <ChevronRight size={15} className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" aria-hidden="true" />
     </Link>
   ) : (
     <div className="h-7" aria-hidden="true" />
@@ -918,7 +917,7 @@ export function VirtualCardDetailsView({
           {isInactive ? (
             <div className="rounded-2xl border border-border/80 bg-card p-6 flex flex-col items-center justify-center text-center">
               <div className="flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground mb-2">
-                <CreditCard className="size-4 stroke-[1.8]" />
+                <CreditCard className="size-4" />
               </div>
               <p className="text-[14px] font-normal text-foreground">Card not activated</p>
               <p className="text-[12px] text-muted-foreground max-w-xs mt-1">
@@ -928,7 +927,7 @@ export function VirtualCardDetailsView({
           ) : activities.length === 0 ? (
             <div className="rounded-2xl border border-border/80 bg-card p-6 flex flex-col items-center justify-center text-center">
               <div className="flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground mb-2">
-                <CreditCard className="size-4 stroke-[1.8]" />
+                <CreditCard className="size-4" />
               </div>
               <p className="text-[14px] font-normal text-foreground">No card activity yet</p>
               <p className="text-[12px] text-muted-foreground max-w-xs mt-1">
@@ -957,9 +956,9 @@ export function VirtualCardDetailsView({
                       )}
                     >
                       {isCredit ? (
-                        <ArrowDownLeft className="size-3.5 stroke-[2]" />
+                        <ArrowDownLeft className="size-3.5" />
                       ) : (
-                        <ArrowUpRight className="size-3.5 stroke-[2]" />
+                        <ArrowUpRight className="size-3.5" />
                       )}
                     </div>
 
@@ -1054,7 +1053,7 @@ export function VirtualCardDetailsView({
 
       {/* Back button, title and one context chip — the card's own balance
           (prepaid/virtual) or the account a debit card spends from. */}
-      <div className="flex items-center gap-2 min-w-0">
+      <div data-page-header className="flex items-center gap-2 min-w-0">
         <button
           type="button"
           onClick={handleBackNavigation}
@@ -1062,7 +1061,7 @@ export function VirtualCardDetailsView({
           title="Back"
           aria-label="Back"
         >
-          <ChevronLeft size={22} strokeWidth={1.8} />
+          <ChevronLeft size={22} />
         </button>
         <h1 className="type-page-title font-medium leading-tight sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate min-w-0">
           {cardNickname || "Virtual Card"}
@@ -1115,7 +1114,7 @@ export function VirtualCardDetailsView({
                     {!(effectiveCard.type === "Virtual" || effectiveCard.isVirtual) ? (
                       <div className="relative z-10 my-auto py-1 flex items-center gap-2">
                         <EmvChip />
-                        <Wifi size={20} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0" />
+                        <Wifi size={20} className="rotate-90 opacity-85 shrink-0" />
                       </div>
                     ) : (
                       <div className="my-auto" aria-hidden="true" />
@@ -1208,7 +1207,7 @@ export function VirtualCardDetailsView({
               <div className="w-full rounded-2xl border border-border/80 bg-muted/30 p-3 flex items-center justify-between gap-2 text-left shadow-2xs">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="size-10 rounded-full bg-primary/15 text-foreground flex items-center justify-center shrink-0">
-                    <Bike size={22} strokeWidth={1.8} />
+                    <Bike size={22} />
                   </div>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2">
@@ -1232,7 +1231,7 @@ export function VirtualCardDetailsView({
                     title={`Call ${effectiveCard.courierRider.name} (${effectiveCard.courierRider.phone})`}
                     aria-label={`Call ${effectiveCard.courierRider.name}`}
                   >
-                    <Phone size={16} strokeWidth={1.8} />
+                    <Phone size={16} />
                   </a>
                 </div>
               </div>
@@ -1256,7 +1255,7 @@ export function VirtualCardDetailsView({
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-10 px-5 rounded-xl text-[14px]"
+                    className="w-full sm:w-auto h-10 px-5 text-[14px]"
                   >
                     Activate Card
                   </Button>
@@ -1277,7 +1276,7 @@ export function VirtualCardDetailsView({
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-10 px-5 rounded-xl text-[14px]"
+                    className="w-full sm:w-auto h-10 px-5 text-[14px]"
                   >
                     Activate Card
                   </Button>
@@ -1298,7 +1297,7 @@ export function VirtualCardDetailsView({
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-10 px-5 rounded-xl text-[14px]"
+                    className="w-full sm:w-auto h-10 px-5 text-[14px]"
                   >
                     Activate Card
                   </Button>

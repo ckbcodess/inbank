@@ -195,6 +195,9 @@ interface LoansState {
   decide: (ownerId: string, approve: boolean) => void;
   repay: (id: string, amount: number, on: string) => void;
   setFailRequests: (fail: boolean) => void;
+  /** Customers who have seen the welcome to loans. */
+  welcomed: Record<string, boolean>;
+  markWelcomed: (ownerId: string, seen?: boolean) => void;
   /** Dev Mode: set who the customer is (their income), and optionally give them an advance. */
   seed: (ownerId: string, accountId: string, scenario: IncomeScenario, advance: "none" | "active" | "overdue" | "pending") => void;
 }
@@ -215,6 +218,8 @@ export const useLoans = create<LoansState>()(
       advances: [],
       serial: 1,
       failRequests: false,
+      welcomed: {},
+      markWelcomed: (ownerId, seen = true) => set((s) => ({ welcomed: { ...s.welcomed, [ownerId]: seen } })),
 
       request: (input, switchAccount) => {
         const serial = get().serial;
@@ -313,6 +318,7 @@ export function useMyLoans() {
   const ownerId = useSession((s) => s.actor?.id) ?? "guest";
   const incomes = useLoans((s) => s.incomes);
   const all = useLoans((s) => s.advances);
+  const welcomedAll = useLoans((s) => s.welcomed);
   return useMemo(() => {
     const stored = incomes[ownerId];
     const income: Income | null =
@@ -320,6 +326,6 @@ export function useMyLoans() {
     const advances = all.filter((a) => a.ownerId === ownerId);
     const open = advances.find((a) => a.status === "pending" || a.status === "active");
     const limit = income ? Math.floor((income.monthly * ADVANCE_SHARE) / 10) * 10 : 0;
-    return { ownerId, income, advances, open, limit, product: income ? ADVANCE_PRODUCTS[income.kind] : undefined };
-  }, [ownerId, incomes, all, defaultAccountId]);
+    return { ownerId, income, advances, open, limit, welcomed: Boolean(welcomedAll[ownerId]), product: income ? ADVANCE_PRODUCTS[income.kind] : undefined };
+  }, [ownerId, incomes, all, welcomedAll, defaultAccountId]);
 }

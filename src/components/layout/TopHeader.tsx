@@ -18,7 +18,7 @@ import {
   Settings,
   Sun,
   SunMoon,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { useTheme } from "next-themes";
 import { useEffect, useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
@@ -79,7 +79,7 @@ function LanguageSelect() {
           </option>
         ))}
       </select>
-      <ChevronDown size={14} strokeWidth={1.8} aria-hidden="true" className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
+      <ChevronDown size={14} aria-hidden="true" className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
     </div>
   );
 }
@@ -147,7 +147,7 @@ export default function TopHeader({
     <header className="absolute inset-x-0 top-0 z-20 flex h-12 items-center justify-between gap-3 border-b border-border/60 bg-[var(--shell-header)] px-3 backdrop-blur-xl backdrop-saturate-150 sm:px-5 lg:px-6">
       <div className="flex min-w-0 items-center gap-2">
         <Button variant="ghost" size="icon-sm" onClick={onMenuToggle} className="lg:hidden shrink-0" aria-label="Open menu">
-          <Menu size={17} strokeWidth={1.9} />
+          <Menu size={17} />
         </Button>
         <Suspense fallback={null}><HeaderBreadcrumbs /></Suspense>
       </div>
@@ -157,7 +157,7 @@ export default function TopHeader({
         {!captureMode && !devToolsHidden && (
           <DropdownMenu>
             <DropdownMenuTrigger className="h-7 gap-2 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2 text-warning-text hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0">
-              <Layers size={13} strokeWidth={2} className="shrink-0" />
+              <Layers size={13} className="shrink-0" />
               <span className="hidden sm:inline whitespace-nowrap">Dev Mode</span>
               <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 font-medium">
                 {simBadge}
@@ -192,7 +192,7 @@ export default function TopHeader({
                 unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"
               }
             >
-              <Bell size={16} strokeWidth={1.9} />
+              <Bell size={16} />
               {unreadCount > 0 && (
                 <span
                   className="absolute right-1 top-1 size-1.5 rounded-full bg-destructive ring-2 ring-card"
@@ -242,7 +242,7 @@ export default function TopHeader({
               className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
               <span className="flex items-center gap-2">
-                <Settings size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <Settings size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.settings", "Settings")}</span>
               </span>
             </DropdownMenuItem>
@@ -258,9 +258,9 @@ export default function TopHeader({
               >
                 <span className="flex items-center gap-2">
                   {devToolsHidden ? (
-                    <Eye size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <Eye size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                   ) : (
-                    <EyeOff size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <EyeOff size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                   )}
                   <span>{devToolsHidden ? "Show floating dev tools" : "Hide floating dev tools"}</span>
                 </span>
@@ -273,7 +273,7 @@ export default function TopHeader({
             {/* Theme: Light / Dark / System */}
             <div className="flex items-center justify-between gap-2 px-2 py-2">
               <span className="flex items-center gap-2 text-[13.5px] text-foreground">
-                <SunMoon size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <SunMoon size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.theme", "Theme")}</span>
               </span>
               <ThemeSegmented />
@@ -282,7 +282,7 @@ export default function TopHeader({
             {/* Language */}
             <div className="flex items-center justify-between gap-2 px-2 py-2">
               <span className="flex items-center gap-2 text-[13.5px] text-foreground">
-                <Globe size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <Globe size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.language", "Language")}</span>
               </span>
               <LanguageSelect />
@@ -296,7 +296,7 @@ export default function TopHeader({
               className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg transition-colors"
             >
               <span className="flex items-center gap-2">
-                <LogOut size={16} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />
+                <LogOut size={16} className="shrink-0" aria-hidden="true" />
                 <span>{t("header.signOut", "Log out")}</span>
               </span>
             </DropdownMenuItem>

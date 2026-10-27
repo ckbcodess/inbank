@@ -10,7 +10,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowDownLeft, ArrowUpRight, CalendarClock } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, CalendarClock } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { formatMoney, type Transaction } from "@/lib/mock-data";
 import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
@@ -48,7 +48,7 @@ function ScheduledRow({ p, showAmounts }: { p: UpcomingPayment; showAmounts: boo
   return (
     <li className="flex items-center gap-3 py-2">
       <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-dashed border-border text-muted-foreground">
-        <CalendarClock size={16} strokeWidth={1.8} />
+        <CalendarClock size={16} />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="truncate text-[14px] text-foreground">{p.payee}</span>
@@ -88,7 +88,7 @@ function TxnRow({
             credit ? "bg-success/10 text-success" : "bg-muted text-muted-foreground",
           )}
         >
-          {credit ? <ArrowDownLeft size={16} strokeWidth={1.8} /> : <ArrowUpRight size={16} strokeWidth={1.8} />}
+          {credit ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}
         </span>
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="truncate text-[14px] text-foreground">{txn.counterparty || txn.description}</span>

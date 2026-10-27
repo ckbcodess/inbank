@@ -29,7 +29,7 @@ import {
   Users,
   Wallet,
   Wifi,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { ActionTile } from "@/components/ui/action-tile";
 import {
@@ -561,7 +561,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   if (!rail) {
     return (
       <div className="mx-auto flex w-full max-w-[580px] flex-col gap-5 py-2">
-        <div className="flex items-center gap-2">
+        <div data-page-header className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => {
@@ -571,7 +571,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
             aria-label="Back to Scheduled Payments"
           >
-            <ChevronLeft size={22} strokeWidth={1.8} />
+            <ChevronLeft size={22} />
           </button>
           <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
             What do you want to schedule?
@@ -671,14 +671,14 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
         {/* Header with back button */}
-        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
+        <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={() => setScreen("form")}
             className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to form"
           >
-            <ChevronLeft size={20} strokeWidth={1.8} />
+            <ChevronLeft size={20} />
           </button>
           <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Scheduled Payment Summary
@@ -700,14 +700,14 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             <Button
               type="button"
               variant="outline"
-              className="flex-1 h-11 rounded-2xl text-[15px]"
+              className="flex-1 h-11 text-[15px]"
               onClick={() => setScreen("form")}
             >
               Back to Edit
             </Button>
             <Button
               type="button"
-              className="flex-1 h-11 rounded-2xl text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+              className="flex-1 h-11 text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
               onClick={() => setPinModalOpen(true)}
             >
               Authorize &amp; Schedule
@@ -734,14 +734,14 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* Header with back button */}
-      <div className="flex items-center gap-2 sm:gap-2 min-w-0">
+      <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
         <button
           type="button"
           onClick={() => setRail(null)}
           className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
           aria-label="Back to payment types"
         >
-          <ChevronLeft size={20} strokeWidth={1.8} />
+          <ChevronLeft size={20} />
         </button>
         <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
           {railConfig.title} Scheduled Payment

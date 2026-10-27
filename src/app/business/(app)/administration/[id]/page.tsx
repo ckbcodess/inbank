@@ -12,7 +12,7 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import { Check, Info, Lock, ShieldAlert, UserCog } from "lucide-react";
+import { Check, Info, Lock, ShieldAlert, UserCog } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import SuspensionDialog from "@/components/SuspensionDialog";
@@ -91,7 +91,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       <section className="rounded-2xl border border-border bg-card p-4">
         <div className="flex items-center gap-2">
           <span className="flex size-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-            <UserCog size={19} strokeWidth={1.8} aria-hidden="true" />
+            <UserCog size={19} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-[15px] text-foreground">Access configuration</p>
@@ -146,7 +146,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
                       : "bg-primary text-primary-foreground"
                   }`}
                 >
-                  {locked ? <Lock size={12} strokeWidth={2} aria-hidden="true" /> : step.n === 5 ? <Check size={13} strokeWidth={2.4} aria-hidden="true" /> : step.n}
+                  {locked ? <Lock size={12} aria-hidden="true" /> : step.n === 5 ? <Check size={13} aria-hidden="true" /> : step.n}
                 </span>
 
                 <div className="min-w-0 flex-1">
@@ -156,7 +156,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
                   {/* 13.7: the reason is stated explicitly — never a silent grey-out */}
                   {locked && (
                     <p className="mt-1 flex items-start gap-2 text-[12.5px] text-warning-text">
-                      <Info size={13} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
+                      <Info size={13} aria-hidden="true" className="mt-px shrink-0" />
                       {reason}
                     </p>
                   )}

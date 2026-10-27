@@ -9,7 +9,7 @@
  */
 
 import { NetworkLogo } from "@/components/cards/NetworkLogo";
-import { Lock, Wifi } from "lucide-react";
+import { Lock, Wifi } from "@/components/ui/icons";
 import type { PaymentCard } from "@/lib/mock-data";
 import { getCardTheme } from "@/components/cards/card-themes";
 import { EmvChip } from "@/components/cards/EmvChip";
@@ -71,7 +71,6 @@ export function CardFace({
             <div className="flex items-center gap-[3cqw]">
               <EmvChip className="w-[12cqw]! sm:w-[12cqw]!" />
               <Wifi
-                strokeWidth={2.2}
                 className="size-[5.4cqw] rotate-90 opacity-85"
                 aria-hidden="true"
               />
@@ -92,7 +91,6 @@ export function CardFace({
           <span className="flex size-[18cqw] items-center justify-center rounded-full bg-white/90 text-primary-foreground shadow-md">
             <Lock
               className="size-[8cqw]"
-              strokeWidth={1.8}
               aria-label="Blocked"
             />
           </span>

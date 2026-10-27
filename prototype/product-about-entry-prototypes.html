@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Product Page: Where the About Entry Goes: 8 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ink:#0b0b0c;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.55;max-width:1100px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  .cell{display:flex;flex-direction:column;gap:12px;width:620px;max-width:100%}
+  .cap{font-size:13px;color:var(--mu);padding:0 4px;line-height:1.5} .cap b{color:var(--tx);font-weight:500}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;min-height:520px;display:flex;flex-direction:column;position:relative}
+  .scroll{flex:1;padding:28px 32px 32px;display:flex;flex-direction:column;gap:24px;width:100%;max-width:560px;margin:0 auto}
+  .hd{display:flex;align-items:center;gap:10px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .btn{height:44px;padding:0 20px;border-radius:14px;background:var(--am);color:#111;font-weight:500;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)} .btn.ghost:hover{background:var(--tile);filter:none}
+  .btn.sm{height:36px;padding:0 14px;font-size:13px;border-radius:12px}
+  .btn.full{width:100%}
+  .h3{font-size:16px;font-weight:500}
+  .big{font-size:44px;letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+  .sech{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:36px}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .grp{background:var(--tile);border-radius:20px;padding:8px}
+  .li{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:12px;width:100%}
+  .li:hover{background:var(--tileh)}
+  .li .ic{width:36px;height:36px;border-radius:10px;background:var(--tileh);display:flex;align-items:center;justify-content:center;color:var(--mu);flex:none}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:14px} .li .m{font-size:12px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:14px} .li .e small{font-size:12px;color:var(--mu)}
+  .li .e.am small{color:var(--amt)}
+  .lnk{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 12px;border-radius:12px;width:100%;font-size:14px}
+  .lnk:hover{background:var(--tileh)}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tile{background:var(--tile);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:104px}
+  .tile:hover{background:var(--tileh)}
+  .tile.pri{background:var(--am);color:#111} .tile.pri:hover{filter:brightness(1.06)}
+  .tile .d{width:36px;height:36px;border-radius:50%;background:var(--tileh);display:flex;align-items:center;justify-content:center}
+  .tile.pri .d{background:rgba(0,0,0,.12)}
+  .tile .n{font-size:14px;font-weight:500} .tile .s{font-size:12px;color:var(--mu);margin-top:2px} .tile.pri .s{color:rgba(0,0,0,.6)}
+  .add{display:flex;align-items:center;gap:12px;padding:14px 12px;border:1px dashed var(--bd);border-radius:12px;width:100%;color:var(--mu);font-size:14px;margin-top:4px}
+  .add:hover{background:var(--tileh);color:var(--tx)}
+  .u{text-decoration:underline;text-underline-offset:3px}
+  .dock{position:sticky;bottom:0;margin-top:auto;padding:16px 0 0;background:linear-gradient(transparent,var(--surf) 30%);display:flex;gap:8px}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--bd)}
+  .tabs button{padding:10px 14px;font-size:14px;color:var(--mu);border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tabs button.on{color:var(--tx);border-color:var(--am)}
+  .tab2{display:flex;gap:4px;border-bottom:1px solid var(--bd)}.tab2 button{padding:10px 14px;font-size:14px;color:var(--mu);border-bottom:2px solid transparent;margin-bottom:-1px}.tab2 button.on{color:var(--tx);border-color:var(--am)}
+  .ibtn{width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border:1px solid var(--bd)}.ibtn:hover{background:var(--tile);color:var(--tx)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .menu{position:absolute;right:0;top:40px;background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:6px;min-width:200px;box-shadow:var(--shadow);z-index:5}
+  .menu button{display:block;width:100%;padding:12px;border-radius:10px;font-size:14px}.menu button:hover{background:var(--tile)}
+  .chip{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;height:32px;padding:0 12px;border-radius:999px;background:var(--tile);font-size:13px}.chip:hover{background:var(--tileh)}
+  .sheet{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;z-index:6}
+  .sheet>div{background:var(--surf);border-radius:24px 24px 0 0;padding:24px 32px 32px;width:100%;display:flex;flex-direction:column;gap:16px;border-top:1px solid var(--bd)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Product page (Insure, Loans, Invest) · the About entry: chip + sheet</h1>
+    <div class="ctrls">
+      <div class="seg" id="prodsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage" id="stage"></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',vault:'<path d="M4 11h13a3 3 0 013 3v2a3 3 0 01-3 3H8a4 4 0 01-4-4z"/><path d="M8 11V8a2 2 0 014 0v3"/>',shield:'<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/>',cash:'<path d="M3 8h18v10H3z"/><circle cx="12" cy="13" r="2.5"/>',more:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>'};
+const back=svg('<path d="M15 6l-6 6 6 6"/>',20,1.8), chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const PROD={
+ ins:{name:'Child Education Plan',title:'Your Policies',buy:'Apply for Another',stmt:null,icon:'shield',ab:'About this plan',abBtn:'About This Plan',low:'this plan',
+  h:[{t:'CEP/2023/040318',sub:'GHS 300.00 a month',fig:6750000,left:'GHS 300.00 a month'}]},
+ loan:{name:'Salary Advance',title:'Your Loans',buy:'Apply for Another',stmt:null,icon:'cash',ab:'About this advance',abBtn:'About This Advance',low:'this advance',
+  h:[{t:'Salary Advance',sub:'Due 28 Oct 2026',fig:104000,left:'Owed today',soon:1}]},
+ td:{name:'Term Deposits',title:'Your Term Deposits',buy:'Open Another',stmt:'View Statements',icon:'vault',ab:'About term deposits',abBtn:'About Term Deposits',low:'term deposits',
+  h:[{t:'91-day Term Deposit',sub:'Matures 19 Nov 2026',fig:1031164,left:'42 days left'},{t:'364-day Term Deposit',sub:'Matures 11 Mar 2027',fig:2299178,left:'154 days left'}]},
+ bl:{name:'Treasury Bills',title:'Your Treasury Bills',buy:'Buy Another',stmt:'View Statements',icon:'doc',ab:'About treasury bills',abBtn:'About Treasury Bills',low:'treasury bills',
+  h:[{t:'91-day Treasury Bill',sub:'Bill · Matures 03 Dec 2026',fig:1000000,left:'56 days left'},{t:'364-day Treasury Bill',sub:'Bill · Matures 21 Mar 2027',fig:500000,left:'164 days left'}]}
+};
+const ghs=c=>'GHS '+(c/100).toLocaleString('en-GH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const AB={
+ ins:{ben:[['Fees paid if you can’t','Cover goes to the school or to you'],['Life cover included','Your family is protected while you pay'],['A lump sum at the end','Paid out when the term finishes']],facts:[['Cover','Up to GHS 100,000.00'],['Premium','From GHS 8.00 a month'],['Stop any time','Premiums paid are kept']]},
+ loan:{ben:[['Up to 80% of your pay','Salary, national service or pension'],['Money in minutes','Straight to your account'],['Repaid for you','Taken from your next salary']],facts:[['Limit','Up to 80% of your pay'],['Fee','4% flat, shown first'],['Repayment','Your next payday']]},
+ td:{ben:[['A fixed rate','Set when you start'],['You choose how long','91, 182 or 364 days'],['Your choice at the end','Take it out or roll it over']],facts:[['Rates from','12.5% a year'],['Minimum','GHS 1,000.00'],['Early exit','Allowed, cost shown first']]},
+ bl:{ben:[['Lend to the government','Government of Ghana Treasury Bills'],['Buy new or from others','At auction, or from other investors'],['Sell early if you need to','Through a rediscount']],facts:[['Terms','91 to 364 days'],['Minimum','GHS 1,000.00'],['Rediscount','Cash in before it matures']]}
+};
+const S={v:4,prod:'ins',dark:true,menu:false,sheet:false};
+const P=()=>PROD[S.prod];
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+const hold=x=>`<button class="li" data-a="toast:Opens the holding"><span class="ic">${svg(IC[P().icon],16)}</span><span class="g"><span class="t">${x.t}</span><span class="m ${x.soon?'am':''}">${x.sub}</span></span><span class="e"><span class="tab">${ghs(x.fig)}</span><small>${x.left}</small></span><span class="mu">${chev}</span></button>`;
+const list=(extra='')=>`<div class="grp">${P().h.map(hold).join('')}${extra}</div>`;
+const sech=(t,right='')=>`<div class="sech"><h3 class="h3">${t}</h3>${right}</div>`;
+const hd=(t,right='')=>`<div class="hd" style="justify-content:space-between;position:relative"><span style="display:flex;align-items:center;gap:10px"><span class="bk">${back}</span><h2>${t}</h2></span>${right}</div>`;
+const btn=(l,cls='')=>`<button class="btn ${cls} full" style="height:44px;border-radius:16px" data-a="toast:${l}">${l}</button>`;
+const acts=(o={})=>`<div style="display:flex;flex-direction:column;gap:12px">${btn(P().buy)}${P().stmt?btn(P().stmt,'ghost'):''}${o.about?btn(o.about,'ghost'):''}</div>`;
+const aboutRow=()=>`<button class="lnk" data-a="toast:Opens ${P().ab}"><span>${cap(P().ab)}</span><span class="mu">${chev}</span></button>`;
+const frame=(h,over='')=>`<div class="frame"><div class="scroll">${h}</div>${over}</div>`;
+const cell=(c,h)=>`<div class="cell"><p class="cap">${c}</p>${h}</div>`;
+const body=()=>`<div class="sec">${sech(P().title)}${list()}</div>`;
+const page=(o={})=>frame(hd(P().name,o.right||'')+(o.under||'')+(o.mid||body())+acts(o)+(o.bottom||''),o.over||'');
+const sheetUI=()=>{const a=AB[S.prod];return S.sheet?`<div class="sheet" data-a="sheet:0"><div data-a="noop:"><div class="sech"><h3 class="h3">${cap(P().ab)}</h3><button data-a="sheet:0" aria-label="Close" style="width:36px;height:36px;border:1px solid var(--bd);border-radius:50%;display:inline-flex;align-items:center;justify-content:center">${svg(IC.x,16)}</button></div><ul style="display:flex;flex-direction:column;gap:14px;margin:4px 0">${a.ben.map(b=>`<li><div style="font-size:15px">${b[0]}</div><div class="mu" style="font-size:13px;margin-top:2px">${b[1]}</div></li>`).join('')}</ul><div>${a.facts.map(x=>`<div class="hl" style="padding:12px 0"><span class="k">${x[0]}</span><span class="v tab">${x[1]}</span></div>`).join('')}</div></div></div>`:''};
+const hchip=()=>`<button class="chip" data-a="sheet:1">${svg(IC.info,14)}<span>About</span></button>`;
+const foot=()=>`<p style="text-align:center;font-size:12px;color:var(--mu)">New to ${P().low}? <button class="u" style="font-size:12px;color:var(--tx)" data-a="sheet:1">See how it works</button></p>`;
+const chip=a=>`<button class="chip" data-a="${a}">${svg(IC.info,14)}<span>${cap(P().ab)}</span></button>`;
+
+const V={};
+
+
+
+V[4]={name:'A. Chip in the header, opens a sheet',note:'Variation 4 with the chip look: a small "About" pill at the right of the title row. It opens a sheet over the page with the benefits and facts, so there is no extra page and no Back. The page body stays only holdings and buttons.',
+ f:()=>[cell('<b>Header chip.</b> Tap About.',page({right:hchip(),over:sheetUI()}))]};
+
+
+
+V[8]={name:'B. Line at the bottom, opens the same sheet',note:'Variation 8, but the link opens the same sheet, so it behaves like the header chip. Quietest, and it speaks to the person who is new to the product.',
+ f:()=>[cell('<b>Footnote line.</b> Tap the link.',page({bottom:foot(),over:sheetUI()}))]};
+V[9]={name:'C. Both',note:'Both together: the chip in the header and the line at the bottom, each opening the same sheet. Two ways to the same thing, which the app avoids; shown so you can judge whether the line adds anything once the chip is there.',
+ f:()=>[cell('<b>Chip and line.</b>',page({right:hchip(),bottom:foot(),over:sheetUI()}))]};
+
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('prodsel',[['ins','Insure'],['loan','Loans'],['td','Term Deposits'],['bl','Treasury Bills']],S.prod,'prod');
+  seg('themesel',[['dark','Dark'],['light','Light']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  $('stage').innerHTML=V[S.v].f().join('');
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='noop')return;
+  if(a==='toast'){toast(arg);S.menu=false;render();return}
+  if(a==='v'){S.v=+arg;S.menu=false;S.sheet=false}
+  else if(a==='prod')S.prod=arg;
+  else if(a==='theme')S.dark=arg==='dark';
+  else if(a==='menu')S.menu=!S.menu;
+  else if(a==='sheet')S.sheet=arg==='1';
+  render();
+});
+render();
+</script>
+</body>
+</html>

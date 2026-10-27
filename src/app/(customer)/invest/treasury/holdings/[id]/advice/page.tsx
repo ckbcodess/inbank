@@ -54,14 +54,14 @@ export default function HoldingAdvicePage() {
   ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader
         title="Advice"
         badge={<Badge variant="secondary">{kindLabel(h.kind)}</Badge>}
         backTo={{ href: `${TREASURY_HOME}/holdings/${h.id}`, label: h.title }}
       />
 
-      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
+      <div className="flex flex-col gap-6">
         <section className="flex flex-col gap-2 px-1">
           <span className="text-[14px] text-muted-foreground">{h.title}</span>
           <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(h.cost)}</span>

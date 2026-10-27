@@ -11,7 +11,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, CreditCard, Lock, X } from "lucide-react";
+import { CheckCircle2, CreditCard, Lock, X } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { AppLoader } from "@/components/ui/loader";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
@@ -92,7 +92,7 @@ export default function CardVerificationPage() {
     <div data-auth-shell className="flex min-h-dvh w-full flex-col bg-muted/30 dark:bg-background text-foreground">
       {/* Top Lock Header */}
       <header className="flex h-12 items-center justify-center gap-2 px-3 text-[13px] text-muted-foreground">
-        <Lock size={13.5} strokeWidth={1.8} aria-hidden="true" />
+        <Lock size={13.5} aria-hidden="true" />
         <span>Secure card verification</span>
       </header>
 
@@ -107,14 +107,14 @@ export default function CardVerificationPage() {
               aria-label="Close"
               className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 flex size-7 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer disabled:pointer-events-none disabled:opacity-40"
             >
-              <X size={18} strokeWidth={1.8} aria-hidden="true" />
+              <X size={18} aria-hidden="true" />
             </button>
           )}
 
           {step === "verified" ? (
             <div className="flex flex-col items-center gap-2 py-5 text-center" role="status">
               <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success-text">
-                <CheckCircle2 size={28} strokeWidth={2} aria-hidden="true" />
+                <CheckCircle2 size={28} aria-hidden="true" />
               </div>
               <h1 className="text-[20px] font-medium tracking-tight">{isPayment ? "Payment approved" : "Card verified"}</h1>
               <p className="flex items-center gap-2 text-[13.5px] text-muted-foreground mt-1">
@@ -147,7 +147,7 @@ export default function CardVerificationPage() {
                 <div className="flex items-center justify-between gap-2 text-left">
                   <dt className="text-muted-foreground">Card</dt>
                   <dd className="flex items-center gap-2 tabular font-medium text-foreground">
-                    <CreditCard size={14} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+                    <CreditCard size={14} className="text-muted-foreground shrink-0" />
                     <span>∗∗∗∗ {last4}</span>
                   </dd>
                 </div>
@@ -194,7 +194,7 @@ export default function CardVerificationPage() {
                     type="submit"
                     disabled={digits.join("").length < OTP_LENGTH}
                     loading={step === "verifying"}
-                    className="h-10 w-full rounded-xl text-[14px] font-medium"
+                    className="h-10 w-full text-[14px] font-medium"
                   >
                     Approve payment
                   </Button>

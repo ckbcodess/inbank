@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { CountryFlag } from "@/components/ui/country-flag";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { formatNationalMobile, toLocalMobile } from "@/lib/phone";
 import { COUNTRIES } from "@/lib/countries";
@@ -76,14 +76,13 @@ function CountryDropdown({
       >
         <CountryFlag code={country} size={20} />
         <span className="tabular text-muted-foreground">+{dialCodeFor(country)}</span>
-        <ChevronDown size={14} strokeWidth={1.8} className="text-muted-foreground" aria-hidden="true" />
+        <ChevronDown size={14} className="text-muted-foreground" aria-hidden="true" />
       </PopoverTrigger>
       <PopoverContent align="start" sideOffset={8} className="w-[300px] rounded-xl">
         <div className="flex flex-col gap-1 p-2">
           <div className="relative">
             <Search
               size={15}
-              strokeWidth={1.8}
               className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
               aria-hidden="true"
             />

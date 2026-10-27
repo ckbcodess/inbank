@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -67,9 +67,9 @@ export function ShareDetailsDialog({
                     aria-label={`Copy ${r.label.toLowerCase()}`}
                   >
                     {copiedKey === r.key ? (
-                      <Check size={14} strokeWidth={1.9} className="text-success" />
+                      <Check size={14} className="text-success" />
                     ) : (
-                      <Copy size={14} strokeWidth={1.8} />
+                      <Copy size={14} />
                     )}
                   </button>
                 </dd>
@@ -78,8 +78,8 @@ export function ShareDetailsDialog({
           </dl>
         </DialogBody>
         <DialogFooter>
-          <Button onClick={copyAll} className="h-9 w-full gap-2 rounded-lg text-[13.5px]">
-            <Copy size={15} strokeWidth={1.8} />
+          <Button onClick={copyAll} className="h-9 w-full gap-2 text-[13.5px]">
+            <Copy size={15} />
             Copy all
           </Button>
         </DialogFooter>

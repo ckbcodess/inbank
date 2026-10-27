@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Invest, Inside the Structure: 8 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ink:#0b0b0c;--ok:#15803d;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.55;max-width:1100px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  .cell{display:flex;flex-direction:column;gap:12px;width:390px;max-width:100%}
+  .cap{font-size:13px;color:var(--mu);padding:0 4px;line-height:1.5} .cap b{color:var(--tx);font-weight:500}
+  .lvl{display:inline-block;font-size:11px;border:1px solid var(--bd);border-radius:999px;padding:1px 8px;margin-right:6px;color:var(--mu)}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;height:780px;display:flex;flex-direction:column;position:relative}
+  .scroll{flex:1;overflow:auto;padding:20px 20px 28px;display:flex;flex-direction:column;gap:22px}
+  .hd{display:flex;align-items:center;gap:10px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .btn{height:48px;padding:0 24px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)} .btn.ghost:hover{background:var(--tile);filter:none}
+  .btn.sm{height:36px;width:auto;padding:0 14px;font-size:13px;border-radius:12px}
+  .h3{font-size:16px;font-weight:500}
+  .big{letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--bd);color:var(--mu)}
+  .chip.on{background:var(--tx);color:var(--surf);border-color:var(--tx)}
+  .li{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--bd);width:100%}
+  .li:last-child{border-bottom:1px solid var(--bd)} .li:hover{background:var(--tile)}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:15px} .li .m{font-size:12px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:15px} .li .e small{font-size:12px;color:var(--mu)}
+  .rate{font-size:18px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .grp{font-size:13px;color:var(--mu)}
+  .rows>div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:13px 0;border-top:1px solid var(--bd);font-size:14px}
+  .rows>div:last-child{border-bottom:1px solid var(--bd)} .rows .l{color:var(--mu);font-size:13px}
+  .lnk{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);width:100%;font-size:14px}
+  /* shelf card, the corner look */
+  .card{position:relative;background:var(--tile);border-radius:20px;padding:20px;min-height:176px;display:flex;flex-direction:column;justify-content:space-between;width:100%;overflow:hidden}
+  .card:hover{background:var(--tileh)}
+  .card .disc{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:50%;background:var(--p);color:var(--ink);display:flex;align-items:center;justify-content:center}
+  .card .nm{font-size:17px;font-weight:500;letter-spacing:-.01em} .card .ln{font-size:13px;color:var(--mu);line-height:1.4;margin-top:4px} .card .st{font-size:12px;color:var(--mu)}
+  /* pitch pieces */
+  .band{border-radius:20px;background:color-mix(in srgb,var(--p) 28%,var(--tile));height:92px;position:relative;overflow:hidden;color:var(--p)}
+  .band .mk{position:absolute;right:-8px;bottom:-24px;opacity:.55}
+  .ben{display:flex;flex-direction:column;gap:18px}
+  .bi{display:flex;gap:14px;align-items:center}
+  .ic{width:40px;height:40px;border-radius:50%;background:var(--p);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
+  .bi .t{font-size:16px;line-height:1.3} .bi .s{font-size:13px;color:var(--mu);margin-top:2px}
+  .ben3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .ben3>div{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-size:13px;line-height:1.3}
+  .perf{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--mu);font-variant-numeric:tabular-nums}
+  .perf::before,.perf::after{content:"";flex:1;border-top:1px dashed var(--bd)} .perf b{color:var(--tx);font-weight:500;font-size:18px}
+  .lead{background:var(--tile);border-radius:20px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%}
+  .lead:hover{background:var(--tileh)}
+  .pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .pick button{background:var(--tile);border-radius:16px;padding:14px 10px;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center}
+  .pick button.on{outline:2px solid var(--am)}
+  .dim{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surf);border-top:1px solid var(--bd);border-radius:24px 24px 0 0;padding:22px 20px 24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 -20px 40px -20px rgba(0,0,0,.6)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Invest · 8 variations inside the structure you have: shelf, then product page, then instrument, then the flow</h1>
+    <div class="ctrls">
+      <div class="seg" id="stsel"></div>
+      <div class="seg" id="prodsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage" id="stage"></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+ rate:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+ time:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>',
+ exit:'<path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/>',
+ gov:'<path d="M4 20h16M6 20V10M10 20V10M14 20V10M18 20V10M3 10l9-6 9 6"/>',
+ coupon:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M9.8 10c0-.9.9-1.4 2.2-1.4s2.2.5 2.2 1.4-.9 1.2-2.2 1.6-2.2.7-2.2 1.6.9 1.4 2.2 1.4 2.2-.5 2.2-1.4"/>',
+ choice:'<path d="M4 12h12M12 6l6 6-6 6"/>',
+ td:'<path d="M4 11h13a3 3 0 013 3v2a3 3 0 01-3 3H8a4 4 0 01-4-4z"/><path d="M8 11V8a2 2 0 014 0v3"/>',
+ tr:'<path d="M4 20h16M6 20V10M10 20V10M14 20V10M18 20V10M3 10l9-6 9 6"/>'
+};
+const back=svg('<path d="M15 6l-6 6 6 6"/>',20,1.8);
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+
+/* ---- from the app's own tables ---- */
+const M=[
+ {id:0,prod:'td',kind:'deposit',name:'91-day Term Deposit',src:'GCB',rate:12.5,days:91,line:'Matures 07 Jan',lbl:'Deposit'},
+ {id:1,prod:'td',kind:'deposit',name:'182-day Term Deposit',src:'GCB',rate:13.5,days:182,line:'Matures 08 Apr',lbl:'Deposit'},
+ {id:2,prod:'td',kind:'deposit',name:'364-day Term Deposit',src:'GCB',rate:15,days:364,line:'Matures 07 Oct',lbl:'Deposit'},
+ {id:3,prod:'tr',kind:'bill',name:'91-day Treasury Bill',src:'Primary',rate:13.304,days:91,line:'Settles 30 Oct',lbl:'Bill'},
+ {id:4,prod:'tr',kind:'bill',name:'182-day Treasury Bill',src:'Primary',rate:15,days:182,line:'Settles 30 Oct',lbl:'Bill'},
+ {id:5,prod:'tr',kind:'bond',name:'15-Year Bond',src:'Primary',rate:14.23,days:5475,line:'Settles 16 Nov',lbl:'Bond'},
+ {id:6,prod:'tr',kind:'bond',name:'15-Year Bond',src:'Secondary',rate:13.304,days:470,line:'Matures 02 Feb 2028',lbl:'Bond'},
+ {id:7,prod:'tr',kind:'bill',name:'364-day Bill',src:'Secondary',rate:14.23,days:28,line:'Matures in 28 days',lbl:'Bill'}
+];
+const PROD={
+ td:{name:'Term Deposits',col:'#0d9488',icon:'td',line:'Lock money away at a fixed rate',st:'1 deposit · 1 matures soon',stA:1,price:{pre:'Rates from',fig:'12.5%',suf:'a year'},
+  ben:[['rate','A fixed rate','Set when you start'],['time','You choose how long','91, 182 or 364 days'],['choice','Your choice at the end','Take it out or roll it over']]},
+ tr:{name:'Treasury Bills & Bonds',col:'#4f46e5',icon:'tr',line:'Lend to the government for a fixed period',st:'3 holdings',stA:0,price:{pre:'Rates from',fig:'13.3%',suf:'a year'},
+  ben:[['gov','Lend to the government','Government of Ghana bills and bonds'],['time','Buy new or from others','At auction, or from other investors'],['exit','Sell early if you need to','Through a rediscount']]}
+};
+const BEN={
+ deposit:[['rate','A fixed rate','Set when you start'],['time','Your term','__T__'],['choice','Your choice at the end','Take it out or roll it over']],
+ bill:[['gov','Backed by the government','Government of Ghana Treasury Bill'],['time','Your term','__T__'],['exit','Sell early if you need to','Through a rediscount']],
+ bond:[['coupon','Interest every 6 months','A coupon until it matures'],['time','Your term','__T__'],['exit','Sell early if you need to','Through a rediscount']]
+};
+const HOLD={td:[{t:'91-day Term Deposit',sub:'Matures 19 Nov',fig:'GHS 10,311.64',left:'5 days left',soon:1}],
+ tr:[{t:'91-day Treasury Bill',sub:'Bill · Matures 20 Dec',fig:'GHS 10,000.00',left:'56 days left'},{t:'364-day Treasury Bill',sub:'Bill · Matures 08 Apr',fig:'GHS 20,000.00',left:'164 days left'},{t:'6-Year Fixed Bond',sub:'Bond · Matures 17 Feb 2031',fig:'GHS 15,000.00',left:'4 years left'}]};
+const pct=r=>(Math.round(r*100)/100).toString()+'%';
+const termTxt=d=>d>=5475?'15 years':d>=730?Math.round(d/365)+' years':d+' days';
+const S={v:1,st:'has',prod:'tr',dark:true,sel:4,sub:'Primary',chip:'all',period:1,sheet:true};
+const has=()=>S.st==='has';
+const P=()=>PROD[S.prod];
+const insts=()=>M.filter(m=>m.prod===S.prod);
+const sel=()=>{const m=M[S.sel];return m&&m.prod===S.prod?m:insts()[0]};
+
+/* ---- pieces ---- */
+const hd=(t,b=true)=>`<div class="hd">${b?`<span class="bk">${back}</span>`:''}<h2>${t}</h2></div>`;
+const frame=(inner,extra='')=>`<div class="frame" style="--p:${P().col}">${inner}${extra}</div>`;
+const scroll=x=>`<div class="scroll">${x}</div>`;
+const cell=(lvl,cap,html)=>`<div class="cell"><div class="cap"><span class="lvl">${lvl}</span>${cap}</div>${html}</div>`;
+const chips=(list,cur,key)=>`<div class="chips">${list.map(([k,l])=>`<button class="chip ${cur===k?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')}</div>`;
+const card=(k,onclick)=>{const p=PROD[k];const st=has()?`<span class="st ${p.stA&&k==='td'?'am':''}">${k==='td'?p.st:p.st}</span>`:'';return `<button class="card" style="--p:${p.col}" data-a="${onclick||'prod:'+k}"><span class="disc">${svg(IC[p.icon],20,1.7)}</span><span style="padding-right:48px"><div class="nm">${p.name}</div><div class="ln">${p.line}</div></span>${st}</button>`};
+const shelf=(title='Invest')=>frame(scroll(hd(title,false)+`<div style="display:flex;flex-direction:column;gap:12px">${card('td')}${card('tr')}</div>`));
+const irow=(m,extra='')=>`<button class="li" data-a="sel:${m.id}"><span class="g"><span class="t">${m.name}</span><span class="m">${m.src==='GCB'?'GCB':m.src+' market'} · ${m.line}</span></span><span class="e"><span class="rate">${pct(m.rate)}</span><small>a year</small></span></button>`;
+const holdRow=h=>`<button class="li" data-a="toast:Opens the holding"><span class="g"><span class="t">${h.t}</span><span class="m ${h.soon?'am':''}">${h.sub}</span></span><span class="e tab">${h.fig}<small class="${h.soon?'am':''}">${h.left}</small></span><span class="mu">${chev}</span></button>`;
+const bandEl=()=>`<div class="band"><span class="mk">${svg(IC[P().icon],150,1.1)}</span></div>`;
+const ben3=()=>`<div class="ben3">${P().ben.map(b=>`<div><span class="ic">${svg(IC[b[0]],18,1.7)}</span><span>${b[1]}</span></div>`).join('')}</div>`;
+const benList=(list)=>`<div class="ben">${list.map(b=>`<div class="bi"><span class="ic">${svg(IC[b[0]],18,1.7)}</span><div><div class="t">${b[1]}</div><div class="s">${b[2]}</div></div></div>`).join('')}</div>`;
+const perf=(pre,fig,suf)=>`<div class="perf"><span>${pre} <b>${fig}</b> ${suf||''}</span></div>`;
+const segSub=()=>S.prod==='tr'?`<div class="seg" style="align-self:flex-start">${['Primary','Secondary'].map(x=>`<button class="${S.sub===x?'on':''}" data-a="sub:${x}">${x}</button>`).join('')}</div>`:'';
+const listFor=()=>(S.prod==='tr'?insts().filter(m=>m.src===S.sub):insts()).map(m=>irow(m)).join('');
+const ctaFor=m=>`<button class="btn" data-a="toast:Opens the ${m.kind==='deposit'?'new deposit':'buy'} flow">${m.kind==='deposit'?'Open this deposit':'Buy this '+m.lbl.toLowerCase()}</button>`;
+const rowsOf=m=>`<div class="rows"><div><span class="l">Term</span><span class="tab">${termTxt(m.days)}</span></div><div><span class="l">${m.src==='GCB'?'Matures':'When'}</span><span>${m.line}</span></div><div><span class="l">You get at the end</span><span>Your money and the interest</span></div><div><span class="l">Early exit</span><span>${m.kind==='deposit'?'Allowed. The cost is shown first':'Sell back through a rediscount'}</span></div></div>`;
+const instrPlain=m=>frame(scroll(hd(m.name)+`<div class="sec" style="gap:6px"><span class="mu" style="font-size:13px">${m.lbl} · ${m.src==='GCB'?'GCB':m.src+' market'}</span><span class="big" style="font-size:52px">${pct(m.rate)}</span><span class="mu" style="font-size:14px">a year · ${m.line}</span></div>${rowsOf(m)}${ctaFor(m)}`));
+const instrPitch=m=>frame(scroll(hd(m.name)+bandEl()+benList(BEN[m.kind].map(b=>[b[0],b[1],b[2].replace('__T__',termTxt(m.days))]))+`<div style="margin-top:14px">${perf('',pct(m.rate),'a year')}</div>${ctaFor(m)}`));
+const aboutRow=t=>`<button class="lnk" data-a="toast:Opens the About page"><span>${t}</span><span class="mu">${chev}</span></button>`;
+
+/* ---------- the 8 ---------- */
+const V={};
+
+V[1]={name:'1. The Insure pitch, condensed',
+ note:'The product page keeps the pitch you built for Insure and Loans (picture, benefits, price on the divider) but compresses it so it does not push the list down: a short band, the three benefits as one row of icons with a word each, then the divider, then the instruments. A Primary | Secondary switch keeps Treasury to one list at a time. It is the closest port of the structure, made shorter.',
+ f:()=>[cell('Level 1','The shelf. Two products.',shelf()),
+  cell('Level 2','The product page: pitch, then the list.',frame(scroll(hd(P().name)+bandEl()+ben3()+perf(P().price.pre,P().price.fig,P().price.suf)+segSub()+`<div>${listFor()}</div>`))),
+  cell('Level 3','The instrument, then the flow.',instrPlain(sel()))]};
+
+V[2]={name:'2. The list first, the pitch behind a row',
+ note:'The product page opens on the instruments, because that is what someone choosing between a 91-day and a 182-day bill came for. The explanation is a row at the bottom, “About bills and bonds”, as the manage state of Insure already does. A new investor and an existing one see the same page, and the list is never below a pitch.',
+ f:()=>[cell('Level 1','The shelf.',shelf()),
+  cell('Level 2','The product page: the list, with About at the bottom.',frame(scroll(hd(P().name)+segSub()+`<div>${listFor()}</div>`+aboutRow('About '+(S.prod==='td'?'term deposits':'bills and bonds'))))),
+  cell('Level 3','The instrument, then the flow.',instrPlain(sel()))]};
+
+V[3]={name:'3. Re-slice: Deposits, Bills, Bonds',
+ note:'The depth comes from the taxonomy. Treasury has two markets and two kinds, so its page is long. Make the shelf three products by kind, Term Deposits, Treasury Bills and Bonds, and each page is a short list of two or three rows, with Primary and Secondary shown as a label on the row, not as a group. Every product page is then small enough to read at once.',
+ f:()=>{const k=S.prod==='td'?'deposit':(S.sel===5||S.sel===6?'bond':'bill');const list=M.filter(m=>m.kind===k);const kn={deposit:'Term Deposits',bill:'Treasury Bills',bond:'Bonds'}[k];
+  const sc=(n,col,ic,ln,st)=>`<button class="card" style="--p:${col}" data-a="toast:Opens ${n}"><span class="disc">${svg(IC[ic],20,1.7)}</span><span style="padding-right:48px"><div class="nm">${n}</div><div class="ln">${ln}</div></span>${has()?`<span class="st">${st}</span>`:''}</button>`;
+  return [cell('Level 1','The shelf: three products by kind.',frame(scroll(hd('Invest',false)+`<div style="display:flex;flex-direction:column;gap:12px">${sc('Term Deposits','#0d9488','td','Lock money away at a fixed rate','1 deposit · 1 matures soon')}${sc('Treasury Bills','#4f46e5','gov','Lend to the government, 91 to 364 days','2 holdings')}${sc('Bonds','#7c3aed','coupon','Interest every 6 months, long term','1 holding')}</div>`))),
+   cell('Level 2','A short list. Primary or Secondary is a label.',frame(scroll(hd(kn)+`<div>${list.map(m=>irow(m)).join('')}</div>`+aboutRow('About '+kn.toLowerCase())))),
+   cell('Level 3','The instrument, then the flow.',instrPlain(list.find(m=>m.id===S.sel)||list[0]))]}};
+
+V[4]={name:'4. The instrument page is a pitch',
+ note:'Level 2 is only the list, with a rate on every row. The pitch moves down a level and becomes specific: each instrument’s page is the Insure pattern, its own picture, three benefits written for that instrument (a fixed rate, your term, your choice at the end), the rate on the divider, and the button. It is the same page as a plan page, so someone who has used Insure already knows it.',
+ f:()=>[cell('Level 1','The shelf.',shelf()),
+  cell('Level 2','The list, nothing above it.',frame(scroll(hd(P().name)+segSub()+`<div>${listFor()}</div>`))),
+  cell('Level 3','The instrument as a pitch, then the flow.',instrPitch(sel()))]};
+
+V[5]={name:'5. A picker where there are only three',
+ note:'Each product gets the layout that fits its size. Term Deposits has three options, so its page is not a list: three periods as a picker with the chosen rate large and the button right there, which makes the instrument level unnecessary for deposits. Treasury has many, so it keeps the list and the detail. The skeleton is the same, the shape inside differs.',
+ f:()=>[cell('Level 1','The shelf.',shelf()),
+  cell('Level 2 (Term Deposits)','Three options: a picker and the button.',(()=>{const m=M[S.period];return frame(scroll(hd('Term Deposits')+`<div class="pick">${M.slice(0,3).map((x,i)=>`<button class="${S.period===i?'on':''}" data-a="period:${i}"><span class="mu" style="font-size:12px">${x.days} days</span><span class="rate" style="font-size:22px">${pct(x.rate)}</span></button>`).join('')}</div><div class="sec" style="gap:6px"><span class="mu" style="font-size:13px">A fixed rate, set when you start</span><span class="big" style="font-size:56px">${pct(m.rate)}</span><span class="mu" style="font-size:14px">a year · ${m.line}</span></div>${rowsOf(m)}${ctaFor(m)}`))})()),
+  cell('Level 2 (Treasury)','Many options: the list, then the detail.',frame(scroll(hd('Treasury Bills & Bonds')+(()=>{const sv=S.prod;return ''})()+`<div class="seg" style="align-self:flex-start">${['Primary','Secondary'].map(x=>`<button class="${S.sub===x?'on':''}" data-a="sub:${x}">${x}</button>`).join('')}</div><div>${M.filter(m=>m.prod==='tr'&&m.src===S.sub).map(m=>irow(m)).join('')}</div>`)))]};
+
+V[6]={name:'6. A best rate on top',
+ note:'The product page leads with the answer to the question people have: the best rate available today, as one large tappable row, then the whole list below it sorted by rate. It gives the page a hierarchy, one thing first and the rest in order, and makes the list useful for someone who is only comparing. The pitch is the About row.',
+ f:()=>{const list=[...insts()].sort((a,b)=>b.rate-a.rate);const best=list[0];
+  return [cell('Level 1','The shelf.',shelf()),
+   cell('Level 2','The best rate first, then every option by rate.',frame(scroll(hd(P().name)+`<button class="lead" data-a="sel:${best.id}"><span><span class="mu" style="font-size:12px">Best rate today</span><div style="font-size:15px;margin-top:2px">${best.name}</div><div class="mu" style="font-size:12px;margin-top:2px">${best.src==='GCB'?'GCB':best.src+' market'} · ${best.line}</div></span><span class="big" style="font-size:32px">${pct(best.rate)}</span></button><div class="sec"><span class="grp">All ${P().name.toLowerCase()}, by rate</span><div>${list.map(m=>irow(m)).join('')}</div></div>`+aboutRow('About '+(S.prod==='td'?'term deposits':'bills and bonds'))))),
+   cell('Level 3','The instrument, then the flow.',instrPlain(sel()))]}};
+
+V[7]={name:'7. Yours first, buy another one level down',
+ note:'This is the structure you already have for Insure and Loans, applied to Invest and tidied. A customer who holds something sees only their holdings on the product page, with a small Buy Another that opens the list as its own page; a new investor sees the pitch with the list under it. The hold state never grows, however many instruments the bank adds.',
+ f:()=>{const h=HOLD[S.prod];
+  const own=frame(scroll(hd(P().name)+`<div class="sec"><div class="row"><span class="h3">Your ${S.prod==='td'?'Term Deposits':'Bills & Bonds'}</span><button class="btn ghost sm" data-a="toast:Opens the list">Buy Another</button></div><div>${h.map(holdRow).join('')}</div></div>`+aboutRow('About '+(S.prod==='td'?'term deposits':'bills and bonds'))));
+  const pitch=frame(scroll(hd(P().name)+bandEl()+ben3()+perf(P().price.pre,P().price.fig,P().price.suf)+segSub()+`<div>${listFor()}</div>`));
+  return [cell('Level 1','The shelf.',shelf()),
+   has()?cell('Level 2 (holds)','Only the holdings; Buy Another opens the list.',own):cell('Level 2 (new)','The pitch, with the list under it.',pitch),
+   cell('Level 2b / 3',has()?'Buy Another: the list, as its own page.':'The instrument, then the flow.',has()?frame(scroll(hd('Buy a Bill or Bond')+segSub()+`<div>${listFor()}</div>`)):instrPlain(sel()))]}};
+
+V[8]={name:'8. The instrument is a sheet',
+ note:'Depth drops by one. The product page is the list; picking a row opens the instrument as a sheet over it, with the rate, the facts and the button, and a swipe or tap away closes it. Insure and Loans are two levels before the flow; Invest becomes the same two, the second being a sheet. You compare instruments without leaving the list.',
+ f:()=>[cell('Level 1','The shelf.',shelf()),
+  cell('Level 2','The list.',frame(scroll(hd(P().name)+segSub()+`<div>${listFor()}</div>`+aboutRow('About '+(S.prod==='td'?'term deposits':'bills and bonds'))))),
+  cell('Level 2 + sheet','A row opens the instrument over the list, with the button.',frame(scroll(hd(P().name)+segSub()+`<div>${listFor()}</div>`),`<div class="dim"></div><div class="sheet"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="mu" style="font-size:12px">${sel().lbl} · ${sel().src==='GCB'?'GCB':sel().src+' market'}</div><div style="font-size:17px;margin-top:2px">${sel().name}</div></div></div><div><span class="big" style="font-size:46px">${pct(sel().rate)}</span><span class="mu" style="font-size:14px"> a year</span></div>${rowsOf(sel())}${ctaFor(sel())}</div>`))]};
+
+/* ---------- chrome ---------- */
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('stsel',[['new','New investor'],['has','Holds investments']],S.st,'st');
+  seg('prodsel',[['td','Term Deposits'],['tr','Treasury']],S.prod,'prod');
+  seg('themesel',[['dark','Dark'],['light','Light']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  $('stage').innerHTML=V[S.v].f().join('');
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='toast'){toast(arg);return}
+  if(a==='v')S.v=+arg;
+  else if(a==='st')S.st=arg;
+  else if(a==='prod'){S.prod=arg;S.sel=arg==='td'?1:4}
+  else if(a==='theme')S.dark=arg==='dark';
+  else if(a==='sel')S.sel=+arg;
+  else if(a==='sub')S.sub=arg;
+  else if(a==='period')S.period=+arg;
+  render();
+});
+render();
+</script>
+</body>
+</html>

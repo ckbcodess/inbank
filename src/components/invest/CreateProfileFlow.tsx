@@ -12,10 +12,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { TermsAgreement } from "@/components/ui/terms-agreement";
+import { securityTerms } from "@/lib/terms";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { OccupationCombobox } from "@/components/ui/occupation-combobox";
@@ -59,6 +60,9 @@ const NATIONALITIES = [
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const reveal = "flex flex-col animate-in fade-in slide-in-from-top-2 duration-200";
+
+/** Opening the account covers both products, so both kinds of terms. */
+const SECURITIES_TERMS = [...new Set([...securityTerms("bill", true), ...securityTerms("bond", true)])];
 
 export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountIntent; onCreated?: () => void }) {
   const router = useRouter();
@@ -108,7 +112,7 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
 
   if (csd) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Your Securities Account" backTo={back} />
         <TrueEmptyState
           icon={<ShieldCheck size={22} strokeWidth={1.8} />}
@@ -130,7 +134,7 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
 
   if (accounts.length === 0) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Open a Securities Account" backTo={back} />
         <TrueEmptyState
           icon={<ShieldCheck size={22} strokeWidth={1.8} />}
@@ -147,9 +151,9 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
   const emailInvalid = email.trim() !== "" && !EMAIL.test(email.trim());
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Open a Securities Account" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
           {intent
             ? `To invest in ${intent.label}, we first open your securities account. It’s held with the Central Securities Depository, where what you own is recorded.`
@@ -226,10 +230,7 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
         {aboutDone && detailsDone && (
           <div className={reveal}>
             <div className="flex flex-col gap-1">
-              <label className="flex cursor-pointer items-start gap-2 px-1 py-2 text-[13px] leading-relaxed text-foreground">
-                <Checkbox checked={accepted} onCheckedChange={(v) => setAccepted(Boolean(v))} aria-label="Accept the Terms and Conditions" className="mt-0.5" />
-                <span>By checking this box, I acknowledge that I have read and agree to the Terms &amp; Conditions of treasury bills and bonds.</span>
-              </label>
+              <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject="treasury bills and bonds" terms={SECURITIES_TERMS} />
               <ProceedButton disabled={!accepted || !from} onClick={() => setAuthOpen(true)} label="Open Securities Account" />
             </div>
           </div>

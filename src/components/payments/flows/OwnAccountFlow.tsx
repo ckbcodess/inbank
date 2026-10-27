@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { AlertCircle, Landmark, Wallet } from "lucide-react";
+import { AlertCircle, Landmark, Wallet } from "@/components/ui/icons";
 import {
   Select,
   SelectContent,
@@ -119,7 +119,7 @@ export function OwnAccountFlow({
               toAccount.type === "Wallet" ? (
                 <Wallet size={18} strokeWidth={1.8} className="shrink-0" />
               ) : (
-                <Landmark size={18} strokeWidth={1.8} className="shrink-0" />
+                <Landmark size={18} className="shrink-0" />
               )
             }
             onChange={() => setCollapsed(false)}

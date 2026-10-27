@@ -10,7 +10,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ChevronRight } from "lucide-react";
+import { AlertTriangle, ChevronRight } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
@@ -53,7 +53,7 @@ export default function ExceptionsPage() {
 
       <section className="rounded-2xl border border-border bg-card">
         <div className="flex items-center gap-2 border-b border-border px-4 py-3">
-          <AlertTriangle size={16} strokeWidth={1.8} aria-hidden="true" className="text-warning-text" />
+          <AlertTriangle size={16} aria-hidden="true" className="text-warning-text" />
           <h2 className="text-[15px] text-foreground">{exceptions.length} open exceptions</h2>
         </div>
 
@@ -77,7 +77,7 @@ export default function ExceptionsPage() {
                   {formatMoney(t.amount, t.currency)}
                 </span>
                 <TransactionStatusBadge state={t.state} />
-                <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
               </Link>
             </li>
           ))}

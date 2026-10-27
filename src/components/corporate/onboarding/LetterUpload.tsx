@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Paperclip } from "lucide-react";
+import { FileText, Paperclip } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 
 export interface AttachedFile {
@@ -32,7 +32,7 @@ export default function LetterUpload({
     <div className="flex items-center justify-between gap-3 py-1">
       <div className="flex min-w-0 items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-          <FileText size={17} strokeWidth={1.8} aria-hidden="true" />
+          <FileText size={17} aria-hidden="true" />
         </span>
         <div className="min-w-0">
           <p className="text-[14px] font-medium text-foreground">{label}</p>
@@ -60,7 +60,7 @@ export default function LetterUpload({
           }}
         />
         <Button type="button" variant="outline" size="lg" tabIndex={-1} className="pointer-events-none">
-          <Paperclip size={15} strokeWidth={1.8} aria-hidden="true" />
+          <Paperclip size={15} aria-hidden="true" />
           {file ? "Replace" : "Choose File"}
         </Button>
       </label>

@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
-import { InsureHome } from "@/components/insure/InsureHome";
+import { PlanPage } from "@/components/insure/PlanPage";
 import { findPlan } from "@/lib/insurance-plans";
 
-/** A plan's own address is Insure with that plan's dialog open, so links, refreshes and Back from the buy flow land on it. */
+/** A plan's own page: the customer's policies under it, what it is, and one button to start. */
 export default async function InsurePlanPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const plan = findPlan(id);
   if (!plan || !plan.available) notFound();
-  return <InsureHome openPlanId={plan.id} />;
+  return <PlanPage planId={plan.id} />;
 }

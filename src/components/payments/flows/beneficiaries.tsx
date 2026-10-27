@@ -3,7 +3,7 @@
 import { HorizontalScrollStrip } from "@/components/ui/horizontal-scroll-strip";
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import React, { useMemo, useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/dialog";
 
@@ -382,7 +382,7 @@ export function RailBeneficiaryStrip<T extends StripRecipient>({
             className="group flex w-[84px] shrink-0 cursor-pointer flex-col items-center gap-2 text-center"
           >
             <span className="flex size-12 items-center justify-center rounded-full border border-dashed border-border bg-card text-foreground transition-colors duration-hover group-hover:bg-muted">
-              <Search size={18} strokeWidth={1.8} aria-hidden="true" />
+              <Search size={18} aria-hidden="true" />
             </span>
             <div className="flex w-full flex-col px-0.5">
               <span className="text-[12px] font-medium text-foreground">See all</span>

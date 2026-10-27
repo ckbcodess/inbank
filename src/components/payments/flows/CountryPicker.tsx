@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronRight, Search } from "lucide-react";
+import { ChevronRight, Search } from "@/components/ui/icons";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { COUNTRIES, findCountryByName, type Country } from "@/lib/countries";
 import { CountryFlag } from "@/components/ui/country-flag";
@@ -49,7 +49,7 @@ export function CountryPicker({
         <span className={selected ? "flex-1 truncate text-foreground" : "flex-1 truncate text-muted-foreground"}>
           {selected ? selected.name : "Select destination country"}
         </span>
-        <ChevronRight size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+        <ChevronRight size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
       </button>
 
       <Dialog
@@ -67,7 +67,6 @@ export function CountryPicker({
             <div className="relative">
               <Search
                 size={16}
-                strokeWidth={1.8}
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
               />
@@ -92,7 +91,7 @@ export function CountryPicker({
                 >
                   <CountryFlag code={country.code} size={28} />
                   <span className="flex-1 truncate text-[14.5px] text-foreground">{country.name}</span>
-                  <ChevronRight size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                  <ChevronRight size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 </button>
               </li>
             ))}

@@ -8,7 +8,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { FileText, Landmark, ShieldCheck } from "lucide-react";
+import { FileText, Landmark, ShieldCheck } from "@/components/ui/icons";
 import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -32,11 +32,12 @@ import { cn } from "@/lib/utils";
 
 /** The Invest page: the one home for everything. */
 export const INVEST_HOME = "/invest";
-/** The Products view of the Invest page. */
-export const PRODUCTS_HREF = "/invest?view=products";
+/** Where the customer picks a product. Invest is one shelf now, so this is the Invest page itself. */
+export const PRODUCTS_HREF = "/invest";
 /** The two product pages under Products. */
 export const TERM_PRODUCTS_HREF = "/invest/products/term-deposits";
-export const TREASURY_PRODUCTS_HREF = "/invest/products/treasury";
+export const BILLS_PRODUCTS_HREF = "/invest/products/treasury-bills";
+export const BONDS_PRODUCTS_HREF = "/invest/products/bonds";
 /** The base of the treasury routes (buy, holdings, statement). It has no page of its own. */
 export const TREASURY_HOME = "/invest/treasury";
 
@@ -51,36 +52,25 @@ export function SecurityIcon({ kind, muted = false }: { kind: SecurityKind; mute
 }
 
 /** Label on the left, value on the right, one line each. The same panel the scheduled payment and review screens use. */
-export function FactsPanel({ rows }: { rows: Array<[string, React.ReactNode]> }) {
+export function FactsPanel({ rows, keyRow }: { rows: Array<[React.ReactNode, React.ReactNode]>; keyRow?: number }) {
   return (
     <div className="flex flex-col rounded-2xl border border-border bg-card p-2 text-[14px]">
-      {rows.map(([label, value], i) => (
-        <div key={`${i}-${label}`} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
-          <span className="shrink-0 text-muted-foreground">{label}</span>
-          <span className="tabular min-w-0 text-right text-foreground">{value}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** What is being approved, restated above the code boxes: the one number, then who and from where. */
-export function AuthSummary({ headline, amount, rows }: { headline: string; amount?: string; rows?: Array<[string, string]> }) {
-  return (
-    <div className="flex flex-col gap-2 rounded-xl bg-muted/40 p-3">
-      <div className="flex flex-col gap-1">
-        <span className="text-[13px] text-muted-foreground">{headline}</span>
-        {amount && <span className="tabular text-[22px] leading-none tracking-[var(--ls-tight)] text-foreground">{amount}</span>}
-      </div>
-      {rows && rows.length > 0 && (
-        <div className="flex flex-col gap-2 text-[13px]">
-          {rows.map(([label, value]) => (
-            <div key={label} className="flex items-baseline justify-between gap-3">
-              <span className="shrink-0 text-muted-foreground">{label}</span>
-              <span className="tabular min-w-0 truncate text-right text-foreground">{value}</span>
+      {rows.map(([label, value], i) =>
+        i === keyRow ? (
+          // The key fact, styled as the total on a payment review, with the same dashed line after it.
+          <div key={i}>
+            <div className="flex items-baseline justify-between gap-4 px-3 py-3">
+              <span className="text-[16px] font-medium text-foreground">{label}</span>
+              <span className="tabular text-[24px] leading-none tracking-[var(--ls-heading)] text-foreground">{value}</span>
             </div>
-          ))}
-        </div>
+            <div aria-hidden="true" className="mx-3 my-2 h-px bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />
+          </div>
+        ) : (
+          <div key={i} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
+            <span className="shrink-0 text-muted-foreground">{label}</span>
+            <span className="tabular min-w-0 text-right text-foreground">{value}</span>
+          </div>
+        ),
       )}
     </div>
   );
@@ -124,7 +114,7 @@ export function MaturityInstructionField({
 /** A holding that isn't there: it may have been cashed in or matured. Says so and goes back to the list. */
 export function HoldingNotFound({ title = "Investment" }: { title?: string }) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={{ href: INVEST_HOME, label: "Invest" }} />
       <TrueEmptyState
         icon={<FileText size={22} strokeWidth={1.8} />}
@@ -155,7 +145,7 @@ export function AccountRequired({
 }) {
   const pending = status === "pending";
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={backTo} />
       <TrueEmptyState
         icon={<ShieldCheck size={22} strokeWidth={1.8} />}
@@ -186,7 +176,10 @@ const ACCOUNT_STATES = [
   { id: "none", label: "Not set up" },
   { id: "pending", label: "Being set up" },
   { id: "active", label: "Active" },
+  /** Set up after the customer chose an investment first: Invest says it is ready and offers to carry on. */
+  { id: "ready", label: "Active, choice saved" },
 ];
+const SAMPLE_INTENT = { href: "/invest/treasury/buy?id=p-1500", label: "91-day Treasury Bill" };
 const MARKET_STATES = [
   { id: "open", label: "Open" },
   { id: "closed", label: "Closed" },
@@ -230,7 +223,7 @@ export function InvestDevTools({
   onChange?: (next: string) => void;
   labels?: Record<string, string>;
 }) {
-  const { ownerId, csd, marketOpen, holdings } = useMyTreasury();
+  const { ownerId, csd, intent, marketOpen, holdings } = useMyTreasury();
   const { active: deposits } = useMyDeposits();
   const setAccountStatus = useTreasury((s) => s.setAccountStatus);
   const setMarketOpen = useTreasury((s) => s.setMarketOpen);
@@ -242,7 +235,7 @@ export function InvestDevTools({
   const setFailRequests = useTermDeposits((s) => s.setFailRequests);
   const accounts = useTreasuryAccounts();
   const linkedId = accounts[0]?.id ?? "";
-  const accountValue = csd?.status ?? "none";
+  const accountValue = csd?.status === "active" && intent ? "ready" : (csd?.status ?? "none");
   const depositCount = Math.min(deposits.length, 2);
   const treasuryCount = Math.min(holdings.length, 3);
   const hasList = Boolean(states && onChange);
@@ -252,7 +245,10 @@ export function InvestDevTools({
       label: "Securities account",
       states: ACCOUNT_STATES,
       value: accountValue,
-      onChange: (v) => setAccountStatus(ownerId, v as "none" | "pending" | "active", linkedId),
+      onChange: (v) =>
+        v === "ready"
+          ? setAccountStatus(ownerId, "active", linkedId, SAMPLE_INTENT)
+          : setAccountStatus(ownerId, v as "none" | "pending" | "active", linkedId, v === "active" ? null : undefined),
     };
     const market: DevStateGroup = {
       label: "Market",

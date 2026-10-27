@@ -10,7 +10,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronRight, FileText, Plus, Ship } from "lucide-react";
+import { ChevronRight, FileText, Plus, Ship } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
@@ -72,7 +72,7 @@ export default function TradeHubPage() {
                 className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
               >
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <Ship size={16} strokeWidth={1.8} aria-hidden="true" />
+                  <Ship size={16} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-[13.5px] text-foreground">{t.desc}</span>
@@ -84,7 +84,7 @@ export default function TradeHubPage() {
                   {formatMoney(t.amount, t.ccy)}
                 </span>
                 <Badge variant={t.tone}>{t.status}</Badge>
-                <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
               </Link>
             </li>
           ))}
@@ -94,7 +94,7 @@ export default function TradeHubPage() {
       <section className="rounded-2xl border border-border bg-card p-4">
         <div className="flex items-center gap-2">
           <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-            <FileText size={17} strokeWidth={1.8} aria-hidden="true" />
+            <FileText size={17} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-[14px] text-foreground">Start a new trade request</p>

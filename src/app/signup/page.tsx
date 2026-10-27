@@ -8,7 +8,7 @@ import { parseOnboardingStep, type OnboardingStep } from "@/lib/onboarding-steps
 import {
   Check,
   User,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -390,7 +390,7 @@ function SignupContent() {
                 </div>
               </div>
               <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-[11px] font-medium text-pill-success-text">
-                <Check size={12} strokeWidth={2.5} />
+                <Check size={12} />
                 Verified
               </span>
             </div>

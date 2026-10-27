@@ -166,7 +166,7 @@ export function TiltCard3D({
               WebkitMaskComposite: "xor",
               maskComposite: "exclude",
               opacity: isHovered ? 1 : 0.45,
-              transition: "opacity 0.25s ease-out",
+              transition: "opacity 0.25s ease-settle",
             }}
           />
         </motion.div>

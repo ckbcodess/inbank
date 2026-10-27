@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plan Page, Redesigned: 8 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ink:#0b0b0c;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.55;max-width:1100px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;max-width:100%}
+  .pg{padding:36px 32px 48px;display:flex;flex-direction:column;min-height:780px}
+  .phone .pg{padding:22px 20px 36px;min-height:760px}
+  .col{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:32px;flex:1}
+  .hd{display:flex;align-items:center;gap:10px}
+  .hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .btn{height:50px;padding:0 24px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)} .btn.ghost:hover{background:var(--tile);filter:none}
+  .btn.sm{height:36px;width:auto;padding:0 14px;font-size:13px;border-radius:12px}
+  .note{font-size:13px;color:var(--mu);text-align:center;line-height:1.5}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .h3{font-size:16px;font-weight:500}
+  .big{letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+  /* benefits */
+  .b3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .b3.n2{grid-template-columns:repeat(2,1fr)}
+  .b3>div{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:0 4px}
+  .b3 .ttl{font-size:16px;font-weight:500;letter-spacing:-.01em} .b3 .dsc{font-size:14px;color:var(--mu);line-height:1.45}
+  .phone .b3{grid-template-columns:1fr;gap:18px} .phone .b3>div{flex-direction:row;text-align:left;align-items:center;gap:14px;padding:0}
+  .phone .b3 .tx{display:flex;flex-direction:column;gap:2px}
+  .b3.left>div{align-items:flex-start;text-align:left}
+  .ic{width:48px;height:48px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:var(--tx)}
+  .ic.disc{background:var(--p);color:var(--ink)}
+  .ic.plain{background:none;width:auto;height:auto;color:var(--p)}
+  .ic.sq{border-radius:14px}
+  .divider{border:0;border-top:1px dashed var(--bd);margin:0}
+  .divider.solid{border-top-style:solid}
+  /* details */
+  .card{background:var(--tile);border-radius:24px;padding:10px 20px}
+  .kv{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:15px 0;font-size:15px}
+  .kv .l{color:var(--mu)} .kv.key .v{font-size:20px}
+  .ruled>div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--bd);font-size:15px}
+  .ruled>div:last-child{border-bottom:1px solid var(--bd)} .ruled .l{color:var(--mu);font-size:14px}
+  .facts3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .phone .facts3{grid-template-columns:1fr;gap:0}
+  .facts3>div{display:flex;flex-direction:column;gap:4px;padding:0 4px;text-align:center;align-items:center}
+  .phone .facts3>div{flex-direction:row;justify-content:space-between;text-align:left;align-items:baseline;padding:13px 0;border-top:1px solid var(--bd)}
+  .facts3 .l{font-size:13px;color:var(--mu)} .facts3 .v{font-size:16px;line-height:1.3}
+  .band{background:color-mix(in srgb,var(--p) 26%,var(--tile));border-radius:28px;padding:28px 20px}
+  .band .ic{background:var(--p);color:var(--ink)}
+  .band .dsc{color:inherit;opacity:.75}
+  .ticket{position:relative;background:var(--tile);border-radius:24px}
+  .ticket .top{padding:28px 20px 24px} .ticket .bot{padding:8px 20px 12px}
+  .perf{position:relative;height:0;border-top:2px dashed var(--bd);margin:0 22px}
+  .perf::before,.perf::after{content:"";position:absolute;top:-13px;width:24px;height:24px;border-radius:50%;background:var(--surf)}
+  .perf::before{left:-34px} .perf::after{right:-34px}
+  /* manage */
+  .li{display:flex;align-items:center;gap:12px;padding:15px 0;border-top:1px solid var(--bd);width:100%}
+  .li:last-child{border-bottom:1px solid var(--bd)} .li:hover{background:var(--tile)}
+  .lc .li{border:0;padding:15px 12px;border-radius:14px} .lc{background:var(--tile);border-radius:20px;padding:6px}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:15px} .li .m{font-size:13px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:15px} .li .e small{font-size:12px;color:var(--mu)}
+  .lnk{display:flex;justify-content:space-between;align-items:center;padding:15px 0;font-size:15px;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);width:100%}
+  .lead{background:var(--tile);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:6px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Plan page · 8 variations of the structure you drew: benefits, a divider, details, one button</h1>
+    <div class="ctrls">
+      <div class="seg" id="plansel"></div>
+      <div class="seg" id="statesel"></div>
+      <div class="seg" id="widthsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage"><div class="frame" id="frame"></div></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+ money:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M9.8 10c0-.9.9-1.4 2.2-1.4s2.2.5 2.2 1.4-.9 1.2-2.2 1.6-2.2.7-2.2 1.6.9 1.4 2.2 1.4 2.2-.5 2.2-1.4"/>',
+ people:'<circle cx="9" cy="9" r="3"/><path d="M3.5 19c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="10" r="2.3"/><path d="M16 14.6c2.6-.2 4.2 1.1 4.6 3.9"/>',
+ shield:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/>',
+ school:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+ heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 017-2.5A4 4 0 0119 10c0 5.5-7 10-7 10z"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>'
+};
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const back=svg('<path d="M15 6l-6 6 6 6"/>',20,1.8);
+
+const D={
+ ce:{label:'Child Education',title:'Child Education Plan',col:'#3b82f6',
+  hl:[['money','Pays out','Within 48 to 72 hours'],['school','School fees','Paid even if you can’t']],
+  key:['Premiums from','GHS 50.00 a month'],keyBig:['GHS 50.00','a month'],
+  rows:[['Policy term','10 to 25 years'],['Provider','StarLife Assurance']],
+  f3:[['Premiums from','GHS 50.00 a month'],['Policy term','10 to 25 years'],['Provider','StarLife Assurance']],
+  pol:[['CEP/2023/040318','GHS 300.00 a month','GHS 67,500.00'],['CEP/2024/011276','GHS 150.00 a month','GHS 24,000.00'],['CEP/2024/019804','GHS 100.00 a month','GHS 12,000.00']],attn:1},
+ hc:{label:'HomeCall',title:'HomeCall Plan',col:'#ea580c',
+  hl:[['money','Pays out','Within 48 to 72 hours'],['people','Your family','Spouse, children, parents'],['shield','Accidents','From day one']],
+  key:['Premiums from','GHS 8.00 a month'],keyBig:['GHS 8.00','a month'],
+  rows:[['Cover','GHS 2,500.00 to GHS 30,000.00'],['Who it covers','You, and family you add'],['Provider','StarLife Assurance']],
+  f3:[['Premiums from','GHS 8.00 a month'],['Cover','GHS 2,500 to 30,000'],['Provider','StarLife Assurance']],
+  pol:[['HC-20733','Covers your mother','GHS 10,000.00','GHS 8.00 a month'],['HC-20418','Covers you, Ama and Kofi','GHS 20,000.00','GHS 15.00 a month'],['HC-21190','Covers you','GHS 10,000.00','GHS 8.00 a month']],attn:0},
+ up:{label:'Ultimate Protection',title:'Ultimate Protection Plan',col:'#db2777',
+  hl:[['money','Pays out','Within 48 to 72 hours'],['shield','Disability','Total and permanent'],['heart','Illness','Critical illness']],
+  key:['Premiums from','GHS 40.50 a month'],keyBig:['GHS 40.50','a month'],
+  rows:[['Sum assured','GHS 50,000.00 to GHS 300,000.00'],['Policy term','8 to 20 years'],['Disability income','Up to age 70'],['Provider','StarLife Assurance']],
+  f3:[['Premiums from','GHS 40.50 a month'],['Sum assured','GHS 50,000 to 300,000'],['Policy term','8 to 20 years']],
+  pol:[['UPP/2024/010942','GHS 40.50 a month','GHS 100,000.00'],['UPP/2024/013377','GHS 60.00 a month','GHS 150,000.00'],['UPP/2025/002210','GHS 40.50 a month','GHS 100,000.00']],attn:2}
+};
+/* every plan gets the same three policies for the manage state; one of them has missed premiums */
+const polOf=p=>D[p].pol.map((x,i)=>x.length===4?{n:x[0],sub:x[1],sum:x[2],prem:x[3],attn:i===D[p].attn?'2 premiums missed · GHS 16.00':null}:{n:x[0],sub:x[1],sum:x[2],prem:x[1],attn:i===D[p].attn?'2 premiums missed · GHS 600.00':null});
+const STATES=[['profile','Needs a profile'],['ready','Ready to apply'],['own','3 policies']];
+const S={v:1,plan:'ce',state:'profile',phone:false,dark:true};
+const P=()=>D[S.plan];
+
+/* ---------- pieces ---------- */
+const hd=()=>`<div class="hd"><span class="bk">${back}</span><h2>${P().title}</h2></div>`;
+const ico=(n,cls='',sz=22)=>`<span class="ic ${cls}">${svg(IC[n],sz,1.6)}</span>`;
+const bens=(cls='',icls='')=>`<div class="b3 ${P().hl.length===2?'n2':''} ${cls}">${P().hl.map(h=>`<div>${ico(h[0],icls)}<div class="tx"><div class="ttl">${h[1]}</div><div class="dsc">${h[2]}</div></div></div>`).join('')}</div>`;
+const rowsAll=()=>[P().key,...P().rows];
+const card=()=>`<div class="card">${rowsAll().map((r,i)=>`<div class="kv ${i===0?'key':''}"><span class="l">${r[0]}</span><span class="v tab">${r[1]}</span></div>`).join('')}</div>`;
+const ruled=()=>`<div class="ruled">${rowsAll().map((r,i)=>`<div class="${i===0?'key':''}"><span class="l">${r[0]}</span><span class="tab" ${i===0?'style="font-size:20px"':''}>${r[1]}</span></div>`).join('')}</div>`;
+const cta=(st)=>st==='profile'?`<div class="sec" style="gap:10px"><button class="btn" data-a="go">Create a Profile</button><p class="note">You only do it once. We keep ${P().title} for you.</p></div>`:`<button class="btn" data-a="go">Apply for ${P().title}</button>`;
+const col=x=>`<div class="col">${x}</div>`;
+const pg=x=>`<div class="pg">${x}</div>`;
+const pol=(p)=>`<button class="li" data-a="item"><span class="g"><span class="t tab">${p.n}</span><span class="m ${p.attn?'am':''} tab">${p.attn||p.sub}</span></span><span class="e tab">${p.sum}<small>${p.prem}</small></span><span class="mu">${chev}</span></button>`;
+const aboutRow=()=>`<button class="lnk" data-a="item"><span>About this plan</span><span class="mu">${chev}</span></button>`;
+
+/* manage, in three styles */
+const manage={
+ A:()=>`${hd()}<div class="sec"><div class="row"><h3 class="h3">Your Policies</h3><button class="btn ghost sm" data-a="go">Apply for Another</button></div><div>${polOf(S.plan).map(pol).join('')}</div></div>${aboutRow()}`,
+ B:()=>`${hd()}<div class="sec" style="gap:6px"><span class="big" style="font-size:40px">3 policies</span><span class="am tab" style="font-size:14px">1 needs attention</span></div><div class="lc">${polOf(S.plan).map(pol).join('')}</div><button class="btn ghost" data-a="go">Apply for Another</button>${aboutRow()}`,
+ C:()=>{const l=polOf(S.plan).find(p=>p.attn)||polOf(S.plan)[0];const rest=polOf(S.plan).filter(p=>p!==l);return `${hd()}<div class="lead"><span class="am" style="font-size:13px">Needs you</span><span class="mu tab" style="font-size:14px">${l.n}</span><span class="big" style="font-size:34px">${l.sum}</span><div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px"><span class="am tab" style="font-size:14px">${l.attn}</span><button class="btn sm" data-a="go">Pay now</button></div></div><div class="sec"><div class="row"><h3 class="h3">Your other policies</h3><button class="btn ghost sm" data-a="go">Apply for Another</button></div><div>${rest.map(pol).join('')}</div></div>${aboutRow()}`}
+};
+
+/* ---------- the 8 ---------- */
+const V={};
+
+V[1]={name:'1. Your layout, refined',manage:'A',
+ note:'Your structure as drawn: three benefits in a row, a dashed divider, the details card, one button. The changes are small and deliberate: the icons sit in discs of the plan’s colour, the benefit title is medium weight over a muted line, the price is the one larger value in the card, and the button names the plan, as you had it. The baseline the other seven are measured against.',
+ r:st=>pg(col(hd()+bens('','disc')+'<hr class="divider">'+card()+cta(st)))};
+
+V[2]={name:'2. Price leads',manage:'A',
+ note:'The same three parts, but the price moves out of the card to the top as the one large figure. Below it the benefits, then a card of only the remaining facts. You see what it costs before anything else, and the card is shorter. The risk is that the price comes before the reason to buy.',
+ r:st=>pg(col(hd()+`<div style="display:flex;align-items:baseline;gap:10px;padding:0 4px"><span class="mu" style="font-size:15px">From</span><span class="big" style="font-size:40px">${P().keyBig[0]}</span><span class="mu" style="font-size:15px">${P().keyBig[1]}</span></div>`+bens('','disc')+`<div class="card">${P().rows.map(r=>`<div class="kv"><span class="l">${r[0]}</span><span class="v tab">${r[1]}</span></div>`).join('')}</div>`+cta(st)))};
+
+V[3]={name:'3. Benefits in a band',manage:'B',
+ note:'The three benefits sit together on one band of the plan’s colour, dividing it into thirds, so they read as one idea (“what you get”) and the plan has an identity. Below the band, the details as ruled rows with no card. Colour is used once, where the benefits are.',
+ r:st=>pg(col(hd()+`<div class="band" style="--p:${P().col}">${bens('','')}</div>`+ruled()+cta(st)))};
+
+V[4]={name:'4. Left-aligned',manage:'A',
+ note:'Everything reads from the left edge: the benefits are three left-aligned columns with a small square icon, and the details are label-and-value rows under a solid hairline. Centred text over three columns can look loose on a wide screen; left alignment lines the benefits up with the title and the card. Plainer and more editorial.',
+ r:st=>pg(col(hd()+bens('left','sq')+'<hr class="divider solid">'+ruled()+cta(st)))};
+
+V[5]={name:'5. A list, not a row',manage:'B',
+ note:'The benefits become a vertical list, icon on the left and title and line on the right, instead of three columns. It reads the same on a phone and on a desktop, handles two or four benefits as well as three, and gives long descriptions room. The page is taller but never cramped.',
+ r:st=>pg(col(hd()+`<div class="sec" style="gap:20px">${P().hl.map(h=>`<div style="display:flex;gap:16px;align-items:center">${ico(h[0],'disc')}<div><div style="font-size:16px;font-weight:500">${h[1]}</div><div class="mu" style="font-size:14px;margin-top:2px">${h[2]}</div></div></div>`).join('')}</div>`+card()+cta(st)))};
+
+V[6]={name:'6. Two aligned rows',manage:'B',
+ note:'The benefits and the facts share one three-column grid: benefits on the top row, facts on the bottom, each under its own column. There is no card and no separate list, so the page is two tidy rows of three and the divider is the gap between them. The most compact; on a phone the facts become ruled rows.',
+ r:st=>pg(col(hd()+bens('','disc')+'<hr class="divider">'+`<div class="facts3">${P().f3.map((f,i)=>`<div><span class="l">${f[0]}</span><span class="v tab" ${i===0?'style="font-size:18px"':''}>${f[1]}</span></div>`).join('')}</div>`+cta(st)))};
+
+V[7]={name:'7. The ticket',manage:'C',
+ note:'One object: a ticket with the benefits above a perforated line and the details below it, notched at the sides. Your dashed divider becomes the perforation, so the idea of the page (what you get above, what it costs below) is built into the shape. The only variation that is one container, and the most distinctive.',
+ r:st=>pg(col(hd()+`<div class="ticket"><div class="top">${bens('','disc')}</div><div class="perf"></div><div class="bot">${rowsAll().map((r,i)=>`<div class="kv ${i===0?'key':''}"><span class="l">${r[0]}</span><span class="v tab">${r[1]}</span></div>`).join('')}</div></div>`+cta(st)))};
+
+V[8]={name:'8. Colour first',manage:'C',
+ note:'A solid tone of the plan’s colour carries the page’s top: the benefits on the colour with dark text and the price in large type, then the details as a quiet card, then the button. It is the loudest and the most branded, and the closest to the shelf card the customer just tapped. Needs the plan colour to be readable with dark text, which the palette is.',
+ r:st=>pg(col(hd()+`<div class="band" style="--p:${P().col};background:var(--p);color:var(--ink)"><div style="display:flex;align-items:baseline;gap:10px;margin-bottom:24px;padding:0 4px"><span style="font-size:14px;opacity:.7">From</span><span class="big" style="font-size:36px">${P().keyBig[0]}</span><span style="font-size:14px;opacity:.7">${P().keyBig[1]}</span></div>${`<div class="b3 ${P().hl.length===2?'n2':''}">${P().hl.map(h=>`<div><span class="ic" style="background:rgba(0,0,0,.12);color:var(--ink)">${svg(IC[h[0]],22,1.6)}</span><div class="tx"><div class="ttl">${h[1]}</div><div class="dsc" style="color:inherit;opacity:.75">${h[2]}</div></div></div>`).join('')}</div>`}</div>`+`<div class="card">${P().rows.map(r=>`<div class="kv"><span class="l">${r[0]}</span><span class="v tab">${r[1]}</span></div>`).join('')}</div>`+cta(st)))};
+
+/* ---------- chrome ---------- */
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('plansel',Object.entries(D).map(([k,v])=>[k,v.label]),S.plan,'plan');
+  seg('statesel',STATES,S.state,'state');
+  seg('widthsel',[[0,'Desktop'],[1,'Phone']],S.phone?1:0,'width');
+  seg('themesel',[['dark','Dark'],['light','Light']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  const f=$('frame');f.className='frame'+(S.phone?' phone':'');f.style.width=(S.phone?390:760)+'px';f.style.setProperty('--p',P().col);
+  f.innerHTML=S.state==='own'?pg(col(manage[V[S.v].manage]())):V[S.v].r(S.state);
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='go'){toast('Opens its own flow');return}
+  if(a==='item'){toast('Opens the page');return}
+  if(a==='v')S.v=+arg;
+  else if(a==='plan')S.plan=arg;
+  else if(a==='state')S.state=arg;
+  else if(a==='width')S.phone=arg==='1';
+  else if(a==='theme')S.dark=arg==='dark';
+  render();
+});
+render();
+</script>
+</body>
+</html>

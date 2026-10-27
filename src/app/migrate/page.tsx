@@ -14,7 +14,7 @@ import { InlineError } from "@/components/ui/inline-error";
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeftRight, CalendarClock, Check, KeyRound, Landmark, Users } from "lucide-react";
+import { ArrowLeftRight, CalendarClock, Check, KeyRound, Landmark, Users } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
@@ -133,7 +133,7 @@ function MigrateContent() {
               "Your transaction PIN",
             ].map((item) => (
               <span key={item} className="flex items-center gap-2 text-[14px] text-foreground">
-                <Check size={16} strokeWidth={1.9} className="shrink-0 text-success" aria-hidden="true" />
+                <Check size={16} className="shrink-0 text-success" aria-hidden="true" />
                 {item}
               </span>
             ))}
@@ -184,7 +184,7 @@ function MigrateContent() {
             <CarriedGroup icon={Users} title="Saved payees" items={MIGRATED_DATA.payees} />
             <CarriedGroup icon={CalendarClock} title="Scheduled payments" items={MIGRATED_DATA.standingOrders} />
             <div className="flex items-center gap-2 px-3 py-3">
-              <KeyRound size={17} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+              <KeyRound size={17} className="shrink-0 text-muted-foreground" aria-hidden="true" />
               <span className="flex-1 text-[14px] text-foreground">Transaction PIN</span>
               <span className="text-[13px] text-muted-foreground">Unchanged</span>
             </div>
@@ -274,7 +274,7 @@ function CarriedGroup({
         <Icon size={17} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
         <span className="flex-1 text-[14px] text-foreground">{title}</span>
         <span className="tabular text-[13px] text-muted-foreground">{items.length}</span>
-        <Check size={15} strokeWidth={2} className="text-success" aria-label="Carried across" />
+        <Check size={15} className="text-success" aria-label="Carried across" />
       </button>
       {open && (
         <ul className="flex flex-col gap-2 px-3 pb-3 pl-10">

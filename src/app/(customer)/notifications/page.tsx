@@ -24,7 +24,7 @@ import {
   Send,
   TriangleAlert,
   XCircle,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
 import PageHeader from "@/components/layout/PageHeader";
@@ -138,7 +138,7 @@ export default function NotificationsPage() {
             onClick={() => setReadIds(NOTIFICATIONS.map((n) => n.id))}
             className="shrink-0 whitespace-nowrap text-xs gap-2 text-muted-foreground hover:text-foreground ml-auto h-7 px-2"
           >
-            <CheckCheck size={14} strokeWidth={1.9} aria-hidden="true" />
+            <CheckCheck size={14} aria-hidden="true" />
             Mark all read
           </Button>
         )}
@@ -202,7 +202,7 @@ export default function NotificationsPage() {
                     <span className="mt-1 text-[11px] text-muted-foreground">{formatRelative(n.date)}</span>
                   </span>
 
-                  <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                  <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                 </>
               );
 

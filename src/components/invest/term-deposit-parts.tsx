@@ -5,7 +5,7 @@
  * maturity instruction picker and the Dev Mode switches.
  */
 
-import { AlertCircle } from "lucide-react";
+import { AlertCircle } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
@@ -77,17 +77,17 @@ export function OutcomeFailure({
   return (
     <div className="mx-auto flex min-h-[60vh] w-full max-w-[460px] flex-col items-center justify-center gap-5 px-3 py-10 text-center animate-in fade-in duration-200">
       <span className="flex size-14 items-center justify-center rounded-full bg-warning/15 text-warning-text">
-        <AlertCircle size={28} strokeWidth={1.7} aria-hidden="true" />
+        <AlertCircle size={28} aria-hidden="true" />
       </span>
       <div className="flex flex-col gap-2">
         <h1 className="text-[24px] font-medium leading-[30px] tracking-[var(--ls-heading)] text-foreground">{title}</h1>
         <p className="text-[15px] leading-[23px] text-muted-foreground">{message}</p>
       </div>
       <div className="flex w-full items-center gap-2">
-        <Button type="button" variant="outline" className="h-10 flex-1 rounded-xl text-[14px]" onClick={onLeave}>
+        <Button type="button" variant="outline" className="h-10 flex-1 text-[14px]" onClick={onLeave}>
           {leaveLabel}
         </Button>
-        <Button type="button" className="h-10 flex-1 rounded-xl text-[14px]" onClick={onRetry}>
+        <Button type="button" className="h-10 flex-1 text-[14px]" onClick={onRetry}>
           Try again
         </Button>
       </div>

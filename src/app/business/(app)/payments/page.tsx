@@ -5,7 +5,7 @@
  * schedule. No wallets, airtime, bills or QR: those are personal banking's, and none of them is a company's.
  */
 
-import { Building2, FileSpreadsheet, Repeat } from "lucide-react";
+import { Building2, FileSpreadsheet, Repeat } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { ActionTile } from "@/components/ui/action-tile";
 import { paysWithoutApproval } from "@/lib/corporate/roles";

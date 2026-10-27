@@ -9,7 +9,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -91,7 +91,7 @@ export default function StandingOrderForm() {
     return (
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6 pt-6">
         <div className="flex flex-col items-start gap-3">
-          <CheckCircle2 size={24} strokeWidth={1.8} className="text-success-text" aria-hidden="true" />
+          <CheckCircle2 size={24} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
             <h1 className="text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground">Standing order set up</h1>
             <p className="text-[14px] leading-relaxed text-muted-foreground">
@@ -151,12 +151,6 @@ export default function StandingOrderForm() {
             setOtpOpen(false);
             save();
           }}
-          summary={
-            <p className="text-[13.5px] text-foreground">
-              Start a standing order of <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} from {fromAccount.name},{" "}
-              {cadencePhrase(preview).toLowerCase()}.
-            </p>
-          }
         />
       </div>
     );

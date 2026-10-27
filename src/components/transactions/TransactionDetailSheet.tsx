@@ -3,7 +3,7 @@
 import { personalRepeatHref } from "@/lib/repeat-payment";
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Copy, Check, Share2, FileDown, RotateCw } from "lucide-react";
+import { Copy, Check, Share2, FileDown, RotateCw } from "@/components/ui/icons";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -342,11 +342,10 @@ export function TransactionDetailSheet({
                     >
                       <span>{transaction.reference}</span>
                       {copied ? (
-                        <Check size={13} strokeWidth={1.8} className="text-success-text" />
+                        <Check size={13} className="text-success-text" />
                       ) : (
                         <Copy
                           size={13}
-                          strokeWidth={1.7}
                           className="text-muted-foreground group-hover:text-foreground transition-colors"
                         />
                       )}
@@ -452,7 +451,7 @@ export function TransactionDetailSheet({
                   className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
-                    <Share2 size={20} strokeWidth={2} />
+                    <Share2 size={20} />
                   </div>
                   <span className="text-[12.5px] font-normal text-foreground tracking-tight">
                     Share
@@ -467,7 +466,7 @@ export function TransactionDetailSheet({
                   className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
-                    <FileDown size={20} strokeWidth={2} />
+                    <FileDown size={20} />
                   </div>
                   <span className="text-[12.5px] font-normal text-foreground tracking-tight">
                     Save as PDF
@@ -483,7 +482,7 @@ export function TransactionDetailSheet({
                     className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
-                      <RotateCw size={20} strokeWidth={2} />
+                      <RotateCw size={20} />
                     </div>
                     <span className="text-[12.5px] font-normal text-foreground tracking-tight">
                       Repeat

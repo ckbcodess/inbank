@@ -11,7 +11,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Ship } from "lucide-react";
+import { ChevronRight, Ship } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Badge } from "@/components/ui/badge";
@@ -65,7 +65,7 @@ export default function TradeMonitoringPage() {
                 className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
               >
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <Ship size={16} strokeWidth={1.8} aria-hidden="true" />
+                  <Ship size={16} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-[13.5px] text-foreground">{t.desc}</span>
@@ -77,7 +77,7 @@ export default function TradeMonitoringPage() {
                   {formatMoney(t.amount, "USD")}
                 </span>
                 <Badge variant={t.tone}>{t.flag}</Badge>
-                <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
               </Link>
             </li>
           ))}

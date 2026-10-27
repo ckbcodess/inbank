@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { X, Maximize2, Minimize2, ArrowUp, FileText, ArrowRightLeft, Search, SquarePen, CircleHelp, Phone, MapPin } from "lucide-react";
+import { X, Maximize2, Minimize2, ArrowUp, FileText, ArrowRightLeft, Search, SquarePen, CircleHelp, Phone, MapPin } from "@/components/ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "@/lib/session-store";
 import { cn } from "@/lib/utils";
@@ -196,7 +196,7 @@ export function SidiAssistantWidget() {
               animate={open ? { opacity: 1, rotate: 0, scale: 1 } : { opacity: 0, rotate: -90, scale: 0.6 }}
               transition={{ duration: DURATION.hover, ease: EASE.snappy }}
             >
-              <X size={20} strokeWidth={1.8} />
+              <X size={20} />
             </motion.span>
             <motion.span
               className="absolute inset-0 will-change-transform"
@@ -211,7 +211,7 @@ export function SidiAssistantWidget() {
           {!open && (
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 -left-full z-10 w-full -skew-x-12 mix-blend-multiply dark:mix-blend-plus-lighter bg-linear-to-r from-transparent via-primary/40 to-transparent group-hover:translate-x-[200%] group-hover:transition-transform group-hover:duration-sweep group-hover:ease-in-out group-focus-visible:translate-x-[200%] group-focus-visible:transition-transform group-focus-visible:duration-sweep group-focus-visible:ease-in-out group-data-[intro=true]:translate-x-[200%] group-data-[intro=true]:transition-transform group-data-[intro=true]:duration-sweep group-data-[intro=true]:ease-in-out"
+            className="pointer-events-none absolute inset-y-0 -left-full z-10 w-full -skew-x-12 mix-blend-multiply dark:mix-blend-plus-lighter bg-linear-to-r from-transparent via-primary/40 to-transparent group-hover:translate-x-[200%] group-hover:transition-transform group-hover:duration-sweep group-hover:ease-settle group-focus-visible:translate-x-[200%] group-focus-visible:transition-transform group-focus-visible:duration-sweep group-focus-visible:ease-settle group-data-[intro=true]:translate-x-[200%] group-data-[intro=true]:transition-transform group-data-[intro=true]:duration-sweep group-data-[intro=true]:ease-settle"
           />
           )}
           {!open && (
@@ -249,19 +249,19 @@ export function SidiAssistantWidget() {
                     className="mr-1 flex h-7 cursor-pointer items-center gap-2 rounded-lg px-2 text-[13px] text-muted-foreground outline-none transition-colors duration-hover hover:bg-item-hover hover:text-foreground aria-expanded:bg-item-hover aria-expanded:text-foreground"
                     aria-label="Get help"
                   >
-                    <CircleHelp size={15} strokeWidth={1.7} />
+                    <CircleHelp size={15} />
                     Get help
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" sideOffset={6} className="w-56">
                     <DropdownMenuItem render={<a href="tel:+233302681531" />} className="gap-2 px-2 py-2">
-                      <Phone size={16} strokeWidth={1.7} className="text-muted-foreground" />
+                      <Phone size={16} className="text-muted-foreground" />
                       <span className="flex flex-col">
                         <span className="text-[13px] text-foreground">Call customer care</span>
                         <span className="text-[12px] text-muted-foreground tabular">+233 302 681 531, 24/7</span>
                       </span>
                     </DropdownMenuItem>
                     <DropdownMenuItem render={<Link href="/locate-us" onClick={() => setOpen(false)} />} className="gap-2 px-2 py-2">
-                      <MapPin size={16} strokeWidth={1.7} className="text-muted-foreground" />
+                      <MapPin size={16} className="text-muted-foreground" />
                       <span className="flex flex-col">
                         <span className="text-[13px] text-foreground">Find a branch</span>
                         <span className="text-[12px] text-muted-foreground">Visit us in person</span>
@@ -271,7 +271,7 @@ export function SidiAssistantWidget() {
                 </DropdownMenu>
                 {hasChat && (
                   <button type="button" onClick={() => setChatLog([])} title="Start a new chat" className={headerButton} aria-label="Start a new chat">
-                    <SquarePen size={16} strokeWidth={1.7} />
+                    <SquarePen size={16} />
                   </button>
                 )}
                 <button
@@ -281,10 +281,10 @@ export function SidiAssistantWidget() {
                   className={cn(headerButton, "max-sm:hidden")}
                   aria-label={isExpanded ? "Make smaller" : "Make larger"}
                 >
-                  {isExpanded ? <Minimize2 size={16} strokeWidth={1.7} /> : <Maximize2 size={16} strokeWidth={1.7} />}
+                  {isExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
                 </button>
                 <button type="button" onClick={() => setOpen(false)} title="Close" className={headerButton} aria-label="Close assistant">
-                  <X size={17} strokeWidth={1.7} />
+                  <X size={17} />
                 </button>
               </div>
             </div>
@@ -361,7 +361,7 @@ export function SidiAssistantWidget() {
                   className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors duration-hover hover:bg-primary-hover active:brightness-95 disabled:cursor-not-allowed disabled:opacity-35"
                   aria-label="Send"
                 >
-                  <ArrowUp size={16} strokeWidth={2} />
+                  <ArrowUp size={16} />
                 </button>
               </form>
             </div>

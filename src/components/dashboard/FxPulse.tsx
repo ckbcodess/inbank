@@ -19,7 +19,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpDown, TrendingDown, TrendingUp } from "lucide-react";
+import { ArrowRight, ArrowUpDown, TrendingDown, TrendingUp } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -116,7 +116,7 @@ export function FxPulse() {
             }
             title="Swap direction"
           >
-            <ArrowUpDown size={15} strokeWidth={1.9} aria-hidden="true" />
+            <ArrowUpDown size={15} aria-hidden="true" />
           </Button>
         </div>
 
@@ -167,7 +167,7 @@ export function FxPulse() {
             render={<Link href="/payments/send?rail=papss" />}
           >
             Continue to transfer
-            <ArrowRight size={14} strokeWidth={1.9} aria-hidden="true" />
+            <ArrowRight size={14} aria-hidden="true" />
           </Button>
         </div>
       </div>

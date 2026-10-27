@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { MapPin, Moon, Sun } from "lucide-react";
+import { MapPin, Moon, Sun } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import LanguageToggle from "@/components/layout/LanguageToggle";
@@ -44,9 +44,9 @@ export default function AuthHeader() {
           className="rounded-full text-muted-foreground"
         >
           {!mounted || resolvedTheme !== "dark" ? (
-            <Sun size={18} strokeWidth={1.8} />
+            <Sun size={18} />
           ) : (
-            <Moon size={18} strokeWidth={1.8} />
+            <Moon size={18} />
           )}
         </Button>
 
@@ -64,7 +64,7 @@ export default function AuthHeader() {
           size="icon-sm"
           className="rounded-full text-muted-foreground"
         >
-          <MapPin size={18} strokeWidth={1.8} />
+          <MapPin size={18} />
         </Button>
       </div>
     </header>

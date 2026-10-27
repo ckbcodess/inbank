@@ -13,7 +13,6 @@ import PageHeader from "@/components/layout/PageHeader";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary } from "@/components/invest/parts";
 import { BeneficiaryEditor, beneficiariesReady, isMinor } from "@/components/insure/BeneficiaryEditor";
 import { PolicyNotFound } from "@/components/insure/parts";
 import { findPlan } from "@/lib/insurance-plans";
@@ -32,12 +31,11 @@ function Editor({ policy }: { policy: Policy }) {
   const changed =
     JSON.stringify(list) !== JSON.stringify(policy.beneficiaries) || (trusteeId ?? "") !== (policy.trusteeId ?? "");
   const needsTrustee = list.some((b) => isMinor(people.find((p) => p.id === b.personId)));
-  const name = (id: string) => people.find((p) => p.id === id)?.fullName ?? "";
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Update Beneficiaries" backTo={{ href: base, label: plan?.name ?? "Policy" }} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <p className="tabular px-1 text-[13px] text-muted-foreground">{`${plan?.name} · ${policy.number}`}</p>
         <BeneficiaryEditor ownerId={ownerId} people={people} value={list} onChange={setList} trusteeId={trusteeId} onTrusteeChange={setTrusteeId} />
         <ProceedButton disabled={!changed || !beneficiariesReady(list, people, trusteeId)} onClick={() => setAuthOpen(true)} label="Save Changes" />
@@ -53,12 +51,6 @@ function Editor({ policy }: { policy: Policy }) {
           toast.success("Beneficiaries updated.", { id: "insure-beneficiaries" });
           router.push(base);
         }}
-        summary={
-          <AuthSummary
-            headline={`Update who your ${plan?.name ?? "policy"} pays`}
-            rows={list.map((b) => [name(b.personId), `${b.share}%`] as [string, string])}
-          />
-        }
       />
     </div>
   );

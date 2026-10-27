@@ -17,7 +17,7 @@ export function AppSplash({ leaving }: { leaving: boolean }) {
       aria-live="polite"
       aria-busy={!leaving}
       className={cn(
-        "fixed inset-0 z-[100] flex items-center justify-center bg-background transition-opacity duration-300 ease-out",
+        "fixed inset-0 z-[100] flex items-center justify-center bg-background transition-opacity duration-300 ease-settle",
         leaving ? "pointer-events-none opacity-0" : "opacity-100",
       )}
     >

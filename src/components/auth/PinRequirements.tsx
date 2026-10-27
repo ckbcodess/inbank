@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check } from "@/components/ui/icons";
 import { PIN_RULES } from "@/lib/auth-shared";
 
 interface PinRequirementsProps {
@@ -31,7 +31,7 @@ export default function PinRequirements({
                   met ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                 }`}
               >
-                <Check size={11} strokeWidth={3} aria-hidden="true" />
+                <Check size={11} aria-hidden="true" />
               </span>
               <span className={met ? "text-foreground font-medium" : "text-muted-foreground"}>
                 {rule.label}
@@ -47,7 +47,7 @@ export default function PinRequirements({
                 confirmMatch ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
               }`}
             >
-              <Check size={11} strokeWidth={3} aria-hidden="true" />
+              <Check size={11} aria-hidden="true" />
             </span>
             <span className={confirmMatch ? "text-foreground font-medium" : "text-muted-foreground"}>
               PINs match

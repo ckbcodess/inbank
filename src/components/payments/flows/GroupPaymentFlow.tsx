@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Users } from "lucide-react";
+import { Users } from "@/components/ui/icons";
 import { Account, formatMoney } from "@/lib/mock-data";
 import { PaymentGroup } from "@/lib/groups-store";
 import {
@@ -121,7 +121,7 @@ export function GroupPaymentFlow({
               {!selectedGroup ? (
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
-                    <Users size={20} strokeWidth={1.8} />
+                    <Users size={20} />
                   </span>
                   <span className="text-[15px] text-muted-foreground font-normal truncate">
                     Select contribution group
@@ -131,7 +131,7 @@ export function GroupPaymentFlow({
                 <div className="flex items-center justify-between min-w-0 flex-1 gap-2">
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="flex size-8 shrink-0 items-center justify-center text-foreground">
-                      <Users size={20} strokeWidth={1.8} />
+                      <Users size={20} />
                     </span>
                     <div className="flex flex-col min-w-0 text-left gap-0.5">
                       <span className="text-[15px] text-foreground font-medium truncate leading-tight">

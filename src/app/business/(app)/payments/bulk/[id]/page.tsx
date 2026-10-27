@@ -10,7 +10,7 @@
 
 import { useState, use } from "react";
 import Link from "next/link";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
@@ -48,7 +48,7 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
       <StubNotice section="section 3 failure recovery" states="13.8" />
 
       <div className="flex items-start gap-2 rounded-2xl border border-border bg-muted/40 p-3">
-        <AlertCircle size={16} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-muted-foreground" />
+        <AlertCircle size={16} aria-hidden="true" className="mt-px shrink-0 text-muted-foreground" />
         <p className="text-[13px] leading-relaxed text-muted-foreground">
           139 of 140 records in this batch settled successfully. Only the failed record below needs
           attention — correcting it revalidates that record alone.

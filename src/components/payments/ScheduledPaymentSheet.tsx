@@ -7,7 +7,7 @@
 
 import { useReducer, useState } from "react";
 import { toast } from "sonner";
-import { AlertTriangle, Pause, Play, Trash2 } from "lucide-react";
+import { AlertTriangle, Pause, Play, Trash2 } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
@@ -134,7 +134,7 @@ export function ScheduledPaymentSheet({
                 className="group flex cursor-pointer flex-col items-center gap-2 rounded-xl p-1 outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <span className="flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xs transition-transform duration-fast group-hover:brightness-95 group-active:scale-95">
-                  {paused ? <Play size={20} strokeWidth={2} aria-hidden="true" /> : <Pause size={20} strokeWidth={2} aria-hidden="true" />}
+                  {paused ? <Play size={20} aria-hidden="true" /> : <Pause size={20} aria-hidden="true" />}
                 </span>
                 <span className="text-[12.5px] text-foreground">{paused ? "Resume" : "Pause"}</span>
               </button>
@@ -144,7 +144,7 @@ export function ScheduledPaymentSheet({
                 className="group flex cursor-pointer flex-col items-center gap-2 rounded-xl p-1 outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <span className="flex size-11 items-center justify-center rounded-full bg-destructive text-white shadow-xs transition-transform duration-fast group-hover:brightness-95 group-active:scale-95">
-                  <Trash2 size={20} strokeWidth={1.9} aria-hidden="true" />
+                  <Trash2 size={20} aria-hidden="true" />
                 </span>
                 <span className="text-[12.5px] text-foreground">Cancel</span>
               </button>
@@ -164,7 +164,7 @@ export function ScheduledPaymentSheet({
               &quot;{si.beneficiary}&quot; will stop running. You can set it up again anytime.
             </p>
             <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-2 text-[12.5px] text-muted-foreground">
-              <AlertTriangle size={15} strokeWidth={1.8} className="mt-0.5 shrink-0 text-warning-text" aria-hidden="true" />
+              <AlertTriangle size={15} className="mt-0.5 shrink-0 text-warning-text" aria-hidden="true" />
               <span>If you just want to pause it temporarily, use Pause instead.</span>
             </div>
           </DialogBody>
@@ -173,7 +173,7 @@ export function ScheduledPaymentSheet({
               Keep It
             </Button>
             <Button variant="destructive" onClick={handleCancel}>
-              <Trash2 size={14} strokeWidth={1.8} aria-hidden="true" className="mr-2" />
+              <Trash2 size={14} aria-hidden="true" className="mr-2" />
               Cancel Scheduled Payment
             </Button>
           </DialogFooter>

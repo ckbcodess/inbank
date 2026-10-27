@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Product Page: 18 Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ok:#15803d;--ink:#0b0b0c;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0f0f0f;--tile:#1a1a1a;--tileh:#222;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,h4,p,ul{margin:0;padding:0} ul{list-style:none}
+  input{font:inherit;color:inherit}
+  .tab{font-variant-numeric:tabular-nums}
+  .mu{color:var(--mu)} .am{color:var(--amt)}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .goal{color:var(--tx)}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;max-width:100%}
+  .pg{padding:28px 32px 40px;display:flex;flex-direction:column;gap:32px;min-height:700px}
+  .phone .pg{padding:20px 20px 32px}
+  .col{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+  .hd{display:flex;align-items:center;gap:12px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .bk:hover{background:var(--tile)}
+  .btn{height:46px;padding:0 28px;border-radius:16px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%;text-align:center}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)} .btn.ghost:hover{background:var(--tile);filter:none}
+  .btn.sm{height:36px;width:auto;padding:0 16px;font-size:13px;border-radius:12px}
+  .note{font-size:13px;color:var(--mu);text-align:center;line-height:1.5}
+  .lead{font-size:24px;line-height:1.3;letter-spacing:-.02em}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .sec>h3{font-size:16px;font-weight:500}
+  .disc{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--p);color:var(--ink);flex:none}
+  .check{display:flex;flex-direction:column;gap:12px}
+  .check li{display:flex;gap:12px;font-size:14px;line-height:1.5}
+  .check svg{flex:none;margin-top:3px;color:var(--ok)}
+  .rows>div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:13px 0;border-top:1px solid var(--bd);font-size:13px}
+  .rows>div:last-child{border-bottom:1px solid var(--bd)}
+  .rows span:first-child{color:var(--mu)} .rows span:last-child{text-align:right}
+  .rows .key span:last-child{font-size:20px}
+  .boxed{background:var(--tile);border-radius:16px;padding:8px 16px}
+  .boxed.rows>div:first-child{border-top:0} .boxed.rows>div:last-child{border-bottom:0}
+  .lc{background:var(--tile);border-radius:16px;padding:4px}
+  .li{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;width:100%}
+  .li:hover{background:var(--tileh)}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:14px} .li .m{font-size:12px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:14px} .li .e small{font-size:12px;color:var(--mu)}
+  .li .ico{width:32px;height:32px;border-radius:10px;background:var(--surf);display:flex;align-items:center;justify-content:center;flex:none}
+  .act{text-decoration:underline;text-underline-offset:3px;font-size:13px;margin-left:12px;color:var(--tx)}
+  .range{width:100%;accent-color:#d99b00}
+  .big{letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+  .opt{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px;border-radius:16px;border:1px solid var(--bd);width:100%}
+  .opt.on{border-color:var(--am);background:color-mix(in srgb,var(--am) 9%,transparent)}
+  .opt:hover{background:var(--tile)}
+  .tabs{display:inline-flex;gap:4px;background:var(--tile);border-radius:12px;padding:4px;align-self:flex-start}
+  .tabs button{padding:8px 16px;border-radius:8px;font-size:13px;color:var(--mu)} .tabs button.on{background:var(--surf);color:var(--tx)}
+  .step{display:flex;gap:16px}
+  .step .n{width:28px;height:28px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:13px;flex:none;position:relative;z-index:1}
+  .step .ln{width:1px;background:var(--bd);margin:0 auto;flex:1}
+  .step .lft{display:flex;flex-direction:column;align-items:center}
+  .step .bd{padding-bottom:24px;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:1.5}
+  .grid2{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;align-items:start}
+  .phone .grid2{grid-template-columns:1fr}
+  .panel{background:var(--tile);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px;position:sticky;top:96px}
+  .poster{position:relative;overflow:hidden;background:color-mix(in srgb,var(--p) 30%,var(--tile));padding:20px 32px 40px;display:flex;flex-direction:column;gap:20px;min-height:260px}
+  .phone .poster{padding:16px 20px 32px}
+  .poster .mark{position:absolute;right:-24px;bottom:-34px;color:var(--p);opacity:.45;pointer-events:none}
+  .poster>*{position:relative}
+  .doc{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 32px}
+  .phone .doc{grid-template-columns:1fr}
+  .doc dt{font-size:12px;color:var(--mu);padding-top:4px} .doc dd{margin:0 0 24px;font-size:14px;line-height:1.6}
+  .tile{background:var(--tile);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:6px;width:100%}
+  .tile:hover{background:var(--tileh)}
+  .acc{display:flex;justify-content:space-between;align-items:center;width:100%;padding:14px 0;font-size:14px;font-weight:500;border-top:1px solid var(--bd)}
+  .q{font-size:28px;line-height:1.25;letter-spacing:-.02em;font-weight:500}
+  .inp{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--bd);padding:8px 0}
+  .inp input{background:none;border:0;outline:0;font-size:40px;letter-spacing:-.03em;width:100%;font-variant-numeric:tabular-nums}
+  .inp:focus-within{border-color:var(--am)}
+  /* 11-18: the sentence (1) inside the colour hero (7) */
+  .poster .lead.am{color:var(--tx)} .poster .act{color:inherit}
+  .poster.slim{min-height:0;padding:16px 32px 28px;gap:12px} .phone .poster.slim{padding:12px 20px 24px}
+  .poster.solid{background:var(--p);color:var(--ink)} .poster.solid .mu{color:rgba(0,0,0,.62)} .poster.solid .mark{color:#000;opacity:.13} .poster.solid .bk{color:var(--ink)} .poster.solid .bk:hover{background:rgba(0,0,0,.08)}
+  .poster.neutral{background:var(--tile)} .poster.neutral .mark{opacity:.25}
+  .herocard{position:relative;overflow:hidden;border-radius:28px;background:color-mix(in srgb,var(--p) 30%,var(--tile));padding:28px;min-height:260px;display:flex;flex-direction:column;justify-content:space-between;gap:24px}
+  .herocard>*{position:relative;z-index:1} .herocard .mark{position:absolute;right:-20px;bottom:-30px;color:var(--p);opacity:.45;pointer-events:none;z-index:0}
+  .ovl{background:var(--surf);border:1px solid var(--bd);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:0 12px 32px -16px rgba(0,0,0,.5)}
+  .hsplit{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:32px;align-items:center}
+  .phone .hsplit{grid-template-columns:1fr}
+  .htile{aspect-ratio:1;border-radius:36px;background:color-mix(in srgb,var(--p) 30%,var(--tile));display:flex;align-items:center;justify-content:center;color:var(--p)}
+  .phone .htile{display:none}
+  .wash{position:relative;overflow:hidden;background:color-mix(in srgb,var(--p) 9%,var(--surf));min-height:720px}
+  .wash .mark{position:absolute;right:-60px;top:-60px;color:var(--p);opacity:.2;pointer-events:none}
+  .wash .pg{position:relative}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Product page · 18 directions · the same three pages (Insure plan, Term Deposits, Salary Advance) with a different goal each</h1>
+    <div class="ctrls">
+      <div class="seg" id="prodsel"></div>
+      <div class="seg" id="statesel"></div>
+      <div class="seg" id="widthsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage"><div class="frame" id="frame"></div></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+ insure:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+ invest:'<path d="M4 11h13a3 3 0 013 3v2a3 3 0 01-3 3H8a4 4 0 01-4-4z"/><path d="M20 12l1-2"/><circle cx="16" cy="14" r=".6"/><path d="M8 11V8a2 2 0 014 0v3"/>',
+ loans:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5c0-1 1-1.5 2.5-1.5s2.5.6 2.5 1.6-1 1.4-2.5 1.9-2.5.9-2.5 1.9 1 1.6 2.5 1.6 2.5-.5 2.5-1.5"/>'
+};
+const tick=svg('<path d="M5 12l4 4 10-10"/>',16,1.8);
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const back=svg('<path d="M15 6l-6 6 6 6"/>',18,1.8);
+const caret=o=>svg(o?'<path d="M6 15l6-6 6 6"/>':'<path d="M6 9l6 6 6-6"/>',16,1.8);
+const GHS=n=>'GHS '+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+/* ---------- the content of the three pages ---------- */
+const mkOwned=(t,sub,fig,fig2,attn)=>({t,sub,fig,fig2,attn});
+const D={
+ insure:{label:'Insure',title:'Child Education Plan',col:'#3b82f6',
+  desc:'Save towards your child’s education, with cover that keeps the plan going if something happens to you.',
+  benefits:['Lump sum paid within 48 to 72 hours of an approved claim','School fees are paid even if you can’t'],
+  key:['Premiums from','GHS 50.00 a month'],
+  rows:[['Policy term','10 to 25 years'],['Provider','StarLife Assurance']],
+  noun:'policy',nouns:'policies',list:'Your Policies',
+  owned:{owns:[mkOwned('Child Education Plan','CEP/2023/040318 · GHS 300.00 a month','GHS 67,500.00','')],
+         attention:[mkOwned('Child Education Plan','CEP/2023/040318 · GHS 300.00 a month','GHS 67,500.00','','2 premiums missed · GHS 600.00')]},
+  lead:{new:{t:'Save towards your child’s education, and keep the plan going if something happens to you.'},
+        owns:{t:'You have 1 policy under this plan. Your next premium is GHS 300.00 on 3 Nov.'},
+        attention:{t:'2 premiums missed. Pay GHS 600.00 to keep your cover going.',a:1,act:'Pay now'}},
+  steps:[['You save','From GHS 50 a month, for 10 to 25 years.'],['You’re protected','Cover keeps the plan going if something happens to you.'],['You’re paid','School fees or a lump sum, within 48 to 72 hours of an approved claim.']],
+  opts:[['10 years','GHS 120.00 a month'],['15 years','GHS 80.00 a month'],['25 years','GHS 50.00 a month']],
+  q:{text:'How much can you save each month?',def:150,unit:'a month',out:v=>`That’s ${GHS(v*12)} a year.`},
+  start:'Get Started'},
+ invest:{label:'Invest',title:'Term Deposits',col:'#0d9488',
+  desc:'Lock money away for a set time at a rate that is fixed when you start.',
+  benefits:['You see exactly what you get back, and when','Choose what happens when it matures'],
+  key:['Rates from','12.5% a year'],
+  rows:[['Terms','91 to 364 days'],['Early exit','Allowed. The cost is shown first']],
+  noun:'deposit',nouns:'deposits',list:'Your Term Deposits',
+  owned:{owns:[mkOwned('91-day Term Deposit','Matures 19 Nov 2026','GHS 10,311.64','42 days left')],
+         attention:[mkOwned('91-day Term Deposit','Matures 19 Nov 2026','GHS 10,311.64','3 days left','Matures in 3 days · choose what happens')]},
+  lead:{new:{t:'Fixed rates from 12.5% a year. You know what you get back before you start.'},
+        owns:{t:'You have 1 deposit. It matures in 42 days.'},
+        attention:{t:'Your deposit matures in 3 days. Choose what happens next.',a:1,act:'Choose'}},
+  steps:[['You choose a period','91, 182 or 364 days. The rate is fixed when you start.'],['It earns','Interest builds every day you leave it.'],['You’re paid','Your money and the interest, on the maturity date, or rolled into a new deposit.']],
+  opts:[['91 days','12.5%','Matures 07 Jan 2027'],['182 days','13.5%','Matures 08 Apr 2027'],['364 days','15%','Matures 07 Oct 2027']],
+  q:{text:'How much do you want to lock away?',def:10000,unit:'for 91 days',out:v=>`You’d get back about ${GHS(v+v*0.125*91/365)}.`},
+  start:'Open a Deposit'},
+ loans:{label:'Loans',title:'Salary Advance',col:'#16a34a',
+  desc:'Take up to 80% of your salary as an advance.',
+  benefits:['Paid out in minutes once approved','Repaid from your salary, nothing else to remember'],
+  key:['Up to','GHS 20,000.00'],
+  rows:[['Based on','80% of one month’s salary'],['Interest','2.17% a month, for each day it is out'],['Fees taken up front','1.5%'],['Smallest advance','GHS 100.00'],['Repaid','Taken automatically on your next payday']],
+  noun:'loan',nouns:'loans',list:'Your Loans',
+  owned:{owns:[mkOwned('Salary Advance','Waiting for approval','GHS 8,000.00','')],
+         attention:[mkOwned('Salary Advance','Taken 2 Oct','GHS 8,412.00','Owed today','Overdue since 20 Oct')]},
+  lead:{new:{t:'You can take up to GHS 20,000.00 against your salary.'},
+        owns:{t:'Your request for GHS 8,000.00 is waiting for approval.'},
+        attention:{t:'Your payment is overdue. Repay GHS 8,412.00 to stop the late charge.',a:1,act:'Repay now'}},
+  steps:[['You ask','Pick an amount, up to 80% of your salary.'],['We pay you','The amount, less 1.5% in fees, in minutes once approved.'],['It’s repaid','Taken automatically on your next payday, with the interest for the days it was out.']],
+  opts:[['Until your next payday','About 20 days · 2.17% a month']],
+  q:{text:'How much do you need?',def:5000,unit:'up to GHS 20,000',out:v=>`You’d receive ${GHS(v*0.985)} and repay ${GHS(v+v*0.0217/30*20)} on payday.`},
+  start:'Apply'}
+};
+const STATES=[['new','New customer'],['owns','Owns some'],['attention','Needs attention']];
+const S={v:1,prod:'insure',state:'owns',phone:false,dark:true,tab:null,opt:0,acc:false,c:{m:150,y:15,a:10000,p:0,l:5000},q:null};
+const P=()=>D[S.prod];
+const owned=()=>P().owned[S.state]||[];
+const hasProfile=()=>S.state!=='new'||S.prod!=='insure';
+
+/* the one button, by state */
+function cta(){
+  const p=P(),o=owned();
+  if(S.prod==='insure'){
+    if(!hasProfile())return {label:'Create a Profile',note:`You only do it once. We keep ${p.title} for you.`};
+    return {label:o.length?'Apply for Another':p.start};
+  }
+  if(S.prod==='invest')return {label:o.length?'Invest Again':p.start};
+  if(S.state==='new')return {label:'Apply'};
+  if(S.state==='owns')return {note:'You can take another once this request is decided and repaid.'};
+  return {label:'Repay Now',note:'Repay your current advance to take another.'};
+}
+const ctaHtml=(extra='')=>{const c=cta();return `<div class="sec" style="gap:8px">${c.label?`<button class="btn ${extra}" data-a="go">${c.label}</button>`:''}${c.note?`<p class="note">${c.note}</p>`:''}</div>`};
+
+/* ---------- pieces ---------- */
+const disc=(s=52)=>`<span class="disc" style="width:${s}px;height:${s}px">${svg(IC[S.prod],Math.round(s*.42))}</span>`;
+const hdr=(t)=>`<div class="hd"><button class="bk" data-a="back">${back}</button><h2>${t||P().title}</h2></div>`;
+const checks=()=>`<ul class="check">${P().benefits.map(b=>`<li>${tick}<span>${b}</span></li>`).join('')}</ul>`;
+const rows=(boxed=false,key=true)=>{const p=P();const all=[...(key?[[p.key[0],p.key[1],1]]:[]),...p.rows];return `<div class="rows ${boxed?'boxed':''}">${all.map(r=>`<div class="${r[2]?'key':''}"><span>${r[0]}</span><span class="tab">${r[1]}</span></div>`).join('')}</div>`};
+const ownedItem=(i,small=false)=>`<button class="li" data-a="item"><span class="g"><span class="t">${i.t}</span><span class="m tab ${i.attn?'am':''}">${i.attn||i.sub}</span></span><span class="e tab">${i.fig}${i.fig2?`<small>${i.fig2}</small>`:''}</span><span class="mu">${chev}</span></button>`;
+const ownedList=(h=true)=>owned().length?`<div class="sec">${h?`<h3>${P().list}</h3>`:''}<div class="lc">${owned().map(i=>ownedItem(i)).join('')}</div></div>`:'';
+const col=inner=>`<div class="col">${inner}</div>`;
+const pg=inner=>`<div class="pg">${inner}</div>`;
+
+/* the state's one sentence */
+const lead=()=>P().lead[S.state];
+const leadHtml=(size,ink)=>{const l=lead();return `<p class="lead ${l.a&&!ink?'am':''}" ${size?`style="font-size:${size}px"`:''}>${l.t}${l.a?`<button class="act" data-a="go">${l.act}</button>`:''}</p>`};
+
+/* ---------- the 10 directions ---------- */
+const V={};
+
+V[1]={name:'1. Answer first',goal:'Tell me where I stand.',
+ note:'Goal: answer “where do I stand?” before anything else. One sentence leads, and it changes with the state: the offer for a new customer, your holdings when you have some, the problem when something needs you (amber, with its action). Then the rows, then the one button. No picture, no explanation block.',
+ r:()=>pg(col(`${hdr()}${leadHtml()}${ownedList()}${rows(false)}${S.prod==='invest'&&!owned().length?'':checks()}${ctaHtml()}`))};
+
+V[2]={name:'2. Start panel',goal:'Make the commitment clear.',
+ note:'Goal: show exactly what starting means. A fixed panel on the right holds the price, your holdings and the one button, always in view; the explanation reads on the left. On a phone the panel comes first. Best on desktop, where the button never scrolls away.',
+ r:()=>pg(`${hdr()}<div class="grid2"><div style="display:flex;flex-direction:column;gap:32px"><p style="font-size:14px;line-height:1.6;color:var(--mu)">${P().desc}</p>${checks()}${rows(false,false)}</div>
+   <div class="panel">${disc(44)}<div><span class="mu" style="font-size:12px">${P().key[0]}</span><div class="big" style="font-size:30px;margin-top:4px">${P().key[1].replace(' a month','').replace(' a year','')}</div><span class="mu" style="font-size:13px">${P().key[1].includes('a month')?'a month':P().key[1].includes('a year')?'a year':''}</span></div>
+   ${owned().length?`<button class="li" style="padding:12px 0;border-top:1px solid var(--bd);border-radius:0" data-a="item"><span class="g"><span class="t" style="font-size:13px">You have ${owned().length} ${owned().length===1?P().noun:P().nouns}</span>${owned()[0].attn?`<span class="m am">${owned()[0].attn}</span>`:''}</span><span class="mu">${chev}</span></button>`:''}
+   ${ctaHtml()}</div></div>`)};
+
+V[3]={name:'3. Try it',goal:'Let me test the numbers first.',
+ note:'Goal: understand the cost by playing with it. A small calculator sits at the top: move a slider, see what you would pay and get. The button then starts with those numbers. The outputs are illustrations; the real rule is on the review.',
+ r:()=>{
+  const p=S.prod,c=S.c;let ctl='',out='';
+  if(p==='insure'){ctl=`<div class="sec" style="gap:6px"><div class="row"><span style="font-size:13px">I can save</span><span class="tab" id="o1">${GHS(c.m)} a month</span></div><input class="range" type="range" min="50" max="1000" step="50" value="${c.m}" data-r="m"></div><div class="sec" style="gap:6px"><div class="row"><span style="font-size:13px">For</span><span class="tab" id="o2">${c.y} years</span></div><input class="range" type="range" min="10" max="25" value="${c.y}" data-r="y"></div>`;}
+  if(p==='invest'){ctl=`<div class="sec" style="gap:6px"><div class="row"><span style="font-size:13px">I want to lock away</span><span class="tab" id="o1">${GHS(c.a)}</span></div><input class="range" type="range" min="1000" max="50000" step="500" value="${c.a}" data-r="a"></div><div class="tabs">${D.invest.opts.map((o,i)=>`<button class="${c.p===i?'on':''}" data-a="cp:${i}">${o[0]}</button>`).join('')}</div>`;}
+  if(p==='loans'){ctl=`<div class="sec" style="gap:6px"><div class="row"><span style="font-size:13px">I need</span><span class="tab" id="o1">${GHS(c.l)}</span></div><input class="range" type="range" min="100" max="20000" step="100" value="${c.l}" data-r="l"></div>`;}
+  return pg(col(`${hdr()}<div class="lc" style="padding:20px;display:flex;flex-direction:column;gap:20px">${ctl}<div class="rows" id="calcout">${calcRows().map(r=>`<div><span>${r[0]}</span><span class="tab">${r[1]}</span></div>`).join('')}</div><p class="mu" style="font-size:12px">An illustration. The review shows the real figures before you agree.</p></div>${ownedList()}${rows(false,false)}${ctaHtml()}`))}};
+function calcRows(){const c=S.c;
+  if(S.prod==='insure'){const paid=c.m*12*c.y;return [['You pay in',GHS(paid)],['You get back about',GHS(paid*1.25)]]}
+  if(S.prod==='invest'){const o=[[91,.125],[182,.135],[364,.15]][c.p];const i=c.a*o[1]*o[0]/365;return [['Interest',GHS(i)],['You get back at maturity',GHS(c.a+i)]]}
+  return [['You receive',GHS(c.l*0.985)],['You repay on payday',GHS(c.l+c.l*0.0217/30*20)]]}
+
+V[4]={name:'4. How it works',goal:'Help me understand it.',
+ note:'Goal: understanding, for someone who does not know the product. Three numbered steps tell the story from start to payout, then the facts and the button. Holdings sit above as a quiet line, so the story is not hidden from a returning customer.',
+ r:()=>pg(col(`${hdr()}${owned().length?`<button class="li" style="background:var(--tile)" data-a="item"><span class="g"><span class="t">You have ${owned().length} ${owned().length===1?P().noun:P().nouns}</span><span class="m tab ${owned()[0].attn?'am':''}">${owned()[0].attn||owned()[0].sub}</span></span><span class="mu">${chev}</span></button>`:''}
+  <div>${P().steps.map((s,i)=>`<div class="step"><div class="lft"><span class="n">${i+1}</span>${i<2?'<span class="ln"></span>':''}</div><div class="bd"><b style="font-weight:500">${s[0]}</b><span class="mu">${s[1]}</span></div></div>`).join('')}</div>${rows(false)}${ctaHtml()}`))};
+
+V[5]={name:'5. Choose an option',goal:'Compare, then pick.',
+ note:'Goal: compare the options and choose in one place. The choices are rows you select, with the number that matters on each (the rate, the monthly cost). The button names the choice. For a product with one option (Loans) it shows that one, so the page still has the same shape.',
+ r:()=>{const o=P().opts,i=Math.min(S.opt,o.length-1);
+  return pg(col(`${hdr()}${ownedList()}<div class="sec"><h3>${S.prod==='invest'?'Choose a period':S.prod==='insure'?'Choose a term':'How it’s repaid'}</h3><div style="display:flex;flex-direction:column;gap:8px">${o.map((x,k)=>`<button class="opt ${k===i?'on':''}" data-a="opt:${k}"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px">${x[0]}</span>${x[2]?`<span class="mu tab" style="font-size:12px">${x[2]}</span>`:''}</span><span class="tab" style="font-size:${x[2]?20:14}px">${x[2]?x[1]:x[1]}</span></button>`).join('')}</div></div>${checks()}<div class="sec" style="gap:8px">${cta().label?`<button class="btn" data-a="go">${S.prod==='invest'?`Open a ${o[i][0]} Deposit`:cta().label}</button>`:''}${cta().note?`<p class="note">${cta().note}</p>`:''}</div>`))}};
+
+V[6]={name:'6. Yours | About',goal:'Never scroll; separate manage from learn.',
+ note:'Goal: no long page. A switch splits what you hold from what the product is, and opens on the one you need: Yours when you hold something, About when you do not. The button is the same on both. Costs a tap to see the other half, and one more control on the page.',
+ r:()=>{const has=owned().length>0;const t=S.tab||(has?'yours':'about');
+  const yours=has?`<div class="lc">${owned().map(i=>ownedItem(i)).join('')}</div>`:`<p class="mu" style="font-size:14px">You don’t have a ${P().noun} yet.</p>`;
+  const about=`<p style="font-size:14px;line-height:1.6;color:var(--mu)">${P().desc}</p>${checks()}${rows(false)}`;
+  return pg(col(`${hdr()}<div class="tabs"><button class="${t==='yours'?'on':''}" data-a="tab:yours">Yours</button><button class="${t==='about'?'on':''}" data-a="tab:about">About</button></div><div class="sec" style="gap:24px">${t==='yours'?yours:about}</div>${ctaHtml()}`))}};
+
+V[7]={name:'7. Colour hero',goal:'Give the product an identity.',
+ note:'Goal: warmth and recognition. A hero in the product’s colour, with its mark cropped in the corner like the shelf card, carries the name and the key figure. The body below is plain rows. The most personality of the ten, and the heaviest on a page that is mostly numbers.',
+ r:()=>`<div style="--p:${P().col}"><div class="poster"><div class="hd"><button class="bk" data-a="back">${back}</button></div><span class="mark">${svg(IC[S.prod],220,1.1)}</span><div style="display:flex;flex-direction:column;gap:8px;max-width:70%"><h2 style="font-size:30px;font-weight:500;letter-spacing:-.02em">${P().title}</h2><p style="font-size:14px;line-height:1.5;color:var(--mu)">${P().desc}</p></div><div><span class="mu" style="font-size:12px">${P().key[0]}</span><div class="big" style="font-size:34px">${P().key[1]}</div></div></div>
+  <div class="pg" style="padding-top:32px">${col(`${ownedList()}${checks()}${rows(false,false)}${ctaHtml()}`)}</div></div>`};
+
+V[8]={name:'8. Typographic',goal:'Calm, no boxes, no icons.',
+ note:'Goal: the calmest page. No cards, no disc, no icons: labels in a left column, text on the right, hairlines between. It reads like a document. Everything is findable and nothing competes; it suits a customer who reads and the least visual of the ten.',
+ r:()=>{const p=P(),o=owned();
+  return pg(col(`${hdr()}<dl class="doc">
+   ${o.length?`<dt>${p.list}</dt><dd>${o.map(i=>`<div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:10px"><span><button data-a="item" style="text-decoration:underline;text-underline-offset:3px">${i.t}</button><br><span class="mu tab ${i.attn?'am':''}" style="font-size:12px">${i.attn||i.sub}</span></span><span class="tab">${i.fig}</span></div>`).join('')}</dd>`:''}
+   <dt>What it is</dt><dd>${p.desc}</dd>
+   <dt>${p.key[0]}</dt><dd class="tab" style="font-size:20px">${p.key[1]}</dd>
+   ${p.rows.map(r=>`<dt>${r[0]}</dt><dd class="tab">${r[1]}</dd>`).join('')}
+   <dt>You get</dt><dd>${p.benefits.join('. ')}.</dd></dl>${ctaHtml()}`))}};
+
+V[9]={name:'9. Manage first',goal:'Be fast for the returning customer.',
+ note:'Goal: someone who already holds this checks it in two taps. Their holdings are large tiles with the figure and any problem, and “apply for another” is a small button beside the heading. What the product is sits in a collapsed section. A new customer gets the About section open and the full button.',
+ r:()=>{const o=owned(),open=S.acc||!o.length;
+  return pg(col(`${hdr()}${o.length?`<div class="sec"><div class="row"><h3>${P().list}</h3>${cta().label?`<button class="btn ghost sm" data-a="go">${cta().label}</button>`:''}</div>${o.map(i=>`<button class="tile" data-a="item"><span class="mu tab" style="font-size:13px">${i.t}</span><span class="big" style="font-size:32px">${i.fig}</span><span class="tab ${i.attn?'am':'mu'}" style="font-size:13px">${i.attn||i.sub}</span></button>`).join('')}${cta().note?`<p class="note" style="text-align:left">${cta().note}</p>`:''}</div>`:''}
+   <div><button class="acc" data-a="acc"><span>About this ${S.prod==='insure'?'plan':'product'}</span>${caret(open)}</button>${open?`<div class="sec" style="gap:24px;padding:8px 0 4px"><p style="font-size:14px;line-height:1.6;color:var(--mu)">${P().desc}</p>${checks()}${rows(false)}</div>`:''}</div>
+   ${o.length?'':ctaHtml()}`))}};
+
+V[10]={name:'10. One question',goal:'Get a new customer started.',
+ note:'Goal: start with the least. One question, one field, one live line, one button. Everything else (what it is, the facts) sits in a disclosure under it, and a customer who holds something gets one line above. It is a starting page, not a reference page, so it is a poor place to manage what you already have.',
+ r:()=>{const p=P(),q=p.q;const v=S.q===null?q.def:S.q;const o=owned();
+  return pg(col(`${hdr()}${o.length?`<button class="li" style="background:var(--tile)" data-a="item"><span class="g"><span class="t">You have ${o.length} ${o.length===1?p.noun:p.nouns}</span><span class="m tab ${o[0].attn?'am':''}">${o[0].attn||o[0].sub}</span></span><span class="mu">${chev}</span></button>`:''}
+   <div class="sec" style="gap:20px;padding:24px 0 8px"><h3 class="q">${q.text}</h3><div class="inp"><span class="mu" style="font-size:20px">GHS</span><input id="qin" inputmode="numeric" value="${v.toLocaleString('en-US')}" data-q="1"><span class="mu" style="font-size:14px;white-space:nowrap">${q.unit}</span></div><p class="mu" id="qout" style="font-size:14px">${q.out(v)}</p></div>
+   ${ctaHtml()}
+   <div><button class="acc" data-a="acc"><span>How it works</span>${caret(S.acc)}</button>${S.acc?`<div class="sec" style="gap:24px;padding:8px 0 4px"><p style="font-size:14px;line-height:1.6;color:var(--mu)">${p.desc}</p>${checks()}${rows(false)}</div>`:''}</div>`))}};
+
+/* ---------- 11-18: answer first (1) inside a colour hero (7) ---------- */
+const heroBack=`<div class="hd"><button class="bk" data-a="back">${back}</button></div>`;
+const markEl=(s=220)=>`<span class="mark">${svg(IC[S.prod],s,1.1)}</span>`;
+const bodyOf=(inner)=>`<div class="pg" style="padding-top:32px">${col(inner)}</div>`;
+const statusText=()=>{const o=owned();if(!o.length)return '';const att=o.filter(i=>i.attn).length;return `${o.length} ${o.length===1?P().noun:P().nouns}${att?` · ${att} needs attention`:''}`};
+const heroTall=()=>`<div class="poster">${heroBack}${markEl(220)}<div style="display:flex;flex-direction:column;gap:8px;max-width:70%"><h2 style="font-size:30px;font-weight:500;letter-spacing:-.02em">${P().title}</h2><p style="font-size:14px;line-height:1.5;color:var(--mu)">${P().desc}</p></div><div><span class="mu" style="font-size:12px">${P().key[0]}</span><div class="big" style="font-size:34px">${P().key[1]}</div></div></div>`;
+const heroSlim=()=>`<div class="poster slim">${heroBack}${markEl(170)}<h2 style="font-size:30px;font-weight:500;letter-spacing:-.02em">${P().title}</h2></div>`;
+
+V[11]={name:'11. Sentence in the hero',goal:'The answer is the hero.',
+ note:'1 + 7: the hero holds the state’s sentence in large type, with the name small above it and the mark cropped behind. The page opens on the answer, in colour. On the tinted background the problem state stays ink, not amber, because amber is unreadable on it; the action is underlined.',
+ r:()=>`<div><div class="poster" style="min-height:300px">${heroBack}${markEl(230)}<div style="display:flex;flex-direction:column;gap:12px;max-width:78%"><span class="mu" style="font-size:14px">${P().title}</span>${leadHtml(28,true)}</div></div>${bodyOf(`${ownedList()}${rows(false)}${ctaHtml()}`)}</div>`};
+
+V[12]={name:'12. Slim hero, then the answer',goal:'Colour for identity, space for the answer.',
+ note:'1 + 7: a slim band carries only the name and the mark, then the sentence leads the plain page below it, in amber when something needs you. Colour tells you which product you are in; the sentence stays readable. The lightest way to use the hero.',
+ r:()=>`<div>${heroSlim()}${bodyOf(`${leadHtml()}${ownedList()}${rows(false)}${checks()}${ctaHtml()}`)}</div>`};
+
+V[13]={name:'13. Hero that gets out of the way',goal:'Sell when new, manage when owned.',
+ note:'1 + 7: the hero changes with the customer. New: the full colour hero with the price, to sell it. Owns something: it shrinks to a slim band and the sentence takes over. Needs attention: no colour at all and the problem leads in amber. Colour is for selling; once you are a customer it steps back.',
+ r:()=>{
+  if(S.state==='new')return `<div>${heroTall()}${bodyOf(`${leadHtml()}${checks()}${rows(false,false)}${ctaHtml()}`)}</div>`;
+  if(S.state==='owns')return `<div>${heroSlim()}${bodyOf(`${leadHtml()}${ownedList()}${rows(false)}${ctaHtml()}`)}</div>`;
+  return pg(col(`${hdr()}${leadHtml()}${ownedList()}${rows(false)}${ctaHtml()}`))}};
+
+V[14]={name:'14. The shelf card, grown up',goal:'Continuity with the card you tapped.',
+ note:'1 + 7: the hero is the shelf card made page-sized: name and descriptor top left, the status line bottom left, the mark cropped bottom right. It is the same object you tapped, so the move feels like opening it. The sentence appears below only when something needs you.',
+ r:()=>pg(col(`${hdr(' ')}<div class="herocard"><div style="display:flex;flex-direction:column;gap:8px;max-width:70%"><h2 style="font-size:26px;font-weight:500;letter-spacing:-.02em">${P().title}</h2><p style="font-size:14px;line-height:1.5;color:var(--mu)">${P().desc}</p></div><span class="tab ${owned().some(i=>i.attn)?'am':'mu'}" style="font-size:13px;max-width:70%">${statusText()||P().key[0]+' '+P().key[1]}</span>${markEl(230)}</div>${lead().a?leadHtml(20):''}${ownedList()}${rows(false,false)}${ctaHtml()}`))};
+
+V[15]={name:'15. Hero with an overlapping panel',goal:'Hold the answer and the button together.',
+ note:'1 + 7: a colour hero with the name and mark, and a panel that overlaps its lower edge holding the sentence, your holdings and the button. The decision sits in one block, the facts and benefits underneath. The only version with a card on the page, so it breaks our no-cards rule.',
+ r:()=>`<div><div class="poster" style="min-height:230px;padding-bottom:90px">${heroBack}${markEl(200)}<h2 style="font-size:30px;font-weight:500;letter-spacing:-.02em">${P().title}</h2></div><div class="pg" style="margin-top:-64px;padding-top:0;position:relative">${col(`<div class="ovl">${leadHtml(22)}${ownedList(false)}${ctaHtml()}</div>${checks()}${rows(false)}`)}</div></div>`};
+
+V[16]={name:'16. Split hero',goal:'Name and price left, the mark as a picture right.',
+ note:'1 + 7: the hero is two columns. Name, description and the key figure on the left, the product’s mark on a rounded tinted tile on the right like a picture slot. The sentence follows below. On a phone the tile drops away and only the text remains.',
+ r:()=>pg(`${hdr(' ')}<div class="hsplit"><div style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:32px;font-weight:500;letter-spacing:-.02em">${P().title}</h2><p style="font-size:14px;line-height:1.6;color:var(--mu)">${P().desc}</p><div style="margin-top:8px"><span class="mu" style="font-size:12px">${P().key[0]}</span><div class="big" style="font-size:30px">${P().key[1]}</div></div></div><div class="htile">${svg(IC[S.prod],110,1.2)}</div></div>${col(`${leadHtml(22)}${ownedList()}${rows(false,false)}${ctaHtml()}`)}`)};
+
+V[17]={name:'17. Page tinted by the product',goal:'Colour without a block.',
+ note:'1 + 7: no hero block at all. The whole page takes a faint wash of the product’s colour, a very large mark fades into the top corner, and the sentence leads in big type. It is the quietest way to bring 7 in, and it keeps everything readable, amber included.',
+ r:()=>`<div class="wash">${markEl(340)}${pg(col(`${hdr()}${leadHtml(30)}${ownedList()}${rows(false)}${ctaHtml()}`))}</div>`};
+
+V[18]={name:'18. Solid colour hero',goal:'Loud, certain, one decision.',
+ note:'1 + 7 at full volume: a solid colour hero in dark ink with the sentence in it, the mark darkened behind. It is the boldest of the three on the page and works for a new customer. When something needs you, the hero goes neutral so the amber is readable.',
+ r:()=>{const attn=S.state==='attention';return `<div><div class="poster ${attn?'neutral':'solid'}" style="min-height:300px">${heroBack}${markEl(230)}<div style="display:flex;flex-direction:column;gap:12px;max-width:78%"><span class="mu" style="font-size:14px">${P().title}</span>${leadHtml(28,!attn)}</div></div>${bodyOf(`${ownedList()}${rows(false)}${ctaHtml()}`)}</div>`}};
+
+/* ---------- chrome ---------- */
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('prodsel',Object.entries(D).map(([k,v])=>[k,v.label]),S.prod,'prod');
+  seg('statesel',STATES,S.state,'state');
+  seg('widthsel',[[0,'Desktop'],[1,'Phone']],S.phone?1:0,'width');
+  seg('themesel',[['dark','Dark'],['light','Light']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').innerHTML=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  const f=$('frame');f.className='frame'+(S.phone?' phone':'');f.style.width=(S.phone?390:900)+'px';f.style.setProperty('--p',P().col);
+  f.innerHTML=V[S.v].r();
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='go'){toast(cta().label?cta().label+' opens its own flow':'Nothing to start right now');return}
+  if(a==='item'){toast('Opens the item');return}
+  if(a==='back'){toast('Back to the shelf');return}
+  if(a==='v'){S.v=+arg;S.acc=false}
+  else if(a==='prod'){S.prod=arg;S.tab=null;S.opt=0;S.q=null}
+  else if(a==='state'){S.state=arg;S.tab=null}
+  else if(a==='width')S.phone=arg==='1';
+  else if(a==='theme')S.dark=arg==='dark';
+  else if(a==='tab')S.tab=arg;
+  else if(a==='opt')S.opt=+arg;
+  else if(a==='acc')S.acc=!S.acc;
+  else if(a==='cp')S.c.p=+arg;
+  render();
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.r){S.c[t.dataset.r]=+t.value;
+    const c=S.c,set=(id,x)=>{const n=$(id);if(n)n.textContent=x};
+    if(S.prod==='insure'){set('o1',GHS(c.m)+' a month');set('o2',c.y+' years')}
+    if(S.prod==='invest')set('o1',GHS(c.a));
+    if(S.prod==='loans')set('o1',GHS(c.l));
+    $('calcout').innerHTML=calcRows().map(r=>`<div><span>${r[0]}</span><span class="tab">${r[1]}</span></div>`).join('');
+  }
+  if(t.dataset.q){const v=Number(String(t.value).replace(/[^0-9]/g,''))||0;S.q=v;$('qout').textContent=P().q.out(v)}
+});
+render();
+</script>
+</body>
+</html>

@@ -13,7 +13,7 @@
  */
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AlertCircle, Link2, Plus } from "lucide-react";
+import { AlertCircle, Link2, Plus } from "@/components/ui/icons";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import type { Account } from "@/lib/mock-data";
 import { useLinkedSources } from "@/lib/accounts-store";
@@ -49,7 +49,7 @@ export function WalletTag({ tag }: { tag: OwnWallet["tag"] }) {
           <path d="m9 12 2 2 4-4" stroke="var(--primary-foreground)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       ) : (
-        <Link2 size={14} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+        <Link2 size={14} aria-hidden="true" className="text-muted-foreground" />
       )}
     </span>
   );
@@ -150,7 +150,7 @@ export function OwnWalletPicker({
     <>
       {removedNotice && (
         <p role="status" className="flex items-start gap-2 rounded-xl bg-warning/10 px-3 py-2 text-[13px] text-foreground">
-          <AlertCircle size={15} strokeWidth={1.9} className="mt-0.5 shrink-0 text-warning" aria-hidden="true" />
+          <AlertCircle size={15} className="mt-0.5 shrink-0 text-warning" aria-hidden="true" />
           That {line ? "number" : "wallet"} is no longer linked, so we&apos;ve switched to your registered one. Choose again below.
         </p>
       )}
@@ -201,7 +201,7 @@ export function OwnWalletPicker({
           <SelectItem value={ADD_ANOTHER}>
             <div className="flex items-center gap-2">
               <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-dashed border-border text-muted-foreground">
-                <Plus size={15} strokeWidth={1.8} aria-hidden="true" />
+                <Plus size={15} aria-hidden="true" />
               </span>
               <span className="text-[14px] text-foreground">{line ? "Add another of your numbers" : "Link another wallet"}</span>
             </div>

@@ -77,9 +77,9 @@ export function CancelPolicyFlow({ policyId }: { policyId: string }) {
   const ready = Boolean(reason) && (reason !== "Other" || other.trim().length >= 3);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={{ href: base, label: plan?.name ?? "Policy" }} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <p className="tabular px-1 text-[13px] text-muted-foreground">{`${plan?.name} · ${policy.number}`}</p>
         <FactsPanel rows={consequences} />
         {savings && !withdraw && (
@@ -112,7 +112,7 @@ export function CancelPolicyFlow({ policyId }: { policyId: string }) {
           <Button
             type="button"
             variant="destructive"
-            className="h-11 w-full rounded-2xl text-[16px]"
+            className="h-11 w-full text-[16px]"
             disabled={!ready}
             loading={busy}
             onClick={() => {

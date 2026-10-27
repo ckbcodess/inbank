@@ -30,6 +30,10 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
   - `DetailPageSkeleton`
   - `FormPageSkeleton`
   - `DashboardSkeleton`
+- **Header gap:** `PageHeader` carries `data-page-header`, and `globals.css` gives it a margin of 40px (48px from
+  `sm`) minus the root's gap, so the gap down to the first content is the same on every page. A title row built
+  by hand (flows, card detail, `TransactionList`) or a skeleton's header bones puts `data-page-header` on its row
+  instead. The row must be a direct child of the page's flex column, which uses a `gap-*` step from the scale.
 - **Behavior:**
   - The shell stays put and only the content area swaps.
   - Skeletons copy the page's real structure, so nothing jumps when content arrives.
@@ -80,7 +84,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 - **Structure:** the search field, then one `FilterPanel` button beside it (or on the left, with
   `ExpandableSearch` on the right, when search is the collapsed icon). `AppliedFilters` sits under
   the row and renders nothing until a filter is on.
-  - The search input has a 15px Lucide `Search` icon inside, `pl-8`, and an `aria-label`.
+  - The search input has a 15px `Search` icon inside, `pl-8`, and an `aria-label`.
   - One `FilterGroup[]` per page drives both the panel and the chips. A group is `single` (one
     choice or Any) or `multi` (none means Any). Fields that need more, like a custom date range, go
     in `extra`.
@@ -96,16 +100,21 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 
 ### 5. Detail page
 - **When:** one object (a standing order, card, account, transaction).
-- **Structure, top to bottom:**
-  1. the name, or short name, as the title
-  2. a small purpose line
-  3. the amount, with its cadence underneath
-  4. a short facts panel of label/value rows separated by whitespace
-  5. the actions
+- **Structure, top to bottom** (rule: CONSTITUTION §3; mock-ups in `prototype/product-hub-prototypes.html` and the
+  2026-10-24 chat):
+  1. the name, or short name, as the title (no purpose line unless the title can't explain itself)
+  2. only if the object is a balance (account, wallet, loan, deposit, portfolio): a lead-in phrase over the figure,
+     for example "You owe" over **GHS 1,200**, "Your deposit is worth" over **GHS 20,640**
+  3. label/value rows separated by whitespace or a hairline. With no balance figure, the first row's value is 20px
+     (a policy's Sum assured, a standing order's Amount)
+  4. the actions
 - **Behavior:**
   - Each fact appears once.
-  - A special state replaces the cadence line (for example "Paused. Nothing will be paid until you
-    resume.").
+  - What needs the customer is a row: amber label, first among the rows, with its action as an underlined text link
+    ("2 premiums missed · GHS 16 · Pay now", "Due 28 Oct · GHS 400 · Pay now"). The row replaces the plain one
+    (don't also show "Next payment"). A special state of the whole object (for example "Paused. Nothing will be paid
+    until you resume.") is one row too, not a line under a figure.
+  - Normal status is silent. No "Active" line.
   - A destructive action (Cancel) is filled red; a recoverable one (Pause) is outline.
   - The single-column width is set per page: 440px for cards, 560px for accounts.
 - **Don't:** write a sentence that repeats a panel row, or add tabs that hide the money actions.
@@ -376,6 +385,43 @@ app it is in; the screen that uses it passes where it leads.
 
 When business needs a screen personal banking has (cards, beneficiaries, settings), build it under
 `src/app/business/` from the building blocks. Do not reach into a personal page.
+
+### 24. Product shelf, product page, item (Insure, Invest, Loans)
+- **When:** any area where the bank offers products and the customer can hold several of them.
+- **Shelf** (`InsureHome`, `InvestHome`, `LoansHome`): the products as cards or tiles, identical for every customer.
+  Each carries one quiet line about what the customer holds ("2 policies", "1 deposit · 1 matures soon"), amber when it
+  needs them. A lead figure above the shelf is allowed only for a single balance the customer opens the area to see,
+  and only when there is something to show: Loans has "You owe"; Insure and Invest have none (Invest's total was
+  dropped, since it mixed principal and cost). No list of holdings, no setup prompt.
+- **Product page: two pages, never both** (`PlanPage`, `AdvanceProductPage`, `TermDepositProducts`, `SecurityProducts`). A
+  customer is in one of two situations, so the page is one of two:
+  - **Nothing held under this product (the pitch):** `ProductPitchBody` (`components/insure/ProductPitch.tsx`): a picture
+    (`image` when supplied, else the flat scene from `PlanImage`, shown whole), three benefits one under another (an
+    icon in a disc of the product's colour, a title, a muted line), and the price set into a dashed divider ("From **GHS
+    8.00** a month", "Up to **GHS 20,000.00**", "Rates from **12.5%** a year"). Then the action: one button that names the
+    product (Apply for ...) or, for the gate, Create a Profile. Invest is the variant: its products are three kinds (Term Deposits,
+    Treasury Bills, Bonds) and the instruments sit inside them, so a new investor sees the list of instruments straight
+    away. About is the header chip (below). No details card; the facts are on the About page and in the buy flow's quote.
+  - **One or more held (manage):** only the holdings (what needs the customer first, its problem in amber on the row),
+    with a small action beside the heading (Apply for Another, Open Another, Buy Another), and an About row at the bottom
+    that opens `ProductAboutBody`: the benefits over one list card of facts, price first and larger. Where the action
+    leads to a list (Invest), that list is its own page (`.../open`). However many are held, nothing else moves.
+  The picture's height follows the viewport (22%, 120 to 315px) so the action stays above the fold. Highlights live in
+  `lib/insurance-plans.ts` (plans), `components/loans/AdvanceInfo.tsx` and `lib/product-highlights.ts` (bills, bonds); Term
+  Deposits' come from its offers.
+- **Instrument page (Invest):** pitched like a plan (`OfferDetail`): picture of the kind, three benefits specific to the
+  instrument (rate, dates, how it ends), the worked example on the divider ("GHS 1,000.00 returns ..."), then Invest.
+- **Header:** the back arrow and title sit inside the same centred column as the content, so they line up with it.
+- **Item:** a detail page (§5). Back goes to the product page, not the shelf.
+- **The gate** (insurance profile, securities account, a salary paid into GCB) appears only at the button, never as a
+  prompt on the shelf, and keeps the chosen product: the profile flow takes `?next=` and `?label=`, and Invest stores the
+  intent. Browsing never needs it.
+- **Don't:** list the customer's items on the shelf, repeat a holding on the shelf and the page, or add a second button
+  that opens a list the page could have shown.
+- **Examples:** `components/insure/PlanPage.tsx` is the reference; `components/insure/PlanCards.tsx`
+  (`ProductCard status`) and `components/ui/action-tile.tsx` (`descriptionTone`) carry the status line.
+- **Mock-ups:** `prototype/product-hub-prototypes.html` (the shelf), `prototype/product-page-approaches-prototypes.html`
+  (the page; direction 10).
 
 ## Engineering notes (each one has already caused a bug)
 

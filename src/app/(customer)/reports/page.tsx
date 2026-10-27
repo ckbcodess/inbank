@@ -19,7 +19,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { BarChart3, Download, Search } from "lucide-react";
+import { BarChart3, Download, Search } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -153,7 +153,7 @@ export default function ReportsPage() {
             }`}
           >
             <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-              <BarChart3 size={15} strokeWidth={1.8} aria-hidden="true" />
+              <BarChart3 size={15} aria-hidden="true" />
             </span>
             <span className="mt-2 text-[14px] text-foreground">{r.label}</span>
             <span className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
@@ -176,7 +176,6 @@ export default function ReportsPage() {
             <div className="relative">
               <Search
                 size={15}
-                strokeWidth={1.9}
                 aria-hidden="true"
                 className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
               />
@@ -205,7 +204,7 @@ export default function ReportsPage() {
       <div className="flex items-center justify-between px-1">
         <h2 className="text-[14px] font-medium text-foreground">{active.label}</h2>
         <Button variant="outline" size="sm" onClick={handleExport} disabled={rowCount === 0}>
-          <Download size={14} strokeWidth={1.9} aria-hidden="true" />
+          <Download size={14} aria-hidden="true" />
           Export CSV
         </Button>
       </div>

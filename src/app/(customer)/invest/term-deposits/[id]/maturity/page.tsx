@@ -12,7 +12,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { XCircle } from "lucide-react";
+import { XCircle } from "@/components/ui/icons";
 import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -21,10 +21,10 @@ import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
-import { AuthSummary, INVEST_HOME } from "@/components/invest/parts";
+import { INVEST_HOME } from "@/components/invest/parts";
 import { DEPOSITS_HOME } from "@/components/invest/term-deposit-parts";
 import { formatDate } from "@/lib/mock-data";
-import { DEPOSIT_INSTRUCTIONS, depositInstructionLabel, useDeposit, useTermDeposits, type DepositInstruction } from "@/lib/term-deposits";
+import { DEPOSIT_INSTRUCTIONS, useDeposit, useTermDeposits, type DepositInstruction } from "@/lib/term-deposits";
 
 export default function DepositMaturityPage() {
   const { id } = useParams<{ id: string }>();
@@ -39,7 +39,7 @@ export default function DepositMaturityPage() {
   if (!hydrated) return <FormPageSkeleton fields={2} />;
   if (!d || d.status !== "active") {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="When It Matures" backTo={{ href: INVEST_HOME, label: "Invest" }} />
         <TrueEmptyState
           icon={<XCircle size={22} strokeWidth={1.8} />}
@@ -89,9 +89,9 @@ export default function DepositMaturityPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="When It Matures" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
           {`This deposit matures on ${formatDate(d.maturity)}. Choose what happens then. You can change it any time before.`}
         </p>
@@ -104,7 +104,7 @@ export default function DepositMaturityPage() {
 
         <div>
           <div className="pt-2">
-            <Button type="button" className="h-11 w-full rounded-2xl text-[16px]" disabled={!changed} onClick={apply}>
+            <Button type="button" className="h-11 w-full text-[16px]" disabled={!changed} onClick={apply}>
               Proceed
             </Button>
           </div>
@@ -119,15 +119,6 @@ export default function DepositMaturityPage() {
           setInstruction(d.id, selected);
           setDone(true);
         }}
-        summary={
-          <AuthSummary
-            headline="Change what happens when your term deposit matures"
-            rows={[
-              ["Now", depositInstructionLabel(current)],
-              ["Change to", depositInstructionLabel(selected)],
-            ]}
-          />
-        }
       />
     </div>
   );

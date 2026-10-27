@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { Brush, Check, Copy, Download, RotateCcw, SlidersHorizontal, X } from "lucide-react";
+import { Brush, Check, Copy, Download, RotateCcw, SlidersHorizontal, X } from "@/components/ui/icons";
 import { EAGLE_COLS, EAGLE_HEIGHT_CELLS, EAGLE_PITCH } from "@/lib/eagle-matrix";
 import {
   DEFAULT_EAGLE,
@@ -220,7 +220,7 @@ function DotEditor({ onClose }: { onClose: () => void }) {
               aria-label="Close dot editor"
               className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
             >
-              <X size={16} strokeWidth={1.8} />
+              <X size={16} />
             </button>
           </div>
         </div>
@@ -281,7 +281,7 @@ export default function EagleStudio() {
         onClick={() => setOpen(true)}
         className="fixed bottom-3.5 left-3.5 z-[70] flex h-8 items-center gap-2 rounded-full border border-border bg-card px-3 text-[12px] text-muted-foreground shadow-sm transition-colors hover:text-foreground"
       >
-        <SlidersHorizontal size={15} strokeWidth={1.8} aria-hidden="true" />
+        <SlidersHorizontal size={15} aria-hidden="true" />
         Eagle
       </button>
     );
@@ -298,7 +298,7 @@ export default function EagleStudio() {
             aria-label="Close eagle studio"
             className="flex size-6 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
           >
-            <X size={16} strokeWidth={1.8} />
+            <X size={16} />
           </button>
         </div>
 
@@ -350,7 +350,7 @@ export default function EagleStudio() {
             onClick={() => setPainting(true)}
             className="flex h-8 items-center justify-center gap-2 rounded-lg border border-border text-[12.5px] text-foreground hover:bg-muted"
           >
-            <Brush size={15} strokeWidth={1.8} aria-hidden="true" />
+            <Brush size={15} aria-hidden="true" />
             Paint dots{cfg.edits.length ? ` · ${cfg.edits.length} edited` : ""}
           </button>
         </Group>
@@ -400,7 +400,7 @@ export default function EagleStudio() {
             onClick={copyJson}
             className="flex h-8 flex-1 items-center justify-center gap-2 rounded-lg border border-border text-[12px] text-foreground hover:bg-muted"
           >
-            {copied ? <Check size={15} strokeWidth={1.8} /> : <Copy size={15} strokeWidth={1.8} />}
+            {copied ? <Check size={15} /> : <Copy size={15} />}
             {copied ? "Copied" : "Copy JSON"}
           </button>
           <button
@@ -408,7 +408,7 @@ export default function EagleStudio() {
             onClick={downloadSvg}
             className="flex h-8 flex-1 items-center justify-center gap-2 rounded-lg border border-border text-[12px] text-foreground hover:bg-muted"
           >
-            <Download size={15} strokeWidth={1.8} />
+            <Download size={15} />
             SVG
           </button>
           <button
@@ -418,7 +418,7 @@ export default function EagleStudio() {
             title={`Reset (${DEFAULT_EAGLE.shape} defaults)`}
             className="flex size-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground"
           >
-            <RotateCcw size={15} strokeWidth={1.8} />
+            <RotateCcw size={15} />
           </button>
         </div>
       </div>

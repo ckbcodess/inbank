@@ -7,7 +7,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Landmark } from "lucide-react";
+import { ChevronRight, Landmark } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { TileChip } from "@/components/ui/action-tile";
@@ -64,7 +64,7 @@ export default function BusinessAccountsPage() {
                   className="group flex items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover sm:px-3"
                 >
                   <TileChip tone="onCard">
-                    <Landmark size={20} strokeWidth={1.8} aria-hidden="true" />
+                    <Landmark size={20} aria-hidden="true" />
                   </TileChip>
                   <span className="flex min-w-0 flex-1 flex-col gap-1">
                     <span className="flex flex-wrap items-center gap-2">
@@ -81,7 +81,6 @@ export default function BusinessAccountsPage() {
                   </span>
                   <ChevronRight
                     size={20}
-                    strokeWidth={1.8}
                     aria-hidden="true"
                     className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground"
                   />

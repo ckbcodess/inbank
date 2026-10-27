@@ -22,7 +22,7 @@ import {
   ArrowDownToLine,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
@@ -580,7 +580,7 @@ export default function TransactionList({
       )}
 
       {/* ── Page Header: Title & Export Action (no description underneath) ── */}
-      <div className="flex items-center justify-between gap-2 w-full">
+      <div data-page-header className="flex items-center justify-between gap-2 w-full">
         <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
           Transaction History
         </h1>
@@ -655,7 +655,7 @@ export default function TransactionList({
           description="Activity will appear here once money moves."
           action={
             startHref ? (
-              <Button nativeButton={false} render={<Link href={startHref} />} className="h-8 rounded-lg px-3 text-[13px]">
+              <Button nativeButton={false} render={<Link href={startHref} />} className="h-8 px-3 text-[13px]">
                 Start a transaction
               </Button>
             ) : undefined

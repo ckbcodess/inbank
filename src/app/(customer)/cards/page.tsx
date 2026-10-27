@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Layers, Plus } from "lucide-react";
+import { Layers, Plus } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -425,7 +425,7 @@ function CardsPageContent() {
           title="No cards yet"
           description="Get a virtual card instantly or request a physical one."
           action={
-            <Button nativeButton={false} render={<Link href="/cards/request" />} className="h-8 rounded-lg px-3 text-[13px]">
+            <Button nativeButton={false} render={<Link href="/cards/request" />} className="h-8 px-3 text-[13px]">
               Request a card
             </Button>
           }

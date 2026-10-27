@@ -9,7 +9,7 @@
  * does not import this component at all).
  */
 
-import { Check, ChevronsUpDown, Building2, User } from "lucide-react";
+import { Check, ChevronsUpDown, Building2, User } from "@/components/ui/icons";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -71,7 +71,7 @@ export default function ProfileSwitcher({ profiles, active, onSelect }: ProfileS
         <span className="hidden text-[12px] leading-none text-muted-foreground tabular sm:inline">
           {active.reference}
         </span>
-        <ChevronsUpDown size={13} strokeWidth={1.8} className="text-muted-foreground" />
+        <ChevronsUpDown size={13} className="text-muted-foreground" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="start" className="w-56">
@@ -91,7 +91,7 @@ export default function ProfileSwitcher({ profiles, active, onSelect }: ProfileS
                 </span>
                 <span className="text-[12px] text-muted-foreground tabular">{p.reference}</span>
               </span>
-              {isActive && <Check size={14} strokeWidth={2} className="text-primary" />}
+              {isActive && <Check size={14} className="text-primary" />}
             </DropdownMenuItem>
           );
         })}

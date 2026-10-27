@@ -7,7 +7,7 @@
  */
 
 import Link from "next/link";
-import { TrendingDown, TrendingUp } from "lucide-react";
+import { TrendingDown, TrendingUp } from "@/components/ui/icons";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CurrencyLogo } from "@/components/ui/currency-logo";

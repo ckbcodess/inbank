@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Landmark } from "lucide-react";
+import { Landmark } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 /**
@@ -26,7 +26,7 @@ export function ContextChip({
         className,
       )}
     >
-      {icon && <Landmark size={13} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />}
+      {icon && <Landmark size={13} className="shrink-0" aria-hidden="true" />}
       <span className="truncate">{children}</span>
     </span>
   );

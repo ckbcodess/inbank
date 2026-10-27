@@ -13,7 +13,7 @@
 
 import { AlertToast } from "@/components/ui/alert-toast";
 import { useState } from "react";
-import { PartyPopper } from "lucide-react";
+import { PartyPopper } from "@/components/ui/icons";
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,7 +82,7 @@ export default function ReferralStep({
       {/* Middle area: Centered icon and optional code input */}
       <div className="flex flex-1 flex-col items-center justify-center py-5 my-auto gap-3">
         <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-xs">
-          <PartyPopper size={28} strokeWidth={1.7} aria-hidden="true" />
+          <PartyPopper size={28} aria-hidden="true" />
         </div>
 
         {entering && (
@@ -125,7 +125,7 @@ export default function ReferralStep({
             type="submit"
             disabled={!referrer}
             loading={busy}
-            className="h-9 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+            className="h-9 w-full text-[14px] active:scale-[0.96] transition-transform duration-hover cursor-pointer"
           >
             Apply Code
           </Button>
@@ -134,7 +134,7 @@ export default function ReferralStep({
             type="button"
             disabled={skipping}
             onClick={() => setEntering(true)}
-            className="h-9 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+            className="h-9 w-full text-[14px] active:scale-[0.96] transition-transform duration-hover cursor-pointer"
           >
             Enter Referral Code
           </Button>
@@ -144,7 +144,7 @@ export default function ReferralStep({
           variant="outline"
           disabled={busy || skipping}
           onClick={skip}
-          className="h-9 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+          className="h-9 w-full text-[14px] active:scale-[0.96] transition-transform duration-hover cursor-pointer"
         >
           {skipLabel}
         </Button>

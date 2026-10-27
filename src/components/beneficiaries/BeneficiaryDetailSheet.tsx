@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Check, Copy, Pencil, Send, Smartphone, Trash2, Zap } from "lucide-react";
+import { Check, Copy, Pencil, Send, Smartphone, Trash2, Zap } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetTitle, SheetDescription, SheetCard, SheetRow } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
@@ -131,11 +131,10 @@ export function BeneficiaryDetailSheet({
                 >
                   <span>{identifier}</span>
                   {copied ? (
-                    <Check size={13} strokeWidth={1.8} className="text-success-text" />
+                    <Check size={13} className="text-success-text" />
                   ) : (
                     <Copy
                       size={13}
-                      strokeWidth={1.7}
                       className="text-muted-foreground group-hover:text-foreground transition-colors"
                     />
                   )}

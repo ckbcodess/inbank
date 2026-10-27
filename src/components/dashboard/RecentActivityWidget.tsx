@@ -7,7 +7,7 @@ import {
   RotateCw,
   ArrowDownLeft,
   ArrowUpRight,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { formatMoney, type Transaction } from "@/lib/mock-data";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -185,7 +185,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
             className="inline-flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
           >
             <span>View all</span>
-            <ChevronRight size={13} strokeWidth={1.8} />
+            <ChevronRight size={13} />
           </Link>
         </div>
 
@@ -214,9 +214,9 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                   )}
                 >
                   {isCredit ? (
-                    <ArrowDownLeft className="size-3.5 stroke-[2]" />
+                    <ArrowDownLeft className="size-3.5" />
                   ) : (
-                    <ArrowUpRight className="size-3.5 stroke-[2]" />
+                    <ArrowUpRight className="size-3.5" />
                   )}
                 </div>
 

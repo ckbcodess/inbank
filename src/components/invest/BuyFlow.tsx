@@ -13,20 +13,21 @@
  */
 
 import { useMemo, useState } from "react";
+import { TermsAgreement, TermsHint } from "@/components/ui/terms-agreement";
+import { securityTerms } from "@/lib/terms";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Clock, SearchX } from "lucide-react";
+import { Clock, SearchX } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { SegmentedControl } from "@/components/ui/segmented-control";
 import { InlineError } from "@/components/ui/inline-error";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
-import { AmountInput, FromAccountSelector, InsufficientFundsAlert, ProceedButton } from "@/components/payments/flows/shared";
+import { DualAmountFields, FromAccountSelector, InsufficientFundsAlert, ProceedButton } from "@/components/payments/flows/shared";
 import { ReviewSummary } from "@/components/ui/review-summary";
-import { AccountRequired, AuthSummary, MaturityInstructionField, TREASURY_HOME, INVEST_HOME, PRODUCTS_HREF, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
+import { AccountRequired, MaturityInstructionField, TREASURY_HOME, INVEST_HOME, PRODUCTS_HREF, BILLS_PRODUCTS_HREF, BONDS_PRODUCTS_HREF } from "@/components/invest/parts";
 import { CreateProfileFlow } from "@/components/invest/CreateProfileFlow";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
@@ -34,11 +35,13 @@ import {
   billInterest,
   costFromFace,
   couponPerPeriod,
+  daysBetween,
   faceFromCost,
   findSecurity,
   formatRate,
   instructionLabel,
   kindLabel,
+  MOCK_TODAY,
   useMyTreasury,
   useTreasury,
   useTreasuryAccounts,
@@ -46,15 +49,6 @@ import {
   type MaturityInstructionId,
 } from "@/lib/treasury";
 
-type Basis = "cost" | "face";
-const BASES: readonly { value: Basis; label: string }[] = [
-  { value: "cost", label: "Cost" },
-  { value: "face", label: "Face Value" },
-];
-const BASIS_HINT: Record<Basis, string> = {
-  cost: "Cost is what you pay today, debited from your account.",
-  face: "Face value is what you receive at maturity.",
-};
 
 const asNumber = (v: string) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
 const money = (n: number) => formatMoney(n, "GHS", true);
@@ -72,11 +66,14 @@ export function BuyFlow() {
 
   const [screen, setScreen] = useState<"form" | "review" | "success">("form");
   const [pickedFrom, setPickedFrom] = useState("");
-  const [basis, setBasis] = useState<Basis>("cost");
-  const initialAmount = params.get("amount") || "";
-  const [amount, setAmount] = useState(initialAmount);
+  // Cost and face value are one amount seen two ways, held like the international transfer holds its two:
+  // whichever box was typed in keeps what was typed (`costIn` is "" while face value is the source).
+  const initialCost = params.get("amount") || "";
+  const [costIn, setCostIn] = useState(initialCost);
+  const [faceIn, setFaceIn] = useState(() => (sec && asNumber(initialCost) > 0 ? String(faceFromCost(sec, asNumber(initialCost))) : ""));
   const [instruction, setInstruction] = useState<MaturityInstructionId>("none");
   const [authOpen, setAuthOpen] = useState(false);
+  const [accepted, setAccepted] = useState(false);
   // Set once the customer has just created their securities account here, so its confirmation stays on screen.
   const [profileStarted, setProfileStarted] = useState(false);
 
@@ -88,14 +85,14 @@ export function BuyFlow() {
   }, [pickedFrom, accounts, csd?.linkedAccountId, defaultId]);
   const from = accounts.find((a) => a.id === fromId);
 
-  const backTo = { href: TREASURY_PRODUCTS_HREF, label: "Treasury Bills & Bonds" };
+  const backTo = sec?.kind === "bond" ? { href: BONDS_PRODUCTS_HREF, label: "Bonds" } : { href: BILLS_PRODUCTS_HREF, label: "Treasury Bills" };
 
   if (!hydrated) return <FormPageSkeleton fields={3} />;
 
   if (screen !== "success") {
     if (!sec) {
       return (
-        <div className="flex flex-col gap-6">
+        <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
           <PageHeader title="Buy" backTo={backTo} />
           <TrueEmptyState
             icon={<SearchX size={22} strokeWidth={1.8} />}
@@ -119,7 +116,7 @@ export function BuyFlow() {
     if (csd.status !== "active") return <AccountRequired status={csd.status} title={sec.title} backTo={backTo} />;
     if (!marketOpen) {
       return (
-        <div className="flex flex-col gap-6">
+        <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
           <PageHeader title={sec.title} backTo={backTo} />
           <TrueEmptyState
             icon={<Clock size={22} strokeWidth={1.8} />}
@@ -132,22 +129,17 @@ export function BuyFlow() {
   }
   if (!sec) return null;
 
-  const num = asNumber(amount);
-  const face = basis === "face" ? num : faceFromCost(sec, num);
-  const cost = basis === "cost" ? num : costFromFace(sec, num);
+  const face = asNumber(faceIn);
+  const cost = costIn !== "" ? asNumber(costIn) : costFromFace(sec, face);
   const lot = sec.available;
   const overLot = lot !== undefined && face > lot;
   const overBalance = Boolean(from) && cost > (from?.available ?? 0);
-  const valid = num > 0 && !overLot && !overBalance && Boolean(from);
+  const valid = face > 0 && !overLot && !overBalance && Boolean(from);
   const interest = billInterest(sec.kind, face, cost);
+  // A bond pays its interest every 6 months until it matures, so the face value alone is not what the customer earns.
+  const coupons = sec.kind === "bond" ? Math.max(1, Math.round((daysBetween(sec.settlement ?? MOCK_TODAY, sec.maturity) / 365) * 2)) : 0;
+  const totalInterest = couponPerPeriod(face, sec.rate) * coupons;
   const rateLabel = sec.market === "primary" ? "Indicative rate" : "Rate";
-
-  function changeBasis(next: Basis) {
-    if (next === basis) return;
-    // Keep the numbers true: the amount carries over as what it means in the new basis.
-    if (num > 0) setAmount(String(next === "face" ? faceFromCost(sec!, num) : costFromFace(sec!, num)));
-    setBasis(next);
-  }
 
   function authorised() {
     if (!sec || !from) return;
@@ -186,38 +178,30 @@ export function BuyFlow() {
       ["When it matures", instructionLabel(instruction)],
     ];
     return (
-      <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ href: backTo.href, label: "Buy", onClick: () => setScreen("form") }} />
-        <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
+        <div className="flex flex-col gap-6">
           <ReviewSummary details={rows.map(([label, value]) => ({ label, value }))} total={money(cost)} totalLabel="You pay" />
           {sec.market === "primary" && (
             <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
               The final rate is set at the auction, so what you pay and what you receive can shift slightly.
             </p>
           )}
+          <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject={sec.kind === "bond" ? "bonds" : "treasury bills"} terms={securityTerms(sec.kind, sec.market === "primary")} />
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="h-11 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("form")}>
+            <Button type="button" variant="outline" className="h-11 flex-1 text-[15px]" onClick={() => setScreen("form")}>
               Back to Edit
             </Button>
-            <Button type="button" className="h-11 flex-1 rounded-2xl text-[16px]" onClick={() => setAuthOpen(true)}>
+            <Button type="button" className="h-11 flex-1 text-[16px]" disabled={!accepted} onClick={() => setAuthOpen(true)}>
               Confirm
             </Button>
           </div>
+          <TermsHint agreed={accepted} />
         </div>
         <TransactionOtpModal
           open={authOpen}
           onOpenChange={setAuthOpen}
           onSuccess={authorised}
-          summary={
-            <AuthSummary
-              headline={`Buy ${sec.title}`}
-              amount={money(cost)}
-              rows={[
-                ["From", from ? `${from.name} · ${from.number}` : ""],
-                ["You receive at maturity", `${money(face)} · ${formatDate(sec.maturity)}`],
-              ]}
-            />
-          }
         />
       </div>
     );
@@ -226,17 +210,15 @@ export function BuyFlow() {
   /* ── Form ────────────────────────────────────────────────────────────── */
   const breakdown: Array<[string, string]> = [
     [rateLabel, formatRate(sec.rate)],
-    ["You pay today", money(cost)],
-    ["You receive at maturity", money(face)],
-    ...(sec.kind === "bill" ? ([["Interest earned", money(interest)]] as Array<[string, string]>) : ([["Interest every 6 months", money(couponPerPeriod(face, sec.rate))]] as Array<[string, string]>)),
+    ...(sec.kind === "bill" ? ([["Interest earned", money(interest)]] as Array<[string, string]>) : ([["Interest every 6 months", money(couponPerPeriod(face, sec.rate))], ["Total interest to maturity", money(totalInterest)]] as Array<[string, string]>)),
     [sec.settlement ? "Settles" : "Matures", formatDate(sec.settlement ?? sec.maturity)],
     ...(sec.settlement ? ([["Matures", formatDate(sec.maturity)]] as Array<[string, string]>) : []),
   ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={sec.title} backTo={backTo} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5 animate-in fade-in duration-200">
+      <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         {accounts.length === 0 ? (
           <TrueEmptyState
             title="You don’t have an account to pay from"
@@ -247,24 +229,22 @@ export function BuyFlow() {
             <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} />
 
             <div className="flex flex-col gap-2">
-              <SegmentedControl aria-label="Calculate by" options={BASES} value={basis} onChange={changeBasis} />
-              <p className="px-1 text-[12px] text-muted-foreground">{BASIS_HINT[basis]}</p>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <AmountInput
-                value={amount}
-                onChange={setAmount}
-                label={basis === "cost" ? "Amount to Invest" : "Face Value"}
+              <DualAmountFields
+                foreign={faceIn}
+                ghs={costIn}
+                foreignCurrency="GHS"
+                labels={{ send: "You Pay Today", get: sec.kind === "bond" ? "Face Value (Repaid at Maturity)" : "You Receive at Maturity" }}
+                toForeign={(c) => faceFromCost(sec, c)}
+                toGhs={(f) => costFromFace(sec, f)}
+                onChange={({ foreign, ghs }) => {
+                  setFaceIn(foreign);
+                  setCostIn(ghs);
+                }}
                 hasError={overBalance || overLot}
-                error={
-                  overBalance ? (
-                    <InsufficientFundsAlert />
-                  ) : overLot && lot !== undefined ? (
-                    <InlineError message={`Only ${money(lot)} of face value is on offer.`} className="text-left" />
-                  ) : undefined
-                }
               />
+              {overBalance && <InsufficientFundsAlert />}
+              {overLot && lot !== undefined && <InlineError message={`Only ${money(lot)} of face value is on offer.`} className="text-left" />}
+              <p className="px-1 text-[12px] text-muted-foreground">Type in either one and the other follows. Cost is debited from your account today; {sec.kind === "bond" ? "face value is repaid at maturity, and the interest is paid every 6 months on top." : "face value is what you get at maturity."}</p>
             </div>
 
             {valid && (
@@ -281,12 +261,7 @@ export function BuyFlow() {
               </div>
             )}
 
-            <div>
-              <ProceedButton disabled={!valid} onClick={() => setScreen("review")} />
-              <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">
-                By continuing, you agree to the Terms &amp; Conditions of treasury bills and bonds.
-              </p>
-            </div>
+            <ProceedButton disabled={!valid} onClick={() => setScreen("review")} />
           </>
         )}
       </div>

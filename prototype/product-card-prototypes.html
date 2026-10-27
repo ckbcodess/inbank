@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Product Card: 28 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ink:#0b0b0c;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p,ul{margin:0;padding:0}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;padding:32px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:24px;max-width:100%}
+  .frame h2{font-size:22px;font-weight:500;letter-spacing:-.02em}
+  .grid{display:grid;gap:12px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* the card, and the pieces every look is built from */
+  .c{position:relative;display:flex;flex-direction:column;width:100%;text-align:left;border-radius:20px;overflow:hidden;background:var(--tile);transition:background .15s}
+  .c:hover{background:var(--tileh)}
+  .tx{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .nm{font-size:16px;font-weight:500;letter-spacing:-.01em}
+  .ln{font-size:13px;color:var(--mu);line-height:1.4}
+  .pr{font-size:14px;font-variant-numeric:tabular-nums} .pr .mu{color:var(--mu)}
+  .st{font-size:12px;color:var(--mu);font-variant-numeric:tabular-nums} .st.am{color:var(--amt)}
+  .disc{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--p);color:var(--ink);flex:none}
+  .tint{background:color-mix(in srgb,var(--p) 26%,var(--tile));display:flex;align-items:center;justify-content:center;color:var(--tx)}
+  .chev{color:var(--mu);flex:none}
+
+  .v1{min-height:176px;justify-content:flex-end;padding:24px}
+  .v1 .disc{position:absolute;top:20px;right:20px}
+  .v1 .tx{padding-right:56px}
+
+  .v2 .tint{height:128px} .v2 .tx{padding:20px 24px;min-height:120px}
+
+  .v3{background:var(--p);color:var(--ink);min-height:176px;justify-content:flex-end;padding:24px}
+  .v3:hover{background:var(--p);filter:brightness(1.04)}
+  .v3 .disc{position:absolute;top:20px;right:20px;background:rgba(0,0,0,.12)}
+  .v3 .tx{padding-right:56px} .v3 .ln,.v3 .st,.v3 .pr .mu{color:rgba(0,0,0,.62)} .v3 .st.am{color:#5b3a00;font-weight:500}
+
+  .v4{flex-direction:row;align-items:center;gap:16px;padding:16px 20px;min-height:84px}
+  .v4 .tx{flex:1}
+
+  .v5{padding:20px;gap:20px;min-height:176px}
+  .v5 .tint{width:48px;height:48px;border-radius:14px}
+
+  .v6{background:transparent;border:1px solid var(--bd);padding:20px;gap:16px;min-height:176px}
+  .v6:hover{background:var(--tile)}
+
+  .v7{background:color-mix(in srgb,var(--p) 16%,var(--surf));padding:24px;min-height:176px;justify-content:space-between}
+  .v7:hover{background:color-mix(in srgb,var(--p) 22%,var(--surf))}
+
+  .v8{padding:20px;min-height:176px;justify-content:space-between}
+  .v8 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+
+  .v9{padding:24px 24px 28px;min-height:160px;justify-content:flex-end}
+  .v9::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--p)}
+  .v9 .head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+
+  .v10{flex-direction:row;min-height:104px}
+  .v10 .tint{width:104px;flex:none} .v10 .tx{padding:20px;flex:1;justify-content:center}
+  .v10 .chev{align-self:center;margin-right:16px}
+
+  .v11{padding:24px;min-height:152px;justify-content:flex-end}
+  .v11 .head{display:flex;align-items:center;gap:10px}
+  .v11 .dot{width:10px;height:10px;border-radius:50%;background:var(--p);flex:none}
+
+  .v12{padding:20px 24px;min-height:176px;justify-content:space-between}
+  .v12 .big{font-size:24px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+  .v12 .big .mu{color:var(--mu);font-size:14px;letter-spacing:0}
+
+  .v13{padding:24px;min-height:176px;justify-content:flex-start}
+  .v13 .mark{position:absolute;right:-18px;bottom:-22px;color:var(--p);opacity:.38}
+
+  .v14 .scene{height:120px;background:color-mix(in srgb,var(--p) 24%,var(--tile));position:relative}
+  .v14 .tx{padding:20px 24px;min-height:120px}
+
+  .v15 .top{background:var(--p);color:var(--ink);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;min-height:68px}
+  .v15 .tx{padding:20px 24px;min-height:108px}
+
+  .v17{align-items:center;text-align:center;padding:24px 12px;gap:12px;min-height:176px;justify-content:center}
+  .v17 .tx{align-items:center}
+
+  .v18{padding:20px;min-height:176px;justify-content:space-between}
+  .v18 .top{display:flex;justify-content:space-between;align-items:flex-start}
+
+  .v19{flex-direction:row;align-items:center;gap:20px;padding:20px 24px;min-height:96px}
+  .v19 .tx{flex:1} .v19 .end{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+
+  .v20{padding:0;min-height:176px}
+  .v20::before{content:"";display:block;height:6px;background:var(--p)}
+  .v20 .in{padding:20px 24px;display:flex;flex-direction:column;gap:12px;flex:1;justify-content:space-between}
+  .v20 .head{display:flex;align-items:center;gap:12px}
+
+  /* 21-28: status in the corner (8) crossed with the cropped icon (13) */
+  .m{position:absolute;pointer-events:none;color:var(--p)}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;position:relative;z-index:1}
+  .v21,.v22,.v23,.v24,.v25,.v27,.v28{padding:20px 24px;min-height:184px;justify-content:space-between}
+  .v21 .tx,.v22 .tx,.v23 .tx,.v24 .tx,.v25 .tx,.v28 .tx{max-width:64%;position:relative;z-index:1}
+  .v21 .m,.v22 .m,.v24 .m,.v25 .m,.v28 .m{right:-14px;bottom:-24px;opacity:.4}
+  .v23 .m{right:-18px;top:-26px;opacity:.4}
+  .v23{justify-content:flex-end}
+  .v24{background:color-mix(in srgb,var(--p) 14%,var(--surf))} .v24:hover{background:color-mix(in srgb,var(--p) 20%,var(--surf))}
+  .v24 .m{opacity:.5}
+  .v25 .m{color:var(--tx);opacity:.08}
+  .v25 .dot{width:10px;height:10px;border-radius:50%;background:var(--p);flex:none}
+  .v25 .top{justify-content:flex-start}
+  .v26{flex-direction:row;align-items:center;min-height:132px;padding:20px 24px}
+  .v26 .tx{max-width:60%;position:relative;z-index:1}
+  .v26 .m{right:-10px;top:50%;transform:translateY(-50%);opacity:.4}
+  .v27{justify-content:flex-start}
+  .v27 .tx{max-width:70%;position:relative;z-index:1}
+  .v27 .m{right:12px;bottom:-44px;opacity:.5}
+  .v28{background:var(--p);color:var(--ink)} .v28:hover{background:var(--p);filter:brightness(1.04)}
+  .v28 .ln,.v28 .st,.v28 .pr .mu{color:rgba(0,0,0,.62)} .v28 .st.am{color:#5b3a00;font-weight:500}
+  .v28 .m{color:#000;opacity:.12} .v28 .disc{background:rgba(0,0,0,.12)}
+  .lst{border:1px solid var(--bd);border-radius:20px;overflow:hidden;background:var(--tile)}
+  .v16{border-radius:0;flex-direction:row;align-items:center;gap:16px;padding:16px 20px;min-height:76px;background:transparent}
+  .v16:hover{background:var(--tileh)} .v16 .tx{flex:1}
+  .v16+.v16{border-top:1px solid var(--bd)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Product card · 28 looks · every one is the same size across Insure, Invest and Loans, with one quiet line</h1>
+    <div class="ctrls">
+      <div class="seg" id="prodsel"></div>
+      <div class="seg" id="statesel"></div>
+      <div class="seg" id="pricesel"></div>
+      <div class="seg" id="widthsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage"><div class="frame" id="frame"></div></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+ ce:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+ hc:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+ wm:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+ up:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/>',
+ td:'<path d="M4 11h13a3 3 0 013 3v2a3 3 0 01-3 3H8a4 4 0 01-4-4z"/><path d="M20 12l1-2"/><circle cx="16" cy="14" r=".6"/><path d="M8 11V8a2 2 0 014 0v3"/>',
+ tb:'<path d="M4 20h16M6 20V10M10 20V10M14 20V10M18 20V10M3 10l9-6 9 6"/>',
+ sa:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5c0-1 1-1.5 2.5-1.5s2.5.6 2.5 1.6-1 1.4-2.5 1.9-2.5.9-2.5 1.9 1 1.6 2.5 1.6 2.5-.5 2.5-1.5"/>'
+};
+const arrow=svg('<path d="M7 17L17 7M9 7h8v8"/>',18,1.6);
+const chevR=svg('<path d="M9 6l6 6-6 6"/>',18,1.8);
+
+const DATA={
+ insure:[
+  {id:'ce',name:'Child Education Plan',col:'#3b82f6',line:'Save for school fees, with cover',pre:'From',amt:'GHS 50.00',unit:'a month'},
+  {id:'hc',name:'HomeCall Plan',col:'#ea580c',line:'Help your family with funeral costs',pre:'From',amt:'GHS 8.00',unit:'a month'},
+  {id:'wm',name:'WealthMaster Plan',col:'#d97706',line:'Save and grow a lump sum',pre:'From',amt:'GHS 50.00',unit:'a month'},
+  {id:'up',name:'Ultimate Protection Plan',col:'#db2777',line:'Keep an income if illness stops you working',pre:'From',amt:'GHS 40.50',unit:'a month'}],
+ invest:[
+  {id:'td',name:'Term Deposits',col:'#0d9488',line:'Lock money away at a fixed rate'},
+  {id:'tb',name:'Treasury Bills & Bonds',col:'#4f46e5',line:'Lend to the government for a fixed period'}],
+ loans:[
+  {id:'sa',name:'Salary Advance',col:'#16a34a',pre:'Up to',amt:'GHS 20,000.00',loan:true}]
+};
+const STATUS={
+ insure:{holds:{hc:['1 policy'],wm:['2 policies']},attention:{hc:['1 policy · 1 needs attention',1],wm:['2 policies']}},
+ invest:{holds:{td:['1 deposit'],tb:['2 holdings']},attention:{td:['1 deposit · 1 matures soon',1],tb:['2 holdings']}},
+ loans:{holds:{sa:['1 loan']},attention:{sa:['1 loan · payment overdue',1]}}
+};
+const PRODS=[['insure','Insure'],['invest','Invest'],['loans','Loans']];
+const STATES=[['none','Nothing held'],['holds','Holds some'],['attention','Needs attention']];
+const S={v:1,prod:'insure',state:'holds',price:false,phone:false,dark:false};
+
+/* ---- pieces ---- */
+function stat(it){const s=(STATUS[S.prod][S.state]||{})[it.id];return s?{t:s[0],a:!!s[1]}:null}
+const showPrice=it=>Boolean(it.amt)&&(it.loan||S.price);
+const P={
+ nm:it=>`<span class="nm">${it.name}</span>`,
+ ln:it=>(!stat(it)&&it.line)?`<span class="ln">${it.line}</span>`:'',
+ pr:it=>showPrice(it)?`<span class="pr"><span class="mu">${it.pre} </span>${it.amt}${it.unit?` <span class="mu">${it.unit}</span>`:''}</span>`:'',
+ st:it=>{const s=stat(it);return s?`<span class="st ${s.a?'am':''}">${s.t}</span>`:''},
+ tx:it=>`<span class="tx">${P.nm(it)}${P.ln(it)}${P.pr(it)}${P.st(it)}</span>`,
+ ic:(it,s)=>svg(IC[it.id],s,1.7),
+ disc:(it,s=44)=>`<span class="disc" style="width:${s}px;height:${s}px">${svg(IC[it.id],Math.round(s*.45),1.7)}</span>`
+};
+const card=(it,cls,inner)=>`<button class="c ${cls}" style="--p:${it.col}" data-a="open">${inner}</button>`;
+
+/* ---- the 20 looks ---- */
+const V={};
+V[1]={name:'1. Plain tile',note:'What the app has now: a quiet tile, the product’s disc at the corner, text at the bottom. The calmest baseline.',cols:2,
+ card:it=>card(it,'v1',`${P.disc(it,48)}${P.tx(it)}`)};
+V[2]={name:'2. Tinted header',note:'A band in the product’s colour holds the icon, text sits below. The app’s “art” look. Strongest identity per card, and the tallest.',cols:2,
+ card:it=>card(it,'v2',`<span class="tint">${P.ic(it,44)}</span>${P.tx(it)}`)};
+V[3]={name:'3. Colour fill',note:'The whole card is the product’s colour with dark text. Loudest. Works only with a small palette, and the amber status needs a different treatment on colour.',cols:2,
+ card:it=>card(it,'v3',`${P.disc(it,48)}${P.tx(it)}`)};
+V[4]={name:'4. Row',note:'One card per row: disc, text, chevron. Reads like a list and is the lightest on height. Best when there are only a few products.',cols:1,
+ card:it=>card(it,'v4',`${P.disc(it,44)}${P.tx(it)}<span class="chev">${chevR}</span>`)};
+V[5]={name:'5. Icon square',note:'A small tinted square carries the icon at the top left; the text starts below it. Tidy and left-aligned, with no corner element to collide with text.',cols:2,
+ card:it=>card(it,'v5',`<span class="tint">${P.ic(it,24)}</span>${P.tx(it)}`)};
+V[6]={name:'6. Outline',note:'No fill, a hairline border, the disc inline. Quietest on a white page, but the card edge is faint in light mode.',cols:2,
+ card:it=>card(it,'v6',`${P.disc(it,40)}${P.tx(it)}`)};
+V[7]={name:'7. Tinted card',note:'The whole card is a soft wash of the product’s colour with a bare icon, no disc. Colour without the heaviness of a fill.',cols:2,
+ card:it=>card(it,'v7',`<span style="color:var(--p)">${P.ic(it,32)}</span>${P.tx(it)}`)};
+V[8]={name:'8. Status in the corner',note:'The status line moves to the top right, so the bottom of the card holds only the name and price. The status reads first, which suits “needs attention”.',cols:2,
+ card:it=>{const s=stat(it);return card(it,'v8',`<span class="top">${P.disc(it,40)}${s?`<span class="st ${s.a?'am':''}">${s.t}</span>`:''}</span><span class="tx">${P.nm(it)}${P.ln(it)}${P.pr(it)}</span>`)}};
+V[9]={name:'9. Colour bar',note:'A plain tile with the product’s colour as a bar along the bottom edge and a small icon beside the name. Colour as an identifier, not decoration.',cols:2,
+ card:it=>card(it,'v9',`<span class="head"><span style="color:var(--p)">${P.ic(it,22)}</span>${P.nm(it)}</span><span class="tx">${P.ln(it)}${P.pr(it)}${P.st(it)}</span>`)};
+V[10]={name:'10. Side image',note:'A tinted block with the icon on the left, text on the right, one per row. A compact version of the tinted header.',cols:1,
+ card:it=>card(it,'v10',`<span class="tint">${P.ic(it,36)}</span>${P.tx(it)}<span class="chev">${chevR}</span>`)};
+V[11]={name:'11. Text only',note:'No icon. A colour dot before the name is the only mark. The most minimal: the card is just words, so it relies on the name being enough.',cols:2,
+ card:it=>card(it,'v11',`<span class="head"><span class="dot"></span>${P.nm(it)}</span><span class="tx" style="margin-top:6px">${P.ln(it)}${P.pr(it)}${P.st(it)}</span>`)};
+V[12]={name:'12. Price first',note:'The price or the descriptor leads in large type; the name is small. Good where the amount is the decision (Loans, Insure), weak for Invest where there is none.',cols:2,
+ card:it=>{const big=showPrice(it)?`<span class="big"><span class="mu">${it.pre} </span>${it.amt}</span>`:(stat(it)?`<span class="big">${stat(it).t.split(' · ')[0]}</span>`:`<span class="ln" style="font-size:15px;color:var(--tx)">${it.line||''}</span>`);
+  return card(it,'v12',`<span style="display:flex;align-items:center;gap:10px">${P.disc(it,32)}<span class="nm" style="font-size:14px">${it.name}</span></span><span class="tx">${big}${stat(it)&&stat(it).a?`<span class="st am">${stat(it).t.split(' · ').slice(1).join(' · ')}</span>`:''}</span>`)}};
+V[13]={name:'13. Watermark icon',note:'A large faded icon cropped in the corner with text top left. Adds personality with no extra element, but it is decoration, so it fails our own rule.',cols:2,
+ card:it=>card(it,'v13',`${P.tx(it)}<span class="mark">${svg(IC[it.id],150,1.2)}</span>`)};
+V[14]={name:'14. Scene header',note:'A flat scene of simple shapes in the product’s colour on top, in place of an icon. Needs a drawing per product; fine for four plans, heavy for many.',cols:2,
+ card:it=>card(it,'v14',`<span class="scene"><svg viewBox="0 0 320 120" preserveAspectRatio="xMidYMax slice" style="position:absolute;inset:0;width:100%;height:100%" aria-hidden="true"><rect x="0" y="108" width="320" height="2" fill="currentColor" opacity=".15"/><circle cx="110" cy="72" r="26" fill="var(--p)"/><rect x="146" y="46" width="64" height="62" rx="8" fill="var(--tx)" opacity=".85"/><rect x="214" y="70" width="44" height="38" rx="8" fill="var(--p)" opacity=".7"/></svg></span>${P.tx(it)}`)};
+V[15]={name:'15. Solid top',note:'A short solid band in the product’s colour with the icon, then a plain body. Colour and a calm body, less tall than the tinted header.',cols:2,
+ card:it=>card(it,'v15',`<span class="top">${P.ic(it,28)}</span>${P.tx(it)}`)};
+V[16]={name:'16. One list card',note:'All the products in one rounded box, separated by hairlines. No cards at all, so it matches the app’s lists. Only sensible for a short shelf.',cols:1,
+ card:it=>card(it,'v16',`${P.disc(it,40)}${P.tx(it)}<span class="chev">${chevR}</span>`),
+ wrap:h=>`<div class="lst">${h}</div>`};
+V[17]={name:'17. App tile',note:'A square tile with the icon centred and the name beneath, like an app icon. Fits four across, so a long shelf stays short. Little room for a status.',cols:4,pcols:2,
+ card:it=>card(it,'v17',`${P.disc(it,56)}<span class="tx">${P.nm(it)}${P.pr(it)}${P.st(it)}</span>`)};
+V[18]={name:'18. Corner arrow',note:'A disc top left and an up-right arrow top right, text at the bottom. The arrow says “opens a page”, which the plain tile leaves implied.',cols:2,
+ card:it=>card(it,'v18',`<span class="top">${P.disc(it,40)}<span class="chev">${arrow}</span></span>${P.tx(it)}`)};
+V[19]={name:'19. Banner',note:'A wide row: disc and name on the left, price and status stacked on the right. Puts the numbers where the eye ends, good on desktop.',cols:1,
+ card:it=>card(it,'v19',`${P.disc(it,48)}<span class="tx">${P.nm(it)}${P.ln(it)}</span><span class="end">${P.pr(it)}${P.st(it)}</span><span class="chev">${chevR}</span>`)};
+V[20]={name:'20. Header strip',note:'A thin colour strip on the top edge, the icon beside the name. The lightest touch of colour that still tells the products apart.',cols:2,
+ card:it=>card(it,'v20',`<span class="in"><span class="head"><span style="color:var(--p)">${P.ic(it,26)}</span>${P.nm(it)}</span><span class="tx">${P.ln(it)}${P.pr(it)}${P.st(it)}</span></span>`)};
+
+/* ---- 21-28: status in the corner crossed with the cropped icon ---- */
+const mark=(it,s=150)=>`<span class="m">${svg(IC[it.id],s,1.2)}</span>`;
+const stR=it=>{const s=stat(it);return s?`<span class="st ${s.a?'am':''}">${s.t}</span>`:''};
+const body3=it=>`<span class="tx">${P.nm(it)}${P.ln(it)}${P.pr(it)}</span>`;
+V[21]={name:'21. Corner status + watermark',note:'8 and 13 straight: disc and status along the top, name and price bottom left, the icon cropped bottom right. The icon appears twice, once small and once large.',cols:2,
+ card:it=>card(it,'v21',`<span class="top">${P.disc(it,40)}${stR(it)}</span>${body3(it)}${mark(it)}`)};
+V[22]={name:'22. Status top, no disc',note:'The watermark carries the icon, so the disc goes. Status top left, name and price bottom left. The icon appears once, which is calmer.',cols:2,
+ card:it=>card(it,'v22',`<span class="top">${stR(it)||'<span></span>'}</span>${body3(it)}${mark(it)}`)};
+V[23]={name:'23. Watermark top right',note:'The icon crops off the top right corner and everything else sits bottom left, status included. The text and the icon never share a row, so nothing can collide.',cols:2,
+ card:it=>card(it,'v23',`<span class="tx">${P.nm(it)}${P.ln(it)}${P.pr(it)}${P.st(it)}</span>${mark(it)}`)};
+V[24]={name:'24. Tinted card + watermark',note:'A soft wash of the product’s colour on the whole card, the icon cropped in a stronger tone, status along the top. Colour without a solid fill.',cols:2,
+ card:it=>card(it,'v24',`<span class="top">${stR(it)||'<span></span>'}</span>${body3(it)}${mark(it)}`)};
+V[25]={name:'25. Neutral outline mark',note:'The watermark is a faint ink outline instead of colour, and the product’s colour shrinks to one dot beside the status. The most restrained take on 13.',cols:2,
+ card:it=>card(it,'v25',`<span class="top"><span class="dot"></span>${stR(it)}</span>${body3(it)}${mark(it)}`)};
+V[26]={name:'26. Wide, mark on the right',note:'One card per row, status above the name, the icon large and cropped on the right edge. Suits a short shelf such as Invest or Loans.',cols:1,
+ card:it=>card(it,'v26',`<span class="tx">${stR(it)}${P.nm(it)}${P.ln(it)}${P.pr(it)}</span>${mark(it,170)}`)};
+V[27]={name:'27. Rising icon',note:'Text stacked at the top, the icon rising from the bottom edge and cut off by it. Reads as a picture in the card’s lower half.',cols:2,
+ card:it=>card(it,'v27',`<span class="tx">${P.nm(it)}${P.ln(it)}${P.pr(it)}${P.st(it)}</span>${mark(it,130)}`)};
+V[28]={name:'28. Colour fill + watermark',note:'The bold version: the card in the product’s colour, a darker icon cropped in the corner, disc and status along the top. Loud, so best with few products.',cols:2,
+ card:it=>card(it,'v28',`<span class="top">${P.disc(it,40)}${stR(it)}</span>${body3(it)}${mark(it)}`)};
+
+/* ---- chrome ---- */
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('prodsel',PRODS,S.prod,'prod');
+  seg('statesel',STATES,S.state,'state');
+  seg('pricesel',[[0,'Price off'],[1,'Price on']],S.price?1:0,'price');
+  seg('widthsel',[[0,'Desktop'],[1,'Phone']],S.phone?1:0,'width');
+  seg('themesel',[['light','Light'],['dark','Dark']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  const v=V[S.v],items=DATA[S.prod],w=S.phone?390:720;
+  const cols=S.phone?(v.pcols||1):(v.cols||2);
+  const cards=items.map(v.card).join('');
+  const body=v.wrap?v.wrap(cards):`<div class="grid" style="grid-template-columns:repeat(${cols},minmax(0,1fr))">${cards}</div>`;
+  const title=PRODS.find(p=>p[0]===S.prod)[1];
+  $('frame').style.width=(w+64)+'px';
+  $('frame').innerHTML=`<h2>${title}</h2>${body}`;
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='open'){toast('Opens the product page');return}
+  if(a==='v')S.v=+arg;
+  else if(a==='prod')S.prod=arg;
+  else if(a==='state')S.state=arg;
+  else if(a==='price')S.price=arg==='1';
+  else if(a==='width')S.phone=arg==='1';
+  else if(a==='theme')S.dark=arg==='dark';
+  render();
+});
+render();
+</script>
+</body>
+</html>

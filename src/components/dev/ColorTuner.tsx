@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
-import { Copy, Crosshair, Palette, RotateCcw, Search } from "lucide-react";
+import { Copy, Crosshair, Palette, RotateCcw, Search } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useCaptureMode } from "@/lib/capture-mode";
@@ -79,7 +79,7 @@ function ColorTunerInner() {
           open ? "border-transparent bg-primary text-primary-foreground hover:bg-primary-hover" : "border-border bg-card text-foreground hover:bg-muted",
         )}
       >
-        <Palette size={18} strokeWidth={1.8} />
+        <Palette size={18} />
       </button>
     </div>
   );
@@ -159,7 +159,7 @@ function TunerPanel() {
       </div>
 
       <label className="relative block">
-        <Search size={14} strokeWidth={1.8} className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+        <Search size={14} className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <input
           type="search"
           value={query}
@@ -207,7 +207,7 @@ function TunerPanel() {
           disabled={changedCount === 0}
           className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-border px-2 py-2 text-[13px] text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <RotateCcw size={15} strokeWidth={1.8} />
+          <RotateCcw size={15} />
           Reset all
         </button>
         <button
@@ -215,7 +215,7 @@ function TunerPanel() {
           onClick={copy}
           className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-2 py-2 text-[13px] text-primary-foreground transition-colors hover:bg-primary-hover"
         >
-          <Copy size={15} strokeWidth={1.8} />
+          <Copy size={15} />
           Copy CSS
         </button>
       </div>
@@ -262,7 +262,7 @@ function ColorRow({
         >
           <span className={cn("truncate text-[12.5px]", changed ? "text-foreground" : "text-muted-foreground")}>{label}</span>
           <span className="flex items-center gap-1 truncate text-[11px] text-muted-foreground/70">
-            <Crosshair size={10} strokeWidth={1.8} aria-hidden="true" />--{token}
+            <Crosshair size={10} aria-hidden="true" />--{token}
           </span>
         </button>
         <span className="flex shrink-0 items-center gap-2">
@@ -273,7 +273,7 @@ function ColorRow({
               aria-label={`Reset ${label}`}
               className="flex size-5 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              <RotateCcw size={13} strokeWidth={1.8} aria-hidden="true" />
+              <RotateCcw size={13} aria-hidden="true" />
             </button>
           )}
           <input

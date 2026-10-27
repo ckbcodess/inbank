@@ -4,7 +4,7 @@ import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 
 import { cn } from "@/lib/utils"
-import { ChevronDown, X } from "lucide-react"
+import { ChevronDown, X } from "@/components/ui/icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Tick02Icon, ArrowUp01Icon, ArrowDown01Icon } from "@hugeicons/core-free-icons"
 
@@ -150,13 +150,13 @@ function SelectTrigger({
             }}
             className="pointer-events-auto flex size-3.5 items-center justify-center rounded-full text-muted-foreground/75 hover:bg-foreground/15 hover:text-foreground active:scale-[0.92] transition-colors cursor-pointer"
           >
-            <X size={12} strokeWidth={2.2} />
+            <X size={12} />
           </span>
         )}
         {!hideChevron && (
           <SelectPrimitive.Icon
             render={
-              <ChevronDown className="pointer-events-none size-3 text-muted-foreground shrink-0 stroke-[1.75]" />
+              <ChevronDown className="pointer-events-none size-3 text-muted-foreground shrink-0" />
             }
           />
         )}

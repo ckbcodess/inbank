@@ -7,7 +7,7 @@ import {
   ReceiptText,
   Repeat,
   RotateCcw,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -397,7 +397,7 @@ export function PaymentSuccessScreen({
           aria-label="Replay animation"
           className="absolute right-1 top-1 z-30 flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-2 py-2 text-[12px] text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
         >
-          <RotateCcw size={13} strokeWidth={1.8} />
+          <RotateCcw size={13} />
           <span>Replay</span>
         </button>
       )}

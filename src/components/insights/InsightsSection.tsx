@@ -16,7 +16,7 @@
 
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useMemo, useState } from "react";
-import { PieChart, TrendingDown, TrendingUp } from "lucide-react";
+import { PieChart, TrendingDown, TrendingUp } from "@/components/ui/icons";
 import {
   GRAIN_LABEL,
   cashflowSeries,
@@ -212,7 +212,7 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
         <div className="rounded-2xl border border-border bg-card p-4">
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-[14px] text-foreground">Spending by category</h3>
-            <PieChart size={15} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+            <PieChart size={15} aria-hidden="true" className="text-muted-foreground" />
           </div>
           <div className="mt-3">
             <SpendByCategory slices={slices} />

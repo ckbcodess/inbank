@@ -9,7 +9,7 @@ import {
   Phone,
   Search,
   X,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Input } from "@/components/ui/input";
 import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
@@ -362,7 +362,7 @@ export default function LocateUsPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-[12.5px] font-medium text-primary hover:underline"
                   >
-                    <Navigation size={13} strokeWidth={2} />
+                    <Navigation size={13} />
                     <span>Get Directions</span>
                     <ExternalLink size={11} className="opacity-70" />
                   </a>

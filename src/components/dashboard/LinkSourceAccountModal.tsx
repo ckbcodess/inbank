@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   Smartphone,
   Wallet,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -378,7 +378,7 @@ export default function LinkSourceAccountModal({
                     className="flex size-6 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
                     aria-label="Back"
                   >
-                    <ChevronLeft size={18} strokeWidth={2} />
+                    <ChevronLeft size={18} />
                   </button>
                 )}
               <DialogTitle>
@@ -535,7 +535,7 @@ export default function LinkSourceAccountModal({
             {screen === "internal_success" && (
               <div className="flex flex-col items-center gap-3 text-center py-2">
                 <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success-text">
-                  <CheckCircle2 size={32} strokeWidth={1.8} />
+                  <CheckCircle2 size={32} />
                 </div>
 
                 <div className="flex flex-col gap-1">
@@ -649,7 +649,7 @@ export default function LinkSourceAccountModal({
             {screen === "momo_waiting" && (
               <div className="flex flex-col items-center gap-3 text-center py-2">
                 <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground animate-pulse">
-                  <Smartphone size={28} strokeWidth={1.8} />
+                  <Smartphone size={28} />
                 </div>
 
                 <div className="flex flex-col gap-1">
@@ -669,7 +669,7 @@ export default function LinkSourceAccountModal({
             {screen === "funding_success" && (
               <div className="flex flex-col items-center gap-3 text-center py-2">
                 <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success-text">
-                  <CheckCircle2 size={32} strokeWidth={1.8} />
+                  <CheckCircle2 size={32} />
                 </div>
 
                 <div className="flex flex-col gap-1">
@@ -772,7 +772,7 @@ export default function LinkSourceAccountModal({
             {screen === "link_momo_pending" && (
               <div className="flex flex-col items-center gap-3 text-center py-2">
                 <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground animate-pulse">
-                  <Smartphone size={28} strokeWidth={1.8} aria-hidden="true" />
+                  <Smartphone size={28} aria-hidden="true" />
                 </div>
 
                 <div className="flex flex-col gap-2" role="status">
@@ -842,7 +842,7 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <p className="flex items-start gap-2 text-[12px] leading-relaxed text-muted-foreground">
-                  <ShieldCheck size={14} strokeWidth={1.8} className="mt-0.5 shrink-0" aria-hidden="true" />
+                  <ShieldCheck size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
                   Your bank will ask you to confirm it&apos;s you, then bring you back here.
                 </p>
               </form>

@@ -26,7 +26,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CheckCircle2, Landmark, ScanFace } from "lucide-react";
+import { CheckCircle2, Landmark, ScanFace } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
 import AuthLayout from "@/components/auth/AuthLayout";

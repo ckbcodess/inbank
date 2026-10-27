@@ -10,7 +10,7 @@ import {
   Landmark,
   Smartphone,
   X,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import { Button } from "@/components/ui/button";
@@ -296,14 +296,14 @@ export default function CreateGroupFlow({
       {/* ────────────────────────────────────────────────────────────────────────── */}
       {/* HEADER: Inline Back Chevron + Screen Title matching Figma mockups          */}
       {/* ────────────────────────────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-2">
+      <div data-page-header className="flex items-center gap-2">
         <button
           type="button"
           onClick={handleBack}
           className="flex size-7 items-center justify-center rounded-lg text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
           aria-label="Back"
         >
-          <ChevronLeft size={20} strokeWidth={2} />
+          <ChevronLeft size={20} />
         </button>
         <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
           {step === 1 ? "Select group members" : "Select the amount per person"}
@@ -358,7 +358,7 @@ export default function CreateGroupFlow({
                 onClick={() => setShowNewContact(!showNewContact)}
                 className="text-[13px] text-foreground hover:underline cursor-pointer flex items-center gap-1 font-medium transition-colors"
               >
-                <Plus size={14} strokeWidth={2} /> New contact
+                <Plus size={14} /> New contact
               </button>
             </div>
 
@@ -456,7 +456,7 @@ export default function CreateGroupFlow({
                       type="button"
                       size="sm"
                       onClick={handleAddCustomContact}
-                      className="h-8 px-3 rounded-xl text-[13px] bg-primary text-primary-foreground font-normal cursor-pointer"
+                      className="h-8 px-3 text-[13px] bg-primary text-primary-foreground font-normal cursor-pointer"
                     >
                       Add Member
                     </Button>
@@ -508,9 +508,9 @@ export default function CreateGroupFlow({
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/70 text-foreground">
                         {contact.type === "wallet" ? (
-                          <Smartphone size={18} strokeWidth={1.8} />
+                          <Smartphone size={18} />
                         ) : (
-                          <Landmark size={18} strokeWidth={1.8} />
+                          <Landmark size={18} />
                         )}
                       </div>
                       <div className="flex flex-col min-w-0">
@@ -532,7 +532,7 @@ export default function CreateGroupFlow({
                           : "border-muted-foreground/30 bg-transparent"
                       )}
                     >
-                      {isSelected && <Check size={11} strokeWidth={2.4} className="shrink-0" />}
+                      {isSelected && <Check size={11} className="shrink-0" />}
                     </div>
                   </div>
                 );
@@ -650,7 +650,7 @@ export default function CreateGroupFlow({
               type="button"
               disabled={totalAmount <= 0}
               onClick={handleCreateGroup}
-              className="flex-1 h-10 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-normal text-[14.5px] cursor-pointer shadow-xs disabled:opacity-50"
+              className="flex-1 h-10 bg-primary hover:bg-primary-hover text-primary-foreground font-normal text-[14.5px] cursor-pointer shadow-xs disabled:opacity-50"
             >
               Create Group
             </Button>

@@ -11,7 +11,7 @@
 
 import { Fact } from "@/components/ui/fact";
 import { useState, use } from "react";
-import { AlertTriangle, Eye } from "lucide-react";
+import { AlertTriangle, Eye } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
@@ -68,7 +68,7 @@ export default function OpsTransactionDetailsPage({ params }: { params: Promise<
 
       {/* View-only indicator — the defining constraint of this variant */}
       <div className="flex items-start gap-2 rounded-2xl border border-border bg-muted/40 p-3">
-        <Eye size={16} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-muted-foreground" />
+        <Eye size={16} aria-hidden="true" className="mt-px shrink-0 text-muted-foreground" />
         <p className="text-[13px] leading-relaxed text-muted-foreground">
           View-only. Internal staff can investigate and annotate this transaction but cannot execute,
           amend or reverse it from the Admin Portal.
@@ -102,7 +102,6 @@ export default function OpsTransactionDetailsPage({ params }: { params: Promise<
           <div className="flex items-start gap-2">
             <AlertTriangle
               size={17}
-              strokeWidth={1.8}
               aria-hidden="true"
               className="mt-px shrink-0 text-warning-text"
             />

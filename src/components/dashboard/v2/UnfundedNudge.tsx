@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Wallet, X } from "lucide-react";
+import { ArrowRight, Wallet, X } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import {
   peekUnfundedNudgeDismissed,
@@ -33,7 +33,7 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
     >
       <div className="flex min-w-0 items-center gap-3 pr-6 sm:pr-0">
         <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          <Wallet size={20} strokeWidth={1.9} aria-hidden="true" />
+          <Wallet size={20} aria-hidden="true" />
         </div>
 
         <div className="flex min-w-0 flex-col gap-0.5">
@@ -50,10 +50,10 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
         <Button
           type="button"
           onClick={onFundClick}
-          className="h-10 flex-1 cursor-pointer px-4 text-[14px] active:scale-[0.97] transition-transform duration-150 sm:flex-none"
+          className="h-10 flex-1 cursor-pointer px-4 text-[14px] active:scale-[0.97] transition-transform duration-hover sm:flex-none"
         >
           <span>Fund Virtual Account</span>
-          <ArrowRight size={15} strokeWidth={1.8} className="ml-2" />
+          <ArrowRight size={15} className="ml-2" />
         </Button>
 
         <button
@@ -62,7 +62,7 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
           aria-label="Dismiss notification"
           className="absolute right-3 top-3 flex size-7 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:static"
         >
-          <X size={15} strokeWidth={1.8} />
+          <X size={15} />
         </button>
       </div>
     </div>

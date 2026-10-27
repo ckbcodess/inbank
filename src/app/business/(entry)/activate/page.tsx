@@ -9,7 +9,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Clock, ShieldAlert } from "lucide-react";
+import { Clock, ShieldAlert } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";

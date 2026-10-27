@@ -9,7 +9,7 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
@@ -72,7 +72,7 @@ export default function BusinessOverviewPage() {
               <li key={account.id}>
                 <Link
                   href={`/business/accounts/${account.id}`}
-                  className="-mx-3 flex items-center justify-between gap-3 rounded-xl px-3 py-3 transition-colors duration-hover ease-settle hover:bg-muted/50"
+                  className="-mx-3 flex items-center justify-between gap-3 rounded-xl px-3 py-3 transition-colors duration-hover hover:bg-muted/50"
                 >
                   <span className="flex min-w-0 flex-col">
                     <span className="truncate text-[14px] text-foreground">{account.name}</span>
@@ -82,7 +82,7 @@ export default function BusinessOverviewPage() {
                     <span className="tabular text-[14px] text-foreground">
                       <RevealingAmount amount={account.available} currency={account.currency} />
                     </span>
-                    <ChevronRight size={16} strokeWidth={1.7} className="text-muted-foreground" aria-hidden="true" />
+                    <ChevronRight size={16} className="text-muted-foreground" aria-hidden="true" />
                   </span>
                 </Link>
               </li>

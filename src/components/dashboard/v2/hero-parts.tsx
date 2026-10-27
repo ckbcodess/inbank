@@ -25,7 +25,7 @@ import {
   Share2,
   TrendingDown,
   TrendingUp,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -253,17 +253,17 @@ export function HeroAccountOptionsMenu({
             />
           }
         >
-          <MoreVertical size={17} strokeWidth={1.9} className="size-[17px]" />
+          <MoreVertical size={17} className="size-[17px]" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" sideOffset={6} className="w-[240px] rounded-2xl p-2">
           {/* Inbound & Sharing */}
           <DropdownMenuItem onClick={handleCopyNumber} className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70">
-            <Copy size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <Copy size={16} className="text-muted-foreground shrink-0" />
             <span className="text-[13.5px]">Copy Account Number</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setShareOpen(true)} className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70">
-            <Share2 size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <Share2 size={16} className="text-muted-foreground shrink-0" />
             <span className="text-[13.5px]">Share Account Details</span>
           </DropdownMenuItem>
 
@@ -274,7 +274,7 @@ export function HeroAccountOptionsMenu({
             onClick={() => router.push(`/accounts/${account.id}/requests?type=statement`)}
             className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70"
           >
-            <FileText size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <FileText size={16} className="text-muted-foreground shrink-0" />
             <span className="text-[13.5px]">Download E-Statement</span>
           </DropdownMenuItem>
 
@@ -282,7 +282,7 @@ export function HeroAccountOptionsMenu({
             onClick={() => router.push(`/transactions?account=${account.id}&limit=10`)}
             className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70"
           >
-            <ArrowLeftRight size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <ArrowLeftRight size={16} className="text-muted-foreground shrink-0" />
             <span className="text-[13.5px]">View Last 10 Transactions</span>
           </DropdownMenuItem>
 
@@ -290,7 +290,7 @@ export function HeroAccountOptionsMenu({
             onClick={() => router.push("/accounts")}
             className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70"
           >
-            <LayoutGrid size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <LayoutGrid size={16} className="text-muted-foreground shrink-0" />
             <span className="text-[13.5px]">View All Accounts</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -320,7 +320,7 @@ export function HeroQrAction({ className }: { className?: string }) {
       aria-label="My QR Code"
       title="My QR Code"
     >
-      <QrCode size={32} strokeWidth={1.7} className="size-7 max-sm:size-5" />
+      <QrCode size={32} className="size-7 max-sm:size-5" />
     </Link>
   );
 }
@@ -413,7 +413,7 @@ export function ManageAccountsLink({
       )}
     >
       {t("dashboard.manageAccounts", "Manage Accounts")}
-      <ChevronRight size={16} strokeWidth={1.8} />
+      <ChevronRight size={16} />
     </Link>
   );
 }
@@ -460,7 +460,7 @@ export function HeroBalance({
         className="flex size-7 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-[color-mix(in_oklch,var(--hero-foreground)_12%,transparent)] cursor-pointer"
         aria-label={showBalance ? t("header.hideAmounts", "Hide balances") : t("header.showAmounts", "Show balances")}
       >
-        {showBalance ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
+        {showBalance ? <Eye size={18} /> : <EyeOff size={18} />}
       </button>
     </div>
   );
@@ -568,7 +568,7 @@ export function HeroSheet({ children, className }: { children: React.ReactNode; 
         "rounded-[calc(var(--radius-3xl)+var(--spacing)*2+1px)] sm:rounded-[calc(var(--radius-3xl)+var(--spacing)*5+1px)]",
         className,
       )}
-      style={{ background: SHEET_BACKGROUND, transition: "--rim-o 300ms ease-out", ...heroWaveVars(wave) }}
+      style={{ background: SHEET_BACKGROUND, transition: "--rim-o 300ms ease-settle", ...heroWaveVars(wave) }}
     >
       <div
         aria-hidden

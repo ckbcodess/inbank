@@ -15,7 +15,7 @@
  */
 
 import { useState, use } from "react";
-import { AlertTriangle, Eye, FileSearch, History, ScrollText } from "lucide-react";
+import { AlertTriangle, Eye, FileSearch, History, ScrollText } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Badge } from "@/components/ui/badge";
@@ -58,7 +58,7 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
 
       {/* Assist / view-only indicator (section 6) */}
       <div className="flex items-start gap-2 rounded-2xl border border-border bg-muted/40 p-3">
-        <Eye size={16} strokeWidth={1.8} className="mt-px shrink-0 text-muted-foreground" />
+        <Eye size={16} className="mt-px shrink-0 text-muted-foreground" />
         <p className="text-[13px] leading-relaxed text-muted-foreground">
           Assist mode — you can audit documents, review versions and record findings. Execution stays
           with the customer and their approvers.
@@ -82,7 +82,6 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
         <div className="flex items-start gap-2">
           <AlertTriangle
             size={17}
-            strokeWidth={1.8}
             className="mt-px shrink-0 text-warning-text"
           />
           <div>
@@ -99,7 +98,7 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
         {/* Document audit */}
         <section className="rounded-2xl border border-border bg-card">
           <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
-            <FileSearch size={16} strokeWidth={1.8} className="text-muted-foreground" />
+            <FileSearch size={16} className="text-muted-foreground" />
             Document audit
           </h2>
           <ul className="divide-y divide-border">
@@ -122,7 +121,7 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
         {/* Version history */}
         <section className="rounded-2xl border border-border bg-card">
           <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
-            <History size={16} strokeWidth={1.8} className="text-muted-foreground" />
+            <History size={16} className="text-muted-foreground" />
             Version history
           </h2>
           <ul className="divide-y divide-border">
@@ -144,7 +143,7 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
       {/* Audit trail */}
       <section className="rounded-2xl border border-border bg-card">
         <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
-          <ScrollText size={16} strokeWidth={1.8} className="text-muted-foreground" />
+          <ScrollText size={16} className="text-muted-foreground" />
           Audit trail
         </h2>
         <ul className="divide-y divide-border">

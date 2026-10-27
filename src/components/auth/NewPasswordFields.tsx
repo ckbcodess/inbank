@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Eye, EyeOff } from "lucide-react";
+import { Check, Eye, EyeOff } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { PASSWORD_RULES, passwordMeetsRules } from "@/lib/auth-shared";
 
@@ -81,7 +81,7 @@ export default function NewPasswordFields({
                     met ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                   }`}
                 >
-                  <Check size={11} strokeWidth={3} aria-hidden="true" />
+                  <Check size={11} aria-hidden="true" />
                 </span>
                 <span className={met ? "text-foreground font-medium" : "text-muted-foreground"}>
                   {rule.label}
@@ -138,7 +138,7 @@ function PasswordInput({
           aria-label={shown ? "Hide password" : "Show password"}
           className="absolute right-1.5 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
         >
-          {shown ? <EyeOff size={16} strokeWidth={1.8} /> : <Eye size={16} strokeWidth={1.8} />}
+          {shown ? <EyeOff size={16} /> : <Eye size={16} />}
         </button>
       </div>
 </Field>

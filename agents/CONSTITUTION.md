@@ -82,8 +82,16 @@ here. Never fall back to dense, boxed layouts.
 - **Space is the main material.** Generous padding and gaps carry the hierarchy. Don't fill white space.
 - **Separate with whitespace first, a hairline second, a box last.** Never put a card inside a card.
   Lists separate rows with whitespace and a rounded hover inset. Tables keep hairline dividers.
-- **One loud thing per screen:** the number. The primary figure is large, thin and `.tabular`.
-  Everything else stays quiet.
+- **The loud thing is a balance, and most pages have none.** A page is a title, then label-and-value rows. Only a
+  balance (money held or owed: an account, wallet, loan, deposit, portfolio) gets a large figure: large, thin,
+  `.tabular`, with a short lead-in phrase above it ("You owe") that does the job of the label. Any other page has
+  no big figure. Its first row's value is a little larger (20px), and only when the page has no balance figure.
+  Never stack more than two lines of small grey text; a third fact is a row. Normal status is silent: no "Active"
+  line.
+- **What needs you is a row, not a block.** The row turns amber, goes first among the rows, and carries its action as
+  an underlined text link ("Pay now"). No notice, banner or filled button above the page, and the same fact is never
+  both a notice and a row. A state that has already gone wrong (overdue, blocked) may be stronger; "coming up" never
+  is. (Designer, 2026-10-24; see PATTERNS §5.)
 - **Let the data speak.** If a value's format already says what it is (`1 USD = 11.42 GHS`), drop the
   label. If plain typography works, drop the container.
 - **Show the summary first, details on request.** Put above the fold the one question the screen
@@ -158,7 +166,8 @@ here. Never fall back to dense, boxed layouts.
 | Use | Classes |
 |---|---|
 | Page title (via `PageHeader`) | `type-page-title` (18 → 20 → 22px, defined in globals.css) `font-medium tracking-[var(--ls-heading)]` |
-| Hero figure | `text-[40px]`–`[76px]`, `tracking-[var(--ls-heading)]` (`--ls-display` for the biggest), regular, `.tabular` |
+| Balance figure (a balance only, never a fact like a sum assured) | `text-[32px]` on a detail page, `text-[40px]`–`[76px]` on home and account screens, `tracking-[var(--ls-heading)]` (`--ls-display` for the biggest), regular, `.tabular` |
+| Key-fact value (first row, page with no balance figure) | `text-[20px]` regular, `.tabular` |
 | Section / panel heading | `text-[16px] font-medium` (14px under `sm` where space is tight) |
 | Row primary text | `text-[14px] text-foreground` |
 | Body, table cells | `text-[13px] text-foreground` |
@@ -179,15 +188,20 @@ here. Never fall back to dense, boxed layouts.
   `rounded-[calc(var(--radius-3xl)+var(--spacing)*N+1px)]`.
 - **Page rhythm:** the page root is `flex flex-col gap-4`. Between sections on a calm page use
   `gap-10`. Each section has a 16px medium heading row (`min-h-6`) and `gap-3` down to its content.
+- **Header to first content is 40px on a phone and 48px from `sm`, on every page,** whatever the root's gap. It comes
+  from `data-page-header` (set by `PageHeader`; see PATTERNS §1). Never space a page's first content by hand
+  (designer, 2026-10-26).
 - **Phone (below `sm`):** a 12px gutter (`px-3`), panels `p-3 gap-2` (going to `sm:p-5 sm:gap-5`) and page
   top padding `pt-5`. See *Phone scale* in PATTERNS.md.
 
 ## 7. Icons
 
-- **Lucide only,** at `size={15}` to `{18}` with `strokeWidth={1.7}` to `{1.9}`. Never use the
-  default stroke weight. Navigation chevrons may go up to 20–22px.
-- **Deliberate exceptions:** the Send & Pay hub's duotone icons (`components/ui/duotone-icons.tsx`),
-  network and bank logos, and country flags (`public/flags/`). Don't add new exceptions without the
+- **Material Symbols (rounded) only,** imported from `@/components/ui/icons`, at `size={15}` to `{18}`. Never
+  import an icon package directly. The weight is set once for every icon in
+  `scripts/gen-material-icons.mts`, so there is no per-icon stroke prop. Navigation chevrons may go up to 20–22px.
+- **Adding an icon:** add a line to the map in that script (the app's name on the left, the Material Symbols name on
+  the right), run `npx tsx scripts/gen-material-icons.mts`, then import it by name. Never edit `icons.tsx` by hand.
+- **Deliberate exceptions:** the Send & Pay hub's duotone and glass icons (Reicon, `reicon-react`), network and bank logos, and country flags (`public/flags/`). Don't add new exceptions without the
   designer.
 
 ## 8. Motion

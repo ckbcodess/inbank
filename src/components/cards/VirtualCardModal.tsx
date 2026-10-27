@@ -3,7 +3,7 @@
 import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import { toast } from "sonner";
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, X, Lock, Unlock, ShieldAlert, RefreshCw } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Lock, Unlock, ShieldAlert, RefreshCw } from "@/components/ui/icons";
 import {
   Dialog,
   DialogBody,
@@ -127,7 +127,7 @@ export function VirtualCardView({
               className="flex size-6 items-center justify-center rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               aria-label="Close"
             >
-              <X size={18} strokeWidth={2} />
+              <X size={18} />
             </button>
           )}
         </div>
@@ -204,7 +204,7 @@ export function VirtualCardView({
                 className="px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-r border-slate-200 dark:border-slate-700 cursor-pointer"
                 aria-label="Previous card"
               >
-                <ChevronLeft size={14} strokeWidth={2.2} />
+                <ChevronLeft size={14} />
               </button>
               <button
                 type="button"
@@ -212,7 +212,7 @@ export function VirtualCardView({
                 className="px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                 aria-label="Next card"
               >
-                <ChevronRight size={14} strokeWidth={2.2} />
+                <ChevronRight size={14} />
               </button>
             </div>
           )}
@@ -344,7 +344,7 @@ export function VirtualCardView({
         <Button
           variant="outline"
           onClick={handleToggleUnhide}
-          className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-9 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           {unhidden ? "Hide" : "Unhide"}
         </Button>
@@ -352,7 +352,7 @@ export function VirtualCardView({
         <Button
           variant="outline"
           onClick={handleStartAdjustLimit}
-          className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-9 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           Adjust Limit
         </Button>

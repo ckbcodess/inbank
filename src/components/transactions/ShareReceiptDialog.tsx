@@ -6,7 +6,7 @@
  * and Save as PDF. The caller builds the text and the PDF.
  */
 
-import { EyeOff, FileDown, Share } from "lucide-react";
+import { EyeOff, FileDown, Share } from "@/components/ui/icons";
 import { ActionTile } from "@/components/ui/action-tile";
 import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 

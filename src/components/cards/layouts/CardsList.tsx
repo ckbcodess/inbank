@@ -5,7 +5,7 @@
 import { ListCard } from "@/components/ui/list-card";
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight } from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
 import { StatusPill, type CardsLayoutProps } from "@/components/cards/CardParts";
@@ -45,7 +45,6 @@ export function CardsList({ cards }: CardsLayoutProps) {
                 ) : (
                   <ChevronRight
                     size={16}
-                    strokeWidth={1.8}
                     className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground"
                   />
                 )}

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Landmark } from "lucide-react";
+import { Landmark } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { brandLogo } from "@/lib/brands";
 
@@ -18,7 +18,7 @@ export function BankMark({ name, size = 28, className }: { name?: string | null;
         style={box}
         className={cn("flex shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground", className)}
       >
-        <Landmark size={Math.round(size * 0.5)} strokeWidth={1.8} aria-hidden="true" />
+        <Landmark size={Math.round(size * 0.5)} aria-hidden="true" />
       </span>
     );
   }
