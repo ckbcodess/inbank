@@ -140,7 +140,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
           <Button
             variant="outline"
             className={cn(
-              "h-8 shrink-0 gap-2 rounded-xl px-3 text-[13px] transition-transform duration-150 active:scale-[0.98]",
+              "h-8 shrink-0 gap-2 rounded-xl px-3 text-[13px] transition-transform duration-hover active:scale-[0.98]",
               className
             )}
           />
@@ -388,7 +388,7 @@ export function AppliedFilters({ groups, className }: { groups: FilterGroup[]; c
             type="button"
             onClick={c.remove}
             aria-label={`Remove filter: ${c.label}`}
-            className="flex h-6 cursor-pointer items-center gap-2 rounded-full bg-muted pl-2 pr-2 text-[12px] text-foreground transition-colors duration-hover ease-settle hover:bg-muted/70"
+            className="flex h-6 cursor-pointer items-center gap-2 rounded-full bg-muted pl-2 pr-2 text-[12px] text-foreground transition-colors duration-hover hover:bg-muted/70"
           >
             <span>{c.label}</span>
             <X size={12} className="text-muted-foreground" aria-hidden="true" />

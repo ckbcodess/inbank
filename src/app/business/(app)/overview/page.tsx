@@ -72,7 +72,7 @@ export default function BusinessOverviewPage() {
               <li key={account.id}>
                 <Link
                   href={`/business/accounts/${account.id}`}
-                  className="-mx-3 flex items-center justify-between gap-3 rounded-xl px-3 py-3 transition-colors duration-hover ease-settle hover:bg-muted/50"
+                  className="-mx-3 flex items-center justify-between gap-3 rounded-xl px-3 py-3 transition-colors duration-hover hover:bg-muted/50"
                 >
                   <span className="flex min-w-0 flex-col">
                     <span className="truncate text-[14px] text-foreground">{account.name}</span>

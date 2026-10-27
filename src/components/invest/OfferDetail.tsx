@@ -142,7 +142,7 @@ export function OfferDetail() {
           {note && <p className="px-1 text-center text-[13px] text-muted-foreground">{note}</p>}
           <Button
             type="button"
-            className="h-11 w-full rounded-2xl text-[16px]"
+            className="h-11 w-full text-[16px]"
             disabled={!canStart}
             nativeButton={!(canStart && hasAccess)}
             render={canStart && hasAccess ? <Link href={startHref} /> : undefined}
@@ -150,7 +150,7 @@ export function OfferDetail() {
           >
             Invest
           </Button>
-          <Button type="button" variant="outline" className="h-11 w-full rounded-2xl text-[14px]" onClick={() => setTerms(true)}>
+          <Button type="button" variant="outline" className="h-11 w-full text-[14px]" onClick={() => setTerms(true)}>
             Terms and Conditions
           </Button>
         </div>

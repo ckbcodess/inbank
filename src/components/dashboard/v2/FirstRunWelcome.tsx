@@ -77,7 +77,7 @@ type FlowStep =
 /** The money flows' field look (Send & Pay, Add money): rounded-2xl, 14px medium labels, the shared AmountInput. */
 
 const BUTTON =
-  "h-9 w-full text-[14px] font-medium active:scale-[0.96] transition-transform duration-150 cursor-pointer";
+  "h-9 w-full text-[14px] font-medium active:scale-[0.96] transition-transform duration-hover cursor-pointer";
 
 const slideVariants: Variants = {
   enter: (dir: "forward" | "backward") => ({

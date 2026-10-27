@@ -175,7 +175,7 @@ function AccountRow({
         <ChevronRight
           size={20}
           aria-hidden="true"
-          className="shrink-0 text-muted-foreground transition-transform duration-150 group-hover:text-foreground"
+          className="shrink-0 text-muted-foreground transition-transform duration-hover group-hover:text-foreground"
         />
       </Link>
     </li>

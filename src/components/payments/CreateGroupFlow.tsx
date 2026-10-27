@@ -456,7 +456,7 @@ export default function CreateGroupFlow({
                       type="button"
                       size="sm"
                       onClick={handleAddCustomContact}
-                      className="h-8 px-3 rounded-xl text-[13px] bg-primary text-primary-foreground font-normal cursor-pointer"
+                      className="h-8 px-3 text-[13px] bg-primary text-primary-foreground font-normal cursor-pointer"
                     >
                       Add Member
                     </Button>
@@ -650,7 +650,7 @@ export default function CreateGroupFlow({
               type="button"
               disabled={totalAmount <= 0}
               onClick={handleCreateGroup}
-              className="flex-1 h-10 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-normal text-[14.5px] cursor-pointer shadow-xs disabled:opacity-50"
+              className="flex-1 h-10 bg-primary hover:bg-primary-hover text-primary-foreground font-normal text-[14.5px] cursor-pointer shadow-xs disabled:opacity-50"
             >
               Create Group
             </Button>

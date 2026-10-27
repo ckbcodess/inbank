@@ -330,7 +330,7 @@ export default function SelfieCapture({
       {/* Circular Viewfinder */}
       <div className="flex flex-col items-center gap-2">
         <div
-          className={`relative flex size-42 sm:size-49 items-center justify-center overflow-hidden rounded-full border-4 transition-colors duration-200 bg-muted/40 shadow-inner ${
+          className={`relative flex size-42 sm:size-49 items-center justify-center overflow-hidden rounded-full border-4 transition-colors duration-hover bg-muted/40 shadow-inner ${
             capturedImage
               ? "border-success/80"
               : facePosition === "centered"
@@ -342,7 +342,7 @@ export default function SelfieCapture({
         >
           {/* Shutter flash effect */}
           {flash && (
-            <div className="absolute inset-0 z-30 bg-white/80 pointer-events-none transition-opacity duration-150" />
+            <div className="absolute inset-0 z-30 bg-white/80 pointer-events-none transition-opacity duration-hover" />
           )}
 
           {capturedImage ? (
@@ -366,7 +366,7 @@ export default function SelfieCapture({
               />
               {/* Dynamic face centering target ring */}
               <div
-                className={`pointer-events-none absolute inset-2.5 rounded-full border-2 transition duration-200 ${
+                className={`pointer-events-none absolute inset-2.5 rounded-full border-2 transition duration-hover ${
                   facePosition === "centered"
                     ? "border-success/90 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                     : facePosition === "off_center" || facePosition === "too_close"

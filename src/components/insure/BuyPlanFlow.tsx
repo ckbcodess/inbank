@@ -192,12 +192,12 @@ function MemberForm({ onAdd, onCancel }: { onAdd: (m: CoveredMember) => void; on
         </div>
       )}
       <div className="flex gap-2">
-        <Button type="button" variant="outline" className="h-10 flex-1 rounded-xl" onClick={onCancel}>
+        <Button type="button" variant="outline" className="h-10 flex-1" onClick={onCancel}>
           Cancel
         </Button>
         <Button
           type="button"
-          className="h-10 flex-1 rounded-xl"
+          className="h-10 flex-1"
           disabled={!ready}
           onClick={() =>
             relationship &&
@@ -487,10 +487,10 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
           </p>
           <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject={`the ${plan.name}, provided by ${PROVIDER}`} terms={insuranceTerms(PROVIDER)} />
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="h-11 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("quote")}>
+            <Button type="button" variant="outline" className="h-11 flex-1 text-[15px]" onClick={() => setScreen("quote")}>
               Back to Edit
             </Button>
-            <Button type="button" className="h-11 flex-1 rounded-2xl text-[16px]" disabled={!accepted} onClick={() => setAuthOpen(true)}>
+            <Button type="button" className="h-11 flex-1 text-[16px]" disabled={!accepted} onClick={() => setAuthOpen(true)}>
               Confirm
             </Button>
           </div>
@@ -674,7 +674,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                     onCancel={() => setAddingMember(false)}
                   />
                 ) : (
-                  <Button type="button" variant="outline" className="h-10 w-full rounded-xl" onClick={() => setAddingMember(true)}>
+                  <Button type="button" variant="outline" className="h-10 w-full" onClick={() => setAddingMember(true)}>
                     <Plus size={16} aria-hidden="true" />
                     {members.length === 0 ? "Add Someone to This Cover" : "Add Another Person"}
                   </Button>

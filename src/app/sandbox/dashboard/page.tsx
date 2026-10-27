@@ -86,7 +86,7 @@ export default function FigmaDesignFidelityDashboard() {
       {/* ============================================================
           1. FIGMA SIDEBAR (Node 315:53322)
           ============================================================ */}
-      <aside className={`bg-[#ffffff] border-r border-[#e8ecef] flex flex-col justify-between shrink-0 transition-all duration-200 ${sidebarCollapsed ? "w-14" : "w-56"}`}>
+      <aside className={`bg-[#ffffff] border-r border-[#e8ecef] flex flex-col justify-between shrink-0 transition-all duration-hover ${sidebarCollapsed ? "w-14" : "w-56"}`}>
         <div className="flex flex-col">
           
           {/* Logo container */}

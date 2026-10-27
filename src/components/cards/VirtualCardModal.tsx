@@ -344,7 +344,7 @@ export function VirtualCardView({
         <Button
           variant="outline"
           onClick={handleToggleUnhide}
-          className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-9 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           {unhidden ? "Hide" : "Unhide"}
         </Button>
@@ -352,7 +352,7 @@ export function VirtualCardView({
         <Button
           variant="outline"
           onClick={handleStartAdjustLimit}
-          className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-9 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           Adjust Limit
         </Button>

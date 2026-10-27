@@ -199,7 +199,7 @@ export function SpendsRadialChart({
                   <path
                     d={slice.path}
                     aria-hidden="true"
-                    className="pointer-events-none transition-[opacity,transform,filter] duration-200"
+                    className="pointer-events-none transition-[opacity,transform,filter] duration-hover"
                     style={{
                       fill: fillColor,
                       opacity: isDimmed ? 0.35 : 1,

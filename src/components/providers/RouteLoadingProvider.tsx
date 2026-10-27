@@ -155,7 +155,7 @@ export function RouteLoadingProvider({ children }: { children?: React.ReactNode 
           aria-valuemax={100}
           aria-valuenow={Math.round(progress)}
           aria-label="Page loading"
-          className="fixed top-0 left-0 right-0 z-[999999] h-[2.5px] pointer-events-none transition-opacity duration-200"
+          className="fixed top-0 left-0 right-0 z-[999999] h-[2.5px] pointer-events-none transition-opacity duration-hover"
           style={{ opacity: loading ? 1 : 0 }}
         >
           <div

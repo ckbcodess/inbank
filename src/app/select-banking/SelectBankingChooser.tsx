@@ -42,7 +42,7 @@ export default function SelectBankingChooser() {
             type="button"
             data-tour={tour}
             onClick={() => router.push(`/login?type=${type}`)}
-            className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+            className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-hover hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -55,7 +55,7 @@ export default function SelectBankingChooser() {
             </div>
             <ChevronRight
               size={20}
-              className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
+              className="shrink-0 text-foreground/70 transition duration-hover group-hover:text-foreground"
             />
           </button>
         ))}

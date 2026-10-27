@@ -78,7 +78,7 @@ export function PlanPage({ planId }: { planId: PlanId }) {
         <div className="flex flex-col gap-6">
           <PlanPitchBody plan={plan} showAmounts={showAmounts} />
           <div className="flex flex-col gap-3">
-            <Button nativeButton={false} render={<Link href={startHref} />} className="h-12 w-full rounded-2xl text-[16px]">
+            <Button nativeButton={false} render={<Link href={startHref} />} className="h-12 w-full text-[16px]">
               {profile ? `Apply for ${plan.name}` : "Create a Profile"}
             </Button>
             {!profile && (

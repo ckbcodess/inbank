@@ -177,7 +177,7 @@ export function MobilePromoBanner() {
         {/* Slide Stage Container */}
         <div className="my-auto py-2">
           <div
-            className={`relative overflow-hidden rounded-xl border p-4 shadow-2xs transition-[background-color,border-color] duration-200 ${slides[currentSlide].containerClass}`}
+            className={`relative overflow-hidden rounded-xl border p-4 shadow-2xs transition-[background-color,border-color] duration-hover ${slides[currentSlide].containerClass}`}
           >
             {slides[currentSlide].content}
           </div>

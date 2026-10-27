@@ -104,7 +104,7 @@ export default function DepositMaturityPage() {
 
         <div>
           <div className="pt-2">
-            <Button type="button" className="h-11 w-full rounded-2xl text-[16px]" disabled={!changed} onClick={apply}>
+            <Button type="button" className="h-11 w-full text-[16px]" disabled={!changed} onClick={apply}>
               Proceed
             </Button>
           </div>

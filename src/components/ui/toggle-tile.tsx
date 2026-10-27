@@ -79,20 +79,20 @@ export function ToggleTile({
       className={cn(
         frame,
         "cursor-pointer",
-        variant === "tile" && "transition-colors duration-150 hover:bg-muted/50",
+        variant === "tile" && "transition-colors duration-hover hover:bg-muted/50",
       )}
     >
       {body}
       <span
         aria-hidden="true"
         className={cn(
-          "relative inline-flex h-5 w-10 shrink-0 rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out",
+          "relative inline-flex h-5 w-10 shrink-0 rounded-full border-2 border-transparent transition-colors duration-300 ease-settle",
           checked ? "bg-primary" : "bg-muted-foreground/25",
         )}
       >
         <span
           className={cn(
-            "pointer-events-none inline-block size-4 rounded-full bg-white shadow-sm transition-transform duration-200 ease-out",
+            "pointer-events-none inline-block size-4 rounded-full bg-white shadow-sm transition-transform duration-hover",
             checked ? "translate-x-4" : "translate-x-0",
           )}
         />

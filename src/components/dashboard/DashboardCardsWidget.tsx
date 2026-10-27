@@ -122,7 +122,7 @@ export function DashboardCardsWidget() {
               >
                 {/* Mini Card Graphic */}
                 <div
-                  className="relative flex h-[38px] w-[60px] shrink-0 flex-col justify-between overflow-hidden rounded-lg p-1 shadow-2xs border border-white/10 transition-transform duration-200 group-hover:scale-105"
+                  className="relative flex h-[38px] w-[60px] shrink-0 flex-col justify-between overflow-hidden rounded-lg p-1 shadow-2xs border border-white/10 transition-transform duration-hover group-hover:scale-105"
                   style={{ background: card.gradient }}
                 >
                   {/* Chip */}

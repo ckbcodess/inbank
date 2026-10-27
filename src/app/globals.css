@@ -12,6 +12,10 @@
   --ease-standard: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+  /* The one hover feel. Every plain `transition`, `transition-colors`, `transition-transform` and so on takes these
+     unless it names its own, so buttons, cards, rows and icons all move the same way. Change them here, nowhere else. */
+  --default-transition-duration: var(--dur-hover);
+  --default-transition-timing-function: var(--ease-in-out);
 }
 :root {
   /* 3-tier velocity scale */
@@ -42,11 +46,14 @@
 @utility duration-toast { transition-duration: var(--dur-toast); }
 @utility duration-sweep { transition-duration: var(--dur-sweep); }
 
-/* Ink for something sitting on a tint: the tint's own hue, dark. Set `--tint` to the background colour (avatars, icon
+/* The fill of a glass tile, registered as a colour so a hover on it can transition (a gradient background cannot). */
+@property --glass-fill { syntax: "<color>"; inherits: false; initial-value: transparent; }
+
+/* Ink for something sitting on a tint: the tint's own hue: dark on a light tint, light on a dark one. Set `--tint` to the background colour (avatars, icon
    discs) and the glyph or initials follow it, so blue gets a deep blue, green a deep green, and none turn muddy brown. A pale
    tint carries little chroma, so it is lifted to stay visibly the same hue. Not for the amber button, whose label stays
    `--primary-foreground`. */
-@utility on-tint { color: oklch(from var(--tint) 0.28 min(calc(c * 4), 0.09) h); }
+@utility on-tint { color: oklch(from var(--tint) clamp(0.28, calc((0.6 - l) * 1000), 0.96) min(calc(c * 4), 0.09) h); }
 
 /* Type scale: sizes that step up at breakpoints. One name per step, so the numbers live here only.
    Named type-*, not text-*, so tailwind-merge doesn't mistake it for a colour. */
@@ -452,12 +459,12 @@
   --plan-art-ultimate-protection-1: #0fb34c;
   --plan-art-ultimate-protection-2: #07691d;
   /* The same for the Invest products. */
-  --plan-art-treasury-bills-1: #9a8cf8;
-  --plan-art-treasury-bills-2: #5f43d6;
-  --plan-art-bonds-1: #38c9ba;
-  --plan-art-bonds-2: #0b7c77;
-  --plan-art-term-deposits-1: #f595b8;
-  --plan-art-term-deposits-2: #d1407f;
+  --plan-art-treasury-bills-1: #fbc833;
+  --plan-art-treasury-bills-2: #fdc509;
+  --plan-art-bonds-1: #e9e3de;
+  --plan-art-bonds-2: #e8e1d6;
+  --plan-art-term-deposits-1: #6c8294;
+  --plan-art-term-deposits-2: #495762;
   /* And the salary advance on Loans. */
   --plan-art-advance-1: #5f93ff;
   --plan-art-advance-2: #2447c4;
@@ -832,7 +839,7 @@ html.i18n-pending body {
   background-color: var(--card);
   border: 1px solid var(--border);
   box-shadow: 0 0 0 1px var(--border), var(--shadow-premium);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform var(--dur-hover) var(--ease-in-out), box-shadow var(--dur-hover) var(--ease-in-out);
 }
 
 .premium-card:hover {
@@ -844,7 +851,7 @@ html.i18n-pending body {
 .surface-interactive {
   position: relative;
   overflow: hidden;
-  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color var(--dur-hover) var(--ease-in-out);
 }
 .surface-interactive:hover {
   background-color: var(--hover);
@@ -888,7 +895,7 @@ a,
 /* Unified neutral hover/open state — intensity from --hover-overlay (per mode).
    Used by ghost/outline buttons, select & dropdown triggers, theme toggles. */
 .hover-surface {
-  transition: background-color 150ms ease;
+  transition: background-color var(--dur-hover) var(--ease-in-out);
 }
 @media (hover: hover) {
   .hover-surface:hover {

@@ -84,10 +84,10 @@ export function OutcomeFailure({
         <p className="text-[15px] leading-[23px] text-muted-foreground">{message}</p>
       </div>
       <div className="flex w-full items-center gap-2">
-        <Button type="button" variant="outline" className="h-10 flex-1 rounded-xl text-[14px]" onClick={onLeave}>
+        <Button type="button" variant="outline" className="h-10 flex-1 text-[14px]" onClick={onLeave}>
           {leaveLabel}
         </Button>
-        <Button type="button" className="h-10 flex-1 rounded-xl text-[14px]" onClick={onRetry}>
+        <Button type="button" className="h-10 flex-1 text-[14px]" onClick={onRetry}>
           Try again
         </Button>
       </div>

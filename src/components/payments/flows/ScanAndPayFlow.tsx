@@ -240,14 +240,14 @@ export function ScanAndPayFlow({
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex-1 h-10 text-[14px] font-medium rounded-xl border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
+                  className="flex-1 h-10 text-[14px] font-medium border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
                   onClick={handleShareMyQr}
                 >
                   Share QR Code
                 </Button>
                 <Button
                   type="button"
-                  className="flex-1 h-10 text-[14px] font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
+                  className="flex-1 h-10 text-[14px] font-medium bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
                   onClick={handleDownloadMyQr}
                 >
                   Download
@@ -329,14 +329,14 @@ export function ScanAndPayFlow({
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex-1 h-10 text-[14px] font-medium rounded-xl border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
+                  className="flex-1 h-10 text-[14px] font-medium border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
                   onClick={() => galleryInputRef.current?.click()}
                 >
                   Select from Gallery
                 </Button>
                 <Button
                   type="button"
-                  className="flex-1 h-10 text-[14px] font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
+                  className="flex-1 h-10 text-[14px] font-medium bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
                   onClick={() => {
                     setTerminalInput("");
                     setTerminalDialogOpen(true);
@@ -409,7 +409,7 @@ export function ScanAndPayFlow({
                 {terminalInput.trim() && (
                   <Button
                     type="button"
-                    className="ml-2 h-8 px-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover font-medium shadow-xs cursor-pointer"
+                    className="ml-2 h-8 px-3 bg-primary text-primary-foreground hover:bg-primary-hover font-medium shadow-xs cursor-pointer"
                     onClick={() => handleConfirmTerminal(terminalInput)}
                   >
                     Continue

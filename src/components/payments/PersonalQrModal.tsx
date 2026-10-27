@@ -96,7 +96,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
             <Button
               type="button"
               variant="outline"
-              className="flex-1 h-9 rounded-xl"
+              className="flex-1 h-9"
               onClick={handleShare}
             >
               <Share2 size={14} className="mr-2" />
@@ -104,7 +104,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
             </Button>
             <Button
               type="button"
-              className="flex-1 h-9 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs"
+              className="flex-1 h-9 bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs"
               onClick={handleDownload}
             >
               <Download size={14} className="mr-2" />

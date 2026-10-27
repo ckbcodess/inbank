@@ -142,7 +142,7 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
                       <li key={t.id}>
                         <Link
                           href={`/business/transactions/${t.id}`}
-                          className="-mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors duration-hover ease-settle hover:bg-muted/50"
+                          className="-mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors duration-hover hover:bg-muted/50"
                         >
                           <TransactionMark transaction={t} />
                           <span className="flex min-w-0 flex-1 flex-col">

@@ -700,14 +700,14 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             <Button
               type="button"
               variant="outline"
-              className="flex-1 h-11 rounded-2xl text-[15px]"
+              className="flex-1 h-11 text-[15px]"
               onClick={() => setScreen("form")}
             >
               Back to Edit
             </Button>
             <Button
               type="button"
-              className="flex-1 h-11 rounded-2xl text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+              className="flex-1 h-11 text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
               onClick={() => setPinModalOpen(true)}
             >
               Authorize &amp; Schedule

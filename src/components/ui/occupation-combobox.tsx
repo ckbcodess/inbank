@@ -242,7 +242,7 @@ export function OccupationCombobox({
         >
           <ChevronDown
             size={16}
-            className={`transition-transform duration-200 ${open ? "rotate-180 text-foreground" : ""}`}
+            className={`transition-transform duration-hover ${open ? "rotate-180 text-foreground" : ""}`}
           />
         </button>
       </div>

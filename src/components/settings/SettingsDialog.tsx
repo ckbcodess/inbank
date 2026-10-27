@@ -98,7 +98,7 @@ export default function SettingsDialog() {
                     aria-current={active === id ? "page" : undefined}
                     // On desktop the list is a tab strip styled like the sidebar: the active section is a solid amber pill.
                     className={cn(
-                      "flex min-h-14 w-full cursor-pointer items-center gap-4 rounded-xl px-3 py-2 text-left transition duration-150 hover:bg-muted/50 sm:h-8 sm:min-h-0 sm:gap-2 sm:rounded-lg sm:px-2 sm:py-0",
+                      "flex min-h-14 w-full cursor-pointer items-center gap-4 rounded-xl px-3 py-2 text-left transition duration-hover hover:bg-muted/50 sm:h-8 sm:min-h-0 sm:gap-2 sm:rounded-lg sm:px-2 sm:py-0",
                       active === id
                         ? "sm:bg-primary sm:text-primary-foreground sm:hover:bg-primary"
                         : "sm:text-muted-foreground sm:hover:text-foreground",

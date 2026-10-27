@@ -200,8 +200,8 @@ export function PlanImage({ planId, className, src }: { planId: ProductKey; clas
         style={hasArt ? { backgroundImage: `linear-gradient(to bottom, var(--plan-art-${planId}-1), var(--plan-art-${planId}-2))` } : undefined}
         className={cn("relative overflow-hidden", !hasArt && "bg-muted", className)}
       >
-        {/* The art is a transparent cut-out: shown whole, centred, with a little air round it. */}
-        <Image src={src} alt="" fill sizes="560px" className={hasArt ? "object-contain p-2" : "object-cover"} />
+        {/* The art is a transparent cut-out: shown whole, centred, with a little air round it. It is already a small WebP, so it is served as it is (no /_next/image round trip to wait on) and loaded eagerly. */}
+        <Image src={src} alt="" fill sizes="560px" unoptimized={hasArt} loading="eager" className={hasArt ? "object-contain p-2 transition-transform group-hover:scale-[1.06]" : "object-cover"} />
       </div>
     );
   }

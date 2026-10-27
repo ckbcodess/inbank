@@ -1255,7 +1255,7 @@ export function VirtualCardDetailsView({
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-10 px-5 rounded-xl text-[14px]"
+                    className="w-full sm:w-auto h-10 px-5 text-[14px]"
                   >
                     Activate Card
                   </Button>
@@ -1276,7 +1276,7 @@ export function VirtualCardDetailsView({
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-10 px-5 rounded-xl text-[14px]"
+                    className="w-full sm:w-auto h-10 px-5 text-[14px]"
                   >
                     Activate Card
                   </Button>
@@ -1297,7 +1297,7 @@ export function VirtualCardDetailsView({
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-10 px-5 rounded-xl text-[14px]"
+                    className="w-full sm:w-auto h-10 px-5 text-[14px]"
                   >
                     Activate Card
                   </Button>

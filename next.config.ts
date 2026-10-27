@@ -38,7 +38,7 @@ const nextConfig: NextConfig = {
   // the background for another day.
   async headers() {
     const cache = [{ key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" }];
-    return ["/images/:path*", "/flags/:path*", "/brands/:path*", "/dashboard/:path*", "/illustrations/:path*", "/icons/:path*"].map(
+    return ["/images/:path*", "/flags/:path*", "/brands/:path*", "/dashboard/:path*", "/illustrations/:path*", "/icons/:path*", "/plans/:path*"].map(
       (source) => ({ source, headers: cache }),
     );
   },

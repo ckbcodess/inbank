@@ -59,7 +59,7 @@ export function TileChip({
   return (
     <span
       className={cn(
-        "flex size-10 shrink-0 items-center justify-center transition-transform duration-150",
+        "flex size-10 shrink-0 items-center justify-center transition-transform duration-hover",
         accent ? "text-[var(--tile-accent)]" : "text-foreground",
       )}
     >
@@ -120,7 +120,7 @@ export function ActionTile({
       <ChevronRight
         size={20}
         aria-hidden="true"
-        className={cn("shrink-0 text-muted-foreground transition-transform duration-150 group-hover:text-foreground", compactOnMobile && "max-sm:hidden")}
+        className={cn("shrink-0 text-muted-foreground transition-transform duration-hover group-hover:text-foreground", compactOnMobile && "max-sm:hidden")}
       />
     </>
   );

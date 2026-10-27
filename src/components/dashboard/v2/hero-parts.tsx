@@ -568,7 +568,7 @@ export function HeroSheet({ children, className }: { children: React.ReactNode; 
         "rounded-[calc(var(--radius-3xl)+var(--spacing)*2+1px)] sm:rounded-[calc(var(--radius-3xl)+var(--spacing)*5+1px)]",
         className,
       )}
-      style={{ background: SHEET_BACKGROUND, transition: "--rim-o 300ms ease-out", ...heroWaveVars(wave) }}
+      style={{ background: SHEET_BACKGROUND, transition: "--rim-o 300ms ease-settle", ...heroWaveVars(wave) }}
     >
       <div
         aria-hidden

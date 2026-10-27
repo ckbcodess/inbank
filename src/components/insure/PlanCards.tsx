@@ -98,7 +98,7 @@ export function ProductCard({
       {parts.map((t, i) => (
         <span
           key={t}
-          className={cn("tabular rounded-full px-3 py-1 text-[13px]", status.attention && (i > 0 || parts.length === 1) ? "bg-warning/15 text-warning-text" : "bg-muted text-foreground")}
+          className={cn("tabular rounded-full px-3 py-1 text-[13px]", status.attention && (i > 0 || parts.length === 1) ? "bg-warning/15 text-warning-text" : "bg-success/15 text-success-text")}
         >
           {t}
         </span>
@@ -144,7 +144,7 @@ export function ProductCard({
     );
 
   const classes = cn(
-    "group relative flex w-full flex-col overflow-hidden rounded-2xl text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+    "group relative flex w-full flex-col overflow-hidden rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
     disabled ? GLASS_TILE_CLASS : GLASS_TILE_HOVER_CLASS,
     "text-foreground",
     look === "image" ? "p-0" : cn("justify-between p-5 sm:px-6", single ? "min-h-[140px]" : "min-h-[184px]"),

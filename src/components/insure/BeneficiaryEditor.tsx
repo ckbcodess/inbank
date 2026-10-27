@@ -162,10 +162,10 @@ function PersonForm({
         </>
       )}
       <div className="flex gap-2">
-        <Button type="button" variant="outline" className="h-10 flex-1 rounded-xl" onClick={onCancel}>
+        <Button type="button" variant="outline" className="h-10 flex-1" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="button" className="h-10 flex-1 rounded-xl" disabled={!ready} onClick={save}>
+        <Button type="button" className="h-10 flex-1" disabled={!ready} onClick={save}>
           {trustee ? "Add Trustee" : "Add Beneficiary"}
         </Button>
       </div>
@@ -333,7 +333,7 @@ export function BeneficiaryEditor({
             <PersonForm ownerId={ownerId} onSaved={add} onCancel={() => setAdding(false)} />
           </div>
         ) : (
-          <Button type="button" variant="outline" className="h-10 w-full rounded-xl" onClick={() => setAdding(true)}>
+          <Button type="button" variant="outline" className="h-10 w-full" onClick={() => setAdding(true)}>
             <Plus size={16} aria-hidden="true" />
             {value.length === 0 ? "Add Beneficiary" : "Add Another Beneficiary"}
           </Button>
@@ -372,7 +372,7 @@ export function BeneficiaryEditor({
               onCancel={() => setAddingTrustee(false)}
             />
           ) : (
-            <Button type="button" variant="outline" className="h-10 w-full rounded-xl" onClick={() => setAddingTrustee(true)}>
+            <Button type="button" variant="outline" className="h-10 w-full" onClick={() => setAddingTrustee(true)}>
               <UserRound size={16} aria-hidden="true" />
               {trusteeChoices.length > 0 ? "Someone Else" : "Add Trustee"}
             </Button>

@@ -655,7 +655,7 @@ export default function TransactionList({
           description="Activity will appear here once money moves."
           action={
             startHref ? (
-              <Button nativeButton={false} render={<Link href={startHref} />} className="h-8 rounded-lg px-3 text-[13px]">
+              <Button nativeButton={false} render={<Link href={startHref} />} className="h-8 px-3 text-[13px]">
                 Start a transaction
               </Button>
             ) : undefined

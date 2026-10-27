@@ -445,7 +445,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 variant="default"
                 size="lg"
                 onClick={handleFinish}
-                className="mt-2 h-9 w-full text-[13.5px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+                className="mt-2 h-9 w-full text-[13.5px] active:scale-[0.96] transition-transform duration-hover cursor-pointer"
               >
                 <span>Continue</span>
               </Button>

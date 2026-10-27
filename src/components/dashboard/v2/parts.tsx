@@ -956,7 +956,7 @@ export function FxBar({ defaultOpen = false, className }: { defaultOpen?: boolea
           {!open && <span className="text-[13px] text-muted-foreground tabular">{fxPeek()}</span>}
           <ChevronDown
             size={16}
-            className={cn("shrink-0 text-muted-foreground transition-transform duration-200", open && "rotate-180")}
+            className={cn("shrink-0 text-muted-foreground transition-transform duration-hover", open && "rotate-180")}
           />
         </span>
       </button>

@@ -211,7 +211,7 @@ export function SidiAssistantWidget() {
           {!open && (
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 -left-full z-10 w-full -skew-x-12 mix-blend-multiply dark:mix-blend-plus-lighter bg-linear-to-r from-transparent via-primary/40 to-transparent group-hover:translate-x-[200%] group-hover:transition-transform group-hover:duration-sweep group-hover:ease-in-out group-focus-visible:translate-x-[200%] group-focus-visible:transition-transform group-focus-visible:duration-sweep group-focus-visible:ease-in-out group-data-[intro=true]:translate-x-[200%] group-data-[intro=true]:transition-transform group-data-[intro=true]:duration-sweep group-data-[intro=true]:ease-in-out"
+            className="pointer-events-none absolute inset-y-0 -left-full z-10 w-full -skew-x-12 mix-blend-multiply dark:mix-blend-plus-lighter bg-linear-to-r from-transparent via-primary/40 to-transparent group-hover:translate-x-[200%] group-hover:transition-transform group-hover:duration-sweep group-hover:ease-settle group-focus-visible:translate-x-[200%] group-focus-visible:transition-transform group-focus-visible:duration-sweep group-focus-visible:ease-settle group-data-[intro=true]:translate-x-[200%] group-data-[intro=true]:transition-transform group-data-[intro=true]:duration-sweep group-data-[intro=true]:ease-settle"
           />
           )}
           {!open && (

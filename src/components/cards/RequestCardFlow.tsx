@@ -722,7 +722,7 @@ export function RequestCardFlow() {
                     aria-label={`Select ${theme.name} card color`}
                     aria-pressed={isSelected}
                     onClick={() => setSelectedTheme(theme)}
-                    className={`relative size-8 sm:size-9 rounded-full cursor-pointer flex items-center justify-center transition duration-200 border border-black/10 dark:border-white/15 ${
+                    className={`relative size-8 sm:size-9 rounded-full cursor-pointer flex items-center justify-center transition duration-hover border border-black/10 dark:border-white/15 ${
                       isSelected
                         ? "ring-2 ring-foreground ring-offset-2 ring-offset-background scale-105 shadow-sm"
                         : "hover:scale-105 opacity-90 hover:opacity-100"

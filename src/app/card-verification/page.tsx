@@ -194,7 +194,7 @@ export default function CardVerificationPage() {
                     type="submit"
                     disabled={digits.join("").length < OTP_LENGTH}
                     loading={step === "verifying"}
-                    className="h-10 w-full rounded-xl text-[14px] font-medium"
+                    className="h-10 w-full text-[14px] font-medium"
                   >
                     Approve payment
                   </Button>

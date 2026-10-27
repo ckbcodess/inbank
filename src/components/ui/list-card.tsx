@@ -15,11 +15,10 @@ export const LIST_CARD_CLASS =
  * The hover version lifts the fill to the hover tile. Written out whole because Tailwind only reads class names it can see.
  */
 export const GLASS_TILE_CLASS =
-  "border border-transparent border-[length:var(--edge-glass-width)] " +
-  "[background:linear-gradient(var(--tile),var(--tile))_padding-box,linear-gradient(var(--edge-glass-angle),var(--edge-glass-start),var(--edge-glass-mid)_var(--edge-glass-mid-at),var(--edge-glass-end))_border-box]";
-export const GLASS_TILE_HOVER_CLASS =
-  GLASS_TILE_CLASS +
-  " hover:[background:linear-gradient(var(--tile-hover),var(--tile-hover))_padding-box,linear-gradient(var(--edge-glass-angle),var(--edge-glass-start),var(--edge-glass-mid)_var(--edge-glass-mid-at),var(--edge-glass-end))_border-box]";
+  "border border-transparent border-[length:var(--edge-glass-width)] [--glass-fill:var(--tile)] " +
+  "[background:linear-gradient(var(--glass-fill),var(--glass-fill))_padding-box,linear-gradient(var(--edge-glass-angle),var(--edge-glass-start),var(--edge-glass-mid)_var(--edge-glass-mid-at),var(--edge-glass-end))_border-box]";
+/** The fill is a registered colour (`--glass-fill`, globals.css), so the hover eases like every other hover instead of snapping. */
+export const GLASS_TILE_HOVER_CLASS = GLASS_TILE_CLASS + " transition-[--glass-fill] hover:[--glass-fill:var(--tile-hover)]";
 
 export function ListCard({
   as = "ul",

@@ -172,10 +172,10 @@ export function SchedulePaymentFlow() {
             totalLabel="Total per payment"
           />
           <div className="flex gap-2 pt-2">
-            <Button type="button" variant="outline" className="h-11 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("form")}>
+            <Button type="button" variant="outline" className="h-11 flex-1 text-[15px]" onClick={() => setScreen("form")}>
               Back to Edit
             </Button>
-            <Button type="button" className="h-11 flex-1 rounded-2xl text-[16px]" onClick={() => setOtpOpen(true)}>
+            <Button type="button" className="h-11 flex-1 text-[16px]" onClick={() => setOtpOpen(true)}>
               Authorize &amp; Schedule
             </Button>
           </div>

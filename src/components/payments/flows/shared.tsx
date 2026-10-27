@@ -1185,7 +1185,7 @@ export function ProceedButton({
       <Button
         type="button"
         data-proceed-cta="true"
-        className="w-full h-11 rounded-2xl text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
+        className="w-full h-11 text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
         disabled={disabled}
         loading={loading}
         onClick={onClick}

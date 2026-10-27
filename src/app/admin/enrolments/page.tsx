@@ -218,7 +218,7 @@ export default function AdminEnrolmentsPage() {
             <Link
               key={app.reference}
               href={`/admin/enrolments/${app.reference.toLowerCase()}`}
-              className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 transition-all duration-hover ease-settle hover:border-foreground/30 hover:bg-muted/30 cursor-pointer"
+              className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 transition-all duration-hover hover:border-foreground/30 hover:bg-muted/30 cursor-pointer"
             >
               <div className="flex items-start gap-3 min-w-0">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary mt-0.5">

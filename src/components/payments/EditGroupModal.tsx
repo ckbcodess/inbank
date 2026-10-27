@@ -549,7 +549,7 @@ export default function EditGroupModal({
                           type="button"
                           size="sm"
                           onClick={handleAddCustomMember}
-                          className="h-8 px-3 rounded-xl text-[12.5px] bg-primary text-primary-foreground font-normal shrink-0 cursor-pointer"
+                          className="h-8 px-3 text-[12.5px] bg-primary text-primary-foreground font-normal shrink-0 cursor-pointer"
                         >
                           Add to Group
                         </Button>
@@ -680,7 +680,7 @@ export default function EditGroupModal({
               type="button"
               onClick={handleSaveChanges}
               disabled={!name.trim() || members.length === 0}
-              className="h-10 px-5 rounded-xl text-[13.5px] cursor-pointer"
+              className="h-10 px-5 text-[13.5px] cursor-pointer"
             >
               Save changes
             </Button>

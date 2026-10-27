@@ -115,7 +115,7 @@ export default function FeeConcessionsPage() {
           title="No concessions configured"
           description="Standard tariffs apply to every customer until a concession is created and approved."
           action={
-            <Button className="rounded-lg">
+            <Button>
               <Plus size={14} aria-hidden="true" />
               New concession
             </Button>
