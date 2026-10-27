@@ -70,8 +70,8 @@ function ProductBenefits({ productId, highlights }: { productId: ProductKey; hig
         const Icon = HIGHLIGHT_ICONS[h.icon];
         return (
           <li key={h.label} className="flex items-center gap-4">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[var(--plan)] [--tint:var(--plan)] on-tint">
-              <Icon size={20} strokeWidth={1.7} aria-hidden="true" />
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--plan)] [--tint:var(--plan)] on-tint">
+              <Icon size={18} strokeWidth={1.7} aria-hidden="true" />
             </span>
             <span className="flex min-w-0 flex-col gap-0.5">
               <span className="text-[17px] leading-snug tracking-[var(--ls-tight)] text-foreground">{h.label}</span>
