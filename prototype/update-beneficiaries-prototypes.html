@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Update Beneficiaries: 8 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--amb:#e8b21a;--ok:#15803d;--warn:#b45309;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--scrim:rgba(0,0,0,.35)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--amb:#a5800f;--ok:#4ade80;--warn:#fbbf24;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:rgba(0,0,0,.6)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input,select{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,h4,p,ul,ol{margin:0;padding:0} ul,ol{list-style:none}
+  .tab{font-variant-numeric:tabular-nums}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{position:relative;width:560px;max-width:100%}
+  .frame.phone{width:390px}
+  .page{background:var(--surf);border:1px solid var(--bd);border-radius:20px;padding:32px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:24px;min-height:640px}
+  .phone .page{padding:16px 12px;border-radius:28px}
+  .hd{display:flex;align-items:center;gap:8px;margin-left:-8px}
+  .hd h1{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .ic{width:40px;height:40px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);flex:none}
+  .ic:hover{background:var(--tile);color:var(--tx)}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .sh{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:24px}
+  .sh h2{font-size:16px;font-weight:500}
+  .link{font-size:13px;text-decoration:underline;text-underline-offset:3px;color:var(--tx);min-height:40px;display:inline-flex;align-items:center}
+  .link.mu{color:var(--mu)} .link:hover{color:var(--tx)}
+  .lead{font-size:13px;line-height:1.55;color:var(--mu);padding:0 4px}
+  .st{font-size:13px;color:var(--mu)} .st.over{color:var(--warn)}
+  .rw{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;min-height:56px}
+  .rw:hover{background:color-mix(in srgb,var(--tile) 70%,transparent)}
+  .rw.btnrow{width:100%;cursor:pointer}
+  .av{width:32px;height:32px;border-radius:50%;background:var(--tile);display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex:none;position:relative}
+  .av i{position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;border:2px solid var(--surf)}
+  .nm{display:flex;flex-direction:column;min-width:0;flex:1}
+  .nm b{font-weight:400;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .nm span{font-size:12px;color:var(--mu)}
+  .pct{display:inline-flex;align-items:center;gap:4px;color:var(--mu);flex:none}
+  .inp{height:40px;width:64px;border:1px solid var(--bd);border-radius:8px;background:var(--surf);text-align:right;padding:0 10px;font-size:14px;color:var(--tx);font-variant-numeric:tabular-nums;outline:0}
+  .inp:focus,.fld:focus{border-color:var(--tx)}
+  .inp.u{border:0;border-bottom:1px solid var(--bd);border-radius:0;width:52px;padding:0 2px;background:transparent}
+  .inp.u:focus{border-bottom-color:var(--tx)}
+  .fld{height:40px;width:100%;border:1px solid var(--bd);border-radius:8px;background:var(--surf);padding:0 12px;font-size:14px;color:var(--tx);outline:0}
+  label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500}
+  .out{height:40px;width:100%;border:1px solid var(--bd);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;background:var(--surf)}
+  .out:hover{background:var(--tile)}
+  .quiet{height:44px;width:100%;border-radius:12px;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:13px;color:var(--mu)}
+  .quiet:hover{background:var(--tile);color:var(--tx)}
+  .btn{height:44px;padding:0 28px;border-radius:12px;background:var(--am);color:#111;font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;width:100%}
+  .btn:hover:not(:disabled){filter:brightness(1.06)}
+  .btn:disabled{background:var(--tile);color:var(--mu);cursor:not-allowed}
+  .why{font-size:12px;color:var(--mu);text-align:center;margin-top:8px;line-height:1.5}
+  .opt{display:flex;align-items:center;gap:12px;width:100%;padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--surf);min-height:56px}
+  .opt:hover{background:color-mix(in srgb,var(--tile) 60%,transparent)}
+  .opt.on{border-color:var(--amb);background:var(--amsoft)}
+  .ring{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--bd);flex:none;display:flex;align-items:center;justify-content:center}
+  .opt.on .ring{border-color:var(--tx);background:var(--tx);color:var(--surf)}
+  .frm{display:flex;flex-direction:column;gap:16px;border:1px solid var(--bd);border-radius:16px;padding:16px}
+  .err{font-size:12px;color:var(--warn)}
+  .track{height:6px;border-radius:99px;background:var(--tile);overflow:hidden}
+  .track>i{display:block;height:100%;background:var(--am);border-radius:99px;transition:width .25s cubic-bezier(.16,1,.3,1)}
+  .segbar{display:flex;gap:2px;height:10px;border-radius:99px;overflow:hidden;background:var(--tile)}
+  .segbar>i{display:block;height:100%;transition:width .25s cubic-bezier(.16,1,.3,1)}
+  input[type=range]{width:100%;accent-color:#d99b00;margin:8px 0 4px}
+  .stp{display:inline-flex;align-items:center;gap:4px;flex:none}
+  .stp button{width:40px;height:40px;border-radius:8px;border:1px solid var(--bd);display:inline-flex;align-items:center;justify-content:center;font-size:18px;line-height:1}
+  .stp button:hover:not(:disabled){background:var(--tile)} .stp button:disabled{opacity:.4;cursor:not-allowed}
+  .stp output{min-width:52px;text-align:center;font-size:15px}
+  .nest{margin:-4px 0 0 56px;padding:8px 12px;border-radius:12px;background:var(--tile);display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px}
+  .diff{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-top:1px solid var(--bd);margin-top:4px}
+  .diff li{display:flex;justify-content:space-between;gap:16px;font-size:13px}
+  .diff li span:last-child{text-align:right}
+  .sticky{position:sticky;bottom:0;background:linear-gradient(to top,var(--surf) 78%,transparent);padding-top:16px;margin-top:auto}
+  .ovl{position:absolute;inset:0;background:var(--scrim);border-radius:20px;display:flex;align-items:flex-end;justify-content:center;z-index:10;animation:fade .2s}
+  .phone .ovl{border-radius:28px}
+  .shx{background:var(--surf);border:1px solid var(--bd);width:100%;border-radius:20px 20px 0 0;padding:24px;display:flex;flex-direction:column;gap:16px;max-height:90%;overflow:auto;animation:up .3s cubic-bezier(.16,1,.3,1)}
+  .phone .shx{padding:20px 12px}
+  @keyframes fade{from{opacity:0}} @keyframes up{from{transform:translateY(24px);opacity:0}}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50;display:flex;gap:16px;align-items:center}
+  .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+  .toast button{text-decoration:underline;color:inherit;font-weight:500}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Update Beneficiaries · 8 ways to set who gets paid, and how much</h1>
+    <div class="ctrls">
+      <div class="seg" id="scsel"></div>
+      <div class="seg" id="devsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage"><div class="frame" id="frame"></div></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ---------- icons ---------- */
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const I={back:svg('<path d="M15 6l-6 6 6 6"/>',20),x:svg('<path d="M6 6l12 12M18 6L6 18"/>',16),plus:svg('<path d="M12 5v14M5 12h14"/>',16),tick:svg('<path d="M5 12l4 4 10-10"/>',12,2.4),chev:svg('<path d="M6 9l6 6 6-6"/>',16),user:svg('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',16)};
+
+/* ---------- data (mock; today is 28 Oct 2026) ---------- */
+const TODAY='2026-10-28';
+const age=d=>{const a=new Date(d),t=new Date(TODAY);let y=t.getFullYear()-a.getFullYear();if(t<new Date(t.getFullYear(),a.getMonth(),a.getDate()))y--;return y};
+const people={
+  p1:{id:'p1',name:'Prince Nii Mills',rel:'Son',dob:'2015-04-12',phone:'0244 567 890',elig:false},
+  p2:{id:'p2',name:'Ama Mills',rel:'Wife',dob:'1987-09-02',phone:'0244 111 222',elig:true},
+  p3:{id:'p3',name:'John Akuffo',rel:'Uncle',dob:'1965-01-20',phone:'024 123 4567',elig:true},
+  p4:{id:'p4',name:'Kofi Mills',rel:'Son',dob:'2019-02-08',phone:'0244 567 891',elig:false},
+};
+const RELS=['Spouse','Son','Daughter','Mother','Father','Brother','Sister','Uncle','Aunt','Other'];
+const SCEN={
+  today:{label:'Today',list:[['p1',100]],trustee:'p3'},
+  two:{label:'Two People',list:[['p1',60],['p2',40]],trustee:'p3'},
+  adult:{label:'Adults Only',list:[['p2',100]],trustee:null},
+  empty:{label:'Nobody Yet',list:[],trustee:null},
+};
+const COLORS=['#FFC423','#5b8def','#2fb59a','#c77dd6','#f08a5d'];
+const first=n=>n.split(' ')[0];
+const initials=n=>n.split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const minor=id=>age(people[id].dob)<18;
+
+const S={v:1,dark:false,phone:false,sc:'today',list:[],trustee:null,base:null,
+  adding:false,nform:null,tOpen:false,exp:null,sheet:null,nf:{name:'',dob:'',rel:''},undo:null,np:0};
+function load(sc){const c=SCEN[sc];S.sc=sc;S.list=c.list.map(([id,share])=>({id,share}));S.trustee=c.trustee;S.base=JSON.stringify({l:S.list,t:S.trustee});
+  Object.assign(S,{adding:c.list.length===0,nform:null,tOpen:false,exp:null,sheet:null})}
+load('today');
+
+/* ---------- derived ---------- */
+const total=()=>S.list.reduce((n,b)=>n+b.share,0);
+const left=()=>100-total();
+const minors=()=>S.list.filter(b=>minor(b.id)).map(b=>people[b.id]);
+const needsT=()=>minors().length>0;
+const changed=()=>JSON.stringify({l:S.list,t:S.trustee})!==S.base;
+function problem(){
+  if(S.list.length===0)return 'Name at least one beneficiary to save.';
+  const z=S.list.find(b=>b.share<=0);if(z)return `Give ${first(people[z.id].name)} a share to save.`;
+  if(total()!==100)return 'Shares need to add up to 100% to save.';
+  if(needsT()&&!S.trustee)return `Choose a trustee for ${minorNames()} to save.`;
+  if(!changed())return 'Change a share, or add or remove someone, to save.';
+  return '';
+}
+const minorNames=()=>{const m=minors().map(p=>first(p.name));return m.length<3?m.join(' and '):m.slice(0,-1).join(', ')+' and '+m.slice(-1)};
+const trusteeLead=()=>{const n=minors().length;return `An adult receives the payout for ${minorNames()} until ${n>1?'each turns':first(minors()[0].name)+' turns'} 18.`};
+const statusTxt=()=>left()>0?`${left()}% left to share`:left()<0?`${-left()}% over`:'';
+
+/* ---------- allocation rules ---------- */
+function scaleOthers(id,val){ // balancing variants: the rest always add up to what is left
+  const others=S.list.filter(b=>b.id!==id);if(!others.length){S.list[0].share=100;return}
+  val=Math.max(1,Math.min(val,100-others.length));
+  const target=100-val,sum=others.reduce((n,b)=>n+b.share,0);
+  const raw=others.map(b=>sum?b.share/sum*target:target/others.length);
+  const fl=raw.map(Math.floor);let rem=target-fl.reduce((a,b)=>a+b,0);
+  raw.map((r,i)=>[r-fl[i],i]).sort((a,b)=>b[0]-a[0]).forEach(([_,i])=>{if(rem>0){fl[i]++;rem--}});
+  others.forEach((b,i)=>b.share=Math.max(1,fl[i]));
+  // keep the sum exact after the floor of 1
+  let diff=100-val-others.reduce((n,b)=>n+b.share,0);for(let i=0;diff!==0&&i<99;i++){const o=others[i%others.length];if(diff>0){o.share++;diff--}else if(o.share>1){o.share--;diff++}}
+  S.list.find(b=>b.id===id).share=val;
+}
+const balancing=()=>[4,5].includes(S.v);
+function splitEqually(){const n=S.list.length,base=Math.floor(100/n);S.list.forEach((b,i)=>b.share=base+(i<100-base*n?1:0))}
+function addPerson(id){
+  if(balancing()&&S.list.length){const sh=Math.floor(100/(S.list.length+1));S.list.push({id,share:sh});scaleOthers(id,sh)}
+  else S.list.push({id,share:Math.max(left(),0)});
+  S.adding=false;S.nform=null;S.sheet=null;
+}
+function removePerson(id){
+  const before=JSON.stringify(S.list);const name=people[id].name;
+  S.list=S.list.filter(b=>b.id!==id);
+  if(balancing()&&S.list.length){const t=total();S.list[S.list.length-1].share+=100-t}
+  S.exp=null;
+  toast(`${name} removed.`,'Undo',()=>{S.list=JSON.parse(before);render()});
+}
+
+/* ---------- shared pieces ---------- */
+const avatar=(id,dot)=>`<span class="av" translate="no">${initials(people[id].name)}${dot?`<i style="background:${dot}"></i>`:''}</span>`;
+const who=(id,extra='')=>`<span class="nm"><b translate="no">${people[id].name}</b><span>${people[id].rel}${minor(id)?' · Under 18':''}${extra}</span></span>`;
+const xbtn=id=>`<button class="ic" data-a="rm:${id}" aria-label="Remove ${people[id].name}">${I.x}</button>`;
+const pctInput=(id,u)=>{const b=S.list.find(b=>b.id===id);return `<label class="pct"><span style="position:absolute;left:-9999px">Share for ${people[id].name}</span><input class="inp tab ${u?'u':''}" inputmode="numeric" placeholder="0" value="${b.share||''}" data-f="s:${id}" data-in="share:${id}"><span>%</span></label>`};
+const header=()=>`<div class="hd"><button class="ic" aria-label="Back">${I.back}</button><h1>Update Beneficiaries</h1></div>`;
+const meta=()=>`<p class="tab mu s13" style="padding:0 4px;margin-top:-8px">Child Education Plan · CEP/2023/040318</p>`;
+const stLine=()=>`<span class="st tab ${left()<0?'over':''}" id="st">${statusTxt()}</span>`;
+const headRow=(title,withSplit)=>`<div class="sh"><h2>${title}</h2><span style="display:flex;gap:16px;align-items:center">${stLine()}${withSplit&&S.list.length>1&&!balancing()?`<button class="link mu" data-a="split">Split Equally</button>`:''}</span></div>`;
+
+function savePart(label='Save Changes'){
+  const why=problem();
+  return `<div id="sv">${S.v===8?diffBlock():''}<button class="btn" data-a="save" ${why?'disabled':''}>${label}</button>${why?`<p class="why">${why}</p>`:''}</div>`;
+}
+function diffBlock(){
+  const b=JSON.parse(S.base),rows=[];
+  b.l.forEach(o=>{const n=S.list.find(x=>x.id===o.id);if(!n)rows.push([people[o.id].name,'Removed']);else if(n.share!==o.share)rows.push([people[o.id].name,`${o.share}% → ${n.share}%`])});
+  S.list.forEach(n=>{if(!b.l.find(o=>o.id===n.id))rows.push([people[n.id].name,`Added at ${n.share}%`])});
+  const nt=needsT()?S.trustee:null,ot=b.t&&b.l.some(o=>minor(o.id))?b.t:null;
+  if(nt!==ot)rows.push(['Trustee',`${ot?people[ot].name:'None'} → ${nt?people[nt].name:'None'}`]);
+  if(!rows.length)return '';
+  return `<div class="diff"><p class="s13" style="font-weight:500;margin-bottom:2px">What changes</p><ul>${rows.map(r=>`<li><span translate="no">${r[0]}</span><span class="tab mu">${r[1]}</span></li>`).join('')}</ul><p class="mu s12" style="margin-top:2px">Your cover and premium stay the same.</p></div>`;
+}
+
+/* adding someone */
+function newForm(trustee){
+  const f=S.nf,dobBad=f.dob&&f.dob>TODAY,young=trustee&&f.dob&&!dobBad&&age(f.dob)<18;
+  const ok=f.name.trim().split(/\s+/).filter(Boolean).length>=2&&f.dob&&!dobBad&&!young&&(trustee||f.rel);
+  return `<div class="frm"><label class="f">Full Name<input class="fld" data-f="nf:name" data-in="nf:name" value="${f.name}" placeholder="As on their ID" autocomplete="off"></label>
+  <label class="f">Date Of Birth<input class="fld" type="date" max="${TODAY}" data-f="nf:dob" data-in="nf:dob" value="${f.dob}">${dobBad?'<span class="err">That date is in the future.</span>':young?'<span class="err">A trustee must be 18 or older.</span>':''}</label>
+  ${trustee?'':`<label class="f">Relationship<select class="fld" data-in="nf:rel"><option value="">Select relationship</option>${RELS.map(r=>`<option ${f.rel===r?'selected':''}>${r}</option>`).join('')}</select></label>`}
+  <p class="mu s12" style="margin-top:-4px">${trustee?'The full form also asks for mobile number, email and address.':'The full form also asks for gender and mobile number.'}</p>
+  <div style="display:flex;gap:8px"><button class="out" data-a="cancel">Cancel</button><button class="btn" style="height:40px;font-size:14px" data-a="mkp:${trustee?'t':'b'}" ${ok?'':'disabled'}>${trustee?'Add Trustee':'Add Beneficiary'}</button></div></div>`;
+}
+function picker(){ // saved first, then new
+  const saved=Object.values(people).filter(p=>!S.list.some(b=>b.id===p.id));
+  if(S.nform==='b')return newForm(false);
+  return `<div class="sec">${saved.length?`<p class="mu s13" style="padding:0 4px">Saved</p><ul>${saved.map(p=>`<li><button class="rw btnrow" data-a="addp:${p.id}">${avatar(p.id)}${who(p.id)}<span class="mu">${I.plus}</span></button></li>`).join('')}</ul>`:''}
+  <button class="out" data-a="nf:b">${I.user} Someone New</button><button class="link mu" style="align-self:center" data-a="cancel">Cancel</button></div>`;
+}
+const addBtn=(quiet)=>S.adding?`<div style="display:flex;flex-direction:column;gap:12px">${picker()}</div>`
+  :quiet?`<button class="quiet" data-a="add">${I.plus} ${S.list.length?'Add Another Beneficiary':'Add Beneficiary'}</button>`
+  :`<button class="out" data-a="add">${I.plus} ${S.list.length?'Add Another Beneficiary':'Add Beneficiary'}</button>`;
+
+/* trustee */
+const eligible=()=>Object.values(people).filter(p=>p.elig&&age(p.dob)>=18);
+function tChoices(){
+  return `<div role="radiogroup" aria-label="Trustee" style="display:flex;flex-direction:column;gap:8px">${eligible().map(p=>`<button class="opt ${S.trustee===p.id?'on':''}" role="radio" aria-checked="${S.trustee===p.id}" data-a="trs:${p.id}"><span class="ring">${S.trustee===p.id?I.tick:''}</span><span class="nm"><b translate="no">${p.name}</b><span>${p.rel} · ${p.phone}</span></span></button>`).join('')}</div>`;
+}
+function tOther(){return S.nform==='t'?newForm(true):`<button class="out" data-a="nf:t">${I.user} Someone Else</button>`}
+function tFull(){ // like today, with the plain-language line
+  if(!needsT())return '';
+  return `<section class="sec"><div class="sh"><h2>Trustee</h2></div><p class="lead">${trusteeLead()}</p>${tChoices()}${tOther()}</section>`;
+}
+function tCompact(){ // one row, choices only on request
+  if(!needsT())return '';
+  const p=S.trustee&&people[S.trustee];
+  return `<section class="sec"><div class="sh"><h2>Trustee</h2></div><p class="lead">${trusteeLead()}</p>
+  ${p&&!S.tOpen&&S.nform!=='t'?`<div class="rw">${avatar(p.id)}${who(p.id,' · '+p.phone).replace(/ · Under 18/,'')}<button class="link" data-a="topen">Change</button></div>`
+  :`${tChoices()}${tOther()}`}</section>`;
+}
+
+/* ---------- variations ---------- */
+const V={};
+
+V[1]={name:'1. Quiet Rows',note:'The calm version. The progress bar goes: the status line only speaks when shares are wrong. Share is an underlined number, not a boxed field. Trustee collapses to one row with Change. Heading hint and info icon are cut.',
+ r:()=>`<section class="sec">${headRow('Beneficiaries',true)}
+  <ul>${S.list.map(b=>`<li class="rw">${avatar(b.id)}${who(b.id)}${pctInput(b.id,true)}${xbtn(b.id)}</li>`).join('')}</ul>${addBtn(true)}</section>${tCompact()}`,
+ save:()=>savePart()};
+
+V[2]={name:'2. Trustee Under The Child',note:'The trustee belongs to the child, so it sits directly under their row ("Receives it for Prince") instead of a separate section far below. One policy has one trustee, so with two minors it sits under the first and names both.',
+ r:()=>{const firstMinor=minors()[0]?.id;
+  return `<section class="sec">${headRow('Beneficiaries',true)}<ul>${S.list.map(b=>{
+    const t=b.id===firstMinor;const tp=S.trustee&&people[S.trustee];
+    return `<li><div class="rw">${avatar(b.id)}${who(b.id)}${pctInput(b.id)}${xbtn(b.id)}</div>${t?
+      (tp&&!S.tOpen?`<div class="nest"><span>${trusteeLead().replace('An adult receives','Paid out to')} <b style="font-weight:500" translate="no">${tp.name}</b>, ${tp.rel.toLowerCase()}</span><button class="link" data-a="topen">Change</button></div>`
+      :`<div style="margin:4px 0 8px 56px;display:flex;flex-direction:column;gap:8px"><p class="lead" style="padding:0">${trusteeLead()}</p>${tChoices()}${tOther()}</div>`):''}</li>`}).join('')}</ul>${addBtn()}</section>`},
+ save:()=>savePart()};
+
+V[3]={name:'3. One Shared Bar',note:'The bar becomes the picture: one coloured segment per person, so the split is visible at a glance. The status line sits beside the bar. Each person carries their colour as a dot on the avatar.',
+ r:()=>{const w=Math.max(total(),100);
+  return `<section class="sec">${headRow('Beneficiaries',true)}
+  <div class="segbar" id="seg" aria-hidden="true">${S.list.map((b,i)=>`<i data-seg="${b.id}" style="width:${b.share/w*100}%;background:${COLORS[i%5]}"></i>`).join('')}</div>
+  <ul>${S.list.map((b,i)=>`<li class="rw">${avatar(b.id,COLORS[i%5])}${who(b.id)}${pctInput(b.id)}${xbtn(b.id)}</li>`).join('')}</ul>${addBtn()}</section>${tFull()}`},
+ save:()=>savePart()};
+
+V[4]={name:'4. Sliders That Balance',note:'Errors cannot happen: drag one share and the others rebalance so the total is always 100. Adding someone splits fairly; a lone beneficiary simply gets everything. No status line is needed at all.',
+ r:()=>`<section class="sec">${headRow('Beneficiaries')}<ul style="display:flex;flex-direction:column;gap:4px">${S.list.map(b=>`<li class="rw" style="flex-wrap:wrap;row-gap:0">${avatar(b.id)}${who(b.id)}<span class="tab" style="min-width:44px;text-align:right" data-pv="${b.id}">${b.share}%</span>${xbtn(b.id)}
+  ${S.list.length>1?`<input type="range" min="1" max="${100-(S.list.length-1)}" value="${b.share}" data-sl="${b.id}" aria-label="Share for ${people[b.id].name}" style="flex-basis:100%;padding:0 4px">`:''}</li>`).join('')}</ul>${addBtn()}</section>${tFull()}`,
+ save:()=>savePart()};
+
+V[5]={name:'5. Steppers In Fives',note:'Plus and minus move 5% at a time, taking from or giving to the last other person, so it still always totals 100. Easier on a phone than typing and no keyboard pops up. Split Equally stays for the quick reset.',
+ r:()=>`<section class="sec"><div class="sh"><h2>Beneficiaries</h2>${S.list.length>1?`<button class="link mu" data-a="split">Split Equally</button>`:''}</div>
+  <ul>${S.list.map(b=>`<li class="rw">${avatar(b.id)}${who(b.id)}${S.list.length>1?`<span class="stp"><button data-a="step:${b.id}:-5" aria-label="Lower ${people[b.id].name}" ${b.share<=5?'disabled':''}>−</button><output class="tab" data-pv="${b.id}">${b.share}%</output><button data-a="step:${b.id}:5" aria-label="Raise ${people[b.id].name}" ${b.share>=100-(S.list.length-1)*5?'disabled':''}>+</button></span>`:`<span class="tab mu">${b.share}%</span>`}${xbtn(b.id)}</li>`).join('')}</ul>${addBtn()}</section>${tCompact()}`,
+ save:()=>savePart()};
+
+V[6]={name:'6. Read First, Edit On Tap',note:'Summary first, details on request. Rows are plain text: name, relationship, share. Tap one to open its editor (share, remove) in place. Most visits are just a look, and a look should not feel like a form.',
+ r:()=>`<section class="sec">${headRow('Beneficiaries',true)}<ul>${S.list.map(b=>b.id===S.exp?
+   `<li class="rw" style="background:var(--tile);flex-wrap:wrap;row-gap:8px">${avatar(b.id)}${who(b.id)}${pctInput(b.id)}<div style="flex-basis:100%;display:flex;justify-content:space-between;padding-left:44px"><button class="link" style="color:var(--mu)" data-a="rm:${b.id}">Remove ${first(people[b.id].name)}</button><button class="link" data-a="exp:">Done</button></div></li>`
+   :`<li><button class="rw btnrow" data-a="exp:${b.id}">${avatar(b.id)}${who(b.id)}<span class="tab" style="font-size:16px">${b.share}%</span><span class="mu">${I.chev}</span></button></li>`).join('')}</ul>${addBtn(true)}</section>${tCompact()}`,
+ save:()=>savePart()};
+
+V[7]={name:'7. Choose In A Sheet',note:'The page stays short: only the people and the numbers. Adding a beneficiary or choosing a trustee opens a sheet with saved people and Someone New, so the picker and its form never push the page around.',
+ r:()=>{const tp=S.trustee&&people[S.trustee];
+  const sheet=S.sheet?`<div class="ovl" data-a="sheetx"><div class="shx" onclick="event.stopPropagation()"><div class="sh"><h2>${S.sheet==='t'?'Choose A Trustee':'Add A Beneficiary'}</h2><button class="ic" data-a="sheetx" aria-label="Close">${I.x}</button></div>
+    ${S.sheet==='t'?`<p class="lead" style="padding:0">${trusteeLead()}</p>${tChoices()}${tOther()}`:picker()}</div></div>`:'';
+  return `<section class="sec">${headRow('Beneficiaries',true)}<ul>${S.list.map(b=>`<li class="rw">${avatar(b.id)}${who(b.id)}${pctInput(b.id)}${xbtn(b.id)}</li>`).join('')}</ul>
+  <button class="quiet" data-a="sheet:b">${I.plus} ${S.list.length?'Add Another Beneficiary':'Add Beneficiary'}</button></section>
+  ${needsT()?`<section class="sec"><div class="sh"><h2>Trustee</h2></div><p class="lead">${trusteeLead()}</p>${tp?`<div class="rw">${avatar(tp.id)}${who(tp.id,' · '+tp.phone).replace(/ · Under 18/,'')}<button class="link" data-a="sheet:t">Change</button></div>`:`<button class="out" data-a="sheet:t">${I.user} Choose A Trustee</button>`}</section>`:''}${sheet}`},
+ save:()=>savePart()};
+
+V[8]={name:'8. Say What Changes',note:'Control before commit: as soon as anything is edited, a short list above Save says exactly what will change (60% → 40%, Ama added, trustee swapped), and that cover and premium are untouched. The disabled-button hint is replaced by this.',
+ r:()=>`<section class="sec">${headRow('Beneficiaries',true)}<ul>${S.list.map(b=>`<li class="rw">${avatar(b.id)}${who(b.id)}${pctInput(b.id)}${xbtn(b.id)}</li>`).join('')}</ul>${addBtn(true)}</section>${tCompact()}`,
+ save:()=>savePart()};
+
+/* ---------- engine ---------- */
+const $=s=>document.querySelector(s);
+function render(){
+  const ae=document.activeElement,key=ae&&ae.dataset&&ae.dataset.f,pos=ae&&ae.selectionStart;
+  $('#scsel').innerHTML=Object.entries(SCEN).map(([k,c])=>`<button class="${S.sc===k?'on':''}" data-a="sc:${k}">${c.label}</button>`).join('');
+  $('#devsel').innerHTML=[[false,'Desktop'],[true,'Phone']].map(([k,l])=>`<button class="${S.phone===k?'on':''}" data-a="phone:${k}">${l}</button>`).join('');
+  $('#themesel').innerHTML=[[false,'Light'],[true,'Dark']].map(([k,l])=>`<button class="${S.dark===k?'on':''}" data-a="dark:${k}">${l}</button>`).join('');
+  $('#pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('#vnote').textContent=V[S.v].note;
+  const f=$('#frame');f.className='frame'+(S.phone?' phone':'');
+  f.innerHTML=`<div class="page">${header()}${meta()}<div style="display:flex;flex-direction:column;gap:40px">${V[S.v].r()}</div><div class="${S.v===8||S.v===7?'sticky':''}" style="margin-top:auto">${V[S.v].save()}</div>${''}</div>`;
+  if(key){const el=document.querySelector(`[data-f="${key}"]`);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(e){}}}
+}
+function live(){ // slider drag: update in place so the drag is not interrupted
+  S.list.forEach(b=>{document.querySelectorAll(`[data-pv="${b.id}"]`).forEach(e=>e.textContent=b.share+'%');const s=document.querySelector(`[data-sl="${b.id}"]`);if(s)s.value=b.share});
+  const sv=$('#sv');if(sv)sv.outerHTML=V[S.v].save();
+}
+let tt;function toast(t,act,fn){const e=$('#toast');e.innerHTML=`<span>${t}</span>${act?`<button>${act}</button>`:''}`;if(act)e.querySelector('button').onclick=()=>{fn();e.classList.remove('show')};e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),act?5000:2400)}
+
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  if(el.dataset.a==='sheetx'&&e.target.closest('.shx')&&!e.target.closest('button.ic'))return;
+  const [a,arg,arg2]=el.dataset.a.split(':');
+  switch(a){
+    case 'v':S.v=+arg;Object.assign(S,{adding:S.list.length===0,nform:null,tOpen:false,exp:null,sheet:null});break;
+    case 'sc':load(arg);break;
+    case 'phone':S.phone=arg==='true';break;
+    case 'dark':S.dark=arg==='true';document.documentElement.dataset.theme=S.dark?'dark':'light';break;
+    case 'rm':removePerson(arg);break;
+    case 'split':splitEqually();break;
+    case 'add':S.adding=true;break;
+    case 'cancel':S.adding=S.list.length===0;S.nform=null;break;
+    case 'addp':addPerson(arg);break;
+    case 'nf':S.nform=arg;S.nf={name:'',dob:'',rel:''};break;
+    case 'mkp':{const id='n'+(++S.np),f=S.nf;people[id]={id,name:f.name.trim(),rel:arg==='t'?'Other':f.rel,dob:f.dob,phone:'—',elig:arg==='t'};
+      if(arg==='t'){S.trustee=id;S.nform=null;S.tOpen=false;S.sheet=null}else addPerson(id);break}
+    case 'trs':S.trustee=arg;S.tOpen=false;S.nform=null;if(S.v===7)S.sheet=null;break;
+    case 'topen':S.tOpen=true;break;
+    case 'exp':S.exp=arg||null;break;
+    case 'sheet':S.sheet=arg;S.adding=false;S.nform=null;break;
+    case 'sheetx':S.sheet=null;S.nform=null;break;
+    case 'step':{const d=+arg2,b=S.list.find(x=>x.id===arg);scaleOthers(arg,b.share+d);break}
+    case 'save':toast('Next: enter your one-time code (the prototype stops here).');return;
+  }
+  render();
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.sl){scaleOthers(t.dataset.sl,+t.value);live();return}
+  const k=t.dataset.in;if(!k)return;const [g,id]=k.split(':');
+  if(g==='share'){const b=S.list.find(x=>x.id===id);b.share=Math.min(Number(t.value.replace(/\D/g,'').slice(0,3))||0,100)}
+  else if(g==='nf')S.nf[id]=t.value;
+  render();
+});
+render();
+</script>
+</body>
+</html>

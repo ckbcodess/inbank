@@ -151,9 +151,6 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ## Cleanup backlog
 - **Dashboard:** Hero split is the default. Delete the Overview, Focus, Timeline, Insights, Actions and
   Hero layouts once confirmed. Until then they still have circular mobile actions and row dividers.
-- **Auth:** Hybrid is the default. Remove the look-switch chip and `auth-layout-store`, then the `quiet`
-  and `card` variants and `EagleBackdrop` / `EagleStudio`, once Hybrid is confirmed. (Resolved: all auth
-  and onboarding cards are vertically centred by default, eliminating card jumps).
 - **Dead or unreachable code:**
   - `FxQuickModal` and its store
   - the `nibs-pending-source` helpers
@@ -184,6 +181,19 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ---
 
 ## Inbox
+
+### 2026-10-28
+- **Decision** (designer, variation 3): beneficiary shares show as one bar, a coloured segment per person (`--cat-1`..`--cat-5`, then `--cat-other`). The line beside the heading speaks only when shares are short of 100. The lines between segments are draggable (and arrow-key) splitters that move share between two neighbours, so the total never changes. Built in `BeneficiaryEditor.tsx`, so BuyPlanFlow gets it too. The trustee line now reads "An adult receives the payout for Prince until Prince turns 18."
+- **Gap** The prototype (`update-beneficiaries-prototypes.html`) variation 3 has no splitter drag; the app is ahead of it. Typed-share add still gives a new person 0% when the total is already 100.
+- **Candidate pattern** Update Beneficiaries has 8 explorations in `prototype/update-beneficiaries-prototypes.html`; none chosen yet. Live code is `components/insure/BeneficiaryEditor.tsx` (shared with BuyPlanFlow), so the pick changes both.
+- **Gap** Typed shares: adding someone when the list already totals 100 gives them 0%, and Save says to give them a share. Variations 4 and 5 rebalance instead, so this can't happen.
+
+### 2026-10-27
+- **Decision** (designer): detail facts are clustered by the question they answer, with whitespace between clusters and no box. A value is a fact, never a sentence; context goes in a muted note under it. Provider, policy number and reference are quiet at the bottom. Built as `FactGroups` in `components/invest/parts.tsx`; used by PolicyDetail and AdvanceDetail. Explored in `prototype/detail-facts-prototypes.html` (variation 3).
+- **Gap** Still on the old flat `FactsPanel`: term-deposit detail, treasury holding and advice, ProductPitch, ClaimFlow, CancelPolicyFlow, and the Also Covered and Beneficiaries panels on PolicyDetail. Move the detail pages to `FactGroups`.
+- **Candidate pattern** If `FactGroups` holds across hubs, promote it to PATTERNS §5 and retire the flat panel for detail pages.
+- **Reuse** Variation 4 (parts, dashed line, total) would make the advance total traceable. Not built.
+- **Gap** The Missed premiums row and the banner say the same thing on PolicyDetail; the banner holds the action.
 
 ### 2026-10-26
 - **Decision:** steps in a flow are the segmented bar (`ui/step-bar.tsx`, now shared by `AuthLayout` and the Insure profile flow), the step name as the title and a quiet `Step n of N` under it (designer, 2026-10-27, variation 1). Any new multi-step flow uses it.

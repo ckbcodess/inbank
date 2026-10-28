@@ -4,15 +4,16 @@
  * Who a policy pays, and how much each gets. Shared by buying a plan and by Update Beneficiaries, so the rules read
  * the same in both:
  *
- *  - Shares are whole percentages and must add up to exactly 100. The line above the list says how much is left (or
- *    how far over), so the customer never has to do the sum.
+ *  - Shares are whole percentages and must add up to exactly 100. One bar shows the split, a segment per person in
+ *    the categorical colours, and a line beside the heading says how much is left (or how far over), but only when the
+ *    total is off: a finished split is silent, so the customer never has to do the sum.
  *  - People already named on another policy are offered first ("Saved"); someone new is added inline and kept for next
  *    time. Whoever is added takes whatever share is left, so a first beneficiary is simply 100%.
  *  - A beneficiary under 18 can't receive money, so a trustee is asked for only then: an adult who receives it for them.
  *  - Removing someone is undoable from the toast, because nothing is saved until the screen is submitted.
  */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Plus, UserRound, X } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -59,10 +60,14 @@ function initials(name: string) {
     .join("");
 }
 
-function Avatar({ name }: { name: string }) {
+/** The nth person's colour on the bar. Positions follow the list, so a colour stays with a person until someone before them is removed. The sixth and later share one. */
+const segmentColor = (i: number) => (i < 5 ? `var(--cat-${i + 1})` : "var(--cat-other)");
+
+function Avatar({ name, color }: { name: string; color?: string }) {
   return (
-    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-[12px] text-foreground" translate="no">
+    <span className="relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-[12px] text-foreground" translate="no">
       {initials(name)}
+      {color && <span aria-hidden="true" className="absolute -right-px -bottom-px size-2.5 rounded-full border-2 border-background" style={{ background: color }} />}
     </span>
   );
 }
@@ -193,6 +198,9 @@ export function BeneficiaryEditor({
 }) {
   const [adding, setAdding] = useState(value.length === 0);
   const [addingTrustee, setAddingTrustee] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ index: number; startX: number; before: BeneficiaryShare[] } | null>(null);
 
   const personOf = (id: string) => people.find((p) => p.id === id);
   const allocated = total(value);
@@ -222,6 +230,14 @@ export function BeneficiaryEditor({
     });
   }
 
+  /** Move the line between two neighbours: what one gains the other loses, so the total never changes. Nobody is dragged down to 0 (removing someone is its own action). */
+  function moveSplitter(index: number, before: BeneficiaryShare[], delta: number) {
+    const pair = before[index].share + before[index + 1].share;
+    if (pair < 2) return;
+    const a = Math.min(Math.max(before[index].share + delta, 1), pair - 1);
+    onChange(before.map((b, i) => (i === index ? { ...b, share: a } : i === index + 1 ? { ...b, share: pair - a } : b)));
+  }
+
   function splitEqually() {
     const n = value.length;
     const base = Math.floor(100 / n);
@@ -233,41 +249,89 @@ export function BeneficiaryEditor({
       <section className="flex flex-col gap-3">
         <SectionHeading
           title="Beneficiaries"
-          hint="The people this policy pays, and the share each one gets."
           action={
-            value.length > 1 ? (
-              <Button type="button" variant="ghost" size="sm" onClick={splitEqually}>
-                Split Equally
-              </Button>
-            ) : undefined
+            <div className="flex items-center gap-4">
+              {left > 0 && <span className="tabular text-[13px] text-muted-foreground">{`${left}% left to share`}</span>}
+              {value.length > 1 && (
+                <Button type="button" variant="ghost" size="sm" onClick={splitEqually}>
+                  Split Equally
+                </Button>
+              )}
+            </div>
           }
         />
 
         {value.length > 0 && (
           <>
             <div className="flex flex-col gap-2 px-1">
-              <div className="flex items-baseline justify-between gap-3 text-[13px]">
-                <span className="tabular text-foreground">{`${allocated}% of 100% shared`}</span>
-                <span className="tabular text-muted-foreground">
-                  {left > 0 ? `${left}% left to share` : left < 0 ? `${-left}% over` : "All shared"}
-                </span>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
-                <div
-                  className={cn("h-full rounded-full transition-[width] duration-reveal ease-settle", left < 0 ? "bg-warning" : "bg-primary")}
-                  style={{ width: `${Math.min(allocated, 100)}%` }}
-                />
+              <div ref={barRef} className="relative flex h-6 items-center">
+                <div className="flex h-2.5 w-full gap-0.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+                  {value.map((b, i) => (
+                    <span
+                      key={b.personId}
+                      className={cn("h-full", !dragging && "transition-[width] duration-reveal ease-settle")}
+                      style={{ width: `${(b.share / Math.max(allocated, 100)) * 100}%`, background: segmentColor(i) }}
+                    />
+                  ))}
+                </div>
+                {value.slice(0, -1).map((b, i) => {
+                  const next = value[i + 1];
+                  const edge = value.slice(0, i + 1).reduce((n, x) => n + x.share, 0);
+                  const nameOf = (id: string) => personOf(id)?.fullName ?? "";
+                  return (
+                    <div
+                      key={b.personId}
+                      role="slider"
+                      tabIndex={0}
+                      aria-label={`Share between ${nameOf(b.personId)} and ${nameOf(next.personId)}`}
+                      aria-valuemin={1}
+                      aria-valuemax={b.share + next.share - 1}
+                      aria-valuenow={b.share}
+                      aria-valuetext={`${nameOf(b.personId)} ${b.share}%, ${nameOf(next.personId)} ${next.share}%`}
+                      className="group absolute top-0 flex h-6 w-6 -translate-x-1/2 cursor-ew-resize touch-none items-center justify-center outline-none"
+                      style={{ left: `${(edge / Math.max(allocated, 100)) * 100}%` }}
+                      onPointerDown={(e) => {
+                        e.currentTarget.setPointerCapture(e.pointerId);
+                        drag.current = { index: i, startX: e.clientX, before: value };
+                        setDragging(true);
+                      }}
+                      onPointerMove={(e) => {
+                        const d = drag.current;
+                        const width = barRef.current?.getBoundingClientRect().width;
+                        if (!d || !width) return;
+                        moveSplitter(d.index, d.before, Math.round(((e.clientX - d.startX) / width) * Math.max(total(d.before), 100)));
+                      }}
+                      onPointerUp={() => {
+                        drag.current = null;
+                        setDragging(false);
+                      }}
+                      onPointerCancel={() => {
+                        drag.current = null;
+                        setDragging(false);
+                      }}
+                      onKeyDown={(e) => {
+                        const step = e.shiftKey ? 5 : 1;
+                        if (e.key === "ArrowLeft" || e.key === "ArrowDown") moveSplitter(i, value, -step);
+                        else if (e.key === "ArrowRight" || e.key === "ArrowUp") moveSplitter(i, value, step);
+                        else return;
+                        e.preventDefault();
+                      }}
+                    >
+                      <span className="h-5 w-1.5 rounded-full border border-border bg-background transition-colors duration-hover group-hover:bg-muted group-focus-visible:bg-muted group-focus-visible:ring-2 group-focus-visible:ring-ring" />
+                    </div>
+                  );
+                })}
               </div>
               {left < 0 && <InlineError message="The shares add up to more than 100%. Lower one of them." className="text-left" />}
             </div>
 
             <ListCard>
-              {value.map((b) => {
+              {value.map((b, i) => {
                 const p = personOf(b.personId);
                 if (!p) return null;
                 return (
                   <li key={b.personId} className="flex items-center gap-3 rounded-xl px-2 py-2 sm:px-3">
-                    <Avatar name={p.fullName} />
+                    <Avatar name={p.fullName} color={segmentColor(i)} />
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-[14px] text-foreground" translate="no">
                         {p.fullName}
@@ -345,8 +409,8 @@ export function BeneficiaryEditor({
           <SectionHeading title="Trustee" />
           <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
             {minors.length === 1
-              ? `${minors[0].fullName} is under 18, so name an adult to receive the payout on their behalf.`
-              : "Some of your beneficiaries are under 18, so name an adult to receive the payout on their behalf."}
+              ? `An adult receives the payout for ${minors[0].fullName.split(/\s+/)[0]} until ${minors[0].fullName.split(/\s+/)[0]} turns 18.`
+              : "An adult receives the payout for your beneficiaries under 18, until each turns 18."}
           </p>
           {trusteeChoices.length > 0 && (
             <div role="radiogroup" aria-label="Trustee" className="flex flex-col gap-2">
