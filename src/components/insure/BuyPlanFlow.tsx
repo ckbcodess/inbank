@@ -393,7 +393,8 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
       planId,
       premium,
       frequency: payFrequency,
-      increment,
+      // Only the savings plans use it (it grows what they pay); it is not asked for, or kept, on the others
+      increment: kind === "savings" ? increment : 0,
       sumAssured,
       termYears: kind === "funeral" ? undefined : (term ?? undefined),
       tier: tier ?? undefined,
@@ -484,7 +485,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
         value: `${m.fullName} · ${findTier(m.tier).label} · ${money(memberMonthly(m.tier, m.relationship))} a month`,
       })),
       { label: kind === "funeral" ? "Total benefit" : "Sum assured", value: money(sumAssured), tabular: true },
-      { label: "Yearly increase", value: INCREMENTS.find((i) => i.value === increment)?.label ?? "None" },
+      ...(kind === "savings" ? [{ label: "Yearly increase", value: INCREMENTS.find((i) => i.value === increment)?.label ?? "None" }] : []),
       { label: "Paid from", value: from ? `${from.name} · ${from.number}` : "" },
       { label: "First deduction", value: firstDeduction, tabular: true },
       ...beneficiaries.map((b) => ({ label: "Beneficiary", value: `${personName(b.personId)} · ${b.share}%`, tabular: true })),
@@ -644,18 +645,21 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
         {kind === "funeral" && !holderTooOld && (
           <>
             <Field label="Your Cover">
-              <div role="radiogroup" aria-label="Your cover" className="flex flex-col gap-2">
-                {COVER_TIERS.map((t) => (
-                  <OptionTile
-                    key={t.id}
-                    title={t.label}
-                    detail={`${money(t.benefit)} benefit`}
-                    value={`${money(t.monthly)} a month`}
-                    selected={tier === t.id}
-                    onSelect={() => setTier(t.id)}
-                  />
-                ))}
-              </div>
+              <Select value={tier} onValueChange={(v) => v && setTier(v as CoverTierId)}>
+                <SelectTrigger aria-label="Your cover">
+                  <SelectValue placeholder="Select cover" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COVER_TIERS.map((t) => (
+                    <SelectItem key={t.id} value={t.id} label={`${t.label} · ${money(t.benefit)}`}>
+                      <span className="flex w-full items-baseline justify-between gap-4">
+                        <span>{`${t.label} · ${money(t.benefit)}`}</span>
+                        <span className="tabular text-muted-foreground">{`${money(t.monthly)} a month`}</span>
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
             {tier && (
               <section className={reveal}>
@@ -706,15 +710,17 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
         {/* When it is paid */}
         {coverChosen && !amountError && (
           <div className={reveal}>
-            <Field label="Yearly Increase">
-              <SegmentedControl
-                aria-label="Yearly increase"
-                options={INCREMENTS.map((i) => ({ value: String(i.value), label: i.label }))}
-                value={String(increment)}
-                onChange={(v) => setIncrement(Number(v))}
-                fullWidth
-              />
-            </Field>
+            {kind === "savings" && (
+              <Field label="Yearly Increase">
+                <SegmentedControl
+                  aria-label="Yearly increase"
+                  options={INCREMENTS.map((i) => ({ value: String(i.value), label: i.label }))}
+                  value={String(increment)}
+                  onChange={(v) => setIncrement(Number(v))}
+                  fullWidth
+                />
+              </Field>
+            )}
             <Field label="First Deduction Month">
               <Select value={startMonth} onValueChange={(v) => v && setStartMonth(v)}>
                 <SelectTrigger aria-label="First deduction month">

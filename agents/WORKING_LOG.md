@@ -182,6 +182,10 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-10-29
+- **Decision** (designer): Yearly Increase is asked for only on the savings plans (Child Education, WealthMaster), where it grows the sum assured (`savingsSumAssured`). Ultimate Protection and HomeCall no longer ask for it, store 0, and don't show it on the review or the policy page, because their pricing never read it. **Question** Do the mobile purchase flows ask for it on any plan? Not checked: the repo has no mobile Figma.
+- **Decision** (designer): `scroll-fade` fades the bottom edge only, never the top (`globals.css`), and the main shell's scroll area has it too (`CustomerShell`, `AdminShell`; business uses the customer shell). `scroll-fade` owns the element's `animation`, so it can't share an element with `animate-in`: the shell's page fade-in moved to a wrapper inside `main`. The unused `.shell-fade-bottom` rule was removed. Check in a browser: a sticky or fixed control inside the page content fades at the bottom edge too.
+
 ### 2026-10-28
 - **Override** (designer): the advance page follows the policy page's shape: a boxed card of plain rows (reference; repays on, interest rate, daily interest, late charge rate; advance, fees, received, paid in, went into, interest so far, late charges) ending in a large figure. A live advance's "To clear it today" is now that closing figure, not a lead-in figure at the top, which overrides CONSTITUTION §3/§5 ("a balance gets a large figure with a short lead-in phrase above it"). The notes under values are gone ("2.17% a month, GHS 5.79 a day" is two rows). Other states close with Requested, Asked for or Repaid. **Proposal:** amend §3/§5 for product records, together with the policy override. Not done until the designer confirms.
 - **Decision** (designer): the new-person modals (beneficiary, trustee, HomeCall cover member) keep Cancel and the add button in the modal footer, outside the scrolling fields. Split Equally is the standard outline `Button`, the same style as Add Another Beneficiary, not a custom pill: don't invent button styles for one screen.

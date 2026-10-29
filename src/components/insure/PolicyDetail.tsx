@@ -114,7 +114,7 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
     {
       rows: [
         { label: "Premium", value: waiting ? `${premium}, not taken yet` : premium },
-        ...(policy.increment ? [{ label: "Yearly increase", value: `${policy.increment}%` }] : []),
+        ...(policy.increment && plan?.kind === "savings" ? [{ label: "Yearly increase", value: `${policy.increment}%` }] : []),
         ...(from ? [{ label: "Paid from", value: from }] : []),
         { label: "Paid so far", value: money(premiumsPaid(policy)), note: count },
       ],
