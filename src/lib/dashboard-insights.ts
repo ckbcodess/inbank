@@ -49,8 +49,10 @@ function toSlices(entries: { label: string; amount: number }[]): {
   const total = sumMoney(ranked.map((r) => r.amount));
   if (total <= 0) return { total: 0, slices: [] };
 
-  const named = ranked.slice(0, 5);
-  const rest = ranked.slice(5);
+  // A real "Other" category always folds into the "Other" slice, so two slices never share that name (and its key)
+  const nonOther = ranked.filter((r) => r.label !== "Other");
+  const named = nonOther.slice(0, 5);
+  const rest = [...nonOther.slice(5), ...ranked.filter((r) => r.label === "Other")];
   const slices: Slice[] = named.map((r, i) => ({
     label: r.label,
     amount: r.amount,
