@@ -1066,12 +1066,6 @@ a,
   --shell-header: color-mix(in srgb, var(--shell-top) 88%, transparent);
 }
 
-/* CSS Mask fade-out for bottom edge of shell content — disabled to prevent masking notifications and interactive bottom controls */
-.shell-fade-bottom {
-  mask-image: none !important;
-  -webkit-mask-image: none !important;
-}
-
 /* Every scrollbar in the app is this one: thin, quiet, the track invisible. It applies to every element, so a new
    scroll area (a modal, a sheet, a list, a table wrapper) gets it without asking. Hide one only on purpose, with
    `no-scrollbar` or `hide-scrollbar`. Never style a scrollbar by hand (see the constitution). */
@@ -1133,23 +1127,15 @@ a,
   background-color: oklch(1 0 0 / 20%);
 }
 
-/* Edge fade for a scroll area: the content dissolves into the edge where more is waiting, and the fade is gone once
-   that edge is reached. Add `scroll-fade` to any scrolling list, modal or sheet body. It is driven by the scroll
-   position (no JS), so an area that doesn't overflow shows no fade. Browsers without scroll-driven animations just
+/* Bottom fade for a scroll area (designer, 2026-10-29: the bottom only, never the top): the content dissolves into the
+   bottom edge while more is waiting below, and the fade is gone once the end is reached. Add `scroll-fade` to any scrolling
+   list, modal, sheet body or the main shell. It is driven by the scroll position (no JS), so an area that doesn't overflow
+   shows no fade. It takes the element's `animation`, so don't also put `animate-in` on the same element. Browsers without scroll-driven animations just
    get a hard edge. Not for popovers that draw their own shadow: the mask would clip it. */
-@property --fade-top {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
 @property --fade-bottom {
   syntax: "<length>";
   inherits: false;
   initial-value: 0px;
-}
-@keyframes scroll-fade-top {
-  from { --fade-top: 0px; }
-  to { --fade-top: var(--scroll-fade-size); }
 }
 @keyframes scroll-fade-bottom {
   from { --fade-bottom: var(--scroll-fade-size); }
@@ -1158,11 +1144,11 @@ a,
 @supports (animation-timeline: scroll()) {
   .scroll-fade {
     --scroll-fade-size: 24px;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent 100%);
-    animation: scroll-fade-top linear both, scroll-fade-bottom linear both;
-    animation-timeline: scroll(self block), scroll(self block);
-    animation-range: 0% var(--scroll-fade-size), calc(100% - var(--scroll-fade-size)) 100%;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - var(--fade-bottom)), transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - var(--fade-bottom)), transparent 100%);
+    animation: scroll-fade-bottom linear both;
+    animation-timeline: scroll(self block);
+    animation-range: calc(100% - var(--scroll-fade-size)) 100%;
   }
 }
 

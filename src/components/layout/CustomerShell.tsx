@@ -162,9 +162,10 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
 
             <main
               key={activeProfile.id}
-              className="custom-scrollbar animate-in fade-in flex-1 overflow-y-auto pt-12 duration-200"
+              className="custom-scrollbar scroll-fade flex-1 overflow-y-auto pt-12"
               style={{ scrollbarGutter: "stable" }}
             >
+              <div className="animate-in fade-in duration-200">
               <div
                 key={pathname}
                 className={cn(
@@ -174,6 +175,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
                 )}
               >
                 {children}
+              </div>
               </div>
             </main>
             <BottomNav onOpenDrawer={() => setSidebarOpen(true)} />
