@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ChevronLeft } from "@/components/ui/icons";
@@ -9,11 +9,6 @@ import AuthHeader from "./AuthHeader";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { cn } from "@/lib/utils";
 import { SmoothHeight } from "@/components/ui/smooth-height";
-import EagleBackdrop from "@/components/brand/EagleBackdrop";
-import { AUTH_LOOK_LABEL, useAuthLayoutStore } from "@/lib/auth-layout-store";
-import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
-import { useDevToolsHidden } from "@/lib/dev-tools-visibility";
-import { useCaptureMode } from "@/lib/capture-mode";
 import { SPRING } from "@/lib/motion";
 import { StepBar } from "@/components/ui/step-bar";
 
@@ -42,7 +37,7 @@ interface AuthLayoutProps {
   }>;
   /** Rendered under the card — links, reassurance, demo affordances. */
   footer?: ReactNode;
-  /** Widen for steps that carry a wide list of choices or tables. */
+  /** Ignored: every step shares one column width. Still accepted so existing screens compile. */
   width?: "default" | "wide" | "compact";
   /** Optional step progress indicator (e.g. 8 steps) */
   stepProgress?: {
@@ -53,12 +48,8 @@ interface AuthLayoutProps {
   showLogo?: boolean;
   /** Animate card height between step transitions. Defaults to false to prevent expanding animations on initial page load. */
   animateHeight?: boolean;
-  /** "quiet" drops the banner and card chrome: content sits directly on the page. "card" is the older boxed look. "hybrid" (default) is the quiet layout (fixed column, top anchored, plain back chevron) inside the card, over the banner, without the eagle. */
-  variant?: "card" | "quiet" | "hybrid";
-  /** Quiet only. "top" (default) keeps multi-step titles fixed; "center" suits short single-screen pages like login. */
+  /** "top" keeps multi-step titles fixed; "center" (default) suits short single-screen pages like login. */
   vAlign?: "top" | "center";
-  /** Quiet only. Faint dotted golden eagle behind the content. */
-  eagle?: boolean;
   /** Vertical padding of the card, as Tailwind `py-*` classes. Defaults to `py-10 sm:py-12`, the shared onboarding rhythm. */
   padY?: string;
   /** Space under the title block, as a Tailwind `mb-*` class. Defaults to `mb-6 sm:mb-10`. */
@@ -78,75 +69,48 @@ export default function AuthLayout({
   backLabel = "Go back",
   icon: Icon,
   footer,
-  width = "default",
   stepProgress,
   showLogo = false,
   animateHeight = false,
-  variant: variantProp = "hybrid",
   vAlign = "center",
-  eagle: eagleProp = false,
   padY,
   headerGap,
 }: AuthLayoutProps) {
-  // Test switch: the saved look overrides the page's variant. Read after mount to avoid a hydration mismatch.
-  const look = useAuthLayoutStore((s) => s.look);
-  const cycleLook = useAuthLayoutStore((s) => s.cycle);
-  const devToolsHidden = useDevToolsHidden();
-  const captureMode = useCaptureMode();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    void useAuthLayoutStore.persist.rehydrate();
-    setMounted(true);
-  }, []);
-  const variant: NonNullable<AuthLayoutProps["variant"]> = !mounted
-    ? variantProp
-    : look === "new" ? "quiet" : look === "classic" ? "card" : "hybrid";
-  const eagle = mounted && look === "new" ? true : eagleProp;
-  const quiet = variant === "quiet"; // no banner, no card
-  const newLayout = variant !== "card"; // the new column, back placement and anchoring
-  // Quiet screens share one column width so steps never jump sideways.
-  const maxWidthClass = newLayout
-    ? "max-w-[500px]"
-    : width === "wide"
-      ? "max-w-[620px]"
-      : width === "compact"
-      ? "max-w-[500px]"
-      : "max-w-[540px]";
+  // One look: the quiet column (fixed width, top-anchored titles, plain back chevron) inside the card, over the banner.
+  const maxWidthClass = "max-w-[500px]";
 
   const hasBack = Boolean(onBack || backHref);
-  const cardClassName = quiet
-    ? cn("px-1", padY ?? "py-10 sm:py-12")
-    : cn("rounded-3xl border border-border/80 bg-card-auth/95 px-5 sm:px-6", padY ?? "py-10 sm:py-12", "shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden");
+  const cardClassName = cn("rounded-3xl border border-border/80 bg-card-auth/95 px-5 sm:px-6", padY ?? "py-10 sm:py-12", "shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden");
 
 
   return (
     <div
       data-auth-shell
-      data-auth-quiet={newLayout ? "" : undefined}
+      data-auth-quiet=""
       className="relative flex min-h-dvh w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden"
     >
       {/* Top Fixed Header */}
       <AuthHeader />
 
       {/* Decorative Brand Hero Banner Background */}
-      {!quiet && <div className="absolute top-14 inset-x-0 h-[240px] sm:h-[280px] lg:h-[300px] overflow-hidden pointer-events-none z-0">
+      <div className="absolute top-14 inset-x-0 h-[240px] sm:h-[280px] lg:h-[300px] overflow-hidden pointer-events-none z-0">
         <Image
           src="/images/auth-banner.webp"
           alt="GCB Internet Banking"
           fill
-          className="object-cover object-center"
+          className="object-cover object-center in-data-[app=business]:hidden"
           priority
         />
-      </div>}
-
-      {quiet && eagle && <EagleBackdrop />}
+        {/* Business banking has no banner image yet; this holds the space until it does. */}
+        <div className="hidden size-full bg-muted in-data-[app=business]:block" />
+      </div>
 
       {/* Main Container - Vertically and horizontally centered in available viewport */}
       <main
         className={cn(
           "relative z-10 flex min-h-[calc(100dvh-4rem)] w-full justify-center px-3 sm:px-5 py-6 mt-12",
           // Quiet screens anchor to the top so the title never jumps when a step's height changes.
-          newLayout && vAlign === "top" ? "items-start pt-10 sm:pt-[12vh]" : "items-center"
+          vAlign === "top" ? "items-start pt-10 sm:pt-[12vh]" : "items-center"
         )}
       >
         <div className={`w-full my-auto ${maxWidthClass}`}>
@@ -156,14 +120,14 @@ export default function AuthLayout({
               <>
                 {/* In-Card Back Navigation Trigger */}
                 {hasBack && (
-                  <div className={newLayout ? (stepProgress ? "mb-5 -ml-1 flex items-center" : "mb-10 -ml-1 flex items-center") : "mb-4 flex items-center"}>
+                  <div className={stepProgress ? "mb-5 -ml-1 flex items-center" : "mb-10 -ml-1 flex items-center"}>
                     {backHref ? (
                       <Link
                         href={backHref}
                         aria-label={backLabel}
                         className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95"
                       >
-                        <div className={newLayout ? "flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground" : "flex size-7 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border"}>
+                        <div className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground">
                           <ChevronLeft size={16} className="transition-transform" />
                         </div>
                         <span>Back</span>
@@ -175,7 +139,7 @@ export default function AuthLayout({
                         aria-label={backLabel}
                         className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95 cursor-pointer"
                       >
-                        <div className={newLayout ? "flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground" : "flex size-7 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border"}>
+                        <div className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground">
                           <ChevronLeft size={16} className="transition-transform" />
                         </div>
                         <span>Back</span>
@@ -186,7 +150,7 @@ export default function AuthLayout({
 
                 {/* Step Progress Segments (Full Width across the card) */}
                 {stepProgress && (
-                  <StepBar current={stepProgress.current} total={stepProgress.total} className={newLayout ? "mb-6" : "mb-5"} />
+                  <StepBar current={stepProgress.current} total={stepProgress.total} className="mb-6" />
                 )}
 
                 {/* Optional Step Icon */}
@@ -306,17 +270,6 @@ export default function AuthLayout({
           )}
         </div>
       </main>
-
-      {mounted && SHOW_DEMO_TOOLS && !devToolsHidden && !captureMode && (
-        <button
-          type="button"
-          onClick={cycleLook}
-          title="Cycle onboarding layout (Press Ctrl+Shift+D to hide dev tools)"
-          className="fixed bottom-3.5 right-3.5 z-50 rounded-full border border-border bg-card-auth/95 px-2 py-2 text-[12px] text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground active:scale-95 cursor-pointer"
-        >
-          Layout: {AUTH_LOOK_LABEL[look]}
-        </button>
-      )}
     </div>
   );
 }

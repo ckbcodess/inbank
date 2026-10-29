@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Account Detail Page on Desktop: 5 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--scrim:rgba(0,0,0,.35);--card:#1c1c1e;--red:#c62828}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:rgba(0,0,0,.6);--card:#222;--red:#ef5350}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0;padding:0}
+  .mu{color:var(--mu)}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .wrap{display:flex;flex-direction:column;align-items:center}
+  .frame{position:relative;width:1080px;max-width:100%;min-height:700px;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;display:flex}
+  .frame.phone{width:420px;border-radius:28px;display:block}
+  .side{width:200px;flex:none;border-right:1px solid var(--bd);padding:24px 12px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+  .side .logo{padding:0 12px 20px;font-weight:500}
+  .side span{padding:10px 12px;border-radius:10px;color:var(--mu)} .side span.on{background:var(--tile);color:var(--tx)}
+  .main{flex:1;min-width:0;position:relative}
+  .page{padding:32px 40px 56px;max-width:880px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:32px}
+  .phone .page{padding:20px 16px 40px}
+  .hd{display:flex;align-items:center;gap:8px;min-height:40px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em;flex:1}
+  .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mu);flex:none} .ic:hover{background:var(--tile);color:var(--tx)}
+  .pillbtn{height:28px;padding:0 10px;border-radius:8px;background:var(--tile);font-size:13px;display:inline-flex;align-items:center;gap:6px} .pillbtn:hover{background:var(--tileh)}
+  .cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px;align-items:start}
+  .phone .cols{grid-template-columns:1fr}
+  .left{display:flex;flex-direction:column;gap:20px;width:82%;margin:0 auto} .phone .left{width:100%}
+  .bal{background:var(--card);color:#fff;border-radius:20px;padding:20px;min-height:170px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;gap:2px}
+  .bal .t{font-size:12px;opacity:.7} .bal .n{font-size:34px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .badge{position:absolute;top:16px;right:16px;font-size:12px;background:var(--am);color:#111;padding:2px 10px;border-radius:999px}
+  .cardfoot{display:flex;gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14);font-size:13px}
+  .cardfoot button{color:#fff;text-decoration:underline;text-underline-offset:3px;opacity:.9} .cardfoot button:hover{opacity:1}
+  .cardfoot span{opacity:.6}
+  .acts{display:flex;justify-content:space-evenly}
+  .ra{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;width:80px;text-align:center}
+  .ra i{width:44px;height:44px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-style:normal}
+  .tiles{display:flex;flex-direction:column;gap:12px}
+  .tile{background:var(--tile);border-radius:14px;min-height:56px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;font-size:15px}
+  .tile:hover{background:var(--tileh)}
+  .link{font-size:13px;text-decoration:underline;text-underline-offset:3px;min-height:36px;display:inline-flex;align-items:center}
+  .link.red{color:var(--red)}
+  .why{font-size:12px;color:var(--mu)}
+  .sec h3{font-size:16px;font-weight:500;margin:0 0 4px}
+  .kv{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;border-top:1px solid var(--bd);font-size:14px}
+  .kv:last-child{border-bottom:1px solid var(--bd)}
+  .kv .s{font-size:12px;color:var(--mu);display:block}
+  .menu{position:absolute;top:72px;right:40px;width:280px;background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:8px;box-shadow:var(--shadow);z-index:5}
+  .mi{display:block;width:100%;padding:10px 12px;border-radius:10px;font-size:14px} .mi:hover:not(.dis){background:var(--tile)} .mi.r{color:var(--red)}
+  .mi.dis{color:var(--mu);cursor:default} .mi small{display:block;font-size:12px;color:var(--mu);margin-top:2px}
+  .scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:center;justify-content:center;z-index:10;padding:24px}
+  .sheet{width:100%;max-width:440px;background:var(--surf);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:12px}
+  .sheet h2{font-size:16px;font-weight:500} .sheet p.t{font-size:13px;line-height:1.5;color:var(--mu)}
+  .btns{display:flex;gap:8px;margin-top:8px}
+  .btn{flex:1;height:44px;border-radius:12px;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:14px}
+  .btn.d{background:var(--red);border-color:var(--red);color:#fff}
+  .toast{position:absolute;left:50%;transform:translateX(-50%);bottom:20px;min-width:340px;background:#111;color:#fff;border-radius:14px;padding:12px 16px;font-size:13px;display:flex;justify-content:space-between;gap:24px;z-index:20}
+  .stack{display:flex;flex-direction:column;gap:12px}
+  .legend{max-width:900px;font-size:12px;color:var(--mu);line-height:1.6;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Account detail page: default and remove, 5 variations</h1>
+    <div class="ctrls"><div class="pills" id="pills"></div><div class="seg" id="states"></div><div class="seg" id="dev"></div><div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="wrap"><div class="frame desk" id="frame"></div><p class="legend" id="legend"></p></div></div>
+<script>
+// This is the Account Details page as built: card and round actions on the left, option tiles on the right.
+const NOTES=[
+ "1 · Header. “Make default” is a small pill in the page header, where Reactivate lives today, and shows only when it applies. Remove is in a ⋯ beside it. The columns stay exactly as they are: nothing is added to the card or the tiles.",
+ "2 · Under the card. The left column gets one quiet line under Top Up and Share Details: “Default account · Make default”, and below it “Remove account” as a text link. They belong to the card, so they sit with it, and the tile list stays all destinations.",
+ "3 · Settings group. A heading, “Settings”, under the tiles in the right column, with two hairline rows: Default account and Remove account. Separate from the tiles by a clear gap and a different look, so they read as settings, not as pages to open.",
+ "4 · Card foot. The links live inside the dark card, along its bottom edge: “Make default · Remove”. The badge on the card still says Default. Everything about the account stays on the account.",
+ "5 · About this account. The right column ends with a short facts list (type, number, holder, status) and the two settings join it as rows: “Default account” (a value, or Make default) and, last, “Remove from my accounts”. Settings are facts about the account.",
+];
+const LEGEND="Switch the state above: the default of three accounts, another account, or the only account. Make default and remove work: remove asks first and offers Undo. Phone width is in the switch too.";
+const ALL=[{id:"cur",nm:"Current Account",sub:"0231 4455 88901",amt:"18,420.50"},{id:"sav",nm:"Savings Account",sub:"0231 7788 20114",amt:"6,200.00"},{id:"jnt",nm:"Joint Account",sub:"0231 9012 33478",amt:"2,310.75"}];
+let v=0,dev="desk",state="default",accounts=[...ALL],def="cur",viewId="cur",menu=false,sheet=false,toast=null,removed=null;
+const $=s=>document.querySelector(s);
+const dots='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
+const back='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>';
+const chev='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>';
+const one=()=>accounts.length<=1;
+const isDef=()=>viewId===def;
+const block=()=>one()?"This is your only account, so it can't be removed.":isDef()?"Your default can't be removed. Set another account as your default first.":null;
+const cur=()=>ALL.find(a=>a.id===viewId);
+const tiles=()=>["Last 10 Transactions","My Spends","Scheduled Payments","Place a Request"].map(t=>`<div class="tile"><span>${t}</span>${chev}</div>`).join("");
+const acts='<div class="acts"><div class="ra"><i>+</i>Top Up</div><div class="ra"><i>↗</i>Share Details</div></div>';
+
+function card(foot=""){const a=cur();return `<div class="bal">${isDef()&&!one()?`<span class="badge">Default</span>`:""}<span class="t">${a.nm} · ${a.sub}</span><span class="n">GHS ${a.amt}</span>${foot}</div>`;}
+function defRow(){ // label, value or action
+  if(one()) return null;
+  return isDef()?`Default account`:null;
+}
+function header(){
+  const a=cur();
+  let right="";
+  if(v===0){
+    right=`${!isDef()&&!one()?`<button class="pillbtn" data-def>Make default</button>`:""}<button class="ic" data-menu aria-label="More">${dots}</button>`;
+  }
+  return `<div class="hd"><button class="ic" aria-label="Back">${back}</button><h2>${a.nm}</h2>${right}</div>`;
+}
+function menuHTML(){const b=block();return `<div class="menu">${b?`<div class="mi dis">Remove account<small>${b}</small></div>`:`<button class="mi r" data-ask>Remove account</button>`}</div>`;}
+function content(){
+  const b=block();
+  if(v===1){
+    const left=`${card()}${acts}
+      <div class="sec" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center">
+        ${one()?"":isDef()?`<span class="why" style="font-size:13px">This is your default account</span>`:`<span style="font-size:13px"><span class="mu">Not your default · </span><button class="link" data-def>Make default</button></span>`}
+        ${b?`<span class="why">${b}</span>`:`<button class="link red" data-ask>Remove account</button>`}
+      </div>`;
+    return `<div class="cols"><div class="left">${left}</div><div class="tiles">${tiles()}</div></div>`;
+  }
+  if(v===3){
+    const foot=`<div class="cardfoot">${one()?`<span>Your only account</span>`:isDef()?`<span>Default account</span>`:`<button data-def>Make default</button>`}${b?"":`<button data-ask>Remove</button>`}</div>`;
+    return `<div class="cols"><div class="left">${card(foot)}${acts}${b&&!one()?`<p class="why" style="text-align:center">${b}</p>`:""}</div><div class="tiles">${tiles()}</div></div>`;
+  }
+  const right=v===2?`<div class="stack"><div class="tiles">${tiles()}</div>
+    <div class="sec" style="margin-top:8px"><h3>Settings</h3>
+      ${one()?"":`<div class="kv"><span>Default account</span>${isDef()?`<span class="mu">Yes</span>`:`<button class="link" data-def>Make default</button>`}</div>`}
+      <div class="kv"><span>Remove account${b?`<span class="s">${b}</span>`:""}</span>${b?"":`<button class="link red" data-ask>Remove</button>`}</div></div></div>`
+  :v===4?`<div class="stack"><div class="tiles">${tiles()}</div>
+    <div class="sec" style="margin-top:8px"><h3>About this account</h3>
+      <div class="kv"><span>Type</span><span class="mu">${viewId==="jnt"?"Joint current":viewId==="sav"?"Savings":"Current"}</span></div>
+      <div class="kv"><span>Account number</span><span class="mu">${cur().sub}</span></div>
+      ${one()?"":`<div class="kv"><span>Default account</span>${isDef()?`<span class="mu">Yes</span>`:`<button class="link" data-def>Make default</button>`}</div>`}
+      <div class="kv"><span>Remove from my accounts${b?`<span class="s">${b}</span>`:""}</span>${b?"":`<button class="link red" data-ask>Remove</button>`}</div></div></div>`
+  :`<div class="tiles">${tiles()}</div>`;
+  return `<div class="cols"><div class="left">${card()}${acts}</div>${right}</div>`;
+}
+function sheetHTML(){return `<div class="scrim" data-scrim><div class="sheet"><h2>Remove ${cur().nm}?</h2><p class="t">It leaves your accounts list. The account stays open at the bank and your money isn't affected. You can add it back from Accounts with a selfie check.</p><div class="btns"><button class="btn" data-close>Cancel</button><button class="btn d" data-confirm>Remove</button></div></div></div>`;}
+function render(){
+  $("#note").textContent=NOTES[v];$("#legend").textContent=LEGEND;
+  $("#pills").innerHTML=NOTES.map((_,i)=>`<button class="pill ${v===i?"on":""}" data-v="${i}">${i+1}</button>`).join("");
+  $("#states").innerHTML=[["default","Default (of 3)"],["other","Another account"],["only","Only account"]].map(([k,l])=>`<button data-s="${k}" class="${state===k?"on":""}">${l}</button>`).join("");
+  $("#dev").innerHTML=[["desk","Desktop"],["phone","Phone"]].map(([k,l])=>`<button data-d="${k}" class="${dev===k?"on":""}">${l}</button>`).join("");
+  const inner=`<div class="page">${header()}${content()}</div>${menu&&v===0?menuHTML():""}${sheet?sheetHTML():""}${toast?`<div class="toast"><span>${toast}</span>${removed?`<u data-undo style="cursor:pointer">Undo</u>`:""}</div>`:""}`;
+  const fr=$("#frame");fr.className="frame "+(dev==="desk"?"desk":"phone");
+  fr.innerHTML=dev==="desk"?`<aside class="side"><div class="logo">GCB</div>${["Home","Accounts","Send & Pay","Cards","Invest","Loans","Beneficiaries","Transactions"].map(n=>`<span class="${n==="Accounts"?"on":""}">${n}</span>`).join("")}</aside><div class="main">${inner}</div>`:inner;
+}
+let tt;const say=(m,r)=>{toast=m;removed=r||null;clearTimeout(tt);tt=setTimeout(()=>{toast=null;removed=null;render();},3200);};
+function setState(k){state=k;accounts=k==="only"?[ALL[0]]:[...ALL];def="cur";viewId=k==="other"?"sav":"cur";menu=false;sheet=false;toast=null;}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-s],[data-d],[data-t],[data-menu],[data-def],[data-ask],[data-close],[data-scrim],[data-confirm],[data-undo]");
+  if(!t){if(menu){menu=false;render();}return;}
+  if(t.dataset.scrim!==undefined&&e.target!==t)return;
+  const d=t.dataset;
+  if(d.v!==undefined){v=+d.v;menu=false;sheet=false;toast=null;}
+  else if(d.s){setState(d.s);}
+  else if(d.d){dev=d.d;menu=false;}
+  else if(d.t){document.documentElement.dataset.theme=d.t;document.querySelectorAll("#theme button").forEach(b=>b.classList.toggle("on",b===t));return;}
+  else if(d.menu!==undefined){menu=!menu;}
+  else if(d.def!==undefined){def=viewId;menu=false;say(`${cur().nm} is now your default`);}
+  else if(d.ask!==undefined){menu=false;sheet=true;}
+  else if(d.close!==undefined||d.scrim!==undefined){sheet=false;}
+  else if(d.confirm!==undefined){sheet=false;if(!block()){const i=accounts.findIndex(a=>a.id===viewId),a=accounts[i];accounts.splice(i,1);viewId=def;say(`${a.nm} removed. Back to ${cur().nm}.`,{a,i});}}
+  else if(d.undo!==undefined&&removed){accounts.splice(removed.i,0,removed.a);viewId=removed.a.id;toast=null;removed=null;}
+  render();
+});
+render();
+</script>
+</body>
+</html>

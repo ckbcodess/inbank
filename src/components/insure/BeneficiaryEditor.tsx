@@ -4,7 +4,7 @@
  * Who a policy pays, and how much each gets. Shared by buying a plan and by Update Beneficiaries, so the rules read
  * the same in both:
  *
- *  - Shares are whole percentages and must add up to exactly 100. One bar shows the split, a segment per person in
+ *  - Shares go up in steps of 5 and must add up to exactly 100. One bar shows the split, a segment per person in
  *    the categorical colours, and a line beside the heading says how much is left (or how far over), but only when the
  *    total is off: a finished split is silent, so the customer never has to do the sum.
  *  - People already named on another policy are offered first ("Saved"); someone new is added inline and kept for next
@@ -13,10 +13,11 @@
  *  - Removing someone is undoable from the toast, because nothing is saved until the screen is submitted.
  */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Plus, UserRound, X } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { InlineError } from "@/components/ui/inline-error";
 import { Input } from "@/components/ui/input";
@@ -43,9 +44,13 @@ export const isMinor = (p: Pick<InsuredPerson, "dateOfBirth"> | undefined) => Bo
 const isAdult = (p: InsuredPerson) => ageOn(p.dateOfBirth) >= 18;
 const total = (list: BeneficiaryShare[]) => list.reduce((n, b) => n + b.share, 0);
 
-/** The list is ready to save: shares add up to 100, nobody has 0, and a minor has a trustee. */
+/** Shares move in multiples of this, whether dragged, typed or split equally. */
+const STEP = 5;
+const snap = (n: number) => Math.round(n / STEP) * STEP;
+
+/** The list is ready to save: shares are multiples of 5 that add up to 100, nobody has 0, and a minor has a trustee. */
 export function beneficiariesReady(list: BeneficiaryShare[], people: InsuredPerson[], trusteeId?: string): boolean {
-  if (list.length === 0 || total(list) !== 100 || list.some((b) => b.share <= 0)) return false;
+  if (list.length === 0 || total(list) !== 100 || list.some((b) => b.share <= 0 || b.share % STEP !== 0)) return false;
   const minors = list.some((b) => isMinor(people.find((p) => p.id === b.personId)));
   return !minors || Boolean(trusteeId && people.some((p) => p.id === trusteeId));
 }
@@ -74,17 +79,25 @@ function Avatar({ name, color }: { name: string; color?: string }) {
 
 /* ── Adding someone ────────────────────────────────────────────────────────── */
 
-function PersonForm({
+/** The new-person form in a modal. Its buttons sit in the modal's footer, so they stay put while the fields scroll. */
+function PersonModal({
+  open,
+  onOpenChange,
+  title,
   ownerId,
   trustee,
   onSaved,
-  onCancel,
+  top,
 }: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
   ownerId: string;
   /** A trustee also needs an email and an address, and must be an adult. */
   trustee?: boolean;
   onSaved: (person: InsuredPerson) => void;
-  onCancel: () => void;
+  /** Shown above the fields, such as the people already saved. */
+  top?: React.ReactNode;
 }) {
   const savePerson = useInsurance((s) => s.savePerson);
   const [fullName, setFullName] = useState("");
@@ -94,6 +107,18 @@ function PersonForm({
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+
+  // A fresh form each time it opens
+  useEffect(() => {
+    if (!open) return;
+    setFullName("");
+    setDob("");
+    setGender("");
+    setRelationship("");
+    setPhone("");
+    setEmail("");
+    setAddress("");
+  }, [open]);
 
   const dobInFuture = dob !== "" && dob > MOCK_TODAY;
   const tooYoung = trustee && dob !== "" && !dobInFuture && ageOn(dob) < 18;
@@ -125,7 +150,24 @@ function PersonForm({
 
   const id = trustee ? "trustee" : "beneficiary";
   return (
-    <div className={cn("flex flex-col gap-5 rounded-2xl border border-border p-3 sm:p-4", reveal)}>
+    <Modal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={title}
+      size="md"
+      footer={
+        <>
+          <Button type="button" variant="outline" className="h-10 flex-1" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button type="button" className="h-10 flex-1" disabled={!ready} onClick={save}>
+            {trustee ? "Add Trustee" : "Add Beneficiary"}
+          </Button>
+        </>
+      }
+    >
+    <div className="flex flex-col gap-5">
+      {top}
       <Field label="Full Name" htmlFor={`${id}-name`}>
         <Input id={`${id}-name`} value={fullName} onChange={(e) => setFullName(e.target.value)} autoComplete="off" placeholder="As on their ID" />
       </Field>
@@ -166,15 +208,8 @@ function PersonForm({
           </Field>
         </>
       )}
-      <div className="flex gap-2">
-        <Button type="button" variant="outline" className="h-10 flex-1" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button type="button" className="h-10 flex-1" disabled={!ready} onClick={save}>
-          {trustee ? "Add Trustee" : "Add Beneficiary"}
-        </Button>
-      </div>
     </div>
+    </Modal>
   );
 }
 
@@ -196,7 +231,7 @@ export function BeneficiaryEditor({
   trusteeId?: string;
   onTrusteeChange: (id: string | undefined) => void;
 }) {
-  const [adding, setAdding] = useState(value.length === 0);
+  const [adding, setAdding] = useState(false);
   const [addingTrustee, setAddingTrustee] = useState(false);
   const [dragging, setDragging] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
@@ -219,6 +254,11 @@ export function BeneficiaryEditor({
     onChange(value.map((b) => (b.personId === personId ? { ...b, share } : b)));
   }
 
+  /** Typing is free while the number is being keyed ("3" on the way to "35"); leaving the box lands it on a multiple of 5. */
+  function settleShare(personId: string) {
+    onChange(value.map((b) => (b.personId === personId && b.share > 0 ? { ...b, share: Math.min(Math.max(snap(b.share), STEP), 100) } : b)));
+  }
+
   function remove(personId: string) {
     const before = value;
     const name = personOf(personId)?.fullName ?? "Beneficiary";
@@ -233,27 +273,30 @@ export function BeneficiaryEditor({
   /** Move the line between two neighbours: what one gains the other loses, so the total never changes. Nobody is dragged down to 0 (removing someone is its own action). */
   function moveSplitter(index: number, before: BeneficiaryShare[], delta: number) {
     const pair = before[index].share + before[index + 1].share;
-    if (pair < 2) return;
-    const a = Math.min(Math.max(before[index].share + delta, 1), pair - 1);
+    if (pair < STEP * 2) return;
+    const a = Math.min(Math.max(snap(before[index].share + delta), STEP), pair - STEP);
     onChange(before.map((b, i) => (i === index ? { ...b, share: a } : i === index + 1 ? { ...b, share: pair - a } : b)));
   }
 
   function splitEqually() {
+    // 20 steps of 5 to hand out: everyone gets the same number, and the first few get one more until none are left
     const n = value.length;
-    const base = Math.floor(100 / n);
-    onChange(value.map((b, i) => ({ ...b, share: base + (i < 100 - base * n ? 1 : 0) })));
+    const units = 100 / STEP;
+    const each = Math.floor(units / n);
+    const extra = units - each * n;
+    onChange(value.map((b, i) => ({ ...b, share: (each + (i < extra ? 1 : 0)) * STEP })));
   }
 
   return (
-    <div className="flex flex-col gap-10">
-      <section className="flex flex-col gap-3">
+    <div className="flex flex-col gap-12">
+      <section className="flex flex-col gap-6">
         <SectionHeading
           title="Beneficiaries"
           action={
             <div className="flex items-center gap-4">
               {left > 0 && <span className="tabular text-[13px] text-muted-foreground">{`${left}% left to share`}</span>}
               {value.length > 1 && (
-                <Button type="button" variant="ghost" size="sm" onClick={splitEqually}>
+                <Button type="button" variant="outline" onClick={splitEqually}>
                   Split Equally
                 </Button>
               )}
@@ -264,8 +307,8 @@ export function BeneficiaryEditor({
         {value.length > 0 && (
           <>
             <div className="flex flex-col gap-2 px-1">
-              <div ref={barRef} className="relative flex h-6 items-center">
-                <div className="flex h-2.5 w-full gap-0.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+              <div ref={barRef} className="relative flex h-7 items-center">
+                <div className="flex h-7 w-full gap-0.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
                   {value.map((b, i) => (
                     <span
                       key={b.personId}
@@ -288,7 +331,7 @@ export function BeneficiaryEditor({
                       aria-valuemax={b.share + next.share - 1}
                       aria-valuenow={b.share}
                       aria-valuetext={`${nameOf(b.personId)} ${b.share}%, ${nameOf(next.personId)} ${next.share}%`}
-                      className="group absolute top-0 flex h-6 w-6 -translate-x-1/2 cursor-ew-resize touch-none items-center justify-center outline-none"
+                      className={cn("group absolute top-0 flex h-7 w-6 -translate-x-1/2 cursor-ew-resize touch-none items-center justify-center outline-none", !dragging && "transition-[left] duration-reveal ease-settle")}
                       style={{ left: `${(edge / Math.max(allocated, 100)) * 100}%` }}
                       onPointerDown={(e) => {
                         e.currentTarget.setPointerCapture(e.pointerId);
@@ -310,14 +353,14 @@ export function BeneficiaryEditor({
                         setDragging(false);
                       }}
                       onKeyDown={(e) => {
-                        const step = e.shiftKey ? 5 : 1;
+                        const step = e.shiftKey ? STEP * 2 : STEP;
                         if (e.key === "ArrowLeft" || e.key === "ArrowDown") moveSplitter(i, value, -step);
                         else if (e.key === "ArrowRight" || e.key === "ArrowUp") moveSplitter(i, value, step);
                         else return;
                         e.preventDefault();
                       }}
                     >
-                      <span className="h-5 w-1.5 rounded-full border border-border bg-background transition-colors duration-hover group-hover:bg-muted group-focus-visible:bg-muted group-focus-visible:ring-2 group-focus-visible:ring-ring" />
+                      <span className="h-5 w-1.5 rounded-full border border-background bg-foreground transition-opacity duration-hover group-hover:opacity-80 group-focus-visible:ring-2 group-focus-visible:ring-ring" />
                     </div>
                   );
                 })}
@@ -330,7 +373,7 @@ export function BeneficiaryEditor({
                 const p = personOf(b.personId);
                 if (!p) return null;
                 return (
-                  <li key={b.personId} className="flex items-center gap-3 rounded-xl px-2 py-2 sm:px-3">
+                  <li key={b.personId} className="flex items-center gap-3 rounded-xl px-2 py-3 sm:px-3">
                     <Avatar name={p.fullName} color={segmentColor(i)} />
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-[14px] text-foreground" translate="no">
@@ -347,7 +390,8 @@ export function BeneficiaryEditor({
                         value={b.share ? String(b.share) : ""}
                         placeholder="0"
                         onChange={(e) => setShare(b.personId, e.target.value)}
-                        className="tabular h-10 w-16 text-right"
+                        onBlur={() => settleShare(b.personId)}
+                        className="tabular h-11 w-[72px] text-right"
                       />
                       <span className="text-[14px] text-muted-foreground">%</span>
                     </label>
@@ -366,10 +410,20 @@ export function BeneficiaryEditor({
           </>
         )}
 
-        {adding ? (
-          <div className="flex flex-col gap-3">
-            {saved.length > 0 && (
-              <div className={cn("flex flex-col gap-2", reveal)}>
+        <Button type="button" variant="outline" className="-mt-2 h-11 w-full" onClick={() => setAdding(true)}>
+          <Plus size={16} aria-hidden="true" />
+          {value.length === 0 ? "Add Beneficiary" : "Add Another Beneficiary"}
+        </Button>
+        <PersonModal
+          open={adding}
+          onOpenChange={setAdding}
+          title="Add a Beneficiary"
+          ownerId={ownerId}
+          onSaved={add}
+          top={
+            saved.length > 0 ? (
+              <>
+              <div className="flex flex-col gap-2">
                 <p className="px-1 text-[13px] text-muted-foreground">Saved</p>
                 <ListCard>
                   {saved.map((p) => (
@@ -391,17 +445,16 @@ export function BeneficiaryEditor({
                     </li>
                   ))}
                 </ListCard>
-                <p className="px-1 pt-2 text-[13px] text-muted-foreground">Or add someone new</p>
               </div>
-            )}
-            <PersonForm ownerId={ownerId} onSaved={add} onCancel={() => setAdding(false)} />
-          </div>
-        ) : (
-          <Button type="button" variant="outline" className="h-10 w-full" onClick={() => setAdding(true)}>
-            <Plus size={16} aria-hidden="true" />
-            {value.length === 0 ? "Add Beneficiary" : "Add Another Beneficiary"}
-          </Button>
-        )}
+              <div className="flex items-center gap-3" role="separator" aria-label="Or add someone new">
+                <span aria-hidden="true" className="h-px flex-1 bg-border" />
+                <span className="text-[13px] text-muted-foreground">Or add someone new</span>
+                <span aria-hidden="true" className="h-px flex-1 bg-border" />
+              </div>
+              </>
+            ) : null
+          }
+        />
       </section>
 
       {minors.length > 0 && (
@@ -425,22 +478,21 @@ export function BeneficiaryEditor({
               ))}
             </div>
           )}
-          {addingTrustee ? (
-            <PersonForm
-              ownerId={ownerId}
-              trustee
-              onSaved={(p) => {
-                onTrusteeChange(p.id);
-                setAddingTrustee(false);
-              }}
-              onCancel={() => setAddingTrustee(false)}
-            />
-          ) : (
-            <Button type="button" variant="outline" className="h-10 w-full" onClick={() => setAddingTrustee(true)}>
-              <UserRound size={16} aria-hidden="true" />
-              {trusteeChoices.length > 0 ? "Someone Else" : "Add Trustee"}
-            </Button>
-          )}
+          <Button type="button" variant="outline" className="h-11 w-full" onClick={() => setAddingTrustee(true)}>
+            <UserRound size={16} aria-hidden="true" />
+            {trusteeChoices.length > 0 ? "Someone Else" : "Add Trustee"}
+          </Button>
+          <PersonModal
+            open={addingTrustee}
+            onOpenChange={setAddingTrustee}
+            title="Add a Trustee"
+            ownerId={ownerId}
+            trustee
+            onSaved={(p) => {
+              onTrusteeChange(p.id);
+              setAddingTrustee(false);
+            }}
+          />
         </section>
       )}
     </div>

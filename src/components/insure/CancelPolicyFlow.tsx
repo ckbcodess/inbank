@@ -84,11 +84,11 @@ export function CancelPolicyFlow({ policyId }: { policyId: string }) {
         <FactsPanel rows={consequences} />
         {savings && !withdraw && (
           <p className="px-1 text-[12px] leading-relaxed text-muted-foreground">
-            {`This is the plan’s cash value today, before ${PROVIDER} confirms it. It’s paid into your account once the cancellation is complete.`}
+            {`Paid into your account once cancelled. ${PROVIDER} confirms the final amount.`}
           </p>
         )}
 
-        <Field label="Why Are You Cancelling?" hint="It helps us improve. Your answer doesn’t change anything about the request.">
+        <Field label="Why Are You Cancelling?">
           <Select value={reason} onValueChange={(v) => v && setReason(v)}>
             <SelectTrigger aria-label="Reason for cancelling">
               <SelectValue placeholder="Select a reason" />

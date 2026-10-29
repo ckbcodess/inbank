@@ -458,7 +458,7 @@ export function FxQuickModal() {
               </div>
 
               {/* Scrollable Rates List */}
-              <div className="divide-y divide-border/40 overflow-y-auto max-h-[300px] md:max-h-[360px] flex-1">
+              <div className="scroll-fade divide-y divide-border/40 overflow-y-auto max-h-[300px] md:max-h-[360px] flex-1">
                 {filteredRates.length === 0 ? (
                   <div className="p-5 text-center text-[12px] text-muted-foreground">
                     No currency pairs matching &ldquo;{searchQuery}&rdquo;

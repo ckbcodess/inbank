@@ -41,7 +41,7 @@ export function GroupDetailSheet({ group, open, onOpenChange, onEdit, onDelete }
             </SheetDescription>
           </div>
 
-          <div className="min-h-0 overflow-y-auto px-5 pb-3 no-scrollbar sm:px-8">
+          <div className="scroll-fade min-h-0 overflow-y-auto px-5 pb-3 no-scrollbar sm:px-8">
             <SheetCard>
             {group.members.map((m) => (
               <div key={m.id || m.destination} className="flex items-center justify-between gap-3 py-2">

@@ -114,7 +114,7 @@ export function RepayAdvanceFlow({ advanceId }: { advanceId: string }) {
           ]}
           total={money(total)}
         />
-        <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">This clears the advance. Your next credit arrives in full.</p>
+        <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">Your next credit arrives in full.</p>
         <ProceedButton disabled={!from || overBalance} onClick={() => setAuthOpen(true)} label="Repay Now" />
       </div>
 

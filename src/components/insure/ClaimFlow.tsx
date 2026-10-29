@@ -18,6 +18,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Check } from "@/components/ui/icons";
+import { StepBar } from "@/components/ui/step-bar";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -127,7 +128,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
   }, [pickedTo, accounts, policy.accountId]);
   const to = accounts.find((a) => a.id === toId);
 
-  const { types, note } = availableTypes(policy, plan?.kind, plan?.claimTypes ?? []);
+  const { types } = availableTypes(policy, plan?.kind, plan?.claimTypes ?? []);
   const member = policy.members.find((m) => m.id === memberId);
   const child = personOf(childId);
   const surrender = surrenderValue(policy);
@@ -263,6 +264,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ href: base, label: "File a Claim", onClick: () => setScreen("form") }} />
         <div className="flex flex-col gap-5">
+          <StepBar current={2} total={2} showCount />
           <ReviewSummary
             details={rows}
             total={claimAmount ? money(claimAmount) : "To be confirmed"}
@@ -271,9 +273,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
           <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
             {type === "surrender"
               ? `Surrendering ends your cover. ${PROVIDER} confirms the final amount before anything is paid.`
-              : claimAmount
-                ? `${PROVIDER} confirms the amount once it has reviewed your documents.`
-                : `${PROVIDER} works out what this claim pays once it has reviewed your documents.`}
+              : `${PROVIDER} confirms the amount after reviewing your documents.`}
           </p>
           <div className="flex gap-2">
             <Button type="button" variant="outline" className="h-11 flex-1 text-[15px]" onClick={() => setScreen("form")}>
@@ -302,6 +302,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="File a Claim" backTo={{ href: base, label: plan?.name ?? "Policy" }} />
       <div className="flex flex-col gap-5">
+        <StepBar current={1} total={2} showCount />
         <section className="flex flex-col gap-2 px-1">
           <p className="text-[13px] text-foreground">{type === "death" ? "We’re sorry for your loss. To make this claim, have these ready:" : "To make a claim, have these ready:"}</p>
           <ul className="flex flex-col gap-2">
@@ -314,7 +315,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
           </ul>
         </section>
 
-        <Field label="Claim Type" hint={type ? CLAIM_TYPES[type].detail : note || undefined}>
+        <Field label="Claim Type">
           <Select value={type} onValueChange={(v) => v && chooseType(v as ClaimTypeId)}>
             <SelectTrigger aria-label="Claim type">
               <SelectValue placeholder="Select claim type">{type ? CLAIM_TYPES[type].label : undefined}</SelectValue>
@@ -355,7 +356,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
             <Field label="Place of Death" htmlFor="claim-place">
               <Input id="claim-place" value={place} onChange={(e) => setPlace(e.target.value)} placeholder="For example, Korle Bu Teaching Hospital" />
             </Field>
-            <Field label="Cause of Death" htmlFor="claim-cause" hint="As stated on the death certificate.">
+            <Field label="Cause of Death" htmlFor="claim-cause">
               <Input id="claim-cause" value={cause} onChange={(e) => setCause(e.target.value)} />
             </Field>
             <Field label="Was the Death Accidental?">
@@ -432,7 +433,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
               hasError={Boolean(loanError)}
               error={loanError ? <InlineError message={loanError} className="text-left" /> : undefined}
             />
-            <p className="-mt-3 px-1 text-[12px] text-muted-foreground">{`Up to ${money(loanMax)}, 80% of the policy’s cash value. ${PROVIDER} sets the interest when it approves the loan.`}</p>
+            <p className="-mt-3 px-1 text-[12px] text-muted-foreground">{`Up to ${money(loanMax)}. ${PROVIDER} sets the interest when it approves.`}</p>
           </div>
         )}
 
@@ -478,7 +479,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
         {/* Documents */}
         {type && detailsDone && (
           <div className={reveal}>
-            <p className="px-1 text-[13px] text-muted-foreground">Take a photo or upload a file. Make sure each document is clear and fully visible.</p>
+            <p className="px-1 text-[13px] text-muted-foreground">Each document must be clear and fully visible.</p>
             <SignatureUpload label="Valid ID of Claimant" file={idDoc} onChange={setIdDoc} />
             {requiredDocs.map((d) => (
               <SignatureUpload key={d} label={d} file={docs[d] ?? null} onChange={(f) => setDocs({ ...docs, [d]: f })} />

@@ -278,6 +278,11 @@ const accounts: Entry[] = [
   ["Set as Default", "Définir par défaut", "Establecer como predeterminada", "设为默认"],
   ["Default Account", "Compte par défaut", "Cuenta predeterminada", "默认账户"],
   ["Default account", "Compte par défaut", "Cuenta predeterminada", "默认账户"],
+  ["Remove Account", "Retirer le compte", "Quitar cuenta", "移除账户"],
+  ["It stays open at the bank. Add it back any time from Accounts.", "Il reste ouvert à la banque. Vous pouvez le rajouter à tout moment depuis Comptes.", "Sigue abierta en el banco. Puedes volver a añadirla cuando quieras desde Cuentas.", "该账户在银行仍保持开通。您随时可在“账户”中重新添加。"],
+  ["It leaves your accounts list. The account stays open at the bank and your money isn't affected. You can add it back from Accounts with a selfie check.", "Il disparaît de votre liste de comptes. Le compte reste ouvert à la banque et votre argent n’est pas touché. Vous pouvez le rajouter depuis Comptes avec une vérification par selfie.", "Sale de tu lista de cuentas. La cuenta sigue abierta en el banco y tu dinero no se ve afectado. Puedes volver a añadirla desde Cuentas con una verificación con selfie.", "该账户将从您的账户列表中移除。账户在银行仍保持开通，您的资金不受影响。您可通过自拍验证在“账户”中重新添加。"],
+  ["This is your only account, so it can't be removed.", "C’est votre seul compte, il ne peut donc pas être retiré.", "Es tu única cuenta, así que no se puede quitar.", "这是您唯一的账户，因此无法移除。"],
+  ["Set another account as your default to remove this one.", "Définissez un autre compte par défaut pour retirer celui-ci.", "Establece otra cuenta como predeterminada para quitar esta.", "请先将另一个账户设为默认账户，再移除此账户。"],
   // Add Account — selfie, then pick an account held under the Ghana Card
   ["Add Account", "Ajouter un compte", "Añadir cuenta", "添加账户"],
   ["Verify It's You", "Confirmez votre identité", "Confirma que eres tú", "验证身份"],

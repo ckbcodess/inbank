@@ -491,7 +491,7 @@ export default function CreateGroupFlow({
             </div>
 
             {/* Members List Container */}
-            <div className="rounded-2xl border border-border/60 bg-card overflow-hidden divide-y divide-border/50 max-h-[360px] overflow-y-auto">
+            <div className="rounded-2xl border border-border/60 bg-card overflow-hidden divide-y divide-border/50 max-h-[360px] overflow-y-auto scroll-fade">
               {filteredContacts.map((contact) => {
                 const isSelected = members.some((m) =>
                   m.id && contact.id ? m.id === contact.id : m.destination === contact.destination
@@ -585,7 +585,7 @@ export default function CreateGroupFlow({
               <Label>
                 Individual Contribution Amounts
               </Label>
-              <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[320px] overflow-y-auto">
+              <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[320px] overflow-y-auto scroll-fade">
                 {members.map((member) => (
                   <div
                     key={member.id || member.destination}

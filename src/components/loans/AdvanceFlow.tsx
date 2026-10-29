@@ -139,7 +139,7 @@ export function AdvanceFlow() {
         <TrueEmptyState
           icon={<HandCoins size={22} strokeWidth={1.8} />}
           title="Advances are for customers paid into GCB"
-          description="You can take up to 80% of your salary, national service allowance or pension once it’s paid into a GCB account. Your first advance is available after the first credit arrives."
+          description="You can take up to 80% of your salary, national service allowance or pension once it’s paid into a GCB account."
           action={
             <Button nativeButton={false} render={<Link href={LOANS_HOME} />}>
               Back to Loans
@@ -160,7 +160,7 @@ export function AdvanceFlow() {
           description={
             open.status === "pending"
               ? "You can take another once this one is decided and repaid."
-              : `Repay it to take another. It’s due on ${formatDate(open.dueOn)}, and repaying early costs less.`
+              : `Repay it to take another. It’s due on ${formatDate(open.dueOn)}.`
           }
           action={
             <Button nativeButton={false} render={<Link href={`/loans/${open.id}`} />}>
@@ -261,7 +261,6 @@ export function AdvanceFlow() {
       <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <div className="flex flex-col gap-2">
           <FromAccountSelector accounts={accounts} value={toId} onChange={setPickedTo} label="Pay Into" />
-          <p className="px-1 text-[12px] text-muted-foreground">We pay the advance into this account.</p>
         </div>
 
         <div className="flex items-baseline justify-between gap-4 px-1">

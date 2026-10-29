@@ -7,19 +7,20 @@
  *  - What needs the customer is the first row, in amber, with its action as a text link: missed premiums with the
  *    amount and Pay now, a pending medical assessment, a requested cancellation. A healthy policy shows none of them
  *    (normal status is silent).
- *  - Sum assured is the key fact, styled as the total on a payment review with the same dashed line after it.
- *  - Update Beneficiaries sits on the Beneficiaries heading rather than in the action list, so it appears once.
+ *  - Facts are plain rows in clusters with whitespace between them (designer, 2026-10-28): who and which policy (holder,
+ *    provider, number), the term (policy term, deduction date, ends), the money (premium, paid so far), then the sum
+ *    assured last, set large like a total.
+ *  - Beneficiaries are not listed on the page: Update Beneficiaries is the first row of the action list and shows them.
  *  - Pay Outstanding is the amber row, not an action row. Cancel Policy is last and disappears once a cancellation is
  *    requested.
  */
 
 import Link from "next/link";
-import { ChevronRight, ClipboardList, FileText, ShieldOff } from "@/components/ui/icons";
+import { ChevronRight, ClipboardList, FileText, ShieldOff, Users } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
-import { Button } from "@/components/ui/button";
 import { ListCard } from "@/components/ui/list-card";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { FactsPanel } from "@/components/invest/parts";
+import { FactGroups, FactsPanel, type Fact, type FactGroup } from "@/components/invest/parts";
 import { ProductBanner } from "@/components/ui/product-banner";
 import { policyAlert } from "@/lib/product-alerts";
 import { FactsPageSkeleton } from "@/components/states/PageSkeletons";
@@ -72,37 +73,53 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
   const plan = findPlan(policy.planId);
   const money = (n: number) => formatMoney(n, "GHS", showAmounts);
   const account = accounts.find((a) => a.id === policy.accountId);
-  const windowLabel = DEDUCTION_WINDOWS.find((w) => w.value === policy.window)?.days ?? "";
+  const windowLabel = DEDUCTION_WINDOWS.find((w) => w.value === policy.window)?.label.replace(/ \(.*\)$/, "") ?? "";
   const maturity = maturityOf(policy);
   const owed = outstanding(policy);
   const base = `/insure/policies/${policy.id}`;
-  const trustee = personOf(policy.trusteeId);
 
   const premium = premiumLine(policy, showAmounts);
   const waiting = policy.status === "pending-medical";
   const cancelling = policy.status === "cancel-requested" && policy.cancellation;
   // The banner says what needs the customer; these rows keep the detail it does not carry.
-  type FactRow = [React.ReactNode, React.ReactNode];
-  const needsYou: FactRow[] = [
-    ...(owed > 0 ? ([["Missed premiums", money(owed)]] as FactRow[]) : []),
-    ...(waiting ? ([["Next step", `${PROVIDER} will call you`]] as FactRow[]) : []),
-    ...(cancelling && policy.cancellation ? ([["Cancellation requested on", formatDate(policy.cancellation.requestedOn)]] as FactRow[]) : []),
+  const needsYou: Fact[] = [
+    ...(owed > 0 ? [{ label: "Missed premiums", value: money(owed) }] : []),
+    ...(waiting ? [{ label: "Next step", value: `${PROVIDER} will call you` }] : []),
+    ...(cancelling && policy.cancellation ? [{ label: "Cancellation requested on", value: formatDate(policy.cancellation.requestedOn) }] : []),
   ];
+  const tier = policy.tier ? findTier(policy.tier) : undefined;
+  const from = account ? `${account.name} · ${account.number}` : undefined;
+  // Only a monthly policy has a count to show: the premiums paid, out of the premiums in the whole term.
+  const count = policy.termYears && policy.frequency === "monthly" ? `${policy.payments.length} of ${policy.termYears * 12} premiums` : undefined;
 
-  const facts: Array<[React.ReactNode, React.ReactNode]> = [
-    ...needsYou,
-    [policy.tier ? "Total benefit" : "Sum assured", money(policy.sumAssured)],
-    ["Premium", waiting ? `${premium}, not taken yet` : premium],
-    ...(waiting || cancelling ? [] : ([["Taken", `Between the ${windowLabel}`]] as Array<[React.ReactNode, React.ReactNode]>)),
-    ...(cancelling ? ([["Cover", "Continues until it’s completed"]] as Array<[React.ReactNode, React.ReactNode]>) : []),
-    ...(policy.tier ? ([["Your cover", `${findTier(policy.tier).label} · ${money(findTier(policy.tier).benefit)}`]] as Array<[React.ReactNode, React.ReactNode]>) : []),
-    ...(policy.termYears ? ([["Policy term", `${policy.termYears} years`]] as Array<[React.ReactNode, React.ReactNode]>) : []),
-    ...(maturity ? ([["Matures", formatDate(maturity)]] as Array<[React.ReactNode, React.ReactNode]>) : []),
-    ["Premiums paid so far", money(premiumsPaid(policy))],
-    ...(policy.increment ? ([["Yearly increase", `${policy.increment}%`]] as Array<[React.ReactNode, React.ReactNode]>) : []),
-    ...(account ? ([["Paid from", `${account.name} · ${account.number}`]] as Array<[React.ReactNode, React.ReactNode]>) : []),
-    ["Provider", PROVIDER],
-    ["Policy number", policy.number],
+  const holder = personOf(policy.ownerId)?.fullName;
+  const groups: FactGroup[] = [
+    { rows: needsYou },
+    {
+      rows: [
+        ...(holder ? [{ label: "Holder", value: holder }] : []),
+        { label: "Provider", value: PROVIDER },
+        { label: "Policy number", value: policy.number },
+      ],
+    },
+    {
+      rows: [
+        ...(policy.termYears ? [{ label: "Policy term", value: `${policy.termYears} Years` }] : []),
+        ...(waiting || cancelling ? [] : [{ label: "Deduction date", value: windowLabel }]),
+        ...(maturity ? [{ label: "Ends", value: formatDate(maturity) }] : []),
+        ...(tier ? [{ label: "Your cover", value: `${tier.label} · ${money(tier.benefit)}` }] : []),
+        ...(cancelling ? [{ label: "Cover", value: "Continues until it’s completed" }] : []),
+      ],
+    },
+    {
+      rows: [
+        { label: "Premium", value: waiting ? `${premium}, not taken yet` : premium },
+        ...(policy.increment ? [{ label: "Yearly increase", value: `${policy.increment}%` }] : []),
+        ...(from ? [{ label: "Paid from", value: from }] : []),
+        { label: "Paid so far", value: money(premiumsPaid(policy)), note: count },
+      ],
+    },
+    { rows: [{ label: tier ? "Total benefit" : "Sum assured", value: money(policy.sumAssured), total: true }] },
   ];
 
   const canClaim = policy.status !== "pending-medical";
@@ -113,9 +130,10 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
       <ProductBanner alert={policyAlert(policy)} />
       <InsureDevTools />
       <div className="flex flex-col gap-10">
-        <FactsPanel rows={facts} keyRow={needsYou.length} />
+        <FactGroups groups={groups} boxed />
 
         <ListCard>
+          <ActionRow href={`${base}/beneficiaries`} icon={Users} title="Update Beneficiaries" meta="Add, remove or change shares" />
           {policy.payments.length > 0 && (
             <ActionRow href={`${base}/statement`} icon={FileText} title="Statement" meta="Every premium you’ve paid" />
           )}
@@ -141,30 +159,6 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
             />
           </section>
         )}
-
-        <section className="flex flex-col gap-3">
-          <SectionHeading
-            title="Beneficiaries"
-            action={
-              <Button size="sm" variant="outline" nativeButton={false} render={<Link href={`${base}/beneficiaries`} />}>
-                Update
-              </Button>
-            }
-          />
-          {policy.beneficiaries.length > 0 ? (
-            <FactsPanel
-              rows={[
-                ...policy.beneficiaries.map((b) => {
-                  const p = personOf(b.personId);
-                  return [p ? `${p.fullName} · ${p.relationship}` : "Beneficiary", `${b.share}%`] as [string, React.ReactNode];
-                }),
-                ...(trustee ? ([[`Trustee · ${trustee.fullName}`, trustee.relationship]] as Array<[string, React.ReactNode]>) : []),
-              ]}
-            />
-          ) : (
-            <p className="px-1 text-[13px] text-muted-foreground">No one is named yet. Without a beneficiary, a payout goes to your estate.</p>
-          )}
-        </section>
 
         {policyClaims.length > 0 && (
           <section className="flex flex-col gap-3">

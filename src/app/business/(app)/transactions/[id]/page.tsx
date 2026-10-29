@@ -9,7 +9,7 @@
 
 import { use } from "react";
 import Link from "next/link";
-import { ArrowRight, Clock, CornerUpLeft, FileWarning, History, Layers, RotateCcw } from "@/components/ui/icons";
+import { ArrowRight, Clock, Undo2, FileWarning, History, Layers, RotateCcw } from "@/components/ui/icons";
 import ApprovalTrail from "@/components/corporate/approvals/ApprovalTrail";
 import { Button } from "@/components/ui/button";
 import { Band, TransactionReceipt } from "@/components/transactions/TransactionReceipt";
@@ -35,7 +35,7 @@ function renderBusinessBand(state: TransactionState, txn: Transaction) {
   if (state === "returned") {
     const repeat = businessRepeatHref(txn);
     return (
-      <Band tone="warning" icon={<CornerUpLeft size={17} aria-hidden="true" />} title="Sent back to the inputter">
+      <Band tone="warning" icon={<Undo2 size={17} aria-hidden="true" />} title="Sent back to the inputter">
         <p className="mb-3">Nothing left the account. Change what was asked and submit it again.</p>
         {approval ? <ApprovalTrail item={approval} /> : txn.failureReason && <p>“{txn.failureReason}”</p>}
         {repeat && (

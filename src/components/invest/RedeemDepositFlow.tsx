@@ -130,8 +130,8 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
       <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
           {whole
-            ? `You’re taking all ${money(d.principal)} out of this deposit and closing it. It would have matured on ${formatDate(d.maturity)}.`
-            : `Take some of your ${money(d.principal)} out early. The rest keeps earning until ${formatDate(d.maturity)}.`}
+            ? `This closes the deposit. It would have matured on ${formatDate(d.maturity)}.`
+            : `The rest keeps earning until ${formatDate(d.maturity)}.`}
         </p>
 
         <FromAccountSelector accounts={accounts} value={toId} onChange={setPickedTo} label="To Account" />

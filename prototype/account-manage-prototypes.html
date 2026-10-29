@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Account Default and Remove: 5 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--scrim:rgba(0,0,0,.35);--card:#1c1c1e;--cardtx:#fff}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:rgba(0,0,0,.6);--card:#222;--cardtx:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0;padding:0}
+  .mu{color:var(--mu)}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .wrap{display:flex;flex-direction:column;align-items:center}
+  .frame{position:relative;width:440px;max-width:100%;min-height:820px;background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
+  .page{padding:24px 20px 40px;display:flex;flex-direction:column;gap:28px}
+  .hd{display:flex;align-items:center;justify-content:space-between;min-height:40px}
+  .hd h2{font-size:18px;font-weight:500;letter-spacing:-.02em}
+  .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mu)} .ic:hover{background:var(--tile);color:var(--tx)}
+  .bal{background:var(--card);color:var(--cardtx);border-radius:20px;padding:20px;min-height:150px;position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:4px}
+  .bal .t{font-size:12px;opacity:.7} .bal .n{font-size:32px;font-weight:400;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .badge{position:absolute;top:16px;right:16px;font-size:12px;background:var(--am);color:#111;padding:2px 10px;border-radius:999px}
+  .acts{display:flex;justify-content:space-evenly}
+  .ra{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;width:80px;text-align:center}
+  .ra i{width:44px;height:44px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-style:normal}
+  .tiles{display:flex;flex-direction:column;gap:8px}
+  .tile{background:var(--tile);border-radius:14px;min-height:56px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;font-size:15px}
+  .tile:hover{background:var(--tileh)}
+  .tile.dis{opacity:.55;cursor:default}
+  .why{font-size:12px;color:var(--mu);padding:0 4px;margin-top:-2px}
+  .grp{display:flex;flex-direction:column}
+  .kv{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;border-top:1px solid var(--bd)}
+  .kv:last-child{border-bottom:1px solid var(--bd)}
+  .kv .k{font-size:14px} .kv .s{font-size:12px;color:var(--mu);display:block}
+  .link{font-size:13px;text-decoration:underline;text-underline-offset:3px;min-height:40px;display:inline-flex;align-items:center}
+  .sw{width:40px;height:24px;border-radius:999px;background:var(--bd);position:relative;flex:none;transition:background .15s}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .sw.on{background:var(--am)} .sw.on::after{transform:translateX(16px)}
+  .foot{display:flex;justify-content:center;padding-top:4px}
+  .menu{position:absolute;top:64px;right:16px;width:300px;background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:8px;box-shadow:var(--shadow);z-index:5}
+  .mi{display:block;width:100%;padding:10px 12px;border-radius:10px;font-size:14px} .mi:hover:not(.dis){background:var(--tile)}
+  .mi.dis{color:var(--mu);cursor:default} .mi small{display:block;font-size:12px;color:var(--mu);margin-top:2px}
+  .scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+  .sheet{width:100%;background:var(--surf);border-radius:24px 24px 0 0;padding:20px 20px 28px;display:flex;flex-direction:column;gap:12px}
+  .sheet h2{font-size:16px;font-weight:500}
+  .sheet .btns{display:flex;gap:8px;margin-top:8px}
+  .btn{flex:1;height:44px;border-radius:12px;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:14px}
+  .btn.d{background:#c62828;border-color:#c62828;color:#fff}
+  .toast{position:absolute;left:16px;right:16px;bottom:16px;background:#111;color:#fff;border-radius:14px;padding:12px 16px;font-size:13px;display:flex;justify-content:space-between;align-items:center;z-index:20}
+  .toast u{cursor:pointer}
+  .legend{max-width:440px;font-size:12px;color:var(--mu);line-height:1.6;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Account: default and remove, 5 variations</h1>
+    <div class="ctrls"><div class="pills" id="pills"></div><div class="seg" id="states"></div><div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="wrap"><div class="frame" id="frame"></div><p class="legend" id="legend"></p></div></div>
+<script>
+const NOTES=[
+ "1 · Two quiet rows. Under the tiles, a small group of label-and-value rows: “Default account” with its state, and “Remove account” as an underlined link at the end. Settings read as settings, not as more places to go. The rule is a sentence in the row.",
+ "2 · Header menu. Both actions move into a ⋯ menu beside the title. The page loses the awkward pair entirely; the card badge still says Default. Items that can't be used stay in the menu with their reason underneath.",
+ "3 · Make default on the card, remove in the menu. “Default” is a badge, and when it isn't, the badge becomes a “Make default” pill in the same corner: one place that says and sets. Remove lives in the ⋯ menu only.",
+ "4 · One Manage tile. A single “Manage Account” tile at the end of the list opens a sheet with Default and Remove side by side, each with its rule written out. One entry, no pair on the page.",
+ "5 · Conditional, no dead controls. Show only what can be done. The default account shows a quiet “Default account” row and nothing to remove (the reason is in that row). A non-default account shows “Make default” and a “Remove” link. The only account says why it stays.",
+];
+const LEGEND="Switch the state above: the default of several accounts, another account, or the only account. Remove asks first and offers Undo. Tap around in each.";
+const STATES={default:"Default (of 3)",other:"Another account",only:"Only account"};
+let v=0,st="default",menu=false,sheet=null,isDef=false,toast=null;
+const $=s=>document.querySelector(s);
+const dots='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
+const back='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>';
+const chev='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>';
+// the rule
+const isDefault=()=>st==="default"||st==="only"||isDef;
+const block=()=>st==="only"?"This is your only account, so it can't be removed.":isDefault()?"Set another account as your default to remove this one.":null;
+function rowsTiles(){return `<div class="tiles">${["Last 10 Transactions","My Spends","Scheduled Payments","Place a Request"].map(t=>`<div class="tile"><span>${t}</span>${chev}</div>`).join("")}</div>`;}
+function card(extra=""){return `<div class="bal">${extra}<span class="t">Current Account · 0231 4455 88901</span><span class="n">GHS 18,420.50</span></div>`;}
+function actions(){return `<div class="acts"><div class="ra"><i>+</i>Top Up</div><div class="ra"><i>↗</i>Share Details</div></div>`;}
+function defaultBadge(){return isDefault()?`<span class="badge">Default</span>`:"";}
+function menuHTML(){
+  const b=block();
+  return `<div class="menu">${st!=="only"&&!isDefault()?`<button class="mi" data-do="def">Set as default</button>`:`<div class="mi dis">Default account<small>${st==="only"?"Your only account is always the default.":"This is your default."}</small></div>`}
+  ${b?`<div class="mi dis">Remove account<small>${b}</small></div>`:`<button class="mi" data-do="rm">Remove account</button>`}</div>`;
+}
+function body(){
+  const b=block();
+  if(v===0){
+    return `${card(defaultBadge())}${actions()}${rowsTiles()}
+    <div class="grp">
+      <div class="kv"><span><span class="k">Default account</span><span class="s">${st==="only"?"Your only account":isDefault()?"Payments and top-ups use this one":"Not your default"}</span></span>${isDefault()?`<span class="mu s13" style="font-size:13px">Yes</span>`:`<button class="sw ${isDef?"on":""}" data-do="def" aria-label="Set as default"></button>`}</div>
+      <div class="kv"><span><span class="k">Remove account</span>${b?`<span class="s">${b}</span>`:""}</span>${b?"":`<button class="link" data-do="rm">Remove</button>`}</div>
+    </div>`;
+  }
+  if(v===1) return `${card(defaultBadge())}${actions()}${rowsTiles()}`;
+  if(v===2) return `${card(isDefault()?`<span class="badge">Default</span>`:`<button class="badge" data-do="def">Make default</button>`)}${actions()}${rowsTiles()}`;
+  if(v===3) return `${card(defaultBadge())}${actions()}<div class="tiles">${["Last 10 Transactions","My Spends","Scheduled Payments","Place a Request"].map(t=>`<div class="tile"><span>${t}</span>${chev}</div>`).join("")}<button class="tile" data-sheet="manage"><span>Manage Account</span>${chev}</button></div>`;
+  // v===4
+  return `${card(defaultBadge())}${actions()}${rowsTiles()}
+    <div class="grp">
+      ${st==="only"?`<div class="kv"><span><span class="k">Only account</span><span class="s">It's always your default, so it stays.</span></span></div>`
+       :isDefault()?`<div class="kv"><span><span class="k">Default account</span><span class="s">Set another as default to remove this one.</span></span></div>`
+       :`<div class="kv"><span class="k">Make this your default</span><button class="link" data-do="def">Make default</button></div><div class="kv"><span class="k">Remove from my accounts</span><button class="link" data-do="rm">Remove</button></div>`}
+    </div>`;
+}
+function sheetHTML(){
+  if(sheet==="remove") return `<div class="scrim" data-scrim><div class="sheet"><h2>Remove Current Account?</h2><p class="mu" style="font-size:13px;line-height:1.5">It leaves your accounts list. The account stays open at the bank and your money isn't affected. You can add it back from Accounts with a selfie check.</p><div class="btns"><button class="btn" data-close>Cancel</button><button class="btn d" data-do="confirm">Remove</button></div></div></div>`;
+  if(sheet==="manage"){const b=block();return `<div class="scrim" data-scrim><div class="sheet"><h2>Manage Account</h2>
+    <div class="grp"><div class="kv"><span><span class="k">Default account</span><span class="s">${isDefault()?"This is your default":"Payments and top-ups use your default"}</span></span>${isDefault()?`<span class="mu" style="font-size:13px">Yes</span>`:`<button class="link" data-do="def">Make default</button>`}</div>
+    <div class="kv"><span><span class="k">Remove account</span>${b?`<span class="s">${b}</span>`:""}</span>${b?"":`<button class="link" data-do="rm">Remove</button>`}</div></div>
+    <div class="btns"><button class="btn" data-close>Done</button></div></div></div>`;}
+  return "";
+}
+function render(){
+  $("#note").textContent=NOTES[v];$("#legend").textContent=LEGEND;
+  $("#pills").innerHTML=NOTES.map((_,i)=>`<button class="pill ${v===i?"on":""}" data-v="${i}">${i+1}</button>`).join("");
+  $("#states").innerHTML=Object.entries(STATES).map(([k,l])=>`<button data-s="${k}" class="${st===k?"on":""}">${l}</button>`).join("");
+  const hasMenu=v===1||v===2;
+  $("#frame").innerHTML=`<div class="page"><div class="hd"><button class="ic">${back}</button><h2>Current Account</h2>${hasMenu?`<button class="ic" data-menu aria-label="More">${dots}</button>`:`<span class="ic"></span>`}</div>${body()}</div>${menu&&hasMenu?menuHTML():""}${sheetHTML()}${toast?`<div class="toast"><span>${toast}</span><u data-undo>Undo</u></div>`:""}`;
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-s],[data-t],[data-menu],[data-do],[data-sheet],[data-close],[data-scrim],[data-undo]");
+  if(!t){if(menu){menu=false;render();}return;}
+  if(t.dataset.scrim!==undefined&&e.target!==t)return;
+  if(t.dataset.v!==undefined){v=+t.dataset.v;menu=false;sheet=null;toast=null;}
+  else if(t.dataset.s){st=t.dataset.s;isDef=false;menu=false;sheet=null;toast=null;}
+  else if(t.dataset.t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll("#theme button").forEach(b=>b.classList.toggle("on",b===t));return;}
+  else if(t.dataset.menu!==undefined){menu=!menu;}
+  else if(t.dataset.sheet){sheet=t.dataset.sheet;}
+  else if(t.dataset.close!==undefined||t.dataset.scrim!==undefined){sheet=null;}
+  else if(t.dataset.undo!==undefined){toast=null;}
+  else if(t.dataset.do==="def"){isDef=true;menu=false;toast="Current Account is now your default";setTimeout(()=>{toast=null;render();},2200);}
+  else if(t.dataset.do==="rm"){menu=false;sheet="remove";}
+  else if(t.dataset.do==="confirm"){sheet=null;toast="Current Account removed";setTimeout(()=>{toast=null;render();},2600);}
+  render();
+});
+render();
+</script>
+</body>
+</html>

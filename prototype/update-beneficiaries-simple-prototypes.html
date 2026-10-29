@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Update Beneficiaries, Simple: 12 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--c1:#3b82f6;--c2:#ea580c;--c3:#16a34a;--c4:#8b5cf6;--c5:#db2777;--c6:#9ca3af}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input,select{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0;padding:0}
+  .mu{color:var(--mu)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .lab{font-size:12px;color:var(--mu)}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px} .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .wrap{display:flex;flex-direction:column;align-items:center}
+  .frame{position:relative;width:440px;max-width:100%;min-height:720px;background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
+  .frame.desk{width:880px;border-radius:20px}
+  .page{padding:24px 20px 32px;display:flex;flex-direction:column;gap:24px}
+  .desk .page{padding:32px 56px 40px}
+  .hd{display:flex;align-items:center;gap:8px;min-height:40px}
+  .hd h2{font-size:18px;font-weight:500;letter-spacing:-.02em;flex:1}
+  .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mu)}
+  .list{display:flex;flex-direction:column}
+  .li{display:flex;align-items:center;gap:12px;min-height:60px;border-top:1px solid var(--bd)}
+  .li:first-child{border-top:0}
+  .av{position:relative;width:36px;height:36px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+  .av i{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;border:2px solid var(--surf)}
+  .mid{flex:1;min-width:0} .mid b{display:block;font-weight:400;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .mid span{font-size:12px;color:var(--mu)}
+  .pc{font-size:15px;min-width:44px;text-align:right}
+  .x{width:40px;height:40px;border-radius:10px;color:var(--mu);display:flex;align-items:center;justify-content:center;flex:none} .x:hover{background:var(--tile)}
+  .sq{width:36px;height:36px;border-radius:10px;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:18px;flex:none} .sq:hover{background:var(--tileh)}
+  .step{display:inline-flex;align-items:center;gap:4px} .step .pc{min-width:48px;text-align:center}
+  .sel{appearance:none;height:40px;border:1px solid var(--bd);background:var(--tile);border-radius:10px;padding:0 32px 0 12px;outline:none;font-size:15px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 10px center}
+  .sel.wide{width:100%;height:48px;border-radius:12px;font-size:15px}
+  .bars{display:flex;height:12px;border-radius:999px;overflow:hidden;gap:2px;background:var(--tile)}
+  .barwrap{position:relative;padding:8px 0}
+  .splitb{position:absolute;top:0;bottom:0;width:24px;margin-left:-12px;display:flex;align-items:center;justify-content:center;cursor:ew-resize;touch-action:none}
+  .splitb span{width:6px;height:22px;border-radius:999px;background:var(--surf);border:1px solid var(--bd);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+  .btn{height:48px;border-radius:14px;background:var(--am);color:#111;font-weight:500;display:flex;align-items:center;justify-content:center;width:100%}
+  .btn.o{background:none;border:1px solid var(--bd);color:var(--tx);font-weight:400}
+  .link{font-size:14px;text-decoration:underline;text-underline-offset:3px;min-height:40px;display:inline-flex;align-items:center}
+  .head{display:flex;align-items:center;justify-content:space-between;min-height:32px}
+  .head h3{margin:0;font-size:16px;font-weight:500}
+  .tr{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;border-top:1px solid var(--bd)}
+  .sw{width:44px;height:26px;border-radius:999px;background:var(--bd);position:relative;flex:none;transition:background .15s}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .sw.on{background:var(--am)} .sw.on::after{transform:translateX(18px)}
+  .track{position:relative;height:36px;border-radius:12px;background:var(--tile);overflow:hidden;touch-action:none;cursor:ew-resize;flex:none;width:100%}
+  .track>div{position:absolute;inset:0 auto 0 0;border-radius:12px 0 0 12px}
+  .track span{position:absolute;right:12px;top:0;bottom:0;display:flex;align-items:center;font-size:14px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px} .desk .grid{grid-template-columns:repeat(3,1fr)}
+  .tile{background:var(--tile);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;position:relative}
+  .big{font-size:28px;letter-spacing:-.02em}
+  .ck{width:24px;height:24px;border-radius:8px;border:2px solid var(--bd);flex:none;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .ck.on{background:var(--am);border-color:var(--am);color:#111}
+  .sheet{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;z-index:10}
+  .desk .sheet{align-items:center;justify-content:center}
+  .sheetc{width:100%;background:var(--surf);border-radius:24px 24px 0 0;padding:24px 20px 28px;display:flex;flex-direction:column;align-items:center;gap:20px}
+  .desk .sheetc{max-width:380px;border-radius:20px}
+  .split2{display:grid;grid-template-columns:1fr;gap:24px} .desk .split2{grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+  .toast{position:absolute;left:16px;right:16px;bottom:16px;background:#111;color:#fff;border-radius:14px;padding:12px 16px;font-size:13px;display:flex;justify-content:space-between;z-index:20}
+  .legend{max-width:880px;font-size:12px;color:var(--mu);line-height:1.6;margin-top:16px}
+  .names{display:flex;align-items:center;justify-content:space-between;font-size:15px}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Update Beneficiaries, designed to be simple: 12 variations</h1>
+    <div class="ctrls"><div class="pills" id="pills"></div></div></div>
+  <div class="row">
+    <div class="ctrls"><span class="lab">People</span><div class="seg" id="counts"></div><span class="lab">Screen</span><div class="seg" id="dev"></div><div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="wrap"><div class="frame" id="frame"></div><p class="legend" id="legend"></p></div></div>
+<script>
+// Rules every variation shares, so none needs a sentence of explanation:
+//  - The total is 100 by construction. Changing one share moves the others; adding or removing someone re-shares the rest. There is no
+//    "left to share", no "over", no Save-disabled reason and no zero.
+//  - Shares are multiples of 5. The trustee is pre-filled with the policy holder, so Save is always ready.
+//  - Nothing is saved until Save.
+const POOL=[
+ {id:"p1",name:"Rasnfrod Guasi",rel:"Son",minor:true},
+ {id:"p2",name:"Ransford Gyasi",rel:"Daughter"},
+ {id:"p3",name:"Akua Gyasi",rel:"Sister",minor:true},
+ {id:"p4",name:"Try Again",rel:"Mother"},
+ {id:"p5",name:"Kojo Mensah",rel:"Brother"},
+ {id:"p6",name:"Esi Boateng",rel:"Cousin"},
+ {id:"p7",name:"Nana Owusu",rel:"Friend"},
+];
+const TRUSTEES=["Ransford Gyasi","Try Again"];
+const COLORS=["var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)"];
+const NOTES=[
+ "<b>1 · Same for everyone.</b> Everyone shares equally by default, and the list is just names and a percentage. One switch, “Same for everyone”, turns on a − and + for each person. The common case has no controls at all.",
+ "<b>2 · A menu per person.</b> Each row's share is a menu: 5%, 10%, 15%… Nothing to type, nothing to drag. The others adjust.",
+ "<b>3 · Minus and plus.</b> Each row has − and + that move 5 at a time. The others adjust. The least to learn.",
+ "<b>4 · One bar.</b> Drag the lines on a single bar. Names and percentages sit below as labels, so the bar is the only control.",
+ "<b>5 · The last one is the rest.</b> Everyone but the last row has − and +; the last row shows what is left over and has no controls. Nothing needs to rebalance.",
+ "<b>6 · Tap a person.</b> The list is names and percentages, read only. Tap someone and a small sheet opens with one large number and − and +.",
+ "<b>7 · Fill the row.</b> Each person's row is a bar you drag, like a volume control, with the percentage inside it.",
+ "<b>8 · Tiles.</b> A tile per person with a large percentage and − and +. Reads like cards, scales to three columns on desktop.",
+ "<b>9 · Read as a sentence.</b> “Rasnfrod gets 25%”, with the percentage as a menu inline. The row explains itself.",
+ "<b>10 · It adapts to how many.</b> One person: just 100%, no controls. Two: a single slider between the two names. Three or more: − and + rows. Each case gets only what it needs.",
+ "<b>11 · One list, tick to include.</b> Everyone you could name in one list. Tick to include; a ticked person shows − and +. Adding and removing are the same gesture.",
+ "<b>12 · Desktop split.</b> Left: tick-to-include list with − and +. Right: a live bar and each person's amount, read only. On a phone it stacks.",
+];
+const LEGEND="Switch People (1, 2, 4, 7) and Screen to see how each one scales. Try: change a share, add someone, remove someone. The total never leaves 100. Undo appears after a removal.";
+const HOLDER_SUM=50000;
+let v=0,dev="phone",count=3,ben=[],trustee=TRUSTEES[0],eq=true,sheetId=null,toast=null,removed=null,drag=null;
+const $=s=>document.querySelector(s);
+const P=id=>POOL.find(p=>p.id===id);
+const idx=id=>ben.findIndex(b=>b.id===id);
+const u=id=>ben[idx(id)].units;
+const pct=id=>u(id)*5;
+const ini=n=>n.split(" ").map(w=>w[0]).join("").slice(0,2);
+const col=i=>COLORS[Math.min(i,5)];
+const hasMinor=()=>ben.some(b=>P(b.id).minor);
+const money=n=>"GHS "+n.toLocaleString("en-GH");
+function setCount(n){ben=POOL.slice(0,n).map(p=>({id:p.id,units:0}));equal();}
+function equal(){const n=ben.length;if(!n)return;const each=Math.floor(20/n),extra=20-each*n;ben.forEach((b,i)=>b.units=each+(i<extra?1:0));}
+// Give the others whatever the chosen person doesn't take, in proportion to what they had, never below one step.
+function rescale(list,target){
+  const s=list.reduce((n,b)=>n+b.units,0)||list.length;
+  const raw=list.map(b=>(b.units||1)*target/s);
+  let units=raw.map(r=>Math.max(1,Math.floor(r)));
+  let sum=units.reduce((a,b)=>a+b,0);
+  while(sum>target){const i=units.indexOf(Math.max(...units));if(units[i]<=1)break;units[i]--;sum--;}
+  while(sum<target){let bi=0,bf=-1;raw.forEach((r,i)=>{const f=r-units[i];if(f>bf){bf=f;bi=i;}});units[bi]++;sum++;}
+  list.forEach((b,i)=>b.units=units[i]);
+}
+function setUnits(id,val){
+  const n=ben.length;if(n===1){ben[0].units=20;return;}
+  val=Math.min(Math.max(val,1),20-(n-1));
+  const others=ben.filter(b=>b.id!==id);
+  ben[idx(id)].units=val;rescale(others,20-val);
+}
+function add(id){
+  const n=ben.length;if(!n){ben=[{id,units:20}];return;}
+  const mine=Math.max(1,Math.floor(20/(n+1)));
+  ben.push({id,units:mine});rescale(ben.filter(b=>b.id!==id),20-mine);
+}
+function remove(id){
+  const before=JSON.parse(JSON.stringify(ben));
+  ben=ben.filter(b=>b.id!==id);
+  if(ben.length)rescale(ben,20);
+  say(`${P(id).name.split(" ")[0]} removed`,before);
+}
+let tt;function say(m,undo){toast=m;removed=undo||null;clearTimeout(tt);tt=setTimeout(()=>{toast=null;removed=null;render();},3200);}
+const ico={back:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>',x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'};
+const av=(b,i)=>`<span class="av">${ini(P(b.id).name)}<i style="background:${col(i)}"></i></span>`;
+const who=b=>`<span class="mid"><b>${P(b.id).name}</b><span>${P(b.id).minor?P(b.id).rel+" · Under 18":P(b.id).rel}</span></span>`;
+const rm=id=>`<button class="x" data-rm="${id}" aria-label="Remove">${ico.x}</button>`;
+const pcs=id=>`<span class="pc tab">${pct(id)}%</span>`;
+const stepper=id=>`<span class="step"><button class="sq" data-step="${id}|-1" aria-label="Less">−</button><span class="pc tab">${pct(id)}%</span><button class="sq" data-step="${id}|1" aria-label="More">+</button></span>`;
+const menu=(id,cls="")=>{const max=20-(ben.length-1);let o="";for(let k=1;k<=max;k++)o+=`<option value="${k}" ${u(id)===k?"selected":""}>${k*5}%</option>`;return `<select class="sel ${cls}" data-sel="${id}" aria-label="Share">${o}</select>`;};
+const canAdd=()=>POOL.some(p=>!ben.some(b=>b.id===p.id));
+const addBtn=()=>canAdd()?`<button class="btn o" data-add>Add a beneficiary</button>`:"";
+const trusteeRow=()=>hasMinor()?`<div class="tr"><span>Trustee</span><select class="sel" data-tr aria-label="Trustee">${TRUSTEES.map(t=>`<option ${t===trustee?"selected":""}>${t}</option>`).join("")}</select></div>`:"";
+const bar=(dragable)=>`<div class="barwrap" id="bar"><div class="bars">${ben.map((b,i)=>`<div style="width:${b.units*5}%;background:${col(i)}"></div>`).join("")}</div>${dragable?ben.slice(0,-1).map((b,i)=>{const e=ben.slice(0,i+1).reduce((n,x)=>n+x.units,0)*5;return `<button class="splitb" data-split="${i}" style="left:${e}%" aria-label="Move"><span></span></button>`}).join(""):""}</div>`;
+const head=(extra="")=>`<div class="head"><h3>Beneficiaries</h3>${extra}</div>`;
+
+function body(){
+  const rows=f=>`<div class="list">${ben.map((b,i)=>`<div class="li">${av(b,i)}${who(b)}${f(b,i)}${rm(b.id)}</div>`).join("")}</div>`;
+  if(v===0) return `${head()}${rows(b=>eq?pcs(b.id):stepper(b.id))}${addBtn()}<div class="tr"><span>Same for everyone</span><button class="sw ${eq?"on":""}" data-eq aria-label="Same for everyone"></button></div>${trusteeRow()}`;
+  if(v===1) return `${head()}${rows(b=>menu(b.id))}${addBtn()}${trusteeRow()}`;
+  if(v===2) return `${head()}${rows(b=>stepper(b.id))}${addBtn()}${trusteeRow()}`;
+  if(v===3) return `${head()}${bar(true)}${rows(b=>pcs(b.id))}${addBtn()}${trusteeRow()}`;
+  if(v===4){const n=ben.length;return `${head()}${rows((b,i)=>n>1&&i===n-1?`<span class="pc tab mu">${pct(b.id)}%</span>`:n>1?stepper2(b.id,i):pcs(b.id))}${addBtn()}${trusteeRow()}`;}
+  if(v===5) return `${head()}<div class="list">${ben.map((b,i)=>`<button class="li" data-open="${b.id}" style="width:100%">${av(b,i)}${who(b)}${pcs(b.id)}<span class="mu">${ico.chev}</span></button>`).join("")}</div>${addBtn()}${trusteeRow()}${sheetId&&idx(sheetId)>=0?`<div class="sheet" data-close><div class="sheetc"><div class="names" style="width:100%"><span>${P(sheetId).name}</span><button class="x" data-close aria-label="Close">${ico.x}</button></div><span class="big tab" style="font-size:56px">${pct(sheetId)}%</span><span class="step" style="gap:24px"><button class="sq" style="width:56px;height:56px;font-size:24px" data-step="${sheetId}|-1">−</button><button class="sq" style="width:56px;height:56px;font-size:24px" data-step="${sheetId}|1">+</button></span><button class="btn" data-close>Done</button><button class="link" data-rm="${sheetId}">Remove ${P(sheetId).name.split(" ")[0]}</button></div></div>`:""}`;
+  if(v===6) return `${head()}<div style="display:flex;flex-direction:column;gap:16px">${ben.map((b,i)=>`<div style="display:flex;flex-direction:column;gap:8px"><div class="names"><span style="display:flex;align-items:center;gap:10px">${av(b,i)}<span>${P(b.id).name}</span></span>${rm(b.id)}</div><div class="track" data-track="${b.id}"><div style="width:${b.units*5}%;background:${col(i)};opacity:.9"></div><span class="tab">${pct(b.id)}%</span></div></div>`).join("")}</div>${addBtn()}${trusteeRow()}`;
+  if(v===7) return `${head()}<div class="grid">${ben.map((b,i)=>`<div class="tile"><div style="display:flex;align-items:center;justify-content:space-between"><span style="display:flex;align-items:center;gap:8px">${av(b,i)}<span style="font-size:14px">${P(b.id).name.split(" ")[0]}</span></span>${rm(b.id)}</div><span class="big tab">${pct(b.id)}%</span><span class="step" style="justify-content:space-between;width:100%"><button class="sq" data-step="${b.id}|-1">−</button><button class="sq" data-step="${b.id}|1">+</button></span></div>`).join("")}</div>${addBtn()}${trusteeRow()}`;
+  if(v===8) return `${head()}<div class="list">${ben.map((b,i)=>`<div class="li" style="min-height:64px">${av(b,i)}<span style="flex:1;font-size:15px;line-height:1.5;display:flex;align-items:center;gap:8px;flex-wrap:wrap">${P(b.id).name.split(" ")[0]} gets ${menu(b.id)}</span>${rm(b.id)}</div>`).join("")}</div>${addBtn()}${trusteeRow()}`;
+  if(v===9){
+    const n=ben.length;
+    let inner="";
+    if(n===1) inner=`<div class="list"><div class="li">${av(ben[0],0)}${who(ben[0])}<span class="pc tab">100%</span>${rm(ben[0].id)}</div></div>`;
+    else if(n===2) inner=`<div style="display:flex;flex-direction:column;gap:16px"><div class="names"><span style="display:flex;align-items:center;gap:10px">${av(ben[0],0)}<span>${P(ben[0].id).name.split(" ")[0]}</span></span><span style="display:flex;align-items:center;gap:10px"><span>${P(ben[1].id).name.split(" ")[0]}</span>${av(ben[1],1)}</span></div><div class="track" data-track2="${ben[0].id}"><div style="width:${ben[0].units*5}%;background:var(--c1)"></div><div style="left:${ben[0].units*5}%;right:0;background:var(--c2);border-radius:0 12px 12px 0"></div></div><div class="names tab"><span style="font-size:22px">${ben[0].units*5}%</span><span style="font-size:22px">${ben[1].units*5}%</span></div><div class="list">${ben.map(b=>`<div class="li" style="min-height:48px"><span class="mid"><b style="font-size:13px;color:var(--mu)">${P(b.id).name}</b></span>${rm(b.id)}</div>`).join("")}</div></div>`;
+    else inner=rows(b=>stepper(b.id));
+    return `${head()}${inner}${addBtn()}${trusteeRow()}`;
+  }
+  if(v===10) return `${head()}<div class="list">${POOL.map((p,i)=>{const on=idx(p.id)>=0;return `<div class="li"><button data-tick="${p.id}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left;min-height:60px"><span class="ck ${on?"on":""}">${on?"✓":""}</span>${on?`<span class="av">${ini(p.name)}<i style="background:${col(idx(p.id))}"></i></span>`:`<span class="av">${ini(p.name)}</span>`}<span class="mid"><b>${p.name}</b><span>${p.minor?p.rel+" · Under 18":p.rel}</span></span></button>${on?stepper(p.id):""}</div>`}).join("")}</div>${trusteeRow()}`;
+  // 12
+  return `<div class="split2"><div>${head()}<div class="list">${POOL.map((p,i)=>{const on=idx(p.id)>=0;return `<div class="li" style="min-height:56px"><button data-tick="${p.id}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left;min-height:56px"><span class="ck ${on?"on":""}">${on?"✓":""}</span><span class="mid"><b>${p.name}</b><span>${p.rel}</span></span></button>${on?stepper(p.id):""}</div>`}).join("")}</div></div><div style="display:flex;flex-direction:column;gap:16px"><div class="head"><h3>Who gets what</h3></div>${bar(false)}<div class="list">${ben.map((b,i)=>`<div class="li" style="min-height:48px"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:${col(i)}"></span><span class="mid"><b style="font-size:14px">${P(b.id).name}</b></span><span class="mu tab" style="font-size:13px">${money(HOLDER_SUM*b.units*5/100)}</span><span class="pc tab">${pct(b.id)}%</span></div>`).join("")}</div>${trusteeRow()}</div></div>`;
+}
+const stepper2=(id,i)=>stepper(id);
+
+function render(){
+  $("#note").innerHTML=NOTES[v];$("#legend").textContent=LEGEND;
+  $("#pills").innerHTML=NOTES.map((_,i)=>`<button class="pill ${v===i?"on":""}" data-v="${i}">${i+1}</button>`).join("");
+  $("#counts").innerHTML=[1,2,4,7].map(n=>`<button data-n="${n}" class="${ben.length===n&&v!==10&&v!==11?"on":""}">${n}</button>`).join("");
+  $("#dev").innerHTML=[["phone","Phone"],["desk","Desktop"]].map(([k,l])=>`<button data-d="${k}" class="${dev===k?"on":""}">${l}</button>`).join("");
+  const fr=$("#frame");fr.className="frame"+(dev==="desk"?" desk":"");
+  fr.innerHTML=`<div class="page"><div class="hd"><button class="ic">${ico.back}</button><h2>Update Beneficiaries</h2></div>${body()}<button class="btn" data-save ${ben.length?"":"disabled"} style="${ben.length?"":"opacity:.5"}">Save changes</button></div>${toast?`<div class="toast"><span>${toast}</span>${removed?`<u data-undo style="cursor:pointer">Undo</u>`:""}</div>`:""}`;
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-n],[data-d],[data-t],[data-rm],[data-add],[data-step],[data-eq],[data-open],[data-close],[data-tick],[data-save],[data-undo]");
+  if(!t)return;const d=t.dataset;
+  if(d.close!==undefined&&e.target.closest(".sheetc")&&!e.target.closest("button[data-close]"))return;
+  if(d.v!==undefined){v=+d.v;sheetId=null;if(v===10||v===11){if(ben.length===0)setCount(3);}}
+  else if(d.n){setCount(+d.n);sheetId=null;}
+  else if(d.d){dev=d.d;}
+  else if(d.t){document.documentElement.dataset.theme=d.t;document.querySelectorAll("#theme button").forEach(b=>b.classList.toggle("on",b===t));return;}
+  else if(d.rm){if(ben.length>1||true)remove(d.rm);if(sheetId===d.rm)sheetId=null;}
+  else if(d.add!==undefined){const p=POOL.find(p=>!ben.some(b=>b.id===p.id));if(p){add(p.id);if(eq)equal();}}
+  else if(d.step){const [id,n]=d.step.split("|");
+    if(v===4){const last=ben[ben.length-1],me=ben[idx(id)],dl=+n;if(me&&id!==last.id&&me.units+dl>=1&&last.units-dl>=1){me.units+=dl;last.units-=dl;}}
+    else setUnits(id,u(id)+ +n);
+    if(v===0)eq=false;}
+  else if(d.eq!==undefined){eq=!eq;if(eq)equal();}
+  else if(d.open){sheetId=d.open;}
+  else if(d.close!==undefined){sheetId=null;}
+  else if(d.tick){const id=d.tick;if(idx(id)>=0){remove(id);}else add(id);}
+  else if(d.save!==undefined){if(ben.length)say("Beneficiaries saved");}
+  else if(d.undo!==undefined&&removed){ben=removed;toast=null;removed=null;}
+  render();
+});
+document.addEventListener("change",e=>{
+  const d=e.target.dataset;
+  if(d.sel){setUnits(d.sel,+e.target.value);render();}
+  if(d.tr!==undefined){trustee=e.target.value;render();}
+});
+function unitsAt(el,clientX){const r=el.getBoundingClientRect();return Math.round((clientX-r.left)/r.width*20);}
+document.addEventListener("pointerdown",e=>{
+  const s=e.target.closest("[data-split]");
+  if(s){drag={k:"split",i:+s.dataset.split,x:e.clientX,before:JSON.parse(JSON.stringify(ben)),w:document.querySelector("#bar").getBoundingClientRect().width};s.setPointerCapture(e.pointerId);return;}
+  const t=e.target.closest("[data-track]");if(t){drag={k:"track",id:t.dataset.track,el:t};t.setPointerCapture(e.pointerId);setUnits(drag.id,unitsAt(t,e.clientX));render();return;}
+  const t2=e.target.closest("[data-track2]");if(t2){drag={k:"t2",id:t2.dataset.track2,el:t2};t2.setPointerCapture(e.pointerId);setUnits(drag.id,unitsAt(t2,e.clientX));render();}
+});
+document.addEventListener("pointermove",e=>{
+  if(!drag)return;
+  if(drag.k==="split"){const i=drag.i,b=drag.before,pair=b[i].units+b[i+1].units,a=Math.min(Math.max(b[i].units+Math.round((e.clientX-drag.x)/drag.w*20),1),pair-1);ben=b.map((x,k)=>k===i?{...x,units:a}:k===i+1?{...x,units:pair-a}:{...x});render();}
+  else{const el=document.querySelector(`[data-track="${drag.id}"]`)||document.querySelector(`[data-track2="${drag.id}"]`);if(el){setUnits(drag.id,unitsAt(el,e.clientX));render();}}
+});
+document.addEventListener("pointerup",()=>{drag=null;});
+setCount(3);render();
+</script>
+</body>
+</html>

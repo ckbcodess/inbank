@@ -209,6 +209,15 @@ interface RecentPayeeAvatar {
   category?: BillerCategory;
   country?: string;
   subtitle?: string;
+  /** What an international wire needs beyond the name, bank and account number, so one tap fills the whole form. */
+  wire?: {
+    currency: string;
+    /** The kind of bank code in `code`: "swift", "sort" or "iban". */
+    mode: string;
+    code: string;
+    bankAddress: string;
+    address: string;
+  };
 }
 
 const ALL_RECENT_AVATARS: RecentPayeeAvatar[] = [
@@ -277,6 +286,44 @@ const ALL_RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KB",
     rail: "wallet",
     colorBg: "var(--avatar-blue)",
+  },
+
+  // International wire payees
+  {
+    id: "rec-sw1",
+    name: "Emily Carter",
+    bank: "JPMorgan Chase Bank",
+    acct: "483920175531",
+    initials: "EC",
+    rail: "swift",
+    country: "United States",
+    subtitle: "JPMorgan Chase Bank · United States",
+    colorBg: "var(--avatar-blue)",
+    wire: { currency: "USD", mode: "swift", code: "CHASUS33", bankAddress: "383 Madison Avenue, New York", address: "14 Elm Street, Austin, TX" },
+  },
+  {
+    id: "rec-sw2",
+    name: "Oliver Hughes",
+    bank: "NatWest",
+    acct: "GB29NWBK60161331926819",
+    initials: "OH",
+    rail: "swift",
+    country: "United Kingdom",
+    subtitle: "NatWest · United Kingdom",
+    colorBg: "var(--avatar-lilac)",
+    wire: { currency: "GBP", mode: "iban", code: "GB29NWBK60161331926819", bankAddress: "250 Bishopsgate, London", address: "9 Albert Road, Leeds" },
+  },
+  {
+    id: "rec-sw3",
+    name: "Lena Fischer",
+    bank: "Deutsche Bank",
+    acct: "DE89370400440532013000",
+    initials: "LF",
+    rail: "swift",
+    country: "Germany",
+    subtitle: "Deutsche Bank · Germany",
+    colorBg: "var(--avatar-sand)",
+    wire: { currency: "EUR", mode: "swift", code: "DEUTDEFF", bankAddress: "Taunusanlage 12, Frankfurt", address: "22 Lindenstrasse, Berlin" },
   },
 
   // Proxy payees
@@ -1006,6 +1053,26 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         ...p,
         pxId: item.acct,
         benName: item.name,
+      }));
+      setStage(1);
+      setStage1Collapsed(true);
+      return;
+    }
+
+    if (item.rail === "swift" && item.wire) {
+      setRail("swift");
+      setBankCategory("international");
+      setF((p) => ({
+        ...p,
+        wBenName: item.name,
+        wBank: item.bank,
+        wIban: item.acct,
+        wCountry: item.country || "",
+        wCurrency: item.wire!.currency,
+        wMode: item.wire!.mode,
+        wSwift: item.wire!.code,
+        wBankAddress: item.wire!.bankAddress,
+        wBenAddress: item.wire!.address,
       }));
       setStage(1);
       setStage1Collapsed(true);

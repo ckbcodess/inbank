@@ -96,7 +96,7 @@ function CountryDropdown({
               className="h-9 w-full rounded-lg border border-field-border bg-field pl-8 pr-2 text-[14px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-field-border-focus focus:bg-field-focus"
             />
           </div>
-          <ul className="max-h-[260px] overflow-y-auto" role="listbox" aria-label="Countries">
+          <ul className="scroll-fade max-h-[260px] overflow-y-auto" role="listbox" aria-label="Countries">
             {matches.map((c) => (
               <li key={c.code} role="option" aria-selected={c.code === country}>
                 <button

@@ -16,12 +16,13 @@
  * the first premium is deducted. Figma authorises with a PIN; here it is the one-time code every payment uses.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, ShieldCheck, X } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/ui/dialog";
 import { TermsAgreement, TermsHint } from "@/components/ui/terms-agreement";
 import { insuranceTerms } from "@/lib/terms";
 import { Field } from "@/components/ui/field";
@@ -30,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import { ListCard } from "@/components/ui/list-card";
 import { OptionTile } from "@/components/ui/option-tile";
 import { ReviewSummary } from "@/components/ui/review-summary";
+import { StepBar } from "@/components/ui/step-bar";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -58,7 +60,6 @@ import {
   PROTECTION_BENEFIT_AGE,
   PROTECTION_SUMS,
   PROVIDER,
-  WAITING_PERIOD_DAYS,
   findPlan,
   findTier,
   type CoverTierId,
@@ -126,12 +127,23 @@ function ResultRows({ rows }: { rows: Array<[string, string]> }) {
 
 /* ── HomeCall: adding someone to the cover ─────────────────────────────────── */
 
-function MemberForm({ onAdd, onCancel }: { onAdd: (m: CoveredMember) => void; onCancel: () => void }) {
+/** The cover-member form in a modal. Its buttons sit in the footer, so they stay put while the fields scroll. */
+function MemberModal({ open, onOpenChange, onAdd }: { open: boolean; onOpenChange: (open: boolean) => void; onAdd: (m: CoveredMember) => void }) {
   const [relationship, setRelationship] = useState<MemberRelationship | "">("");
   const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState<"Female" | "Male" | "">("");
   const [tier, setTier] = useState<CoverTierId | "">("");
+
+  // A fresh form each time it opens
+  useEffect(() => {
+    if (!open) return;
+    setRelationship("");
+    setFullName("");
+    setDob("");
+    setGender("");
+    setTier("");
+  }, [open]);
 
   const rule = relationship ? MEMBER_RULES[relationship] : undefined;
   const age = dob ? ageOn(dob) : null;
@@ -146,7 +158,33 @@ function MemberForm({ onAdd, onCancel }: { onAdd: (m: CoveredMember) => void; on
   const ready = Boolean(relationship) && fullName.trim().split(/\s+/).length >= 2 && dob !== "" && !ageError && gender !== "" && tier !== "";
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-border p-3 animate-in fade-in slide-in-from-top-2 duration-200 sm:p-4">
+    <Modal
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Add to This Cover"
+      size="md"
+      footer={
+        <>
+          <Button type="button" variant="outline" className="h-10 flex-1" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            className="h-10 flex-1"
+            disabled={!ready}
+            onClick={() =>
+              relationship &&
+              gender &&
+              tier &&
+              onAdd({ id: `cm-${Date.now()}`, relationship, fullName: fullName.trim(), dateOfBirth: dob, gender, tier })
+            }
+          >
+            Add to Cover
+          </Button>
+        </>
+      }
+    >
+    <div className="flex flex-col gap-5">
       <Field label="Relationship">
         <Select value={relationship} onValueChange={(v) => v && setRelationship(v as MemberRelationship)}>
           <SelectTrigger aria-label="Relationship">
@@ -166,7 +204,7 @@ function MemberForm({ onAdd, onCancel }: { onAdd: (m: CoveredMember) => void; on
           <Field label="Full Name" htmlFor="member-name">
             <Input id="member-name" value={fullName} onChange={(e) => setFullName(e.target.value)} autoComplete="off" placeholder="As on their ID" />
           </Field>
-          <Field label="Date of Birth" htmlFor="member-dob" hint={rule ? `From ${rule.min} to ${rule.max} years` : undefined} error={ageError}>
+          <Field label="Date of Birth" htmlFor="member-dob" error={ageError}>
             <Input id="member-dob" type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
           </Field>
           <Field label="Gender">
@@ -191,25 +229,8 @@ function MemberForm({ onAdd, onCancel }: { onAdd: (m: CoveredMember) => void; on
           </Field>
         </div>
       )}
-      <div className="flex gap-2">
-        <Button type="button" variant="outline" className="h-10 flex-1" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button
-          type="button"
-          className="h-10 flex-1"
-          disabled={!ready}
-          onClick={() =>
-            relationship &&
-            gender &&
-            tier &&
-            onAdd({ id: `cm-${Date.now()}`, relationship, fullName: fullName.trim(), dateOfBirth: dob, gender, tier })
-          }
-        >
-          Add to Cover
-        </Button>
-      </div>
     </div>
+    </Modal>
   );
 }
 
@@ -272,7 +293,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
         <TrueEmptyState
           icon={<ShieldCheck size={22} strokeWidth={1.8} />}
           title="Create your insurance profile first"
-          description="Every plan uses it, so you only do it once. We’ll bring you back here when it’s done."
+          description="We’ll bring you back here when it’s done."
           action={
             <Button nativeButton={false} render={<Link href={`/insure/profile?next=${encodeURIComponent(next)}&label=${encodeURIComponent(plan.name)}`} />}>
               Create Profile
@@ -435,11 +456,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Beneficiaries" backTo={{ ...back, label: plan.name, onClick: () => setScreen("quote") }} />
         <div className="flex flex-col gap-5">
-          <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
-            {kind === "funeral"
-              ? "Who should receive the benefit if you die? You can change this at any time."
-              : "Who should receive the sum assured if you die before the plan ends? You can change this at any time."}
-          </p>
+          <StepBar current={2} total={3} showCount />
           <BeneficiaryEditor
             ownerId={ownerId}
             people={people}
@@ -477,13 +494,14 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ ...back, label: "Beneficiaries", onClick: () => setScreen("beneficiaries") }} />
         <div className="flex flex-col gap-5">
+          <StepBar current={3} total={3} showCount />
           <ReviewSummary details={details} total={money(premium)} totalLabel={premiumLabel} />
           <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
             {needsMedical
-              ? `The sum assured is above ${money(NON_MEDICAL_LIMIT)}, so ${PROVIDER} needs a medical assessment first. A representative will call you, and nothing is deducted until your cover is confirmed.`
+              ? `Above ${money(NON_MEDICAL_LIMIT)}, ${PROVIDER} needs a medical first and will call you. Nothing is deducted until you’re covered.`
               : monthly
-                ? `Nothing is taken today. Your first premium of ${money(premium)} is deducted between ${firstDeduction}, then every month. You can cancel at any time.`
-                : `Nothing is taken today. Your first premium of ${money(premium)} is deducted between ${firstDeduction}, then every year. You can cancel at any time.`}
+                ? `Nothing is taken today. Your first premium of ${money(premium)} is taken between ${firstDeduction}, then every month.`
+                : `Nothing is taken today. Your first premium of ${money(premium)} is taken between ${firstDeduction}, then every year.`}
           </p>
           <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject={`the ${plan.name}, provided by ${PROVIDER}`} terms={insuranceTerms(PROVIDER)} />
           <div className="flex gap-2">
@@ -526,9 +544,9 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={plan.name} backTo={back} />
       <div className="flex flex-col gap-5 animate-in fade-in duration-200">
+        <StepBar current={1} total={3} showCount />
         <div className="flex flex-col gap-2">
           <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} label="Pay Premiums From" />
-          <p className="px-1 text-[12px] text-muted-foreground">Nothing is taken today. Premiums start in the month you choose below.</p>
         </div>
 
         {holderTooOld && (
@@ -551,7 +569,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                 fullWidth
               />
             </Field>
-            <Field label="Policy Term" hint={`From ${termRange.min} to ${termRange.max} years`}>
+            <Field label="Policy Term">
               <Select value={term ? String(term) : ""} onValueChange={(v) => v && setTerm(Number(v))}>
                 <SelectTrigger aria-label="Policy term">
                   <SelectValue placeholder="Select term" />
@@ -586,7 +604,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
 
         {kind === "protection" && !noTerms && (
           <>
-            <Field label="Policy Term" hint={`Pays a disability income up to age ${PROTECTION_BENEFIT_AGE}.`}>
+            <Field label="Policy Term">
               <Select value={term ? String(term) : ""} onValueChange={(v) => v && setTerm(Number(v))}>
                 <SelectTrigger aria-label="Policy term">
                   <SelectValue placeholder="Select term" />
@@ -625,7 +643,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
 
         {kind === "funeral" && !holderTooOld && (
           <>
-            <Field label="Your Cover" hint={`Deaths from natural causes are covered after ${WAITING_PERIOD_DAYS} days, accidents from day one.`}>
+            <Field label="Your Cover">
               <div role="radiogroup" aria-label="Your cover" className="flex flex-col gap-2">
                 {COVER_TIERS.map((t) => (
                   <OptionTile
@@ -665,23 +683,18 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                     ))}
                   </ListCard>
                 )}
-                {addingMember ? (
-                  <MemberForm
-                    onAdd={(m) => {
-                      setMembers([...members, m]);
-                      setAddingMember(false);
-                    }}
-                    onCancel={() => setAddingMember(false)}
-                  />
-                ) : (
-                  <Button type="button" variant="outline" className="h-10 w-full" onClick={() => setAddingMember(true)}>
-                    <Plus size={16} aria-hidden="true" />
-                    {members.length === 0 ? "Add Someone to This Cover" : "Add Another Person"}
-                  </Button>
-                )}
-                {members.length === 0 && !addingMember && (
-                  <p className="-mt-3 px-1 text-[12px] text-muted-foreground">Optional. Your spouse, children up to 23, parents and other family.</p>
-                )}
+                <Button type="button" variant="outline" className="h-11 w-full" onClick={() => setAddingMember(true)}>
+                  <Plus size={16} aria-hidden="true" />
+                  {members.length === 0 ? "Add Someone to This Cover" : "Add Another Person"}
+                </Button>
+                <MemberModal
+                  open={addingMember}
+                  onOpenChange={setAddingMember}
+                  onAdd={(m) => {
+                    setMembers([...members, m]);
+                    setAddingMember(false);
+                  }}
+                />
                 <Field label="Payment Frequency">
                   <SegmentedControl aria-label="Payment frequency" options={FREQUENCIES} value={frequency} onChange={setFrequency} fullWidth />
                 </Field>
@@ -693,7 +706,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
         {/* When it is paid */}
         {coverChosen && !amountError && (
           <div className={reveal}>
-            <Field label="Yearly Increase" hint="Your premium goes up by this much each year, and so does what the plan pays.">
+            <Field label="Yearly Increase">
               <SegmentedControl
                 aria-label="Yearly increase"
                 options={INCREMENTS.map((i) => ({ value: String(i.value), label: i.label }))}
@@ -740,7 +753,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
             />
             {needsMedical && (
               <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
-                {`This sum assured is above the ${money(NON_MEDICAL_LIMIT)} we can cover without a medical. You can still apply: a ${PROVIDER} representative will call you to arrange a medical assessment.`}
+                {`Above ${money(NON_MEDICAL_LIMIT)} needs a medical. You can still apply, and a ${PROVIDER} representative will call you.`}
               </p>
             )}
           </div>

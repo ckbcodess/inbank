@@ -1,6 +1,6 @@
 "use client";
 
-import { SavedSuggestions } from "./SavedRecipients";
+import { SavedRecipientLink } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -72,8 +72,6 @@ export function OtherGcbFlow({
 
   // Resolving / Verification state
   const [resolving, setResolving] = useState(false);
-  // What is typed when the person is searching saved recipients by name rather than entering a number
-  const [nameQuery, setNameQuery] = useState("");
 
   useEffect(() => {
     if (isAcctValid) {
@@ -107,7 +105,7 @@ export function OtherGcbFlow({
       />
 
       {/* 2. Destination (GCB Account) */}
-      <Field label="Beneficiary Details">
+      <Field label="Beneficiary Details" action={!(isVerified && isCollapsed) && <SavedRecipientLink value={state.benAcct} onPicked={(item) => setPickedAcct(item.acct.replace(/[\s-]/g, ""))} />}>
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `GCB Account ${state.benAcct}`}
@@ -119,24 +117,12 @@ export function OtherGcbFlow({
         ) : (
           <div className="flex flex-col gap-2">
             <div className="relative flex items-center">
-              <SavedSuggestions query={nameQuery || state.benAcct} onPicked={(item) => {
-                setNameQuery("");
-                setPickedAcct(item.acct.replace(/[\s-]/g, ""));
-              }}>
                 <Input
                   type="text"
-                  inputMode="text"
-                  value={nameQuery || state.benAcct}
+                  inputMode="numeric"
+                  value={state.benAcct}
                   onChange={(e) => {
-                    const raw = e.target.value;
-                    // Letters mean the person is looking someone up by name, so the account stays empty until they pick or type digits
-                    if (/[a-z]/i.test(raw)) {
-                      setNameQuery(raw);
-                      onChange("benAcct", "");
-                      return;
-                    }
-                    setNameQuery("");
-                    const val = raw.replace(/[^0-9]/g, "").slice(0, 13);
+                    const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 13);
                     onChange("benAcct", val);
                     if (val.length === 13) {
                       const resolved = resolveAccountName(val, "");
@@ -145,10 +131,9 @@ export function OtherGcbFlow({
                       }
                     }
                   }}
-                  placeholder="Enter new account number or saved beneficiary name"
+                  placeholder="Enter account number"
                   className="numorainput tabular"
                 />
-              </SavedSuggestions>
             </div>
 
             {/* Verification Status */}

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Detail Facts: 5 Ways to Say the Same Things</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--card:#fafafa;--tile:#f4f4f5;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amtint:#fff3cf;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0f0f0f;--card:#161616;--tile:#1a1a1a;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amtint:#2b2208;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;max-width:100%;width:760px}
+  .frame.phone{width:390px}
+  .pg{padding:28px 32px 48px;display:flex;flex-direction:column;gap:24px;min-height:720px}
+  .phone .pg{padding:20px 12px 32px}
+  .col{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+  .hd{display:flex;align-items:center;gap:12px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .body{display:flex;flex-direction:column;gap:24px;margin-top:16px}
+
+  .fig{display:flex;flex-direction:column;gap:4px;padding:0 4px}
+  .fig small{font-size:14px;color:var(--mu)}
+  .fig b{font-weight:300;font-size:32px;line-height:1;letter-spacing:-.02em}
+
+  /* the facts */
+  .panel{display:flex;flex-direction:column;border-radius:16px;font-size:14px}
+  .panel.card{background:var(--card);border:1px solid var(--bd);padding:8px}
+  .grp{display:flex;flex-direction:column}
+  .panel.card.hair .grp+.grp{border-top:1px solid var(--bd);margin-top:4px;padding-top:4px}
+  .panel.space{gap:32px}
+  .panel.card.space{gap:8px}
+  .fr{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding:12px 8px;border-radius:12px}
+  .phone .fr{gap:12px}
+  .fr .l{color:var(--mu);flex:none;font-size:14px}
+  .fr .r{text-align:right;min-width:0;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+  .fr .v{color:var(--tx)}
+  .fr .s{font-size:12px;color:var(--mu);line-height:1.5}
+  .fr.key{align-items:baseline;padding:12px 8px}
+  .fr.key .l{font-size:16px;font-weight:500;color:var(--tx)}
+  .fr.key .v{font-weight:300;font-size:24px;line-height:1;letter-spacing:-.02em}
+  .fr.k20 .v{font-size:20px}
+  .dash{height:1px;margin:8px;background:repeating-linear-gradient(to right,var(--bd) 0 6px,transparent 6px 16px)}
+  .fr.need{background:var(--amtint);align-items:center}
+  .fr.need .l{color:var(--tx)}
+  .fr.need .r{flex-direction:row;align-items:baseline;gap:16px}
+  .act{text-decoration:underline;text-underline-offset:3px;white-space:nowrap;font-weight:500}
+  .fr.ref{padding:6px 8px}
+  .fr.ref .l,.fr.ref .v{font-size:12px;color:var(--mu)}
+  .fr.total{align-items:baseline}
+  .fr.total .l{font-size:16px;font-weight:500;color:var(--tx)}
+  .fr.total .v{font-weight:300;font-size:28px;line-height:1;letter-spacing:-.02em}
+  .bar2{height:4px;border-radius:999px;background:var(--bd);margin:0 8px 8px;overflow:hidden}
+  .bar2 i{display:block;height:100%;background:var(--am);border-radius:999px}
+  .fold{display:flex;justify-content:space-between;align-items:center;padding:12px 8px;border-radius:12px;color:var(--mu);font-size:14px;width:100%}
+  .fold:hover{background:var(--tile)}
+  .why{font-size:12px;color:var(--mu);line-height:1.5;max-width:700px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--mu)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Detail facts · 5 treatments · same data, different clustering and copy</h1>
+    <div class="ctrls">
+      <div class="seg" id="subsel"></div>
+      <div class="seg" id="widthsel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage"><div class="frame" id="frame"></div></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const back='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>';
+const caret=o=>`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${o?'<path d="M6 15l6-6 6 6"/>':'<path d="M6 9l6 6 6-6"/>'}</svg>`;
+
+/* Every subject is written twice: flat (what ships today) and grouped (the proposal). Same facts, nothing invented. */
+const SUBJ={
+ policy:{name:'Policy',title:'Wealth Protect',
+  flat:[['Missed premiums','GHS 1,000.00'],['Sum assured','GHS 37,500.00','key'],['Premium','GHS 500.00 a month'],['Taken','Between the 12th to 16th'],['Policy term','5 years'],['Matures','01 Feb 2029'],['Premiums paid so far','GHS 15,000.00'],['Paid from','Savings Account · 4001 9922 1100'],['Provider','StarLife Assurance'],['Policy number','WMP/2024/041203']],
+  groups:[
+   {rows:[{l:'Missed premiums',v:'GHS 1,000.00',need:'Pay now'}]},
+   {rows:[{l:'Sum assured',v:'GHS 37,500.00',key:1,s:'What we pay if you claim'}]},
+   {rows:[{l:'Premium',v:'GHS 500.00 a month',s:'Taken between the 12th and 16th, from Savings Account · 4001 9922 1100'}]},
+   {rows:[{l:'Paid so far',v:'GHS 15,000.00',s:'30 of 60 premiums',bar:.5},{l:'Ends',v:'01 Feb 2029',s:'A 5-year policy'}]},
+   {ref:1,rows:[{l:'Provider',v:'StarLife Assurance'},{l:'Policy number',v:'WMP/2024/041203'}]}
+  ]},
+ live:{name:'Advance, overdue',title:'Salary Advance',fig:['To clear it today','GHS 8,677.92'],
+  flat:[['Advance','GHS 8,000.00'],['Paid in','GHS 7,880.00 on 21 Aug 2026'],['Fees taken up front','GHS 120.00'],['Interest rate','2.17% a month, GHS 5.79 a day'],['Interest so far','GHS 277.92'],['Late charges','GHS 400.00'],['Paid into','Savings Account · 4001 9922 1100'],['Reference','SAD-2026-310287']],
+  groups:[
+   {ledger:1,rows:[{l:'Advance',v:'GHS 8,000.00'},{l:'Interest so far',v:'GHS 277.92',s:'2.17% a month, GHS 5.79 a day'},{l:'Late charges',v:'GHS 400.00',s:'Added after the repayment date'}]},
+   {rows:[{l:'You received',v:'GHS 7,880.00',s:'On 21 Aug 2026, after GHS 120.00 in fees'},{l:'Went into',v:'Savings Account',s:'4001 9922 1100'}]},
+   {ref:1,rows:[{l:'Reference',v:'SAD-2026-310287'}]}
+  ],
+  total:['To clear it today','GHS 8,677.92']},
+ pending:{name:'Advance, pending',title:'Salary Advance',
+  flat:[['Requested','GHS 500.00','k20'],['Once approved','We pay GHS 492.50 into Savings Account once it’s approved'],['Interest rate','2.17% a month, GHS 0.36 a day'],['Repayment date','25 Oct 2026'],['Paid into','Savings Account · 4001 9922 1100'],['Reference','SAD-2026-310041']],
+  groups:[
+   {rows:[{l:'Requested',v:'GHS 500.00',key:1,k20:1},{l:'You’ll receive',v:'GHS 492.50',s:'After a GHS 7.50 fee, once it’s approved'},{l:'Goes into',v:'Savings Account',s:'4001 9922 1100'}]},
+   {rows:[{l:'Repays on',v:'25 Oct 2026',s:'2.17% a month, GHS 0.36 a day until then'}]},
+   {ref:1,rows:[{l:'Reference',v:'SAD-2026-310041'}]}
+  ]}
+};
+
+const VARS=[
+ {n:'Today',note:'What ships now. One flat list, every row the same weight, sentences in the value column, and the figure sits apart from the sum it comes from.'},
+ {n:'Grouped card',note:'Same card, but rows are clustered by the question they answer, split by hairlines. Cost, timing and account become one row with a sub-line. Provider and number go quiet at the bottom. 10 rows become 5 on the policy.'},
+ {n:'Open',note:'No card at all: whitespace does the grouping (CONSTITUTION §3: whitespace first, hairline second, box last). Calmest of the five, and the one most like the Wealthsimple reference.'},
+ {n:'Ledger and progress',note:'Where the numbers really add up, show the sum: advance + interest + late charges, then the dashed line, then what you pay today. On the policy, a progress bar shows how far in you are. Only used where it is honest.'},
+ {n:'Fold the detail',note:'Essentials stay in view; terms and reference tuck behind one row. Shortest page, at the cost of one tap to reach the policy number someone reads out on a call.'}
+];
+const S={v:0,sub:'policy',phone:false,dark:false,fold:false};
+
+const row=(r,o)=>{
+  if(r.need){return `<div class="fr need"><span class="l">${r.l}</span><span class="r"><span class="v tab">${r.v}</span><button class="act" data-toast="Pay now opens the payment review">${r.need}</button></span></div>`}
+  const cls=['fr',r.key?'key':'',r.k20?'k20':'',r.ref?'ref':''].join(' ');
+  const sub=r.s&&o.sub?`<span class="s tab">${r.s}</span>`:'';
+  return `<div class="${cls}"><span class="l">${r.l}</span><span class="r"><span class="v tab">${r.v}</span>${sub}</span></div>`+
+    (r.bar&&o.bar?`<div class="bar2"><i style="width:${r.bar*100}%"></i></div>`:'')+(r.key&&!r.k20?'<div class="dash"></div>':'');
+};
+
+function flat(sj){
+  return `<div class="panel card"><div class="grp">${sj.flat.map(([l,v,k])=>{
+    const cls=['fr',k==='key'?'key':'',k==='k20'?'key k20':''].join(' ');
+    const dash=k==='key'?'<div class="dash"></div>':'';
+    return `<div class="${cls}"><span class="l">${l}</span><span class="r"><span class="v tab">${v}</span></span></div>${dash}`}).join('')}</div></div>`;
+}
+
+function grouped(sj,o){
+  let groups=sj.groups;
+  let tail='';
+  if(o.fold){
+    const main=groups.filter(g=>!g.ref);
+    const rest=groups.filter(g=>g.ref);
+    const open=S.fold;
+    tail=`<button class="fold" id="foldbtn"><span>${sj.name==='Policy'?'Policy details':'Reference'}</span>${caret(open)}</button>`+(open?`<div class="grp">${rest.map(g=>g.rows.map(r=>row(r,o)).join('')).join('')}</div>`:'');
+    groups=main;
+  }
+  let totalHtml='';
+  if(o.total&&sj.total){
+    totalHtml=`<div class="grp"><div class="dash" style="margin-top:0"></div><div class="fr total"><span class="l">${sj.total[0]}</span><span class="r"><span class="v tab">${sj.total[1]}</span></span></div></div>`;
+  }
+  const inner=groups.map((g,i)=>{
+    let html=g.rows.map(r=>row(r,o)).join('');
+    if(o.total&&g.ledger){html+=totalHtml;totalHtml=''}
+    return `<div class="grp">${html}</div>`;
+  }).join('')+(tail?`<div class="grp">${tail}</div>`:'');
+  const cls=['panel',o.card?'card':'',o.hair?'hair':'',o.space?'space':''].join(' ');
+  return `<div class="${cls}">${inner}</div>`;
+}
+
+function render(){
+  const sj=SUBJ[S.sub], v=S.v;
+  const opts=[null,{card:1,hair:1,sub:1},{card:0,space:1,sub:1},{card:1,space:1,sub:1,bar:1,total:1},{card:1,hair:1,sub:1,fold:1}][v];
+  const showFig=sj.fig&&!(opts&&opts.total);
+  const fig=showFig?`<div class="fig"><small>${sj.fig[0]}</small><b class="tab">${sj.fig[1]}</b></div>`:'';
+  const facts=v===0?flat(sj):grouped(sj,opts);
+  document.getElementById('frame').className='frame'+(S.phone?' phone':'');
+  document.getElementById('frame').innerHTML=`<div class="pg"><div class="col"><div class="hd"><span class="bk">${back}</span><h2>${sj.title}</h2></div><div class="body">${fig}${facts}</div></div></div>`;
+  const fb=document.getElementById('foldbtn'); if(fb) fb.onclick=()=>{S.fold=!S.fold;render()};
+  document.querySelectorAll('[data-toast]').forEach(b=>b.onclick=()=>toast(b.dataset.toast));
+  document.getElementById('vnote').textContent=VARS[v].note;
+  document.querySelectorAll('#pills .pill').forEach((p,i)=>p.classList.toggle('on',i===v));
+  seg('subsel',Object.entries(SUBJ).map(([k,x])=>[k,x.name]),S.sub,k=>{S.sub=k;S.fold=false;render()});
+  seg('widthsel',[['d','Desktop'],['p','Phone']],S.phone?'p':'d',k=>{S.phone=k==='p';render()});
+  seg('themesel',[['l','Light'],['d','Dark']],S.dark?'d':'l',k=>{S.dark=k==='d';document.documentElement.dataset.theme=S.dark?'dark':'light';render()});
+}
+function seg(id,items,cur,fn){
+  const el=document.getElementById(id);
+  el.innerHTML=items.map(([k,l])=>`<button class="${k===cur?'on':''}" data-k="${k}">${l}</button>`).join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>fn(b.dataset.k));
+}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),1800)}
+document.getElementById('pills').innerHTML=VARS.map((x,i)=>`<button class="pill" data-i="${i}">${i+1}. ${x.n}</button>`).join('');
+document.querySelectorAll('#pills .pill').forEach(p=>p.onclick=()=>{S.v=+p.dataset.i;S.fold=false;render()});
+render();
+</script>
+</body>
+</html>

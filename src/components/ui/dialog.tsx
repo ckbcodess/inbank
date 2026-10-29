@@ -185,7 +185,7 @@ function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="dialog-body"
       className={cn(
-        "custom-scrollbar max-h-[calc(90vh-130px)] sm:max-h-[75vh] overflow-y-auto px-4 sm:px-5 py-4 flex flex-col gap-3",
+        "custom-scrollbar scroll-fade max-h-[calc(90vh-130px)] sm:max-h-[75vh] overflow-y-auto px-4 sm:px-5 py-4 flex flex-col gap-3",
         className
       )}
       {...props}

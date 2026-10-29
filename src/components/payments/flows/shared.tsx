@@ -1617,7 +1617,7 @@ export function BankSelect({
         {matches.length === 0 ? (
           <p className="px-2 py-6 text-center text-[13px] text-muted-foreground">No bank matches that.</p>
         ) : (
-          <ul role="listbox" aria-label="Banks" className="custom-scrollbar flex max-h-60 flex-col gap-0.5 overflow-y-auto overscroll-contain">
+          <ul role="listbox" aria-label="Banks" className="custom-scrollbar scroll-fade flex max-h-60 flex-col gap-0.5 overflow-y-auto overscroll-contain">
             {matches.map((b) => (
               <li key={b} role="option" aria-selected={b === value}>
                 <button

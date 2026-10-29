@@ -156,8 +156,8 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
       <div className="flex flex-col gap-5">
         <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
           {intent
-            ? `To invest in ${intent.label}, we first open your securities account. It’s held with the Central Securities Depository, where what you own is recorded.`
-            : "To start investing, we first open your securities account. It’s held with the Central Securities Depository, where what you own is recorded."}
+            ? `To invest in ${intent.label}, we first open your securities account, which records what you own.`
+            : "To start investing, we first open your securities account, which records what you own."}
         </p>
 
         <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} label="Linked Account" />

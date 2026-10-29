@@ -38,7 +38,6 @@ const loans: Entry[] = [
   ["Advances are for customers paid into GCB", "Les avances sont réservées aux clients payés sur un compte GCB", "Los anticipos son para clientes que cobran en GCB", "预支仅适用于收入存入 GCB 的客户"],
   ["You can take up to 80% of your salary, national service allowance or pension once it’s paid into a GCB account. Ask your employer or pension office to pay into {0} ({1}). Your first advance is available after the first credit arrives.", "Vous pouvez obtenir jusqu’à 80 % de votre salaire, allocation de service national ou pension dès qu’ils sont versés sur un compte GCB. Demandez à votre employeur ou caisse de retraite de verser sur {0} ({1}). Votre première avance est disponible après le premier versement.", "Puedes recibir hasta el 80 % de tu salario, asignación del servicio nacional o pensión cuando se ingrese en una cuenta GCB. Pide a tu empleador u oficina de pensiones que pague en {0} ({1}). Tu primer anticipo estará disponible tras el primer ingreso.", "工资、国民服务津贴或养老金存入 GCB 账户后，您最多可预支其 80%。请让雇主或养老金机构将款项存入 {0}（{1}）。首笔款项到账后即可申请首次预支。"],
   ["You can take up to 80% of your salary, national service allowance or pension once it’s paid into a GCB account.", "Vous pouvez obtenir jusqu’à 80 % de votre salaire, allocation de service national ou pension dès qu’ils sont versés sur un compte GCB.", "Puedes recibir hasta el 80 % de tu salario, asignación del servicio nacional o pensión cuando se ingrese en una cuenta GCB.", "工资、国民服务津贴或养老金存入 GCB 账户后，您最多可预支其 80%。"],
-  ["You can take up to 80% of your salary, national service allowance or pension once it’s paid into a GCB account. Your first advance is available after the first credit arrives.", "Vous pouvez obtenir jusqu’à 80 % de votre salaire, allocation de service national ou pension dès qu’ils sont versés sur un compte GCB. Votre première avance est disponible après le premier versement.", "Puedes recibir hasta el 80 % de tu salario, asignación del servicio nacional o pensión cuando se ingrese en una cuenta GCB. Tu primer anticipo estará disponible tras el primer ingreso.", "工资、国民服务津贴或养老金存入 GCB 账户后，您最多可预支其 80%。首笔款项到账后即可申请首次预支。"],
 
   // ── Requesting an advance ──
   ["We’ll pay {0} into {1} once it’s approved. We’ll let you know when it’s in.", "Nous verserons {0} sur {1} une fois approuvée. Nous vous préviendrons à réception.", "Ingresaremos {0} en {1} cuando se apruebe. Te avisaremos cuando llegue.", "获批后我们会将 {0} 存入 {1}，到账时会通知您。"],
@@ -49,11 +48,9 @@ const loans: Entry[] = [
   ["Your request is being reviewed", "Votre demande est en cours d’examen", "Tu solicitud está en revisión", "您的申请正在审核中"],
   ["You already have an advance", "Vous avez déjà une avance", "Ya tienes un anticipo", "您已有一笔预支"],
   ["You can take another once this one is decided and repaid.", "Vous pourrez en prendre une autre une fois celle-ci traitée et remboursée.", "Podrás pedir otro cuando este se resuelva y se devuelva.", "此笔处理并还清后，您可再次申请。"],
-  ["Repay it to take another. It’s due on {0}, and repaying early costs less.", "Remboursez-la pour en prendre une autre. Elle est due le {0}, et rembourser plus tôt coûte moins cher.", "Devuélvelo para pedir otro. Vence el {0} y devolverlo antes cuesta menos.", "还清后即可再次申请。到期日为 {0}，提前还款费用更低。"],
   ["You need an account to receive the advance", "Il vous faut un compte pour recevoir l’avance", "Necesitas una cuenta para recibir el anticipo", "您需要一个账户来接收预支款"],
   ["It’s paid in cedis into an active current or savings account.", "Elle est versée en cedis sur un compte courant ou d’épargne actif.", "Se ingresa en cedis en una cuenta corriente o de ahorro activa.", "预支款以塞地存入有效的活期或储蓄账户。"],
   ["Pay Into", "Verser sur", "Pagar en", "存入账户"],
-  ["We pay the advance into this account.", "Nous versons l’avance sur ce compte.", "Ingresamos el anticipo en esta cuenta.", "预支款将存入此账户。"],
   ["You can take up to", "Vous pouvez obtenir jusqu’à", "Puedes recibir hasta", "您最多可预支"],
   ["You can take up to {0}.", "Vous pouvez obtenir jusqu’à {0}.", "Puedes recibir hasta {0}.", "您最多可预支 {0}。"],
   ["From {0} to {1}.", "De {0} à {1}.", "De {0} a {1}.", "{0} 至 {1}。"],
@@ -90,6 +87,9 @@ const loans: Entry[] = [
   ["Paid in", "Versé", "Ingresado", "已入账"],
   ["Fees taken up front", "Frais prélevés d’avance", "Comisiones cobradas por adelantado", "预先扣除的费用"],
   ["{0} a month, {1} a day", "{0} par mois, {1} par jour", "{0} al mes, {1} al día", "每月 {0}，每天 {1}"],
+  ["Daily interest", "Intérêts par jour", "Interés diario", "每日利息"],
+  ["Late charge rate", "Taux des frais de retard", "Tasa del cargo por mora", "滞纳费率"],
+  ["Paid in on", "Versé le", "Ingresado el", "到账日期"],
   ["Interest so far", "Intérêts à ce jour", "Intereses hasta ahora", "目前利息"],
   ["Late charges", "Frais de retard", "Cargos por mora", "滞纳金"],
   ["Repayment date", "Date de remboursement", "Fecha de devolución", "还款日期"],
@@ -109,7 +109,6 @@ const loans: Entry[] = [
   ["Amount advanced", "Montant avancé", "Importe anticipado", "预支金额"],
   ["Interest for 1 day", "Intérêts pour 1 jour", "Intereses por 1 día", "1 天的利息"],
   ["Interest for {0} days", "Intérêts pour {0} jours", "Intereses por {0} días", "{0} 天的利息"],
-  ["This clears the advance. Your next credit arrives in full.", "Cela solde l’avance. Votre prochain versement arrivera en entier.", "Esto salda el anticipo. Tu próximo ingreso llegará completo.", "这将结清预支，下次款项将全额到账。"],
   ["Repay your {0}", "Rembourser votre {0}", "Devolver tu {0}", "偿还您的{0}"],
 
   // ── Elsewhere: Transactions, receipts, breadcrumbs, dashboard ──
@@ -123,6 +122,22 @@ const loans: Entry[] = [
   ["It’s repaid from your next credit.", "Elle est remboursée sur votre prochain versement.", "Se devuelve con tu próximo ingreso.", "将从您下次到账款项中还款。"],
   ["Request advance", "Demander une avance", "Solicitar anticipo", "申请预支"],
   ["your account", "votre compte", "tu cuenta", "您的账户"],
+
+  // ── Detail facts ──
+  ["Goes into","Versée sur","Se ingresa en","存入"],
+  ["Went into","Versée sur","Se ingresó en","已存入"],
+  ["You received","Vous avez reçu","Recibiste","您已收到"],
+  ["You’ll receive","Vous recevrez","Recibirás","您将收到"],
+  ["After a {0} fee, once it’s approved","Après des frais de {0}, une fois approuvée","Tras una comisión de {0}, cuando se apruebe","扣除 {0} 费用，获批后到账"],
+  ["Ask again after","Redemander après le","Vuelve a pedirlo después del","可再次申请日期"],
+  ["Repaid on","Remboursée le","Reembolsado el","还款日期"],
+  ["{0} of the advance a month","{0} de l’avance par mois","{0} del anticipo al mes","每月预支金额的 {0}"],
+  ["On {0}, after {1} in fees","Le {0}, après {1} de frais","El {0}, tras {1} en comisiones","{0}，扣除 {1} 费用后"],
+  ["Repays on","Remboursée le","Se reembolsa el","还款日"],
+  ["Was due","Était due le","Vencía el","原定还款日"],
+  ["If your credit is late","Si votre versement est en retard","Si tu ingreso se retrasa","若您的款项延迟"],
+  ["Repay it to take another. It’s due on {0}.", "Remboursez-la pour en prendre une autre. Échéance le {0}.", "Devuélvelo para pedir otro. Vence el {0}.", "还清后可再次申请。到期日为 {0}。"],
+  ["Your next credit arrives in full.", "Votre prochain versement arrive en totalité.", "Tu próximo abono llegará completo.", "您的下一笔入账将全额到账。"],
 ];
 
 export default loans;

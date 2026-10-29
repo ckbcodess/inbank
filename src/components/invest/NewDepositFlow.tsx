@@ -197,7 +197,6 @@ export function NewDepositFlow() {
       <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <div className="flex flex-col gap-2">
           <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} />
-          <p className="px-1 text-[12px] text-muted-foreground">This account is debited now, and credited at maturity.</p>
         </div>
 
         <Field label="Deposit Period">

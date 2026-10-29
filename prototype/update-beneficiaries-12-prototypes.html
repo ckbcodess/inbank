@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Update Beneficiaries: 12 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--red:#c62828;--c1:#3b82f6;--c2:#ea580c;--c3:#16a34a;--c4:#8b5cf6;--c5:#db2777;--c6:#9ca3af}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--red:#ef5350}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0;padding:0}
+  .mu{color:var(--mu)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .wrap{display:flex;flex-direction:column;align-items:center}
+  .frame{position:relative;width:440px;max-width:100%;min-height:760px;background:var(--surf);border:1px solid var(--bd);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
+  .frame.desk{width:860px;border-radius:20px}
+  .page{padding:24px 20px 32px;display:flex;flex-direction:column;gap:20px}
+  .desk .page{padding:32px 48px 40px}
+  .hd{display:flex;align-items:center;gap:8px;min-height:40px}
+  .hd h2{font-size:18px;font-weight:500;letter-spacing:-.02em;flex:1}
+  .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mu);flex:none}
+  .sub{font-size:13px;color:var(--mu);padding:0 4px}
+  .sec{display:flex;align-items:center;justify-content:space-between;min-height:28px;padding:0 4px}
+  .sec h3{margin:0;font-size:16px;font-weight:500}
+  .link{font-size:13px;text-decoration:underline;text-underline-offset:3px;min-height:36px;display:inline-flex;align-items:center}
+  .left{font-size:13px;color:var(--mu)}
+  .panel{background:var(--tile);border-radius:16px;padding:8px;display:flex;flex-direction:column}
+  .prow{display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:12px}
+  .av{position:relative;width:36px;height:36px;border-radius:50%;background:var(--tileh);display:flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+  .av i{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;border:2px solid var(--tile)}
+  .mid{flex:1;min-width:0} .mid b{display:block;font-weight:400;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .mid span{font-size:12px;color:var(--mu)}
+  .pin{width:64px;height:40px;border:1px solid var(--bd);background:var(--surf);border-radius:10px;text-align:right;padding:0 10px;outline:none}
+  .pin:focus{border-color:var(--am)}
+  .x{width:36px;height:36px;border-radius:8px;color:var(--mu);display:flex;align-items:center;justify-content:center;flex:none} .x:hover{background:var(--tileh)}
+  .pctl{display:inline-flex;align-items:center;gap:4px}
+  .sq{width:36px;height:36px;border-radius:10px;background:var(--surf);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none} .sq:hover{background:var(--tileh)}
+  .val{min-width:48px;text-align:center}
+  .bars{display:flex;height:10px;border-radius:999px;overflow:hidden;gap:2px;background:var(--tile);position:relative}
+  .bars>div{height:100%}
+  .barwrap{position:relative;padding:6px 0}
+  .split{position:absolute;top:0;bottom:0;width:20px;margin-left:-10px;display:flex;align-items:center;justify-content:center;cursor:ew-resize;touch-action:none}
+  .split span{width:6px;height:20px;border-radius:999px;background:var(--surf);border:1px solid var(--bd)}
+  .btn{height:48px;border-radius:14px;background:var(--am);color:#111;font-weight:500;display:flex;align-items:center;justify-content:center;width:100%}
+  .btn[disabled]{background:var(--tile);color:var(--mu);cursor:default}
+  .btn.o{background:none;border:1px solid var(--bd);color:var(--tx);font-weight:400}
+  .reason{font-size:12px;color:var(--mu);text-align:center;margin-top:-8px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{padding:8px 14px;border-radius:999px;border:1px solid var(--bd);font-size:13px;display:inline-flex;align-items:center;gap:8px}
+  .chip.on{background:var(--am);border-color:var(--am);color:#111}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .big{font-size:34px;letter-spacing:-.02em}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .card{background:var(--tile);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:120px;position:relative}
+  .card.sel{outline:2px solid var(--am)}
+  .blocks{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .blk{aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;opacity:.95}
+  .tbl{width:100%;border-collapse:collapse} .tbl th{font-weight:400;font-size:12px;color:var(--mu);text-align:left;padding:8px 8px;border-bottom:1px solid var(--bd)} .tbl td{padding:10px 8px;border-bottom:1px solid var(--bd);vertical-align:middle}
+  .tbl th.r,.tbl td.r{text-align:right}
+  .range{width:100%;accent-color:#e0a800}
+  .opt{border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px;width:100%}
+  .opt.on{border-color:var(--am);background:color-mix(in srgb,var(--am) 12%,transparent)}
+  .tr{background:var(--tile);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+  .sel{height:44px;border:1px solid var(--bd);background:var(--surf);border-radius:12px;padding:0 12px;display:flex;align-items:center;justify-content:space-between}
+  .toast{position:absolute;left:16px;right:16px;bottom:16px;background:#111;color:#fff;border-radius:14px;padding:12px 16px;font-size:13px;display:flex;justify-content:space-between;z-index:20}
+  .ck{width:22px;height:22px;border-radius:7px;border:2px solid var(--bd);flex:none;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .ck.on{background:var(--am);border-color:var(--am);color:#111}
+  .stepbar{display:flex;gap:8px} .stepbar i{flex:1;height:6px;border-radius:99px;background:var(--tile)} .stepbar i.on{background:var(--am)}
+  .legend{max-width:860px;font-size:12px;color:var(--mu);line-height:1.6;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Update Beneficiaries: 12 variations</h1>
+    <div class="ctrls"><div class="pills" id="pills"></div><div class="seg" id="dev"></div><div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="wrap"><div class="frame" id="frame"></div><p class="legend" id="legend"></p></div></div>
+<script>
+// Rules kept in every variation (they are the app's, not the design's): shares go up in steps of 5, add up to exactly 100, nobody is at 0,
+// someone under 18 needs a trustee (an adult), and nothing is saved until Save. Sum assured is GHS 50,000.
+const SUM=50000, STEP=5;
+const POOL=[
+ {id:"p1",name:"Rasnfrod Guasi",rel:"Son",minor:true},
+ {id:"p2",name:"Ransford Gyasi",rel:"Daughter"},
+ {id:"p3",name:"Akua Gyasi",rel:"Sister",minor:true},
+ {id:"p4",name:"Try Again",rel:"Mother"},
+ {id:"p5",name:"Kojo Mensah",rel:"Brother"},
+];
+const TRUSTEES=[{id:"t1",name:"Ransford Gyasi"},{id:"t2",name:"Try Again"}];
+const COLORS=["var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)"];
+const NOTES=[
+ "<b>1 · Plain list.</b> Focus: nothing to learn. Name, percentage box, remove. A line under the list says how much is left. Lowest abstraction and lowest complexity: typing is the only control.",
+ "<b>2 · Bar and list (today).</b> Focus: seeing the split. One bar, a draggable splitter between neighbours, and the list below. Low-medium: two ways to edit the same numbers.",
+ "<b>3 · Stepper per person.</b> Focus: precision on a phone. Each row has − and + that move 5 at a time, no typing, no dragging. Low abstraction; the total can drift, so it shows what is left.",
+ "<b>4 · Sliders.</b> Focus: direct feel. One slider per person, in steps of 5; moving one gives or takes from the others automatically, so the total is always 100. Medium: auto-balancing hides who changed.",
+ "<b>5 · Ring.</b> Focus: the whole at a glance. A donut of the split with the same −/+ rows below, balanced automatically. Medium abstraction: the picture leads, the numbers follow.",
+ "<b>6 · Twenty blocks.</b> Focus: sharing as handing out pieces. Twenty blocks of 5%. Pick a person, tap blocks to give them. High abstraction, no numbers to type; total is always 100 by construction.",
+ "<b>7 · What each gets.</b> Focus: the money, not the percent. Each row shows the amount (of GHS 50,000) beside the share, and the share controls are −/+. Concrete outcome first.",
+ "<b>8 · People cards.</b> Focus: the people. A card per person with their share large. Tap a card to change it. Medium: more room and more taps, good for two to four people.",
+ "<b>9 · Step by step.</b> Focus: guidance. Who → how much → trustee, one decision per screen. Highest complexity (three screens) but the least to hold in your head.",
+ "<b>10 · Start from a template.</b> Focus: a good first answer. Pick Equal, One main, or Custom, then adjust. Medium: a decision up front that saves most people the rest.",
+ "<b>11 · Table.</b> Focus: desktop and checking. Columns for person, relationship, share, amount and a remove. Dense and exact; best at desktop width.",
+ "<b>12 · Grouped by who they are.</b> Focus: the under-18 rule. Adults and Under 18 are separate groups, and a trustee block appears attached to the minors. Medium-high: the rule is part of the layout, not an error.",
+];
+const LEGEND="Every variation keeps the app's rules: steps of 5, total exactly 100, nobody at 0, a trustee for anyone under 18, Save only when valid. Add, remove, Split equally and Save work in each. Switch to Desktop to see how they scale (11 is built for it).";
+let v=0,dev="phone",ben=[{id:"p1",share:50},{id:"p2",share:30},{id:"p3",share:20}],trustee="t1",toast=null,removed=null;
+let sel="p1",w9=0,tpl="custom",drag=null,openCard=null;
+const $=s=>document.querySelector(s);
+const snap=n=>Math.round(n/STEP)*STEP;
+const P=id=>POOL.find(p=>p.id===id);
+const idx=id=>ben.findIndex(b=>b.id===id);
+const total=()=>ben.reduce((n,b)=>n+b.share,0);
+const hasMinor=()=>ben.some(b=>P(b.id).minor);
+const money=n=>"GHS "+n.toLocaleString("en-GH",{minimumFractionDigits:0});
+const valid=()=>ben.length>0&&total()===100&&ben.every(b=>b.share>0&&b.share%STEP===0)&&(!hasMinor()||trustee);
+const why=()=>!ben.length?"Add someone to name a beneficiary.":total()<100?`${100-total()}% left to share.`:total()>100?`The shares add up to ${total()-100}% over 100.`:(hasMinor()&&!trustee)?"Choose a trustee for the under 18s.":"";
+const ini=n=>n.split(" ").map(w=>w[0]).join("").slice(0,2);
+const col=i=>COLORS[Math.min(i,5)];
+const av=(b,i)=>`<span class="av">${ini(P(b.id).name)}<i style="background:${col(i)}"></i></span>`;
+const meta=p=>p.minor?`${p.rel} · Under 18`:p.rel;
+function equal(){const n=ben.length,units=100/STEP,each=Math.floor(units/n),extra=units-each*n;ben=ben.map((b,i)=>({...b,share:(each+(i<extra?1:0))*STEP}));}
+function addNext(){const p=POOL.find(p=>!ben.some(b=>b.id===p.id));if(!p)return;const left=Math.max(100-total(),0);ben.push({id:p.id,share:left});}
+function remove(id){const before=JSON.parse(JSON.stringify(ben));ben=ben.filter(b=>b.id!==id);say(`${P(id).name} removed.`,before);}
+function bump(id,d){const b=ben[idx(id)];b.share=Math.min(100,Math.max(0,b.share+d));}
+function auto(id,val){ // set one share, take or give the difference among the others in steps of 5
+  const n=ben.length;if(n===1){ben[0].share=100;return;}
+  val=Math.min(Math.max(snap(val),STEP),100-STEP*(n-1));
+  const me=ben[idx(id)];let diff=val-me.share;me.share=val;
+  const others=ben.filter(b=>b.id!==id);
+  while(diff!==0){
+    if(diff>0){const t=others.filter(o=>o.share>STEP).sort((a,b)=>b.share-a.share)[0];if(!t)break;t.share-=STEP;diff-=STEP;}
+    else{const t=others.sort((a,b)=>a.share-b.share)[0];t.share+=STEP;diff+=STEP;}
+  }
+}
+function move(i,delta,before){const pair=before[i].share+before[i+1].share;if(pair<STEP*2)return;const a=Math.min(Math.max(snap(before[i].share+delta),STEP),pair-STEP);ben=before.map((b,k)=>k===i?{...b,share:a}:k===i+1?{...b,share:pair-a}:b);}
+let tt;function say(m,undo){toast=m;removed=undo||null;clearTimeout(tt);tt=setTimeout(()=>{toast=null;removed=null;render();},3200);}
+
+const ico={back:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>',x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>'};
+const pinInput=id=>`<span style="display:inline-flex;align-items:center;gap:4px"><input class="pin tab" data-in="${id}" value="${ben[idx(id)].share||""}" inputmode="numeric" placeholder="0"/><span class="mu">%</span></span>`;
+const stepper=(id,fn="bump")=>`<span class="pctl"><button class="sq" data-${fn}="${id}|-5" aria-label="Less">−</button><span class="val tab">${ben[idx(id)].share}%</span><button class="sq" data-${fn}="${id}|5" aria-label="More">+</button></span>`;
+const rm=id=>`<button class="x" data-rm="${id}" aria-label="Remove">${ico.x}</button>`;
+const headRow=(extra="")=>`<div class="sec"><h3>Beneficiaries</h3><span style="display:flex;gap:16px;align-items:center">${extra}${total()!==100?`<span class="left tab">${total()<100?100-total()+"% left to share":total()-100+"% over"}</span>`:""}${ben.length>1?`<button class="link" data-eq>Split equally</button>`:""}</span></div>`;
+const addRow=()=>POOL.some(p=>!ben.some(b=>b.id===p.id))?`<button class="btn o" data-add style="height:44px">Add a beneficiary</button>`:"";
+const bar=(drag=false)=>`<div class="barwrap" id="bar"><div class="bars">${ben.map((b,i)=>`<div style="width:${b.share/Math.max(total(),100)*100}%;background:${col(i)}"></div>`).join("")}</div>${drag?ben.slice(0,-1).map((b,i)=>{const e=ben.slice(0,i+1).reduce((n,x)=>n+x.share,0);return `<button class="split" data-split="${i}" style="left:${e/Math.max(total(),100)*100}%" aria-label="Move split"><span></span></button>`}).join(""):""}</div>`;
+
+function trusteeBlock(){return hasMinor()?`<div class="tr"><div style="font-size:14px">Trustee</div><p class="mu" style="font-size:12px;line-height:1.5">Someone under 18 can't receive money, so an adult receives it for them.</p><div class="chips">${TRUSTEES.map(t=>`<button class="chip ${trustee===t.id?"on":""}" data-tr="${t.id}">${t.name}</button>`).join("")}</div></div>`:"";}
+
+function body(){
+  const list=(controls)=>`<div class="panel">${ben.map((b,i)=>`<div class="prow">${av(b,i)}<span class="mid"><b>${P(b.id).name}</b><span>${meta(P(b.id))}</span></span>${controls(b,i)}${rm(b.id)}</div>`).join("")}</div>`;
+  if(v===0) return `${headRow()}${list(b=>pinInput(b.id))}${addRow()}${trusteeBlock()}`;
+  if(v===1) return `${headRow()}${bar(true)}${list(b=>pinInput(b.id))}${addRow()}${trusteeBlock()}`;
+  if(v===2) return `${headRow()}${list(b=>stepper(b.id))}${addRow()}${trusteeBlock()}`;
+  if(v===3) return `${headRow()}<div class="panel" style="gap:4px">${ben.map((b,i)=>`<div style="padding:12px 8px;display:flex;flex-direction:column;gap:8px"><div class="prow" style="padding:0">${av(b,i)}<span class="mid"><b>${P(b.id).name}</b><span>${meta(P(b.id))}</span></span><span class="tab">${b.share}%</span>${rm(b.id)}</div><input type="range" class="range" min="5" max="95" step="5" value="${b.share}" data-range="${b.id}" style="accent-color:${col(i)}"/></div>`).join("")}</div>${addRow()}${trusteeBlock()}`;
+  if(v===4){
+    let off=0;const R=70,C=2*Math.PI*R;
+    const arcs=ben.map((b,i)=>{const len=b.share/100*C;const s=`<circle r="${R}" cx="90" cy="90" fill="none" stroke="${col(i)}" stroke-width="22" stroke-dasharray="${Math.max(len-2,0)} ${C}" stroke-dashoffset="${-off}" transform="rotate(-90 90 90)"/>`;off+=len;return s;}).join("");
+    return `${headRow()}<div style="display:flex;justify-content:center"><svg width="180" height="180" viewBox="0 0 180 180"><circle r="${R}" cx="90" cy="90" fill="none" stroke="var(--tile)" stroke-width="22"/>${arcs}<text x="90" y="98" text-anchor="middle" font-size="26" fill="currentColor">${total()}%</text></svg></div>${list(b=>stepper(b.id,"auto"))}${addRow()}${trusteeBlock()}`;
+  }
+  if(v===5){
+    const owner=[];ben.forEach((b,i)=>{for(let k=0;k<b.share/STEP;k++)owner.push(i);});
+    while(owner.length<20)owner.push(-1);
+    if(!ben.find(b=>b.id===sel)&&ben[0])sel=ben[0].id;
+    return `${headRow()}<div class="chips">${ben.map((b,i)=>`<button class="chip ${sel===b.id?"on":""}" data-sel="${b.id}"><span class="dot" style="background:${col(i)}"></span>${P(b.id).name.split(" ")[0]} · ${b.share}%</button>`).join("")}</div>
+    <p class="sub">Tap a block to give it to ${sel?P(sel).name.split(" ")[0]:"someone"}. Each block is 5%.</p>
+    <div class="blocks">${owner.map((o,k)=>`<button class="blk" data-blk="${k}" style="background:${o>=0?col(o):"var(--tile)"}">${o>=0?"5":""}</button>`).join("")}</div>${addRow()}${trusteeBlock()}`;
+  }
+  if(v===6) return `${headRow()}<div class="panel">${ben.map((b,i)=>`<div class="prow" style="flex-wrap:wrap">${av(b,i)}<span class="mid"><b>${P(b.id).name}</b><span>${meta(P(b.id))}</span></span>${rm(b.id)}<div style="display:flex;width:100%;justify-content:space-between;align-items:center;padding:0 4px 4px 48px"><span class="big tab" style="font-size:24px">${money(SUM*b.share/100)}</span>${stepper(b.id)}</div></div>`).join("")}</div><p class="sub">Of the sum assured, ${money(SUM)}.</p>${addRow()}${trusteeBlock()}`;
+  if(v===7) return `${headRow()}<div class="grid">${ben.map((b,i)=>`<div class="card ${openCard===b.id?"sel":""}" data-card="${b.id}"><div style="display:flex;align-items:center;gap:8px">${av(b,i)}<span class="mid"><b>${P(b.id).name.split(" ")[0]}</b><span>${P(b.id).rel}${P(b.id).minor?" · U18":""}</span></span></div><span class="big tab">${b.share}%</span>${openCard===b.id?`<div style="display:flex;justify-content:space-between">${stepper(b.id)}${rm(b.id)}</div>`:`<span class="mu" style="font-size:12px">Tap to change</span>`}</div>`).join("")}</div>${addRow()}${trusteeBlock()}`;
+  if(v===8){
+    const steps=["Who","How much","Trustee"].slice(0,hasMinor()?3:2);
+    return `<div class="stepbar">${steps.map((_,i)=>`<i class="${i<=w9?"on":""}"></i>`).join("")}</div><p class="sub">Step ${w9+1} of ${steps.length} · ${steps[w9]}</p>`+
+    (w9===0?`<div class="panel">${POOL.map(p=>{const on=ben.some(b=>b.id===p.id);return `<button class="prow" data-w9tog="${p.id}"><span class="ck ${on?"on":""}">${on?"✓":""}</span><span class="mid"><b>${p.name}</b><span>${meta(p)}</span></span></button>`}).join("")}</div><button class="btn" data-w9="1" ${ben.length?"":"disabled"}>Next</button>`
+    :w9===1?`${headRow()}${list(b=>stepper(b.id,"auto"))}<button class="btn" data-w9="${hasMinor()?2:3}" ${total()===100?"":"disabled"}>Next</button>${total()!==100?`<p class="reason">${why()}</p>`:""}<button class="link" data-w9="0">Back</button>`
+    :`${trusteeBlock()}<button class="btn" data-w9="3" ${trustee?"":"disabled"}>Next</button><button class="link" data-w9="1">Back</button>`);
+  }
+  if(v===9) return `${headRow()}${["equal|Share equally|Everyone gets the same, as close as 5% steps allow.","main|One main, others smaller|The first gets half; the rest share the other half.","custom|Set each myself|Start from what you have now."].map(t=>{const [k,a,b]=t.split("|");return `<button class="opt ${tpl===k?"on":""}" data-tpl="${k}"><span style="font-size:15px">${a}</span><span class="mu" style="font-size:12px">${b}</span></button>`}).join("")}${list(b=>stepper(b.id,"auto"))}${addRow()}${trusteeBlock()}`;
+  if(v===10) return `${headRow()}<table class="tbl"><thead><tr><th>Person</th><th>Relationship</th><th class="r">Share</th><th class="r">Amount</th><th></th></tr></thead><tbody>${ben.map((b,i)=>`<tr><td><span style="display:flex;align-items:center;gap:10px">${av(b,i)}${P(b.id).name}</span></td><td class="mu">${meta(P(b.id))}</td><td class="r">${pinInput(b.id)}</td><td class="r tab">${money(SUM*b.share/100)}</td><td class="r">${rm(b.id)}</td></tr>`).join("")}</tbody></table>${bar(false)}${addRow()}${trusteeBlock()}`;
+  // 12
+  const ad=ben.filter(b=>!P(b.id).minor),mi=ben.filter(b=>P(b.id).minor);
+  const grp=(t,arr)=>arr.length?`<div class="sec"><h3 style="font-size:14px;font-weight:400;color:var(--mu)">${t}</h3></div><div class="panel">${arr.map(b=>{const i=idx(b.id);return `<div class="prow">${av(b,i)}<span class="mid"><b>${P(b.id).name}</b><span>${P(b.id).rel}</span></span>${pinInput(b.id)}${rm(b.id)}</div>`}).join("")}</div>`:"";
+  return `${headRow()}${bar(false)}${grp("Adults",ad)}${grp("Under 18",mi)}${mi.length?`<div class="tr" style="margin-top:-8px"><div style="font-size:14px">Trustee for ${mi.map(b=>P(b.id).name.split(" ")[0]).join(" and ")}</div><div class="chips">${TRUSTEES.map(t=>`<button class="chip ${trustee===t.id?"on":""}" data-tr="${t.id}">${t.name}</button>`).join("")}</div><p class="mu" style="font-size:12px;line-height:1.5">An adult receives the money until they are 18.</p></div>`:""}${addRow()}`;
+}
+
+function render(){
+  $("#note").innerHTML=NOTES[v];$("#legend").textContent=LEGEND;
+  $("#pills").innerHTML=NOTES.map((_,i)=>`<button class="pill ${v===i?"on":""}" data-v="${i}">${i+1}</button>`).join("");
+  $("#dev").innerHTML=[["phone","Phone"],["desk","Desktop"]].map(([k,l])=>`<button data-d="${k}" class="${dev===k?"on":""}">${l}</button>`).join("");
+  const fr=$("#frame");fr.className="frame"+(dev==="desk"?" desk":"");
+  const showSave=!(v===8&&w9<3);
+  fr.innerHTML=`<div class="page"><div class="hd"><button class="ic">${ico.back}</button><h2>Update Beneficiaries</h2></div><p class="sub tab">Child Education Plan · CEP/2026/049797</p>${body()}${showSave?`<button class="btn" data-save ${valid()?"":"disabled"}>Save changes</button>${!valid()&&why()?`<p class="reason">${why()}</p>`:""}`:(v===8&&w9===3?"":"")}${v===8&&w9===3?`<div class="tr"><div>Review</div>${ben.map(b=>`<div style="display:flex;justify-content:space-between"><span>${P(b.id).name}</span><span class="tab">${b.share}%</span></div>`).join("")}${hasMinor()?`<div style="display:flex;justify-content:space-between" class="mu"><span>Trustee</span><span>${TRUSTEES.find(t=>t.id===trustee)?.name||""}</span></div>`:""}</div><button class="btn" data-save ${valid()?"":"disabled"}>Save changes</button><button class="link" data-w9="${hasMinor()?2:1}">Back</button>`:""}</div>${toast?`<div class="toast"><span>${toast}</span>${removed?`<u data-undo style="cursor:pointer">Undo</u>`:""}</div>`:""}`;
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-d],[data-t],[data-rm],[data-add],[data-eq],[data-bump],[data-auto],[data-save],[data-tr],[data-sel],[data-blk],[data-card],[data-w9],[data-w9tog],[data-tpl],[data-undo]");
+  if(!t)return;const d=t.dataset;
+  if(d.v!==undefined){v=+d.v;w9=0;openCard=null;tpl="custom";}
+  else if(d.d){dev=d.d;}
+  else if(d.t){document.documentElement.dataset.theme=d.t;document.querySelectorAll("#theme button").forEach(b=>b.classList.toggle("on",b===t));return;}
+  else if(d.rm){if(ben.length>0)remove(d.rm);}
+  else if(d.add!==undefined){addNext();if(v===8||v===9)auto(ben[ben.length-1].id,ben[ben.length-1].share);}
+  else if(d.eq!==undefined){equal();}
+  else if(d.bump){const [id,n]=d.bump.split("|");bump(id,+n);}
+  else if(d.auto){const [id,n]=d.auto.split("|");auto(id,ben[idx(id)].share+ +n);}
+  else if(d.save!==undefined){if(valid())say("Beneficiaries saved");}
+  else if(d.tr){trustee=d.tr;}
+  else if(d.sel){sel=d.sel;}
+  else if(d.blk!==undefined){const k=+d.blk;const owner=[];ben.forEach((b,i)=>{for(let q=0;q<b.share/STEP;q++)owner.push(i);});const cur=owner[k],to=idx(sel);if(cur!==undefined&&cur!==to&&ben[cur].share>STEP){ben[cur].share-=STEP;ben[to].share+=STEP;}else if(cur!==undefined&&cur!==to)say(`${P(ben[cur].id).name.split(" ")[0]} would be left at 0. Remove them instead.`);}
+  else if(d.card){openCard=openCard===d.card?null:d.card;}
+  else if(d.w9!==undefined){w9=+d.w9;if(w9===1&&total()!==100)equal();}
+  else if(d.w9tog){const id=d.w9tog;if(ben.some(b=>b.id===id))ben=ben.filter(b=>b.id!==id);else ben.push({id,share:0});}
+  else if(d.tpl){tpl=d.tpl;if(tpl==="equal")equal();else if(tpl==="main"&&ben.length>1){const rest=ben.length-1;const half=50;ben[0].share=half;const units=half/STEP,each=Math.floor(units/rest),extra=units-each*rest;ben.slice(1).forEach((b,i)=>b.share=(each+(i<extra?1:0))*STEP);}}
+  else if(d.undo!==undefined&&removed){ben=removed;toast=null;removed=null;}
+  render();
+});
+document.addEventListener("change",e=>{
+  if(e.target.dataset.in){const id=e.target.dataset.in,raw=Number(e.target.value.replace(/\D/g,"").slice(0,3))||0;ben[idx(id)].share=raw>0?Math.min(Math.max(snap(raw),STEP),100):0;render();}
+});
+document.addEventListener("input",e=>{
+  if(e.target.dataset.range){auto(e.target.dataset.range,+e.target.value);render();}
+});
+document.addEventListener("pointerdown",e=>{
+  const s=e.target.closest("[data-split]");if(!s)return;
+  drag={i:+s.dataset.split,x:e.clientX,before:JSON.parse(JSON.stringify(ben)),w:$("#bar").getBoundingClientRect().width};s.setPointerCapture(e.pointerId);
+});
+document.addEventListener("pointermove",e=>{if(!drag)return;move(drag.i,Math.round((e.clientX-drag.x)/drag.w*Math.max(total(),100)),drag.before);render();const s=document.querySelector(`[data-split="${drag.i}"]`);if(s)s.setPointerCapture?.(e.pointerId);});
+document.addEventListener("pointerup",()=>{drag=null;});
+render();
+</script>
+</body>
+</html>

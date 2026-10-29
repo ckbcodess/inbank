@@ -47,19 +47,12 @@ import {
 import { BILLERS } from "@/lib/mock-data";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Sheet,
-  SheetBody,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { GroupDetailSheet } from "@/components/beneficiaries/GroupDetailSheet";
 import { BeneficiaryDetailSheet } from "@/components/beneficiaries/BeneficiaryDetailSheet";
 import {
@@ -848,19 +841,18 @@ export default function BeneficiariesPage() {
         ))}
 
       {/* ── Progressive Add / Edit Beneficiary Sheet ── */}
-      <Sheet open={formOpen} onOpenChange={setFormOpen}>
-        <SheetContent side="right" className="flex flex-col">
-          {/* Header */}
-          <SheetHeader>
-            <SheetTitle>
+      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+        <DialogContent size="md">
+          <DialogHeader>
+            <DialogTitle>
               {form.id
                 ? "Edit Beneficiary"
                 : "Add Beneficiary"}
-            </SheetTitle>
-          </SheetHeader>
+            </DialogTitle>
+          </DialogHeader>
 
-          {/* Sheet Body with Progressive Disclosure */}
-          <SheetBody className="gap-4">
+          {/* Body with Progressive Disclosure */}
+          <DialogBody className="gap-4">
             {/* Step 1: Destination Rail (Dropdown) */}
             <Field label="Payment Rail">
               <Select
@@ -1234,27 +1226,18 @@ export default function BeneficiariesPage() {
                 placeholder="e.g. Landlord"
               />
             </Field>
-          </SheetBody>
+          </DialogBody>
 
-          {/* Sheet Footer with Primary Lime Action */}
-          <SheetFooter className="gap-2">
-            <Button
-              onClick={handleSaveBeneficiary}
-              disabled={!form.name.trim()}
-              className="h-10 w-full rounded-full bg-primary text-primary-foreground hover:bg-primary-hover font-medium transition-all cursor-pointer text-[14px] disabled:opacity-40 shadow-xs"
-            >
-              {form.id ? "Save Changes" : "Save Beneficiary"}
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setFormOpen(false)}
-              className="h-9 w-full rounded-full text-foreground/80 hover:text-foreground text-[14px]"
-            >
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+            <Button onClick={handleSaveBeneficiary} disabled={!form.name.trim()}>
+              {form.id ? "Save Changes" : "Save Beneficiary"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* ── Beneficiary Details Sheet matching user's design ── */}
       <BeneficiaryDetailSheet

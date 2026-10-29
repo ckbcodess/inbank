@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beneficiary Picker: 3 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--scrim:rgba(0,0,0,.35)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:rgba(0,0,0,.6)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px}
+  .seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{position:relative;width:480px;max-width:100%;min-height:640px;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+  .page{padding:32px;display:flex;flex-direction:column;gap:20px}
+  .page h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .lbl{font-size:13px;font-weight:500;margin-bottom:8px;display:block}
+  .field{height:44px;width:100%;border:1px solid var(--bd);background:var(--tile);border-radius:12px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:14px}
+  input.field{outline:none} input.field:focus{border-color:var(--am)}
+  .line{display:flex;gap:8px;align-items:flex-start}
+  .iconbtn{flex:none;width:56px;height:44px;border:1px solid var(--bd);background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .iconbtn:hover{background:var(--tileh)}
+  .verified{font-size:13px;color:var(--mu);display:flex;align-items:center;gap:8px;margin-top:8px}
+  .tick{width:16px;height:16px;border-radius:50%;background:var(--am);color:#111;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+  .toast{font-size:12px;color:var(--mu);margin-top:8px;animation:in .25s ease}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px;animation:in .15s ease}
+  .modal{background:var(--surf);border:1px solid var(--bd);border-radius:20px;width:100%;max-height:560px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+  .mh{display:flex;align-items:center;justify-content:space-between}
+  .mh h2{font-size:16px}
+  .x{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mu)} .x:hover{background:var(--tile)}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0}
+  .chip{flex:none;font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--bd);color:var(--mu);white-space:nowrap}
+  .chip.on{background:var(--am);border-color:var(--am);color:#111}
+  .list{overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin:0 -4px;padding:0 4px}
+  .item{display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;width:100%}
+  .item:hover{background:var(--tile)}
+  .av{width:36px;height:36px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#111}
+  .nm{font-size:14px;display:block} .sub{font-size:12px;color:var(--mu);display:block}
+  .gh{font-size:12px;color:var(--mu);padding:12px 8px 4px;display:flex;justify-content:space-between}
+  .empty{padding:32px 8px;text-align:center;font-size:13px;color:var(--mu)}
+  .legend{max-width:480px;font-size:12px;color:var(--mu);line-height:1.6;margin-top:16px}
+  .stagewrap{display:flex;flex-direction:column;align-items:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Beneficiary Picker: 3 variations</h1>
+    <div class="ctrls">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="flows"></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+    </div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="stagewrap"><div class="frame" id="frame"></div><p class="legend" id="legend"></p></div></div>
+
+<script>
+// One component, every flow. The flow only changes what the form says and which saved people count as "this flow's kind".
+const PEOPLE = [
+  {id:1,name:"Abena Mensah",org:"Stanbic Bank",acct:"0112 3344 55",kind:"bank",tint:"#fde7c4"},
+  {id:2,name:"Kofi Boateng",org:"Ecobank Ghana",acct:"0245 1190 22",kind:"bank",tint:"#d9efe3"},
+  {id:3,name:"Ama Serwaa",org:"MTN Mobile Money",acct:"024 412 7789",kind:"wallet",tint:"#e4dcf5"},
+  {id:4,name:"Yaw Owusu",org:"Stanbic Bank",acct:"0112 9087 31",kind:"bank",tint:"#d6e8f5"},
+  {id:5,name:"Esi Appiah",org:"Fidelity Bank",acct:"0334 5521 09",kind:"bank",tint:"#fde7c4"},
+  {id:6,name:"Kwame Asare",org:"Telecel Cash",acct:"050 220 1184",kind:"wallet",tint:"#d9efe3"},
+  {id:7,name:"Efua Darko",org:"Absa Ghana",acct:"0600 8812 44",kind:"bank",tint:"#e4dcf5"},
+  {id:8,name:"Nana Adjei",org:"Ecobank Ghana",acct:"0245 7733 10",kind:"bank",tint:"#d6e8f5"},
+  {id:9,name:"Akosua Frimpong",org:"MTN Mobile Money",acct:"055 109 4420",kind:"wallet",tint:"#fde7c4"},
+];
+const FLOWS = {
+  bank:{label:"Other bank",kind:"bank",title:"Send to another bank",field:"Account number",ph:"Enter account number",hint:"Stanbic Bank",provLabel:"Bank"},
+  wallet:{label:"Mobile wallet",kind:"wallet",title:"Send to a wallet",field:"Mobile number",ph:"Enter mobile number",hint:"MTN Mobile Money",provLabel:"Network"},
+};
+const NOTES = [
+  "1 · One list, everyone. Opens on all saved recipients A to Z. The bank or network already chosen on the form is only a hint: it is not used to hide anyone. Search narrows by name, bank or number.",
+  "2 · Filter chips. Same list, plus a chip row made from the banks that actually appear in it (All first). The bank on the form is not preselected; tapping a chip is the person's call.",
+  "3 · This bank first. Everyone is still there, but the people at the bank on the form are grouped on top, then everyone else. Helps the common case without ever hiding a recipient. With no bank chosen it collapses to variation 1.",
+];
+const LEGEND = "Choosing someone at a different bank than the form shows switches the form to that bank and says so. Try Abena (Stanbic) vs Kofi (Ecobank) on Other bank.";
+let v=0, flow="bank", form={org:FLOWS.bank.hint,acct:"",who:null,note:""}, open=false, q="", chip="All";
+
+const $=s=>document.querySelector(s);
+const ic = {add:'<svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="M730-530H630q-13 0-21-8.7-9-8.6-9-21.5 0-12.8 9-21.3 8-8.5 21-8.5h100v-100q0-13 8.7-21.400 8.600-8.600 21.500-8.600 12.800 0 21.300 8.600 8.500 8.400 8.500 21.400v100h100q13 0 21.400 8.700 8.600 8.700 8.600 21.500 0 12.800-8.600 21.300-8.400 8.500-21.400 8.500H790v100q0 13-8.700 21.400-8.700 8.600-21.500 8.600-12.800 0-21.300-8.600-8.500-8.400-8.500-21.400v-100ZM40-220v-34q0-35 17.500-63.500T108-360q75-33 133-46.500T360-420q60 0 118 13.500T611-360q33 15 51 43t18 63v34q0 25-17.600 42.400Q644.800-160 620-160H100q-25 0-42.400-17.600Q40-195 40-220Zm320-321q-42 0-75-33t-33-75q0-42 33-75t75-33q42 0 75 33t33 75q0 42-33 75t-75 33Z"/></svg>',
+  x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>'};
+const ini=n=>n.split(" ").map(w=>w[0]).join("").slice(0,2);
+const norm=s=>s.toLowerCase();
+
+function pool(){return PEOPLE.filter(p=>p.kind===FLOWS[flow].kind).sort((a,b)=>a.name.localeCompare(b.name));}
+function matches(p){
+  const s=norm(q.trim()), d=q.replace(/\D/g,"");
+  if(!s) return true;
+  return norm(p.name).includes(s)||norm(p.org).includes(s)||(d&&p.acct.replace(/\D/g,"").includes(d));
+}
+function rowHTML(p){return `<button class="item" data-pick="${p.id}"><span class="av" style="background:${p.tint}">${ini(p.name)}</span><span><span class="nm">${p.name}</span><span class="sub">${p.org} · ${p.acct}</span></span></button>`;}
+
+function listHTML(){
+  let rows=pool().filter(matches);
+  if(v===1&&chip!=="All") rows=rows.filter(p=>p.org===chip);
+  if(!rows.length) return `<div class="empty">Nobody saved matches that. Clear the search to see everyone.</div>`;
+  if(v===2){
+    const here=rows.filter(p=>p.org===form.org), rest=rows.filter(p=>p.org!==form.org);
+    if(here.length&&rest.length) return `<div class="gh"><span>At ${form.org}</span></div>${here.map(rowHTML).join("")}<div class="gh"><span>Other ${FLOWS[flow].kind==="bank"?"banks":"networks"}</span></div>${rest.map(rowHTML).join("")}`;
+  }
+  return rows.map(rowHTML).join("");
+}
+function modalHTML(){
+  const orgs=[...new Set(pool().map(p=>p.org))];
+  const chips=v===1?`<div class="chips">${["All",...orgs].map(o=>`<button class="chip ${chip===o?"on":""}" data-chip="${o}">${o}</button>`).join("")}</div>`:"";
+  return `<div class="scrim" data-scrim><div class="modal"><div class="mh"><h2>Choose a recipient</h2><button class="x" data-close aria-label="Close">${ic.x}</button></div>
+  <input class="field" id="q" placeholder="Search by name, bank or number" value="${q.replace(/"/g,"&quot;")}" />${chips}<div class="list">${listHTML()}</div></div></div>`;
+}
+function render(){
+  const f=FLOWS[flow];
+  $("#note").textContent=NOTES[v]; $("#legend").textContent=LEGEND;
+  $("#pills").innerHTML=NOTES.map((_,i)=>`<button class="pill ${v===i?"on":""}" data-v="${i}">${i+1}</button>`).join("");
+  $("#flows").innerHTML=Object.entries(FLOWS).map(([k,x])=>`<button data-f="${k}" class="${flow===k?"on":""}">${x.label}</button>`).join("");
+  $("#frame").innerHTML=`<div class="page"><h2>${f.title}</h2>
+    <div><span class="lbl">${f.provLabel}</span><div class="field"><span>${form.org}</span>${ic.chev}</div></div>
+    <div><span class="lbl">Beneficiary Details</span><div class="line"><input class="field" id="acct" placeholder="${f.ph}" value="${form.acct}" /><button class="iconbtn" data-open aria-label="Choose a saved recipient">${ic.add}</button></div>
+    ${form.who?`<div class="verified"><span class="tick">✓</span>${form.who}</div>`:""}${form.note?`<div class="toast">${form.note}</div>`:""}</div></div>${open?modalHTML():""}`;
+  if(open){const el=$("#q"); if(el){el.focus(); el.setSelectionRange(q.length,q.length);}}
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-f],[data-t],[data-open],[data-close],[data-chip],[data-pick],[data-scrim]"); if(!t) return;
+  if(t.dataset.scrim!==undefined&&e.target!==t) return;
+  if(t.dataset.v!==undefined){v=+t.dataset.v; q=""; chip="All";}
+  else if(t.dataset.f){flow=t.dataset.f; form={org:FLOWS[flow].hint,acct:"",who:null,note:""}; open=false; q=""; chip="All";}
+  else if(t.dataset.t){document.documentElement.dataset.theme=t.dataset.t; document.querySelectorAll("#theme button").forEach(b=>b.classList.toggle("on",b===t)); return;}
+  else if(t.dataset.open!==undefined){open=true; q=""; chip="All";}
+  else if(t.dataset.close!==undefined||t.dataset.scrim!==undefined){open=false;}
+  else if(t.dataset.chip){chip=t.dataset.chip;}
+  else if(t.dataset.pick){
+    const p=PEOPLE.find(x=>x.id==t.dataset.pick), switched=p.org!==form.org;
+    form={org:p.org,acct:p.acct,who:`${p.name} · ${p.org}`,note:switched?`${FLOWS[flow].provLabel} changed to ${p.org} to match ${p.name.split(" ")[0]}.`:""};
+    open=false;
+  }
+  render();
+});
+document.addEventListener("input",e=>{
+  if(e.target.id==="q"){q=e.target.value; document.querySelector(".list").innerHTML=listHTML();}
+  if(e.target.id==="acct"){form.acct=e.target.value; form.who=null; form.note="";}
+});
+render();
+</script>
+</body>
+</html>

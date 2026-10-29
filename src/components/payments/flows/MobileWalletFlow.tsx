@@ -1,6 +1,6 @@
 "use client";
 
-import { SavedSuggestions } from "./SavedRecipients";
+import { SavedRecipientLink } from "./SavedRecipients";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -104,7 +104,6 @@ export function MobileWalletFlow({
 
   const [resolving, setResolving] = useState(false);
   // What is typed when the person is searching saved recipients by name rather than entering a number
-  const [nameQuery, setNameQuery] = useState("");
 
   useEffect(() => {
     if (!isSelf && isDetailsEntered) {
@@ -139,7 +138,7 @@ export function MobileWalletFlow({
       />
 
       {/* 2. Destination (Mobile Wallet) */}
-      <Field label="Beneficiary Details">
+      <Field label="Beneficiary Details" action={!isSelf && !(isVerified && isCollapsed) && <SavedRecipientLink provider={state.wNetwork} value={state.wPhone} />}>
         {!isSelf && isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={isSelf ? `My ${state.wNetwork || REGISTERED_WALLET.network}` : (verifiedName || state.wName || `Wallet ${state.wPhone}`)}
@@ -175,13 +174,10 @@ export function MobileWalletFlow({
                   options={NETWORKS}
                 />
 
-                {state.wNetwork && (
-                <SavedSuggestions provider={state.wNetwork} requireProvider query={nameQuery || state.wPhone} onPicked={() => setNameQuery("")}>
                 <PhoneInput
                   value={state.wPhone}
-                  search={nameQuery}
-                  onSearch={setNameQuery}
-                  placeholder="Enter new mobile number or saved beneficiary name"
+                  placeholder={state.wNetwork ? "Enter mobile number" : "Choose a network first"}
+                  disabled={!state.wNetwork}
                   onValueChange={(val) => {
                     onChange("wPhone", val);
                     const detected = detectTelcoNetwork(val);
@@ -195,8 +191,6 @@ export function MobileWalletFlow({
                   }}
                   aria-label="Mobile number"
                 />
-              </SavedSuggestions>
-                )}
               </>
             )}
 

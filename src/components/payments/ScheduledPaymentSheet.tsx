@@ -103,7 +103,7 @@ export function ScheduledPaymentSheet({
     <>
       <Sheet open={Boolean(id)} onOpenChange={onOpenChange}>
         <SheetContent side="center" className="flex flex-col overflow-hidden bg-modal p-0 select-text" showCloseButton>
-          <div className="custom-scrollbar relative z-10 flex flex-1 flex-col overflow-y-auto px-5 pb-5 pt-12 sm:px-8">
+          <div className="custom-scrollbar scroll-fade relative z-10 flex flex-1 flex-col overflow-y-auto px-5 pb-5 pt-12 sm:px-8">
             <div className="my-auto">
               <div className="flex flex-col items-center pb-5 text-center">
                 <SheetTitle className="text-[13px] font-normal text-muted-foreground">{title}</SheetTitle>

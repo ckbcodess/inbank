@@ -325,7 +325,7 @@ export default function EditGroupModal({
           </div>
 
           {/* Scrollable Sheet Content Body */}
-          <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5 flex flex-col gap-4 overscroll-contain custom-scrollbar">
+          <div className="scroll-fade flex-1 min-h-0 overflow-y-auto px-5 py-5 flex flex-col gap-4 overscroll-contain custom-scrollbar">
             {/* Name and the amount: the only two things most edits touch */}
             <div className="flex flex-col gap-3">
               <Field label="Group Name" error={errors.name}>
@@ -454,7 +454,7 @@ export default function EditGroupModal({
                         )}
                       </div>
 
-                      <div className="max-h-[180px] overflow-y-auto rounded-xl border border-border/70 bg-card divide-y divide-border/50">
+                      <div className="scroll-fade max-h-[180px] overflow-y-auto rounded-xl border border-border/70 bg-card divide-y divide-border/50">
                         {availableSavedBeneficiaries.length > 0 ? (
                           availableSavedBeneficiaries.map((b) => (
                             <div
@@ -587,7 +587,7 @@ export default function EditGroupModal({
               )}
 
               {/* Members List Container */}
-              <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[360px] overflow-y-auto">
+              <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[360px] overflow-y-auto scroll-fade">
                 {filteredMembers.map((m) => (
                   <div
                     key={m.id || m.destination}

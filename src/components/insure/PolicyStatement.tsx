@@ -84,7 +84,7 @@ export function PolicyStatement({ policyId }: { policyId: string }) {
             )}
           </>
         ) : (
-          <p className="px-1 text-[14px] text-muted-foreground">No premiums have been paid yet. They’ll show here as each one is taken.</p>
+          <p className="px-1 text-[14px] text-muted-foreground">No premiums paid yet.</p>
         )}
       </div>
     </div>

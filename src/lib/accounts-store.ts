@@ -111,6 +111,14 @@ interface AccountPrefsState {
   addedAccountIds: string[];
   addAccount: (id: string) => void;
   /**
+   * Accounts the customer took off their online banking. Removing only hides it here: the account stays open at the
+   * bank and "Add Account" can bring it back. Never the default, and never the last one (`canRemoveAccount`).
+   */
+  removedAccountIds: string[];
+  removeAccount: (id: string) => void;
+  /** Undo a removal. */
+  restoreAccount: (id: string) => void;
+  /**
    * A wallet customer who adds a GCB account: the wallet balance moved there
    * and the wallet went back to being hidden plumbing.
    */
@@ -128,8 +136,15 @@ export const useAccountPrefs = create<AccountPrefsState>()(
       setDefaultAccount: (id) => set({ defaultAccountId: id }),
       addedAccountIds: [],
       addAccount: (id) =>
-        set((s) => (s.addedAccountIds.includes(id) ? s : { addedAccountIds: [...s.addedAccountIds, id] })),
-      clearAddedAccounts: () => set({ addedAccountIds: [], walletMigration: null }),
+        set((s) => ({
+          addedAccountIds: s.addedAccountIds.includes(id) ? s.addedAccountIds : [...s.addedAccountIds, id],
+          // Adding an account back after removing it
+          removedAccountIds: s.removedAccountIds.filter((x) => x !== id),
+        })),
+      removedAccountIds: [],
+      removeAccount: (id) => set((s) => (s.removedAccountIds.includes(id) ? s : { removedAccountIds: [...s.removedAccountIds, id] })),
+      restoreAccount: (id) => set((s) => ({ removedAccountIds: s.removedAccountIds.filter((x) => x !== id) })),
+      clearAddedAccounts: () => set({ addedAccountIds: [], removedAccountIds: [], walletMigration: null }),
       walletMigration: null,
       migrateWallet: (toAccountId, amount) =>
         set({ walletMigration: { toAccountId, amount, dismissed: false }, defaultAccountId: toAccountId }),
@@ -148,4 +163,19 @@ export function resolveDefaultAccountId(
 ): string | null {
   if (storedId && accounts.some((a) => a.id === storedId && a.status === "Active")) return storedId;
   return accounts.find((a) => a.status === "Active")?.id ?? null;
+}
+
+/**
+ * Why an account can't be removed, or null when it can. The default account can't go (pick another default first),
+ * and neither can the last account, which is always the default.
+ */
+export function accountRemovalBlock(
+  accounts: { id: string }[],
+  defaultId: string | null,
+  id: string,
+): string | null {
+  if (!accounts.some((a) => a.id === id)) return null;
+  if (accounts.length <= 1) return "This is your only account, so it can't be removed.";
+  if (id === defaultId) return "Set another account as your default to remove this one.";
+  return null;
 }

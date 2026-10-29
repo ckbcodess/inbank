@@ -1,6 +1,6 @@
 "use client";
 
-import { SavedSuggestions } from "./SavedRecipients";
+import { SavedRecipientLink } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Search } from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
@@ -261,7 +261,7 @@ export function BillsPaymentFlow({
       />
 
       {/* 2. Biller & Reference / Account */}
-      <Field label="Beneficiary Details">
+      <Field label="Beneficiary Details" action={!(isDestinationValid && isVerified && isCollapsed) && <SavedRecipientLink value={currentRef} />}>
         {isDestinationValid && isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || "Biller Account"}
@@ -285,7 +285,6 @@ export function BillsPaymentFlow({
                 </div>
 
                 <div className="relative">
-                  <SavedSuggestions query={state.ecgMeter}>
 <Input
                     type="text"
                     value={state.ecgMeter}
@@ -306,7 +305,6 @@ export function BillsPaymentFlow({
                     placeholder="Enter meter number"
                     className="tabular pr-16"
                   />
-</SavedSuggestions>
                   {renderVerifyButton()}
                 </div>
               </>
@@ -335,7 +333,6 @@ export function BillsPaymentFlow({
                 </Select>
 
                 <div className="relative">
-                  <SavedSuggestions query={state.govRef}>
 <Input
                     type="text"
                     value={state.govRef}
@@ -356,7 +353,6 @@ export function BillsPaymentFlow({
                     placeholder="Enter PRN or invoice number"
                     className="tabular pr-16"
                   />
-</SavedSuggestions>
                   {renderVerifyButton()}
                 </div>
               </>
@@ -385,7 +381,6 @@ export function BillsPaymentFlow({
                 </Select>
 
                 <div className="relative">
-                  <SavedSuggestions query={state.billRef}>
 <Input
                     type="text"
                     value={state.billRef}
@@ -406,7 +401,6 @@ export function BillsPaymentFlow({
                     placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Account or reference number"}
                     className="tabular pr-16"
                   />
-</SavedSuggestions>
                   {renderVerifyButton()}
                 </div>
               </>

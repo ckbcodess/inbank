@@ -247,7 +247,7 @@ function SheetBody({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sheet-body"
       className={cn(
-        "flex-1 overflow-y-auto px-5 sm:px-6 py-2 flex flex-col gap-4 overscroll-contain no-scrollbar",
+        "scroll-fade flex-1 overflow-y-auto px-5 sm:px-6 py-2 flex flex-col gap-4 overscroll-contain no-scrollbar",
         className
       )}
       {...props}

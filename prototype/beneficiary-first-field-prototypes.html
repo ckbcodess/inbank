@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beneficiary Button on the First Field: 3 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--scrim:rgba(0,0,0,.35)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:rgba(0,0,0,.6)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0;padding:0}
+  .mu{color:var(--mu)}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .wrap{display:flex;flex-direction:column;align-items:center}
+  .frame{position:relative;width:480px;max-width:100%;min-height:560px;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+  .page{padding:32px;display:flex;flex-direction:column;gap:20px}
+  .page h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .lbl{font-size:13px;font-weight:500;display:block;margin-bottom:8px}
+  .stack{display:flex;flex-direction:column;gap:8px}
+  .field{height:44px;width:100%;border:1px solid var(--bd);background:var(--tile);border-radius:12px;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:14px;min-width:0}
+  .field input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent}
+  .field:focus-within{border-color:var(--am)}
+  .field .pre{color:var(--mu)}
+  .field .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .line{display:flex;gap:8px}
+  .line>.field{flex:1}
+  .iconbtn{flex:none;width:56px;height:44px;border:1px solid var(--bd);background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .iconbtn:hover,.seg-btn:hover,.tin:hover{background:var(--tileh)}
+  .joined{padding:0 0 0 12px;overflow:hidden}
+  .seg-btn{flex:none;width:52px;height:100%;display:flex;align-items:center;justify-content:center;border-left:1px solid var(--bd)}
+  .tin{flex:none;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mu);margin-right:-4px}
+  .verify{flex:none;font-size:13px;text-decoration:underline;text-underline-offset:3px}
+  .ok{font-size:13px;color:var(--mu);display:flex;gap:8px;align-items:center;margin-top:12px}
+  .tick{width:16px;height:16px;border-radius:50%;background:var(--am);color:#111;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+  .tag{font-size:12px;color:var(--mu);margin-left:auto}
+  .scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px}
+  .modal{background:var(--surf);border:1px solid var(--bd);border-radius:20px;width:100%;max-height:480px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+  .mh{display:flex;justify-content:space-between;align-items:center} .mh h2{font-size:16px}
+  .x{width:32px;height:32px;border-radius:8px;color:var(--mu);display:flex;align-items:center;justify-content:center} .x:hover{background:var(--tile)}
+  .list{overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+  .item{display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;width:100%} .item:hover{background:var(--tile)}
+  .av{width:36px;height:36px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#111}
+  .nm{display:block} .sub{display:block;font-size:12px;color:var(--mu)}
+  .legend{max-width:480px;font-size:12px;color:var(--mu);line-height:1.6;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Button on the first field: 3 variations</h1>
+    <div class="ctrls"><div class="pills" id="pills"></div><div class="seg" id="flows"></div><div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="wrap"><div class="frame" id="frame"></div><p class="legend" id="legend"></p></div></div>
+<script>
+const PEOPLE=[
+ {id:1,name:"Abena Mensah",org:"Stanbic Bank",num:"0112334455",kind:"bank",tint:"#fde7c4"},
+ {id:2,name:"Kofi Boateng",org:"Ecobank Ghana",num:"0245119022",kind:"bank",tint:"#d9efe3"},
+ {id:3,name:"Ama Serwaa",org:"MTN Mobile Money",num:"244127789",kind:"wallet",tint:"#e4dcf5"},
+ {id:4,name:"Yaw Owusu",org:"Stanbic Bank",num:"0112908731",kind:"bank",tint:"#d6e8f5"},
+ {id:5,name:"Kwame Asare",org:"Telecel Cash",num:"502201184",kind:"wallet",tint:"#d9efe3"},
+ {id:6,name:"Chidi Okafor",org:"Nigeria",num:"2145 8890 12",kind:"intl",tint:"#fde7c4",extra:["Access Bank Plc","ABNGNGLA"]},
+];
+// first = which control carries the button: the select where there is one, else the input
+const FLOWS={
+ bank:{label:"Other bank",title:"Send to another bank",kind:"bank",sel:"Stanbic Bank",selLbl:"Bank",ph:"Enter account number"},
+ wallet:{label:"Mobile wallet",title:"Send to a wallet",kind:"wallet",sel:"MTN Mobile Money",selLbl:"Network",ph:"24 123 4567",pre:"+233"},
+ bills:{label:"Bills (verify)",title:"Pay a bill",kind:"bank",fixed:"Electricity Company of Ghana (ECG)",ph:"Enter meter number",verify:true},
+ proxy:{label:"Proxy ID",title:"Send with a proxy ID",kind:"bank",ph:"Ghana Card, phone or email"},
+ papss:{label:"PAPSS",title:"Send across Africa",kind:"intl",sel:"Nigeria",selLbl:"Country",ph:"Enter account number",extras:["Bank","SWIFT code"]},
+};
+const NOTES=[
+ "1 · Beside the first control. A 56px button to the right of whatever comes first in the group: the select where there is one, otherwise the input. Always top-right of the group, so the position never changes between flows.",
+ "2 · Joined to the first control. The button is the right segment of that first control, a divider away from the text. The select keeps its chevron to the left of it. One control, no extra width.",
+ "3 · Inside the first control. A small icon button sits in the control's right edge, before the chevron on a select. Lightest, and the most easily missed.",
+];
+const LEGEND="The button always sits on the first control of Beneficiary Details. Pick someone and the select and the number both fill, so nothing is left to choose. On Bills and Proxy the first control is the input, so the button sits beside it.";
+let v=0,flow="bank",st={},open=false,q="";
+const $=s=>document.querySelector(s);
+const add='<svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="M730-530H630q-13 0-21-8.700-9-8.600-9-21.500 0-12.800 9-21.300 8-8.500 21-8.500h100v-100q0-13 8.700-21.400 8.600-8.600 21.500-8.600 12.800 0 21.300 8.600 8.500 8.400 8.500 21.400v100h100q13 0 21.400 8.700 8.600 8.700 8.600 21.500 0 12.800-8.600 21.300-8.400 8.500-21.400 8.500H790v100q0 13-8.700 21.400-8.700 8.600-21.500 8.600-12.800 0-21.300-8.600-8.500-8.400-8.500-21.400v-100ZM40-220v-34q0-35 17.500-63.500T108-360q75-33 133-46.500T360-420q60 0 118 13.500T611-360q33 15 51 43t18 63v34q0 25-17.600 42.400Q644.800-160 620-160H100q-25 0-42.400-17.600Q40-195 40-220Zm320-321q-42 0-75-33t-33-75q0-42 33-75t75-33q42 0 75 33t33 75q0 42-33 75t-75 33Z"/></svg>';
+const chev='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>';
+const xi='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const ini=n=>n.split(" ").map(w=>w[0]).join("");
+const reset=()=>{const f=FLOWS[flow];st={sel:f.sel||"",num:"",who:null,extra:[]};};
+const btn=(cls,inner="")=>`<button class="${cls}" data-open aria-label="Choose a saved recipient" title="Saved recipients">${inner||add}</button>`;
+
+// The first control, with the button attached the way the variation says
+function first(f){
+  const isSel=Boolean(f.sel);
+  const body=isSel?`<span class="grow">${st.sel}</span>`:`${f.pre?`<span class="pre">${f.pre}</span>`:""}<input id="num" placeholder="${f.ph}" value="${st.num}" />${f.verify?`<button class="verify" type="button">Verify</button>`:""}`;
+  if(v===0) return `<div class="line"><div class="field">${body}${isSel?chev:""}</div>${btn("iconbtn")}</div>`;
+  if(v===1) return `<div class="field joined">${body}${isSel?chev:""}${btn("seg-btn")}</div>`;
+  return `<div class="field">${body}${btn("tin")}${isSel?chev:""}</div>`;
+}
+function rest(f){
+  let h="";
+  if(f.fixed) h+=`<div class="field"><span class="grow">${f.fixed}</span></div>`;
+  if(f.sel) h+=`<div class="field">${f.pre?`<span class="pre">${f.pre}</span>`:""}<input id="num" placeholder="${f.ph}" value="${st.num}" /></div>`;
+  (f.extras||[]).forEach((l,i)=>{h+=`<div class="field"><input placeholder="${l}" value="${st.extra[i]||""}" /></div>`;});
+  return h;
+}
+function render(){
+  const f=FLOWS[flow];
+  $("#note").textContent=NOTES[v];$("#legend").textContent=LEGEND;
+  $("#pills").innerHTML=NOTES.map((_,i)=>`<button class="pill ${v===i?"on":""}" data-v="${i}">${i+1}</button>`).join("");
+  $("#flows").innerHTML=Object.entries(FLOWS).map(([k,x])=>`<button data-f="${k}" class="${flow===k?"on":""}">${x.label}</button>`).join("");
+  const fixedFirst=!f.sel&&f.fixed?`<div class="field"><span class="grow">${f.fixed}</span></div>`:"";
+  const body=f.sel?`${first(f)}${rest(f)}`:`${fixedFirst}${first(f)}`;
+  $("#frame").innerHTML=`<div class="page"><h2>${f.title}</h2><div><span class="lbl">Beneficiary Details</span><div class="stack">${body}</div>${st.who?`<div class="ok"><span class="tick">✓</span>${st.who}</div>`:""}</div></div>${open?modal(f):""}`;
+  if(open){const e=$("#q");e.focus();e.setSelectionRange(q.length,q.length);}
+}
+function rows(f){const s=q.trim().toLowerCase(),d=q.replace(/\D/g,"");
+  return PEOPLE.filter(p=>p.kind===f.kind).filter(p=>!s||p.name.toLowerCase().includes(s)||p.org.toLowerCase().includes(s)||(d&&p.num.replace(/\D/g,"").includes(d)));}
+function listHTML(){const r=rows(FLOWS[flow]);return r.length?r.map(p=>`<button class="item" data-pick="${p.id}"><span class="av" style="background:${p.tint}">${ini(p.name)}</span><span><span class="nm">${p.name}</span><span class="sub">${p.org} · ${p.num}</span></span></button>`).join(""):`<p class="mu" style="padding:24px;text-align:center">Nobody saved matches that.</p>`;}
+function modal(){return `<div class="scrim" data-scrim><div class="modal"><div class="mh"><h2>Choose a recipient</h2><button class="x" data-close>${xi}</button></div><div class="field"><input id="q" placeholder="Search by name, bank or number" value="${q}"/></div><div class="list">${listHTML()}</div></div></div>`;}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-f],[data-t],[data-open],[data-close],[data-pick],[data-scrim]");if(!t)return;
+  if(t.dataset.scrim!==undefined&&e.target!==t)return;
+  if(t.dataset.v!==undefined){v=+t.dataset.v;open=false;reset();}
+  else if(t.dataset.f){flow=t.dataset.f;open=false;reset();}
+  else if(t.dataset.t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll("#theme button").forEach(b=>b.classList.toggle("on",b===t));return;}
+  else if(t.dataset.open!==undefined){open=true;q="";}
+  else if(t.dataset.close!==undefined||t.dataset.scrim!==undefined){open=false;}
+  else if(t.dataset.pick){const p=PEOPLE.find(x=>x.id==t.dataset.pick),f=FLOWS[flow];
+    st={sel:f.sel?p.org:"",num:p.num,extra:p.extra||[],who:`${p.name} · ${p.org}`};open=false;}
+  render();
+});
+document.addEventListener("input",e=>{if(e.target.id==="q"){q=e.target.value;$(".list").innerHTML=listHTML();}if(e.target.id==="num"){st.num=e.target.value;st.who=null;}});
+reset();render();
+</script>
+</body>
+</html>

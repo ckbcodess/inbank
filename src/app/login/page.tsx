@@ -11,6 +11,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { useSession } from "@/lib/session-store";
+import { useBusinessTheme } from "@/lib/business-theme";
 import { ACTORS, findActorByPhone } from "@/lib/mock-data";
 import { toLocalMobile } from "@/lib/phone";
 import { useTrustedDevice, type TrustedDevice } from "@/lib/device-trust";
@@ -38,6 +39,9 @@ function LoginForm() {
   const [closed, setClosed] = useState(false);
   // Business sign-in is closed for now (lib/launch.ts). Retail sign-in is open.
   const doorOpen = bankingType !== "business" || BUSINESS_SIGN_IN_OPEN;
+
+  // The business door wears smoke ash like the rest of business banking.
+  useBusinessTheme(bankingType === "business");
 
   const [mobile, setMobile] = useState("");
   const [country, setCountry] = useState("GH");

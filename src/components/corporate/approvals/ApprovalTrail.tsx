@@ -4,7 +4,7 @@
  * neither has to ask "who has it now?".
  */
 
-import { Check, CornerUpLeft, Circle } from "@/components/ui/icons";
+import { Check, Undo2, Circle } from "@/components/ui/icons";
 import type { ApprovalEvent, ApprovalItem } from "@/lib/corporate/approvals";
 import { cn } from "@/lib/utils";
 
@@ -76,7 +76,7 @@ function TrailRow({
           )}
         >
           {icon === "done" && <Check size={13} aria-hidden="true" />}
-          {icon === "returned" && <CornerUpLeft size={13} aria-hidden="true" />}
+          {icon === "returned" && <Undo2 size={13} aria-hidden="true" />}
           {icon === "waiting" && <Circle size={6} aria-hidden="true" />}
         </span>
         {!last && <span className="w-px flex-1 bg-border" aria-hidden="true" />}

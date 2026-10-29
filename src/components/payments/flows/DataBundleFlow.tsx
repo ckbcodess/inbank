@@ -1,5 +1,6 @@
 "use client";
 
+import { SavedRecipientLink } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account, formatMoney } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -150,7 +151,7 @@ export function DataBundleFlow({
       />
 
       {/* 2. Destination: Network & Phone Number */}
-      <Field label="Recipient Details">
+      <Field label="Recipient Details" action={!isSelf && !(isPhoneValid && isCollapsed) && <SavedRecipientLink provider={state.wNetwork ? normalizeNetworkName(state.wNetwork) : undefined} value={state.aPhone} />}>
         {isSelf ? (
           selfBlock
         ) : isPhoneValid && isCollapsed ? (

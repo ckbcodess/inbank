@@ -10,16 +10,20 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
+import { ListCard } from "@/components/ui/list-card";
+import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
+import { formatMoney } from "@/lib/mock-data";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { ProceedButton } from "@/components/payments/flows/shared";
 import { BeneficiaryEditor, beneficiariesReady, isMinor } from "@/components/insure/BeneficiaryEditor";
-import { PolicyNotFound } from "@/components/insure/parts";
+import { PolicyNotFound, premiumLine } from "@/components/insure/parts";
 import { findPlan } from "@/lib/insurance-plans";
 import { useInsurance, useInsuranceHydrated, usePolicy, type BeneficiaryShare, type Policy } from "@/lib/insurance";
 
 function Editor({ policy }: { policy: Policy }) {
   const router = useRouter();
+  const { showAmounts } = useAmountVisibility();
   const { ownerId, people } = usePolicy(policy.id);
   const setBeneficiaries = useInsurance((s) => s.setBeneficiaries);
   const [list, setList] = useState<BeneficiaryShare[]>(policy.beneficiaries);
@@ -35,11 +39,19 @@ function Editor({ policy }: { policy: Policy }) {
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Update Beneficiaries" backTo={{ href: base, label: plan?.name ?? "Policy" }} />
-      <div className="flex flex-col gap-5">
-        <p className="tabular px-1 text-[13px] text-muted-foreground">{`${plan?.name} · ${policy.number}`}</p>
+      <div className="flex flex-col gap-10">
+        <ListCard>
+          <li className="flex items-center justify-between gap-3 px-2 py-3 sm:px-3">
+            <span className="tabular truncate text-[14px] text-foreground">{policy.number}</span>
+            <span className="flex shrink-0 flex-col items-end">
+              <span className="tabular text-[14px] text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
+              <span className="tabular text-[12px] text-muted-foreground">{premiumLine(policy, showAmounts)}</span>
+            </span>
+          </li>
+        </ListCard>
         <BeneficiaryEditor ownerId={ownerId} people={people} value={list} onChange={setList} trusteeId={trusteeId} onTrusteeChange={setTrusteeId} />
         <ProceedButton disabled={!changed || !beneficiariesReady(list, people, trusteeId)} onClick={() => setAuthOpen(true)} label="Save Changes" />
-        {!changed && <p className="-mt-2 px-1 text-center text-[12px] text-muted-foreground">Change a share, or add or remove someone, to save.</p>}
+        {!changed && <p className="-mt-8 px-1 text-center text-[12px] text-muted-foreground">Change a share, or add or remove someone, to save.</p>}
       </div>
 
       <TransactionOtpModal

@@ -137,7 +137,7 @@ export function PayArrearsFlow({ policyId }: { policyId: string }) {
           ]}
           total={money(owed)}
         />
-        <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">Paying now brings your policy up to date. Your next premium is still taken on its usual date.</p>
+        <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">Your next premium is still taken on its usual date.</p>
         <ProceedButton disabled={!from || overBalance} onClick={() => setAuthOpen(true)} label="Pay Now" />
       </div>
 

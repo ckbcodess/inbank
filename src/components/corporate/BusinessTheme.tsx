@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useBusinessTheme } from "@/lib/business-theme";
 
 /**
  * Marks <html data-app="business"> while a /business page is open, which switches the brand tokens to smoke ash
@@ -9,13 +9,7 @@ import { useEffect } from "react";
  * is amber again.
  */
 export default function BusinessTheme() {
-  useEffect(() => {
-    const root = document.documentElement;
-    root.dataset.app = "business";
-    return () => {
-      if (root.dataset.app === "business") delete root.dataset.app;
-    };
-  }, []);
+  useBusinessTheme(true);
   return null;
 }
 

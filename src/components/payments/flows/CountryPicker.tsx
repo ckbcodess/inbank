@@ -81,7 +81,7 @@ export function CountryPicker({
               />
             </div>
           </div>
-          <ul className="max-h-[55vh] overflow-y-auto px-4 pb-3 sm:px-5">
+          <ul className="scroll-fade max-h-[55vh] overflow-y-auto px-4 pb-3 sm:px-5">
             {matches.map((country) => (
               <li key={country.code} className="border-b border-border/60 last:border-b-0">
                 <button

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beneficiary Button: 5 More Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--scrim:rgba(0,0,0,.35)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:rgba(0,0,0,.6)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0;padding:0}
+  .mu{color:var(--mu)}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .wrap{display:flex;flex-direction:column;align-items:center}
+  .frame{position:relative;width:480px;max-width:100%;min-height:520px;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+  .page{padding:32px;display:flex;flex-direction:column;gap:20px}
+  .page h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .lbl{font-size:13px;font-weight:500}
+  .lblrow{display:flex;align-items:center;justify-content:space-between;min-height:24px;margin-bottom:8px}
+  .link{font-size:13px;text-decoration:underline;text-underline-offset:3px;min-height:32px;display:inline-flex;align-items:center}
+  .field{height:44px;width:100%;border:1px solid var(--bd);background:var(--tile);border-radius:12px;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:14px}
+  .field input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent}
+  .field:focus-within{border-color:var(--am)}
+  .field .pre{color:var(--mu)}
+  .sel{justify-content:space-between;margin-bottom:8px}
+  .line{display:flex;gap:8px}
+  .iconbtn{flex:none;width:56px;height:44px;border:1px solid var(--bd);background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .iconbtn:hover,.tin:hover{background:var(--tileh)}
+  .tin{flex:none;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mu)}
+  .verify{flex:none;font-size:13px;text-decoration:underline;text-underline-offset:3px}
+  .div{width:1px;height:20px;background:var(--bd);flex:none}
+  .strip{display:flex;gap:16px;margin-bottom:12px;overflow-x:auto}
+  .sq{flex:none;width:64px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+  .sq span.n{font-size:12px;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .av{width:44px;height:44px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#111}
+  .av.dash{background:var(--surf);border:1px dashed var(--bd);color:var(--tx)}
+  .toggle{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px;margin-bottom:12px}
+  .toggle button{padding:6px 16px;border-radius:8px;font-size:13px;color:var(--mu)}
+  .toggle button.on{background:var(--surf);color:var(--tx);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .trig{justify-content:space-between;cursor:pointer;width:100%}
+  .ok{font-size:13px;color:var(--mu);display:flex;gap:8px;align-items:center;margin-top:8px}
+  .tick{width:16px;height:16px;border-radius:50%;background:var(--am);color:#111;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+  .scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px}
+  .modal{background:var(--surf);border:1px solid var(--bd);border-radius:20px;width:100%;max-height:480px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+  .mh{display:flex;justify-content:space-between;align-items:center} .mh h2{font-size:16px}
+  .x{width:32px;height:32px;border-radius:8px;color:var(--mu);display:flex;align-items:center;justify-content:center} .x:hover{background:var(--tile)}
+  .list{overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+  .item{display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;width:100%} .item:hover{background:var(--tile)}
+  .av.sm{width:36px;height:36px}
+  .nm{display:block} .sub{display:block;font-size:12px;color:var(--mu)}
+  .legend{max-width:480px;font-size:12px;color:var(--mu);line-height:1.6;margin-top:16px}
+  .link .ico{margin-right:6px;display:inline-flex}
+  .sq40{width:40px;height:40px;margin:-8px -8px -8px 0;border:1px solid var(--bd);background:var(--tile)}
+  .lblrow.tall{min-height:24px}
+  .pillbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--bd);background:var(--tile);border-radius:999px;padding:4px 8px 4px 4px;font-size:13px;margin:-4px 0}
+  .pillbtn:hover{background:var(--tileh)}
+  .stk{display:inline-flex}
+  .av.xs{width:24px;height:24px;font-size:9px;border:2px solid var(--tile);margin-left:-6px}
+  .av.xs:first-child{margin-left:0}
+  .lbtn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid var(--bd);background:var(--tile);border-radius:8px;font-size:13px;margin:-4px 0}
+  .lbtn:hover{background:var(--tileh)}
+  .joined{padding:0 0 0 12px;overflow:hidden}
+  .joined .div.full{height:100%;width:1px;margin-left:4px}
+  .seg-btn{flex:none;width:52px;height:100%;display:flex;align-items:center;justify-content:center}
+  .seg-btn:hover{background:var(--tileh)}
+  .bigbtn{width:100%;height:44px;border:1px solid var(--bd);background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px}
+  .bigbtn:hover{background:var(--tileh)}
+  .or{font-size:12px;color:var(--mu);text-align:center;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Beneficiary button: 5 more variations</h1>
+    <div class="ctrls"><div class="pills" id="pills"></div><div class="seg" id="flows"></div><div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="wrap"><div class="frame" id="frame"></div><p class="legend" id="legend"></p></div></div>
+<script>
+const PEOPLE=[
+ {id:1,name:"Abena Mensah",sub:"Stanbic Bank · 0112 3344 55",val:"0112334455",tint:"#fde7c4"},
+ {id:2,name:"Kofi Boateng",sub:"Ecobank Ghana · 0245 1190 22",val:"0245119022",tint:"#d9efe3"},
+ {id:3,name:"Ama Serwaa",sub:"MTN Mobile Money · 024 412 7789",val:"244127789",tint:"#e4dcf5"},
+ {id:4,name:"Yaw Owusu",sub:"Stanbic Bank · 0112 9087 31",val:"0112908731",tint:"#d6e8f5"},
+ {id:5,name:"Esi Appiah",sub:"Fidelity Bank · 0334 5521 09",val:"0334552109",tint:"#fde7c4"},
+];
+const FLOWS={
+ bank:{label:"Other bank",title:"Send to another bank",sel:"Stanbic Bank",ph:"Enter account number"},
+ wallet:{label:"Mobile wallet",title:"Send to a wallet",sel:"MTN Mobile Money",ph:"24 123 4567",pre:"+233"},
+ bills:{label:"Bills (verify)",title:"Pay a bill",static:"Electricity Company of Ghana (ECG)",ph:"Enter meter number",verify:true},
+ proxy:{label:"Proxy ID",title:"Send with a proxy ID",ph:"Ghana Card, phone or email"},
+ papss:{label:"PAPSS",title:"Send across Africa",sel:"Nigeria",ph:"Enter account number"},
+};
+const NOTES=[
+ "1 · Joined control. The input and the button are one control: shared border, a hairline divider, the button as the right segment. It reads as part of the field, not a neighbour, and adds no row. On Bills, Verify moves to sit beside it inside the same control.",
+ "2 · Button on the label row. A small bordered button, icon and “Saved”, on the right of the label. A real button, but it never competes with the field for width, so every field shape is untouched.",
+ "3 · Full-width button above the field. “Choose from saved recipients” as its own secondary button, then the typed field. The most visible and the most honest about there being two ways in. Costs a row on every form, so justified only if most payments go to a saved person.",
+ "4 · Leading button inside the field. The icon is the first thing in the input, before any +233 prefix. People look left first on a number field, and the right edge stays free for Verify. Icon only, so it needs a tooltip.",
+ "5 · Adaptive. Inline beside the field when the field is a single plain input (bank, proxy, PAPSS). On the label row as a button when the field already carries something (the +233 prefix, Verify). Inline is justified only where there is room, so the rule is the answer to your condition. The cost is that the button is not in one place.",
+];
+const LEGEND="Everything opens the same single modal. Pick someone to see the field fill. Switch flows above: Bills (inline Verify) and Wallet (+233 prefix) are the awkward ones. Variation 5 moves the button depending on the field.";
+let v=0,flow="bank",val="",who=null,open=false,q="",mode="new";
+const CSSX=1;
+const $=s=>document.querySelector(s);
+const add='<svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="M730-530H630q-13 0-21-8.700-9-8.600-9-21.500 0-12.800 9-21.300 8-8.500 21-8.500h100v-100q0-13 8.700-21.400 8.600-8.600 21.500-8.600 12.800 0 21.300 8.600 8.500 8.400 8.500 21.400v100h100q13 0 21.400 8.700 8.600 8.700 8.600 21.500 0 12.800-8.600 21.300-8.400 8.500-21.400 8.500H790v100q0 13-8.700 21.400-8.700 8.600-21.500 8.600-12.800 0-21.300-8.600-8.500-8.400-8.500-21.400v-100ZM40-220v-34q0-35 17.500-63.500T108-360q75-33 133-46.500T360-420q60 0 118 13.500T611-360q33 15 51 43t18 63v34q0 25-17.600 42.400Q644.800-160 620-160H100q-25 0-42.400-17.600Q40-195 40-220Zm320-321q-42 0-75-33t-33-75q0-42 33-75t75-33q42 0 75 33t33 75q0 42-33 75t-75 33Z"/></svg>';
+const chev='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>';
+const xi='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const ini=n=>n.split(" ").map(w=>w[0]).join("");
+
+function input(f,trailing=""){
+  return `<div class="field">${f.pre?`<span class="pre">${f.pre}</span>`:""}<input id="val" placeholder="${f.ph}" value="${val}" />${trailing}${f.verify?`${trailing?'<span class="div"></span>':""}<button class="verify" type="button">Verify</button>`:""}</div>`;
+}
+function control(f){
+  const ib=`<button class="iconbtn" data-open aria-label="Choose a saved recipient" title="Saved recipients">${add}</button>`;
+  if(v===0){
+    return `<div class="field joined"><input id="val" placeholder="${f.ph}" value="${val}" />${f.verify?`<button class="verify" type="button">Verify</button>`:""}<span class="div full"></span><button class="seg-btn" data-open aria-label="Choose a saved recipient" title="Saved recipients">${add}</button></div>`;
+  }
+  if(v===2) return `<button class="bigbtn" data-open>${add}<span>Choose from saved recipients</span></button><div class="or">or enter a new one</div>${input(f)}`;
+  if(v===3) return `<div class="field"><button class="tin" data-open aria-label="Choose a saved recipient" title="Saved recipients" style="margin-left:-8px">${add}</button>${f.pre?`<span class="pre">${f.pre}</span>`:""}<input id="val" placeholder="${f.ph}" value="${val}" />${f.verify?`<button class="verify" type="button">Verify</button>`:""}</div>`;
+  if(v===4&&!compound) return `<div class="line"><div style="flex:1;min-width:0">${input(f)}</div>${ib}</div>`;
+  return input(f);
+}
+function render(){
+  const f=FLOWS[flow];
+  $("#note").textContent=NOTES[v];$("#legend").textContent=LEGEND;
+  $("#pills").innerHTML=NOTES.map((_,i)=>`<button class="pill ${v===i?"on":""}" data-v="${i}">${i+1}</button>`).join("");
+  $("#flows").innerHTML=Object.entries(FLOWS).map(([k,x])=>`<button data-f="${k}" class="${flow===k?"on":""}">${x.label}</button>`).join("");
+  const sel=f.sel?`<div class="field sel"><span>${f.sel}</span>${chev}</div>`:f.static?`<div class="field sel"><span>${f.static}</span></div>`:"";
+  const stack=`<span class="stk">${PEOPLE.slice(0,3).map(p=>`<span class="av xs" style="background:${p.tint}">${ini(p.name)}</span>`).join("")}</span>`;
+  const compound=Boolean(f.pre||f.verify);
+  const lblBtn=`<button class="lbtn" data-open>${add}<span>Saved</span></button>`;
+  const ctl=[ "", lblBtn, "", "", compound?lblBtn:"" ][v];
+  const head=`<div class="lblrow"><span class="lbl">Beneficiary Details</span>${ctl}</div>`;
+  const strip=v===4?`<div class="strip">${PEOPLE.slice(0,3).map(p=>`<button class="sq" data-pick="${p.id}"><span class="av" style="background:${p.tint}">${ini(p.name)}</span><span class="n">${p.name.split(" ")[0]}</span></button>`).join("")}<button class="sq" data-open><span class="av dash">${add}</span><span class="n">All</span></button></div>`:"";
+  const tog=v===3?`<div class="toggle"><button data-m="new" class="${mode==="new"?"on":""}">New</button><button data-m="saved" class="${mode==="saved"?"on":""}">Saved</button></div>`:"";
+  $("#frame").innerHTML=`<div class="page"><h2>${f.title}</h2><div>${head}${sel}${control(f)}${who?`<div class="ok"><span class="tick">✓</span>${who}</div>`:""}</div></div>${open?modal():""}`;
+  if(open){const e=$("#q");e.focus();e.setSelectionRange(q.length,q.length);}
+}
+function rows(){const s=q.trim().toLowerCase(),d=q.replace(/\D/g,"");return PEOPLE.filter(p=>!s||p.name.toLowerCase().includes(s)||p.sub.toLowerCase().includes(s)||(d&&p.val.includes(d)));}
+function listHTML(){const r=rows();return r.length?r.map(p=>`<button class="item" data-pick="${p.id}"><span class="av sm" style="background:${p.tint}">${ini(p.name)}</span><span><span class="nm">${p.name}</span><span class="sub">${p.sub}</span></span></button>`).join(""):`<p class="mu" style="padding:24px;text-align:center">Nobody saved matches that.</p>`;}
+function modal(){return `<div class="scrim" data-scrim><div class="modal"><div class="mh"><h2>Choose a recipient</h2><button class="x" data-close>${xi}</button></div><div class="field"><input id="q" placeholder="Search by name, bank or number" value="${q}"/></div><div class="list">${listHTML()}</div></div></div>`;}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-f],[data-t],[data-open],[data-close],[data-pick],[data-scrim],[data-m]");if(!t)return;
+  if(t.dataset.scrim!==undefined&&e.target!==t)return;
+  if(t.dataset.v!==undefined){v=+t.dataset.v;val="";who=null;open=false;mode="new";}
+  else if(t.dataset.f){flow=t.dataset.f;val="";who=null;open=false;}
+  else if(t.dataset.t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll("#theme button").forEach(b=>b.classList.toggle("on",b===t));return;}
+  else if(t.dataset.m){mode=t.dataset.m;if(mode==="saved")open=true;else{val="";who=null;}}
+  else if(t.dataset.open!==undefined){open=true;q="";}
+  else if(t.dataset.close!==undefined||t.dataset.scrim!==undefined){open=false;}
+  else if(t.dataset.pick){const p=PEOPLE.find(x=>x.id==t.dataset.pick);val=p.val;who=`${p.name} · ${p.sub}`;open=false;}
+  render();
+});
+document.addEventListener("input",e=>{if(e.target.id==="q"){q=e.target.value;$(".list").innerHTML=listHTML();}if(e.target.id==="val"){val=e.target.value;who=null;}});
+render();
+</script>
+</body>
+</html>

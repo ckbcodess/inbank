@@ -261,7 +261,7 @@ export function TransactionDetailSheet({
           showCloseButton={true}
         >
           {/* ── Scrollable Content Area ── */}
-          <div className="relative z-10 flex-1 overflow-y-auto px-5 sm:px-8 pt-12 pb-5 no-scrollbar flex flex-col">
+          <div className="scroll-fade relative z-10 flex-1 overflow-y-auto px-5 sm:px-8 pt-12 pb-5 no-scrollbar flex flex-col">
             {/* Centred in the space above the buttons; scrolls if the receipt is taller than that */}
             <div className="my-auto">
               {/* ── Hero Section (Channel, Big Amount, Date & Time) ── */}

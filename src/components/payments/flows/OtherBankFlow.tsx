@@ -1,6 +1,6 @@
 "use client";
 
-import { SavedSuggestions } from "./SavedRecipients";
+import { SavedRecipientLink } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -82,7 +82,6 @@ export function OtherBankFlow({
 
   const [resolving, setResolving] = useState(false);
   // What is typed when the person is searching saved recipients by name rather than entering a number
-  const [nameQuery, setNameQuery] = useState("");
 
   useEffect(() => {
     if (isDetailsValid) {
@@ -112,7 +111,7 @@ export function OtherBankFlow({
       />
 
       {/* 2. Destination Bank & Account Number */}
-      <Field label="Beneficiary Details">
+      <Field label="Beneficiary Details" action={!(isVerified && isCollapsed) && <SavedRecipientLink provider={state.bank} value={state.benAcct} />}>
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Account ${state.benAcct}`}
@@ -125,35 +124,24 @@ export function OtherBankFlow({
           <div className="flex flex-col gap-2">
             <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={OTHER_BANKS} />
 
-            {isBankValid && (
             <div className="relative flex items-center">
-              <SavedSuggestions provider={state.bank} requireProvider query={nameQuery || state.benAcct} onPicked={() => setNameQuery("")}>
                 <Input
                   type="text"
-                  inputMode="text"
-                  value={nameQuery || state.benAcct}
+                  inputMode="numeric"
+                  value={state.benAcct}
                   onChange={(e) => {
-                    const raw = e.target.value;
-                    // Letters mean the person is looking someone up by name, so the account stays empty until they pick or type digits
-                    if (/[a-z]/i.test(raw)) {
-                      setNameQuery(raw);
-                      onChange("benAcct", "");
-                      return;
-                    }
-                    setNameQuery("");
-                    const val = raw.replace(/[^0-9]/g, "");
+                    const val = e.target.value.replace(/[^0-9]/g, "");
                     onChange("benAcct", val);
                     const resolved = resolveAccountName(val, "");
                     if (resolved) {
                       onChange("benName", resolved);
                     }
                   }}
-                  placeholder="Enter new account number or saved beneficiary name"
+                  placeholder={isBankValid ? "Enter account number" : "Choose a bank first"}
+                  disabled={!isBankValid}
                   className="numorainput tabular"
                 />
-              </SavedSuggestions>
             </div>
-            )}
 
             {/* Verification Status */}
             <AccountVerificationStatus

@@ -21,6 +21,7 @@ export function useCustomerAccounts() {
   const scenario = findScenario(useAccountsScenario((s) => s.scenarioId));
   const storedDefaultId = useAccountPrefs((s) => s.defaultAccountId);
   const addedAccountIds = useAccountPrefs((s) => s.addedAccountIds);
+  const removedAccountIds = useAccountPrefs((s) => s.removedAccountIds);
   const storedMigration = useAccountPrefs((s) => s.walletMigration);
 
   const walletMigration = scenario.customer === "wallet" ? storedMigration : null;
@@ -32,7 +33,7 @@ export function useCustomerAccounts() {
       return retailAccounts;
     }
     const base = walletMigration ? [] : scenario.accountIds;
-    const ids = [...new Set([...base, ...addedAccountIds])];
+    const ids = [...new Set([...base, ...addedAccountIds])].filter((id) => !removedAccountIds.includes(id));
     return ids
       .map((id) => findAccount(id))
       .filter((a): a is Account => Boolean(a))
@@ -45,7 +46,7 @@ export function useCustomerAccounts() {
             }
           : a,
       );
-  }, [scenario, addedAccountIds, walletMigration]);
+  }, [scenario, addedAccountIds, removedAccountIds, walletMigration]);
 
   const defaultId = resolveDefaultAccountId(accounts, storedDefaultId);
 

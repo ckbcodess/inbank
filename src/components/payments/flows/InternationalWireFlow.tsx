@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PAPSS_COUNTRY_NAMES, type Country } from "@/lib/countries";
 import { CountryPicker } from "./CountryPicker";
+import { SavedRecipientLink } from "./SavedRecipients";
 import { Account } from "@/lib/mock-data";
 import {
   Select,
@@ -268,7 +269,10 @@ export function InternationalWireFlow({
       ) : (
         <>
           <div className="flex flex-col gap-2">
-            <Label>Destination</Label>
+            <div className="flex items-center justify-between gap-2">
+              <Label>Destination</Label>
+              <SavedRecipientLink provider={state.wBank} value={state.wIban} />
+            </div>
             <div className="grid gap-2 sm:grid-cols-2">
               <Field label="Country">
                 <CountryPicker

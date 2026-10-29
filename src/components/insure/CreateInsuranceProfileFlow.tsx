@@ -291,10 +291,6 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
 
         {step === "about" && (
           <>
-            <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
-              To access the insurance plans, we need to create your insurance profile. Every plan uses it, so you only do this once.
-            </p>
-
             <Field label="Title">
               <PickOne value={title} onChange={setTitle} options={INSURANCE_TITLES} placeholder="Select title" label="Title" />
             </Field>

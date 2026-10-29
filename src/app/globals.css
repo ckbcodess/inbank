@@ -866,8 +866,8 @@ html.i18n-pending body {
    /business page is open, so dialogs, menus and toasts in portals pick it up too. Only the brand accent and the
    hero move; status colours (warning amber, success, destructive) and categorical colours stay as they are. */
 :root[data-app="business"] {
-  --primary: var(--smoke-700);
-  --primary-hover: var(--smoke-600);
+  --primary: var(--smoke-600);
+  --primary-hover: var(--smoke-500);
   --primary-foreground: var(--white);
   --ring: var(--smoke-400);
   --tile-accent: var(--smoke-600);
@@ -890,9 +890,9 @@ html.i18n-pending body {
   --hero-primary-foreground: var(--smoke-950);
 }
 .dark[data-app="business"] {
-  --primary: var(--smoke-200);
-  --primary-hover: var(--smoke-100);
-  --primary-foreground: var(--smoke-950);
+  --primary: var(--smoke-600);
+  --primary-hover: var(--smoke-500);
+  --primary-foreground: var(--white);
   --ring: var(--smoke-300);
   --tile-accent: var(--smoke-300);
   --duo-accent: var(--smoke-300);
@@ -1131,6 +1131,39 @@ a,
 }
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: oklch(1 0 0 / 20%);
+}
+
+/* Edge fade for a scroll area: the content dissolves into the edge where more is waiting, and the fade is gone once
+   that edge is reached. Add `scroll-fade` to any scrolling list, modal or sheet body. It is driven by the scroll
+   position (no JS), so an area that doesn't overflow shows no fade. Browsers without scroll-driven animations just
+   get a hard edge. Not for popovers that draw their own shadow: the mask would clip it. */
+@property --fade-top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --fade-bottom {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@keyframes scroll-fade-top {
+  from { --fade-top: 0px; }
+  to { --fade-top: var(--scroll-fade-size); }
+}
+@keyframes scroll-fade-bottom {
+  from { --fade-bottom: var(--scroll-fade-size); }
+  to { --fade-bottom: 0px; }
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-fade {
+    --scroll-fade-size: 24px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent 100%);
+    animation: scroll-fade-top linear both, scroll-fade-bottom linear both;
+    animation-timeline: scroll(self block), scroll(self block);
+    animation-range: 0% var(--scroll-fade-size), calc(100% - var(--scroll-fade-size)) 100%;
+  }
 }
 
 /* Hide scrollbar — keeps scroll behaviour, hides the track/thumb */

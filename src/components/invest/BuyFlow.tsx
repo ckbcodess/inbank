@@ -184,7 +184,7 @@ export function BuyFlow() {
           <ReviewSummary details={rows.map(([label, value]) => ({ label, value }))} total={money(cost)} totalLabel="You pay" />
           {sec.market === "primary" && (
             <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
-              The final rate is set at the auction, so what you pay and what you receive can shift slightly.
+              The final rate is set at the auction, so your amounts can shift slightly.
             </p>
           )}
           <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject={sec.kind === "bond" ? "bonds" : "treasury bills"} terms={securityTerms(sec.kind, sec.market === "primary")} />
@@ -244,7 +244,7 @@ export function BuyFlow() {
               />
               {overBalance && <InsufficientFundsAlert />}
               {overLot && lot !== undefined && <InlineError message={`Only ${money(lot)} of face value is on offer.`} className="text-left" />}
-              <p className="px-1 text-[12px] text-muted-foreground">Type in either one and the other follows. Cost is debited from your account today; {sec.kind === "bond" ? "face value is repaid at maturity, and the interest is paid every 6 months on top." : "face value is what you get at maturity."}</p>
+              <p className="px-1 text-[12px] text-muted-foreground">{sec.kind === "bond" ? "Face value is repaid at maturity, with interest every 6 months." : "Face value is what you receive at maturity."}</p>
             </div>
 
             {valid && (

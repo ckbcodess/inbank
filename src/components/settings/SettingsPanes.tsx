@@ -41,7 +41,7 @@ export interface PaneProps {
 
 function PaneShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 pb-6 sm:px-10 sm:pb-8 sm:pt-8">{children}</div>
+    <div className="custom-scrollbar scroll-fade flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 pb-6 sm:px-10 sm:pb-8 sm:pt-8">{children}</div>
   );
 }
 

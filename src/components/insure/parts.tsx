@@ -18,7 +18,7 @@ import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { formatDate, formatMoney, recordTransaction, type Account } from "@/lib/mock-data";
 import { INSURE_HOME, PROVIDER, findPlan, type PlanId } from "@/lib/insurance-plans";
 import type { Frequency } from "@/lib/insurance-plans";
-import { sampleProfile, useInsurance, useMyInsurance, type Policy } from "@/lib/insurance";
+import { maturityOf, sampleProfile, useInsurance, useMyInsurance, type Policy } from "@/lib/insurance";
 import { useTreasuryAccounts } from "@/lib/treasury";
 import { cn } from "@/lib/utils";
 
@@ -263,16 +263,19 @@ export function PolicyRow({ policy, showAmounts }: { policy: Policy; showAmounts
 
 /**
  * A policy on its own plan's page, where every row is the same plan, so the plan name would say nothing: the policy
- * number leads, then what needs the customer (amber) or who it covers, then the sum assured and the premium.
+ * number leads, on its own line unless something needs the customer (amber) or a funeral policy has people on it. On
+ * the right, the sum assured, then when it ends (or, with no end date, the premium). Each fact appears once.
  */
 export function PlanPolicyRow({ policy, showAmounts }: { policy: Policy; showAmounts: boolean }) {
   const attention = attentionOf(policy);
+  const maturity = maturityOf(policy);
   const covers =
     findPlan(policy.planId)?.kind === "funeral"
       ? policy.members.length > 0
         ? `Covers you and ${policy.members.length === 1 ? "1 other" : `${policy.members.length} others`}`
         : "Covers you"
-      : premiumLine(policy, showAmounts);
+      : undefined;
+  const second = attention ?? covers;
   return (
     <li>
       <Link
@@ -281,11 +284,13 @@ export function PlanPolicyRow({ policy, showAmounts }: { policy: Policy; showAmo
       >
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="tabular truncate text-[14px] text-foreground">{policy.number}</span>
-          <span className={cn("truncate text-[12px]", attention ? "text-warning-text" : "text-muted-foreground")}>{attention ?? covers}</span>
+          {second && <span className={cn("truncate text-[12px]", attention ? "text-warning-text" : "text-muted-foreground")}>{second}</span>}
         </span>
         <span className="flex shrink-0 flex-col items-end">
           <span className="tabular text-[14px] text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
-          <span className="tabular text-[12px] text-muted-foreground">{premiumLine(policy, showAmounts)}</span>
+          <span className="tabular text-[12px] text-muted-foreground">
+            {maturity ? `Ends ${formatDate(maturity)}` : premiumLine(policy, showAmounts)}
+          </span>
         </span>
         <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
       </Link>

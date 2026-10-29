@@ -28,6 +28,7 @@ import {
   type SecurityKind,
 } from "@/lib/treasury";
 import { useMyDeposits, useTermDeposits } from "@/lib/term-deposits";
+import { LIST_CARD_CLASS } from "@/components/ui/list-card";
 import { cn } from "@/lib/utils";
 
 /** The Invest page: the one home for everything. */
@@ -72,6 +73,46 @@ export function FactsPanel({ rows, keyRow }: { rows: Array<[React.ReactNode, Rea
           </div>
         ),
       )}
+    </div>
+  );
+}
+
+/** One fact: a label, its value, and an optional muted line under the value for the context that would crowd it. */
+export type Fact = { label: React.ReactNode; value: React.ReactNode; note?: React.ReactNode; lead?: boolean; total?: boolean };
+/** A cluster of facts that answer one question. `quiet` is for reference numbers: small, muted, last. A `total` row is the one figure the page ends on, set large like the total on a payment review. */
+export type FactGroup = { rows: Fact[]; quiet?: boolean };
+
+/**
+ * The calm detail page's facts: clusters of label-and-value rows, separated by whitespace and no box (CONSTITUTION §3).
+ * A value is a fact, never a sentence; what explains it goes in `note`. `lead` makes the first row's value 20px, only
+ * for a page with no balance figure. `boxed` sits them in the ListCard box (its glass edge) instead of on the page.
+ */
+export function FactGroups({ groups, boxed = false }: { groups: FactGroup[]; boxed?: boolean }) {
+  return (
+    <div className={boxed ? cn(LIST_CARD_CLASS, "gap-6") : "flex flex-col gap-8"}>
+      {groups
+        .filter((g) => g.rows.length > 0)
+        .map((g, i) => (
+          <div key={i} className="flex flex-col">
+            {g.rows.map((r, j) => r.total ? (
+              <div key={j} className="flex items-baseline justify-between gap-5 rounded-xl px-2 py-3">
+                <span className="shrink-0 text-[18px] text-foreground">{r.label}</span>
+                <span className="tabular min-w-0 text-right text-[24px] leading-none tracking-[var(--ls-heading)] text-foreground">{r.value}</span>
+              </div>
+            ) : (
+              <div
+                key={j}
+                className={cn("flex justify-between gap-5 rounded-xl px-2", g.quiet ? "items-baseline py-2 text-[12px]" : "items-baseline py-3 text-[14px]")}
+              >
+                <span className="shrink-0 text-muted-foreground">{r.label}</span>
+                <span className="flex min-w-0 flex-col items-end gap-0.5 text-right">
+                  <span className={cn("tabular", g.quiet ? "text-muted-foreground" : "text-foreground", r.lead && "text-[20px]")}>{r.value}</span>
+                  {r.note && <span className="tabular text-[12px] leading-relaxed text-muted-foreground">{r.note}</span>}
+                </span>
+              </div>
+            ))}
+          </div>
+        ))}
     </div>
   );
 }

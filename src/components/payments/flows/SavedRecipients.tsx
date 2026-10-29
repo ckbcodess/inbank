@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { PayeeAvatar } from "@/components/ui/payee-avatar";
+import { BeneficiaryPicker } from "./beneficiaries";
 
 /** What the picker needs from a saved recipient: enough to show them, and to hand back to the flow. */
 export interface SavedRecipient {
@@ -35,7 +35,7 @@ const SavedRecipientsContext = React.createContext<SavedRecipientsValue | null>(
 
 /**
  * The saved recipients that fit the payment the customer is making. Put once around a flow; each beneficiary
- * field is then wrapped in `SavedSuggestions`, which suggests them as the person focuses or types. Nothing is drawn until then.
+ * field is then given a `SavedRecipientLink` in its label row, which opens them.
  */
 export function SavedRecipientsProvider<T extends SavedRecipient>({
   items,
@@ -54,91 +54,63 @@ export function SavedRecipientsProvider<T extends SavedRecipient>({
   return <SavedRecipientsContext.Provider value={value}>{children}</SavedRecipientsContext.Provider>;
 }
 
+/** Two entries are the same recipient when their letters and digits match; phone numbers compare on their last nine digits. */
+function recipientKey(v: string): string {
+  const k = v.replace(/[^a-z0-9]/gi, "").toLowerCase();
+  return /^\d+$/.test(k) ? k.slice(-9) : k;
+}
+
 /**
- * Suggestions under a beneficiary field. Focus the field and the saved people at the chosen bank or provider appear;
- * type a name or the start of a number and the list narrows. Pick one and the flow fills in. Nothing shows when
- * nobody fits, and a number that is already complete and saved needs no suggestion.
+ * The way into the saved recipients, for the end of a beneficiary field's label row (`Field`'s `action`). It reads
+ * "Choose saved" until the field holds someone who is saved, then "Change", so the same link is also the way back. The
+ * list is everyone saved for this kind of payment, whichever bank or network the form shows; the chosen `provider`
+ * only puts its people on top, and picking someone elsewhere switches the form to them. Nothing is drawn when nobody
+ * is saved, so there is never an empty list to open.
  */
-export function SavedSuggestions({
+export function SavedRecipientLink({
   provider,
-  requireProvider,
-  query,
+  value,
   onPicked,
-  children,
 }: {
-  /** The bank or network chosen on the form. Only people at it are suggested. */
+  /** The bank or network chosen on the form. Its people are listed first. */
   provider?: string;
-  /** Don't suggest anyone until a provider has been chosen. */
-  requireProvider?: boolean;
-  /** What is typed in the field. */
-  query: string;
-  /** Called after someone is picked, so the field can drop the text it was searching with or remember who was picked. */
+  /** What the field holds now (account, number or reference), to tell whether it is a saved person. */
+  value?: string;
+  /** Called after someone is picked, so the flow can remember who was picked. */
   onPicked?: (item: SavedRecipient) => void;
-  children: React.ReactNode;
 }) {
   const ctx = React.useContext(SavedRecipientsContext);
-  const [focused, setFocused] = React.useState(false);
-  const boxRef = React.useRef<HTMLDivElement>(null);
+  const [open, setOpen] = React.useState(false);
 
-  const matches = React.useMemo(() => {
-    if (!ctx || (requireProvider && !provider)) return [];
-    const want = provider ? providerWords(provider) : null;
-    const q = query.trim().toLowerCase();
-    const digits = q.replace(/\D/g, "");
-    return ctx.items
-      .filter((i) => want === null || providerWords(i.bank) === want)
-      .filter((i) => {
-        if (!q) return true;
-        const acctDigits = i.acct.replace(/\D/g, "");
-        if (digits.length > 0 && acctDigits === digits) return false; // already typed in full
-        return i.name.toLowerCase().includes(q) || i.acct.toLowerCase().includes(q) || (digits.length > 0 && acctDigits.includes(digits));
-      })
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .slice(0, 5);
-  }, [ctx, provider, requireProvider, query]);
+  const items = React.useMemo(() => (ctx ? ctx.items.map((i) => ({ ...i, initials: i.initials ?? "" })) : []), [ctx]);
+  const want = provider ? providerWords(provider) : null;
 
-  const open = focused && matches.length > 0;
+  if (!ctx || items.length === 0) return null;
+
+  const key = value ? recipientKey(value) : "";
+  const isSaved = key !== "" && items.some((i) => recipientKey(i.acct) === key);
 
   return (
-    <div
-      ref={boxRef}
-      className="relative w-full"
-      onFocusCapture={() => setFocused(true)}
-      onBlurCapture={(e) => {
-        if (!boxRef.current?.contains(e.relatedTarget as Node | null)) setFocused(false);
-      }}
-    >
-      {children}
-      {open && ctx && (
-        <ul
-          role="listbox"
-          aria-label="Saved recipients"
-          className="absolute inset-x-0 top-full z-30 mt-2 rounded-2xl border border-border bg-menu p-2 shadow-lg animate-in fade-in duration-150"
-        >
-          {matches.map((item) => (
-            <li key={item.id} role="option" aria-selected={false}>
-              <button
-                type="button"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => {
-                  ctx.onSelect(item);
-                  onPicked?.(item);
-                  setFocused(false);
-                }}
-                className="group flex w-full cursor-pointer items-center gap-2 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted/60"
-              >
-                <PayeeAvatar name={item.name} initials={item.initials} size="sm" />
-                <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[13px] text-foreground">{item.name}</span>
-                  <span className="truncate text-[12px] text-muted-foreground tabular">
-                    {item.subtitle || [item.bank, item.acct].filter(Boolean).join(" · ")}
-                  </span>
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="inline-flex min-h-8 cursor-pointer items-center text-[13px] text-foreground underline underline-offset-4 transition-colors duration-hover hover:text-muted-foreground"
+      >
+        {isSaved ? "Change" : "Choose saved"}
+      </button>
+      <BeneficiaryPicker
+        open={open}
+        onOpenChange={setOpen}
+        items={items}
+        first={want ? (i) => providerWords(i.bank) === want : undefined}
+        firstLabel={provider}
+        onSelect={(item) => {
+          setOpen(false);
+          ctx.onSelect(item);
+          onPicked?.(item);
+        }}
+      />
+    </>
   );
 }

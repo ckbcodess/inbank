@@ -8,6 +8,8 @@ import { AlertToast } from "@/components/ui/alert-toast";
 import { InlineError } from "@/components/ui/inline-error";
 import { AppLoader } from "@/components/ui/loader";
 import AuthLayout from "@/components/auth/AuthLayout";
+import { useBusinessTheme } from "@/lib/business-theme";
+import { isBusinessProfile } from "@/lib/profile";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { OtpHelp } from "@/components/payments/OtpHelp";
 import { OTP_SHORTCODE, PIN_LENGTH, REGISTERED_PHONE, useAuthorisation } from "@/components/payments/useAuthorisation";
@@ -26,6 +28,8 @@ function PinContent() {
   const isNewDevice = searchParams.get("device") === "new";
 
   const { actor, verifyMfa } = useSession();
+  // A business sign-in stays in smoke ash through the code step.
+  useBusinessTheme(isBusinessProfile(actor?.profiles[0]));
   const auth = useAuthorisation("pin");
   const [verifying, setVerifying] = useState(false);
   const hydrated = useSessionHydrated();

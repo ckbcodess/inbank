@@ -290,7 +290,7 @@ export function SidiAssistantWidget() {
             </div>
 
             {/* Body: welcome with suggestions, or the conversation */}
-            <div className="custom-scrollbar flex flex-1 flex-col overflow-y-auto overscroll-contain px-4">
+            <div className="custom-scrollbar scroll-fade flex flex-1 flex-col overflow-y-auto overscroll-contain px-4">
               {!hasChat ? (
                 <div className="flex flex-1 flex-col items-center justify-end gap-5 pb-5 text-center animate-in fade-in duration-200">
                   <div className="flex flex-col items-center gap-2">

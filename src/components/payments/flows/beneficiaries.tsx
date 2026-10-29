@@ -406,17 +406,25 @@ export function RailBeneficiaryStrip<T extends StripRecipient>({
   );
 }
 
-/** Everyone saved for this payment, A to Z, with a search over name, bank and number. */
+/**
+ * Everyone saved for this payment, A to Z, with a search over name, bank and number. Nobody is ever hidden by what the
+ * form already says: pass `first` (who to list on top) and `firstLabel` (its heading) and those people are grouped
+ * above everyone else, which gets the "Other recipients" heading. With only one of the two groups there are no headings.
+ */
 export function BeneficiaryPicker<T extends StripRecipient>({
   open,
   onOpenChange,
   items,
   onSelect,
+  first,
+  firstLabel,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   items: T[];
   onSelect: (item: T) => void;
+  first?: (item: T) => boolean;
+  firstLabel?: string;
 }) {
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
@@ -431,6 +439,15 @@ export function BeneficiaryPicker<T extends StripRecipient>({
         (digits.length > 0 && i.acct.replace(/\D/g, "").includes(digits)),
     );
   }, [items, q, digits]);
+
+  const groups = useMemo(() => {
+    const top = first ? rows.filter(first) : [];
+    if (top.length === 0 || top.length === rows.length) return [{ label: undefined as string | undefined, rows }];
+    return [
+      { label: firstLabel, rows: top },
+      { label: "Other recipients", rows: rows.filter((i) => !first!(i)) },
+    ];
+  }, [rows, first, firstLabel]);
 
   return (
     <Modal
@@ -452,20 +469,25 @@ export function BeneficiaryPicker<T extends StripRecipient>({
         {rows.length === 0 ? (
           <p className="py-8 text-center text-[13px] text-muted-foreground">Nobody saved matches that. Clear the search to see everyone.</p>
         ) : (
-          <div className="custom-scrollbar -mx-1 flex max-h-[50vh] flex-col gap-0.5 overflow-y-auto overscroll-contain px-1">
-            {rows.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onSelect(item)}
-                className="flex w-full cursor-pointer items-center gap-3 rounded-xl p-2 text-left transition-colors duration-hover hover:bg-muted/50"
-              >
-                <PayeeAvatar name={item.name} initials={item.initials} size="md" />
-                <span className="flex min-w-0 flex-col">
-                  <span className="truncate text-[14px] text-foreground">{item.name}</span>
-                  <span className="truncate text-[12px] text-muted-foreground">{item.subtitle || item.bank}</span>
-                </span>
-              </button>
+          <div className="custom-scrollbar scroll-fade -mx-1 flex max-h-[50vh] flex-col gap-0.5 overflow-y-auto overscroll-contain px-1">
+            {groups.map((g) => (
+              <div key={g.label ?? "all"} className="flex flex-col gap-0.5">
+                {g.label && <p className="px-2 pb-1 pt-3 text-[12px] text-muted-foreground">{g.label}</p>}
+                {g.rows.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => onSelect(item)}
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl p-2 text-left transition-colors duration-hover hover:bg-muted/50"
+                  >
+                    <PayeeAvatar name={item.name} initials={item.initials} size="md" />
+                    <span className="flex min-w-0 flex-col">
+                      <span className="truncate text-[14px] text-foreground">{item.name}</span>
+                      <span className="truncate text-[12px] text-muted-foreground">{item.subtitle || item.bank}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
             ))}
           </div>
         )}

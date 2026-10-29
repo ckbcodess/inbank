@@ -1,6 +1,6 @@
 "use client";
 
-import { SavedSuggestions } from "./SavedRecipients";
+import { SavedRecipientLink } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -99,7 +99,7 @@ export function ProxyPayFlow({
       />
 
       {/* 2. Destination: Proxy ID */}
-      <Field label="Beneficiary Details">
+      <Field label="Beneficiary Details" action={!(isPxValid && isCollapsed) && <SavedRecipientLink value={state.pxId} />}>
         {isPxValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || state.pxId}
@@ -110,7 +110,6 @@ export function ProxyPayFlow({
         ) : (
           <div className="flex flex-col gap-2">
             <div className="relative flex items-center">
-              <SavedSuggestions query={state.pxId}>
 <Input
                 type="text"
                 value={state.pxId}
@@ -125,7 +124,6 @@ export function ProxyPayFlow({
                 placeholder="Ghana Card, phone or email"
                 
               />
-</SavedSuggestions>
             </div>
             {/* Verification Status */}
             <AccountVerificationStatus

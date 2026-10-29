@@ -1,6 +1,6 @@
 "use client";
 
-import { SavedSuggestions } from "./SavedRecipients";
+import { SavedRecipientLink } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -199,7 +199,7 @@ export function PapssPaymentFlow({
       />
 
       {/* 2. Recipient & Destination Details */}
-      <Field label="PAPSS Beneficiary Details">
+      <Field label="PAPSS Beneficiary Details" action={!(isDestinationValid && isCollapsed) && <SavedRecipientLink value={state.wIban} />}>
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || `PAPSS Account (${state.wIban})`}
@@ -252,7 +252,6 @@ export function PapssPaymentFlow({
               </Select>
             </div>
 
-            <SavedSuggestions query={state.wIban}>
 <Input
               type="text"
               value={state.wIban}
@@ -267,7 +266,6 @@ export function PapssPaymentFlow({
               placeholder="Enter account number"
               className="tabular"
             />
-</SavedSuggestions>
 
             {/* Verification Status */}
             <AccountVerificationStatus
