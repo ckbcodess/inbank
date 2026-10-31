@@ -425,29 +425,34 @@ export function BeneficiaryEditor({
           top={
             saved.length > 0 ? (
               <>
-              <div className="flex flex-col gap-2">
-                <p className="px-1 text-[13px] text-muted-foreground">Saved</p>
-                <ListCard>
-                  {saved.map((p) => (
-                    <li key={p.id}>
-                      <button
-                        type="button"
-                        onClick={() => add(p)}
-                        className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted/50 sm:px-3"
-                      >
-                        <Avatar name={p.fullName} />
-                        <span className="flex min-w-0 flex-1 flex-col">
-                          <span className="truncate text-[14px] text-foreground" translate="no">
-                            {p.fullName}
+              <Field label="Saved">
+                <Select
+                  value=""
+                  onValueChange={(id) => {
+                    const p = saved.find((s) => s.id === id);
+                    if (p) add(p);
+                  }}
+                >
+                  <SelectTrigger aria-label="Saved">
+                    <SelectValue placeholder="Choose a saved beneficiary" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {saved.map((p) => (
+                      <SelectItem key={p.id} value={p.id} className="py-2">
+                        <span className="flex min-w-0 items-center gap-3">
+                          <Avatar name={p.fullName} />
+                          <span className="flex min-w-0 flex-col text-left">
+                            <span className="truncate text-[14px] text-foreground" translate="no">
+                              {p.fullName}
+                            </span>
+                            <span className="truncate text-[12px] text-muted-foreground">{p.relationship}</span>
                           </span>
-                          <span className="truncate text-[12px] text-muted-foreground">{p.relationship}</span>
                         </span>
-                        <Plus size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
-                      </button>
-                    </li>
-                  ))}
-                </ListCard>
-              </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
               <div className="flex items-center gap-3" role="separator" aria-label="Or add someone new">
                 <span aria-hidden="true" className="h-px flex-1 bg-border" />
                 <span className="text-[13px] text-muted-foreground">Or add someone new</span>

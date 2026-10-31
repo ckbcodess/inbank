@@ -264,7 +264,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ href: base, label: "File a Claim", onClick: () => setScreen("form") }} />
         <div className="flex flex-col gap-5">
-          <StepBar current={2} total={2} showCount />
+          <StepBar current={2} total={2} />
           <ReviewSummary
             details={rows}
             total={claimAmount ? money(claimAmount) : "To be confirmed"}
@@ -302,7 +302,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="File a Claim" backTo={{ href: base, label: plan?.name ?? "Policy" }} />
       <div className="flex flex-col gap-5">
-        <StepBar current={1} total={2} showCount />
+        <StepBar current={1} total={2} />
         <section className="flex flex-col gap-2 px-1">
           <p className="text-[13px] text-foreground">{type === "death" ? "We’re sorry for your loss. To make this claim, have these ready:" : "To make a claim, have these ready:"}</p>
           <ul className="flex flex-col gap-2">

@@ -256,7 +256,7 @@ export default function HeaderBreadcrumbs() {
           list={[
             home,
             { label: findPlan(segments[2])?.name ?? "Plan", href: `/insure/plans/${segments[2]}`, isLast: !buying },
-            ...(buying ? [{ label: "Get Started", href: pathname, isLast: true }] : []),
+            ...(buying ? [{ label: "Apply", href: pathname, isLast: true }] : []),
           ]}
         />
       );

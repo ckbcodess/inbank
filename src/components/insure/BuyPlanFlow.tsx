@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Insure → a plan → Get Started. One flow for all four plans, from the bancassurance Figma's Purchase rows:
+ * Insure → a plan → Apply. One flow for all four plans, from the bancassurance Figma's Purchase rows:
  *
  *   quote → beneficiaries (and a trustee if one is under 18) → review → one-time code → outcome
  *
@@ -105,7 +105,6 @@ const GENDERS = [
 ] as const;
 /** Age used to price a customer the bank has no date of birth for. */
 const DEFAULT_AGE = 35;
-
 const asNumber = (v: string) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
 const money = (n: number) => formatMoney(n, "GHS", true);
 const reveal = "flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200";
@@ -459,9 +458,8 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
   if (screen === "beneficiaries") {
     return (
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
-        <PageHeader title="Beneficiaries" backTo={{ ...back, label: plan.name, onClick: () => setScreen("quote") }} />
+        <PageHeader title="Beneficiaries" backTo={{ ...back, label: plan.name, onClick: () => setScreen("quote") }} actions={<StepBar current={2} total={3} compact />} />
         <div className="flex flex-col gap-5">
-          <StepBar current={2} total={3} showCount />
           <BeneficiaryEditor
             ownerId={ownerId}
             people={people}
@@ -497,9 +495,8 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
     ];
     return (
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
-        <PageHeader title="Review and Confirm" backTo={{ ...back, label: "Beneficiaries", onClick: () => setScreen("beneficiaries") }} />
+        <PageHeader title="Review and Confirm" backTo={{ ...back, label: "Beneficiaries", onClick: () => setScreen("beneficiaries") }} actions={<StepBar current={3} total={3} compact />} />
         <div className="flex flex-col gap-5">
-          <StepBar current={3} total={3} showCount />
           <ReviewSummary details={details} total={money(premium)} totalLabel={premiumLabel} />
           <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
             {needsMedical
@@ -547,9 +544,8 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
 
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
-      <PageHeader title={plan.name} backTo={back} />
+      <PageHeader title={plan.name} backTo={back} actions={<StepBar current={1} total={3} compact />} />
       <div className="flex flex-col gap-5 animate-in fade-in duration-200">
-        <StepBar current={1} total={3} showCount />
         <div className="flex flex-col gap-2">
           <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} label="Pay Premiums From" />
         </div>

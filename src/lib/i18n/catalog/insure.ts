@@ -272,6 +272,7 @@ const insure: Entry[] = [
   ["Share for {0}", "Part de {0}", "Parte de {0}", "{0} 的份额"],
   ["Or add someone new", "Ou ajoutez une nouvelle personne", "O añade a alguien nuevo", "或添加新的人"],
   ["Add Another Beneficiary", "Ajouter un autre bénéficiaire", "Añadir otro beneficiario", "添加另一位受益人"],
+  ["Choose a saved beneficiary", "Choisir un bénéficiaire enregistré", "Elegir un beneficiario guardado", "选择已保存的受益人"],
   ["Trustee", "Fiduciaire", "Fideicomisario", "受托人"],
   ["An adult receives the payout for {0} until {1} turns 18.", "Un adulte reçoit le paiement pour {0} jusqu’aux 18 ans de {1}.", "Un adulto recibe el pago de {0} hasta que {1} cumpla 18 años.", "在{0}年满 18 岁前，由一位成年人代为领取赔付。"],
   ["An adult receives the payout for your beneficiaries under 18, until each turns 18.", "Un adulte reçoit le paiement pour vos bénéficiaires de moins de 18 ans, jusqu’à leurs 18 ans.", "Un adulto recibe el pago de tus beneficiarios menores de 18 años hasta que cada uno cumpla 18.", "在未满 18 岁的受益人各自年满 18 岁前，由一位成年人代为领取赔付。"],

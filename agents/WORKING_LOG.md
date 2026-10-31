@@ -183,6 +183,9 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ## Inbox
 
 ### 2026-10-31
+- Decision: a short flow shows progress as three small ticks in the page header's `actions` (`<StepBar compact />`), with no "Step n of N" text and no full-width bar above the form (designer chose it over named segments, a ring and a bar above the button; see `prototype/insure-buy-progress-prototypes.html`). Done in `BuyPlanFlow`.
+- Gap: `ClaimFlow` (2 steps) and `CreateInsuranceProfileFlow` still use the full-width `StepBar`; move them to `compact` if the designer wants Insure consistent.
+- Decision: the buy-flow breadcrumb tail reads "Apply" (was "Get Started", which only fits a first purchase).
 - Decision: one control-height scale (`--control-*` in globals.css, rule in CONSTITUTION §6). Button `lg` is removed: it was 36px, and about 65 call sites forced it to 40px with `h-10 text-[14px]`, which is `md`. They now use `md` with no override. `Input`, `PhoneInput` and `Select` read the same tokens, so an `xl` button matches a field.
 - Discovery: the Button default is 36px, so a full-width flow button with no `size` came out small beside 44px fields (the "Add members" button in CreateGroupFlow). Flow step actions are `xl`.
 - Gap: other flows still have full-width `<Button>` with no `size` (for example the picker "Done" in CreateGroupFlow). Needs a pass, or a lint rule for `w-full` buttons with no size.

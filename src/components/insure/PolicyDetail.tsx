@@ -16,6 +16,7 @@
  */
 
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { ChevronRight, ClipboardList, FileText, ShieldOff, Users } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { ListCard } from "@/components/ui/list-card";
@@ -36,11 +37,14 @@ function ActionRow({
   icon: Icon,
   title,
   meta,
+  destructive = false,
 }: {
   href: string;
   icon: typeof FileText;
   title: string;
   meta: string;
+  /** Ends something for good: the icon goes destructive, and the row sits apart from the others. */
+  destructive?: boolean;
 }) {
   return (
     <li>
@@ -48,7 +52,7 @@ function ActionRow({
         href={href}
         className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
       >
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+        <span className={cn("flex size-8 shrink-0 items-center justify-center rounded-xl", destructive ? "bg-destructive/10 text-destructive-text" : "bg-muted text-foreground")}>
           <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
@@ -134,14 +138,6 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
             <ActionRow href={`${base}/statement`} icon={FileText} title="Statement" meta="Every premium you’ve paid" />
           )}
           {canClaim && <ActionRow href={`${base}/claim`} icon={ClipboardList} title="File a Claim" meta="Tell us what happened and upload documents" />}
-          {policy.status !== "cancel-requested" && (
-            <ActionRow
-              href={`${base}/cancel`}
-              icon={ShieldOff}
-              title={policy.status === "pending-medical" ? "Withdraw Application" : "Cancel Policy"}
-              meta="End your cover"
-            />
-          )}
         </ListCard>
 
         {policy.members.length > 0 && (
@@ -175,6 +171,18 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
             </ListCard>
             <p className="px-1 text-[12px] text-muted-foreground">{`${PROVIDER} contacts you within 48 hours of a claim, once every document is in.`}</p>
           </section>
+        )}
+
+        {policy.status !== "cancel-requested" && (
+          <ListCard>
+            <ActionRow
+              href={`${base}/cancel`}
+              icon={ShieldOff}
+              title={policy.status === "pending-medical" ? "Withdraw Application" : "Cancel Policy"}
+              meta="End your cover"
+              destructive
+            />
+          </ListCard>
         )}
       </div>
     </div>

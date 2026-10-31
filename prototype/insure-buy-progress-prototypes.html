@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Insure buy flow progress: 5 variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#e4e4e7;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--tile:#1a1a1a;--tileh:#2a2a2a;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0}
+  .mu{color:var(--mu)}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note{font-size:13px;color:var(--mu);line-height:1.55;max-width:900px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .cell{width:560px;max-width:100%;display:flex;flex-direction:column;gap:12px}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:24px;box-shadow:var(--shadow);min-height:600px;padding:24px;display:flex;flex-direction:column;gap:20px;overflow:hidden}
+  /* page chrome */
+  .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mu);flex-wrap:wrap} .crumbs b{font-weight:500;color:var(--tx)}
+  .hd{display:flex;align-items:center;gap:10px;min-height:32px} .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em;flex:1}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .lbl{font-size:13px;font-weight:500} .fg{display:flex;flex-direction:column;gap:8px}
+  .field{height:44px;border-radius:12px;background:var(--tile);padding:0 14px;display:flex;align-items:center;font-size:14px;color:var(--mu)}
+  .btn{height:44px;border-radius:12px;background:var(--am);color:#111;font-weight:500;font-size:14px;display:flex;align-items:center;justify-content:center;width:100%}
+  .btn.ghost{background:var(--tile);color:var(--tx)}
+  .foot{margin-top:auto;display:flex;flex-direction:column;gap:12px}
+  /* progress pieces */
+  .segs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px} .segs i{height:6px;border-radius:3px;background:var(--tileh);transition:background .25s} .segs i.d{background:color-mix(in srgb,var(--am) 60%,transparent)} .segs i.c{background:var(--am)}
+  .named{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px} .named div{display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--mu)} .named div i{height:6px;border-radius:3px;background:var(--tileh);transition:background .25s} .named .d i{background:color-mix(in srgb,var(--am) 60%,transparent)} .named .c i{background:var(--am)} .named .c{color:var(--tx);font-weight:500} .named .d{color:var(--tx)}
+  .hair{height:3px;background:var(--tileh);margin:-24px -24px 0} .hair i{display:block;height:100%;background:var(--am);transition:width .3s}
+  .ring{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none} .ring span{width:28px;height:28px;border-radius:50%;background:var(--surf);display:flex;align-items:center;justify-content:center;font-size:11px}
+  .mini{display:flex;gap:4px;align-items:center} .mini i{width:18px;height:4px;border-radius:2px;background:var(--tileh)} .mini i.d{background:color-mix(in srgb,var(--am) 60%,transparent)} .mini i.c{background:var(--am)}
+  .next{font-size:13px;color:var(--mu)} .next b{font-weight:400;color:var(--tx)}
+  .sheet{display:flex;flex-direction:column;gap:8px;background:var(--tile);border-radius:16px;padding:12px 14px;font-size:13px} .sheet div{display:flex;justify-content:space-between;gap:12px} .sheet span{color:var(--mu)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Insure buy flow: showing progress, 5 variations</h1>
+    <div class="row" style="gap:8px">
+      <div class="seg" id="theme"><button data-t="dark" class="on">Dark</button><button data-t="light">Light</button></div>
+    </div>
+  </div>
+  <div class="pills" id="pills"></div>
+  <p class="note" id="note"></p>
+</div>
+<div class="stage"><div class="cell" id="cell"></div></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const STEPS=["Your Cover","Beneficiaries","Review"];
+const TITLES=["Child Education Plan","Beneficiaries","Review and Confirm"];
+let v=0, step=0;
+const V=[
+ ["Bar under the header","A full-width line at the very top of the page, one segment per step. Nothing is added to the screen below the title, so the form starts where it always did. The step name is the page title."],
+ ["Named segments","Three segments with their names under them. The customer sees the whole path and where they are, in the space the old label took. Finished steps read in full ink."],
+ ["Folded into the breadcrumb","No bar at all. The last crumb is the step, with three small ticks beside it. The header already says where you are, so progress joins it instead of sitting under it."],
+ ["Ring beside the title","A small ring with 2/3 inside, at the right of the title row. It costs no vertical space and stays in the same place on every step."],
+ ["Bar above the button, with what is next","The bar sits on the action it belongs to, with the next step named beside it: Next, Review. Progress is read at the moment the customer decides to go on."],
+];
+const body=()=>{
+ if(step===0)return `<div class="fg"><span class="lbl">Cover Amount</span><div class="field">GHS 50,000.00</div></div><div class="fg"><span class="lbl">Premium</span><div class="field">GHS 265.02 a month</div></div><div class="fg"><span class="lbl">Pay From</span><div class="field">Savings Account · 4001 9922 1100</div></div>`;
+ if(step===1)return `<div class="fg"><span class="lbl">Beneficiaries</span><div class="field">Naa Shika Mensah · Sister · 100%</div></div><div class="btn ghost">+ Add Another Beneficiary</div>`;
+ return `<div class="sheet"><div><span>Plan</span>Child Education Plan</div><div><span>Cover</span>GHS 50,000.00</div><div><span>Premium</span>GHS 265.02 a month</div><div><span>Beneficiary</span>Naa Shika Mensah</div></div>`;
+};
+const cta=()=>step===2?"Confirm and Pay":"Continue";
+const ctaRow=()=>`<button class="btn" data-go="1">${cta()}</button>`;
+const hd=(extra="")=>`<div class="hd"><span class="bk" data-go="-1" style="cursor:pointer">‹</span><h2>${TITLES[step]}</h2>${extra}</div>`;
+const crumbs=(last)=>`<div class="crumbs">Insure › Child Education Plan › <b>${last}</b></div>`;
+const cls=i=>i<step?"d":i===step?"c":"";
+function render(){
+ let top="",foot=ctaRow(),head="";
+ if(v===0){top=`<div class="hair"><i style="width:${(step+1)/3*100}%"></i></div>`;head=crumbs("Apply")+hd();}
+ if(v===1){head=crumbs("Apply")+hd()+`<div class="named">${STEPS.map((s,i)=>`<div class="${cls(i)}"><i></i>${s}</div>`).join("")}</div>`;}
+ if(v===2){head=`<div class="crumbs">Insure › Child Education Plan › <b>Apply</b> <span class="mini">${STEPS.map((_,i)=>`<i class="${cls(i)}"></i>`).join("")}</span></div>`+hd();}
+ if(v===3){head=crumbs("Apply")+hd(`<div class="ring" style="background:conic-gradient(var(--am) ${(step+1)/3*100}%,var(--tileh) 0)"><span>${step+1}/3</span></div>`);}
+ if(v===4){head=crumbs("Apply")+hd();foot=`<div class="segs">${STEPS.map((_,i)=>`<i class="${cls(i)}"></i>`).join("")}</div>${step<2?`<p class="next">Next: <b>${STEPS[step+1]}</b></p>`:`<p class="next">Last step</p>`}`+ctaRow();}
+ $("#cell").innerHTML=`<div class="frame">${top}${head}${body()}<div class="foot">${foot}</div></div>`;
+ $("#pills").innerHTML=V.map((x,i)=>`<button class="pill ${i===v?"on":""}" data-v="${i}">${i+1}. ${x[0]}</button>`).join("");
+ $("#note").textContent=V[v][1];
+}
+document.addEventListener("click",e=>{
+ const p=e.target.closest("[data-v]");if(p){v=+p.dataset.v;render();return}
+ const g=e.target.closest("[data-go]");if(g){step=Math.max(0,Math.min(2,step+ +g.dataset.go));render();return}
+ const t=e.target.closest("[data-t]");if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll("#theme button").forEach(b=>b.classList.toggle("on",b===t))}
+});
+render();
+</script>
+</body>
+</html>
