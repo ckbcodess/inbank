@@ -195,9 +195,6 @@ export function InteractiveCardsHub({
           variant={isBlocked ? "default" : "outline"}
           size="sm"
           onClick={toggleCardBlock}
-          className={`h-8 text-[12px] gap-2 rounded-xl ${
-            isBlocked ? "bg-success hover:bg-success text-white" : ""
-          }`}
         >
           {isBlocked ? (
             <>
@@ -211,21 +208,19 @@ export function InteractiveCardsHub({
         </Button>
 
         {currentCard.fundable ? (
-          <Button
-            variant="outline"
+          <Button variant="outline"
             size="sm"
             onClick={() => onTopUp(currentCard.id)}
-            className="h-8 text-[12px] gap-2 rounded-xl"
+            className="h-8 text-[12px] gap-2"
           >
             <Plus size={13} /> Top Up
           </Button>
         ) : (
-          <Button
-            variant="outline"
+          <Button variant="outline"
             size="sm"
             render={<Link href={`/cards/${currentCard.id}`} />}
             nativeButton={false}
-            className="h-8 text-[12px] gap-2 rounded-xl"
+            className="h-8 text-[12px] gap-2"
           >
             Limits &amp; PIN
           </Button>

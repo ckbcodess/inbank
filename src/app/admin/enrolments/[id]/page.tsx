@@ -508,7 +508,6 @@ export default function AdminEnrolmentDetailPage({
                     size="xs"
                     disabled={!letterIn}
                     onClick={() => handleSignatureDecision(idx, "match")}
-                    className={`h-7 text-[12px] ${check.status === "match" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}
                   >
                     <Check size={12} className="mr-1" />
                     Match

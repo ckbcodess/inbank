@@ -453,10 +453,11 @@ export function InternationalWireFlow({
             </DialogDescription>
           </div>
           <DialogFooter className="flex-row gap-2 px-4 pb-4 sm:px-5">
-            <Button type="button" variant="outline" onClick={() => setPapssFor(null)} className="h-10 flex-1 text-[15px]">
+            <Button size="md" type="button" variant="outline" onClick={() => setPapssFor(null)} className="flex-1 text-[15px]">
               Not now
             </Button>
             <Button
+              size="md"
               type="button"
               onClick={() => {
                 const name = papssFor ? PAPSS_COUNTRY_NAMES[papssFor.code] : undefined;
@@ -464,7 +465,7 @@ export function InternationalWireFlow({
                 setPapssFor(null);
                 if (name) onUsePapss?.(name, currency);
               }}
-              className="h-10 flex-1 text-[15px]"
+              className="flex-1 text-[15px]"
             >
               Use PAPSS
             </Button>

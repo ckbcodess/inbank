@@ -389,7 +389,7 @@ export default function EditGroupModal({
                   size="sm"
                   variant="outline"
                   onClick={() => setShowAddMember((prev) => !prev)}
-                  className="h-7 gap-2 px-2 text-[12px] rounded-xl border-border/80 font-normal cursor-pointer"
+                  className="h-7 gap-2 px-2 text-[12px]"
                 >
                   <UserPlus size={14} />
                   <span>{showAddMember ? "Close" : "+ Add Member"}</span>
@@ -483,7 +483,7 @@ export default function EditGroupModal({
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleAddSavedBeneficiary(b)}
-                                className="h-6 px-2 rounded-lg text-[11px] border-border/80 font-normal shrink-0"
+                                className="h-6 px-2 text-[11px] shrink-0"
                               >
                                 <Plus size={12} className="mr-1" /> Add
                               </Button>
@@ -549,7 +549,7 @@ export default function EditGroupModal({
                           type="button"
                           size="sm"
                           onClick={handleAddCustomMember}
-                          className="h-8 px-3 text-[12.5px] bg-primary text-primary-foreground font-normal shrink-0 cursor-pointer"
+                          className="h-8 px-3 text-[12.5px] shrink-0"
                         >
                           Add to Group
                         </Button>
@@ -680,7 +680,7 @@ export default function EditGroupModal({
               type="button"
               onClick={handleSaveChanges}
               disabled={!name.trim() || members.length === 0}
-              className="h-10 px-5 text-[13.5px] cursor-pointer"
+              className="h-10 px-5 text-[13.5px]"
             >
               Save changes
             </Button>

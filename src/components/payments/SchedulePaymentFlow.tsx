@@ -175,7 +175,7 @@ export function SchedulePaymentFlow() {
             <Button type="button" variant="outline" className="h-11 flex-1 text-[15px]" onClick={() => setScreen("form")}>
               Back to Edit
             </Button>
-            <Button type="button" className="h-11 flex-1 text-[16px]" onClick={() => setOtpOpen(true)}>
+            <Button size="xl" type="button" className="flex-1" onClick={() => setOtpOpen(true)}>
               Authorize &amp; Schedule
             </Button>
           </div>

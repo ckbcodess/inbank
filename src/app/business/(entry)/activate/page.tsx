@@ -302,8 +302,8 @@ function BusinessActivateContent() {
           <Button
             nativeButton={false}
             render={<Link href="/login?type=business" />}
-            size="lg"
-            className="h-10 w-full text-[14px]"
+            size="md"
+            className="w-full"
           >
             Go to Login
           </Button>
@@ -326,8 +326,8 @@ function BusinessActivateContent() {
         >
           <div className="flex flex-col gap-3">
             <Button
-              size="lg"
-              className="h-10 w-full text-[14px]"
+              size="md"
+              className="w-full"
               onClick={() => setShowBranchDialog(true)}
             >
               Find a Branch
@@ -416,8 +416,8 @@ function BusinessActivateContent() {
           </div>
 
           <Button
-            size="lg"
-            className="h-10 w-full text-[14px]"
+            size="md"
+            className="w-full"
             onClick={() => setStep("ghana_card")}
           >
             Accept Invitation
@@ -442,9 +442,9 @@ function BusinessActivateContent() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Continue
           </Button>
@@ -542,10 +542,10 @@ function BusinessActivateContent() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             disabled={!newPasswordReady(password, confirmPassword)}
             loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Proceed
           </Button>
@@ -587,10 +587,10 @@ function BusinessActivateContent() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             disabled={pinDigits.join("").length < 4}
             loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Continue
           </Button>
@@ -626,10 +626,10 @@ function BusinessActivateContent() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             disabled={confirmPinDigits.join("").length < 4}
             loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Confirm &amp; Finish
           </Button>

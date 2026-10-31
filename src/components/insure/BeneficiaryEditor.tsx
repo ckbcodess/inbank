@@ -159,10 +159,10 @@ function PersonModal({
       size="md"
       footer={
         <>
-          <Button type="button" variant="outline" className="h-10 flex-1" onClick={() => onOpenChange(false)}>
+          <Button size="md" type="button" variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button type="button" className="h-10 flex-1" disabled={!ready} onClick={save}>
+          <Button size="md" type="button" className="flex-1" disabled={!ready} onClick={save}>
             {trustee ? "Add Trustee" : "Add Beneficiary"}
           </Button>
         </>

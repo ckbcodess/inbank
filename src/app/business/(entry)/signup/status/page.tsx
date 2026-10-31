@@ -171,7 +171,7 @@ function StatusContent() {
               }}
             />
           </Field>
-          <Button type="submit" size="lg" disabled={!reference.trim()} className="h-10 w-full text-[14px]">
+          <Button type="submit" size="md" disabled={!reference.trim()} className="w-full">
             Continue
           </Button>
         </form>
@@ -276,8 +276,8 @@ function StatusContent() {
                 {company && (
                   <Button
                     variant="outline"
-                    size="lg"
-                    className="h-10 w-full text-[14px]"
+                    size="md"
+                    className="w-full"
                     onClick={() =>
                       openRequestLetter({ reference: app.reference, company, accounts: app.accounts, users: app.users })
                     }
@@ -294,7 +294,7 @@ function StatusContent() {
               file={letter}
               onChange={setLetter}
             />
-            <Button size="lg" loading={busy} disabled={!letter} onClick={handleSendLetter} className="h-10 w-full text-[14px]">
+            <Button size="md" loading={busy} disabled={!letter} onClick={handleSendLetter} className="w-full">
               Send Letter
             </Button>
             <p className="text-center text-[12px] text-muted-foreground">
@@ -336,14 +336,14 @@ function StatusContent() {
                         {SHOW_DEMO_TOOLS && (
                           <Button
                             variant="ghost"
-                            size="lg"
+                            size="md"
                             nativeButton={false}
                             render={<Link href="/business/activate" />}
                           >
                             Activate
                           </Button>
                         )}
-                        <Button variant="outline" size="lg" onClick={() => handleResend(u.id, u.name)}>
+                        <Button variant="outline" size="md" onClick={() => handleResend(u.id, u.name)}>
                           Resend
                         </Button>
                       </div>
@@ -403,8 +403,8 @@ function StatusContent() {
 
         {app.status === "approved" && (
           <Button
-            size="lg"
-            className="h-10 w-full text-[14px]"
+            size="md"
+            className="w-full"
             onClick={() => router.push("/login?type=business")}
           >
             Go to Login

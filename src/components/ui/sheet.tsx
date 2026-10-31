@@ -4,6 +4,7 @@ import * as React from "react";
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 import { X } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
@@ -381,25 +382,15 @@ function SheetButton({
   variant?: "primary" | "secondary" | "ghost" | "lime";
 }) {
   return (
-    <button
+    <Button
       type="button"
-      className={cn(
-        "rounded-full font-medium transition-all cursor-pointer flex items-center justify-center select-none",
-        (variant === "primary" || variant === "lime") && [
-          "bg-primary text-primary-foreground hover:bg-primary-hover h-10 text-[14px] shadow-xs",
-        ],
-        variant === "secondary" && [
-          "bg-muted hover:bg-muted/80 text-foreground h-10 text-[14px]",
-        ],
-        variant === "ghost" && [
-          "text-muted-foreground hover:text-foreground hover:bg-muted/50 h-9 text-[14px]",
-        ],
-        className
-      )}
+      size="md"
+      variant={variant === "primary" || variant === "lime" ? "default" : variant}
+      className={className}
       {...props}
     >
       {children}
-    </button>
+    </Button>
   );
 }
 

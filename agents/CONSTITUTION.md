@@ -186,6 +186,11 @@ here. Never fall back to dense, boxed layouts.
   (badges and pills). Don't write `rounded`, `-md`, `-xs`, `-4xl` or px radii (the only exceptions are swatches
   of 3px or less). For concentric corners, add padding and border to the inner radius:
   `rounded-[calc(var(--radius-3xl)+var(--spacing)*N+1px)]`.
+- **One control-height scale.** Buttons and fields take their height from `--control-xs 20 · sm 28 · default 36 · md 40 · xl 44`
+  (globals.css), so a button beside a field lines up. Pick a Button `size` by role: `sm` in a row or chip strip,
+  `default` in a toolbar, `md` in a panel, dialog or auth screen, `xl` for a flow or form step's action (a full-width
+  flow button is `xl`, the same height as a field). Never override height or text size with `className` and never
+  write a raw `h-*` on a control. There is no `lg`. A new size needs a new token and a reason.
 - **Page rhythm:** the page root is `flex flex-col gap-4`. Between sections on a calm page use
   `gap-10`. Each section has a 16px medium heading row (`min-h-6`) and `gap-3` down to its content.
 - **Header to first content is 40px on a phone and 48px from `sm`, on every page,** whatever the root's gap. It comes

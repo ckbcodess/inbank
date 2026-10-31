@@ -89,8 +89,6 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
   ];
   const tier = policy.tier ? findTier(policy.tier) : undefined;
   const from = account ? `${account.name} · ${account.number}` : undefined;
-  // Only a monthly policy has a count to show: the premiums paid, out of the premiums in the whole term.
-  const count = policy.termYears && policy.frequency === "monthly" ? `${policy.payments.length} of ${policy.termYears * 12} premiums` : undefined;
 
   const holder = personOf(policy.ownerId)?.fullName;
   const groups: FactGroup[] = [
@@ -104,7 +102,6 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
     },
     {
       rows: [
-        ...(policy.termYears ? [{ label: "Policy term", value: `${policy.termYears} Years` }] : []),
         ...(waiting || cancelling ? [] : [{ label: "Deduction date", value: windowLabel }]),
         ...(maturity ? [{ label: "Ends", value: formatDate(maturity) }] : []),
         ...(tier ? [{ label: "Your cover", value: `${tier.label} · ${money(tier.benefit)}` }] : []),
@@ -113,10 +110,9 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
     },
     {
       rows: [
-        { label: "Premium", value: waiting ? `${premium}, not taken yet` : premium },
-        ...(policy.increment && plan?.kind === "savings" ? [{ label: "Yearly increase", value: `${policy.increment}%` }] : []),
+        { label: "Premium", value: `${premium}${policy.increment && plan?.kind === "savings" ? `, up ${policy.increment}% a year` : ""}${waiting ? ", not taken yet" : ""}` },
         ...(from ? [{ label: "Paid from", value: from }] : []),
-        { label: "Paid so far", value: money(premiumsPaid(policy)), note: count },
+        { label: "Paid so far", value: money(premiumsPaid(policy)) },
       ],
     },
     { rows: [{ label: tier ? "Total benefit" : "Sum assured", value: money(policy.sumAssured), total: true }] },

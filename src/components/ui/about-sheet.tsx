@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Button } from "@/components/ui/button";
 import { Info } from "@/components/ui/icons";
 import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
@@ -13,14 +14,10 @@ export function AboutSheet({ title, children }: { title: string; children: React
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="inline-flex h-8 items-center gap-1 rounded-full bg-muted px-3 text-[13px] text-foreground transition-colors duration-hover hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
+      <Button type="button" variant="tile" onClick={() => setOpen(true)}>
         <Info size={14} aria-hidden="true" />
         About
-      </button>
+      </Button>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="center" className="flex flex-col">
           <SheetHeader>

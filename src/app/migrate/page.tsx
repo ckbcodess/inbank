@@ -142,7 +142,7 @@ function MigrateContent() {
             <span className="text-[13px] text-muted-foreground">What&apos;s new</span>
             <span className="text-[14px] text-foreground">A clearer dashboard, faster payments to saved payees, and passkey login on your own devices.</span>
           </div>
-          <Button size="lg" onClick={next} className="h-10 w-full text-[14px]">
+          <Button size="md" onClick={next} className="w-full">
             Get started
           </Button>
         </div>
@@ -193,10 +193,10 @@ function MigrateContent() {
             Something missing? You can tell us from Help once you&apos;re in — nothing on your accounts has changed.
           </p>
           <div className="flex gap-2">
-            <Button variant="outline" size="lg" onClick={back} className="h-10 flex-1 text-[14px]">
+            <Button variant="outline" size="md" onClick={back} className="flex-1">
               Back
             </Button>
-            <Button size="lg" onClick={next} className="h-10 flex-[2] text-[14px]">
+            <Button size="md" onClick={next} className="flex-[2]">
               Looks right
             </Button>
           </div>
@@ -222,7 +222,7 @@ function MigrateContent() {
             onConfirmChange={setConfirm}
             autoFocus
           />
-          <Button type="submit" size="lg" disabled={!newPasswordReady(password, confirm)} loading={busy} className="mt-1 h-10 w-full text-[14px]">
+          <Button type="submit" size="md" disabled={!newPasswordReady(password, confirm)} loading={busy} className="mt-1 w-full">
             Proceed
           </Button>
         </form>
@@ -244,7 +244,7 @@ function MigrateContent() {
               </span>
             </span>
           </label>
-          <Button size="lg" onClick={finish} disabled={!acceptTerms} loading={busy} className="h-10 w-full text-[14px]">
+          <Button size="md" onClick={finish} disabled={!acceptTerms} loading={busy} className="w-full">
             Go to my dashboard
           </Button>
         </div>

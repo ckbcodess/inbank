@@ -69,7 +69,7 @@ function NewToGcbContent() {
         align="center"
         width="compact"
       >
-        <Button size="lg" className="h-10 w-full text-[14px]" onClick={() => router.push("/login?type=business")}>
+        <Button size="md" className="w-full" onClick={() => router.push("/login?type=business")}>
           Back to Login
         </Button>
       </AuthLayout>
@@ -146,7 +146,7 @@ function NewToGcbContent() {
           </Field>
         </div>
 
-        <Button type="submit" size="lg" loading={busy} disabled={!ready} className="h-10 w-full text-[14px]">
+        <Button type="submit" size="md" loading={busy} disabled={!ready} className="w-full">
           Send Request
         </Button>
       </form>

@@ -48,9 +48,10 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
 
       <div className="flex shrink-0 items-center gap-2 sm:gap-2">
         <Button
+          size="md"
           type="button"
           onClick={onFundClick}
-          className="h-10 flex-1 cursor-pointer px-4 text-[14px] transition-transform duration-hover sm:flex-none"
+          className="flex-1 px-4 sm:flex-none"
         >
           <span>Fund Virtual Account</span>
           <ArrowRight size={15} className="ml-2" />

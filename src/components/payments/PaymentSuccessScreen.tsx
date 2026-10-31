@@ -565,19 +565,11 @@ export function PaymentSuccessScreen({
         className="flex items-stretch gap-3 w-full max-w-[460px] pt-2"
       >
         {onSecondaryAction && (
-          <button
-            type="button"
-            onClick={onSecondaryAction}
-            className="flex-1 rounded-lg border border-border dark:border-border bg-card px-4 py-2 text-[14px] font-medium text-foreground hover:bg-muted/60 transition cursor-pointer text-center shadow-xs"
-          >
+          <Button size="md" type="button" variant="outline" onClick={onSecondaryAction} className="flex-1">
             {secondaryActionLabel}
-          </button>
+          </Button>
         )}
-        <button
-          type="button"
-          onClick={onPrimaryAction}
-          className="relative overflow-hidden flex-1 rounded-lg bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-2 text-[14px] font-medium transition-[transform,background-color] duration-press ease-settle cursor-pointer text-center shadow-xs"
-        >
+        <Button size="md" type="button" onClick={onPrimaryAction} className="flex-1">
           {/* Single light sweep as the button arrives — then it stays still */}
           <motion.div
             initial={{ x: "-100%" }}
@@ -586,7 +578,7 @@ export function PaymentSuccessScreen({
             className="pointer-events-none absolute inset-0 -skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent"
           />
           <span className="relative z-10">{primaryActionLabel}</span>
-        </button>
+        </Button>
       </motion.div>
       )}
 
@@ -655,12 +647,13 @@ export function PaymentSuccessScreen({
           {feedbackRating && (
             <DialogFooter>
               <Button
+                size="md"
                 type="button"
                 onClick={() => {
                   setShowFeedbackModal(false);
                   toast.success("Thank you! Your feedback helps us improve GCB Internet Banking.");
                 }}
-                className="h-10 w-full rounded-lg text-[14px]"
+                className="w-full"
               >
                 Submit Feedback
               </Button>

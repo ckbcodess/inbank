@@ -374,21 +374,21 @@ function CorporateEnrolmentFlow() {
           width="compact"
         >
           <div className="flex flex-col gap-3">
-            <Button size="lg" className="h-10 w-full text-[14px]" onClick={handleBack}>
+            <Button size="md" className="w-full" onClick={handleBack}>
               Try Again
             </Button>
             <Button
               variant="outline"
-              size="lg"
-              className="h-10 w-full text-[14px]"
+              size="md"
+              className="w-full"
               onClick={() => router.push("/business/signup/new-to-gcb?type=company")}
             >
               Open an Account
             </Button>
             <Button
               variant="outline"
-              size="lg"
-              className="h-10 w-full text-[14px]"
+              size="md"
+              className="w-full"
               onClick={() => setShowBranchDialog(true)}
             >
               Find a Branch
@@ -414,13 +414,13 @@ function CorporateEnrolmentFlow() {
       >
         <div className="flex flex-col gap-3">
           <Button
-            size="lg"
-            className="h-10 w-full text-[14px]"
+            size="md"
+            className="w-full"
             onClick={() => router.push("/login?type=business")}
           >
             Go to Login
           </Button>
-          <Button variant="outline" size="lg" className="h-10 w-full text-[14px]" onClick={handleBack}>
+          <Button variant="outline" size="md" className="w-full" onClick={handleBack}>
             Use Another Account
           </Button>
         </div>
@@ -452,16 +452,16 @@ function CorporateEnrolmentFlow() {
           </div>
           <div className="flex flex-col gap-3">
             <Button
-              size="lg"
-              className="h-10 w-full text-[14px]"
+              size="md"
+              className="w-full"
               onClick={() => router.push(`/business/signup/status?ref=${encodeURIComponent(reference)}`)}
             >
               Track Your Application
             </Button>
             <Button
               variant="outline"
-              size="lg"
-              className="h-10 w-full text-[14px]"
+              size="md"
+              className="w-full"
               onClick={() => router.push("/login?type=business")}
             >
               Back to Login
@@ -569,10 +569,10 @@ function CorporateEnrolmentFlow() {
             <div className="flex flex-col gap-2">
               <Button
                 type="submit"
-                size="lg"
+                size="md"
                 loading={busy}
                 disabled={Boolean(company) && selectedAccountIds.length === 0}
-                className="h-10 w-full text-[14px]"
+                className="w-full"
               >
                 {company ? "Continue" : "Find Company"}
               </Button>
@@ -637,11 +637,11 @@ function CorporateEnrolmentFlow() {
 
             <div className="flex flex-col gap-2">
               <Button
-                size="lg"
+                size="md"
                 loading={busy}
                 disabled={applicantChoice === null || (applicantChoice === "other" && !otherReady)}
                 onClick={handleSendCode}
-                className="h-10 w-full text-[14px]"
+                className="w-full"
               >
                 Send Code
               </Button>
@@ -799,10 +799,10 @@ function CorporateEnrolmentFlow() {
                   </Select>
                 </Field>
                 <div className="flex gap-3">
-                  <Button type="button" variant="outline" size="lg" className="h-10 flex-1 text-[14px]" onClick={resetNewUser}>
+                  <Button type="button" variant="outline" size="md" className="flex-1" onClick={resetNewUser}>
                     Cancel
                   </Button>
-                  <Button type="submit" size="lg" disabled={!newUserReady} className="h-10 flex-1 text-[14px]">
+                  <Button type="submit" size="md" disabled={!newUserReady} className="flex-1">
                     Add User
                   </Button>
                 </div>
@@ -810,12 +810,12 @@ function CorporateEnrolmentFlow() {
             ) : (
               <div className="flex flex-col gap-3">
                 {canAddSelf && (
-                  <Button variant="outline" size="lg" className="h-10 w-full text-[14px]" onClick={startAddingSelf}>
+                  <Button variant="outline" size="md" className="w-full" onClick={startAddingSelf}>
                     <UserPlus size={16} />
                     Add Myself
                   </Button>
                 )}
-                <Button variant="outline" size="lg" className="h-10 w-full text-[14px]" onClick={() => setAdding(true)}>
+                <Button variant="outline" size="md" className="w-full" onClick={() => setAdding(true)}>
                   <Plus size={16} />
                   Add a User
                 </Button>
@@ -834,10 +834,10 @@ function CorporateEnrolmentFlow() {
             {!adding && (
               <div className="flex flex-col gap-2">
                 <Button
-                  size="lg"
+                  size="md"
                   disabled={Boolean(usersBlock)}
                   onClick={() => setStep("review")}
-                  className="h-10 w-full text-[14px]"
+                  className="w-full"
                 >
                   Continue
                 </Button>
@@ -872,7 +872,7 @@ function CorporateEnrolmentFlow() {
               ))}
             </ReviewGroup>
 
-            <Button size="lg" onClick={goToLetter} className="h-10 w-full text-[14px]">
+            <Button size="md" onClick={goToLetter} className="w-full">
               Continue
             </Button>
           </div>
@@ -884,8 +884,8 @@ function CorporateEnrolmentFlow() {
             <div className="flex flex-col gap-3">
               <Button
                 variant="outline"
-                size="lg"
-                className="h-10 w-full text-[14px]"
+                size="md"
+                className="w-full"
                 onClick={() => openRequestLetter({ reference, company, accounts, users, applicant })}
               >
                 <FileText size={16} />
@@ -907,11 +907,11 @@ function CorporateEnrolmentFlow() {
             <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-2">
                 <Button
-                  size="lg"
+                  size="md"
                   loading={busy && !sendingLater}
                   disabled={!letter}
                   onClick={() => handleSubmit(true)}
-                  className="h-10 w-full text-[14px]"
+                  className="w-full"
                 >
                   Submit Application
                 </Button>
@@ -921,10 +921,10 @@ function CorporateEnrolmentFlow() {
               </div>
               <Button
                 variant="ghost"
-                size="lg"
+                size="md"
                 loading={busy && sendingLater}
                 onClick={() => handleSubmit(false)}
-                className="h-10 w-full text-[14px]"
+                className="w-full"
               >
                 I&apos;ll Email, Post or Bring It In
               </Button>

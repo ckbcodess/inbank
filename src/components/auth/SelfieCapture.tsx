@@ -432,9 +432,9 @@ export default function SelfieCapture({
             <Button
               type="button"
               variant="default"
-              size="lg"
+              size="md"
               loading={busy}
-              className="h-10 w-full text-[14px]"
+              className="w-full"
             >
               Verified ✓
             </Button>
@@ -453,11 +453,11 @@ export default function SelfieCapture({
           <Button
             type="button"
             variant="default"
-            size="lg"
+            size="md"
             data-tour={dataTour}
             onClick={handleSnap}
             disabled={busy}
-            className="h-10 w-full text-[14px]"
+            className="w-full"
           >
             <Camera size={16} className="mr-2" />
             Take photo
@@ -467,9 +467,9 @@ export default function SelfieCapture({
             <Button
               type="button"
               variant="outline"
-              size="lg"
+              size="md"
               onClick={startCamera}
-              className="h-10 w-full text-[14px]"
+              className="w-full"
             >
               <RefreshCw size={15} className="mr-2" />
               Try camera again
@@ -477,9 +477,9 @@ export default function SelfieCapture({
             <Button
               type="button"
               variant="default"
-              size="lg"
+              size="md"
               onClick={() => fileInputRef.current?.click()}
-              className="h-10 w-full text-[14px]"
+              className="w-full"
             >
               <Upload size={15} className="mr-2" />
               Upload photo from device
@@ -489,9 +489,9 @@ export default function SelfieCapture({
           <Button
             type="button"
             variant="default"
-            size="lg"
+            size="md"
             loading
-            className="h-10 w-full text-[14px]"
+            className="w-full"
           >
             Preparing camera...
           </Button>

@@ -35,7 +35,7 @@ export function SearchField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="h-10 pl-10 pr-10"
+        className="h-(--control-md) pl-10 pr-10"
       />
       {value && (
         <button

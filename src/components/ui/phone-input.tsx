@@ -147,7 +147,7 @@ export function PhoneInput({
     <div
       data-slot="phone-input"
       className={cn(
-        "flex h-11 w-full items-center gap-2 rounded-xl border border-field-border bg-field px-3 text-[14px] transition-all outline-none",
+        "flex h-(--control-xl) w-full items-center gap-2 rounded-xl border border-field-border bg-field px-3 text-[14px] transition-all outline-none",
         "focus-within:outline-none focus-within:border-field-border-focus focus-within:ring-1 focus-within:ring-field-border-focus",
         "hover:bg-field-hover focus-within:bg-field-focus",
         "has-aria-invalid:border-destructive has-aria-invalid:ring-1 has-aria-invalid:ring-destructive dark:has-aria-invalid:ring-destructive",

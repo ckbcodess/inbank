@@ -140,8 +140,9 @@ export function OfferDetail() {
         <ProductPitchBody productId={product.id} highlights={highlightsOf(offer)} price={priceOf(offer)} />
         <div className="flex flex-col gap-2">
           <Button
+            size="xl"
             type="button"
-            className="h-11 w-full text-[16px]"
+            className="w-full"
             disabled={!canStart}
             nativeButton={!goes}
             render={goes ? <Link href={startHref} /> : undefined}

@@ -465,10 +465,10 @@ function ActivateContent() {
             <Button
               type="submit"
               variant="default"
-              size="lg"
+              size="md"
               data-tour="activate-card"
               loading={busy}
-              className="h-10 w-full text-[14px]"
+              className="w-full"
             >
               Continue
             </Button>
@@ -639,11 +639,11 @@ function ActivateContent() {
           <Button
             type="button"
             variant="default"
-            size="lg"
+            size="md"
             data-tour="activate-review"
             onClick={handleVerifyDetails}
             disabled={(isMultiAccount && !selectedPrimaryAccountId)} loading={busy}
-            className="mt-1 h-10 w-full text-[14px]"
+            className="mt-1 w-full"
           >
             Proceed
           </Button>
@@ -751,11 +751,11 @@ function ActivateContent() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             data-tour="activate-password"
             disabled={!newPasswordReady(password, confirmPassword)}
             loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Proceed
           </Button>

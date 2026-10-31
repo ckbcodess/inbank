@@ -59,7 +59,7 @@ export default function LetterUpload({
             if (chosen) onChange(toAttachedFile(chosen));
           }}
         />
-        <Button type="button" variant="outline" size="lg" tabIndex={-1} className="pointer-events-none">
+        <Button type="button" variant="outline" size="md" tabIndex={-1} className="pointer-events-none">
           <Paperclip size={15} aria-hidden="true" />
           {file ? "Replace" : "Choose File"}
         </Button>

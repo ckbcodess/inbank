@@ -239,16 +239,18 @@ export function ScanAndPayFlow({
               {/* Two Action Buttons: Outline on left, Primary on right */}
               <div className="flex w-full items-center gap-3">
                 <Button
+                  size="md"
                   type="button"
                   variant="outline"
-                  className="flex-1 h-10 text-[14px] font-medium border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
+                  className="flex-1"
                   onClick={handleShareMyQr}
                 >
                   Share QR Code
                 </Button>
                 <Button
+                  size="md"
                   type="button"
-                  className="flex-1 h-10 text-[14px] font-medium bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
+                  className="flex-1"
                   onClick={handleDownloadMyQr}
                 >
                   Download
@@ -328,16 +330,18 @@ export function ScanAndPayFlow({
               {/* Two Action Buttons: Outline on left, Primary on right */}
               <div className="flex w-full items-center gap-3">
                 <Button
+                  size="md"
                   type="button"
                   variant="outline"
-                  className="flex-1 h-10 text-[14px] font-medium border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
+                  className="flex-1"
                   onClick={() => galleryInputRef.current?.click()}
                 >
                   Select from Gallery
                 </Button>
                 <Button
+                  size="md"
                   type="button"
-                  className="flex-1 h-10 text-[14px] font-medium bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
+                  className="flex-1"
                   onClick={() => {
                     setTerminalInput("");
                     setTerminalDialogOpen(true);
@@ -415,7 +419,7 @@ export function ScanAndPayFlow({
                 {terminalInput.trim() && (
                   <Button
                     type="button"
-                    className="ml-2 h-8 px-3 bg-primary text-primary-foreground hover:bg-primary-hover font-medium shadow-xs cursor-pointer"
+                    className="ml-2 h-8 px-3"
                     onClick={() => handleConfirmTerminal(terminalInput)}
                   >
                     Continue
@@ -470,7 +474,7 @@ export function ScanAndPayFlow({
                   variant="ghost"
                   size="sm"
                   onClick={handleClearMerchant}
-                  className="text-xs text-muted-foreground hover:text-foreground h-7 px-2 cursor-pointer"
+                  className="text-xs text-muted-foreground hover:text-foreground h-7 px-2"
                   aria-label="Change merchant"
                 >
                   Change

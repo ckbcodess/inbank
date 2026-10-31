@@ -218,9 +218,9 @@ function ForgotPasswordFlow() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             disabled={!mobileValid} loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Proceed
           </Button>
@@ -319,9 +319,9 @@ function ForgotPasswordFlow() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             disabled={!canReset} loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Reset password
           </Button>
@@ -330,7 +330,7 @@ function ForgotPasswordFlow() {
 
       {stage === "no_match" && (
         <div className="flex flex-col gap-2">
-          <Button variant="default" size="lg" onClick={retrySelfie} className="h-10 w-full text-[14px]">
+          <Button variant="default" size="md" onClick={retrySelfie} className="w-full">
             Try again
           </Button>
           <p className="text-center text-[12px] text-muted-foreground tabular">
@@ -345,18 +345,18 @@ function ForgotPasswordFlow() {
         <div className="flex flex-col gap-2">
           <Button
             variant="default"
-            size="lg"
+            size="md"
             nativeButton={false}
             render={<a href={BRANCH_LOCATOR_URL} target="_blank" rel="noreferrer" />}
-            className="h-10 w-full text-[14px]"
+            className="w-full"
           >
             Find a branch
           </Button>
           <Button
             variant="ghost"
-            size="lg"
+            size="md"
             onClick={() => router.push("/login")}
-            className="h-10 w-full text-[14px]"
+            className="w-full"
           >
             Back to login
           </Button>
@@ -366,9 +366,9 @@ function ForgotPasswordFlow() {
       {stage === "done" && (
         <Button
           variant="default"
-          size="lg"
+          size="md"
           onClick={() => router.push("/login")}
-          className="h-10 w-full text-[14px]"
+          className="w-full"
         >
           Back to login
         </Button>

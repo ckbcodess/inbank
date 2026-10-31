@@ -270,10 +270,10 @@ function ForgotPinContent() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             disabled={!mobileValid}
             loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Proceed
           </Button>
@@ -382,7 +382,7 @@ function ForgotPinContent() {
 
       {stage === "no_match" && (
         <div className="flex flex-col gap-2">
-          <Button variant="default" size="lg" onClick={retrySelfie} className="h-10 w-full text-[14px]">
+          <Button variant="default" size="md" onClick={retrySelfie} className="w-full">
             Try again
           </Button>
           <p className="text-center text-[12px] text-muted-foreground tabular">
@@ -397,18 +397,18 @@ function ForgotPinContent() {
         <div className="flex flex-col gap-2">
           <Button
             variant="default"
-            size="lg"
+            size="md"
             nativeButton={false}
             render={<a href={BRANCH_LOCATOR_URL} target="_blank" rel="noreferrer" />}
-            className="h-10 w-full text-[14px]"
+            className="w-full"
           >
             Find a branch
           </Button>
           <Button
             variant="ghost"
-            size="lg"
+            size="md"
             onClick={() => router.push(actor ? homePathForActor(actor) : "/login")}
-            className="h-10 w-full text-[14px]"
+            className="w-full"
           >
             {actor ? "Back to dashboard" : "Back to login"}
           </Button>
@@ -418,9 +418,9 @@ function ForgotPinContent() {
       {stage === "done" && (
         <Button
           variant="default"
-          size="lg"
+          size="md"
           onClick={() => router.push(actor ? homePathForActor(actor) : "/login")}
-          className="h-10 w-full text-[14px]"
+          className="w-full"
         >
           {actor ? "Back to dashboard" : "Back to login"}
         </Button>

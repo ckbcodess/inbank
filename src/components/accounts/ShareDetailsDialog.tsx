@@ -78,7 +78,7 @@ export function ShareDetailsDialog({
           </dl>
         </DialogBody>
         <DialogFooter>
-          <Button onClick={copyAll} className="h-9 w-full gap-2 text-[13.5px]">
+          <Button onClick={copyAll} className="w-full gap-2">
             <Copy size={15} />
             Copy all
           </Button>

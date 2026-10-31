@@ -336,10 +336,10 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
             </p>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setRemoveOpen(false)} className="h-9 flex-1 rounded-lg text-[13px]">
+            <Button type="button" variant="outline" onClick={() => setRemoveOpen(false)} className="flex-1">
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleRemove} className="h-9 flex-1 rounded-lg text-[13px]">
+            <Button type="button" variant="destructive" onClick={handleRemove} className="flex-1">
               Remove
             </Button>
           </DialogFooter>
@@ -552,11 +552,10 @@ function RecentTransactionsDialog({
           )}
         </DialogBody>
         <DialogFooter>
-          <Button
-            variant="outline"
+          <Button variant="outline"
             nativeButton={false}
             render={<Link href={`/transactions?account=${account.id}`} />}
-            className="h-9 w-full rounded-lg text-[13px]"
+            className="w-full"
           >
             View All Transactions
           </Button>

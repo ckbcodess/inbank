@@ -393,21 +393,19 @@ export default function FigmaDesignFidelityDashboard() {
                               <p className="text-[11px] text-[#71717a]">{c.type}</p>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Button
-                                variant="outline"
+                              <Button variant="outline"
                                 size="sm"
                                 onClick={() => toggleBlock(c.id)}
-                                className="h-5 text-[11px] px-2 rounded-lg gap-1"
+                                className="h-5 text-[11px] px-2 gap-1"
                               >
                                 {isBlocked ? <Unlock size={11} /> : <Lock size={11} />}
                                 {isBlocked ? "Unblock" : "Block"}
                               </Button>
                               {c.fundable && (
-                                <Button
-                                  variant="outline"
+                                <Button variant="outline"
                                   size="sm"
                                   onClick={() => alert("Top up card")}
-                                  className="h-5 text-[11px] px-2 rounded-lg gap-1"
+                                  className="h-5 text-[11px] px-2 gap-1"
                                 >
                                   <Plus size={11} />
                                   Fund card
@@ -621,7 +619,7 @@ export default function FigmaDesignFidelityDashboard() {
 
                 <div>
                   <Button 
-                    className="w-full h-8 bg-[#18181b] text-white text-xs font-bold gap-2"
+                    className="w-full"
                     onClick={() => openAction("Currency Exchange Transfer")}
                   >
                     Continue to transfer <ArrowRight size={13} />

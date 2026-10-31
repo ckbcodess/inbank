@@ -95,11 +95,10 @@ export function CardDetails({ card }: { card: PaymentCard }) {
           {figure.label} · <span className="text-foreground">{figure.value}</span>
         </span>
       </div>
-      <Button
-        nativeButton={false}
+      <Button nativeButton={false}
         render={<Link href={`/cards/${card.id}`} />}
         variant="outline"
-        className="h-8 shrink-0 rounded-lg px-3 text-[13px]"
+        className="h-8 shrink-0 px-3 text-[13px]"
       >
         Manage
       </Button>

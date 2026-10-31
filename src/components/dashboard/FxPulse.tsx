@@ -104,10 +104,9 @@ export function FxPulse() {
             </Select>
           </div>
 
-          <Button
-            variant="outline"
+          <Button variant="outline"
             size="icon-sm"
-            className="mb-0.5 size-8 shrink-0 cursor-pointer"
+            className="mb-0.5 size-8 shrink-0"
             onClick={() => setDirection((d) => (d === "to-ghs" ? "from-ghs" : "to-ghs"))}
             aria-label={
               direction === "to-ghs"

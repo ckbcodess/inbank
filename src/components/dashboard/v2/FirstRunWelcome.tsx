@@ -525,7 +525,7 @@ export function FirstRunWelcome({
                         type="button"
                         variant="ghost"
                         onClick={skipFunding}
-                        className="h-8 w-full text-[13px] text-muted-foreground hover:text-foreground cursor-pointer"
+                        className="h-8 w-full text-[13px] text-muted-foreground hover:text-foreground"
                       >
                         I&apos;ll do this later
                       </Button>

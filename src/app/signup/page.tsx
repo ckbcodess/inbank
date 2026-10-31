@@ -340,10 +340,10 @@ function SignupContent() {
             <Button
               type="submit"
               variant="default"
-              size="lg"
+              size="md"
               data-tour="signup-card"
               loading={busy}
-              className="h-10 w-full text-[14px]"
+              className="w-full"
             >
               Continue
             </Button>
@@ -440,12 +440,12 @@ function SignupContent() {
           <Button
             type="button"
             variant="default"
-            size="lg"
+            size="md"
             data-tour="signup-review"
             onClick={handleVerifyDetails}
             disabled={!detailsValid}
             loading={busy}
-            className="mt-3 h-10 w-full text-[14px]"
+            className="mt-3 w-full"
           >
             Verify Mobile Number
           </Button>
@@ -539,10 +539,10 @@ function SignupContent() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             data-tour="signup-password"
             disabled={!newPasswordReady(password, confirmPassword)} loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Proceed
           </Button>

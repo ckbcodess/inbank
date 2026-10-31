@@ -730,14 +730,10 @@ export function VirtualCardDetailsView({
 
   const controlsNode = isInactive ? (
                 <div className="w-full">
-                  <button
-                    type="button"
-                    onClick={handleOpenActivate}
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary-hover rounded-lg py-2 px-3 flex items-center justify-center gap-2 font-medium text-[14px] shadow-2xs cursor-pointer transition-colors"
-                  >
+                  <Button size="md" type="button" onClick={handleOpenActivate} className="w-full">
                     <Sparkles size={17} />
                     Activate Card
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <div className="flex w-full flex-col">
@@ -805,7 +801,7 @@ export function VirtualCardDetailsView({
                     <Button
                       type="button"
                       onClick={handleOpenActivate}
-                      className="w-full h-9 text-[13px] bg-primary text-primary-foreground hover:bg-primary-hover"
+                      className="w-full"
                     >
                       Activate Card
                     </Button>
@@ -1211,20 +1207,22 @@ export function VirtualCardDetailsView({
               {effectiveCard.deliveryStatus === "ready_for_pickup" ? (
                 <>
                   <Button
+                    size="md"
                     type="button"
                     variant="outline"
                     onClick={() => {
                       setInitialTrackerView("pickup-code");
                       setActiveModal("tracking");
                     }}
-                    className="w-full sm:w-auto h-10 px-5 rounded-xl text-[14px]"
+                    className="w-full sm:w-auto px-5"
                   >
                     Show Pickup Code
                   </Button>
                   <Button
+                    size="md"
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-10 px-5 text-[14px]"
+                    className="w-full sm:w-auto px-5"
                   >
                     Activate Card
                   </Button>
@@ -1232,20 +1230,22 @@ export function VirtualCardDetailsView({
               ) : effectiveCard.deliveryStatus === "delivered" ? (
                 <>
                   <Button
+                    size="md"
                     type="button"
                     variant="outline"
                     onClick={() => {
                       setInitialTrackerView("timeline");
                       setActiveModal("tracking");
                     }}
-                    className="w-full sm:w-auto h-10 px-5 rounded-xl text-[14px]"
+                    className="w-full sm:w-auto px-5"
                   >
                     Track Delivery
                   </Button>
                   <Button
+                    size="md"
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-10 px-5 text-[14px]"
+                    className="w-full sm:w-auto px-5"
                   >
                     Activate Card
                   </Button>
@@ -1253,32 +1253,35 @@ export function VirtualCardDetailsView({
               ) : effectiveCard.deliveryStatus === "out_for_delivery" ? (
                 <>
                   <Button
+                    size="md"
                     type="button"
                     variant="outline"
                     onClick={() => {
                       setInitialTrackerView("pickup-code");
                       setActiveModal("tracking");
                     }}
-                    className="w-full sm:w-auto h-10 px-5 rounded-xl text-[14px]"
+                    className="w-full sm:w-auto px-5"
                   >
                     Show Delivery Code
                   </Button>
                   <Button
+                    size="md"
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-10 px-5 text-[14px]"
+                    className="w-full sm:w-auto px-5"
                   >
                     Activate Card
                   </Button>
                 </>
               ) : (
                 <Button
+                  size="md"
                   type="button"
                   onClick={() => {
                     setInitialTrackerView("timeline");
                     setActiveModal("tracking");
                   }}
-                  className="w-full sm:w-auto h-10 px-5 rounded-xl text-[14px]"
+                  className="w-full sm:w-auto px-5"
                 >
                   Track Delivery Progress
                 </Button>
@@ -1427,7 +1430,7 @@ export function VirtualCardDetailsView({
                 setActiveModal(null);
                 setPinCountdown(15);
               }}
-              className="w-full cursor-pointer"
+              className="w-full"
             >
               Done
             </Button>

@@ -3737,21 +3737,23 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {/* Action Buttons */}
             <div className="flex gap-3 items-center w-full pt-1">
               <Button
+                size="md"
                 type="button"
                 variant="outline"
                 onClick={() => setStage(1)}
                 disabled={phase === "submitting"}
-                className="flex-1 h-10 rounded-lg text-[14px] border-border"
+                className="flex-1"
               >
                 Back
               </Button>
               <Button
+                size="md"
                 type="button"
                 loading={phase === "submitting"}
                 onClick={() => {
                   setPinModalOpen(true);
                 }}
-                className="flex-1 h-10 rounded-lg text-[14px] bg-primary text-primary-foreground drop-shadow-sm cursor-pointer"
+                className="flex-1"
               >
                 {f.isScheduled ? "Proceed & Schedule" : "Proceed to Pay"}
               </Button>

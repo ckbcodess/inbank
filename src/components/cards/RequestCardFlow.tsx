@@ -467,10 +467,11 @@ export function RequestCardFlow() {
                 {/* Proceed Button */}
                 <div className="pt-2">
                   <Button
+                    size="md"
                     type="button"
                     disabled={!isDetailsValid}
                     onClick={() => setStep("customize")}
-                    className="w-full h-10 rounded-xl text-[14px]"
+                    className="w-full"
                   >
                     Continue
                   </Button>
@@ -586,10 +587,11 @@ export function RequestCardFlow() {
                     {/* Proceed Button */}
                     <div className="pt-2">
                       <Button
+                        size="md"
                         type="button"
                         disabled={!isDetailsValid}
                         onClick={() => setStep("customize")}
-                        className="w-full h-10 rounded-xl text-[14px]"
+                        className="w-full"
                       >
                         Continue
                       </Button>
@@ -753,9 +755,10 @@ export function RequestCardFlow() {
             {/* Proceed to Review Button */}
             <div className="w-full pt-2">
               <Button
+                size="md"
                 type="button"
                 onClick={() => setStep("review")}
-                className="w-full h-10 rounded-xl text-[14px]"
+                className="w-full"
               >
                 Continue
               </Button>
@@ -918,17 +921,17 @@ export function RequestCardFlow() {
           {/* Authorize CTA Button */}
           <div className="w-full flex flex-col gap-2 pt-2">
             <Button
+              size="md"
               type="button"
               onClick={() => setAuthModalOpen(true)}
-              className="w-full h-10 rounded-xl text-[14px] cursor-pointer"
+              className="w-full"
             >
               Authorize
             </Button>
-            <Button
-              variant="ghost"
+            <Button variant="ghost"
               type="button"
               onClick={() => setStep("customize")}
-              className="w-full h-9 rounded-xl text-[13px] text-muted-foreground hover:text-foreground"
+              className="w-full text-muted-foreground hover:text-foreground"
             >
               Back
             </Button>
@@ -1086,10 +1089,11 @@ export function RequestCardFlow() {
               transition={{ duration: 0.4, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
               className="w-full max-w-[420px]"
             >
-              <button
+              <Button
+                size="md"
                 type="button"
                 onClick={() => router.replace(`/cards/${createdCard.id}`)}
-                className="relative overflow-hidden w-full rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-3 text-[14px] font-medium transition cursor-pointer text-center shadow-xs"
+                className="w-full"
               >
                 {/* Single light sweep as the button arrives */}
                 <motion.div
@@ -1099,7 +1103,7 @@ export function RequestCardFlow() {
                   className="pointer-events-none absolute inset-0 -skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent"
                 />
                 <span className="relative z-10">View Card</span>
-              </button>
+              </Button>
             </motion.div>
           )}
         </motion.div>

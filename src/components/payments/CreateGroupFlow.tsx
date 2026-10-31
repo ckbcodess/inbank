@@ -81,7 +81,7 @@ export default function CreateGroupFlow({
   const [name, setName] = useState(groupToEdit?.name || "");
   const [description, setDescription] = useState(groupToEdit?.description || "");
   const [defaultAmount, setDefaultAmount] = useState(
-    groupToEdit?.defaultPerMemberAmount ? String(groupToEdit.defaultPerMemberAmount) : "4344"
+    groupToEdit?.defaultPerMemberAmount ? String(groupToEdit.defaultPerMemberAmount) : ""
   );
   const [splitType, setSplitType] = useState<"equal" | "custom">(
     groupToEdit?.splitType || "equal"
@@ -457,7 +457,7 @@ export default function CreateGroupFlow({
                       type="button"
                       size="sm"
                       onClick={handleAddCustomContact}
-                      className="h-8 px-3 text-[13px] bg-primary text-primary-foreground font-normal cursor-pointer"
+                      className="h-8 px-3 text-[13px]"
                     >
                       Add Member
                     </Button>
@@ -492,7 +492,7 @@ export default function CreateGroupFlow({
                 ))}
               </div>
             )}
-            <Button type="button" variant="outline" onClick={() => setPickerOpen(true)} className="w-full">
+            <Button type="button" size="xl" variant="outline" onClick={() => setPickerOpen(true)} className="w-full">
               <Plus size={14} /> {members.length > 0 ? "Add more members" : "Add members"}
             </Button>
 
@@ -565,10 +565,11 @@ export default function CreateGroupFlow({
 
           {/* Primary CTA */}
           <Button
+            size="xl"
             type="button"
             disabled={!name.trim() || members.length === 0}
             onClick={() => setStep(2)}
-            className="w-full h-10 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground text-[14px] font-normal cursor-pointer shadow-xs disabled:opacity-50 mt-1"
+            className="w-full mt-1"
           >
             Proceed to Amount
           </Button>
@@ -599,9 +600,6 @@ export default function CreateGroupFlow({
           ) : (
             /* Custom Amounts List */
             <div className="flex flex-col gap-2">
-              <Label>
-                Individual Contribution Amounts
-              </Label>
               <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[320px] overflow-y-auto scroll-fade">
                 {members.map((member) => (
                   <div
@@ -609,9 +607,7 @@ export default function CreateGroupFlow({
                     className="flex items-center justify-between px-3 py-2"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted/70 text-foreground text-[11px]">
-                        {initials(member.name)}
-                      </div>
+                      <PayeeAvatar name={member.name} initials={initials(member.name)} size="md" />
                       <div className="flex flex-col min-w-0">
                         <span className="text-[14px] text-foreground font-normal truncate">
                           {member.name}
@@ -656,18 +652,20 @@ export default function CreateGroupFlow({
           {/* Action Buttons: [ Back | Create Group ] */}
           <div className="flex items-center gap-2 w-full">
             <Button
+              size="xl"
               type="button"
               variant="outline"
               onClick={() => setStep(1)}
-              className="flex-1 h-10 rounded-xl border border-border/80 bg-background hover:bg-muted/40 text-foreground font-normal text-[14px] cursor-pointer"
+              className="flex-1"
             >
               Back
             </Button>
             <Button
+              size="xl"
               type="button"
               disabled={totalAmount <= 0}
               onClick={handleCreateGroup}
-              className="flex-1 h-10 bg-primary hover:bg-primary-hover text-primary-foreground font-normal text-[14.5px] cursor-pointer shadow-xs disabled:opacity-50"
+              className="flex-1"
             >
               Create Group
             </Button>

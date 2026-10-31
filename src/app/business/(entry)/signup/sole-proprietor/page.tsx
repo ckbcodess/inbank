@@ -299,8 +299,8 @@ function SoleProprietorSignupContent() {
       >
         <div className="flex flex-col gap-3">
           <Button
-            size="lg"
-            className="h-10 w-full gap-2 text-[14px]"
+            size="md"
+            className="w-full"
             onClick={() => window.open(GHANA_CARD_LINKAGE_URL, "_blank")}
           >
             Link Your Ghana Card
@@ -308,8 +308,8 @@ function SoleProprietorSignupContent() {
           </Button>
           <Button
             variant="outline"
-            size="lg"
-            className="h-10 w-full text-[14px]"
+            size="md"
+            className="w-full"
             onClick={() => {
               setOutcome(null);
               setStep("ghana_card");
@@ -335,16 +335,16 @@ function SoleProprietorSignupContent() {
         >
           <div className="flex flex-col gap-3">
             <Button
-              size="lg"
-              className="h-10 w-full text-[14px]"
+              size="md"
+              className="w-full"
               onClick={() => router.push("/business/signup/new-to-gcb?type=sole")}
             >
               Open an Account
             </Button>
             <Button
               variant="outline"
-              size="lg"
-              className="h-10 w-full text-[14px]"
+              size="md"
+              className="w-full"
               onClick={() => {
                 setOutcome(null);
                 setStep("ghana_card");
@@ -370,16 +370,16 @@ function SoleProprietorSignupContent() {
       >
         <div className="flex flex-col gap-3">
           <Button
-            size="lg"
-            className="h-10 w-full text-[14px]"
+            size="md"
+            className="w-full"
             onClick={() => router.push("/business/signup/enrol")}
           >
             Apply for Your Company
           </Button>
           <Button
             variant="outline"
-            size="lg"
-            className="h-10 w-full text-[14px]"
+            size="md"
+            className="w-full"
             onClick={() => router.push("/business/signup?step=type")}
           >
             Back to Options
@@ -454,9 +454,9 @@ function SoleProprietorSignupContent() {
             <Button
               type="submit"
               variant="default"
-              size="lg"
+              size="md"
               loading={busy}
-              className="h-10 w-full text-[14px]"
+              className="w-full"
             >
               Continue
             </Button>
@@ -544,9 +544,9 @@ function SoleProprietorSignupContent() {
           <Button
             type="button"
             variant="default"
-            size="lg"
+            size="md"
             loading={busy}
-            className="h-10 w-full text-[14px]"
+            className="w-full"
             onClick={handleConfirmBusiness}
           >
             Continue
@@ -645,10 +645,10 @@ function SoleProprietorSignupContent() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             disabled={!newPasswordReady(password, confirmPassword)}
             loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Proceed
           </Button>
@@ -690,10 +690,10 @@ function SoleProprietorSignupContent() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             disabled={pinDigits.join("").length < 4}
             loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Continue
           </Button>
@@ -729,10 +729,10 @@ function SoleProprietorSignupContent() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             disabled={confirmPinDigits.join("").length < 4}
             loading={busy}
-            className="mt-2 h-10 w-full text-[14px]"
+            className="mt-2 w-full"
           >
             Confirm &amp; Finish
           </Button>

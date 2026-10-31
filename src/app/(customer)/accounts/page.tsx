@@ -540,20 +540,22 @@ function AccountsContent() {
           </DialogBody>
           <DialogFooter className="flex-col gap-2 sm:flex-col">
             <Button
+              size="md"
               type="button"
               onClick={() => {
                 setFundWith(fundPrompt);
                 setFundPrompt(null);
               }}
-              className="h-10 w-full rounded-lg text-[14px]"
+              className="w-full"
             >
               Fund My Account Now
             </Button>
             <Button
+              size="md"
               type="button"
               variant="outline"
               onClick={() => setFundPrompt(null)}
-              className="h-10 w-full rounded-lg text-[14px]"
+              className="w-full"
             >
               Skip For Now
             </Button>
@@ -597,6 +599,7 @@ function AccountsContent() {
           </DialogBody>
           <DialogFooter>
             <Button
+              size="md"
               type="button"
               variant="destructive"
               onClick={() => {
@@ -604,7 +607,7 @@ function AccountsContent() {
                 setRemoveOpen(true);
                 setViewOpen(false);
               }}
-              className="h-10 flex-1 rounded-lg text-[14px]"
+              className="flex-1"
             >
               Remove
             </Button>
@@ -629,14 +632,14 @@ function AccountsContent() {
             </div>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setRemoveOpen(false)} className="h-9 flex-1 rounded-lg text-[13px]">
+            <Button type="button" variant="outline" onClick={() => setRemoveOpen(false)} className="flex-1">
               Cancel
             </Button>
             <Button
               type="button"
               variant="destructive"
               onClick={() => removing && handleRemoveSource(removing)}
-              className="h-9 flex-1 rounded-lg text-[13px]"
+              className="flex-1"
             >
               {removing?.type === "card" ? "Remove Card" : "Remove"}
             </Button>

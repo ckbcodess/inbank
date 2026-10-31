@@ -584,10 +584,9 @@ export default function TransactionList({
         <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
           Transaction History
         </h1>
-        <Button
-          variant="outline"
+        <Button variant="outline"
           onClick={() => exportTransactionsCSV(results)}
-          className="h-8 gap-2 sm:gap-2 px-2 sm:px-3 text-[13px] border-border/80 bg-card hover:bg-muted/50 rounded-lg shadow-xs shrink-0"
+          className="h-8 gap-2 sm:gap-2 px-2 sm:px-3 text-[13px] shrink-0"
         >
           <ArrowDownToLine size={14} className="text-muted-foreground shrink-0" />
           <span className="hidden sm:inline">Export Transactions</span>
@@ -746,12 +745,11 @@ export default function TransactionList({
 
             {totalPages > 1 && (
               <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
+                <Button variant="ghost"
                   size="sm"
                   disabled={currentPage <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="h-7 gap-1 px-2 text-[12px] text-muted-foreground hover:text-foreground disabled:opacity-40"
+                  className="h-7 gap-1 px-2 text-[12px] text-muted-foreground hover:text-foreground"
                 >
                   <ChevronLeft size={14} />
                   Previous
@@ -759,12 +757,11 @@ export default function TransactionList({
 
                 {renderPageButtons()}
 
-                <Button
-                  variant="ghost"
+                <Button variant="ghost"
                   size="sm"
                   disabled={currentPage >= totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="h-7 gap-1 px-2 text-[12px] text-muted-foreground hover:text-foreground disabled:opacity-40"
+                  className="h-7 gap-1 px-2 text-[12px] text-muted-foreground hover:text-foreground"
                 >
                   Next
                   <ChevronRight size={14} />

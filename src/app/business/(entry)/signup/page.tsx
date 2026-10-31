@@ -42,16 +42,16 @@ function BusinessSignupContent() {
         >
           <div className="flex flex-col gap-3">
             <Button
-              size="lg"
-              className="h-10 w-full text-[14px]"
+              size="md"
+              className="w-full"
               onClick={() => router.push("/business/signup/enrol")}
             >
               Apply Online
             </Button>
             <Button
               variant="outline"
-              size="lg"
-              className="h-10 w-full text-[14px]"
+              size="md"
+              className="w-full"
               onClick={() => router.push("/business/signup/status")}
             >
               Track an Application

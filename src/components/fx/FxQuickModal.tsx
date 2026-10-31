@@ -405,15 +405,14 @@ export function FxQuickModal() {
 
             {/* Transfer Action */}
             <div className="flex flex-col gap-2 pt-1">
-              <Button
-                nativeButton={false}
+              <Button nativeButton={false}
                 render={
                   <Link
                     href={`/payments/send?amount=${encodeURIComponent(conversion.output.replace(/,/g, ""))}&currency=${encodeURIComponent(toCcy)}&returnUrl=/overview`}
                     onClick={() => closeModal()}
                   />
                 }
-                className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                className="w-full gap-2"
               >
                 <span>Transfer {toCcy}</span>
                 <ArrowUpRight size={15} />

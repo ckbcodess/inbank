@@ -453,17 +453,19 @@ export default function RequestFlow({ account }: { account: Account }) {
 
           <div className="flex w-full items-center gap-3 pt-1">
             <Button
+              size="md"
               type="button"
               variant="outline"
               onClick={() => setPhase("details")}
-              className="h-10 flex-1 rounded-lg border-border text-[14px]"
+              className="flex-1"
             >
               Back
             </Button>
             <Button
+              size="md"
               type="button"
               onClick={() => setPinOpen(true)}
-              className="h-10 flex-1 rounded-lg bg-primary text-[14px] text-primary-foreground drop-shadow-sm cursor-pointer"
+              className="flex-1"
             >
               Submit request
             </Button>

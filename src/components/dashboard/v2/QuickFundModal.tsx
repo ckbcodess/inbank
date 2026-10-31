@@ -336,9 +336,9 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
               <Button
                 type="submit"
                 variant="default"
-                size="lg"
+                size="md"
                 disabled={!amount} loading={busy}
-                className="mt-2 h-10 w-full text-[14px] cursor-pointer"
+                className="mt-2 w-full"
               >
                 <span>Continue</span>
               </Button>
@@ -436,9 +436,9 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
               <Button
                 type="button"
                 variant="default"
-                size="lg"
+                size="md"
                 onClick={handleFinish}
-                className="mt-2 h-9 w-full text-[13.5px] transition-transform duration-hover cursor-pointer"
+                className="mt-2 h-9 w-full text-[13.5px]"
               >
                 <span>Continue</span>
               </Button>

@@ -182,6 +182,13 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-10-31
+- Decision: one control-height scale (`--control-*` in globals.css, rule in CONSTITUTION §6). Button `lg` is removed: it was 36px, and about 65 call sites forced it to 40px with `h-10 text-[14px]`, which is `md`. They now use `md` with no override. `Input`, `PhoneInput` and `Select` read the same tokens, so an `xl` button matches a field.
+- Discovery: the Button default is 36px, so a full-width flow button with no `size` came out small beside 44px fields (the "Add members" button in CreateGroupFlow). Flow step actions are `xl`.
+- Gap: other flows still have full-width `<Button>` with no `size` (for example the picker "Done" in CreateGroupFlow). Needs a pass, or a lint rule for `w-full` buttons with no size.
+- Gap: not on the scale yet: `Badge` (20/24px), `SegmentedControl` and `RangePills` (padding-driven), `SearchBar` (36), `ExpandableSearch` and `DatePicker` (32), the inner `PhoneInput` search (36), Button `icon` (32; §3 asks for 40 on icon-only controls).
+- Candidate pattern: rename Button sizes to a plain xs/sm/md/lg/xl to match the tokens. It needs a swap of old `md` to `lg` across about 100 sites, so it was not done blind.
+
 ### 2026-10-30
 - Fix: 	reasury product key added to PLAN_ART, PLAN_TONES, and globals.css so the Treasury Bills & Bonds shelf card renders the 3D illustration contained with padding on its warm golden gradient instead of being cropped by object-cover.
 - Decision: Treasury Bills and Bonds are merged into 1 product ("Treasury Bills & Bonds") on the Invest shelf and product surface (`/invest/products/treasury`). The market view separates Primary and Secondary markets into two distinct sections (`Primary Market` and `Secondary Market`).

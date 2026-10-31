@@ -341,29 +341,23 @@ export function VirtualCardView({
 
       {/* Bottom Actions Row */}
       <div className="mt-5 grid grid-cols-3 gap-2">
-        <Button
-          variant="outline"
+        <Button variant="outline"
           onClick={handleToggleUnhide}
-          className="h-9 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           {unhidden ? "Hide" : "Unhide"}
         </Button>
 
-        <Button
-          variant="outline"
+        <Button variant="outline"
           onClick={handleStartAdjustLimit}
-          className="h-9 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           Adjust Limit
         </Button>
 
-        <Button
-          variant="outline"
+        <Button variant="outline"
           onClick={() => {
             setShowMoreMenu((prev) => !prev);
             setAdjustingLimit(false);
           }}
-          className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           More
         </Button>

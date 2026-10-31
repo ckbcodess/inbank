@@ -206,9 +206,9 @@ function LoginForm() {
           <Button
             type="submit"
             variant="default"
-            size="lg"
+            size="md"
             loading={state === "submitting"}
-            className="h-10 sm:h-10 w-full text-[14px]"
+            className="sm:h-10 w-full"
           >
             Log in
           </Button>
@@ -217,8 +217,8 @@ function LoginForm() {
             nativeButton={false}
             render={<Link href={bankingType === "business" ? "/business/signup" : "/get-started"} data-tour="login-get-started" />}
             variant="outline"
-            size="lg"
-            className="h-10 sm:h-10 w-full text-[14px]"
+            size="md"
+            className="sm:h-10 w-full"
           >
             {bankingType === "business" ? (
               "Register"
@@ -368,7 +368,7 @@ function ReturningSignIn({
               Forgot password?
             </Link>
 </Field>
-          <Button type="submit" variant="default" size="lg" loading={submitting} className="h-10 sm:h-10 w-full text-[14px]">
+          <Button type="submit" variant="default" size="md" loading={submitting} className="sm:h-10 w-full">
             Log in
           </Button>
         </form>

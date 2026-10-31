@@ -1183,9 +1183,10 @@ export function ProceedButton({
   return (
     <div className="pt-2">
       <Button
+        size="xl"
         type="button"
         data-proceed-cta="true"
-        className="w-full h-11 text-[16px] bg-primary text-primary-foreground drop-shadow-sm disabled:opacity-40 disabled:pointer-events-none"
+        className="w-full"
         disabled={disabled}
         loading={loading}
         onClick={onClick}
@@ -1320,10 +1321,10 @@ export function CollapsedDetailsBadge({
 }) {
   const initials = initialsOf(title);
   return (
-    <div className="flex min-h-[58px] items-center justify-between gap-2 rounded-2xl border border-field-border bg-field px-4 py-2 transition-colors animate-in fade-in duration-150 ease-out hover:bg-field-hover">
+    <div className="flex min-h-(--control-xl) items-center justify-between gap-2 rounded-xl border border-field-border bg-field px-3 py-2 transition-colors animate-in fade-in duration-150 ease-out hover:bg-field-hover">
       <div className="flex min-w-0 items-center gap-2">
         {icon ? (
-          <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full text-foreground">
+          <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full text-foreground [&>svg]:size-5">
             {icon}
           </span>
         ) : provider ? (

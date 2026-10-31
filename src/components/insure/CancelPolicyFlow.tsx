@@ -110,9 +110,10 @@ export function CancelPolicyFlow({ policyId }: { policyId: string }) {
 
         <div className="pt-2">
           <Button
+            size="xl"
             type="button"
             variant="destructive"
-            className="h-11 w-full text-[16px]"
+            className="w-full"
             disabled={!ready}
             loading={busy}
             onClick={() => {
