@@ -1,15 +1,10 @@
 "use client";
 
 /**
- * The three Invest products, by kind: Term Deposits, Treasury Bills and Bonds. Each is a product page, two pages, never
- * both (PATTERNS §24), and its instruments are short lists because the products are small:
- *
- *  - Nothing held: the list of what to buy, and an About row behind which the explanation sits. A row opens the instrument
- *    (`OfferDetail`, a pitch of its own), then the flow.
- *  - Something held: only the holdings (one that matures within a week in amber on its row), a small Buy Another that
- *    opens the list as its own page (`...Open`), and the About row (`...About`: the benefits over a list card of facts).
- *
- * The securities account's own status (being set up, or ready to carry on) sits at the top of both securities pages.
+ * The Invest products: Term Deposits and Treasury Bills & Bonds.
+ * Each is a product page:
+ *  - Nothing held: the offers grouped into sections, and an About sheet.
+ *  - Something held: only the holdings, a Buy Another action, and the About sheet.
  */
 
 import { Clock } from "@/components/ui/icons";
@@ -17,17 +12,23 @@ import { AboutSheet } from "@/components/ui/about-sheet";
 import { HolderActions } from "@/components/ui/holder-actions";
 import PageHeader from "@/components/layout/PageHeader";
 import { ListCard } from "@/components/ui/list-card";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { TrueEmptyState } from "@/components/states/ListStates";
 import { InvestProductsSkeleton } from "@/components/states/PageSkeletons";
-import { BILLS_PRODUCTS_HREF, BONDS_PRODUCTS_HREF, INVEST_HOME, InvestDevTools, TERM_PRODUCTS_HREF, TREASURY_HOME } from "@/components/invest/parts";
+import {
+  INVEST_HOME,
+  InvestDevTools,
+  TERM_PRODUCTS_HREF,
+  TREASURY_HOME,
+  TREASURY_PRODUCTS_HREF,
+} from "@/components/invest/parts";
 import { OfferRow, securityOffers, termOffers, type Offer } from "@/components/invest/offers";
 import { TreasuryAccountStatus, YourDeposits, YourTreasury } from "@/components/invest/OwnedRows";
 import { ProductAboutBody } from "@/components/insure/ProductPitch";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { formatRate, useMyTreasury, useTreasuryHydrated } from "@/lib/treasury";
 import { useMyDeposits } from "@/lib/term-deposits";
-import { BILLS_HIGHLIGHTS, BONDS_HIGHLIGHTS, type PlanHighlight } from "@/lib/product-highlights";
-import type { ProductKey } from "@/components/insure/parts";
+import { TREASURY_HIGHLIGHTS, type PlanHighlight } from "@/lib/product-highlights";
 
 const back = { href: INVEST_HOME, label: "Invest" };
 const TERM_OPEN_HREF = `${TERM_PRODUCTS_HREF}/open`;
@@ -44,7 +45,6 @@ function OfferList({ offers }: { offers: Offer[] }) {
   );
 }
 
-/** What a holder can do, as two full-width buttons under the holdings: the main one, then the statement. */
 /* ── Term Deposits ──────────────────────────────────────────────────────── */
 
 function termFacts() {
@@ -106,50 +106,30 @@ export function TermDepositOpen() {
   );
 }
 
-/** What term deposits are, for the About sheet. */
 function TermDepositAboutContent() {
   const { highlights, rows } = termFacts();
   return <ProductAboutBody productId="term-deposits" highlights={highlights} rows={rows} />;
 }
 
-/* ── Treasury Bills and Bonds ───────────────────────────────────────────── */
+/* ── Treasury Bills & Bonds ─────────────────────────────────────────────── */
 
-type SecurityKind = "bill" | "bond";
-
-const SECURITY: Record<
-  SecurityKind,
-  { productId: ProductKey; title: string; href: string; openTitle: string; aboutTitle: string; highlights: readonly PlanHighlight[]; terms: string; extra: Array<[string, string]> }
-> = {
-  bill: {
-    productId: "treasury-bills",
-    title: "Treasury Bills",
-    href: BILLS_PRODUCTS_HREF,
-    openTitle: "Buy a Bill",
-    aboutTitle: "About Treasury Bills",
-    highlights: BILLS_HIGHLIGHTS,
-    terms: "91 to 364 days",
-    extra: [],
-  },
-  bond: {
-    productId: "bonds",
-    title: "Bonds",
-    href: BONDS_PRODUCTS_HREF,
-    openTitle: "Buy a Bond",
-    aboutTitle: "About Bonds",
-    highlights: BONDS_HIGHLIGHTS,
-    terms: "Years, set by the bond",
-    extra: [["Interest", "Every 6 months"]],
-  },
-};
-
-/** What is on offer for one kind: both markets, none while the market is closed. */
-function kindOffers(kind: SecurityKind, marketOpen: boolean): Offer[] {
-  if (!marketOpen) return [];
-  return [...securityOffers("primary"), ...securityOffers("secondary")].filter((o) => o.security?.kind === kind);
+function treasuryFacts(marketOpen: boolean) {
+  const primary = marketOpen ? securityOffers("primary") : [];
+  const secondary = marketOpen ? securityOffers("secondary") : [];
+  const allOffers = [...primary, ...secondary];
+  const rows: Array<[React.ReactNode, React.ReactNode]> = [
+    ...(allOffers.length > 0
+      ? ([["Rates from", <span key="rate" className="text-[20px]">{`${formatRate(Math.min(...allOffers.map((o) => o.rate)))} a year`}</span>]] as Array<[React.ReactNode, React.ReactNode]>)
+      : []),
+    ["Terms", "91 days to 15 years"],
+    ["Markets", "Primary at auction, secondary from other investors"],
+    ["Held in", "Your own securities account at the CSD"],
+    ["Early exit", "Sell back through a rediscount"],
+  ];
+  return { highlights: TREASURY_HIGHLIGHTS, rows };
 }
 
-function Market({ kind, marketOpen }: { kind: SecurityKind; marketOpen: boolean }) {
-  const offers = kindOffers(kind, marketOpen);
+function TreasuryMarket({ marketOpen }: { marketOpen: boolean }) {
   if (!marketOpen) {
     return (
       <TrueEmptyState
@@ -159,42 +139,50 @@ function Market({ kind, marketOpen }: { kind: SecurityKind; marketOpen: boolean 
       />
     );
   }
-  if (offers.length === 0) {
-    return <TrueEmptyState icon={<Clock size={22} strokeWidth={1.8} />} title="Nothing on offer right now" description="New ones will show here as they open." />;
+  const primaryOffers = securityOffers("primary");
+  const secondaryOffers = securityOffers("secondary");
+
+  if (primaryOffers.length === 0 && secondaryOffers.length === 0) {
+    return (
+      <TrueEmptyState
+        icon={<Clock size={22} strokeWidth={1.8} />}
+        title="Nothing on offer right now"
+        description="New ones will show here as they open."
+      />
+    );
   }
-  return <OfferList offers={offers} />;
+
+  return (
+    <div className="flex flex-col gap-8">
+      {primaryOffers.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <SectionHeading title="Primary Market" />
+          <OfferList offers={primaryOffers} />
+        </section>
+      )}
+      {secondaryOffers.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <SectionHeading title="Secondary Market" />
+          <OfferList offers={secondaryOffers} />
+        </section>
+      )}
+    </div>
+  );
 }
 
-function securityFacts(kind: SecurityKind, marketOpen: boolean) {
-  const cfg = SECURITY[kind];
-  const offers = kindOffers(kind, marketOpen);
-  const rows: Array<[React.ReactNode, React.ReactNode]> = [
-    ...(offers.length > 0
-      ? ([["Rates from", <span key="rate" className="text-[20px]">{`${formatRate(Math.min(...offers.map((o) => o.rate)))} a year`}</span>]] as Array<[React.ReactNode, React.ReactNode]>)
-      : []),
-    ["Terms", cfg.terms],
-    ...cfg.extra,
-    ["Markets", "Primary at auction, secondary from other investors"],
-    ["Held in", "Your own securities account at the CSD"],
-    ["Early exit", "Sell back through a rediscount"],
-  ];
-  return { highlights: cfg.highlights, rows };
-}
-
-export function SecurityProducts({ kind }: { kind: SecurityKind }) {
+export function TreasuryProducts() {
   const hydrated = useTreasuryHydrated();
   const { marketOpen, holdings, orders } = useMyTreasury();
-  if (!hydrated) return <InvestProductsSkeleton groups={1} rows={3} />;
-  const cfg = SECURITY[kind];
-  const holds = holdings.some((h) => h.kind === kind) || orders.some((o) => o.security.kind === kind);
+  if (!hydrated) return <InvestProductsSkeleton groups={2} rows={3} />;
+  const holds = holdings.length > 0 || orders.length > 0;
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader
-        title={cfg.title}
+        title="Treasury Bills & Bonds"
         backTo={back}
         actions={
-          <AboutSheet title={cfg.aboutTitle}>
-            <SecurityAboutContent kind={kind} />
+          <AboutSheet title="About Treasury Bills & Bonds">
+            <TreasuryAboutContent />
           </AboutSheet>
         }
       />
@@ -203,35 +191,44 @@ export function SecurityProducts({ kind }: { kind: SecurityKind }) {
         <TreasuryAccountStatus />
         {holds ? (
           <>
-            <YourTreasury kind={kind} />
-            <HolderActions primary={{ label: "Buy Another", href: `${cfg.href}/open` }} secondary={{ label: "View Statements", href: `${TREASURY_HOME}/statement` }} />
+            <YourTreasury kind="all" />
+            <HolderActions
+              primary={{ label: "Buy Another", href: `${TREASURY_PRODUCTS_HREF}/open` }}
+              secondary={{ label: "View Statements", href: `${TREASURY_HOME}/statement` }}
+            />
           </>
         ) : (
-          <Market kind={kind} marketOpen={marketOpen} />
+          <TreasuryMarket marketOpen={marketOpen} />
         )}
       </div>
     </div>
   );
 }
 
-export function SecurityOpen({ kind }: { kind: SecurityKind }) {
+export function TreasuryOpen() {
   const hydrated = useTreasuryHydrated();
   const { marketOpen } = useMyTreasury();
-  if (!hydrated) return <InvestProductsSkeleton groups={1} rows={3} />;
-  const cfg = SECURITY[kind];
+  if (!hydrated) return <InvestProductsSkeleton groups={2} rows={3} />;
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
-      <PageHeader title={cfg.openTitle} backTo={{ href: cfg.href, label: cfg.title }} />
+      <PageHeader title="Buy Bills & Bonds" backTo={{ href: TREASURY_PRODUCTS_HREF, label: "Treasury Bills & Bonds" }} />
       <InvestDevTools section="Invest" />
-      <Market kind={kind} marketOpen={marketOpen} />
+      <TreasuryMarket marketOpen={marketOpen} />
     </div>
   );
 }
 
-/** What treasury bills or bonds are, for the About sheet. */
-function SecurityAboutContent({ kind }: { kind: SecurityKind }) {
+function TreasuryAboutContent() {
   const { marketOpen } = useMyTreasury();
-  const cfg = SECURITY[kind];
-  const { highlights, rows } = securityFacts(kind, marketOpen);
-  return <ProductAboutBody productId={cfg.productId} highlights={highlights} rows={rows} />;
+  const { highlights, rows } = treasuryFacts(marketOpen);
+  return <ProductAboutBody productId="treasury" highlights={highlights} rows={rows} />;
+}
+
+/** Backward-compatible aliases for any prior links/components. */
+export function SecurityProducts() {
+  return <TreasuryProducts />;
+}
+
+export function SecurityOpen() {
+  return <TreasuryOpen />;
 }

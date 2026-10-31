@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Account Verify: 8 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--ok:#047857;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--scrim:rgba(0,0,0,.35)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--ok:#34d399;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:rgba(0,0,0,.6)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0;padding:0}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px} .ok{color:var(--ok)}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .frame{position:relative;width:480px;max-width:100%;min-height:680px;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+  .page{padding:32px;display:flex;flex-direction:column;gap:20px}
+  .page h2.t{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .lbl{font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;min-height:20px}
+  .link{font-size:13px;font-weight:400;color:var(--tx);text-decoration:underline;text-underline-offset:3px}
+  .field{position:relative;height:44px;width:100%;border:1px solid var(--bd);background:var(--tile);border-radius:12px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px}
+  .field.tall{height:56px}
+  input.inp{outline:none;background:var(--tile);border:1px solid var(--bd);border-radius:12px;height:44px;width:100%;padding:0 96px 0 12px;font-size:14px;font-variant-numeric:tabular-nums}
+  input.inp.plain{padding-right:12px}
+  input.inp:focus{border-color:var(--am)}
+  .stack{display:flex;flex-direction:column;gap:8px}
+  .slot{position:relative}
+  .vbtn{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:500;color:var(--mu);white-space:nowrap}
+  .vbtn:hover{background:var(--tileh);color:var(--tx)}
+  .vbtn.off{opacity:.35;pointer-events:none}
+  .vbtn.nm{color:var(--tx);font-weight:400;font-size:13px;max-width:60%;overflow:hidden}
+  .vbtn.nm span{overflow:hidden;text-overflow:ellipsis}
+  .bk{display:flex;align-items:center;gap:8px}
+  .bm{width:28px;height:28px;border-radius:50%;background:#0b4f9c;color:#fff;font-size:12px;font-style:normal;display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .av{width:36px;height:36px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#111;background:var(--am)}
+  .av.sm{width:28px;height:28px;font-size:11px}
+  .tick{width:16px;height:16px;border-radius:50%;background:#059669;color:#fff;display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .ring{width:13px;height:13px;border-radius:50%;border:1.5px dashed var(--mu);animation:spin .8s linear infinite;flex:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .in{animation:in .25s ease}
+  .recip{display:flex;align-items:center;gap:12px;border:1px solid var(--bd);background:var(--tile);border-radius:12px;padding:12px}
+  .recip .nm{font-size:14px;display:block} .recip .sub{font-size:12px;color:var(--mu);display:block}
+  .recip .grow{flex:1;min-width:0}
+  .res{border:1px solid var(--bd);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:12px;background:var(--surf)}
+  .btns{display:flex;gap:8px}
+  .btn{height:40px;padding:0 16px;border-radius:12px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.am{background:var(--am);color:#111} .btn.am:hover{background:#ffd966}
+  .btn.out{border:1px solid var(--bd)} .btn.out:hover{background:var(--tile)}
+  .btn.full{width:100%;height:44px}
+  .btn.dis{opacity:.4;pointer-events:none}
+  .pop{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;background:var(--surf);border:1px solid var(--bd);border-radius:12px;padding:8px;box-shadow:var(--shadow);animation:in .15s ease}
+  .pop .h{font-size:12px;color:var(--mu);padding:4px 8px}
+  .pop button.it{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border-radius:8px}
+  .pop button.it:hover{background:var(--tile)}
+  .chipTok{display:inline-flex;align-items:center;gap:8px;background:var(--surf);border:1px solid var(--bd);border-radius:999px;padding:4px 4px 4px 4px;font-size:13px}
+  .chipTok .x{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--mu)} .chipTok .x:hover{background:var(--tile)}
+  .scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px;animation:in .15s ease;z-index:20}
+  .modal{background:var(--surf);border:1px solid var(--bd);border-radius:20px;width:100%;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)}
+  .modal h3{margin:0;font-size:16px;font-weight:500}
+  .head{display:flex;align-items:center;gap:12px}
+  .head .big{font-size:20px;letter-spacing:-.02em;display:block}
+  .head .grow{flex:1;min-width:0}
+  .pm{display:flex;flex-direction:column;gap:20px}
+  .hr{height:1px;background:var(--bd)}
+  .legend{max-width:480px;font-size:12px;color:var(--mu);line-height:1.5;margin-top:16px;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Account verify: how the check and its result are shown</h1>
+    <div class="row" style="gap:12px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+    </div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div><div class="frame" id="frame"></div><p class="legend">Bank is already chosen. Type any 8 or more digits, then verify. Every version ends at the same place: Payment Method and Amount appear once the name is confirmed.</p></div></div>
+
+<script>
+const NAME='Kwame Mensah', INIT='KM', BANK='Ecobank Ghana';
+const I={
+  search:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  check:'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+  chev:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--mu)"><path d="m6 9 6 6 6-6"/></svg>',
+  x:'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+};
+const NOTES=[
+ ['Name inside the field','The Verify button becomes the name, in the same spot. No line underneath, nothing to push the page down. Cost: long names get cut off.'],
+ ['The field becomes the recipient','Once found, the bank and account fields fold into one recipient row, the same one used for saved beneficiaries. The result is a person, not a status. Change reopens the fields.'],
+ ['Ask the person to confirm','The name comes back as a question with a yes. It treats the check as what it is: you compare the name with who you meant. One extra tap, and it is the safest wording.'],
+ ['Verify as a search result','Verify behaves like a search. One result drops down, tap it to pick it, and it sits in the field as a token. Tapping the x clears it.'],
+ ['Verify is the page step','No button in the field. The page button reads Verify Account, then Continue. The name takes the place of the right-hand label above the field.'],
+ ['A small confirmation sheet','Verify opens a sheet that says what was found and asks to use it. Most deliberate, but it covers the page for a one-line answer.'],
+ ['The field becomes the answer','The input turns into a two-line field: the name on top, the bank and number under it. Same box, same place, so nothing is added to the page. Edit puts the number back.'],
+ ['The name becomes the heading','After the check the page leads with who you are paying, in large type, and the fields fold into it. Payment Method and Amount read as the rest of a sentence about that person.']
+];
+
+let V=1, S={acct:'',st:'idle'}; // st: idle | busy | found | ok
+const needsConfirm=()=>[3,4,6].includes(V);
+const valid=()=>S.acct.length>=8;
+const $=s=>document.querySelector(s);
+const masked=()=>S.acct.length>4?'•••• '+S.acct.slice(-4):S.acct;
+const done=()=>S.st==='ok'||(S.st==='found'&&!needsConfirm());
+
+function pills(){ $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1}</button>`).join(''); $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]}`; }
+
+const fromRow=()=>`<div><span class="lbl">From Account</span><div class="field"><span class="bk"><i class="bm" style="background:#FFC423;color:#111">G</i><span>Current ···4821</span></span><span class="mu s13 tab">GHS 12,480.00</span></div></div>`;
+const bankField=()=>`<div class="field"><span class="bk"><i class="bm">E</i><span>${BANK}</span></span>${I.chev}</div>`;
+const spin=()=>`<span class="ring"></span>`;
+const vbtn=(label='Verify')=>S.st==='busy'
+  ?`<span class="vbtn">${spin()}<span class="mu">Verifying...</span></span>`
+  :`<button class="vbtn ${valid()?'':'off'}" data-act="verify">${I.search}<span>${label}</span></button>`;
+const numInput=(extra='',plain=false)=>`<input id="acct" class="inp ${plain?'plain':''}" inputmode="numeric" placeholder="Enter account number" value="${S.acct}" ${extra} />`;
+const recip=(sub=true)=>`<div class="recip in"><span class="av">${INIT}</span><span class="grow"><span class="nm">${NAME}</span><span class="sub">${BANK} · ${S.acct}</span></span><button class="link s13" data-act="change">Change</button></div>`;
+
+const payBlock=()=>`<div class="pm in">
+  <div><span class="lbl">Payment Method</span><div class="field"><span>GhIPSS Instant Pay (GIP)</span>${I.chev}</div></div>
+  <div><span class="lbl">Amount</span><div class="field"><span class="mu">GHS 0.00</span></div></div>
+  <button class="btn am full dis">Continue</button>
+</div>`;
+
+function benef(){
+  const lab=(right='')=>`<span class="lbl">Beneficiary Details${right}</span>`;
+  switch(V){
+  case 1: {
+    let slot;
+    if(S.st==='busy') slot=vbtn();
+    else if(done()) slot=`<span class="vbtn nm"><span class="tick">${I.check}</span><span>${NAME}</span></span>`;
+    else slot=vbtn();
+    return `<div>${lab('<button class="link">Select beneficiary</button>')}<div class="stack">${bankField()}<div class="slot">${numInput(done()?'style="padding-right:60%"':'')}${slot}</div></div></div>`;
+  }
+  case 2:
+    if(done()) return `<div>${lab()}${recip()}</div>`;
+    return `<div>${lab('<button class="link">Select beneficiary</button>')}<div class="stack">${bankField()}<div class="slot">${numInput()}${vbtn()}</div></div></div>`;
+  case 3: {
+    if(S.st==='ok') return `<div>${lab()}${recip()}</div>`;
+    const card=S.st==='found'?`<div class="res in"><div class="head"><span class="av">${INIT}</span><span class="grow"><span class="s12 mu">Account found. Is this who you are paying?</span><span class="big" style="font-size:16px">${NAME}</span><span class="s12 mu">${BANK} · ${masked()}</span></span></div><div class="btns"><button class="btn am" data-act="confirm">Yes, that's them</button><button class="btn out" data-act="change">No, change</button></div></div>`:'';
+    return `<div>${lab('<button class="link">Select beneficiary</button>')}<div class="stack">${bankField()}<div class="slot">${numInput()}${S.st==='found'?'':vbtn()}</div>${card}</div></div>`;
+  }
+  case 4: {
+    if(S.st==='ok') return `<div>${lab()}<div class="stack">${bankField()}<div class="field in" style="padding:0 6px"><span class="chipTok"><span class="av sm">${INIT}</span><span>${NAME}</span><span class="mu s12">${masked()}</span><button class="x" data-act="change" aria-label="Clear">${I.x}</button></span></div></div></div>`;
+    const pop=S.st==='found'?`<div class="pop"><div class="h">1 result</div><button class="it" data-act="confirm"><span class="av sm">${INIT}</span><span class="grow" style="flex:1"><span class="nm" style="font-size:14px;display:block">${NAME}</span><span class="s12 mu">${BANK} · ${masked()}</span></span></button></div>`:'';
+    return `<div>${lab('<button class="link">Select beneficiary</button>')}<div class="stack">${bankField()}<div class="slot">${numInput()}${S.st==='found'?'':vbtn('Search')}${pop}</div></div></div>`;
+  }
+  case 5: {
+    const right=done()?`<span class="in" style="display:inline-flex;align-items:center;gap:8px;font-weight:400"><span class="tick">${I.check}</span>${NAME}</span>`:'<button class="link">Select beneficiary</button>';
+    return `<div>${lab(right)}<div class="stack">${bankField()}${numInput('',true)}</div></div>`;
+  }
+  case 6: {
+    if(S.st==='ok') return `<div>${lab()}${recip()}</div>`;
+    return `<div>${lab('<button class="link">Select beneficiary</button>')}<div class="stack">${bankField()}<div class="slot">${numInput()}${S.st==='found'?vbtn():vbtn()}</div></div></div>`;
+  }
+  case 7: {
+    if(done()) return `<div>${lab()}<div class="stack">${bankField()}<div class="field tall in"><span class="bk"><span class="tick">${I.check}</span><span style="display:flex;flex-direction:column;line-height:1.25"><span>${NAME}</span><span class="s12 mu tab">${S.acct}</span></span></span><button class="link s13" data-act="change">Edit</button></div></div></div>`;
+    return `<div>${lab('<button class="link">Select beneficiary</button>')}<div class="stack">${bankField()}<div class="slot">${numInput()}${vbtn()}</div></div></div>`;
+  }
+  case 8: {
+    if(done()) return `<div class="head in"><span class="av" style="width:44px;height:44px;font-size:14px">${INIT}</span><span class="grow"><span class="s12 mu">Paying</span><span class="big">${NAME}</span><span class="s12 mu">${BANK} · ${S.acct}</span></span><button class="link s13" data-act="change">Change</button></div>`;
+    return `<div>${lab('<button class="link">Select beneficiary</button>')}<div class="stack">${bankField()}<div class="slot">${numInput()}${vbtn()}</div></div></div>`;
+  }}
+}
+
+function sheet(){
+  if(V!==6||S.st!=='found') return '';
+  return `<div class="scrim"><div class="modal"><h3>Account found</h3><div class="recip" style="background:var(--tile)"><span class="av">${INIT}</span><span class="grow"><span class="nm">${NAME}</span><span class="sub">${BANK} · ${masked()}</span></span></div><p class="s13 mu">Check the name matches who you meant to pay.</p><div class="btns"><button class="btn out" data-act="change" style="flex:1">Change</button><button class="btn am" data-act="confirm" style="flex:1">Use this account</button></div></div></div>`;
+}
+
+function render(focus){
+  let body=`<h2 class="t">Send to another bank</h2>${fromRow()}${benef()}`;
+  if(V===5){
+    body+= done()? payBlock() : `<button class="btn am full ${valid()&&S.st!=='busy'?'':'dis'}" data-act="verify">${S.st==='busy'?'Verifying...':'Verify Account'}</button>`;
+  } else if(done()) body+=payBlock();
+  $('#frame').innerHTML=`<div class="page">${body}</div>${sheet()}`;
+  if(focus){const el=$('#acct'); if(el){el.focus(); el.setSelectionRange(el.value.length,el.value.length);}}
+}
+
+function verify(){
+  if(!valid()||S.st==='busy') return;
+  S.st='busy'; render();
+  setTimeout(()=>{ S.st=needsConfirm()?'found':'ok'; if(!needsConfirm()) S.st='ok'; render(); },900);
+}
+
+document.addEventListener('click',e=>{
+  const p=e.target.closest('[data-v]'); if(p){V=+p.dataset.v; S={acct:'',st:'idle'}; pills(); render(); return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t; document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t)); return;}
+  const a=e.target.closest('[data-act]'); if(!a) return;
+  const act=a.dataset.act;
+  if(act==='verify') verify();
+  if(act==='confirm'){S.st='ok'; render();}
+  if(act==='change'){S.st='idle'; render(true);}
+});
+document.addEventListener('input',e=>{
+  if(e.target.id!=='acct') return;
+  S.acct=e.target.value.replace(/\D/g,''); e.target.value=S.acct;
+  if(S.st!=='idle'){S.st='idle'; render(true);}
+  else { const b=$('[data-act=verify]'); if(b) b.classList.toggle('off',!valid()), b.classList.toggle('dis',!valid()); }
+});
+document.addEventListener('keydown',e=>{ if(e.target.id==='acct'&&e.key==='Enter'){e.preventDefault(); verify();} });
+pills(); render();
+</script>
+</body>
+</html>

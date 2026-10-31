@@ -5,13 +5,12 @@ import {
   ChevronRight,
   Download,
   RotateCw,
-  ArrowDownLeft,
-  ArrowUpRight,
 } from "@/components/ui/icons";
 import { formatMoney, type Transaction } from "@/lib/mock-data";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { TransactionMark } from "@/components/transactions/TransactionMark";
 import {
   Dialog,
   DialogBody,
@@ -47,7 +46,20 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
   ];
 
   // Raw mock transaction dataset
-  const allMockItems = [
+  type ActivityItem = {
+    id: string;
+    title: string;
+    subtitle: string;
+    amount: number;
+    direction: string;
+    status: string;
+    account: string;
+    reference: string;
+    category: string;
+    paymentMethod?: Transaction["paymentMethod"];
+    counterparty?: string;
+  };
+  const allMockItems: ActivityItem[] = [
     {
       id: "act-1",
       title: "Supermarket Purchase — Melcom",
@@ -116,7 +128,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
     },
   ];
 
-  const allItems =
+  const allItems: ActivityItem[] =
     transactions.length > 0
       ? transactions.map((t) => ({
           id: t.id,
@@ -128,6 +140,8 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
           account: t.accountId || selectedAccount,
           reference: t.reference || `TX-${t.id}`,
           category: t.category || "Utilities",
+          paymentMethod: t.paymentMethod,
+          counterparty: t.counterparty,
         }))
       : allMockItems;
 
@@ -150,7 +164,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
               <button
                 type="button"
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
-                className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+                className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
               >
                 <span>{selectedAccount}</span>
                 <ChevronDown size={12} className="text-muted-foreground" />
@@ -182,7 +196,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
           <Link
             href="/transactions"
-            className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
+            className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
           >
             <span>View all</span>
             <ChevronRight size={13} />
@@ -193,7 +207,6 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
         <div className="my-auto flex flex-col divide-y divide-border/40 py-1">
           {items.map((item) => {
             const isDebit = item.direction === "debit";
-            const isCredit = !isDebit;
             const isFailed = item.status.toLowerCase() === "failed";
             const isPending = item.status.toLowerCase() === "pending";
 
@@ -204,21 +217,14 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                 onClick={() => setSelectedTx(item)}
                 className="group relative overflow-hidden flex items-center gap-3 py-2 px-2 -mx-2 rounded-xl cursor-pointer hover:bg-item-hover transition-colors"
               >
-                {/* Direction Anchor Icon */}
-                <div
-                  className={cn(
-                    "flex size-8 shrink-0 items-center justify-center rounded-full transition-colors",
-                    isCredit
-                      ? "bg-pill-success text-success"
-                      : "bg-tile text-muted-foreground"
-                  )}
-                >
-                  {isCredit ? (
-                    <ArrowDownLeft className="size-3.5" />
-                  ) : (
-                    <ArrowUpRight className="size-3.5" />
-                  )}
-                </div>
+                {/* What it was; which way it went is the sign on the amount */}
+                <TransactionMark
+                  transaction={{
+                    direction: isDebit ? "debit" : "credit",
+                    paymentMethod: item.paymentMethod,
+                    counterparty: item.counterparty ?? item.title,
+                  }}
+                />
 
                 {/* Counterparty & Metadata */}
                 <div className="flex-1 min-w-0 flex flex-col gap-0.5">
@@ -232,28 +238,11 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
                 {/* Amount & State / Account Number */}
                 <div className="shrink-0 flex flex-col items-end gap-0.5">
-                  <span
-                    className={cn(
-                      "tabular text-[14px] font-normal",
-                      isCredit ? "text-success" : "text-foreground"
-                    )}
-                  >
+                  <span className="tabular text-[14px] font-normal text-foreground">
                     {isDebit ? "− " : "+ "}
                     {formatMoney(item.amount, "GHS", true)}
                   </span>
-                  {isFailed ? (
-                    <span className="text-[11px] text-destructive font-normal">
-                      Failed
-                    </span>
-                  ) : isPending ? (
-                    <span className="text-[11px] text-warning font-normal">
-                      Pending
-                    </span>
-                  ) : (
-                    <span className="text-[11px] text-muted-foreground">
-                      {item.account.split(" ").pop()}
-                    </span>
-                  )}
+                  {isFailed ? <Badge variant="destructive">Failed</Badge> : isPending ? <Badge variant="warning">Pending</Badge> : null}
                 </div>
               </div>
             );
@@ -271,11 +260,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
             <DialogBody>
               <div className="flex items-center gap-2 p-2 rounded-xl bg-muted/40 border border-border/60">
-                <div className={`flex size-9 items-center justify-center rounded-full shrink-0 ${
-                  selectedTx.direction === "debit" ? "bg-destructive/10 text-destructive-text" : "bg-success/10 text-success-text"
-                }`}>
-                  {selectedTx.direction === "debit" ? <ArrowUpRight size={20} /> : <ArrowDownLeft size={20} />}
-                </div>
+                <TransactionMark transaction={{ direction: selectedTx.direction === "debit" ? "debit" : "credit", paymentMethod: undefined, counterparty: selectedTx.title }} />
                 <div>
                   <span className="text-[14px] font-medium text-foreground">{selectedTx.title}</span>
                   <p className="text-[12px] text-muted-foreground">{selectedTx.subtitle}</p>

@@ -96,7 +96,7 @@ export default function CustomerManagementPage() {
               <li key={c.id}>
                 <Link
                   href={`/admin/customers/${c.id}`}
-                  className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                  className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 transition-transform"
                 >
                   <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                     <Building2 size={16} aria-hidden="true" />

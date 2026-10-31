@@ -78,7 +78,7 @@ export function ActiveCodeDialog({
         }
       >
         <div className="flex flex-col items-center gap-2 pb-2 pt-3 text-center">
-          <CashoutTicket code={code.code} amount={amount} recipientPhone={code.phone ?? REGISTERED_WALLET.phone} />
+          <CashoutTicket code={code.code} amount={amount} recipientPhone={code.phone ?? REGISTERED_WALLET.phone} expires={code.expires.replace(/^Expires\s+/i, "").replace(/^./, (c) => c.toUpperCase())} />
           <p className="max-w-[300px] text-balance text-[13px] text-muted-foreground">
             {code.expires}. Anyone with this code can take the cash.
           </p>

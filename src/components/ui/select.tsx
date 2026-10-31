@@ -148,7 +148,7 @@ function SelectTrigger({
                 onClear();
               }
             }}
-            className="pointer-events-auto flex size-3.5 items-center justify-center rounded-full text-muted-foreground/75 hover:bg-foreground/15 hover:text-foreground active:scale-[0.92] transition-colors cursor-pointer"
+            className="pointer-events-auto flex size-3.5 items-center justify-center rounded-full text-muted-foreground/75 hover:bg-foreground/15 hover:text-foreground transition-colors cursor-pointer"
           >
             <X size={12} />
           </span>

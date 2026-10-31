@@ -25,6 +25,7 @@ import {
   ScheduleFrequency,
   RATES,
   DualAmountFields,
+  BankSelect,
 } from "./shared";
 
 import { Label } from "@/components/ui/label";
@@ -96,7 +97,17 @@ const CODE_TYPES = [
     clean: (v: string) => v.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 34),
     valid: (v: string) => v.length >= 15 && v.length <= 34,
   },
-];
+  {
+    id: "cips",
+    label: "CIPS Code",
+    note: "Cross-Border Interbank Payment System",
+    hint: "8 to 12 letters and numbers",
+    placeholder: "e.g. 313290000017",
+    clean: (v: string) => v.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 12),
+    valid: (v: string) => v.length >= 8 && v.length <= 12,
+    country: "China",
+  },
+] as { id: string; label: string; note?: string; hint: string; placeholder: string; clean: (v: string) => string; valid: (v: string) => boolean; country?: string }[];
 
 export const CODE_TYPE_LABELS: Record<string, string> = Object.fromEntries(CODE_TYPES.map((c) => [c.id, c.label]));
 
@@ -210,7 +221,8 @@ export function InternationalWireFlow({
 
   const currentCountry = state.wCountry;
   const availableBanks = INTERNATIONAL_BANKS_BY_COUNTRY[currentCountry] ?? [];
-  const codeType = CODE_TYPES.find((c) => c.id === state.wMode);
+  const codeTypes = CODE_TYPES.filter((c) => !c.country || c.country === currentCountry);
+  const codeType = codeTypes.find((c) => c.id === state.wMode);
   const [papssFor, setPapssFor] = useState<Country | null>(null);
 
   const fromAccount = useMemo(
@@ -230,7 +242,6 @@ export function InternationalWireFlow({
 
   // Each block appears once the one before it is done.
   const accountOk = state.wIban.trim().length >= 6;
-  const nameOk = state.wBenName.trim().length >= 3;
   const optionalOpen = showOptional || Boolean(state.wBenEmail || state.wBenPhone);
   const emailOk = !state.wBenEmail.trim() || /^\S+@\S+\.\S+$/.test(state.wBenEmail.trim());
   const codeOk = Boolean(codeType?.valid(state.wSwift));
@@ -248,7 +259,7 @@ export function InternationalWireFlow({
     Boolean(state.fromId) && isDestinationValid && numForeign > 0 && !overBalance;
 
   return (
-    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -268,12 +279,12 @@ export function InternationalWireFlow({
 </Field>
       ) : (
         <>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-col gap-3">
+            <div className="flex min-h-6 items-center justify-between gap-2">
               <Label>Destination</Label>
               <SavedRecipientLink provider={state.wBank} value={state.wIban} />
             </div>
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Country">
                 <CountryPicker
                   value={currentCountry}
@@ -283,6 +294,8 @@ export function InternationalWireFlow({
                     // A different country means different banks; never carry one over.
                     onChange("wBank", "");
                     onChange("wSwift", "");
+                    // A rail only one country has (CIPS) can't outlive that country.
+                    if (CODE_TYPES.find((c) => c.id === state.wMode)?.country) onChange("wMode", "");
                     if (PAPSS_COUNTRY_NAMES[country.code]) setPapssFor(country);
                   }}
                 />
@@ -301,11 +314,11 @@ export function InternationalWireFlow({
                     <SelectValue placeholder="Select mode of delivery" />
                   </SelectTrigger>
                   <SelectContent>
-                    {CODE_TYPES.map((m) => (
+                    {codeTypes.map((m) => (
                       <SelectItem key={m.id} value={m.id} label={m.label}>
                         <span className="flex flex-col">
                           <span>{m.label}</span>
-                          <span className="text-[12px] text-muted-foreground">{m.hint}</span>
+                          <span className="text-[12px] text-muted-foreground">{m.note ?? m.hint}</span>
                         </span>
                       </SelectItem>
                     ))}
@@ -330,22 +343,19 @@ export function InternationalWireFlow({
           </div>
 
           {codeOk && currentCountry && (
-            <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-              <Label>Beneficiary Bank</Label>
+            <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+              <div className="flex min-h-6 items-center">
+                <Label>Beneficiary Details</Label>
+              </div>
+              <div className="flex flex-col gap-4">
               <Field label="Bank">
                 {availableBanks.length > 0 ? (
-                  <Select value={state.wBank} onValueChange={(val) => val && onChange("wBank", val)}>
-                    <SelectTrigger >
-                      <SelectValue placeholder="Select beneficiary bank" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableBanks.map((bank) => (
-                        <SelectItem key={bank} value={bank}>
-                          {bank}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <BankSelect
+                    value={state.wBank}
+                    onChange={(val) => onChange("wBank", val)}
+                    options={availableBanks}
+                    placeholder="Select beneficiary bank"
+                  />
                 ) : (
                   <Input
                     type="text"
@@ -364,13 +374,8 @@ export function InternationalWireFlow({
                   placeholder="Enter address"
                 />
               </Field>
-            </div>
-          )}
 
-          {bankDetailsOk && (
-            <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-              <Label>Beneficiary Details</Label>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Account Number">
                   <Input
                     type="text"
@@ -390,9 +395,7 @@ export function InternationalWireFlow({
                 </Field>
               </div>
 
-              {accountOk && nameOk && (
-                <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-                  <Field label="Address">
+              <Field label="Address">
                     <Input
                       type="text"
                       value={state.wBenAddress}
@@ -402,7 +405,7 @@ export function InternationalWireFlow({
                   </Field>
 
                   {optionalOpen ? (
-                    <div className="grid gap-2 animate-in fade-in duration-150 ease-out sm:grid-cols-2">
+                    <div className="grid gap-4 animate-in fade-in duration-150 ease-out sm:grid-cols-2">
                       <Field label="Email Address" optional>
                         <Input
                           type="email"
@@ -433,8 +436,7 @@ export function InternationalWireFlow({
                   {!emailOk && (
                     <p className="text-[12px] text-warning">That email address doesn&apos;t look right.</p>
                   )}
-                </div>
-              )}
+              </div>
             </div>
           )}
         </>

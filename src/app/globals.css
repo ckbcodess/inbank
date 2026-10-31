@@ -459,6 +459,8 @@
   --plan-art-ultimate-protection-1: #0fb34c;
   --plan-art-ultimate-protection-2: #07691d;
   /* The same for the Invest products. */
+  --plan-art-treasury-1: #fbc833;
+  --plan-art-treasury-2: #fdc509;
   --plan-art-treasury-bills-1: #fbc833;
   --plan-art-treasury-bills-2: #fdc509;
   --plan-art-bonds-1: #e9e3de;
@@ -914,14 +916,6 @@ html.i18n-pending body {
 /* Auth & Onboarding shell: reassign --card so all nested card utilities use the auth card token */
 [data-auth-shell] {
   --card: var(--card-auth);
-}
-
-/* Eliminate active scale-down / shrink across all clickable elements */
-[class*="active:scale-"]:active,
-[class*="group-active:scale-"]:active,
-.group:active [class*="group-active:scale-"] {
-  scale: 1 !important;
-  transform: none !important;
 }
 
 /* Android Material Visual Feedback (Ripple & State Layer) */

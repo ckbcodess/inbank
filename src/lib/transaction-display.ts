@@ -1,20 +1,13 @@
-import { cn } from "@/lib/utils";
 import type { Transaction } from "@/lib/mock-data";
 
 /**
- * How a transaction's amount is drawn, shared by every list of transactions. Which way the money went is the sign
- * (+ or −), not a colour: a completed payment is plain text either way. Money that did not move (pending, failed,
- * reversed) is muted, with a line through a failed one. The status word under it says why, and only when it isn't the
- * usual "Completed".
+ * How a transaction's amount is drawn, shared by every list of transactions (designer, 2026-10-29). Which way the money
+ * went is the sign (+ or −) and nothing else: no arrow, no colour. Every state draws the amount the same plain way,
+ * with no line through it; a pill under it (pending, failed, reversed) is what says it did not complete, and a
+ * completed payment says nothing.
  */
 export function amountStyling(t: Pick<Transaction, "state" | "direction">): { colorClass: string; prefix: string } {
-  const prefix = t.direction === "debit" ? "− " : "+ ";
-  if (t.state !== "completed") {
-    const struck = t.state.startsWith("failed") || t.state === "reversed";
-    return { colorClass: cn("text-muted-foreground font-normal", struck && "line-through"), prefix };
-  }
-  // Money that has landed is green; money out stays the foreground colour
-  return { colorClass: t.direction === "credit" ? "text-success-text font-normal" : "text-foreground font-normal", prefix };
+  return { colorClass: "text-foreground font-normal", prefix: t.direction === "debit" ? "− " : "+ " };
 }
 
 /** A state worth saying in words next to an amount: anything that isn't Completed. */

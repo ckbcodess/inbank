@@ -384,7 +384,7 @@ function SheetButton({
     <button
       type="button"
       className={cn(
-        "rounded-full font-medium transition-all cursor-pointer flex items-center justify-center select-none active:scale-[0.98]",
+        "rounded-full font-medium transition-all cursor-pointer flex items-center justify-center select-none",
         (variant === "primary" || variant === "lime") && [
           "bg-primary text-primary-foreground hover:bg-primary-hover h-10 text-[14px] shadow-xs",
         ],

@@ -156,7 +156,7 @@ export function CardDeliveryTracker({
         <h3 className="text-[17px] font-medium text-foreground tracking-[var(--ls-tight)]">
           Delivery Progress
         </h3>
-        <span className="rounded-full bg-pill-warning px-2 py-0.5 text-[12px] font-medium text-pill-warning-text">
+        <span className="rounded-full bg-pill-warning px-2 py-0.5 text-[11px] font-medium text-pill-warning-text">
           {isReadyForPickup ? "Ready" : "Pending"}
         </span>
       </div>

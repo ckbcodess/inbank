@@ -10,7 +10,10 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowDownLeft, ArrowUpRight, CalendarClock } from "@/components/ui/icons";
+import { CalendarClock } from "@/components/ui/icons";
+import { TransactionMark } from "@/components/transactions/TransactionMark";
+import { TransactionStatusBadge } from "@/components/StatusBadge";
+import { amountStyling } from "@/lib/transaction-display";
 import { cn } from "@/lib/utils";
 import { formatMoney, type Transaction } from "@/lib/mock-data";
 import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
@@ -72,9 +75,7 @@ function TxnRow({
   showAmounts: boolean;
   onSelect: (t: Transaction) => void;
 }) {
-  const credit = txn.direction === "credit";
-  const failed = typeof txn.state === "string" && txn.state.startsWith("failed");
-  const pending = txn.state === "pending";
+  const { colorClass, prefix } = amountStyling(txn);
   return (
     <li>
       <button
@@ -82,28 +83,17 @@ function TxnRow({
         onClick={() => onSelect(txn)}
         className="flex w-full text-left items-center gap-3 py-2 hover:opacity-80 transition-opacity cursor-pointer"
       >
-        <span
-          className={cn(
-            "flex size-8 shrink-0 items-center justify-center rounded-full",
-            credit ? "bg-success/10 text-success" : "bg-muted text-muted-foreground",
-          )}
-        >
-          {credit ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}
-        </span>
+        <TransactionMark transaction={txn} />
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="truncate text-[14px] text-foreground">{txn.counterparty || txn.description}</span>
-          <span
-            className={cn(
-              "text-[12px]",
-              failed ? "text-destructive" : pending ? "text-warning" : "text-muted-foreground",
-            )}
-          >
-            {failed ? "Failed" : pending ? "Pending" : txn.category || txn.channel}
-          </span>
+          <span className="text-[12px] text-muted-foreground">{txn.category || txn.channel}</span>
         </span>
-        <span className={cn("shrink-0 tabular text-[14px]", credit ? "text-success" : "text-foreground")}>
-          {credit ? "+ " : "− "}
-          {formatMoney(Math.abs(txn.amount), txn.currency, showAmounts)}
+        <span className="flex shrink-0 flex-col items-end gap-1">
+          <span className={cn("tabular text-[14px]", colorClass)}>
+            {prefix}
+            {formatMoney(Math.abs(txn.amount), txn.currency, showAmounts)}
+          </span>
+          {txn.state !== "completed" && <TransactionStatusBadge state={txn.state} />}
         </span>
       </button>
     </li>

@@ -83,7 +83,7 @@ export function FxRatesWidget() {
           <button
             type="button"
             onClick={() => setActiveTab("convert")}
-            className={`flex items-center gap-2 rounded-lg px-2 py-1 text-[12px] transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
+            className={`flex items-center gap-2 rounded-lg px-2 py-1 text-[12px] transition-colors transition-transform cursor-pointer ${
               activeTab === "convert"
                 ? "bg-card text-foreground shadow-2xs font-medium"
                 : "text-muted-foreground hover:text-foreground"
@@ -94,7 +94,7 @@ export function FxRatesWidget() {
           <button
             type="button"
             onClick={() => setActiveTab("chart")}
-            className={`flex items-center gap-2 rounded-lg px-2 py-1 text-[12px] transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
+            className={`flex items-center gap-2 rounded-lg px-2 py-1 text-[12px] transition-colors transition-transform cursor-pointer ${
               activeTab === "chart"
                 ? "bg-card text-foreground shadow-2xs font-medium"
                 : "text-muted-foreground hover:text-foreground"
@@ -131,7 +131,7 @@ export function FxRatesWidget() {
                   setShowFromMenu(!showFromMenu);
                   setShowToMenu(false);
                 }}
-                className="flex items-center gap-2 rounded-lg bg-card px-2 py-1 text-[13px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+                className="flex items-center gap-2 rounded-lg bg-card px-2 py-1 text-[13px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted transition-transform cursor-pointer"
               >
                 <CurrencyLogo currency={fromCurrency} size={17} />
                 <span>{fromCurrency}</span>
@@ -166,7 +166,7 @@ export function FxRatesWidget() {
           <button
             type="button"
             onClick={handleSwap}
-            className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background active:scale-[0.96] transition-transform cursor-pointer shadow-2xs"
+            className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background transition-transform cursor-pointer shadow-2xs"
             aria-label="Swap currencies"
           >
             <ArrowUpDown size={14} />
@@ -184,7 +184,7 @@ export function FxRatesWidget() {
                   setShowToMenu(!showToMenu);
                   setShowFromMenu(false);
                 }}
-                className="flex items-center gap-2 rounded-lg bg-card px-2 py-1 text-[13px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+                className="flex items-center gap-2 rounded-lg bg-card px-2 py-1 text-[13px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted transition-transform cursor-pointer"
               >
                 <CurrencyLogo currency={toCurrency} size={17} />
                 <span>{toCurrency}</span>
@@ -231,7 +231,7 @@ export function FxRatesWidget() {
                   key={r}
                   type="button"
                   onClick={() => setChartRange(r)}
-                  className={`rounded-lg px-2 py-0.5 text-[11px] font-medium transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
+                  className={`rounded-lg px-2 py-0.5 text-[11px] font-medium transition-colors transition-transform cursor-pointer ${
                     chartRange === r ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
                   }`}
                 >

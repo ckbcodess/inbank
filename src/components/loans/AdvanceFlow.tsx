@@ -4,7 +4,7 @@
  * Loans → Salary Advance (or National Service Advance, or Pensioner Advance: the same flow, named for the customer's
  * income). From the Figma's "Request Salary Advance", "Proactive Flow" and "Migrate Account Class" rows:
  *
- *   amount → review → one-time code → request submitted (paid in once approved)
+ *   amount → review → one-time code → paid in at once (only customers who qualify can ask, so nothing waits for approval)
  *
  *  - What it costs is shown as soon as the amount is valid: the fees taken up front, what lands in the account, and
  *    what comes out of the next salary, so nothing on the review is a surprise.
@@ -31,8 +31,8 @@ import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, ProceedButton } from "@/components/payments/flows/shared";
 import { OutcomeFailure } from "@/components/invest/term-deposit-parts";
-import { LOANS_HOME, LoansDevTools } from "@/components/loans/parts";
-import { formatDate, formatMoney } from "@/lib/mock-data";
+import { LOANS_HOME, LoansDevTools, postLoanEntry } from "@/components/loans/parts";
+import { ACCOUNTS, formatDate, formatMoney } from "@/lib/mock-data";
 import { MOCK_TODAY, useTreasuryAccounts } from "@/lib/treasury";
 import {
   advanceFees,
@@ -101,8 +101,8 @@ export function AdvanceFlow() {
     const fees = advanceFees(made.amount);
     return (
       <PaymentSuccessScreen
-        title="Request submitted"
-        message={`We’ll pay ${money(fees.received)} into ${to?.name ?? "your account"} once it’s approved. We’ll let you know when it’s in.`}
+        title="Advance paid in"
+        message={`${money(fees.received)} is in ${to?.name ?? "your account"}.`}
         receiptRows={[
           ["Reference", made.reference],
           ["Advance", money(made.amount)],
@@ -156,12 +156,8 @@ export function AdvanceFlow() {
         <LoansDevTools />
         <TrueEmptyState
           icon={<HandCoins size={22} strokeWidth={1.8} />}
-          title={open.status === "pending" ? "Your request is being reviewed" : "You already have an advance"}
-          description={
-            open.status === "pending"
-              ? "You can take another once this one is decided and repaid."
-              : `Repay it to take another. It’s due on ${formatDate(open.dueOn)}.`
-          }
+          title="You already have an advance"
+          description={`Repay it to take another. It’s due on ${formatDate(open.dueOn)}.`}
           action={
             <Button nativeButton={false} render={<Link href={`/loans/${open.id}`} />}>
               View Advance
@@ -197,7 +193,10 @@ export function AdvanceFlow() {
       setScreen("failed");
       return;
     }
-    setMade(request({ ownerId, kind: income.kind, amount: num, accountId: to.id }, needsSwitch));
+    const advance = request({ ownerId, kind: income.kind, amount: num, accountId: to.id }, needsSwitch);
+    const account = ACCOUNTS.find((a) => a.id === to.id);
+    if (account) postLoanEntry({ direction: "credit", amount: advanceFees(advance.amount).received, account, advance });
+    setMade(advance);
     setScreen("success");
   }
 

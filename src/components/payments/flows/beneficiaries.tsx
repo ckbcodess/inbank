@@ -18,6 +18,11 @@ export interface RecentPayeeAvatar {
   colorDarkBg?: string;
   colorDarkText?: string;
   billerId?: string;
+  /** A Ghana.gov payee: the agency and the service it was saved for. */
+  govService?: string;
+  govProduct?: string;
+  /** The answers to fill in when the saved Ghana.gov service is generated again (JSON). */
+  govDetails?: string;
   category?: string;
   country?: string;
   subtitle?: string;
@@ -339,6 +344,12 @@ export interface StripRecipient {
   subtitle?: string;
 }
 
+/** The last four digits of a number, behind dots, so a saved recipient is recognisable without showing it all. */
+function maskedAcct(acct: string): string {
+  const digits = acct.replace(/\D/g, "");
+  return digits.length >= 4 ? `•••• ${digits.slice(-4)}` : "";
+}
+
 /** The most recipients the strip shows. More than this and a "See all" tile opens the full, searchable list. */
 export const STRIP_LIMIT = 5;
 
@@ -456,7 +467,7 @@ export function BeneficiaryPicker<T extends StripRecipient>({
         if (!next) setQuery("");
         onOpenChange(next);
       }}
-      title="Choose a recipient"
+      title="Select a Beneficiary"
       size="md"
     >
       <div className="flex flex-col gap-3">
@@ -483,7 +494,10 @@ export function BeneficiaryPicker<T extends StripRecipient>({
                     <PayeeAvatar name={item.name} initials={item.initials} size="md" />
                     <span className="flex min-w-0 flex-col">
                       <span className="truncate text-[14px] text-foreground">{item.name}</span>
-                      <span className="truncate text-[12px] text-muted-foreground">{item.subtitle || item.bank}</span>
+                      <span className="truncate text-[12px] text-muted-foreground">
+                        {item.subtitle || item.bank}
+                        {maskedAcct(item.acct) && <span className="tabular"> · {maskedAcct(item.acct)}</span>}
+                      </span>
                     </span>
                   </button>
                 ))}

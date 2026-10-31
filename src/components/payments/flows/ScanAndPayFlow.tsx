@@ -29,6 +29,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { QrCode } from "@/components/ui/qr-code";
 import { useSession } from "@/lib/session-store";
+import { SavedRecipientLink } from "./SavedRecipients";
 
 export interface ScanAndPayFormState {
   fromId: string;
@@ -344,6 +345,11 @@ export function ScanAndPayFlow({
                 >
                   Enter Merchant ID
                 </Button>
+              </div>
+
+              {/* Merchants saved before: one tap instead of a scan (nothing is drawn when none are saved) */}
+              <div className="flex justify-center">
+                <SavedRecipientLink />
               </div>
             </div>
           )}

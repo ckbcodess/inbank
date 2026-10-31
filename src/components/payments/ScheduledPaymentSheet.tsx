@@ -133,7 +133,7 @@ export function ScheduledPaymentSheet({
                 onClick={togglePause}
                 className="group flex cursor-pointer flex-col items-center gap-2 rounded-xl p-1 outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <span className="flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xs transition-transform duration-fast group-hover:brightness-95 group-active:scale-95">
+                <span className="flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xs transition-transform duration-fast group-hover:brightness-95">
                   {paused ? <Play size={20} aria-hidden="true" /> : <Pause size={20} aria-hidden="true" />}
                 </span>
                 <span className="text-[12px] text-foreground">{paused ? "Resume" : "Pause"}</span>
@@ -143,7 +143,7 @@ export function ScheduledPaymentSheet({
                 onClick={() => setConfirmCancel(true)}
                 className="group flex cursor-pointer flex-col items-center gap-2 rounded-xl p-1 outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <span className="flex size-11 items-center justify-center rounded-full bg-destructive text-white shadow-xs transition-transform duration-fast group-hover:brightness-95 group-active:scale-95">
+                <span className="flex size-11 items-center justify-center rounded-full bg-destructive text-white shadow-xs transition-transform duration-fast group-hover:brightness-95">
                   <Trash2 size={20} aria-hidden="true" />
                 </span>
                 <span className="text-[12px] text-foreground">Cancel</span>

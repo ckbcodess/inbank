@@ -125,7 +125,7 @@ export function ExpandableSearch({
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="flex size-8 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 transition cursor-pointer"
+            className="flex size-8 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 transition cursor-pointer"
             aria-label={label}
           >
             <Search size={18} />

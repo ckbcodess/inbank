@@ -3,8 +3,9 @@
 import { SavedRecipientLink } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
-import {
-} from "@/components/ui/select";
+import { Search } from "@/components/ui/icons";
+import { AppLoader } from "@/components/ui/loader";
+import { cn } from "@/lib/utils";
 import {
   FromAccountSelector,
   AmountInput,
@@ -80,22 +81,30 @@ export function OtherBankFlow({
   const isBankValid = Boolean(state.bank);
   const isDetailsValid = isBankValid && isAcctValid;
 
+  // Other banks can't be checked as the person types, so the name is looked up when they press Verify.
+  const [verifiedKey, setVerifiedKey] = useState<string | null>(() =>
+    state.benName && state.bank && cleanAcct.length >= 8 ? `${state.bank}|${cleanAcct}` : null
+  );
   const [resolving, setResolving] = useState(false);
-  // What is typed when the person is searching saved recipients by name rather than entering a number
+  const currentKey = `${state.bank}|${cleanAcct}`;
 
+  // A saved recipient picked from outside arrives with its name already resolved
   useEffect(() => {
-    if (isDetailsValid) {
-      setResolving(true);
-      const timer = setTimeout(() => {
-        setResolving(false);
-      }, 250);
-      return () => clearTimeout(timer);
-    } else {
-      setResolving(false);
-    }
-  }, [isDetailsValid, state.bank, state.benAcct]);
+    if (state.benName && isDetailsValid && verifiedKey !== currentKey) setVerifiedKey(currentKey);
+  }, [state.benName, isDetailsValid, verifiedKey, currentKey]);
 
-  const isVerified = isDetailsValid && !resolving && Boolean(verifiedName);
+  const handleVerify = () => {
+    if (!isDetailsValid || resolving) return;
+    setResolving(true);
+    setTimeout(() => {
+      const resolved = resolveAccountName(state.benAcct, state.benName);
+      if (resolved) onChange("benName", resolved);
+      setVerifiedKey(currentKey);
+      setResolving(false);
+    }, 250);
+  };
+
+  const isVerified = isDetailsValid && !resolving && verifiedKey === currentKey && Boolean(verifiedName);
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
@@ -124,30 +133,57 @@ export function OtherBankFlow({
           <div className="flex flex-col gap-2">
             <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={OTHER_BANKS} />
 
-            <div className="relative flex items-center">
+            {isBankValid && (
+              <div className="relative flex items-center animate-in fade-in duration-200 ease-out">
                 <Input
                   type="text"
                   inputMode="numeric"
                   value={state.benAcct}
                   onChange={(e) => {
-                    const val = e.target.value.replace(/[^0-9]/g, "");
-                    onChange("benAcct", val);
-                    const resolved = resolveAccountName(val, "");
-                    if (resolved) {
-                      onChange("benName", resolved);
+                    onChange("benAcct", e.target.value.replace(/[^0-9]/g, ""));
+                    if (state.benName) onChange("benName", "");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && isDetailsValid && !isVerified) {
+                      e.preventDefault();
+                      handleVerify();
                     }
                   }}
-                  placeholder={isBankValid ? "Enter account number" : "Choose a bank first"}
-                  disabled={!isBankValid}
-                  className="numorainput tabular"
+                  placeholder="Enter account number"
+                  className="numorainput tabular pr-24"
                 />
-            </div>
+                <button
+                  type="button"
+                  onClick={handleVerify}
+                  disabled={!isDetailsValid || resolving}
+                  className={cn(
+                    "absolute right-2 top-1/2 flex -translate-y-1/2 select-none items-center gap-2 rounded-lg px-2 py-1 text-[12px] font-medium transition-all",
+                    isDetailsValid
+                      ? "cursor-pointer text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                      : "pointer-events-none cursor-not-allowed text-muted-foreground/35"
+                  )}
+                >
+                  {resolving ? (
+                    <>
+                      <AppLoader size={12} className="text-muted-foreground" />
+                      <span className="text-[12px] text-muted-foreground">Verifying...</span>
+                    </>
+                  ) : isVerified ? (
+                    <span className="text-[12px] font-medium text-success-text">Verified</span>
+                  ) : (
+                    <span className="flex items-center gap-1">
+                      <Search size={13} />
+                      <span>Verify</span>
+                    </span>
+                  )}
+                </button>
+              </div>
+            )}
 
             {/* Verification Status */}
             <AccountVerificationStatus
-              resolving={isDetailsValid && resolving}
+              resolving={false}
               name={isVerified ? verifiedName : null}
-              resolvingMessage="Verifying..."
             />
           </div>
         )}

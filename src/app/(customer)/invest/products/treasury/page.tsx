@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
+import { TreasuryProducts } from "@/components/invest/ProductPages";
 
-/** Treasury Bills & Bonds became two products, Treasury Bills and Bonds; this keeps an old link working. */
-export default function TreasuryRedirect() {
-  redirect("/invest/products/treasury-bills");
+export default function TreasuryPage() {
+  return <TreasuryProducts />;
 }

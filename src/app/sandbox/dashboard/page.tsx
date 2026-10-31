@@ -276,7 +276,7 @@ export default function FigmaDesignFidelityDashboard() {
               {/* Action 1: Send money */}
               <button
                 onClick={() => openAction("Send money")}
-                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs active:scale-[0.97]"
+                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs"
               >
                 <div className="size-7 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
                   <Send size={15} />
@@ -287,7 +287,7 @@ export default function FigmaDesignFidelityDashboard() {
               {/* Action 2: Pay Bill */}
               <button
                 onClick={() => openAction("Pay Bill")}
-                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs active:scale-[0.97]"
+                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs"
               >
                 <div className="size-7 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
                   <Receipt size={15} />
@@ -298,7 +298,7 @@ export default function FigmaDesignFidelityDashboard() {
               {/* Action 3: Quick pay */}
               <button
                 onClick={() => openAction("Quick pay")}
-                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs active:scale-[0.97]"
+                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs"
               >
                 <div className="size-7 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
                   <Zap size={15} />
@@ -309,7 +309,7 @@ export default function FigmaDesignFidelityDashboard() {
               {/* Action 4: View Loans */}
               <button
                 onClick={() => alert("Viewing loans and credit facilities")}
-                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs active:scale-[0.97]"
+                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs"
               >
                 <div className="size-7 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
                   <Briefcase size={15} />

@@ -190,6 +190,8 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
         message={intent ? `You can now carry on with the ${intent.label}.` : "You can now explore and purchase insurance plans."}
         onPrimaryAction={() => router.push(intent?.href ?? INSURE_HOME)}
         primaryActionLabel={intent ? `Continue to ${intent.label}` : "View Plans"}
+        onSecondaryAction={() => router.push(INSURE_HOME)}
+        secondaryActionLabel="Back to Insure"
         showSaveBeneficiary={false}
         customActionCards={[]}
       />

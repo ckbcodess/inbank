@@ -17,6 +17,7 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { InlineError } from "@/components/ui/inline-error";
 import {
   FromAccountSelector,
+  AmountInput,
   InsufficientFundsAlert,
   ProceedButton,
   AccountVerificationStatus,
@@ -33,6 +34,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SavedRecipientLink } from "./SavedRecipients";
 import { Field } from "@/components/ui/field";
 export interface BroadbandFormState {
   fromId: string;
@@ -40,6 +42,8 @@ export interface BroadbandFormState {
   aPhone: string;
   benName: string;
   bundleId: string;
+  /** An amount that replaces the package price, when the customer changes it. */
+  amount?: string;
   isScheduled?: boolean;
   scheduleDate?: string;
   scheduleFrequency?: ScheduleFrequency;
@@ -118,8 +122,16 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
     groups.find(([g]) => g === pickedGroup)?.[0] ?? groups.find(([g]) => g === selected?.group)?.[0] ?? groups[0]?.[0] ?? "";
   const activeItems = groups.find(([g]) => g === activeGroup)?.[1] ?? [];
   const price = selected?.price ?? 0;
-  const overBalance = price > (fromAccount?.available ?? 0);
-  const isValid = Boolean(state.fromId) && isVerified && Boolean(selected) && !overBalance;
+  // The package price, unless the customer changed it
+  const [editingAmount, setEditingAmount] = useState(false);
+  const payable = state.amount ? Number(state.amount.replace(/[^0-9.]/g, "")) || 0 : price;
+  const overBalance = payable > (fromAccount?.available ?? 0);
+  const isValid = Boolean(state.fromId) && isVerified && Boolean(selected) && payable > 0 && !overBalance;
+  // A different package starts from its own price
+  const selectedId = selected?.id;
+  useEffect(() => {
+    setEditingAmount(false);
+  }, [selectedId]);
 
   return (
     <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
@@ -137,7 +149,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
       ) : (
         <>
           {/* 2. Which broadband product */}
-          <Field label="Broadband Provider">
+          <Field label="Broadband Provider" action={<SavedRecipientLink provider={state.wNetwork} value={state.aPhone} />}>
             <NetworkSelect
               value={state.wNetwork}
               placeholder="Select provider"
@@ -226,6 +238,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
                   selected={p.id === state.bundleId}
                   onSelect={() => {
                     onChange("bundleId", p.id);
+                    onChange("amount", "");
                     setCollapsed(true);
                   }}
                 />
@@ -241,6 +254,39 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
 
           {selected && (
             <>
+              {/* The package has a price; what is paid is the customer's to change */}
+              {editingAmount ? (
+                <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
+                  <AmountInput
+                    value={state.amount ?? ""}
+                    onChange={(val) => onChange("amount", val)}
+                    label="Amount"
+                    error={overBalance ? <InsufficientFundsAlert /> : undefined}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onChange("amount", "");
+                      setEditingAmount(false);
+                    }}
+                    className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
+                  >
+                    Use the package price
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange("amount", String(price));
+                    setEditingAmount(true);
+                  }}
+                  className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
+                >
+                  Edit amount
+                </button>
+              )}
+
               <SchedulePaymentSection
                 state={{
                   enabled: state.isScheduled ?? false,
@@ -256,7 +302,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
                 }}
               />
 
-              <ProceedButton disabled={!isValid} onClick={onProceed} label={`Buy Package (${formatMoney(price, "GHS", true)})`} />
+              <ProceedButton disabled={!isValid} onClick={onProceed} label={`Buy Package (${formatMoney(payable, "GHS", true)})`} />
             </>
           )}
         </div>

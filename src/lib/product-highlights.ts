@@ -26,6 +26,12 @@ export interface PlanHighlight {
 }
 
 /** What a Treasury Bills customer gets, from what the app already does (no figures: those come from the offers). */
+export const TREASURY_HIGHLIGHTS: readonly PlanHighlight[] = [
+  { icon: "government", label: "Lend to the government", value: "Government of Ghana Treasury Bills & Bonds" },
+  { icon: "market", label: "Primary and secondary markets", value: "New issues at auction, or secondary from other investors" },
+  { icon: "exit", label: "Sell before it matures", value: "Through a rediscount, with the price shown first" },
+];
+
 export const BILLS_HIGHLIGHTS: readonly PlanHighlight[] = [
   { icon: "government", label: "Lend to the government", value: "Government of Ghana Treasury Bills" },
   { icon: "market", label: "Buy at auction or from others", value: "New issues, or from other investors" },

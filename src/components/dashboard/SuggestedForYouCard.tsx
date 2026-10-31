@@ -95,7 +95,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
           <button
             type="button"
             onClick={() => setShowEditModal(true)}
-            className="rounded-lg px-2 py-1 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
+            className="rounded-lg px-2 py-1 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground transition-transform cursor-pointer"
           >
             Customize
           </button>

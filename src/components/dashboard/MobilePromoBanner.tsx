@@ -87,14 +87,14 @@ export function MobilePromoBanner() {
             <button
               type="button"
               onClick={() => setShowCalculator(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-success px-3 py-2 text-[12px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-success px-3 py-2 text-[12px] font-medium text-white shadow-2xs hover:opacity-90 transition-transform cursor-pointer"
             >
               <Calculator size={14} />
               <span>Calculate Returns</span>
             </button>
             <Link
               href="/accounts"
-              className="inline-flex items-center gap-1 text-[12px] font-medium text-foreground hover:underline active:scale-[0.96] transition-transform"
+              className="inline-flex items-center gap-1 text-[12px] font-medium text-foreground hover:underline transition-transform"
             >
               <span>Open Account</span>
               <ArrowRight size={13} />
@@ -124,7 +124,7 @@ export function MobilePromoBanner() {
           <div className="mt-2 flex items-center gap-2">
             <Link
               href="/payments/send"
-              className="inline-flex items-center gap-2 rounded-xl bg-info px-3 py-2 text-[12px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform"
+              className="inline-flex items-center gap-2 rounded-xl bg-info px-3 py-2 text-[12px] font-medium text-white shadow-2xs hover:opacity-90 transition-transform"
             >
               <span>Send Money Now</span>
               <ArrowRight size={13} />
@@ -146,7 +146,7 @@ export function MobilePromoBanner() {
         {/* Top Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full border border-warning/25 bg-pill-warning px-2 py-0.5 text-[11.5px] font-medium text-pill-warning-text">
+            <span className="inline-flex items-center gap-2 rounded-full border border-warning/25 bg-pill-warning px-2 py-0.5 text-[11px] font-medium text-pill-warning-text">
               <Sparkles size={12} />
               Featured
             </span>
@@ -158,7 +158,7 @@ export function MobilePromoBanner() {
             <button
               type="button"
               onClick={() => setCurrentSlide((s) => (s === 0 ? slides.length - 1 : s - 1))}
-              className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
+              className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground transition-transform cursor-pointer"
               aria-label="Previous slide"
             >
               <ChevronLeft size={16} />
@@ -166,7 +166,7 @@ export function MobilePromoBanner() {
             <button
               type="button"
               onClick={() => setCurrentSlide((s) => (s === slides.length - 1 ? 0 : s + 1))}
-              className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
+              className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground transition-transform cursor-pointer"
               aria-label="Next slide"
             >
               <ChevronRight size={16} />

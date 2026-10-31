@@ -562,13 +562,13 @@ export function PaymentSuccessScreen({
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="flex items-center gap-3 w-full max-w-[460px] pt-2"
+        className="flex items-stretch gap-3 w-full max-w-[460px] pt-2"
       >
         {onSecondaryAction && (
           <button
             type="button"
             onClick={onSecondaryAction}
-            className="flex-1 rounded-lg border border-border dark:border-border bg-card px-4 py-2 text-[14px] font-medium text-foreground hover:bg-muted/60 active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
+            className="flex-1 rounded-lg border border-border dark:border-border bg-card px-4 py-2 text-[14px] font-medium text-foreground hover:bg-muted/60 transition cursor-pointer text-center shadow-xs"
           >
             {secondaryActionLabel}
           </button>
@@ -576,7 +576,7 @@ export function PaymentSuccessScreen({
         <button
           type="button"
           onClick={onPrimaryAction}
-          className="relative overflow-hidden flex-1 rounded-lg bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-2 text-[14px] font-medium active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
+          className="relative overflow-hidden flex-1 rounded-lg bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-2 text-[14px] font-medium transition-[transform,background-color] duration-press ease-settle cursor-pointer text-center shadow-xs"
         >
           {/* Single light sweep as the button arrives — then it stays still */}
           <motion.div

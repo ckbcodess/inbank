@@ -5,6 +5,7 @@
  * pills are filled amber, the same as `RangePills`. For one choice only, use `SegmentedControl` or `RangePills`.
  */
 
+import { Check, Plus } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 interface MultiChoiceProps {
@@ -32,12 +33,13 @@ export function MultiChoice({ options, value, onChange, className, ...rest }: Mu
             aria-checked={chosen}
             onClick={() => toggle(option)}
             className={cn(
-              "cursor-pointer select-none rounded-full border px-4 py-2 text-left text-[12px] outline-none transition-colors duration-hover focus-visible:ring-1 focus-visible:ring-ring",
+              "inline-flex cursor-pointer select-none items-center gap-1 rounded-full border px-4 py-2 text-left text-[12px] outline-none transition-colors duration-hover focus-visible:ring-1 focus-visible:ring-ring",
               chosen
                 ? "border-transparent bg-primary text-primary-foreground"
                 : "border-border/80 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
+            {chosen ? <Check size={15} /> : <Plus size={15} />}
             {option}
           </button>
         );

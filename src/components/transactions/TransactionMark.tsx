@@ -1,5 +1,4 @@
 import {
-  ArrowDownLeft,
   ArrowLeftRight,
   Banknote,
   CreditCard,
@@ -71,8 +70,8 @@ const LOGO_RAILS = new Set(["bill", "qr", "card", "airtime", "data", "wallet-to-
 /**
  * The leading mark of a transaction row: one quiet circle, a hairline outline with a grey line icon for the kind of
  * payment (what it was). A company we have a logo for shows its logo instead, because that is recognition rather than
- * decoration. Money that came in gets a small green badge on the corner with a white arrow; money out has
- * none (the minus sign on the amount already says it). The arrow sits over whatever the mark shows, a logo or an icon.
+ * decoration. It says nothing about direction: no arrow or badge on the corner, whatever the mark shows (designer,
+ * 2026-10-29). Which way the money went is the + or − on the amount, and only that.
  */
 export function TransactionMark({
   transaction,
@@ -82,7 +81,6 @@ export function TransactionMark({
   className?: string;
 }) {
   const Icon = iconFor(transaction);
-  const incoming = transaction.direction === "credit";
   // A company we have a logo for is shown by its logo filling the circle; between my own accounts it is GCB. Everything else is the kind icon.
   const logo =
     transaction.paymentMethod === "own-account"
@@ -110,16 +108,6 @@ export function TransactionMark({
           className={logo.round ? "size-full rounded-full object-cover" : "size-5 object-contain"}
         />
       ) : <Icon size={17} strokeWidth={1.6} />}
-      {/* Only money in is marked: most rows are money out, so the exception is what gets the arrow */}
-      {incoming && (
-        <span
-          role="img"
-          aria-label="Money in"
-          className="absolute -bottom-1 -right-1 flex size-[17px] items-center justify-center rounded-full bg-success text-card ring-2 ring-card"
-        >
-          <ArrowDownLeft size={10} aria-hidden="true" />
-        </span>
-      )}
     </div>
   );
 }

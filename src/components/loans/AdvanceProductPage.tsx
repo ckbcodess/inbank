@@ -42,10 +42,6 @@ const ADVANCE_STEPS: SetupStep[] = [
 
 function statusLine(a: Advance): string {
   switch (a.status) {
-    case "pending":
-      return "Waiting for approval";
-    case "declined":
-      return "Not approved";
     case "repaid":
       return `Repaid ${formatDate(a.repaidOn ?? "")}`;
     default:
@@ -56,7 +52,7 @@ function statusLine(a: Advance): string {
 function AdvanceRow({ advance, showAmounts }: { advance: Advance; showAmounts: boolean }) {
   const overdue = advance.status === "active" && advance.dueOn < MOCK_TODAY;
   const figure = advance.status === "active" ? owedBy(advance) : advance.status === "repaid" ? (advance.repaidAmount ?? advance.amount) : advance.amount;
-  const muted = advance.status === "declined" || advance.status === "repaid";
+  const muted = advance.status === "repaid";
   return (
     <li>
       <Link
@@ -125,7 +121,7 @@ export function AdvanceProductPage() {
             </ListCard>
             {open && (
               <p className="px-1 text-[12px] text-muted-foreground">
-                {open.status === "pending" ? "You can take another once this request is decided and repaid." : "Repay your current advance to take another."}
+                Repay your current advance to take another.
               </p>
             )}
           </section>

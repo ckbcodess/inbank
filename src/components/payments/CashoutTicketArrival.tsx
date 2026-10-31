@@ -68,7 +68,7 @@ function frames(): Keyframe[] {
   return out;
 }
 
-export function CashoutTicketArrival(props: { code: string; amount: string; recipientPhone: string }) {
+export function CashoutTicketArrival(props: { code: string; amount: string; recipientPhone: string; expires?: string }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

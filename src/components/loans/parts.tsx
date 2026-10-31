@@ -8,14 +8,13 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { FileText } from "@/components/ui/icons";
-import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { TrueEmptyState } from "@/components/states/ListStates";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
-import { ACCOUNTS, recordTransaction, type Account } from "@/lib/mock-data";
-import { advanceFees, ADVANCE_PRODUCTS, useLoans, useMyLoans, type Advance, type IncomeScenario } from "@/lib/loans";
+import { recordTransaction, type Account } from "@/lib/mock-data";
+import { ADVANCE_PRODUCTS, totalRepaid, useLoans, useMyLoans, type Advance, type IncomeScenario } from "@/lib/loans";
 import { MOCK_TODAY, useTreasuryAccounts } from "@/lib/treasury";
 
 export const LOANS_HOME = "/loans";
@@ -34,22 +33,30 @@ export function postLoanEntry({
   amount,
   account,
   advance,
+  isPartial = false,
 }: {
   direction: "credit" | "debit";
   amount: number;
   account: Account;
   advance: Advance;
+  isPartial?: boolean;
 }): string {
   const d = new Date();
   const trn = `TRN-${String(d.getTime()).slice(-8)}`;
   const name = ADVANCE_PRODUCTS[advance.kind].name;
+  const description =
+    direction === "credit"
+      ? `${name} paid in`
+      : isPartial
+      ? `${name} installment paid`
+      : `${name} repaid in full`;
   recordTransaction({
     id: trn,
     reference: trn,
     date: d.toISOString().slice(0, 10),
     time: d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
     valueDate: d.toISOString().slice(0, 10),
-    description: direction === "credit" ? `${name} paid in` : `${name} repaid`,
+    description,
     counterparty: name,
     counterpartyAccount: advance.reference,
     accountId: account.id,
@@ -93,13 +100,9 @@ const CUSTOMER_STATES: { id: IncomeScenario; label: string }[] = [
 ];
 const ADVANCE_STATES = [
   { id: "none", label: "None" },
-  { id: "pending", label: "Waiting for approval" },
   { id: "active", label: "Paid in, due next payday" },
+  { id: "partial", label: "Partially repaid" },
   { id: "overdue", label: "Overdue" },
-];
-const DECISION_STATES = [
-  { id: "approve", label: "Approve the pending request" },
-  { id: "decline", label: "Decline the pending request" },
 ];
 const REQUEST_STATES = [
   { id: "succeed", label: "Go through" },
@@ -117,21 +120,25 @@ function scenarioOf(income: ReturnType<typeof useMyLoans>["income"]): IncomeScen
 }
 
 /**
- * Dev Mode for Loans: who the customer is (what the bank sees credited to them), an advance they already hold, the
- * bank's decision on a pending request (approving pays it in), and whether new requests fail.
+ * Dev Mode for Loans: who the customer is (what the bank sees credited to them), an advance they already hold, and
+ * whether new requests fail.
  */
 export function LoansDevTools({ extraGroups }: { extraGroups?: DevStateGroup[] } = {}) {
-  const { ownerId, income, open, advances } = useMyLoans();
+  const { ownerId, income, open } = useMyLoans();
   const seed = useLoans((s) => s.seed);
-  const decide = useLoans((s) => s.decide);
   const markWelcomed = useLoans((s) => s.markWelcomed);
   const failRequests = useLoans((s) => s.failRequests);
   const setFailRequests = useLoans((s) => s.setFailRequests);
   const accounts = useTreasuryAccounts();
   const accountId = income?.accountId ?? accounts[0]?.id ?? "";
   const scenario = scenarioOf(income);
-  const pending = advances.find((a) => a.status === "pending");
-  const advanceValue = !open ? "none" : open.status === "pending" ? "pending" : open.dueOn < MOCK_TODAY ? "overdue" : "active";
+  const advanceValue = !open
+    ? "none"
+    : totalRepaid(open) > 0
+    ? "partial"
+    : open.dueOn < MOCK_TODAY
+    ? "overdue"
+    : "active";
 
   const groups = useMemo<DevStateGroup[]>(
     () => [
@@ -139,24 +146,7 @@ export function LoansDevTools({ extraGroups }: { extraGroups?: DevStateGroup[] }
         label: "Advance",
         states: ADVANCE_STATES,
         value: advanceValue,
-        onChange: (v) => seed(ownerId, accountId, scenario === "none" ? "salary" : scenario, v as "none" | "active" | "overdue" | "pending"),
-      },
-      {
-        label: "Bank decision",
-        states: DECISION_STATES,
-        value: "",
-        onChange: (v) => {
-          if (!pending) {
-            toast("There’s no request waiting for a decision.", { id: "loans-decide" });
-            return;
-          }
-          decide(ownerId, v === "approve");
-          if (v === "approve") {
-            const account = ACCOUNTS.find((a) => a.id === pending.accountId);
-            if (account) postLoanEntry({ direction: "credit", amount: advanceFees(pending.amount).received, account, advance: pending });
-          }
-          toast.success(v === "approve" ? "Approved and paid in." : "Declined.", { id: "loans-decide" });
-        },
+        onChange: (v) => seed(ownerId, accountId, scenario === "none" ? "salary" : scenario, v as "none" | "active" | "overdue" | "partial"),
       },
       {
         label: "New requests",
@@ -172,7 +162,7 @@ export function LoansDevTools({ extraGroups }: { extraGroups?: DevStateGroup[] }
       },
       ...(extraGroups ?? []),
     ],
-    [advanceValue, ownerId, accountId, scenario, pending, failRequests, seed, decide, setFailRequests, markWelcomed, extraGroups],
+    [advanceValue, ownerId, accountId, scenario, failRequests, seed, setFailRequests, markWelcomed, extraGroups],
   );
 
   return (

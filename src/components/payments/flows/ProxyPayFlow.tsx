@@ -121,7 +121,7 @@ export function ProxyPayFlow({
                     onChange("benName", resolved);
                   }
                 }}
-                placeholder="Ghana Card, phone or email"
+                placeholder="Enter a proxy ID"
                 
               />
             </div>

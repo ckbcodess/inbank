@@ -111,7 +111,7 @@ function QueueLink({
   return (
     <Link
       href={href}
-      className="group flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 transition-colors hover:border-primary/40 hover:bg-muted/40 active:scale-[0.99] transition-transform"
+      className="group flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 transition-colors hover:border-primary/40 hover:bg-muted/40 transition-transform"
     >
       <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
         {icon}

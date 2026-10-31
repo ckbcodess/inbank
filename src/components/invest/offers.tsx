@@ -81,10 +81,10 @@ export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: bo
     offer.group === "term" ? (
       <span className="truncate">{`Matures ${formatDate(addDays(MOCK_TODAY, offer.tenureDays ?? 0))}`}</span>
     ) : s && offer.group === "primary" ? (
-      <span className="truncate">{`Primary · Settles ${formatDate(s.settlement ?? s.maturity)}`}</span>
+      <span className="truncate">{`Settles ${formatDate(s.settlement ?? s.maturity)}`}</span>
     ) : s ? (
       <>
-        <span className="shrink-0">{`Secondary · Matures ${formatDate(s.maturity)}`}</span>
+        <span className="shrink-0">{`Matures ${formatDate(s.maturity)}`}</span>
         <span aria-hidden="true">·</span>
         <span className="truncate">{daysLeftLabel(s.maturity)}</span>
       </>

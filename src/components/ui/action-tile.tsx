@@ -73,7 +73,7 @@ export function TileChip({
  * on the padding box, the gradient on the border box. The fill is a variable so hover can swap it.
  */
 const TILE =
-  "group flex w-full items-center justify-between gap-3 rounded-2xl border border-transparent border-[length:var(--edge-glass-width)] p-3 text-left transition duration-150 active:scale-[0.99] " +
+  "group flex w-full items-center justify-between gap-3 rounded-2xl border border-transparent border-[length:var(--edge-glass-width)] p-3 text-left transition duration-150 " +
   "[--tile-fill:var(--tile-rest)] hover:[--tile-fill:var(--tile-over)] " +
   "[background:linear-gradient(var(--tile-fill),var(--tile-fill))_padding-box,linear-gradient(var(--edge-glass-angle),var(--edge-glass-start),var(--edge-glass-mid)_var(--edge-glass-mid-at),var(--edge-glass-end))_border-box]";
 
@@ -142,7 +142,7 @@ export function ActionTile({
         TILE,
         TILE_FILL[variant],
         compactOnMobile && "max-sm:p-3",
-        "cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:[--tile-fill:var(--tile-rest)] disabled:active:scale-100",
+        "cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:[--tile-fill:var(--tile-rest)]",
         className,
       )}
     >

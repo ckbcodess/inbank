@@ -37,8 +37,9 @@ export const INVEST_HOME = "/invest";
 export const PRODUCTS_HREF = "/invest";
 /** The two product pages under Products. */
 export const TERM_PRODUCTS_HREF = "/invest/products/term-deposits";
-export const BILLS_PRODUCTS_HREF = "/invest/products/treasury-bills";
-export const BONDS_PRODUCTS_HREF = "/invest/products/bonds";
+export const TREASURY_PRODUCTS_HREF = "/invest/products/treasury";
+export const BILLS_PRODUCTS_HREF = TREASURY_PRODUCTS_HREF;
+export const BONDS_PRODUCTS_HREF = TREASURY_PRODUCTS_HREF;
 /** The base of the treasury routes (buy, holdings, statement). It has no page of its own. */
 export const TREASURY_HOME = "/invest/treasury";
 

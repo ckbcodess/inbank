@@ -4,11 +4,8 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   ChevronLeft,
-  Search,
   Check,
   Plus,
-  Landmark,
-  Smartphone,
   X,
 } from "@/components/ui/icons";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
@@ -21,7 +18,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  Modal,
 } from "@/components/ui/dialog";
+import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import { cn } from "@/lib/utils";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { toast } from "sonner";
@@ -91,6 +90,7 @@ export default function CreateGroupFlow({
     groupToEdit?.members ? [...groupToEdit.members] : []
   );
   const [search, setSearch] = useState("");
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   // Auto-focus Group Name input
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -127,7 +127,8 @@ export default function CreateGroupFlow({
   // Map beneficiaries to contacts (or fallback to mockup seed contacts)
   const availableContacts: GroupMember[] = useMemo(() => {
     const list = beneficiaries
-      .filter((b) => b.category === "person" || b.category === "number" || b.transactionType !== "bill")
+      // Only people with a bank account or a wallet can be in a group; services and merchants can't
+      .filter((b) => !["bill", "airtime", "broadband", "card", "qr", "insurance"].includes(b.transactionType))
       .map((b) => ({
         id: b.id.startsWith("b-") ? b.id : `b-${b.id}`,
         name: b.name,
@@ -465,85 +466,101 @@ export default function CreateGroupFlow({
               </div>
             )}
 
-            {/* Search contacts input */}
-            <div className="relative w-full">
-              <Search
-                size={17}
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
-              />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search contacts"
-                className="h-11 w-full rounded-2xl border border-field-border bg-field pl-10 pr-10 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
-              />
-              {search && (
-                <button
-                  type="button"
-                  onClick={() => setSearch("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
-                  aria-label="Clear search"
-                >
-                  <X size={15} />
-                </button>
-              )}
-            </div>
-
-            {/* Members List Container */}
-            <div className="rounded-2xl border border-border/60 bg-card overflow-hidden divide-y divide-border/50 max-h-[360px] overflow-y-auto scroll-fade">
-              {filteredContacts.map((contact) => {
-                const isSelected = members.some((m) =>
-                  m.id && contact.id ? m.id === contact.id : m.destination === contact.destination
-                );
-                return (
-                  <div
-                    key={contact.id || contact.destination}
-                    onClick={() => toggleMember(contact)}
-                    className={cn(
-                      "flex items-center justify-between px-3 py-3 hover:bg-muted/30 transition-colors cursor-pointer select-none",
-                      isSelected && "bg-primary/5 dark:bg-primary/10"
-                    )}
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/70 text-foreground">
-                        {contact.type === "wallet" ? (
-                          <Smartphone size={18} />
-                        ) : (
-                          <Landmark size={18} />
-                        )}
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-[14px] text-foreground font-normal truncate">
-                          {contact.name || "Current Account"}
+            {/* Who is in the group: the people picked, then a button that opens the saved recipients */}
+            {members.length > 0 && (
+              <div className="flex flex-col gap-0.5">
+                {members.map((m) => (
+                  <div key={m.id || m.destination} className="flex items-center justify-between gap-3 rounded-xl p-2">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <PayeeAvatar name={m.name} initials={initials(m.name)} size="md" />
+                      <span className="flex min-w-0 flex-col">
+                        <span className="truncate text-[14px] text-foreground">{m.name}</span>
+                        <span className="truncate text-[12px] text-muted-foreground">
+                          {m.networkOrBank} <span className="tabular">· {m.destination}</span>
                         </span>
-                        <span className="text-[12px] text-muted-foreground font-normal truncate tabular-nums numorainput">
-                          {contact.networkOrBank || "GCB Bank"} • {contact.destination}
-                        </span>
-                      </div>
+                      </span>
                     </div>
-
-                    {/* Selection Indicator */}
-                    <div
-                      className={cn(
-                        "flex size-4 shrink-0 items-center justify-center rounded-full border transition",
-                        isSelected
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-muted-foreground/30 bg-transparent"
-                      )}
+                    <button
+                      type="button"
+                      onClick={() => toggleMember(m)}
+                      aria-label={`Remove ${m.name}`}
+                      className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors duration-hover hover:bg-muted hover:text-foreground"
                     >
-                      {isSelected && <Check size={11} className="shrink-0" />}
-                    </div>
+                      <X size={16} />
+                    </button>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+            )}
+            <Button type="button" variant="outline" onClick={() => setPickerOpen(true)} className="w-full">
+              <Plus size={14} /> {members.length > 0 ? "Add more members" : "Add members"}
+            </Button>
 
-              {filteredContacts.length === 0 && (
-                <div className="py-6 text-center text-muted-foreground text-[13px]">
-                  No contacts found matching “{search}”.
-                </div>
-              )}
-            </div>
+            <Modal
+              open={pickerOpen}
+              onOpenChange={(o) => {
+                setPickerOpen(o);
+                if (!o) setSearch("");
+              }}
+              title="Select a Beneficiary"
+              size="md"
+              footer={
+                <Button type="button" onClick={() => setPickerOpen(false)} className="w-full">
+                  Done{members.length > 0 ? ` (${members.length})` : ""}
+                </Button>
+              }
+            >
+              <div className="flex flex-col gap-3">
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search by name, bank or number"
+                  aria-label="Search recipients"
+                />
+                {filteredContacts.length === 0 ? (
+                  <p className="py-8 text-center text-[13px] text-muted-foreground">
+                    Nobody saved matches that. Clear the search to see everyone.
+                  </p>
+                ) : (
+                  <div className="custom-scrollbar scroll-fade -mx-1 flex max-h-[50vh] flex-col gap-0.5 overflow-y-auto overscroll-contain px-1">
+                    {filteredContacts.map((contact) => {
+                      const isSelected = members.some((m) =>
+                        m.id && contact.id ? m.id === contact.id : m.destination === contact.destination
+                      );
+                      return (
+                        <button
+                          key={contact.id || contact.destination}
+                          type="button"
+                          onClick={() => toggleMember(contact)}
+                          aria-pressed={isSelected}
+                          className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl p-2 text-left transition-colors duration-hover hover:bg-muted/50"
+                        >
+                          <span className="flex min-w-0 items-center gap-3">
+                            <PayeeAvatar name={contact.name} initials={initials(contact.name)} size="md" />
+                            <span className="flex min-w-0 flex-col">
+                              <span className="truncate text-[14px] text-foreground">{contact.name}</span>
+                              <span className="truncate text-[12px] text-muted-foreground">
+                                {contact.networkOrBank} <span className="tabular">· {contact.destination}</span>
+                              </span>
+                            </span>
+                          </span>
+                          <span
+                            className={cn(
+                              "flex size-4 shrink-0 items-center justify-center rounded-full border transition",
+                              isSelected
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "border-muted-foreground/30 bg-transparent"
+                            )}
+                          >
+                            {isSelected && <Check size={11} className="shrink-0" />}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </Modal>
           </div>
 
           {/* Primary CTA */}

@@ -142,7 +142,7 @@ export default function EditGroupModal({
 
     return beneficiaries
       .filter((b) => {
-        if (b.category === "biller" || b.transactionType === "bill" || b.transactionType === "airtime") {
+        if (b.category === "biller" || ["bill", "airtime", "broadband", "card", "qr", "insurance"].includes(b.transactionType)) {
           return false;
         }
         const dest = (b.accountNumber || b.phoneNumber || b.proxyId || "").replace(/\s+/g, "").toLowerCase();

@@ -16,6 +16,7 @@ import { useTransactionDetail } from "@/lib/transaction-detail";
 import { Bone } from "@/components/states/PageSkeletons";
 import { ShareReceiptDialog, type ReceiptFormat } from "./ShareReceiptDialog";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { roundMoney } from "@/lib/money";
 
 interface TransactionDetailSheetProps {
@@ -317,18 +318,7 @@ export function TransactionDetailSheet({
               <div className="flex flex-col gap-3 relative py-5 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
                 <div className="flex items-center justify-between text-[13px]">
                   <span className="text-muted-foreground font-normal">Status</span>
-                  <span
-                    className={cn(
-                      "inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium",
-                      isFailed
-                        ? "bg-pill-destructive text-pill-destructive-text"
-                        : isPending
-                        ? "bg-pill-warning text-pill-warning-text"
-                        : "bg-pill-success text-pill-success-text"
-                    )}
-                  >
-                    {statusLabel}
-                  </span>
+                  <Badge variant={isFailed ? "destructive" : isPending ? "warning" : "success"}>{statusLabel}</Badge>
                 </div>
 
                 <div className="flex items-center justify-between text-[13px]">
@@ -450,7 +440,7 @@ export function TransactionDetailSheet({
                   disabled={!detailReady}
                   className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
+                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast group-hover:brightness-95">
                     <Share2 size={20} />
                   </div>
                   <span className="text-[12px] font-normal text-foreground tracking-tight">
@@ -465,7 +455,7 @@ export function TransactionDetailSheet({
                   disabled={!detailReady}
                   className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
+                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast group-hover:brightness-95">
                     <FileDown size={20} />
                   </div>
                   <span className="text-[12px] font-normal text-foreground tracking-tight">
@@ -481,7 +471,7 @@ export function TransactionDetailSheet({
                   disabled={!detailReady}
                     className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
+                    <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast group-hover:brightness-95">
                       <RotateCw size={20} />
                     </div>
                     <span className="text-[12px] font-normal text-foreground tracking-tight">

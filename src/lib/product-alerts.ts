@@ -32,7 +32,6 @@ export interface ProductAlert {
 export const MATURITY_NOTICE_DAYS = 14;
 
 export function advanceAlert(a: Advance): ProductAlert | null {
-  if (a.status === "pending") return { tone: "wait", headline: "Waiting for approval" };
   if (a.status === "active" && a.dueOn < MOCK_TODAY) {
     return { tone: "act", headline: `Overdue since ${formatDate(a.dueOn)}`, action: { label: "Repay now", href: `/loans/${a.id}/repay` } };
   }
@@ -67,7 +66,6 @@ export function holdingAlert(h: Holding): ProductAlert | null {
   }
   return null;
 }
-
 
 export function depositAlert(d: TermDeposit): ProductAlert | null {
   const days = daysBetween(MOCK_TODAY, d.maturity);

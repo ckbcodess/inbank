@@ -7,8 +7,6 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
-  ArrowDownLeft,
-  ArrowUpRight,
   Building2,
   ChevronLeft,
   ChevronRight,
@@ -67,7 +65,8 @@ import { ActionTile } from "@/components/ui/action-tile";
 import { RoundAction } from "@/components/ui/round-action";
 import { BlockReasonDialog } from "@/components/cards/BlockReasonDialog";
 import { KeypadIcon } from "@/components/ui/keypad-icon";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { TransactionMark } from "@/components/transactions/TransactionMark";
 import { useContextualBack } from "@/lib/contextual-back";
 import { SmoothCollapse } from "@/components/ui/smooth-height";
 
@@ -946,21 +945,8 @@ export function VirtualCardDetailsView({
                     key={item.id}
                     className="flex items-center gap-3 px-3 py-2 hover:bg-tile-hover transition-colors"
                   >
-                    {/* Direction Anchor Icon */}
-                    <div
-                      className={cn(
-                        "flex size-8 shrink-0 items-center justify-center rounded-full transition-colors",
-                        isCredit
-                          ? "bg-pill-success text-success"
-                          : "bg-tile text-muted-foreground"
-                      )}
-                    >
-                      {isCredit ? (
-                        <ArrowDownLeft className="size-3.5" />
-                      ) : (
-                        <ArrowUpRight className="size-3.5" />
-                      )}
-                    </div>
+                    {/* What it was; which way it went is the sign on the amount */}
+                    <TransactionMark transaction={{ direction: isCredit ? "credit" : "debit", paymentMethod: "card", counterparty: item.title }} />
 
                     {/* Counterparty & Metadata */}
                     <div className="flex-1 min-w-0 flex flex-col gap-0.5">
@@ -976,28 +962,11 @@ export function VirtualCardDetailsView({
 
                     {/* Amount & State / Card Ending */}
                     <div className="shrink-0 flex flex-col items-end gap-0.5">
-                      <span
-                        className={cn(
-                          "tabular text-[14px] font-normal",
-                          isCredit ? "text-success" : "text-foreground"
-                        )}
-                      >
+                      <span className="tabular text-[14px] font-normal text-foreground">
                         {isCredit ? "+ " : "− "}
                         {formatMoney(item.amount, currentCard.currency || "GHS", true)}
                       </span>
-                      {isFailed ? (
-                        <span className="text-[11px] text-destructive font-normal">
-                          Failed
-                        </span>
-                      ) : isPending ? (
-                        <span className="text-[11px] text-warning font-normal">
-                          Pending
-                        </span>
-                      ) : (
-                        <span className="text-[11px] text-muted-foreground">
-                          {currentCard.maskedNumber || "∗∗∗∗ 9102"}
-                        </span>
-                      )}
+                      {isFailed ? <Badge variant="destructive">Failed</Badge> : isPending ? <Badge variant="warning">Pending</Badge> : null}
                     </div>
                   </div>
                 );

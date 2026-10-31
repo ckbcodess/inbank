@@ -63,7 +63,7 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
           const content = (
             <div
               className={cn(
-                "group relative flex flex-col items-center justify-center gap-2 py-1 px-2 rounded-xl transition-all duration-hover active:scale-92 cursor-pointer select-none",
+                "group relative flex flex-col items-center justify-center gap-2 py-1 px-2 rounded-xl transition-all duration-hover cursor-pointer select-none",
                 isActive
                   ? "text-black dark:text-white font-medium"
                   : "text-neutral-400 hover:text-neutral-700 dark:text-white/40 dark:hover:text-white/80",

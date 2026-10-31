@@ -14,7 +14,7 @@
 import { SearchField } from "@/components/ui/search-field";
 import { ListCard } from "@/components/ui/list-card";
 import { getTransactionType, transactionRail } from "@/lib/transaction-type";
-import { TransactionStatusText } from "@/components/StatusBadge";
+import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { amountStyling } from "@/lib/transaction-display";
 import { TransactionMark } from "@/components/transactions/TransactionMark";
 import { useMemo, useState, useEffect } from "react";
@@ -727,7 +727,7 @@ export default function TransactionList({
                     </span>
                     {/* Only what needs a word: a completed payment says nothing */}
                     {t.state !== "completed" && (
-                      <TransactionStatusText state={t.state} />
+                      <TransactionStatusBadge state={t.state} />
                     )}
                   </div>
                 </div>

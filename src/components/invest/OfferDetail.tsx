@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { OfferDetailSkeleton } from "@/components/states/PageSkeletons";
 import { TrueEmptyState } from "@/components/states/ListStates";
-import { BILLS_PRODUCTS_HREF, BONDS_PRODUCTS_HREF, TERM_PRODUCTS_HREF } from "@/components/invest/parts";
+import { TERM_PRODUCTS_HREF, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
 import { findOffer, type Offer } from "@/components/invest/offers";
 import { ProductPitchBody, type PitchPrice } from "@/components/insure/ProductPitch";
 import type { ProductKey } from "@/components/insure/parts";
@@ -34,8 +34,7 @@ const money = (n: number) => formatMoney(n, "GHS", true);
 /** The product this instrument belongs to, and the page its back link returns to. */
 function productOf(offer: Offer): { id: ProductKey; back: { href: string; label: string } } {
   if (offer.group === "term") return { id: "term-deposits", back: { href: TERM_PRODUCTS_HREF, label: "Term Deposits" } };
-  if (offer.security?.kind === "bond") return { id: "bonds", back: { href: BONDS_PRODUCTS_HREF, label: "Bonds" } };
-  return { id: "treasury-bills", back: { href: BILLS_PRODUCTS_HREF, label: "Treasury Bills" } };
+  return { id: "treasury", back: { href: TREASURY_PRODUCTS_HREF, label: "Treasury Bills & Bonds" } };
 }
 
 /** Three benefits specific to this instrument, with the figures the tables hold. */

@@ -62,7 +62,7 @@ function recipientKey(v: string): string {
 
 /**
  * The way into the saved recipients, for the end of a beneficiary field's label row (`Field`'s `action`). It reads
- * "Choose saved" until the field holds someone who is saved, then "Change", so the same link is also the way back. The
+ * "Select beneficiary" until the field holds someone who is saved, then "Change", so the same link is also the way back. The
  * list is everyone saved for this kind of payment, whichever bank or network the form shows; the chosen `provider`
  * only puts its people on top, and picking someone elsewhere switches the form to them. Nothing is drawn when nobody
  * is saved, so there is never an empty list to open.
@@ -97,7 +97,7 @@ export function SavedRecipientLink({
         onClick={() => setOpen(true)}
         className="inline-flex min-h-8 cursor-pointer items-center text-[13px] text-foreground underline underline-offset-4 transition-colors duration-hover hover:text-muted-foreground"
       >
-        {isSaved ? "Change" : "Choose saved"}
+        {isSaved ? "Change" : "Select beneficiary"}
       </button>
       <BeneficiaryPicker
         open={open}

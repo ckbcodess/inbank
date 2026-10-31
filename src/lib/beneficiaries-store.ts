@@ -10,7 +10,12 @@ export type TransactionType =
   | "bill"
   | "airtime"
   | "papss"
-  | "swift";
+  | "swift"
+  | "broadband"
+  | "card"
+  | "qr"
+  /** People named on an insurance policy. They are kept by the insurance store and listed here, never saved here. */
+  | "insurance";
 
 export type BeneficiaryCategory = "person" | "biller" | "number";
 
@@ -34,6 +39,8 @@ export interface BeneficiaryRecord {
   country?: string;
   countryCode?: string;
   label?: string;
+  /** A Ghana.gov service saved for next time: what to open and what to fill in. The invoice number is never kept, it is spent once paid. */
+  gov?: { agency: string; serviceId: string; details: Record<string, string> };
   createdAt: string;
 }
 
@@ -385,6 +392,46 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
     verified: true,
     createdAt: "2026-07-28",
   },
+
+  // ── Broadband ──────────────────────────────────────────────────
+  {
+    id: "ben-bb1",
+    name: "Office Broadband",
+    transactionType: "broadband",
+    category: "number",
+    network: "MTN TurboNet",
+    phoneNumber: "0244556090",
+    detail: "MTN TurboNet · 0244556090",
+    verified: true,
+    createdAt: "2026-07-18",
+  },
+
+  // ── Card Top Up (someone else's prepaid card) ──────────────────
+  {
+    id: "ben-cd1",
+    name: "Kojo's Prepaid Card",
+    transactionType: "card",
+    category: "number",
+    bankName: "GCB Prepaid Card",
+    accountNumber: "7X2K89AB",
+    currency: "GHS",
+    detail: "GCB Prepaid Card · 7X2K89AB",
+    verified: true,
+    createdAt: "2026-07-20",
+  },
+
+  // ── Merchants (GCB QR) ─────────────────────────────────────────
+  {
+    id: "ben-qr1",
+    name: "Melcom Plus — Kaneshie",
+    transactionType: "qr",
+    category: "biller",
+    billerName: "GCB QR",
+    billerReference: "GCB-QR-88210",
+    detail: "GCB QR · GCB-QR-88210",
+    verified: true,
+    createdAt: "2026-07-21",
+  },
 ];
 
 export function getInitialBeneficiaries(): BeneficiaryRecord[] {
@@ -465,6 +512,30 @@ export function getInitialBeneficiaries(): BeneficiaryRecord[] {
   return SEED_BENEFICIARIES;
 }
 
+/** The category a kind of beneficiary belongs to. */
+export function categoryFor(type: TransactionType): BeneficiaryCategory {
+  if (type === "bill" || type === "qr" || type === "insurance") return "biller";
+  if (type === "airtime" || type === "broadband" || type === "card") return "number";
+  return "person";
+}
+
+const identity = (r: Pick<BeneficiaryRecord, "accountNumber" | "phoneNumber" | "proxyId" | "billerReference">) =>
+  (r.accountNumber || r.phoneNumber || r.proxyId || r.billerReference || "").replace(/[^a-z0-9]/gi, "").toLowerCase();
+
+/**
+ * Saves a beneficiary unless the same one of that kind is already saved. `created` says whether this call added it,
+ * so a "Save as beneficiary" switch that is turned off again only removes what it added.
+ */
+export function saveBeneficiaryOnce(record: Omit<BeneficiaryRecord, "id" | "createdAt">): { id: string; created: boolean } {
+  const store = useBeneficiariesStore.getState();
+  const key = identity(record);
+  const existing = key
+    ? store.beneficiaries.find((b) => b.transactionType === record.transactionType && identity(b) === key)
+    : undefined;
+  if (existing) return { id: existing.id, created: false };
+  return { id: store.addBeneficiary(record).id, created: true };
+}
+
 interface BeneficiariesState {
   beneficiaries: BeneficiaryRecord[];
   setBeneficiaries: (list: BeneficiaryRecord[]) => void;
@@ -513,12 +584,10 @@ export const useBeneficiariesStore = create<BeneficiariesState>()(
         set((state) => ({
           beneficiaries: state.beneficiaries.map((b) => {
             if (b.id !== id) return b;
-            const category: BeneficiaryCategory =
-              newType === "bill" ? "biller" : newType === "airtime" ? "number" : "person";
             return {
               ...b,
               transactionType: newType,
-              category,
+              category: categoryFor(newType),
             };
           }),
         }));
@@ -532,8 +601,16 @@ export const useBeneficiariesStore = create<BeneficiariesState>()(
       name: "nibs_beneficiaries_store",
       // Browsers that ran the later beneficiaries experiments saved this store as version 3. Keep reading it (extra
       // fields are ignored) instead of throwing it away with a "couldn't be migrated" error.
-      version: 3,
-      migrate: (persisted) => persisted as BeneficiariesState,
+      version: 4,
+      // Version 4 added broadband, card and merchant beneficiaries: bring their demo entries to saved lists.
+      migrate: (persisted) => {
+        const state = persisted as BeneficiariesState;
+        const have = new Set((state.beneficiaries ?? []).map((b) => b.id));
+        const added = SEED_BENEFICIARIES.filter(
+          (b) => ["broadband", "card", "qr"].includes(b.transactionType) && !have.has(b.id),
+        );
+        return { ...state, beneficiaries: [...(state.beneficiaries ?? []), ...added] };
+      },
     }
   )
 );

@@ -42,7 +42,7 @@ export function RoundAction({
       <span
         className={cn(
           size === "sm" ? "size-10" : "size-12",
-          "flex items-center justify-center rounded-full transition-[background-color,transform] duration-hover group-active:scale-95 group-focus-visible:ring-1 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background",
+          "flex items-center justify-center rounded-full transition-[background-color,transform] duration-hover group-focus-visible:ring-1 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background",
           chipClassName ?? "bg-primary text-primary-foreground group-hover:bg-primary-hover",
         )}
       >

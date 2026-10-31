@@ -101,6 +101,7 @@ function PersonModal({
 }) {
   const savePerson = useInsurance((s) => s.savePerson);
   const [fullName, setFullName] = useState("");
+  const [nameTouched, setNameTouched] = useState(false);
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState<"Female" | "Male" | "">("");
   const [relationship, setRelationship] = useState("");
@@ -112,6 +113,7 @@ function PersonModal({
   useEffect(() => {
     if (!open) return;
     setFullName("");
+    setNameTouched(false);
     setDob("");
     setGender("");
     setRelationship("");
@@ -168,8 +170,8 @@ function PersonModal({
     >
     <div className="flex flex-col gap-5">
       {top}
-      <Field label="Full Name" htmlFor={`${id}-name`}>
-        <Input id={`${id}-name`} value={fullName} onChange={(e) => setFullName(e.target.value)} autoComplete="off" placeholder="As on their ID" />
+      <Field label="Full Name" htmlFor={`${id}-name`} error={nameTouched && !nameOk && "Enter their first and last name."}>
+        <Input id={`${id}-name`} value={fullName} onChange={(e) => setFullName(e.target.value)} onBlur={() => setNameTouched(true)} aria-invalid={nameTouched && !nameOk} autoComplete="off" placeholder="As on their ID" />
       </Field>
       <Field
         label="Date of Birth"

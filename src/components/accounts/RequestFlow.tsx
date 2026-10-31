@@ -463,7 +463,7 @@ export default function RequestFlow({ account }: { account: Account }) {
             <Button
               type="button"
               onClick={() => setPinOpen(true)}
-              className="h-10 flex-1 rounded-lg bg-primary text-[14px] text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+              className="h-10 flex-1 rounded-lg bg-primary text-[14px] text-primary-foreground drop-shadow-sm cursor-pointer"
             >
               Submit request
             </Button>

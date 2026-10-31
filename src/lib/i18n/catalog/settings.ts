@@ -5,7 +5,6 @@ const settings: Entry[] = [
   // ── Saved recipients strip and picker (Send & Pay choosers) ──
   ["See all", "Tout voir", "Ver todo", "查看全部"],
   ["saved", "enregistrés", "guardados", "已保存"],
-  ["Choose a recipient", "Choisir un bénéficiaire", "Elegir un destinatario", "选择收款人"],
   ["Search by name, bank or number", "Rechercher par nom, banque ou numéro", "Buscar por nombre, banco o número", "按姓名、银行或号码搜索"],
   ["Nobody saved matches that. Clear the search to see everyone.", "Aucun bénéficiaire enregistré ne correspond. Effacez la recherche pour voir tout le monde.", "Nadie guardado coincide. Borra la búsqueda para ver a todos.", "没有匹配的已保存收款人。清除搜索即可查看全部。"],
 

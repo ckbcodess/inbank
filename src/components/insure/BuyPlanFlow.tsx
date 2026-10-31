@@ -131,6 +131,7 @@ function ResultRows({ rows }: { rows: Array<[string, string]> }) {
 function MemberModal({ open, onOpenChange, onAdd }: { open: boolean; onOpenChange: (open: boolean) => void; onAdd: (m: CoveredMember) => void }) {
   const [relationship, setRelationship] = useState<MemberRelationship | "">("");
   const [fullName, setFullName] = useState("");
+  const [nameTouched, setNameTouched] = useState(false);
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState<"Female" | "Male" | "">("");
   const [tier, setTier] = useState<CoverTierId | "">("");
@@ -140,6 +141,7 @@ function MemberModal({ open, onOpenChange, onAdd }: { open: boolean; onOpenChang
     if (!open) return;
     setRelationship("");
     setFullName("");
+    setNameTouched(false);
     setDob("");
     setGender("");
     setTier("");
@@ -155,7 +157,8 @@ function MemberModal({ open, onOpenChange, onAdd }: { open: boolean; onOpenChang
           ? `Must be ${rule.min} to ${rule.max} years old to be covered.`
           : null
       : null;
-  const ready = Boolean(relationship) && fullName.trim().split(/\s+/).length >= 2 && dob !== "" && !ageError && gender !== "" && tier !== "";
+  const nameOk = fullName.trim().split(/\s+/).filter(Boolean).length >= 2;
+  const ready = Boolean(relationship) && nameOk && dob !== "" && !ageError && gender !== "" && tier !== "";
 
   return (
     <Modal
@@ -201,8 +204,8 @@ function MemberModal({ open, onOpenChange, onAdd }: { open: boolean; onOpenChang
       </Field>
       {relationship && (
         <div className={reveal}>
-          <Field label="Full Name" htmlFor="member-name">
-            <Input id="member-name" value={fullName} onChange={(e) => setFullName(e.target.value)} autoComplete="off" placeholder="As on their ID" />
+          <Field label="Full Name" htmlFor="member-name" error={nameTouched && !nameOk && "Enter their first and last name."}>
+            <Input id="member-name" value={fullName} onChange={(e) => setFullName(e.target.value)} onBlur={() => setNameTouched(true)} aria-invalid={nameTouched && !nameOk} autoComplete="off" placeholder="As on their ID" />
           </Field>
           <Field label="Date of Birth" htmlFor="member-dob" error={ageError}>
             <Input id="member-dob" type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
@@ -662,47 +665,9 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
               </Select>
             </Field>
             {tier && (
-              <section className={reveal}>
-                <SectionHeading title="People on This Cover" />
-                {members.length > 0 && (
-                  <ListCard>
-                    {members.map((m) => (
-                      <li key={m.id} className="flex items-center gap-3 rounded-xl px-2 py-2 sm:px-3">
-                        <span className="flex min-w-0 flex-1 flex-col">
-                          <span className="truncate text-[14px] text-foreground" translate="no">
-                            {m.fullName}
-                          </span>
-                          <span className="truncate text-[12px] text-muted-foreground">{`${m.relationship} · ${findTier(m.tier).label} · ${money(findTier(m.tier).benefit)}`}</span>
-                        </span>
-                        <span className="tabular shrink-0 text-[14px] text-foreground">{`${money(memberMonthly(m.tier, m.relationship))} a month`}</span>
-                        <button
-                          type="button"
-                          onClick={() => setMembers(members.filter((x) => x.id !== m.id))}
-                          aria-label={`Remove ${m.fullName}`}
-                          className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                        >
-                          <X size={16} aria-hidden="true" />
-                        </button>
-                      </li>
-                    ))}
-                  </ListCard>
-                )}
-                <Button type="button" variant="outline" className="h-11 w-full" onClick={() => setAddingMember(true)}>
-                  <Plus size={16} aria-hidden="true" />
-                  {members.length === 0 ? "Add Someone to This Cover" : "Add Another Person"}
-                </Button>
-                <MemberModal
-                  open={addingMember}
-                  onOpenChange={setAddingMember}
-                  onAdd={(m) => {
-                    setMembers([...members, m]);
-                    setAddingMember(false);
-                  }}
-                />
-                <Field label="Payment Frequency">
-                  <SegmentedControl aria-label="Payment frequency" options={FREQUENCIES} value={frequency} onChange={setFrequency} fullWidth />
-                </Field>
-              </section>
+              <Field label="Payment Frequency">
+                <SegmentedControl aria-label="Payment frequency" options={FREQUENCIES} value={frequency} onChange={setFrequency} fullWidth />
+              </Field>
             )}
           </>
         )}
@@ -745,6 +710,48 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
               />
             </Field>
           </div>
+        )}
+
+        {/* HomeCall: who else is on the cover, after the payment choices, because it is optional and changes the total below */}
+        {kind === "funeral" && !holderTooOld && tier && (
+        <section className={reveal}>
+          <SectionHeading title="People on This Cover" />
+          {members.length > 0 && (
+            <ListCard>
+              {members.map((m) => (
+                <li key={m.id} className="flex items-center gap-3 rounded-xl px-2 py-2 sm:px-3">
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-[14px] text-foreground" translate="no">
+                      {m.fullName}
+                    </span>
+                    <span className="truncate text-[12px] text-muted-foreground">{`${m.relationship} · ${findTier(m.tier).label} · ${money(findTier(m.tier).benefit)}`}</span>
+                  </span>
+                  <span className="tabular shrink-0 text-[14px] text-foreground">{`${money(memberMonthly(m.tier, m.relationship))} a month`}</span>
+                  <button
+                    type="button"
+                    onClick={() => setMembers(members.filter((x) => x.id !== m.id))}
+                    aria-label={`Remove ${m.fullName}`}
+                    className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  >
+                    <X size={16} aria-hidden="true" />
+                  </button>
+                </li>
+              ))}
+            </ListCard>
+          )}
+          <Button type="button" variant="outline" className="h-11 w-full" onClick={() => setAddingMember(true)}>
+            <Plus size={16} aria-hidden="true" />
+            {members.length === 0 ? "Add Someone to This Cover" : "Add Another Person"}
+          </Button>
+          <MemberModal
+            open={addingMember}
+            onOpenChange={setAddingMember}
+            onAdd={(m) => {
+              setMembers([...members, m]);
+              setAddingMember(false);
+            }}
+          />
+        </section>
         )}
 
         {/* What it comes to */}

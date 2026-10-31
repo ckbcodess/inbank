@@ -17,7 +17,7 @@ import { useProductAlertItems } from "@/lib/product-alerts";
 import PageHeader from "@/components/layout/PageHeader";
 import { ListErrorState } from "@/components/states/ListStates";
 import { InvestHomeSkeleton } from "@/components/states/PageSkeletons";
-import { BILLS_PRODUCTS_HREF, BONDS_PRODUCTS_HREF, InvestDevTools, TERM_PRODUCTS_HREF } from "@/components/invest/parts";
+import { InvestDevTools, TERM_PRODUCTS_HREF, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
 import { InvestWelcome } from "@/components/invest/InvestWelcome";
 import { ProductCard, useCardLooks, type ProductStatus } from "@/components/insure/PlanCards";
 import { MOCK_TODAY, useMyTreasury, useTreasuryHydrated } from "@/lib/treasury";
@@ -52,9 +52,9 @@ export function InvestHome() {
         };
 
   const ready = csd?.status === "active" && Boolean(intent);
-  const securityStatus = (kind: "bill" | "bond"): ProductStatus | undefined => {
-    const mine = holdings.filter((h) => h.kind === kind);
-    const waiting = orders.filter((o) => o.security.kind === kind).length;
+  const securityStatus = (): ProductStatus | undefined => {
+    const mine = holdings;
+    const waiting = orders.length;
     const mineSoon = mine.filter((h) => soon(h.maturity)).length;
     if (mine.length === 0 && waiting === 0) {
       return ready
@@ -91,24 +91,14 @@ export function InvestHome() {
               href={TERM_PRODUCTS_HREF}
             />
             <ProductCard
-              id="treasury-bills"
-              name="Treasury Bills"
-              line="Lend to the government for up to a year"
-              status={securityStatus("bill")}
-              image={PRODUCT_IMAGES["treasury-bills"]}
+              id="treasury"
+              name="Treasury Bills & Bonds"
+              line="Lend to the government at fixed rates or auction"
+              status={securityStatus()}
+              image={PRODUCT_IMAGES.treasury}
               look={look}
               layout={layout}
-              href={BILLS_PRODUCTS_HREF}
-            />
-            <ProductCard
-              id="bonds"
-              name="Bonds"
-              line="Lend to the government for years and earn every 6 months"
-              status={securityStatus("bond")}
-              image={PRODUCT_IMAGES.bonds}
-              look={look}
-              layout={layout}
-              href={BONDS_PRODUCTS_HREF}
+              href={TREASURY_PRODUCTS_HREF}
             />
           </div>
         )}

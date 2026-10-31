@@ -32,6 +32,14 @@ function getBeneficiaryCategory(type: TransactionType): string {
       return "International wire";
     case "papss":
       return "Cross-border (PAPSS)";
+    case "broadband":
+      return "Broadband";
+    case "card":
+      return "Card top up";
+    case "qr":
+      return "Merchant";
+    case "insurance":
+      return "Policy beneficiary";
     case "bank":
     default:
       return "Bank account";
@@ -50,7 +58,8 @@ export function BeneficiaryDetailSheet({
 
   if (!beneficiary) return null;
 
-  const isCompany = beneficiary.transactionType === "bill" || beneficiary.transactionType === "airtime";
+  const isPolicyPerson = beneficiary.transactionType === "insurance";
+  const isCompany = ["bill", "airtime", "broadband", "card", "qr"].includes(beneficiary.transactionType);
   const identifier =
     beneficiary.accountNumber ||
     beneficiary.phoneNumber ||
@@ -61,7 +70,13 @@ export function BeneficiaryDetailSheet({
   const identifierLabel =
     beneficiary.transactionType === "bill"
       ? "Account / Meter"
-      : beneficiary.transactionType === "wallet" || beneficiary.transactionType === "airtime"
+      : beneficiary.transactionType === "qr"
+      ? "Merchant Code"
+      : beneficiary.transactionType === "card"
+      ? "Card Reference"
+      : beneficiary.transactionType === "broadband"
+      ? "Account / Number"
+      : beneficiary.transactionType === "wallet" || beneficiary.transactionType === "airtime" || beneficiary.transactionType === "insurance"
       ? "Phone Number"
       : beneficiary.transactionType === "proxy"
       ? "Proxy ID"
@@ -90,7 +105,10 @@ export function BeneficiaryDetailSheet({
   const handleSendMoney = () => {
     onOpenChange(false);
     let sendHref = `/payments/send?recipient=${encodeURIComponent(beneficiary.name)}`;
-    if (beneficiary.accountNumber) sendHref += `&account=${encodeURIComponent(beneficiary.accountNumber)}`;
+    if (beneficiary.transactionType === "card") sendHref = `/payments/send?rail=card-topup&cardId=ref-${encodeURIComponent(beneficiary.accountNumber ?? "")}`;
+    else if (beneficiary.transactionType === "qr") sendHref += `&rail=qr&ref=${encodeURIComponent(beneficiary.billerReference ?? "")}`;
+    else if (beneficiary.transactionType === "broadband") sendHref += `&rail=data&category=broadband&account=${encodeURIComponent(beneficiary.phoneNumber ?? "")}`;
+    else if (beneficiary.accountNumber) sendHref += `&account=${encodeURIComponent(beneficiary.accountNumber)}`;
     else if (beneficiary.phoneNumber) sendHref += `&account=${encodeURIComponent(beneficiary.phoneNumber)}`;
     else if (beneficiary.proxyId) sendHref += `&proxy=${encodeURIComponent(beneficiary.proxyId)}`;
     else if (beneficiary.billerReference) sendHref += `&ref=${encodeURIComponent(beneficiary.billerReference)}`;
@@ -141,10 +159,22 @@ export function BeneficiaryDetailSheet({
                 </button>
               </SheetRow>
             )}
-            <SheetRow
-              label={beneficiary.transactionType === "bill" ? "Biller" : "Bank / Provider"}
-              value={providerName}
-            />
+            {isPolicyPerson ? (
+              // One plan a line, so a long list wraps instead of running out of the sheet
+              <SheetRow>
+                <span className="shrink-0 text-muted-foreground font-normal">Named on</span>
+                <span className="flex min-w-0 flex-col items-end gap-0.5 text-right text-foreground font-medium">
+                  {providerName.split(", ").map((plan) => (
+                    <span key={plan}>{plan}</span>
+                  ))}
+                </span>
+              </SheetRow>
+            ) : (
+              <SheetRow
+                label={beneficiary.transactionType === "bill" || beneficiary.transactionType === "qr" ? "Biller" : "Bank / Provider"}
+                value={providerName}
+              />
+            )}
             {beneficiary.currency && <SheetRow label="Currency" value={beneficiary.currency} />}
             {beneficiary.country && <SheetRow label="Country" value={beneficiary.country} />}
           </SheetCard>
@@ -153,23 +183,26 @@ export function BeneficiaryDetailSheet({
         {/* Round actions, pinned to the foot of the sheet */}
         <div className="shrink-0 px-5 pb-6 pt-3 sm:px-8">
           <div className="flex items-center justify-center gap-5">
-            <RoundAction label="Send" icon={Send} onClick={handleSendMoney} />
+            {/* Money can't be sent to someone on a policy, and they are taken off it on the policy */}
+            {!isPolicyPerson && <RoundAction label="Send" icon={Send} onClick={handleSendMoney} />}
             <RoundAction
-              label="Edit"
+              label={isPolicyPerson ? "Update" : "Edit"}
               icon={Pencil} chipClassName="bg-muted text-foreground group-hover:bg-muted/70"
               onClick={() => {
                 onOpenChange(false);
                 onEdit(beneficiary);
               }}
             />
-            <RoundAction
-              label="Remove"
-              icon={Trash2} chipClassName="bg-muted text-destructive-text group-hover:bg-muted/70"
-              onClick={() => {
-                onOpenChange(false);
-                onRemove(beneficiary);
-              }}
-            />
+            {!isPolicyPerson && (
+              <RoundAction
+                label="Remove"
+                icon={Trash2} chipClassName="bg-muted text-destructive-text group-hover:bg-muted/70"
+                onClick={() => {
+                  onOpenChange(false);
+                  onRemove(beneficiary);
+                }}
+              />
+            )}
           </div>
         </div>
       </SheetContent>

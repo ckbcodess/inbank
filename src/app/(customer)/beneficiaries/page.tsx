@@ -15,19 +15,24 @@ import { SearchField } from "@/components/ui/search-field";
 import { ListCard } from "@/components/ui/list-card";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import {
   ChevronRight,
+  CreditCard,
   Globe,
   Landmark,
   Pencil,
   Plus,
   Send,
+  Shield,
   Smartphone,
+  Store,
   Trash2,
   User,
   Wallet,
+  Wifi,
 } from "@/components/ui/icons";
 import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import { Button } from "@/components/ui/button";
@@ -37,10 +42,7 @@ import { SimpleTooltip } from "@/components/ui/tooltip";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -60,11 +62,15 @@ import {
   TrueEmptyState,
 } from "@/components/states/ListStates";
 import {
+  categoryFor,
   useBeneficiariesStore,
   type BeneficiaryRecord,
   type TransactionType,
 } from "@/lib/beneficiaries-store";
 import { useGroupsStore, type PaymentGroup } from "@/lib/groups-store";
+import { usePolicyBeneficiaries } from "@/lib/policy-beneficiaries";
+import { BROADBAND_PROVIDERS, BankSelect } from "@/components/payments/flows/shared";
+import { BillerPicker } from "@/components/payments/flows/BillerPicker";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import EditGroupModal from "@/components/payments/EditGroupModal";
 import { toast } from "sonner";
@@ -90,10 +96,32 @@ const TYPE_CONFIG: Record<TransactionType, TypeMeta> = {
   airtime: { label: "Airtime & Data", plural: "Airtime & Data", rail: "airtime", icon: Smartphone },
   swift: { label: "SWIFT International Wire", plural: "SWIFT Wire Transfers", rail: "swift", icon: Globe },
   papss: { label: "PAPSS Cross-Border", plural: "PAPSS Cross-Border", rail: "papss", icon: Globe },
+  broadband: { label: "Broadband", plural: "Broadband", rail: "data", icon: Wifi },
+  card: { label: "Card Top Up", plural: "Card Top Up", rail: "card-topup", icon: CreditCard },
+  qr: { label: "Merchant (QR)", plural: "Merchants", rail: "qr", icon: Store },
+  insurance: { label: "Policy Beneficiary", plural: "Policy Beneficiaries", rail: "insure", icon: Shield },
 };
 
 const PEOPLE_TYPES: TransactionType[] = ["bank", "wallet", "proxy", "swift", "papss"];
-const BILLER_TYPES: TransactionType[] = ["bill", "airtime"];
+/** Insurance is not here: the people on a policy are added on the policy, and listed here from it. */
+const BILLER_TYPES: TransactionType[] = ["bill", "airtime", "broadband", "card", "qr"];
+/** The kinds whose saved name is a service or merchant, not a person. */
+const SERVICE_TYPES: TransactionType[] = ["bill", "airtime", "broadband", "card", "qr"];
+
+function nameLabel(t: TransactionType): string {
+  if (t === "bill" || t === "airtime") return "Biller Name";
+  if (t === "qr") return "Merchant Name";
+  if (t === "broadband") return "Account Name";
+  if (t === "card") return "Cardholder Name";
+  return "Beneficiary Full Name";
+}
+
+function namePlaceholder(t: TransactionType): string {
+  if (t === "bill" || t === "airtime") return "e.g. ECG PowerApp";
+  if (t === "qr") return "e.g. Melcom Plus, Kaneshie";
+  if (t === "broadband") return "e.g. Home Fibre";
+  return "e.g. Kojo Mensah";
+}
 
 const GHANA_BANKS = [
   "GCB Bank",
@@ -110,7 +138,6 @@ const GHANA_BANKS = [
 
 const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GhanaPay", "G-Money"];
 const AIRTIME_NETWORKS = ["MTN Ghana", "Telecel Ghana", "AT Ghana", "GhanaPay", "G-Money"];
-const BILLER_CATEGORIES = Array.from(new Set(BILLERS.map((b) => b.category)));
 
 const SWIFT_COUNTRIES = [
   { name: "United States", currency: "USD" },
@@ -303,13 +330,18 @@ const INITIAL_FORM: FormState = {
 
 export default function BeneficiariesPage() {
   const {
-    beneficiaries,
+    beneficiaries: stored,
     addBeneficiary,
     updateBeneficiary,
     removeBeneficiary,
   } = useBeneficiariesStore();
 
   const { groups, deleteGroup } = useGroupsStore();
+  const router = useRouter();
+
+  // Saved here, plus the people named on policies, which the insurance store keeps and this only lists
+  const policyPeople = usePolicyBeneficiaries();
+  const beneficiaries = useMemo(() => [...stored, ...policyPeople], [stored, policyPeople]);
 
   // Two tabs: Beneficiaries (people and billers together) and Groups
   const [activeTab, setActiveTab] = useState<ActiveTab>("people");
@@ -462,6 +494,15 @@ export default function BeneficiariesPage() {
       case "airtime":
         detail = `${form.network} · ${form.phoneNumber || "Number"}`;
         break;
+      case "broadband":
+        detail = `${form.network} broadband · ${form.phoneNumber || "Number"}`;
+        break;
+      case "card":
+        detail = `GCB Prepaid Card · ${form.accountNumber || "Card reference"}`;
+        break;
+      case "qr":
+        detail = `GCB QR · ${form.billerReference || "Merchant code"}`;
+        break;
       case "swift":
         const swiftCurr = SWIFT_COUNTRIES.find((c) => c.name === form.country)?.currency || "USD";
         detail = `SWIFT (${form.swiftCode || "BIC"}) · ${form.bankName || "Bank"} · ${swiftCurr} · ${form.accountNumber || "IBAN"}`;
@@ -493,7 +534,7 @@ export default function BeneficiariesPage() {
       addBeneficiary({
         name: form.name.trim(),
         transactionType: form.transactionType,
-        category: form.transactionType === "bill" ? "biller" : form.transactionType === "airtime" ? "number" : "person",
+        category: categoryFor(form.transactionType),
         detail,
         verified,
         bankName: form.bankName,
@@ -548,7 +589,11 @@ export default function BeneficiariesPage() {
     const Icon = config.icon;
 
     let sendHref = `/payments/send?rail=${config.rail}&recipient=${encodeURIComponent(b.name)}`;
-    if (b.accountNumber) sendHref += `&account=${encodeURIComponent(b.accountNumber)}`;
+    if (b.transactionType === "insurance") sendHref = "/insure";
+    else if (b.transactionType === "card") sendHref = `/payments/send?rail=card-topup&cardId=ref-${encodeURIComponent(b.accountNumber ?? "")}`;
+    else if (b.transactionType === "qr") sendHref += `&ref=${encodeURIComponent(b.billerReference ?? "")}`;
+    else if (b.transactionType === "broadband") sendHref += `&account=${encodeURIComponent(b.phoneNumber ?? "")}&category=broadband`;
+    else if (b.accountNumber) sendHref += `&account=${encodeURIComponent(b.accountNumber)}`;
     else if (b.phoneNumber) sendHref += `&account=${encodeURIComponent(b.phoneNumber)}`;
     else if (b.proxyId) sendHref += `&proxy=${encodeURIComponent(b.proxyId)}`;
     else if (b.billerReference) sendHref += `&ref=${encodeURIComponent(b.billerReference)}`;
@@ -562,7 +607,7 @@ export default function BeneficiariesPage() {
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <PayeeAvatar
             name={b.name}
-            icon={b.transactionType === "bill" || b.transactionType === "airtime" ? Icon : undefined}
+            icon={SERVICE_TYPES.includes(b.transactionType) ? Icon : undefined}
           />
 
           <div className="min-w-0 flex-1">
@@ -859,7 +904,17 @@ export default function BeneficiariesPage() {
                 value={form.transactionType}
                 onValueChange={(val) => {
                   if (!val) return;
-                  setForm((p) => ({ ...p, transactionType: val as TransactionType }));
+                  const next = val as TransactionType;
+                  setForm((p) => ({
+                    ...p,
+                    transactionType: next,
+                    // Fields one kind fills must not leak into the next
+                    accountNumber: next === "card" ? "" : p.accountNumber,
+                    network: next === "broadband" ? "" : p.network || "MTN Mobile Money",
+                    phoneNumber: next === "broadband" ? "" : p.phoneNumber,
+                    billerName: next === "qr" ? "" : p.billerName || "ECG Prepaid",
+                    billerReference: next === "qr" ? "" : p.billerReference,
+                  }));
                 }}
               >
                 <SelectTrigger className="shadow-xs">
@@ -929,21 +984,12 @@ export default function BeneficiariesPage() {
             {form.transactionType === "bank" && (
               <div className="flex flex-col gap-2">
                 <Field label="Destination Bank">
-                  <Select
+                  <BankSelect
                     value={form.bankName}
-                    onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
-                  >
-                    <SelectTrigger className="shadow-xs">
-                      <SelectValue placeholder="Select destination bank" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-49">
-                      {GHANA_BANKS.map((b) => (
-                        <SelectItem key={b} value={b}>
-                          {b}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(val) => setForm((p) => ({ ...p, bankName: val }))}
+                    options={GHANA_BANKS}
+                    placeholder="Select destination bank"
+                  />
 </Field>
 
                 <Field label="Account Number">
@@ -962,53 +1008,19 @@ export default function BeneficiariesPage() {
             {form.transactionType === "bill" && (
               <div className="flex flex-col gap-2">
                 <Field label="Bill / Service Provider">
-                  <Select
-                    value={matchedBiller?.name || form.billerName}
-                    onValueChange={(val) => {
-                      if (!val) return;
+                  <BillerPicker
+                    billers={BILLERS}
+                    value={BILLERS.find((b) => b.name === (matchedBiller?.name || form.billerName))}
+                    onChange={(b) =>
                       setForm((p) => {
-                        const prevBiller = BILLERS.find((b) => b.name === p.billerName);
+                        const prevBiller = BILLERS.find((x) => x.name === p.billerName);
                         const isDefaultName =
                           !p.name ||
-                          (prevBiller &&
-                            (p.name === prevBiller.name ||
-                              p.name === `${prevBiller.name} Account`));
-                        return {
-                          ...p,
-                          billerName: val,
-                          name: isDefaultName ? `${val} Account` : p.name,
-                        };
-                      });
-                    }}
-                  >
-                    <SelectTrigger >
-                      <SelectValue placeholder="Select bill / utility provider" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-63">
-                      {BILLER_CATEGORIES.map((cat, idx) => {
-                        const catBillers = BILLERS.filter((b) => b.category === cat);
-                        if (catBillers.length === 0) return null;
-                        return (
-                          <SelectGroup key={cat}>
-                            <SelectLabel className="px-2 py-2 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
-                              {cat}
-                            </SelectLabel>
-                            {catBillers.map((b) => (
-                              <SelectItem key={b.id} value={b.name} label={b.name} className="py-2 text-[13px]">
-                                <div className="flex items-center justify-between w-full gap-2">
-                                  <span className="font-medium text-foreground">{b.name}</span>
-                                  <span className="text-[11px] text-muted-foreground/75 font-normal shrink-0">
-                                    {b.reference}
-                                  </span>
-                                </div>
-                              </SelectItem>
-                            ))}
-                            {idx < BILLER_CATEGORIES.length - 1 && <SelectSeparator className="my-1" />}
-                          </SelectGroup>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
+                          (prevBiller && (p.name === prevBiller.name || p.name === `${prevBiller.name} Account`));
+                        return { ...p, billerName: b.name, name: isDefaultName ? `${b.name} Account` : p.name };
+                      })
+                    }
+                  />
 </Field>
 
                 <Field label={billerRefLabel}>
@@ -1024,6 +1036,46 @@ export default function BeneficiariesPage() {
             )}
 
             {/* Airtime Rail */}
+            {form.transactionType === "broadband" && (
+              <div className="flex flex-col gap-2">
+                <Field label="Broadband Provider">
+                  <Select
+                    value={form.network}
+                    onValueChange={(val) => val && setForm((p) => ({ ...p, network: val, phoneNumber: "" }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BROADBAND_PROVIDERS.map((p) => (
+                        <SelectItem key={p.name} value={p.name}>
+                          {p.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+                {BROADBAND_PROVIDERS.some((p) => p.name === form.network) && (
+                  <Field label={BROADBAND_PROVIDERS.find((p) => p.name === form.network)?.accountLabel ?? "Account Number"}>
+                    <Input
+                      type="text"
+                      inputMode={BROADBAND_PROVIDERS.find((p) => p.name === form.network)?.inputMode}
+                      maxLength={BROADBAND_PROVIDERS.find((p) => p.name === form.network)?.maxLength}
+                      value={form.phoneNumber}
+                      onChange={(e) =>
+                        setForm((p) => ({
+                          ...p,
+                          phoneNumber: BROADBAND_PROVIDERS.find((x) => x.name === p.network)?.sanitize(e.target.value) ?? e.target.value,
+                        }))
+                      }
+                      placeholder={BROADBAND_PROVIDERS.find((p) => p.name === form.network)?.accountPlaceholder}
+                      className="tabular"
+                    />
+                  </Field>
+                )}
+              </div>
+            )}
+
             {form.transactionType === "airtime" && (
               <div className="flex flex-col gap-2">
                 <Field label="Network Provider">
@@ -1052,6 +1104,35 @@ export default function BeneficiariesPage() {
                   />
 </Field>
               </div>
+            )}
+
+            {/* Card Top Up: the card is found by its reference */}
+            {form.transactionType === "card" && (
+              <Field label="Card Reference">
+                <Input
+                  type="text"
+                  maxLength={8}
+                  value={form.accountNumber}
+                  onChange={(e) =>
+                    setForm((p) => ({ ...p, accountNumber: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") }))
+                  }
+                  placeholder="The 8-character reference, e.g. 7X2K89AB"
+                  className="tabular uppercase placeholder:normal-case"
+                />
+              </Field>
+            )}
+
+            {/* Merchant: found by the code on its GCB QR */}
+            {form.transactionType === "qr" && (
+              <Field label="Merchant QR Code">
+                <Input
+                  type="text"
+                  value={form.billerReference}
+                  onChange={(e) => setForm((p) => ({ ...p, billerReference: e.target.value.toUpperCase() }))}
+                  placeholder="The code under the QR, e.g. GCB-QR-88210"
+                  className="tabular"
+                />
+              </Field>
             )}
 
             {/* Proxy Pay Rail */}
@@ -1102,21 +1183,11 @@ export default function BeneficiariesPage() {
 </Field>
 
                   <Field label="Bank">
-                    <Select
+                    <BankSelect
                       value={form.bankName}
-                      onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
-                    >
-                      <SelectTrigger >
-                        <SelectValue placeholder="Select bank" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-49">
-                        {(INTERNATIONAL_BANKS_BY_COUNTRY[form.country] || INTERNATIONAL_BANKS_BY_COUNTRY["United Kingdom"]).map((bank) => (
-                          <SelectItem key={bank} value={bank}>
-                            {bank}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onChange={(val) => setForm((p) => ({ ...p, bankName: val }))}
+                      options={INTERNATIONAL_BANKS_BY_COUNTRY[form.country] || INTERNATIONAL_BANKS_BY_COUNTRY["United Kingdom"]}
+                    />
 </Field>
                 </div>
 
@@ -1180,21 +1251,11 @@ export default function BeneficiariesPage() {
 </Field>
 
                 <div className="grid grid-cols-2 gap-2">
-                  <Select
+                  <BankSelect
                     value={form.bankName}
-                    onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
-                  >
-                    <SelectTrigger >
-                      <SelectValue placeholder="Select bank" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-49">
-                      {(PAPSS_BANKS_BY_COUNTRY[form.country] || PAPSS_BANKS_BY_COUNTRY["Nigeria"]).map((bank) => (
-                        <SelectItem key={bank} value={bank}>
-                          {bank}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(val) => setForm((p) => ({ ...p, bankName: val }))}
+                    options={PAPSS_BANKS_BY_COUNTRY[form.country] || PAPSS_BANKS_BY_COUNTRY["Nigeria"]}
+                  />
                   <Input
                     type="text"
                     value={form.accountNumber}
@@ -1207,12 +1268,12 @@ export default function BeneficiariesPage() {
             )}
 
             {/* Step 3: Beneficiary Legal Name / Biller Nickname */}
-            <Field label={form.transactionType === "bill" || form.transactionType === "airtime" ? "Biller Name" : "Beneficiary Full Name"}>
+            <Field label={nameLabel(form.transactionType)}>
               <Input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                placeholder={form.transactionType === "bill" || form.transactionType === "airtime" ? "e.g. ECG PowerApp" : "e.g. Kojo Mensah"}
+                placeholder={namePlaceholder(form.transactionType)}
                 
               />
 </Field>
@@ -1247,7 +1308,9 @@ export default function BeneficiariesPage() {
           if (!open) setSelectedBeneficiary(null);
         }}
         onEdit={(b) => {
-          openEdit(b);
+          // People on a policy are changed on the policy, where their shares are
+          if (b.transactionType === "insurance") router.push(`/insure/policies/${b.billerReference}/beneficiaries`);
+          else openEdit(b);
         }}
         onRemove={(b) => setRemoveId(b.id)}
       />

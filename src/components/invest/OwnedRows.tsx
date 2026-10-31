@@ -59,15 +59,16 @@ export function YourDeposits() {
   );
 }
 
-export function YourTreasury({ kind }: { kind: "bill" | "bond" }) {
+export function YourTreasury({ kind = "all" }: { kind?: "bill" | "bond" | "all" }) {
   const { holdings: allHoldings, orders: allOrders } = useMyTreasury();
   const { showAmounts } = useAmountVisibility();
-  const holdings = allHoldings.filter((h) => h.kind === kind);
-  const orders = allOrders.filter((o) => o.security.kind === kind);
+  const holdings = kind === "all" ? allHoldings : allHoldings.filter((h) => h.kind === kind);
+  const orders = kind === "all" ? allOrders : allOrders.filter((o) => o.security.kind === kind);
   if (holdings.length === 0 && orders.length === 0) return null;
+  const title = kind === "bill" ? "Your Treasury Bills" : kind === "bond" ? "Your Bonds" : "Your Bills & Bonds";
   return (
     <section className="flex flex-col gap-3">
-      <SectionHeading title={kind === "bill" ? "Your Treasury Bills" : "Your Bonds"} />
+      <SectionHeading title={title} />
       <ListCard>
         {[...holdings]
           .sort((a, b) => a.maturity.localeCompare(b.maturity))

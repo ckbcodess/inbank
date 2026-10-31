@@ -119,7 +119,7 @@ export function DashboardAnalyticsWidget() {
             <button
               type="button"
               onClick={() => setShowAccountMenu(!showAccountMenu)}
-              className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+              className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
             >
               <span>{selectedAccount}</span>
               <ChevronDown size={12} className="text-muted-foreground" />
@@ -151,7 +151,7 @@ export function DashboardAnalyticsWidget() {
 
         <Link
           href="/reports"
-          className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
+          className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
         >
           <span>View all</span>
           <ChevronRight size={13} />

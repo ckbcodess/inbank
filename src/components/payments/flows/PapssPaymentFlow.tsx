@@ -22,6 +22,7 @@ import {
   resolveAccountName,
   RATES,
   DualAmountFields,
+  BankSelect,
 } from "./shared";
 
 import { Input } from "@/components/ui/input";
@@ -235,21 +236,12 @@ export function PapssPaymentFlow({
                 </SelectContent>
               </Select>
 
-              <Select
+              <BankSelect
                 value={state.wBank}
-                onValueChange={(val) => val && onChange("wBank", val)}
-              >
-                <SelectTrigger >
-                  <SelectValue placeholder="Select receiving bank" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableBanks.map((bank) => (
-                    <SelectItem key={bank} value={bank}>
-                      {bank}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                onChange={(val) => onChange("wBank", val)}
+                options={availableBanks}
+                placeholder="Select receiving bank"
+              />
             </div>
 
 <Input

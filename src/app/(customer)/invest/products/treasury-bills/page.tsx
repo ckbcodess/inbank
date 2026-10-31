@@ -1,5 +1,5 @@
-import { SecurityProducts } from "@/components/invest/ProductPages";
+import { redirect } from "next/navigation";
 
 export default function TreasuryBillsPage() {
-  return <SecurityProducts kind="bill" />;
+  redirect("/invest/products/treasury");
 }

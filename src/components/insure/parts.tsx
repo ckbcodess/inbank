@@ -23,13 +23,14 @@ import { useTreasuryAccounts } from "@/lib/treasury";
 import { cn } from "@/lib/utils";
 
 /** Anything that gets a card: an insurance plan, the salary advance on Loans, or a kind of investment on Invest. */
-export type ProductKey = PlanId | "advance" | "term-deposits" | "treasury-bills" | "bonds";
+export type ProductKey = PlanId | "advance" | "term-deposits" | "treasury-bills" | "bonds" | "treasury";
 
 const PLAN_ICONS: Record<ProductKey, typeof ShieldCheck> = {
   advance: HandCoins,
   "term-deposits": PiggyBank,
   "treasury-bills": FileText,
   bonds: Landmark,
+  treasury: FileText,
   "child-education": GraduationCap,
   homecall: HandHeart,
   wealthmaster: PiggyBank,
@@ -57,6 +58,7 @@ const PLAN_TONES: Partial<Record<ProductKey, string>> = {
   advance: "var(--plan-art-advance-1)",
   "term-deposits": "var(--plan-art-term-deposits-1)",
   "treasury-bills": "var(--plan-art-treasury-bills-1)",
+  treasury: "var(--plan-art-treasury-1)",
   bonds: "var(--plan-art-bonds-1)",
   // The insurance plans take the light stop of their picture's gradient, so the icons match the art.
   "child-education": "var(--plan-art-child-education-1)",
@@ -102,6 +104,7 @@ const PLAN_ART: Partial<Record<ProductKey, true>> = {
   wealthmaster: true,
   "ultimate-protection": true,
   "treasury-bills": true,
+  treasury: true,
   bonds: true,
   "term-deposits": true,
   advance: true,
@@ -164,6 +167,15 @@ const SCENES: Partial<Record<ProductKey, React.ReactNode>> = {
       <circle cx="160" cy="90" r="6" className="fill-[var(--plan)]" />
       <rect x="104" y="140" width="12" height="6" className="fill-foreground" />
       <rect x="204" y="140" width="12" height="6" className="fill-foreground" />
+    </>
+  ),
+  treasury: (
+    <>
+      <rect x="96" y="34" width="128" height="92" rx="6" className="fill-foreground/90" />
+      <rect x="106" y="44" width="108" height="72" rx="3" className="fill-none stroke-[var(--plan)]" strokeWidth="3" />
+      <path d="M122 64h76M122 80h76M122 96h44" className="fill-none stroke-[var(--plan)]" strokeWidth="4" strokeLinecap="round" />
+      <circle cx="196" cy="102" r="12" className="fill-[var(--plan)]" />
+      <rect x="104" y="136" width="112" height="4" rx="2" className="fill-foreground/60" />
     </>
   ),
   "treasury-bills": (

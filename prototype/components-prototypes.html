@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Components: buttons, toggles, fields</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* Tokens mirror globals.css (light and dark). Source components: ui/button, switch, checkbox, toggle-tile, segmented-control, range-pills, option-tile, input, textarea, field. */
+  :root{
+    --background:#fff;--foreground:#0a0a0a;--card:#fafafa;--muted:#ebebeb;--muted-foreground:#8a8a8a;--border:#ebebeb;
+    --field:#fff;--field-border:#ebebeb;--field-hover:#fafafa;--field-focus:#fff;--field-border-focus:#181818;
+    --tile:#f5f5f5;--tile-hover:#ebebeb;--primary:#ffc423;--primary-hover:#fcd34d;--primary-foreground:#451a03;
+    --destructive:#dc2626;--destructive-text:#b91c1c;--success:#16a34a;--ring:#b8b8b8;
+    --chip:#f5f5f5;--chip-selected:#fff;--chip-selected-foreground:#0a0a0a;--chip-foreground:#6b6b6b;
+    --active-bg:#fff;--active-border:#000;--hover-overlay:5%;--hover-fill:90%;
+    --page:#ececea;
+    --glass-top:rgba(40,40,40,.29);--glass-bottom:rgba(150,150,150,.5);
+    --ease-settle:cubic-bezier(.2,.8,.2,1);--ease-in-out:cubic-bezier(.4,0,.2,1);--dur-hover:200ms;--dur-press:400ms;
+  }
+  [data-theme=dark]{
+    --background:#0a0a0a;--foreground:#fafafa;--card:#181818;--muted:#262626;--muted-foreground:#a1a1a1;--border:#262626;
+    --field:#1c1c1c;--field-border:#2b2b2b;--field-hover:#212121;--field-focus:#181818;--field-border-focus:#8a8a8a;
+    --tile:#161616;--tile-hover:#1c1c1c;--destructive-text:#b91c1c;--ring:#6b6b6b;
+    --chip:#1c1c1c;--chip-selected:#2b2b2b;--chip-selected-foreground:#fafafa;--chip-foreground:#8a8a8a;
+    --active-bg:rgba(255,255,255,.051);--active-border:#fff;--hover-overlay:8%;--hover-fill:85%;
+    --page:#050505;--success:#22c55e;
+    --glass-top:rgba(40,40,40,.16);--glass-bottom:rgba(150,150,150,.38);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--foreground);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{border:0;padding:0;background:none;cursor:pointer}
+  h1,h2,h3,p{margin:0}
+  .tabular{font-variant-numeric:tabular-nums}
+
+  /* page chrome */
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--background) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--chip);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--muted-foreground);min-height:36px}
+  .pill:hover{background:var(--tile)}
+  .pill.on,.seg button.on{background:var(--primary);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .stage{max-width:1040px;margin:0 auto;padding:32px 24px 96px;display:flex;flex-direction:column;gap:48px}
+  section.group{display:none;flex-direction:column;gap:40px}
+  section.group.on{display:flex}
+  .panel{background:var(--background);border:1px solid var(--border);border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:32px}
+  .panel h2{font-size:16px;font-weight:500;letter-spacing:-.01em}
+  .sub{font-size:12px;color:var(--muted-foreground)}
+  .block{display:flex;flex-direction:column;gap:12px}
+  .block>h3{font-size:13px;font-weight:500}
+  .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .cell{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+  .cell .sub{min-height:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px 16px;align-items:start}
+  .w{width:100%;max-width:320px}
+
+  /* Button: ui/button.tsx. rounded-xl, 13px medium, press = scale .995 over --dur-press with ease-settle */
+  .btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex:none;gap:8px;height:36px;padding:0 12px;border-radius:12px;border:1px solid transparent;font-size:13px;font-weight:500;white-space:nowrap;user-select:none;outline:none;
+    transition:color var(--dur-hover) var(--ease-in-out),background-color var(--dur-hover) var(--ease-in-out),border-color var(--dur-hover) var(--ease-in-out),box-shadow var(--dur-hover) var(--ease-in-out),transform var(--dur-press) var(--ease-settle)}
+  .btn:active:not(:disabled){transform:scale(.995)}
+  .btn:focus-visible,.btn.is-focus{border-color:var(--ring);box-shadow:0 0 0 1px var(--ring)}
+  .btn.lg{padding:0 20px}
+  .btn.sm{height:28px;padding:0 8px;font-size:12.5px}
+  .btn.xs{height:20px;padding:0 8px;font-size:12px;gap:4px}
+  .btn.icon{width:32px;height:32px;padding:0}.btn.icon-sm{width:28px;height:28px;padding:0}.btn.icon-xs{width:20px;height:20px;padding:0}.btn.icon-lg{width:36px;height:36px;padding:0}
+  .btn svg{width:14px;height:14px;flex:none;pointer-events:none}
+  .btn.icon-xs svg{width:10px;height:10px}
+  .v-default{background:var(--primary);color:var(--primary-foreground)}
+  .v-default:hover,.v-default.is-hover{background:var(--primary-hover)}
+  .v-default:active,.v-default.is-press{filter:brightness(.95)}
+  .v-outline{background:var(--background);border-color:var(--border);color:var(--foreground)}
+  [data-theme=dark] .v-outline{background:color-mix(in srgb,var(--border) 30%,transparent)}
+  .v-ghost{color:var(--foreground)}
+  .v-outline:hover,.v-outline.is-hover,.v-ghost:hover,.v-ghost.is-hover{background:color-mix(in oklch,var(--foreground) var(--hover-overlay),transparent)}
+  .v-secondary{background:var(--muted);color:var(--foreground)}
+  .v-secondary:hover,.v-secondary.is-hover{background:color-mix(in oklch,var(--muted) var(--hover-fill),#000)}
+  .v-destructive{background:var(--destructive);color:#fff}
+  .v-destructive:hover,.v-destructive.is-hover{background:color-mix(in srgb,var(--destructive) 90%,transparent)}
+  .v-link{color:var(--foreground);padding:0 4px}
+  .v-link:hover,.v-link.is-hover{text-decoration:underline;text-underline-offset:4px}
+  .v-tile{background:var(--tile);color:var(--foreground)}
+  .v-tile:hover,.v-tile.is-hover{background:var(--tile-hover)}
+  .v-glass{color:#fff;backdrop-filter:blur(12px);background:linear-gradient(to bottom,var(--glass-top),var(--glass-bottom));box-shadow:inset 0 1px 1px rgba(255,255,255,.18)}
+  .v-glass:hover,.v-glass.is-hover{box-shadow:inset 0 1px 1px rgba(255,255,255,.18),inset 0 0 0 999px rgba(255,255,255,.1)}
+  .btn:disabled,.btn.is-disabled{background:var(--muted);color:var(--muted-foreground);border-color:transparent;opacity:.6;pointer-events:none}
+  .btn.is-loading{pointer-events:none;opacity:.7}
+  .btn .lbl{display:inline-flex;align-items:center;gap:inherit}
+  .btn.is-loading .lbl{visibility:hidden}
+  .btn.is-loading .ring{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+  .ring{display:none}
+  .ring i{width:16px;height:16px;border-radius:50%;border:2px dashed currentColor;animation:spin 1.1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .heroPanel{background:linear-gradient(135deg,#2a2a2a,#555);border-radius:16px;padding:16px;display:flex;gap:12px;flex-wrap:wrap}
+
+  /* Switch: ui/switch.tsx, h-6 w-11 */
+  .switch{position:relative;display:inline-flex;align-items:center;flex:none;width:44px;height:24px;padding:2px;border-radius:999px;background:color-mix(in srgb,var(--muted-foreground) 30%,transparent);transition:background-color var(--dur-hover)}
+  .switch i{display:block;width:20px;height:20px;border-radius:50%;background:var(--background);box-shadow:0 1px 2px rgba(0,0,0,.12);transition:transform var(--dur-hover)}
+  .switch[aria-checked=true]{background:var(--primary)}
+  .switch[aria-checked=true] i{transform:translateX(20px);background:var(--primary-foreground)}
+  .switch:focus-visible{outline:0;box-shadow:0 0 0 1px var(--ring)}
+  .switch:disabled{opacity:.5;cursor:not-allowed}
+
+  /* Checkbox: 14px, rounded-sm */
+  .check{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:14px;height:14px;border-radius:4px;border:1px solid var(--field-border);transition:background-color var(--dur-hover),border-color var(--dur-hover)}
+  [data-theme=dark] .check{background:color-mix(in srgb,var(--border) 30%,transparent)}
+  .check svg{width:10px;height:10px;display:none}
+  .check[aria-checked=true]{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground)}
+  .check[aria-checked=true] svg{display:block}
+  .check.invalid{border-color:var(--destructive);box-shadow:0 0 0 1px var(--destructive)}
+  .check:disabled{opacity:.5;cursor:not-allowed}
+  .check:focus-visible{outline:0;border-color:var(--ring);box-shadow:0 0 0 1px var(--ring)}
+  .checkrow{display:inline-flex;align-items:center;gap:12px;font-size:14px;cursor:pointer}
+
+  /* Toggle tile: ui/toggle-tile.tsx (tile + row) */
+  .ttile{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;border-radius:16px;background:var(--tile);padding:12px 16px;transition:background-color var(--dur-hover)}
+  .ttile:hover{background:var(--tile-hover)}
+  .ttile.row{background:transparent;padding:8px 0;border-radius:0}
+  .ttile.row:hover{background:transparent}
+  .ttile .l{display:flex;align-items:center;gap:12px;min-width:0;font-size:16px;font-weight:500;letter-spacing:-.01em}
+  .chipi{width:36px;height:36px;border-radius:8px;background:color-mix(in srgb,var(--foreground) 6%,transparent);display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .chipi svg{width:18px;height:18px}
+  .mini{position:relative;display:inline-flex;flex:none;width:40px;height:20px;border-radius:999px;border:2px solid transparent;background:color-mix(in srgb,var(--muted-foreground) 25%,transparent);transition:background-color 300ms var(--ease-settle)}
+  .mini i{display:block;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);transition:transform var(--dur-hover)}
+  .ttile[aria-checked=true] .mini{background:var(--primary)}
+  .ttile[aria-checked=true] .mini i{transform:translateX(16px)}
+  .ttile[disabled]{opacity:.5;cursor:not-allowed}
+
+  /* Segmented control + range pills + option tile */
+  .segc{display:inline-flex;max-width:100%;align-items:center;border-radius:12px;background:var(--chip);padding:4px}
+  .segc.full{display:flex;width:100%}
+  .segc button{flex:1 1 auto;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;border-radius:8px;padding:8px 12px;font-size:13px;color:var(--chip-foreground);transition:all var(--dur-hover)}
+  .segc button:hover{color:var(--chip-selected-foreground)}
+  .segc button[aria-checked=true]{background:var(--chip-selected);color:var(--chip-selected-foreground);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .segc small{font-size:11px;font-weight:400;color:var(--muted-foreground)}
+  .rpills{display:flex;gap:8px;width:100%}
+  .rpills button{flex:1;border-radius:999px;padding:4px 0;text-align:center;font-size:12px;border:1px solid color-mix(in srgb,var(--border) 80%,transparent);color:var(--muted-foreground);transition:background-color var(--dur-hover),color var(--dur-hover)}
+  .rpills button:hover{background:var(--muted);color:var(--foreground)}
+  .rpills button[aria-checked=true]{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground)}
+  .otile{display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;text-align:left;border-radius:16px;border:1px solid var(--border);background:var(--card);padding:12px;transition:background-color var(--dur-hover)}
+  .otile:hover{background:color-mix(in srgb,var(--muted) 50%,transparent)}
+  .otile[aria-checked=true]{border-color:var(--active-border);background:var(--active-bg)}
+  .otile b{display:block;font-size:15px;font-weight:500}.otile span.d{display:block;font-size:12px;color:var(--muted-foreground)}
+  .otile .v{font-size:15px}
+
+  /* Fields: ui/field, input, textarea, select. h-11, rounded-xl, 14px */
+  .fld{display:flex;flex-direction:column;gap:8px;width:100%}
+  .fld .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .fld label{font-size:13px;font-weight:500}
+  .fld label em{font-size:12px;font-weight:400;font-style:italic;color:var(--muted-foreground);margin-left:4px}
+  .fld .act{font-size:13px;text-decoration:underline;text-underline-offset:3px}
+  .fld .err{font-size:12px;color:var(--destructive)}
+  .inp{height:44px;width:100%;min-width:0;border-radius:12px;border:1px solid var(--field-border);background:var(--field);padding:4px 12px;font-size:14px;color:var(--foreground);outline:0;transition:all var(--dur-hover) var(--ease-in-out)}
+  .inp::placeholder{color:var(--muted-foreground)}
+  .inp:hover,.inp.is-hover{background:var(--field-hover)}
+  .inp:focus,.inp.is-focus{background:var(--field-focus);border-color:var(--field-border-focus);box-shadow:0 0 0 1px var(--field-border-focus)}
+  .inp.invalid{border-color:var(--destructive);box-shadow:0 0 0 1px var(--destructive)}
+  .inp:disabled{background:color-mix(in srgb,var(--border) 50%,transparent);opacity:.5;cursor:not-allowed}
+  textarea.inp{height:auto;min-height:84px;padding:8px 12px;resize:vertical;line-height:1.4}
+  .selw{position:relative}
+  .selw select{appearance:none;padding-right:36px;cursor:pointer}
+  .selw svg{position:absolute;right:12px;top:50%;width:14px;height:14px;transform:translateY(-50%);pointer-events:none;color:var(--muted-foreground)}
+  .adorn{position:relative}
+  .adorn .inp{padding-left:44px}
+  .adorn span{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--muted-foreground)}
+  .otp{display:flex;gap:8px}
+  .otp input{width:44px;height:52px;text-align:center;border-radius:12px;border:1px solid var(--field-border);background:var(--field);font-size:20px;outline:0;transition:all var(--dur-hover)}
+  .otp input:focus{border-color:var(--field-border-focus);box-shadow:0 0 0 1px var(--field-border-focus)}
+  .amount{display:flex;align-items:baseline;gap:8px;border-bottom:1px solid var(--field-border);padding-bottom:8px;width:100%;max-width:320px}
+  .amount span{font-size:20px;color:var(--muted-foreground)}
+  .amount input{border:0;outline:0;background:transparent;font-size:32px;width:100%;min-width:0;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="bar">
+  <h1>Components: buttons, toggles, fields</h1>
+  <div class="ctrls">
+    <div class="pills" id="pills">
+      <button class="pill on" data-g="buttons">Buttons</button>
+      <button class="pill" data-g="toggles">Toggles</button>
+      <button class="pill" data-g="fields">Fields</button>
+    </div>
+    <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+  </div>
+</div>
+
+<div class="stage">
+
+<!-- ============================ BUTTONS ============================ -->
+<section class="group on" id="g-buttons">
+  <div class="panel">
+    <div><h2>Variants</h2><p class="sub">Every variant of <code>Button</code>, at the default size. Hover and press them: the press is a 0.995 scale over 400ms with ease-settle.</p></div>
+    <div class="grid" id="variants"></div>
+  </div>
+  <div class="panel">
+    <div><h2>Sizes</h2><p class="sub">Default is 36px high. Icon-only controls under 40px get a larger hit area in use.</p></div>
+    <div class="block"><h3>Default variant</h3><div class="row" id="sizes"></div></div>
+    <div class="block"><h3>Icon only</h3><div class="row" id="icons"></div></div>
+    <div class="block"><h3>With an icon</h3><div class="row" id="withicon"></div></div>
+  </div>
+  <div class="panel">
+    <div><h2>States</h2><p class="sub">Forced here so they can be compared side by side. Disabled loses its fill; loading keeps its hue, dims, and keeps its width.</p></div>
+    <div id="states" class="block" style="gap:24px"></div>
+    <div class="block"><h3>Click to see loading</h3><div class="row"><button class="btn lg v-default" id="loadDemo"><span class="lbl">Pay GHS 250.00</span><span class="ring"><i></i></span></button><span class="sub">Busy state lives on the button, for 2 seconds.</span></div></div>
+  </div>
+</section>
+
+<!-- ============================ TOGGLES ============================ -->
+<section class="group" id="g-toggles">
+  <div class="panel">
+    <div><h2>Switch</h2><p class="sub">The bare control. On is amber, off is a quiet grey.</p></div>
+    <div class="row" style="gap:32px">
+      <div class="cell"><button class="switch" role="switch" aria-checked="false"><i></i></button><span class="sub">Off</span></div>
+      <div class="cell"><button class="switch" role="switch" aria-checked="true"><i></i></button><span class="sub">On</span></div>
+      <div class="cell"><button class="switch" role="switch" aria-checked="false" disabled><i></i></button><span class="sub">Disabled off</span></div>
+      <div class="cell"><button class="switch" role="switch" aria-checked="true" disabled><i></i></button><span class="sub">Disabled on</span></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div><h2>Toggle tile</h2><p class="sub">A labelled switch. The tile variant sits in a filled tile; the row variant sits in a list with hairline-free spacing.</p></div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">
+      <div class="cell w"><button class="ttile" role="switch" aria-checked="true"><span class="l"><span class="chipi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 004 0"/></svg></span>Payment alerts</span><span class="mini"><i></i></span></button><span class="sub">Tile, on</span></div>
+      <div class="cell w"><button class="ttile" role="switch" aria-checked="false"><span class="l"><span class="chipi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span>Hide amounts</span><span class="mini"><i></i></span></button><span class="sub">Tile, off</span></div>
+      <div class="cell w"><button class="ttile" role="switch" aria-checked="true" disabled><span class="l">Card payments online</span><span class="mini"><i></i></span></button><span class="sub">Tile, disabled</span></div>
+      <div class="cell w"><button class="ttile row" role="switch" aria-checked="true"><span class="l">Weekly summary</span><span class="mini"><i></i></span></button><span class="sub">Row, on</span></div>
+      <div class="cell w"><button class="ttile row" role="switch" aria-checked="false"><span class="l">Marketing messages</span><span class="mini"><i></i></span></button><span class="sub">Row, off</span></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div><h2>Checkbox</h2><p class="sub">14px, rounded-sm. Checked turns amber with dark ink.</p></div>
+    <div class="row" style="gap:32px">
+      <label class="checkrow"><button class="check" role="checkbox" aria-checked="false"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6.5l2.5 2.5L10 3"/></svg></button>Unchecked</label>
+      <label class="checkrow"><button class="check" role="checkbox" aria-checked="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6.5l2.5 2.5L10 3"/></svg></button>Checked</label>
+      <label class="checkrow"><button class="check invalid" role="checkbox" aria-checked="false"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6.5l2.5 2.5L10 3"/></svg></button>Invalid</label>
+      <label class="checkrow" style="opacity:.5;cursor:not-allowed"><button class="check" role="checkbox" aria-checked="false" disabled><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6.5l2.5 2.5L10 3"/></svg></button>Disabled</label>
+      <label class="checkrow" style="opacity:.5;cursor:not-allowed"><button class="check" role="checkbox" aria-checked="true" disabled><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6.5l2.5 2.5L10 3"/></svg></button>Disabled, checked</label>
+    </div>
+  </div>
+  <div class="panel">
+    <div><h2>Choosing one</h2><p class="sub">Segmented control, range pills and option tiles. One selected at a time.</p></div>
+    <div class="block"><h3>Segmented control</h3>
+      <div class="segc" data-one><button role="radio" aria-checked="true">Personal</button><button role="radio" aria-checked="false">Business</button></div>
+      <div class="segc" data-one><button role="radio" aria-checked="true">All <small>24</small></button><button role="radio" aria-checked="false">Money in <small>9</small></button><button role="radio" aria-checked="false">Money out <small>15</small></button></div>
+      <div class="segc full w" style="max-width:420px" data-one><button role="radio" aria-checked="false">Daily</button><button role="radio" aria-checked="true">Weekly</button><button role="radio" aria-checked="false">Monthly</button></div>
+      <span class="sub">Hug-content, with counts, and full width.</span>
+    </div>
+    <div class="block"><h3>Range pills</h3>
+      <div class="rpills w" style="max-width:420px" data-one><button role="radio" aria-checked="false">7D</button><button role="radio" aria-checked="true">30D</button><button role="radio" aria-checked="false">90D</button><button role="radio" aria-checked="false">1Y</button></div>
+    </div>
+    <div class="block"><h3>Option tile</h3>
+      <div class="w" style="display:flex;flex-direction:column;gap:8px" data-one>
+        <button class="otile" role="radio" aria-checked="true"><span><b>Instant</b><span class="d">Arrives in seconds</span></span><span class="v tabular">GHS 1.00</span></button>
+        <button class="otile" role="radio" aria-checked="false"><span><b>Standard</b><span class="d">Arrives within 24 hours</span></span><span class="v tabular">Free</span></button>
+        <button class="otile" role="radio" aria-checked="false"><span><b>Scheduled</b><span class="d">Pick a date</span></span></button>
+      </div>
+      <span class="sub">Selected uses the active border and fill; unselected is a card with a hover wash.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FIELDS ============================ -->
+<section class="group" id="g-fields">
+  <div class="panel">
+    <div><h2>Input states</h2><p class="sub">44px high, rounded-xl, 14px. Nothing sits under a field but an error, so help text goes in the placeholder.</p></div>
+    <div class="grid">
+      <div class="cell w"><input class="inp" placeholder="For example, October payroll"/><span class="sub">Empty</span></div>
+      <div class="cell w"><input class="inp" value="Ama Mensah"/><span class="sub">Filled</span></div>
+      <div class="cell w"><input class="inp is-hover" value="Ama Mensah"/><span class="sub">Hover</span></div>
+      <div class="cell w"><input class="inp is-focus" value="Ama Mensah"/><span class="sub">Focus</span></div>
+      <div class="cell w"><input class="inp invalid" value="0244 12"/><span class="sub">Invalid</span></div>
+      <div class="cell w"><input class="inp" value="Ama Mensah" disabled/><span class="sub">Disabled</span></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div><h2>Field</h2><p class="sub">Label, optional marker, a small action at the end of the label row, and the error line. Labels are Title Case.</p></div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:32px 24px">
+      <div class="fld"><div class="top"><label>Account Name</label></div><input class="inp" placeholder="Name on the account"/></div>
+      <div class="fld"><div class="top"><label>Reference<em>(optional)</em></label></div><input class="inp" placeholder="For example, October payroll"/></div>
+      <div class="fld"><div class="top"><label>Mobile Number</label><a class="act" href="#" onclick="return false">Saved</a></div><input class="inp" placeholder="024 000 0000"/></div>
+      <div class="fld"><div class="top"><label>Mobile Number</label></div><input class="inp invalid" value="024 12"/><p class="err" role="alert">Enter a 10-digit number</p></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div><h2>Other field types</h2><p class="sub">Select, textarea, prefixed input, one-time code and the amount field (the only bespoke ones).</p></div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:32px 24px">
+      <div class="fld"><div class="top"><label>Bank</label></div><div class="selw"><select class="inp"><option>Select a bank</option><option>GCB Bank</option><option>Ecobank</option><option>Stanbic</option></select><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div></div>
+      <div class="fld"><div class="top"><label>Bank</label></div><div class="selw"><select class="inp" disabled><option>GCB Bank</option></select><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div></div>
+      <div class="fld"><div class="top"><label>Note<em>(optional)</em></label></div><textarea class="inp" placeholder="Anything the recipient should know"></textarea></div>
+      <div class="fld"><div class="top"><label>Phone Number</label></div><div class="adorn"><span>+233</span><input class="inp" placeholder="24 000 0000"/></div></div>
+      <div class="fld"><div class="top"><label>One-Time Code</label></div><div class="otp"><input maxlength="1" value="4"/><input maxlength="1" value="8"/><input maxlength="1"/><input maxlength="1"/><input maxlength="1"/><input maxlength="1"/></div></div>
+      <div class="fld"><div class="top"><label>Amount</label></div><div class="amount"><span>GHS</span><input class="tabular" inputmode="decimal" placeholder="0.00"/></div></div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+const ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const PLUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+const VARS=[["default","Default","Primary action. One per screen."],["outline","Outline","Secondary, on a plain surface."],["secondary","Secondary","Quiet filled action."],["ghost","Ghost","Toolbar and low emphasis."],["destructive","Destructive","Real destructive actions only."],["tile","Tile","Beside or above hub tiles."],["link","Link","Inline text action."]];
+const btn=(v,label,extra="",inner)=>`<button class="btn v-${v} ${extra}"><span class="lbl">${inner||label}</span><span class="ring"><i></i></span></button>`;
+document.getElementById("variants").innerHTML=VARS.map(([v,n,d])=>`<div class="cell">${btn(v,n)}<span class="sub">${d}</span></div>`).join("")+
+ `<div class="cell"><div class="heroPanel" style="padding:12px">${btn("glass","Glass")}</div><span class="sub">Glass: only on the dark dashboard hero.</span></div>`;
+document.getElementById("sizes").innerHTML=[["xs","Extra small"],["sm","Small"],["","Default"],["lg","Large"]].map(([s,n])=>`<div class="cell">${btn("default","Continue",s)}<span class="sub">${n}</span></div>`).join("");
+document.getElementById("icons").innerHTML=[["icon-xs","20px"],["icon-sm","28px"],["icon","32px"],["icon-lg","36px"]].map(([s,n])=>`<div class="cell"><div class="row">${btn("default","",s,PLUS)}${btn("outline","",s,PLUS)}${btn("ghost","",s,PLUS)}</div><span class="sub">${n}</span></div>`).join("");
+document.getElementById("withicon").innerHTML=btn("default","Send",""," Send "+ICON).replace(" Send "+ICON,"Send "+ICON)+btn("outline","Add recipient","",PLUS+"Add recipient")+btn("secondary","Add","",PLUS+"Add")+btn("ghost","Share","",ICON+"Share");
+const STATES=[["","Rest"],["is-hover","Hover"],["is-focus","Focus"],["is-press","Pressed"],["is-disabled","Disabled"],["is-loading","Loading"]];
+document.getElementById("states").innerHTML=VARS.filter(x=>x[0]!=="link").map(([v,n])=>`<div class="block"><h3>${n}</h3><div class="row" style="gap:20px">${STATES.map(([c,l])=>`<div class="cell">${btn(v,n,"lg "+c)}<span class="sub">${l}</span></div>`).join("")}</div></div>`).join("");
+document.querySelectorAll(".btn.is-loading .ring").forEach(r=>r.style.display="flex");
+const ld=document.getElementById("loadDemo");
+ld.onclick=()=>{ld.classList.add("is-loading");ld.querySelector(".ring").style.display="flex";setTimeout(()=>{ld.classList.remove("is-loading");ld.querySelector(".ring").style.display="none"},2000)};
+
+// interactions
+document.addEventListener("click",e=>{
+  const sw=e.target.closest(".switch,.ttile,.check");
+  if(sw&&!sw.disabled){sw.setAttribute("aria-checked",sw.getAttribute("aria-checked")==="true"?"false":"true")}
+  const r=e.target.closest("[data-one] [role=radio]");
+  if(r){r.closest("[data-one]").querySelectorAll("[role=radio]").forEach(x=>x.setAttribute("aria-checked",x===r?"true":"false"))}
+});
+document.querySelectorAll(".checkrow").forEach(l=>l.addEventListener("click",e=>{if(e.target.closest(".check"))return;const c=l.querySelector(".check");if(c&&!c.disabled)c.setAttribute("aria-checked",c.getAttribute("aria-checked")==="true"?"false":"true")}));
+document.getElementById("pills").onclick=e=>{const b=e.target.closest("[data-g]");if(!b)return;document.querySelectorAll("#pills .pill").forEach(x=>x.classList.toggle("on",x===b));document.querySelectorAll("section.group").forEach(s=>s.classList.toggle("on",s.id==="g-"+b.dataset.g))};
+document.getElementById("theme").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;document.documentElement.dataset.theme=b.dataset.t;document.querySelectorAll("#theme button").forEach(x=>x.classList.toggle("on",x===b))};
+</script>
+</body>
+</html>

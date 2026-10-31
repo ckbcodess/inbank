@@ -707,7 +707,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             </Button>
             <Button
               type="button"
-              className="flex-1 h-11 text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+              className="flex-1 h-11 text-[16px] bg-primary text-primary-foreground drop-shadow-sm cursor-pointer"
               onClick={() => setPinModalOpen(true)}
             >
               Authorize &amp; Schedule

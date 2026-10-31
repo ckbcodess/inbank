@@ -6,7 +6,6 @@
  */
 
 import Image from "next/image";
-import { maskMobile } from "@/lib/auth-shared";
 import { cn } from "@/lib/utils";
 
 const W = 278;
@@ -37,12 +36,15 @@ export function CashoutTicket({
   code,
   amount,
   recipientPhone,
+  expires,
   className,
 }: {
   code: string;
   /** Already formatted, without the currency (e.g. "500.00"). */
   amount: string;
   recipientPhone: string;
+  /** When it stops working, already worded (e.g. "30 Oct, 14:32"). */
+  expires?: string;
   className?: string;
 }) {
   return (
@@ -84,8 +86,14 @@ export function CashoutTicket({
       </div>
       <div className="absolute inset-x-7 top-[306px] flex items-center justify-between text-[14px] leading-5">
         <span>To</span>
-        <span className="tabular">{maskMobile(recipientPhone)}</span>
+        <span className="tabular">•••• {recipientPhone.replace(/\D/g, "").slice(-4)}</span>
       </div>
+      {expires && (
+        <div className="absolute inset-x-7 top-[340px] flex items-center justify-between text-[14px] leading-5">
+          <span>Expires</span>
+          <span className="tabular">{expires}</span>
+        </div>
+      )}
     </div>
   );
 }

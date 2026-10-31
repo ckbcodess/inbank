@@ -1,5 +1,5 @@
-import { SecurityOpen } from "@/components/invest/ProductPages";
+import { redirect } from "next/navigation";
 
 export default function TreasuryBillsOpenPage() {
-  return <SecurityOpen kind="bill" />;
+  redirect("/invest/products/treasury/open");
 }

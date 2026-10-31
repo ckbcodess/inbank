@@ -10,7 +10,7 @@
  * hide-amounts toggle and uses semantic tokens only.
  */
 
-import { TransactionStatusText } from "@/components/StatusBadge";
+import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { amountStyling, hasStatusWord } from "@/lib/transaction-display";
 import { TransactionMark } from "@/components/transactions/TransactionMark";
 import { getTransactionType } from "@/lib/transaction-type";
@@ -582,9 +582,9 @@ export function RecentTransactions({
                     {amountStyling(t).prefix}
                     {fmtGHS(Math.abs(t.amount), showAmounts)}
                   </span>
-                  {/* A word only when it isn't Completed; a failed payment is amber, not red */}
+                  {/* A pill only when it isn't Completed (pending, failed, reversed) */}
                   {hasStatusWord(t) && (
-                    <TransactionStatusText state={t.state} className="text-[11px]" />
+                    <TransactionStatusBadge state={t.state} />
                   )}
                 </span>
               </button>

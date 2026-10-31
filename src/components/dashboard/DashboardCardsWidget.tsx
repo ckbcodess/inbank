@@ -100,7 +100,7 @@ export function DashboardCardsWidget() {
           <h2 className="text-[15px] font-medium text-foreground">Cards</h2>
           <Link
             href="/cards"
-            className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
+            className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
           >
             <span>View all</span>
             <ChevronRight size={13} />
@@ -152,7 +152,7 @@ export function DashboardCardsWidget() {
                 <button
                   type="button"
                   onClick={() => toggleFreeze(card.id)}
-                  className={`flex h-7 items-center gap-2 rounded-lg border px-2 text-[12px] font-medium transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
+                  className={`flex h-7 items-center gap-2 rounded-lg border px-2 text-[12px] font-medium transition-colors transition-transform cursor-pointer ${
                     card.frozen
                       ? "border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20"
                       : "border-border bg-muted/60 text-foreground hover:bg-muted"
@@ -165,7 +165,7 @@ export function DashboardCardsWidget() {
                 <button
                   type="button"
                   onClick={() => setManagingCard(card)}
-                  className="flex h-7 items-center rounded-lg border border-border bg-muted/60 px-2 text-[12px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+                  className="flex h-7 items-center rounded-lg border border-border bg-muted/60 px-2 text-[12px] font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
                 >
                   Manage
                 </button>

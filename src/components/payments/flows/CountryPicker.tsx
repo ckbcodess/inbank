@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronRight, Search } from "@/components/ui/icons";
+import { ChevronDown, ChevronRight, Search } from "@/components/ui/icons";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { COUNTRIES, findCountryByName, type Country } from "@/lib/countries";
 import { CountryFlag } from "@/components/ui/country-flag";
@@ -49,7 +49,7 @@ export function CountryPicker({
         <span className={selected ? "flex-1 truncate text-foreground" : "flex-1 truncate text-muted-foreground"}>
           {selected ? selected.name : "Select destination country"}
         </span>
-        <ChevronRight size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+        <ChevronDown className="pointer-events-none size-3 shrink-0 text-muted-foreground" aria-hidden="true" />
       </button>
 
       <Dialog

@@ -257,6 +257,7 @@ const insure: Entry[] = [
   ["Male", "Homme", "Hombre", "男"],
   ["As on their ID", "Comme sur sa pièce d’identité", "Como figura en su documento", "与证件一致"],
   ["That date is in the future.", "Cette date est dans le futur.", "Esa fecha está en el futuro.", "该日期在未来。"],
+  ["Enter their first and last name.", "Saisissez son prénom et son nom.", "Introduce su nombre y apellido.", "请输入其名和姓。"],
   ["A trustee must be 18 or older.", "Un fiduciaire doit avoir 18 ans ou plus.", "Un fideicomisario debe tener 18 años o más.", "受托人必须年满 18 岁。"],
   ["Select relationship", "Choisir le lien", "Selecciona el parentesco", "选择关系"],
   ["Add Trustee", "Ajouter un fiduciaire", "Añadir fideicomisario", "添加受托人"],

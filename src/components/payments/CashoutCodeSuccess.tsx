@@ -23,13 +23,14 @@ const TITLE_LIFT = -150;
 export function CashoutCodeSuccess({
   code,
   amount,
+  expiresAt,
   recipientPhone,
   onDone,
 }: {
   code: string;
   /** Already formatted, without the currency (e.g. "200.00"). */
   amount: string;
-  /** Kept for callers that pass it; the ticket doesn't show it. */
+  /** When the code stops working, already worded; shown on the ticket. */
   expiresAt?: string;
   recipientName?: string;
   recipientPhone: string;
@@ -101,7 +102,7 @@ export function CashoutCodeSuccess({
               <GcbEagleEmblem className="h-auto w-[104px] sm:w-[114px]" />
             </motion.div>
           ) : (
-            <CashoutTicketArrival key={`ticket-${run}`} code={code} amount={amount} recipientPhone={recipientPhone} />
+            <CashoutTicketArrival key={`ticket-${run}`} code={code} amount={amount} recipientPhone={recipientPhone} expires={expiresAt} />
           )}
         </AnimatePresence>
       </div>

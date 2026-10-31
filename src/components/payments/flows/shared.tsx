@@ -2,9 +2,9 @@
 
 import { InlineError } from "@/components/ui/inline-error";
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { ArrowLeftRight, Landmark, AlertCircle, Check, ChevronDown, User } from "@/components/ui/icons";
+import { ArrowLeftRight, Landmark, AlertCircle, Check, User } from "@/components/ui/icons";
 import { BankMark } from "@/components/ui/bank-mark";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { SearchPicker, type PickerItem } from "@/components/ui/search-picker";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -1185,7 +1185,7 @@ export function ProceedButton({
       <Button
         type="button"
         data-proceed-cta="true"
-        className="w-full h-11 text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
+        className="w-full h-11 text-[16px] bg-primary text-primary-foreground drop-shadow-sm disabled:opacity-40 disabled:pointer-events-none"
         disabled={disabled}
         loading={loading}
         onClick={onClick}
@@ -1212,7 +1212,7 @@ export function AccountVerificationStatus({
 }) {
   if (resolving) {
     return (
-      <div className={cn("flex items-center gap-2 pt-2 text-[13px] text-muted-foreground select-none animate-verify-in", className)}>
+      <div className={cn("flex items-center gap-2 pt-2 pb-3 text-[13px] text-muted-foreground select-none animate-verify-in", className)}>
         <span className="flex items-center justify-center shrink-0 animate-in zoom-in-75 duration-200">
           <AppLoader size={14} className="text-muted-foreground" />
         </span>
@@ -1225,7 +1225,7 @@ export function AccountVerificationStatus({
 
   if (name) {
     return (
-      <div className={cn("flex items-center gap-2 pt-2 text-[13px] text-foreground select-none animate-verify-in", className)}>
+      <div className={cn("flex items-center gap-2 pt-2 pb-3 text-[13px] text-foreground select-none animate-verify-in", className)}>
         <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
           <Check size={10} className="shrink-0" />
         </span>
@@ -1553,88 +1553,44 @@ export function OperatorSelect({
 }
 
 /**
- * Bank picker. It looks like `NetworkSelect` (the mark, then the name, in the field and in every option) and, because
- * the list is long, opens with a search field. The field is the same box as a select (`data-slot="select-trigger"`).
+ * Bank picker: the shared searchable picker with each bank's mark. It looks like `NetworkSelect` in the field, and
+ * because the list is long it opens in a modal with a search, like Bills' biller list.
  */
 export function BankSelect({
   value,
   onChange,
   options = BANKS,
+  placeholder = "Select bank",
+  title = "Select a Bank",
+  invalid,
 }: {
   value: string;
   onChange: (value: string) => void;
   options?: readonly string[];
+  placeholder?: string;
+  title?: string;
+  invalid?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const q = query.trim().toLowerCase();
-  const matches = useMemo(() => (q ? options.filter((b) => b.toLowerCase().includes(q)) : options), [options, q]);
-
-  function pick(bank: string) {
-    onChange(bank);
-    setOpen(false);
-  }
-
+  const items = useMemo<PickerItem[]>(
+    () => options.map((b) => ({ id: b, label: b, mark: (size: number) => <BankMark name={b} size={size} /> })),
+    [options],
+  );
   return (
-    <Popover
-      open={open}
-      onOpenChange={(next) => {
-        setOpen(next);
-        if (!next) setQuery("");
-      }}
-    >
-      <PopoverTrigger
-        data-slot="select-trigger"
-        data-size="default"
-        className="flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 rounded-xl border border-field-border bg-field px-3 py-2 text-[14px] text-foreground outline-none transition-all hover:bg-field-hover focus-visible:border-field-border-focus focus-visible:ring-1 focus-visible:ring-field-border-focus aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive"
-      >
-        <span className="flex min-w-0 items-center gap-2">
-          {value ? (
-            <BankMark name={value} size={28} />
-          ) : (
-            <span className="flex size-7 shrink-0 items-center justify-center text-muted-foreground">
-              <Landmark size={20} className="shrink-0" />
-            </span>
-          )}
-          <span className={cn("truncate", !value && "text-muted-foreground")}>{value || "Select bank"}</span>
+    <SearchPicker
+      items={items}
+      value={value}
+      onChange={(item) => onChange(item.id)}
+      placeholder={placeholder}
+      title={title}
+      searchPlaceholder="Search banks"
+      emptyText="No bank matches that."
+      emptyMark={
+        <span className="flex size-7 shrink-0 items-center justify-center text-muted-foreground">
+          <Landmark size={20} className="shrink-0" />
         </span>
-        <ChevronDown aria-hidden="true" className="pointer-events-none ml-1 size-3 shrink-0 text-muted-foreground" />
-      </PopoverTrigger>
-      <PopoverContent align="start" className="w-(--anchor-width) min-w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-border p-2">
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && matches.length > 0) {
-              e.preventDefault();
-              pick(matches[0]);
-            }
-          }}
-          placeholder="Search banks"
-          aria-label="Search banks"
-          className="mb-2"
-        />
-        {matches.length === 0 ? (
-          <p className="px-2 py-6 text-center text-[13px] text-muted-foreground">No bank matches that.</p>
-        ) : (
-          <ul role="listbox" aria-label="Banks" className="custom-scrollbar scroll-fade flex max-h-60 flex-col gap-0.5 overflow-y-auto overscroll-contain">
-            {matches.map((b) => (
-              <li key={b} role="option" aria-selected={b === value}>
-                <button
-                  type="button"
-                  onClick={() => pick(b)}
-                  className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-menu-item-hover"
-                >
-                  <BankMark name={b} size={28} />
-                  <span className="flex-1 truncate">{b}</span>
-                  {b === value && <Check size={14} className="shrink-0" aria-hidden="true" />}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </PopoverContent>
-    </Popover>
+      }
+      invalid={invalid}
+    />
   );
 }
 

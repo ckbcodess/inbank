@@ -108,7 +108,7 @@ export function SaveSourcePrompt({
             type="button"
             variant="ghost"
             onClick={onDone}
-            className="h-9 flex-1 px-3 text-[13.5px] text-muted-foreground hover:text-foreground active:scale-[0.96] transition-transform duration-hover sm:flex-none"
+            className="h-9 flex-1 px-3 text-[13.5px] text-muted-foreground hover:text-foreground transition-transform duration-hover sm:flex-none"
           >
             Not now
           </Button>
@@ -116,7 +116,7 @@ export function SaveSourcePrompt({
             type="button"
             variant="default"
             onClick={save}
-            className="h-9 flex-1 px-4 text-[13.5px] active:scale-[0.96] transition-transform duration-hover sm:flex-none"
+            className="h-9 flex-1 px-4 text-[13.5px] transition-transform duration-hover sm:flex-none"
           >
             {saveLabel}
           </Button>

@@ -27,7 +27,7 @@ import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { DualAmountFields, FromAccountSelector, InsufficientFundsAlert, ProceedButton } from "@/components/payments/flows/shared";
 import { ReviewSummary } from "@/components/ui/review-summary";
-import { AccountRequired, MaturityInstructionField, TREASURY_HOME, INVEST_HOME, PRODUCTS_HREF, BILLS_PRODUCTS_HREF, BONDS_PRODUCTS_HREF } from "@/components/invest/parts";
+import { AccountRequired, MaturityInstructionField, TREASURY_HOME, INVEST_HOME, PRODUCTS_HREF, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
 import { CreateProfileFlow } from "@/components/invest/CreateProfileFlow";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
@@ -85,7 +85,7 @@ export function BuyFlow() {
   }, [pickedFrom, accounts, csd?.linkedAccountId, defaultId]);
   const from = accounts.find((a) => a.id === fromId);
 
-  const backTo = sec?.kind === "bond" ? { href: BONDS_PRODUCTS_HREF, label: "Bonds" } : { href: BILLS_PRODUCTS_HREF, label: "Treasury Bills" };
+  const backTo = { href: TREASURY_PRODUCTS_HREF, label: "Treasury Bills & Bonds" };
 
   if (!hydrated) return <FormPageSkeleton fields={3} />;
 

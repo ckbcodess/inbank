@@ -141,6 +141,20 @@ const beneficiaries: Entry[] = [
   ["Proxy Identifier", "Identifiant proxy", "Alias", "代理 ID"],
   ["Recipient Physical Address", "Adresse du bénéficiaire", "Dirección del destinatario", "收款人地址"],
   ["Search by name or number", "Rechercher par nom ou numéro", "Buscar por nombre o número", "按姓名或号码搜索"],
+  ["Card Top Up", "Recharge de carte", "Recarga de tarjeta", "银行卡充值"],
+  ["Merchant (QR)", "Commerçant (QR)", "Comercio (QR)", "商户（二维码）"],
+  ["Merchants", "Commerçants", "Comercios", "商户"],
+  ["Card Reference", "Référence de la carte", "Referencia de la tarjeta", "卡片参考号"],
+  ["Merchant QR Code", "Code QR du commerçant", "Código QR del comercio", "商户二维码编号"],
+  ["Merchant Name", "Nom du commerçant", "Nombre del comercio", "商户名称"],
+  ["Account Name", "Nom du compte", "Nombre de la cuenta", "账户名称"],
+  ["The 8-character reference, e.g. 7X2K89AB", "La référence à 8 caractères, p. ex. 7X2K89AB", "La referencia de 8 caracteres, p. ej., 7X2K89AB", "8 位参考号，例如：7X2K89AB"],
+  ["The code under the QR, e.g. GCB-QR-88210", "Le code sous le QR, p. ex. GCB-QR-88210", "El código bajo el QR, p. ej., GCB-QR-88210", "二维码下方的编号，例如：GCB-QR-88210"],
+  ["e.g. Melcom Plus, Kaneshie", "p. ex. Melcom Plus, Kaneshie", "p. ej., Melcom Plus, Kaneshie", "例如：Melcom Plus, Kaneshie"],
+  ["e.g. Home Fibre", "p. ex. Fibre maison", "p. ej., Fibra del hogar", "例如：家庭光纤"],
+  ["Policy Beneficiary", "Bénéficiaire de police", "Beneficiario de póliza", "保单受益人"],
+  ["Policy Beneficiaries", "Bénéficiaires de police", "Beneficiarios de póliza", "保单受益人"],
+  ["Named on", "Désigné sur", "Nombrado en", "所属保单"],
 ];
 
 export default beneficiaries;

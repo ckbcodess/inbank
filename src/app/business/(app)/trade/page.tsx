@@ -71,7 +71,7 @@ export default function TradeHubPage() {
             <li key={t.id}>
               <Link
                 href={`/business/trade/${t.id}`}
-                className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/50 transition-transform"
               >
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                   <Ship size={16} aria-hidden="true" />

@@ -46,9 +46,11 @@ import {
   SpendCategory,
 } from "@/lib/mock-data";
 import { useGroupsStore } from "@/lib/groups-store";
+import { findGovService } from "@/lib/government-services";
+import { useGovInvoices } from "@/lib/gov-invoices-store";
 import { GCB_PAY_CATEGORIES } from "@/lib/payment-options";
 import { useProxyStore, PROXY_TYPE_LABEL } from "@/lib/proxy-store";
-import CreateGroupModal from "@/components/payments/CreateGroupModal";
+import CreateGroupFlow from "@/components/payments/CreateGroupFlow";
 import ProxyIdModal from "@/components/payments/ProxyIdModal";
 import {
   Dialog,
@@ -84,7 +86,9 @@ import { PapssPaymentFlow } from "./flows/PapssPaymentFlow";
 import { CardlessWithdrawalFlow } from "./flows/CardlessWithdrawalFlow";
 import { CashoutCodeSuccess } from "./CashoutCodeSuccess";
 import { ActiveCodeDialog } from "./ActiveCodeDialog";
-import { GroupPaymentFlow } from "./flows/GroupPaymentFlow";
+import { findCountryByName } from "@/lib/countries";
+import { needsNameCheck } from "@/lib/biller-rules";
+import { GroupPaymentFlow, groupTotal } from "./flows/GroupPaymentFlow";
 import { ProxyPayFlow } from "./flows/ProxyPayFlow";
 import { ScanAndPayFlow } from "./flows/ScanAndPayFlow";
 import {
@@ -99,7 +103,7 @@ import {
   getBroadbandPackages,
   formatGhPhone,
 } from "./flows/shared";
-import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
+import { useBeneficiariesStore, saveBeneficiaryOnce, categoryFor, type BeneficiaryRecord, type TransactionType } from "@/lib/beneficiaries-store";
 import { useContextualBack } from "@/lib/contextual-back";
 
 export type FlowGroup = "send" | "bills";
@@ -206,9 +210,14 @@ interface RecentPayeeAvatar {
   colorDarkBg?: string;
   colorDarkText?: string;
   billerId?: string;
+  govService?: string;
+  govProduct?: string;
+  govDetails?: string;
   category?: BillerCategory;
   country?: string;
   subtitle?: string;
+  /** A broadband account (the Internet rail's "Broadband"), told apart from a phone number that buys bundles. */
+  broadband?: boolean;
   /** What an international wire needs beyond the name, bank and account number, so one tap fills the whole form. */
   wire?: {
     currency: string;
@@ -218,6 +227,94 @@ interface RecentPayeeAvatar {
     bankAddress: string;
     address: string;
   };
+}
+
+const AVATAR_TINTS = [
+  "var(--avatar-teal)",
+  "var(--avatar-sand)",
+  "var(--avatar-green)",
+  "var(--avatar-lilac)",
+  "var(--avatar-yellow)",
+  "var(--avatar-blue)",
+  "var(--avatar-red)",
+];
+
+/** Two entries are the same recipient when their letters and digits match (phone numbers on their last nine digits). */
+function recipientKey(rail: string, acct: string): string {
+  const k = acct.replace(/[^a-z0-9]/gi, "").toLowerCase();
+  return `${rail}:${/^\d+$/.test(k) ? k.slice(-9) : k}`;
+}
+
+/**
+ * What the customer has saved, as the people each payment rail offers. Every kind of beneficiary lands on the rail
+ * that pays it, so what is saved on one screen is offered on the next. A phone number that buys airtime is offered
+ * for bundles too.
+ */
+function avatarsFromStore(list: BeneficiaryRecord[]): RecentPayeeAvatar[] {
+  const out: RecentPayeeAvatar[] = [];
+  list.forEach((b, i) => {
+    const initials =
+      b.name
+        .replace(/[^a-zA-Z ]/g, "")
+        .split(" ")
+        .filter(Boolean)
+        .map((w) => w[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase() || "BN";
+    const base = { id: `sav-${b.id}`, name: b.name, initials, colorBg: AVATAR_TINTS[i % AVATAR_TINTS.length] };
+    switch (b.transactionType) {
+      case "bank":
+        out.push({ ...base, rail: "bank", bank: b.bankName || "GCB Bank", acct: b.accountNumber || "" });
+        break;
+      case "wallet":
+        out.push({ ...base, rail: "wallet", bank: b.network || "", acct: b.phoneNumber || "" });
+        break;
+      case "proxy":
+        out.push({ ...base, rail: "proxy", bank: "Proxy ID", acct: b.proxyId || "" });
+        break;
+      case "bill": {
+        const biller = BILLERS.find((x) => x.name === b.billerName);
+        out.push({
+          ...base,
+          rail: "bill",
+          bank: b.billerName || "",
+          acct: b.billerReference || "",
+          billerId: biller?.id,
+          category: biller?.category,
+        });
+        break;
+      }
+      case "airtime":
+        out.push({ ...base, rail: "airtime", bank: b.network || "", acct: b.phoneNumber || "" });
+        out.push({ ...base, id: `${base.id}-data`, rail: "data", bank: b.network || "", acct: b.phoneNumber || "" });
+        break;
+      case "broadband":
+        out.push({ ...base, rail: "data", broadband: true, bank: b.network || "", acct: b.phoneNumber || "" });
+        break;
+      case "card":
+        out.push({ ...base, rail: "card-topup", bank: "GCB Prepaid Card", acct: b.accountNumber || "" });
+        break;
+      case "qr":
+        out.push({ ...base, rail: "qr", bank: "GCB QR", acct: b.billerReference || "" });
+        break;
+      case "swift":
+      case "papss":
+        out.push({
+          ...base,
+          rail: b.transactionType,
+          bank: b.bankName || "",
+          acct: b.accountNumber || "",
+          country: b.country,
+          subtitle: [b.bankName, b.country].filter(Boolean).join(" · "),
+        });
+        break;
+      // People on a policy are named on the policy; there is nothing to pay them
+      default:
+        break;
+    }
+  });
+  return out;
 }
 
 const ALL_RECENT_AVATARS: RecentPayeeAvatar[] = [
@@ -679,27 +776,18 @@ const ALL_RECENT_AVATARS: RecentPayeeAvatar[] = [
 
   // 4. Government Services
   {
-    id: "rec-bill4",
-    name: "GRA Tax Assessment",
-    bank: "GRA — Tax Payment",
-    acct: "TIN-9088214-G",
-    initials: "GRA",
-    rail: "bill",
-    billerId: "bil-004",
-    category: "Government Services",
-    subtitle: "TIN: TIN-9088214-G",
-    colorBg: "var(--avatar-yellow)",
-  },
-  {
     id: "rec-bill-gov2",
-    name: "DVLA Licence Renewal",
-    bank: "DVLA — Driver Licence",
-    acct: "DVLA-2026-9901",
+    name: "Vehicle Registration",
+    bank: "Ghana.gov",
+    acct: "GR 1234-24",
     initials: "DVLA",
     rail: "bill",
-    billerId: "bil-004c",
+    billerId: "bil-004b",
+    govService: "Driver and Vehicle Licensing Agency (DVLA)",
+    govProduct: "dvla-reg",
+    govDetails: JSON.stringify({ payer: "Ransford Gyasi", phone: "0244 123 456", vehicle: "GR 1234-24" }),
     category: "Government Services",
-    subtitle: "Licence: DVLA-2026-9901",
+    subtitle: "DVLA · GR 1234-24",
     colorBg: "var(--avatar-blue)",
   },
 
@@ -816,33 +904,20 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const activeProfile = useSession((s) => s.activeProfile);
   const accounts = useMemo(() => accountsForProfile(activeProfile?.kind), [activeProfile?.kind]);
   const simUserType = useDevUserStore((s) => s.userType);
+  const storedBeneficiaries = useBeneficiariesStore((st) => st.beneficiaries);
   const RECENT_AVATARS = useMemo<RecentPayeeAvatar[]>(() => {
-    if (simUserType === "clean") return [];
-    if (simUserType === "single") {
-      return [
-        {
-          id: "rec-s1",
-          name: "Mum (Yaa Gyan)",
-          bank: "MTN Mobile Money",
-          acct: "0244 889 900",
-          initials: "YG",
-          rail: "wallet",
-          colorBg: "var(--avatar-teal)",
-        },
-        {
-          id: "rec-s2",
-          name: "ECG Electricity",
-          bank: "ECG",
-          acct: "P-992014",
-          initials: "EC",
-          rail: "bill",
-          category: "Bills & Utilities",
-          colorBg: "var(--avatar-sand)",
-        },
-      ];
-    }
-    return ALL_RECENT_AVATARS;
-  }, [simUserType]);
+    // The clean and single personas' people are exactly what the beneficiaries store holds for them; everyone else
+    // also has the demo regulars, and whatever they have saved is added to those.
+    const regulars = simUserType === "clean" || simUserType === "single" ? [] : ALL_RECENT_AVATARS;
+    const known = new Set(regulars.map((r) => recipientKey(r.rail, r.acct)));
+    const saved = avatarsFromStore(storedBeneficiaries).filter((r) => {
+      const key = recipientKey(r.rail, r.acct);
+      if (known.has(key)) return false;
+      known.add(key);
+      return true;
+    });
+    return [...regulars, ...saved];
+  }, [simUserType, storedBeneficiaries]);
 
   const auth = useAuthorisation();
 
@@ -857,6 +932,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const [proxyModalMode, setProxyModalMode] = useState<"create" | "edit">("edit");
   const [proxyDeregisterOpen, setProxyDeregisterOpen] = useState(false);
   const [groupCategory, setGroupCategory] = useState<"transfer" | null>(null);
+  /** Amounts changed for single members of the chosen group, by member id. */
+  const [grpMemberAmounts, setGrpMemberAmounts] = useState<Record<string, string>>({});
   const { myProxy, deregisterProxy } = useProxyStore();
   const [cardlessCategory, setCardlessCategory] = useState<"self" | "third-party" | null>(null);
   const [cardTopupCategory, setCardTopupCategory] = useState<"my" | "other" | null>(null);
@@ -912,6 +989,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     product: "airtime" as "airtime" | "data",
     airtimeAmount: "",
     bundleId: "",
+    /** Broadband only: an amount that replaces the package price. */
+    bundleAmount: "",
     cardId: "",
     cardAmount: "",
     ecgMeter: "",
@@ -920,6 +999,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     billRef: "",
     billAmount: "",
     govService: "",
+    govProduct: "",
+    govMode: "",
+    govDetails: "",
     govRef: "",
     govAmount: "",
     qrMerchant: "",
@@ -944,6 +1026,22 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     cardlessType: "self" as "self" | "third-party",
   });
 
+  /** A code for someone else goes to a saved number; picking them keeps the person on the cardless rail. */
+  const pickCardlessRecipient = (item: RecentPayeeAvatar) => {
+    setCardlessCategory("third-party");
+    setF((p) => ({
+      ...p,
+      cardlessType: "third-party",
+      wPhone: item.acct.replace(/\s+/g, ""),
+      wNetwork: item.bank || p.wNetwork,
+      benName: item.name,
+      wAmount: "",
+      wRef: "",
+    }));
+    setStage(1);
+    setStage1Collapsed(true);
+  };
+
   const selectBeneficiary = (item: RecentPayeeAvatar) => {
     if (item.rail === "bill") {
       setRail("bill");
@@ -958,8 +1056,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       setF((p) => ({
         ...p,
         billerId: item.billerId || matchedBiller.id,
-        billRef: item.acct,
+        billRef: item.govDetails ? "" : item.acct,
         benName: item.name,
+        govService: item.govService ?? "",
+        govProduct: item.govProduct ?? "",
+        // A saved Ghana.gov service opens Generate with its details filled in; any other saved bill pays on its reference
+        ...(item.govDetails ? { govMode: "invoice", govDetails: item.govDetails } : { govMode: item.govService ? "pay" : "" }),
       }));
       setStage(1);
       setStage1Collapsed(true);
@@ -1030,9 +1132,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
     if (item.rail === "data") {
       setRail("data");
-      setTopupCategory(item.id.includes("self") ? "self" : "other");
+      setTopupCategory(item.broadband ? "broadband" : item.id.includes("self") ? "self" : "other");
       const detected = detectTelcoNetwork(item.acct);
-      const net = detected?.telcoName || normalizeNetworkName(item.bank) || "MTN Ghana";
+      // A broadband account is kept under its product's name ("MTN Fibre"), which is what the form's provider field holds
+      const net = item.broadband ? item.bank : detected?.telcoName || normalizeNetworkName(item.bank) || "MTN Ghana";
       // The bundle is the customer's choice every time: never preselected.
       setF((p) => ({
         ...p,
@@ -1059,20 +1162,21 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       return;
     }
 
-    if (item.rail === "swift" && item.wire) {
+    if (item.rail === "swift") {
       setRail("swift");
       setBankCategory("international");
+      // A wire saved from a payment has no bank code or addresses on file yet: those are asked again, the rest is filled
       setF((p) => ({
         ...p,
         wBenName: item.name,
         wBank: item.bank,
         wIban: item.acct,
         wCountry: item.country || "",
-        wCurrency: item.wire!.currency,
-        wMode: item.wire!.mode,
-        wSwift: item.wire!.code,
-        wBankAddress: item.wire!.bankAddress,
-        wBenAddress: item.wire!.address,
+        wCurrency: item.wire?.currency ?? findCountryByName(item.country || "")?.currency ?? p.wCurrency,
+        wMode: item.wire?.mode ?? "",
+        wSwift: item.wire?.code ?? "",
+        wBankAddress: item.wire?.bankAddress ?? "",
+        wBenAddress: item.wire?.address ?? "",
       }));
       setStage(1);
       setStage1Collapsed(true);
@@ -1123,11 +1227,21 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
     if (item.rail === "card-topup") {
       setRail("card-topup");
+      // A saved card is someone else's, found by its reference
+      setCardTopupCategory("other");
       setF((p) => ({
         ...p,
-        cardId: item.acct,
+        cardId: `ref-${item.acct}`,
         benName: item.name,
       }));
+      setStage(1);
+      setStage1Collapsed(true);
+      return;
+    }
+
+    if (item.rail === "qr") {
+      setRail("qr");
+      setF((p) => ({ ...p, qrMerchant: item.name, qrRef: item.acct }));
       setStage(1);
       setStage1Collapsed(true);
       return;
@@ -1163,9 +1277,26 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   }, [billCategory, RECENT_AVATARS]);
 
   const selectedGroupObj = useMemo(() => groups.find((g) => g.name === f.groupName), [groups, f.groupName]);
+  // Changes to single members belong to the group they were made in.
+  useEffect(() => {
+    setGrpMemberAmounts({});
+  }, [f.groupName]);
+
+  // A cash-out code is texted to a number, so only people with a number are offered: wallets and phone lines, once each
+  const cardlessRecipients = useMemo(() => {
+    const seen = new Set<string>();
+    return RECENT_AVATARS.filter((i) => {
+      if (i.rail !== "wallet" && i.rail !== "airtime") return false;
+      const key = recipientKey("phone", i.acct);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [RECENT_AVATARS]);
 
   const activeRailBeneficiaries = useMemo(() => {
-    if (bankCategory === "own" || walletCategory === "self" || rail === "card-topup" || rail === "qr") {
+    // Your own accounts, wallets and cards are picked from your own list, never from saved beneficiaries
+    if (bankCategory === "own" || walletCategory === "self" || (rail === "card-topup" && cardTopupCategory !== "other")) {
       return [];
     }
     if (rail === "group") {
@@ -1198,8 +1329,20 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "wallet-to-bank") {
       return RECENT_AVATARS.filter((i) => i.rail === "bank" || i.rail === "wallet-to-bank");
     }
+    // ECG and Ghana.gov payments are bills: what was saved as a bill to those billers is offered here
+    if (rail === "ecg") return RECENT_AVATARS.filter((i) => i.rail === "ecg" || (i.rail === "bill" && /ecg/i.test(i.bank)));
+    if (rail === "ghanagov") {
+      return RECENT_AVATARS.filter((i) => i.rail === "ghanagov" || (i.rail === "bill" && /gra|ghana\.gov/i.test(i.bank)));
+    }
+    if (rail === "cardless") {
+      // The people a code can go to: anyone with a number
+      return cardlessCategory === "third-party" ? cardlessRecipients : [];
+    }
+    if (rail === "data") {
+      return RECENT_AVATARS.filter((i) => i.rail === "data" && Boolean(i.broadband) === (topupCategory === "broadband"));
+    }
     return RECENT_AVATARS.filter((i) => i.rail === rail);
-  }, [rail, bankCategory, walletCategory, categoryBeneficiaries, groups, RECENT_AVATARS]);
+  }, [rail, bankCategory, walletCategory, cardTopupCategory, topupCategory, cardlessCategory, cardlessRecipients, categoryBeneficiaries, groups, RECENT_AVATARS]);
 
   const num = (v: string) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
 
@@ -1215,14 +1358,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         return num(f.wAmount);
       case "proxy":
         return num(f.pxAmount);
-      case "group": {
-        const count = selectedGroupObj ? selectedGroupObj.members.length : 5;
-        return num(f.grpAmount) * count;
-      }
+      case "group":
+        return selectedGroupObj
+          ? groupTotal(selectedGroupObj, f.grpAmount, grpMemberAmounts)
+          : num(f.grpAmount) * 5;
       case "airtime":
         return num(f.airtimeAmount);
       case "data":
-        return bundle?.price ?? 0;
+        // A broadband payment can be for a different amount than the package: what was typed wins
+        return topupCategory === "broadband" && f.bundleAmount ? num(f.bundleAmount) : bundle?.price ?? 0;
       case "card-topup":
         return num(f.cardAmount);
       case "ecg":
@@ -1240,6 +1384,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         return 0;
     }
   }, [
+    grpMemberAmounts,
+    f.bundleAmount,
+    topupCategory,
     rail,
     f.bankAmount,
     f.wAmount,
@@ -1306,7 +1453,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     }
     if (rail === "bill") {
       const ref = f.billRef.trim();
-      if (ref.length >= 4) {
+      // Only billers that can name an account holder are name-checked; the rest are paid on the reference as typed
+      if (ref.length >= 4 && needsNameCheck(f.billerId)) {
         return resolveAccountName(ref, f.benName);
       }
       return "";
@@ -1328,6 +1476,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     return "";
   }, [
     rail,
+    f.billerId,
     bankCategory,
     f.benAcct,
     f.benName,
@@ -1669,6 +1818,105 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     applyDeepLinkRef.current = applyDeepLink;
   });
 
+  /** Saves who was just paid, whichever rail it was, once. Turning the switch off again removes only what it added. */
+  const savedBeneficiary = useRef<{ id: string; created: boolean } | null>(null);
+  const saveAsBeneficiary = () => {
+    if (savedBeneficiary.current) return;
+    const nickname = f.beneficiaryNickname?.trim() || undefined;
+    let txType: TransactionType = "bank";
+    let detail = "";
+    let bankName: string | undefined = f.bank || "GCB Bank";
+    let accountNumber: string | undefined = f.benAcct;
+    let phoneNumber: string | undefined = f.wPhone;
+    let network: string | undefined = f.wNetwork;
+    let billerName: string | undefined = biller?.name;
+    let billerReference: string | undefined = f.billRef;
+    let proxyId: string | undefined;
+    let name = nickname || resolvedName || f.benName || f.wName || "New Payee";
+
+    if (rail === "wallet" || rail === "momo") {
+      txType = "wallet";
+      network = f.wNetwork || "MTN Mobile Money";
+      detail = `${network} · ${phoneNumber}`;
+    } else if (rail === "cardless") {
+      // A code for someone else goes to their number, so they are saved like any wallet recipient
+      txType = "wallet";
+      network = f.wNetwork || "MTN Mobile Money";
+      phoneNumber = f.wPhone || f.aPhone;
+      detail = `${network} · ${phoneNumber}`;
+    } else if (rail === "airtime") {
+      txType = "airtime";
+      network = f.wNetwork || "MTN";
+      phoneNumber = f.aPhone;
+      detail = `${network} · ${phoneNumber}`;
+    } else if (rail === "data") {
+      const broadband = topupCategory === "broadband";
+      txType = broadband ? "broadband" : "airtime";
+      network = f.wNetwork || "MTN";
+      phoneNumber = f.aPhone;
+      detail = broadband
+        ? `${network} broadband · ${phoneNumber}`
+        : `${network} · ${phoneNumber} · ${bundle?.name || "Internet bundle"}`;
+    } else if (rail === "proxy") {
+      txType = "proxy";
+      proxyId = f.pxId;
+      detail = `Proxy · ${f.pxId}`;
+    } else if (rail === "swift") {
+      txType = "swift";
+      bankName = f.wBank || "International Bank";
+      accountNumber = f.wIban;
+      detail = `${bankName} · ${f.wCurrency} · ${f.wIban}`;
+      name = nickname || f.wBenName || name;
+    } else if (rail === "papss") {
+      txType = "papss";
+      bankName = f.wBank || "International Bank";
+      accountNumber = f.wIban;
+      detail = `${bankName} · ${f.wCurrency} · ${f.wIban}`;
+    } else if (rail === "card-topup") {
+      const ref = f.cardId.replace(/^ref-/, "");
+      txType = "card";
+      bankName = "GCB Prepaid Card";
+      accountNumber = ref;
+      detail = `GCB Prepaid Card · ${ref}`;
+      name = nickname || `Prepaid Card ${ref}`;
+    } else if (rail === "qr") {
+      txType = "qr";
+      billerName = "GCB QR";
+      billerReference = f.qrRef;
+      detail = `GCB QR · ${f.qrRef || f.qrMerchant}`;
+      name = nickname || f.qrMerchant || "Merchant";
+    } else if (rail === "bill" || rail === "ecg" || rail === "ghanagov") {
+      txType = "bill";
+      billerName = rail === "ecg" ? "ECG Prepaid" : rail === "ghanagov" ? (f.govService || "Ghana.gov") : biller?.id === "bil-004b" && f.govService ? [f.govService, findGovService(f.govService, f.govProduct)?.name].filter(Boolean).join(" · ") : (biller?.name || "Utility Biller");
+      billerReference = rail === "ecg" ? f.ecgMeter : rail === "ghanagov" ? f.govRef : f.billRef;
+      detail = `${billerName} · ${billerReference}`;
+    } else {
+      bankName = bankCategory === "gcb" ? "GCB Bank" : (f.bank || "Commercial Bank");
+      detail = `${bankName} · ${accountNumber}`;
+    }
+
+    savedBeneficiary.current = saveBeneficiaryOnce({
+      name,
+      transactionType: txType,
+      category: categoryFor(txType),
+      detail,
+      verified: true,
+      bankName,
+      accountNumber,
+      network,
+      phoneNumber,
+      proxyId,
+      billerName,
+      billerReference,
+      label: nickname,
+    });
+  };
+  const unsaveBeneficiary = () => {
+    const saved = savedBeneficiary.current;
+    savedBeneficiary.current = null;
+    if (saved?.created) useBeneficiariesStore.getState().removeBeneficiary(saved.id);
+  };
+
   const confirm = (codeOverride?: string | string[]) => {
     if (!auth.verify(codeOverride) || phase === "submitting") return;
     setPhase("submitting");
@@ -1683,75 +1931,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         fundCard(f.cardId, currentAmount);
       }
 
-      if (f.saveBeneficiary) {
-        const benDisplayName = f.beneficiaryNickname?.trim() || resolvedName || f.benName || f.wName || "New Payee";
-        let txType: "bank" | "wallet" | "proxy" | "bill" | "airtime" | "papss" = "bank";
-        let benCat: "person" | "biller" | "number" = "person";
-        let detail = "";
-        let bankName = f.bank || "GCB Bank";
-        let accountNumber = f.benAcct;
-        let phoneNumber = f.wPhone;
-        let network = f.wNetwork;
-        let billerName = biller?.name;
-        let billerReference = f.billRef;
-
-        if (rail === "wallet" || rail === "momo") {
-          txType = "wallet";
-          benCat = "person";
-          network = f.wNetwork || "MTN Mobile Money";
-          phoneNumber = f.wPhone;
-          detail = `${network} · ${phoneNumber}`;
-        } else if (rail === "airtime") {
-          txType = "airtime";
-          benCat = "number";
-          network = f.wNetwork || "MTN";
-          phoneNumber = f.aPhone;
-          detail = `${network} · ${phoneNumber}`;
-        } else if (rail === "data") {
-          txType = "wallet";
-          benCat = "number";
-          network = f.wNetwork || "MTN";
-          phoneNumber = f.aPhone;
-          detail = topupCategory === "broadband" ? `${network} broadband · ${phoneNumber} · ${bundle?.name || "Broadband package"}` : `${network} · ${phoneNumber} · ${bundle?.name || "Internet bundle"}`;
-        } else if (rail === "proxy") {
-          txType = "proxy";
-          benCat = "person";
-          detail = `Proxy · ${f.pxId}`;
-        } else if (isForeign) {
-          txType = "papss";
-          benCat = "person";
-          bankName = f.wBank || "International Bank";
-          accountNumber = f.wIban;
-          detail = `${bankName} · ${f.wCurrency} · ${f.wIban}`;
-        } else if (rail === "bill" || rail === "ecg" || rail === "ghanagov") {
-          txType = "bill";
-          benCat = "biller";
-          billerName = rail === "ecg" ? "ECG Prepaid" : rail === "ghanagov" ? (f.govService || "Ghana.gov") : (biller?.name || "Utility Biller");
-          billerReference = rail === "ecg" ? f.ecgMeter : rail === "ghanagov" ? f.govRef : f.billRef;
-          detail = `${billerName} · ${billerReference}`;
-        } else {
-          txType = "bank";
-          benCat = "person";
-          bankName = bankCategory === "gcb" ? "GCB Bank" : (f.bank || "Commercial Bank");
-          accountNumber = f.benAcct;
-          detail = `${bankName} · ${accountNumber}`;
-        }
-
-        useBeneficiariesStore.getState().addBeneficiary({
-          name: benDisplayName,
-          transactionType: txType,
-          category: benCat,
-          detail,
-          verified: true,
-          bankName,
-          accountNumber,
-          network,
-          phoneNumber,
-          billerName,
-          billerReference,
-          label: f.beneficiaryNickname?.trim() || undefined,
-        });
-      }
+      if (f.saveBeneficiary) saveAsBeneficiary();
 
       const formattedAmount = formatMoney(currentAmount, isForeign ? f.wCurrency : "GHS", true);
       const recipientDisplayName = resolvedName || f.benName || f.wName || "recipient";
@@ -1801,7 +1981,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         successMsg = `You’ve purchased ${formattedAmount} of electricity units for meter ${f.ecgMeter}.`;
       } else if (rail === "bill") {
         successTitle = "Bill paid!";
-        const billerName = biller?.name || "your biller";
+        const billerName = biller?.id === "bil-004b" && f.govService ? f.govService : biller?.name || "your biller";
+        // An invoice raised here is settled now, so it is not offered again
+        useGovInvoices.getState().remove(f.billRef);
         successMsg = `You’ve paid ${formattedAmount} to ${billerName}. Your payment has been received.`;
       } else if (rail === "ghanagov") {
         successTitle = "Payment confirmed!";
@@ -1832,10 +2014,11 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             ? {
                 code: `${Math.floor(100 + Math.random() * 900)}-${Math.floor(100 + Math.random() * 900)}`,
                 amount: currentAmount.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-                expiresAt: new Date(d.getTime() + 24 * 60 * 60 * 1000).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "2-digit",
+                expiresAt: new Date(d.getTime() + 24 * 60 * 60 * 1000).toLocaleString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  hour: "2-digit",
+                  minute: "2-digit",
                 }),
                 recipientPhone: f.wPhone || f.aPhone || REGISTERED_WALLET.phone,
                 recipientName: f.cardlessType === "self" ? "Myself" : f.benName,
@@ -1995,6 +2178,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         transactionId={receipt.trn}
         receiptRows={receipt.rows}
         onSecondaryAction={() => {
+          savedBeneficiary.current = null;
           setPhase("form");
           setStage(1);
           setBankCategory(null);
@@ -2023,6 +2207,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             aPhone: "",
             airtimeAmount: "",
             bundleId: "",
+            bundleAmount: "",
             cardId: "",
             cardAmount: "",
             ecgMeter: "",
@@ -2031,6 +2216,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             billRef: "",
             billAmount: "",
             govService: "",
+            govProduct: "",
+            govMode: "",
+            govDetails: "",
             govRef: "",
             govAmount: "",
             qrAmount: "",
@@ -2056,12 +2244,19 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         onPrimaryAction={handleBackNavigation}
         primaryActionLabel="Back to Overview"
         showSaveBeneficiary={
-          rail !== "cardless" &&
+          (rail !== "cardless" || cardlessCategory === "third-party") &&
+          !(rail === "card-topup" && cardTopupCategory === "my") &&
           bankCategory !== "own" &&
-          !f.toOwnAccountId
+          !f.toOwnAccountId &&
+          // An invoice number is spent once paid; what is worth keeping is the service, saved when it is generated
+          !(rail === "bill" && f.billerId === "bil-004b")
         }
         initialSaveBeneficiary={f.saveBeneficiary}
-        onSaveBeneficiaryChange={(saved) => set("saveBeneficiary", saved)}
+        onSaveBeneficiaryChange={(saved) => {
+          set("saveBeneficiary", saved);
+          if (saved) saveAsBeneficiary();
+          else unsaveBeneficiary();
+        }}
         onSchedulePayment={() => {
           // Whatever was paid goes to the schedule form as it read on the receipt, so any payment can be scheduled
           // and the customer only chooses when and how often.
@@ -2306,20 +2501,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
         {/* Recent Beneficiaries Strip */}
         <RailBeneficiaryStrip
-          items={RECENT_AVATARS.filter((item) => item.rail === "wallet" || item.rail === "bank")}
-          onSelect={(item) => {
-            setCardlessCategory("third-party");
-            setF((p) => ({
-              ...p,
-              cardlessType: "third-party",
-              wPhone: item.acct.replace(/\s+/g, ""),
-              benName: item.name,
-              wAmount: "",
-              wRef: "",
-            }));
-            setStage(1);
-            setStage1Collapsed(true);
-          }}
+          items={cardlessRecipients}
+          onSelect={pickCardlessRecipient}
         />
 
         {/* 2 Separate Category Cards */}
@@ -2417,6 +2600,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             Which card do you want to top up?
           </h1>
         </div>
+
+        {/* Cards saved as beneficiaries */}
+        <RailBeneficiaryStrip
+          items={RECENT_AVATARS.filter((item) => item.rail === "card-topup")}
+          onSelect={selectBeneficiary}
+        />
 
         <div className="flex flex-col gap-3">
           {/* Card 1: My GCB Cards */}
@@ -2632,6 +2821,28 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
+  // Group — a new group is made on its own page (the same one Beneficiaries opens), then paid straight away.
+  if (rail === "group" && createGroupOpen) {
+    return (
+      <CreateGroupFlow
+        onCancel={() => {
+          setCreateGroupOpen(false);
+          if (!f.groupName) setGroupCategory(null);
+        }}
+        onDone={(newGroup) => {
+          setCreateGroupOpen(false);
+          setGrpMemberAmounts({});
+          setF((prev) => ({
+            ...prev,
+            groupName: newGroup.name,
+            grpAmount: String(newGroup.defaultPerMemberAmount || prev.grpAmount || 200),
+          }));
+          setStage1Collapsed(true);
+        }}
+      />
+    );
+  }
+
   // Group — chooser: transfer to a group, or manage groups.
   if (rail === "group" && !groupCategory) {
     return (
@@ -2675,8 +2886,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 >
                   {g.name.slice(0, 2).toUpperCase()}
                 </span>
-                <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
-                  {g.name.split(" ")[0]}
+                <span className="flex flex-col">
+                  <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
+                    {g.name.split(" ")[0]}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground tabular">
+                    {g.members.length} {g.members.length === 1 ? "member" : "members"}
+                  </span>
                 </span>
               </button>
             ))}
@@ -2687,12 +2903,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Transfer to group */}
           <ActionTile
             icon={Users}
-            title="Transfer to Group"
+            title="Send to New Group"
             onClick={() => {
               setGroupCategory("transfer");
               setF((p) => ({ ...p, groupName: "", grpAmount: "", grpRef: "" }));
               setStage(1);
               setStage1Collapsed(false);
+              setCreateGroupOpen(true);
             }}
             className="p-4"
           />
@@ -2808,13 +3025,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   // Saved recipients are offered from the "Saved" link on the beneficiary field, never as a row above the form
   const savedForThisPayment =
-    bankCategory !== "own" && walletCategory !== "self" && topupCategory !== "self" && topupCategory !== "broadband" && rail !== "group"
+    bankCategory !== "own" && walletCategory !== "self" && topupCategory !== "self" && rail !== "group"
       ? activeRailBeneficiaries
       : [];
 
   // Unified Progressive Disclosure Experience across ALL Services
   return (
-    <SavedRecipientsProvider items={savedForThisPayment} onSelect={selectBeneficiary}>
+    <SavedRecipientsProvider items={savedForThisPayment} onSelect={rail === "cardless" ? pickCardlessRecipient : selectBeneficiary}>
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* Header with back button */}
       <div className="flex items-center justify-between gap-2 min-w-0">
@@ -3094,12 +3311,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   aPhone: f.aPhone,
                   benName: f.benName,
                   bundleId: f.bundleId,
+                  amount: f.bundleAmount,
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
-                onChange={(key, val) => set(key, val)}
+                onChange={(key, val) => set(key === "amount" ? "bundleAmount" : key, val)}
                 detailsCollapsed={stage1Collapsed}
                 onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
@@ -3191,6 +3409,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   billRef: f.billRef,
                   ecgMeter: f.ecgMeter,
                   govService: f.govService,
+                  govProduct: f.govProduct,
+                  govDetails: f.govDetails,
+                  govMode: f.govMode as "pay" | "invoice" | "",
                   govRef: f.govRef,
                   benName: f.benName,
                   amount: rail === "ecg" ? f.ecgAmount : rail === "ghanagov" ? f.govAmount : f.billAmount,
@@ -3322,6 +3543,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 }}
                 detailsCollapsed={stage1Collapsed}
                 onToggleCollapsed={setStage1Collapsed}
+                memberAmounts={grpMemberAmounts}
+                onMemberAmountChange={(id, val) => setGrpMemberAmounts((p) => ({ ...p, [id]: val }))}
                 onOpenCreateGroup={() => setCreateGroupOpen(true)}
                 onProceed={() => {
                   auth.reset();
@@ -3528,7 +3751,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 onClick={() => {
                   setPinModalOpen(true);
                 }}
-                className="flex-1 h-10 rounded-lg text-[14px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+                className="flex-1 h-10 rounded-lg text-[14px] bg-primary text-primary-foreground drop-shadow-sm cursor-pointer"
               >
                 {f.isScheduled ? "Proceed & Schedule" : "Proceed to Pay"}
               </Button>
@@ -3551,18 +3774,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           }}
         />
 
-        <CreateGroupModal
-          open={createGroupOpen}
-          onOpenChange={setCreateGroupOpen}
-          onSuccess={(newGroup) => {
-            setF((prev) => ({
-              ...prev,
-              groupName: newGroup.name,
-              grpAmount: String(newGroup.defaultPerMemberAmount || prev.grpAmount || 200),
-            }));
-            setStage1Collapsed(true);
-          }}
-        />
       </div>
     </div>
     </SavedRecipientsProvider>

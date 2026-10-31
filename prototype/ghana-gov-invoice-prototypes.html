@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ghana.gov in Pay Bills: invoice, 4 variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--ok:#15803d;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--scrim:rgba(0,0,0,.35)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--ok:#4ade80;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:rgba(0,0,0,.6)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input,select{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0;padding:0}
+  .mu{color:var(--mu)}
+  .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center}
+  .wrap{display:flex;flex-direction:column;align-items:center}
+  .frame{position:relative;width:480px;max-width:100%;min-height:640px;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+  .page{padding:32px;display:flex;flex-direction:column;gap:24px}
+  .page h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .lbl{font-size:13px;font-weight:500}
+  .lblrow{display:flex;align-items:center;justify-content:space-between;min-height:24px;margin-bottom:8px}
+  .link{font-size:13px;text-decoration:underline;text-underline-offset:3px;min-height:32px;display:inline-flex;align-items:center}
+  .field{height:44px;width:100%;border:1px solid var(--bd);background:var(--tile);border-radius:12px;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:14px}
+  .field input,.field select{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;appearance:none}
+  .field select option{color:#111}
+  .field:focus-within{border-color:var(--am)}
+  .static{justify-content:flex-start;gap:12px}
+  .mark{width:28px;height:28px;border-radius:50%;background:#d6e8f5;color:#111;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex:none}
+  .stack{display:flex;flex-direction:column;gap:12px}
+  .stack16{display:flex;flex-direction:column;gap:16px}
+  .chip{font-size:12px;color:var(--ok);white-space:nowrap}
+  .due{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+  .due .l{font-size:18px;color:var(--mu)} .due .a{font-size:22px}
+  .rows{display:flex;flex-direction:column;gap:2px}
+  .item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px;border-radius:12px;width:100%}
+  .item:hover{background:var(--tile)}
+  .item .s{display:block;font-size:12px;color:var(--mu)}
+  .item.gen{color:var(--tx)} .item .plus{width:36px;height:36px;border-radius:50%;border:1px dashed var(--bd);display:inline-flex;align-items:center;justify-content:center;flex:none;margin-right:4px}
+  .btn{height:44px;border-radius:12px;background:var(--am);color:#111;font-weight:500;display:flex;align-items:center;justify-content:center;width:100%}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)}
+  .btns{display:flex;gap:8px}
+  .panel{display:flex;flex-direction:column;gap:16px;padding-top:16px;border-top:1px solid var(--bd)}
+  .toggle{display:flex;background:var(--tile);border-radius:12px;padding:4px}
+  .toggle button{flex:1;text-align:center;padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu)}
+  .toggle button.on{background:var(--surf);color:var(--tx);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px}
+  .modal{background:var(--surf);border:1px solid var(--bd);border-radius:20px;width:100%;max-height:560px;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)}
+  .mh{display:flex;justify-content:space-between;align-items:center} .mh h2{font-size:16px}
+  .x{width:32px;height:32px;border-radius:8px;color:var(--mu);display:flex;align-items:center;justify-content:center} .x:hover{background:var(--tile)}
+  .toast{position:absolute;left:16px;right:16px;bottom:16px;background:var(--tx);color:var(--surf);border-radius:12px;padding:12px 16px;font-size:13px}
+  .legend{max-width:480px;font-size:12px;color:var(--mu);line-height:1.6;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Ghana.gov in Pay Bills: invoice, 4 variations</h1>
+    <div class="ctrls"><div class="pills" id="pills"></div><div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="wrap"><div class="frame" id="frame"></div><p class="legend" id="legend"></p></div></div>
+<script>
+const AG={
+  lands:{n:"Lands Commission",s:{stamp:{n:"Stamp Duty",x:"Property Reference"},bill:{n:"Lands Commission Bill",x:"Bill Number"}}},
+  orc:{n:"Office of the Registrar of Companies (ORC)",s:{renew:{n:"ORC Business Renewal",x:"Business Registration Number"},app:{n:"Existing ORC Application",x:"Application Number"}}},
+  dvla:{n:"Driver and Vehicle Licensing Agency (DVLA)",s:{reg:{n:"Vehicle Registration",x:"Vehicle Registration Number"}}},
+  nmc:{n:"Nursing and Midwifery Council (NMC)",s:{pin:{n:"PIN/AIN Renewal",x:"PIN or AIN"}}},
+};
+const NOTES=[
+ "1 · Field first, generate on demand. Ghana.gov opens on one Invoice Number field, like every other bill. “Generate one” is an underlined link under it and opens the agency, service and form steps in place. Closest to the rest of Pay Bills.",
+ "2 · Same, but generate is a modal. The page stays one calm field; the link opens a modal with the steps, and closes on a result with Pay now or Pay later. Keeps the form short, adds a layer.",
+ "3 · Toggle at the top. Pay an invoice or Generate an invoice, chosen first. This is the mobile app's shape in one control. Clear, but it asks a question before the person has said anything.",
+ "4 · Your invoices as the way in. The field has your saved invoices under it and, as the last row, “Generate a new invoice”. Recognition over recall: most people with an invoice already have it here. Without invoices the row stands alone.",
+];
+const LEGEND="Type any invoice number of 4+ characters to see the amount come back (read-only). Try GOV482910377, the saved one. Generate: pick an agency and service, fill the form, and the agency issues the number and amount. Pay now fills the field; Pay later saves it under Your invoices.";
+let v=0,theme="light";
+let num="",invoices=[{n:"GOV482910377",ag:"lands",sv:"stamp",amt:640,who:"Ransford Gyasi"}];
+let g={open:false,ag:"",sv:"",name:"",phone:"",x:"",res:null};
+let mode="pay",toast="",focus=null;
+const $=s=>document.querySelector(s);
+const hash=s=>[...s].reduce((n,c)=>(n*31+c.charCodeAt(0))>>>0,7);
+const money=n=>"GHS "+n.toLocaleString("en-US",{minimumFractionDigits:2});
+const xi='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const plus='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+const chev='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>';
+
+function lookup(){
+  const n=num.trim(); if(n.length<4) return null;
+  const inv=invoices.find(i=>i.n===n);
+  if(inv) return {t:AG[inv.ag].s[inv.sv].n,d:AG[inv.ag].n+" · "+inv.n,amt:inv.amt};
+  return {t:"Ghana.gov invoice",d:n,amt:50+hash(n)%950};
+}
+function selectField(id,val,opts,ph){return `<div class="field"><select id="${id}"><option value="">${ph}</option>${opts.map(([k,l])=>`<option value="${k}" ${val===k?"selected":""}>${l}</option>`).join("")}</select>${chev}</div>`;}
+function textField(id,label,val,ph){return `<div class="stack" style="gap:8px"><span class="lbl">${label}</span><div class="field"><input id="${id}" placeholder="${ph}" value="${val}"/></div></div>`;}
+
+function genForm(){
+  const a=AG[g.ag], s=a&&a.s[g.sv];
+  if(g.res){const r=g.res;return `<div class="stack16"><div class="due"><span class="l">Invoice number</span><span class="tab">${r.n}</span></div><div class="due"><span class="l">Amount due</span><span class="a tab">${money(r.amt)}</span></div><div class="btns"><button class="btn ghost" data-later>Pay later</button><button class="btn" data-now>Pay now</button></div></div>`;}
+  const ok=s&&g.name.trim()&&g.phone.trim()&&g.x.trim();
+  return `<div class="stack16">
+    ${selectField("ag",g.ag,Object.entries(AG).map(([k,x])=>[k,x.n]),"Select ministry, department or agency")}
+    ${a?selectField("sv",g.sv,Object.entries(a.s).map(([k,x])=>[k,x.n]),"Select service"):""}
+    ${s?textField("name","Full Name",g.name,"Name on the invoice")+textField("phone","Phone Number",g.phone,"For the invoice SMS")+textField("x",s.x,g.x,"Enter "+s.x.toLowerCase())+`<button class="btn" data-gen ${ok?"":"disabled"}>Generate invoice</button>`:""}
+  </div>`;
+}
+function payBlock(){
+  const L=lookup();
+  return `<div class="stack">
+    <div class="lblrow" style="margin:0"><span class="lbl">Invoice Number</span>${v===0||v===1?`<button class="link" data-genopen>Generate one</button>`:""}</div>
+    <div class="field"><input id="num" placeholder="Enter invoice number" value="${num}"/>${L?`<span class="chip">Verified</span>`:""}</div>
+    ${v===3?invList():""}
+  </div>
+  ${L?`<div class="stack16"><div class="stack" style="gap:4px"><span style="font-size:14px">${L.t}</span><span class="mu tab" style="font-size:12px">${L.d}</span></div><div class="due"><span class="l">Amount due</span><span class="a tab">${money(L.amt)}</span></div><button class="btn" data-pay>Pay ${money(L.amt)}</button></div>`:`<button class="btn" disabled>Pay</button>`}`;
+}
+function invList(){
+  return `<div class="rows">${invoices.length?`<span class="mu" style="font-size:12px;padding:8px 8px 4px">Your invoices</span>`:""}${invoices.map(i=>`<button class="item" data-pick="${i.n}"><span><span class="tab">${i.n}</span><span class="s">${AG[i.ag].s[i.sv].n} · ${AG[i.ag].n}</span></span><span class="tab">${money(i.amt)}</span></button>`).join("")}<button class="item gen" data-genopen><span style="display:flex;align-items:center"><span class="plus">${plus}</span>Generate a new invoice</span></button></div>`;
+}
+function body(){
+  if(v===2){
+    const tg=`<div class="toggle"><button data-m="pay" class="${mode==="pay"?"on":""}">Pay an invoice</button><button data-m="gen" class="${mode==="gen"?"on":""}">Generate an invoice</button></div>`;
+    if(mode==="gen") return tg+genForm();
+    const saved=invoices.length&&!lookup()?`<div class="rows"><span class="mu" style="font-size:12px;padding:8px 8px 4px">Your invoices</span>${invoices.map(i=>`<button class="item" data-pick="${i.n}"><span><span class="tab">${i.n}</span><span class="s">${AG[i.ag].s[i.sv].n}</span></span><span class="tab">${money(i.amt)}</span></button>`).join("")}</div>`:"";
+    return tg+payBlock()+saved;
+  }
+  return payBlock()+(v===0&&g.open?`<div class="panel"><div class="lblrow" style="margin:0"><span class="lbl">Generate an invoice</span><button class="link" data-genclose>Close</button></div>${genForm()}</div>`:"");
+}
+function modal(){return `<div class="scrim"><div class="modal"><div class="mh"><h2>Generate an invoice</h2><button class="x" data-genclose aria-label="Close">${xi}</button></div>${genForm()}</div></div>`;}
+function render(){
+  $("#note").textContent=NOTES[v];$("#legend").textContent=LEGEND;
+  $("#pills").innerHTML=NOTES.map((_,i)=>`<button class="pill ${v===i?"on":""}" data-v="${i}">${i+1}</button>`).join("");
+  document.documentElement.dataset.theme=theme;
+  $("#frame").innerHTML=`<div class="page"><h2>Pay Bills</h2>
+    <div class="stack"><span class="lbl">Biller</span><div class="field static"><span class="mark">GH</span>Ghana.gov</div></div>
+    ${body()}</div>${v===1&&g.open?modal():""}${toast?`<div class="toast">${toast}</div>`:""}`;
+  if(focus){const e=document.getElementById(focus.id);if(e){e.focus();try{e.setSelectionRange(focus.s,focus.s)}catch(_){}}}
+}
+function say(t){toast=t;render();setTimeout(()=>{toast="";render()},2400);}
+const reset=()=>{g={open:false,ag:"",sv:"",name:"",phone:"",x:"",res:null};};
+document.addEventListener("input",e=>{
+  const id=e.target.id;focus={id,s:e.target.selectionStart};
+  if(id==="num")num=e.target.value;
+  else if(["name","phone","x"].includes(id))g[id]=e.target.value;
+  render();
+});
+document.addEventListener("change",e=>{
+  const id=e.target.id;focus=null;
+  if(id==="ag"){g.ag=e.target.value;g.sv="";g.x="";}
+  if(id==="sv"){g.sv=e.target.value;g.x="";}
+  render();
+});
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;focus=null;const d=b.dataset;
+  if(d.v!==undefined){v=+d.v;reset();mode="pay";num="";}
+  else if(d.t){theme=d.t;document.querySelectorAll("#theme button").forEach(x=>x.classList.toggle("on",x.dataset.t===d.t));}
+  else if(d.m){mode=d.m;reset();}
+  else if("genopen" in d){g.open=true;g.res=null;}
+  else if("genclose" in d){reset();}
+  else if(d.pick){num=d.pick;}
+  else if("gen" in d){const a=AG[g.ag],s=a.s[g.sv];g.res={n:"GOV"+String(Date.now()).slice(-9),amt:50+hash(g.x+g.sv)%950,ag:g.ag,sv:g.sv,who:g.name};}
+  else if("now" in d){num=g.res.n;invoices=[{...g.res},...invoices];reset();mode="pay";}
+  else if("later" in d){invoices=[{...g.res},...invoices];reset();mode="pay";say("Invoice saved. Pay it any time from Your invoices.");return;}
+  else if("pay" in d){const L=lookup();invoices=invoices.filter(i=>i.n!==num.trim());num="";say("Payment of "+money(L.amt)+" confirmed.");return;}
+  render();
+});
+render();
+</script>
+</body>
+</html>

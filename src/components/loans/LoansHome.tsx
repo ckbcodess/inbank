@@ -34,15 +34,12 @@ export function LoansHome() {
 
   const shown = product ?? ADVANCE_PRODUCTS.salary;
   const active = advances.filter((a) => a.status === "active");
-  const pending = advances.filter((a) => a.status === "pending");
   const overdue = active.some((a) => a.dueOn < MOCK_TODAY);
 
   const status: ProductStatus | undefined =
     active.length > 0
       ? { text: `${active.length === 1 ? "1 loan" : `${active.length} loans`}${overdue ? " · payment overdue" : ""}`, attention: overdue }
-      : pending.length > 0
-        ? { text: "Waiting for approval" }
-        : undefined;
+      : undefined;
 
   return (
     <div className="flex flex-col gap-6">

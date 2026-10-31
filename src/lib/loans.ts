@@ -8,8 +8,8 @@
  *  - Pensioner Advance, against a pension
  *
  * Which one a customer gets is never asked: the bank knows what is credited to their account (`income`). They can take
- * up to 80% of one month's income, it is paid in once approved, and it is repaid in one go from the next credit, with
- * interest for the days it was out. Repaying early is allowed and costs less.
+ * up to 80% of one month's income, it is paid in once approved, and it can be repaid in one go or in bits (installments).
+ * Repaying early or in bits is allowed and costs less interest.
  *
  * An advance needs the income to land in a Salary Account. A customer whose salary goes into an ordinary account is told
  * so on the form, and taking the advance switches that account over (same number, its own monthly fee).
@@ -79,6 +79,8 @@ export const ADVANCE_PRODUCTS: Record<IncomeKind, AdvanceProduct> = {
 /** Share of one month's income that can be advanced. */
 export const ADVANCE_SHARE = 0.8;
 export const MIN_ADVANCE = 100;
+/** Minimum partial repayment / installment amount. */
+export const MIN_PARTIAL_REPAYMENT = 10;
 /** Taken from the advance before it is paid in. */
 export const PROCESSING_FEE_RATE = 0.01;
 export const FACILITY_FEE_RATE = 0.005;
@@ -129,7 +131,16 @@ export interface Income {
 
 /* ── Advances ────────────────────────────────────────────────────────────── */
 
-export type AdvanceStatus = "pending" | "declined" | "active" | "repaid";
+/** Only customers who qualify can ask, so a request is paid in at once: there is no waiting or declined state. */
+export type AdvanceStatus = "active" | "repaid";
+
+export interface AdvanceRepayment {
+  id: string;
+  amount: number;
+  date: string;
+  reference: string;
+  accountId?: string;
+}
 
 export interface Advance {
   id: string;
@@ -147,9 +158,10 @@ export interface Advance {
   /** The income credit it is repaid from. */
   dueOn: string;
   repaidOn?: string;
-  /** What was repaid, principal and interest together. */
+  /** What was repaid in total, principal and interest together. */
   repaidAmount?: number;
-  declineReason?: string;
+  /** Installment payments made towards this advance. */
+  repayments?: AdvanceRepayment[];
 }
 
 /** Days the advance has been out by `on` (never less than one once paid in: the first day is charged). */
@@ -158,18 +170,31 @@ function daysOut(a: Pick<Advance, "disbursedOn">, on: string): number {
   return Math.max(daysBetween(a.disbursedOn, on), 1);
 }
 
-/** Interest owed on an active advance by `on`. */
-export const interestBy = (a: Advance, on = MOCK_TODAY) => roundMoney(dailyInterest(a.amount) * daysOut(a, on));
+/** Total amount repaid so far across all payments / installments. */
+export function totalRepaid(a: Advance): number {
+  if (a.repayments && a.repayments.length > 0) {
+    return roundMoney(sumMoney(a.repayments.map((r) => r.amount)));
+  }
+  return a.repaidAmount ?? 0;
+}
 
-/** Late charge owed by `on`: 5% of the advance for each month, or part of one, past the repayment date. */
+/** Remaining principal on an active advance. */
+export function remainingPrincipal(a: Advance): number {
+  return roundMoney(Math.max(0, a.amount - totalRepaid(a)));
+}
+
+/** Interest owed on an active advance by `on` (accrues on remaining principal). */
+export const interestBy = (a: Advance, on = MOCK_TODAY) => roundMoney(dailyInterest(remainingPrincipal(a)) * daysOut(a, on));
+
+/** Late charge owed by `on`: 5% of remaining principal for each month, or part of one, past the repayment date. */
 export function lateChargeBy(a: Advance, on = MOCK_TODAY): number {
   const late = daysBetween(a.dueOn, on);
   if (late <= 0) return 0;
-  return roundMoney(a.amount * LATE_CHARGE_RATE * Math.ceil(late / 30));
+  return roundMoney(remainingPrincipal(a) * LATE_CHARGE_RATE * Math.ceil(late / 30));
 }
 
 /** Everything owed today to clear the advance. */
-export const owedBy = (a: Advance, on = MOCK_TODAY) => sumMoney([a.amount, interestBy(a, on), lateChargeBy(a, on)]);
+export const owedBy = (a: Advance, on = MOCK_TODAY) => sumMoney([remainingPrincipal(a), interestBy(a, on), lateChargeBy(a, on)]);
 
 /** What repaying on the repayment date would come to, worked out before the advance is taken. */
 export function repaidOnDue(amount: number, today: string, dueOn: string) {
@@ -190,16 +215,15 @@ interface LoansState {
   /** Dev Mode: the next request fails outright, to walk the failure screen. */
   failRequests: boolean;
 
+  /** Pays the advance in straight away and returns it. */
   request: (input: Pick<Advance, "ownerId" | "kind" | "amount" | "accountId">, switchAccount: boolean) => Advance;
-  /** Dev Mode stands in for the bank's decision on pending requests. */
-  decide: (ownerId: string, approve: boolean) => void;
-  repay: (id: string, amount: number, on: string) => void;
+  repay: (id: string, amount: number, on: string, accountId?: string) => { repaidInFull: boolean; remaining: number };
   setFailRequests: (fail: boolean) => void;
   /** Customers who have seen the welcome to loans. */
   welcomed: Record<string, boolean>;
   markWelcomed: (ownerId: string, seen?: boolean) => void;
   /** Dev Mode: set who the customer is (their income), and optionally give them an advance. */
-  seed: (ownerId: string, accountId: string, scenario: IncomeScenario, advance: "none" | "active" | "overdue" | "pending") => void;
+  seed: (ownerId: string, accountId: string, scenario: IncomeScenario, advance: "none" | "active" | "overdue" | "partial") => void;
 }
 
 const INCOME_FOR: Record<Exclude<IncomeScenario, "none">, Omit<Income, "accountId">> = {
@@ -231,8 +255,10 @@ export const useLoans = create<LoansState>()(
           processingFee: fees.processing,
           facilityFee: fees.facility,
           requestedOn: MOCK_TODAY,
-          status: "pending",
+          status: "active",
+          disbursedOn: MOCK_TODAY,
           dueOn: nextPayday(input.kind),
+          repayments: [],
         };
         set((s) => {
           const income = s.incomes[input.ownerId];
@@ -242,23 +268,50 @@ export const useLoans = create<LoansState>()(
         return advance;
       },
 
-      decide: (ownerId, approve) =>
-        set((s) => ({
-          advances: s.advances.map((a) =>
-            a.ownerId === ownerId && a.status === "pending"
-              ? approve
-                ? { ...a, status: "active", disbursedOn: MOCK_TODAY }
-                : {
-                    ...a,
-                    status: "declined",
-                    declineReason: "Your salary credits over the last three months were lower than this amount needs.",
-                  }
-              : a,
-          ),
-        })),
+      repay: (id, amount, on, accountId) => {
+        let result = { repaidInFull: false, remaining: 0 };
+        set((s) => {
+          const advances = s.advances.map((a) => {
+            if (a.id !== id) return a;
+            const owed = owedBy(a, on);
+            const isFull = amount >= owed;
+            const newRepayment: AdvanceRepayment = {
+              id: `rep-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+              amount,
+              date: on,
+              reference: `REP-${MOCK_TODAY.slice(0, 4)}-${String(Date.now()).slice(-6)}`,
+              accountId,
+            };
+            const existingRepayments =
+              a.repayments ??
+              (a.repaidAmount
+                ? [
+                    {
+                      id: `rep-prev-${a.id}`,
+                      amount: a.repaidAmount,
+                      date: a.repaidOn ?? a.dueOn,
+                      reference: a.reference,
+                      accountId: a.accountId,
+                    },
+                  ]
+                : []);
+            const updatedRepayments = [...existingRepayments, newRepayment];
+            const newTotalRepaid = roundMoney(sumMoney(updatedRepayments.map((r) => r.amount)));
+            const remaining = isFull ? 0 : roundMoney(Math.max(0, owed - amount));
+            result = { repaidInFull: isFull, remaining };
 
-      repay: (id, amount, on) =>
-        set((s) => ({ advances: s.advances.map((a) => (a.id === id ? { ...a, status: "repaid", repaidOn: on, repaidAmount: amount } : a)) })),
+            return {
+              ...a,
+              status: isFull ? ("repaid" as const) : ("active" as const),
+              repaidOn: isFull ? on : a.repaidOn,
+              repaidAmount: newTotalRepaid,
+              repayments: updatedRepayments,
+            };
+          });
+          return { advances };
+        });
+        return result;
+      },
 
       setFailRequests: (fail) => set({ failRequests: fail }),
 
@@ -270,7 +323,10 @@ export const useLoans = create<LoansState>()(
           const amount = roundMoney(income.monthly * ADVANCE_SHARE * 0.4);
           const fees = advanceFees(amount);
           const overdue = advance === "overdue";
-          const disbursedOn = addDays(MOCK_TODAY, overdue ? -48 : -12);
+          const isPartial = advance === "partial";
+          const disbursedOn = addDays(MOCK_TODAY, overdue ? -48 : isPartial ? -18 : -12);
+          const partialPaidOn = addDays(MOCK_TODAY, -8);
+          const partialAmount = isPartial ? roundMoney(amount * 0.4) : 0;
           const seeded: Advance = {
             id: `adv-${ownerId}-seed`,
             ownerId,
@@ -281,14 +337,36 @@ export const useLoans = create<LoansState>()(
             facilityFee: fees.facility,
             accountId,
             requestedOn: disbursedOn,
-            status: advance === "pending" ? "pending" : "active",
-            disbursedOn: advance === "pending" ? undefined : disbursedOn,
+            status: "active",
+            disbursedOn,
             dueOn: overdue ? addDays(MOCK_TODAY, -13) : nextPayday(income.kind),
+            repaidAmount: isPartial ? partialAmount : undefined,
+            repayments: isPartial
+              ? [
+                  {
+                    id: "rep-seed-1",
+                    amount: partialAmount,
+                    date: partialPaidOn,
+                    reference: `REP-${MOCK_TODAY.slice(0, 4)}-301920`,
+                    accountId,
+                  },
+                ]
+              : [],
           };
           return { incomes: { ...s.incomes, [ownerId]: { ...income, salaryAccount: true } }, advances: [seeded, ...others] };
         }),
     }),
-    { name: "nibs-loans" },
+    {
+      name: "nibs-loans",
+      version: 1,
+      migrate: (saved) => {
+        const state = saved as { advances?: Array<Omit<Advance, "status"> & { status: string; repayments?: AdvanceRepayment[] }> };
+        const advances = (state.advances ?? [])
+          .filter((a) => a.status !== "declined")
+          .map((a) => (a.status === "pending" ? { ...a, status: "active", disbursedOn: a.requestedOn, repayments: [] } : a));
+        return { ...state, advances } as LoansState;
+      },
+    },
   ),
 );
 
@@ -324,7 +402,7 @@ export function useMyLoans() {
     const income: Income | null =
       stored === undefined ? (defaultAccountId ? { ...INCOME_FOR.salary, accountId: defaultAccountId } : null) : stored;
     const advances = all.filter((a) => a.ownerId === ownerId);
-    const open = advances.find((a) => a.status === "pending" || a.status === "active");
+    const open = advances.find((a) => a.status === "active");
     const limit = income ? Math.floor((income.monthly * ADVANCE_SHARE) / 10) * 10 : 0;
     return { ownerId, income, advances, open, limit, welcomed: Boolean(welcomedAll[ownerId]), product: income ? ADVANCE_PRODUCTS[income.kind] : undefined };
   }, [ownerId, incomes, all, welcomedAll, defaultAccountId]);

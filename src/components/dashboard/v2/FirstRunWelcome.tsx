@@ -77,7 +77,7 @@ type FlowStep =
 /** The money flows' field look (Send & Pay, Add money): rounded-2xl, 14px medium labels, the shared AmountInput. */
 
 const BUTTON =
-  "h-9 w-full text-[14px] font-medium active:scale-[0.96] transition-transform duration-hover cursor-pointer";
+  "h-9 w-full text-[14px] font-medium transition-transform duration-hover cursor-pointer";
 
 const slideVariants: Variants = {
   enter: (dir: "forward" | "backward") => ({
@@ -413,7 +413,7 @@ export function FirstRunWelcome({
           disabled={moneyInFlight}
           aria-label={moneyInFlight ? "Close (available once your payment finishes)" : "Close"}
           title={moneyInFlight ? "Available once your payment finishes" : undefined}
-          className="absolute right-3.5 top-3.5 z-20 flex size-7 cursor-pointer items-center justify-center rounded-full border border-border/60 bg-card/85 text-foreground backdrop-blur transition-colors hover:bg-card active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"
+          className="absolute right-3.5 top-3.5 z-20 flex size-7 cursor-pointer items-center justify-center rounded-full border border-border/60 bg-card/85 text-foreground backdrop-blur transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-40"
         >
           <X size={15} aria-hidden="true" />
         </button>

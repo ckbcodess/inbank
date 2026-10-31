@@ -1727,10 +1727,16 @@ export const BILLERS: Biller[] = [
   { id: "bil-010d", name: "Ghana Red Cross Society", category: "Giving & Donations", reference: "Donor ID" },
 
   // Government Services
-  { id: "bil-004", name: "GRA — Tax Payment", category: "Government Services", reference: "TIN" },
-  { id: "bil-004b", name: "Ghana.gov Platform", category: "Government Services", reference: "Invoice / Ref Code" },
-  { id: "bil-004c", name: "DVLA — Driver Licence", category: "Government Services", reference: "Licence / Reg No." },
-  { id: "bil-004d", name: "Passports Office Ghana", category: "Government Services", reference: "Application ID" },
+  // Each agency with its own biller, then Ghana.gov, which asks for the agency first (src/lib/government-services.ts)
+  { id: "bil-gov-ahpc", name: "Allied Health Professions Council of Ghana", category: "Government Services", reference: "Invoice Number" },
+  { id: "bil-gov-fc", name: "Forestry Commission", category: "Government Services", reference: "Invoice Number" },
+  { id: "bil-gov-ghlink", name: "Ghana Link", category: "Government Services", reference: "Invoice Number" },
+  { id: "bil-gov-mps", name: "Meridian Port Services (MPS)", category: "Government Services", reference: "Invoice Number" },
+  { id: "bil-gov-parker", name: "Parker Consulting / COCOSHE Project", category: "Government Services", reference: "Invoice Number" },
+  { id: "bil-gov-ssnit", name: "Social Security and National Insurance Trust (SSNIT)", category: "Government Services", reference: "Invoice Number" },
+  { id: "bil-gov-sltf", name: "Student Loan Trust Fund", category: "Government Services", reference: "Invoice Number" },
+  { id: "bil-gov-tdc", name: "TDC Development Company Limited", category: "Government Services", reference: "Invoice Number" },
+  { id: "bil-004b", name: "Ghana.gov", category: "Government Services", reference: "Invoice Number" },
 
   // Healthcare
   { id: "bil-009", name: "National Health Insurance (NHIS)", category: "Healthcare", reference: "Membership ID" },

@@ -20,8 +20,8 @@ import {
 import { OwnWalletPicker, REGISTERED_WALLET, useOwnDestination, type OwnWallet } from "./OwnWalletPicker";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
-import { maskMobile } from "@/lib/auth-shared";
 import { Field } from "@/components/ui/field";
+import { SavedRecipientLink } from "./SavedRecipients";
 
 export interface CardlessFormState {
   fromId: string;
@@ -125,7 +125,7 @@ export function CardlessWithdrawalFlow({
 
       {/* Yourself: pick which of your numbers gets the code */}
       {isSelf && (
-        <Field label="Send Code To">
+        <Field label="Generate Code For">
           <OwnWalletPicker
             wallets={own.wallets}
             selectedPhone={selfPhone}
@@ -138,7 +138,10 @@ export function CardlessWithdrawalFlow({
 
       {/* Someone else: just their number. The name is looked up and shown, like every other payment field. */}
       {!isSelf && (
-        <Field label="Recipient">
+        <Field
+          label="Recipient"
+          action={!(isVerified && isCollapsed) ? <SavedRecipientLink provider={state.wNetwork} value={state.recipientPhone} /> : undefined}
+        >
           {isVerified && isCollapsed ? (
             <CollapsedDetailsBadge
               title={verifiedName}
@@ -188,12 +191,6 @@ export function CardlessWithdrawalFlow({
               }}
               error={overBalance ? <InsufficientFundsAlert /> : undefined}
             />
-            {/* Where the code goes, and what it's good for, in one line */}
-            <p className="text-[12px] text-muted-foreground tabular">
-              {isSelf
-                ? `We'll text the code to ${maskMobile(selfPhone)}. It works at any GCB ATM.`
-                : `We'll text the code to ${verifiedName}. It works at any GCB ATM.`}
-            </p>
           </div>
 
           <ProceedButton disabled={!isValid} onClick={onProceed} label="Generate Code" />

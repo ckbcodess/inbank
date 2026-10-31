@@ -393,7 +393,7 @@ export default function TransactionMonitoringPage() {
                 <li key={t.id}>
                   <Link
                     href={`/admin/transactions/${t.id}`}
-                    className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                    className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 transition-transform"
                   >
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-[13px] text-foreground">{t.description}</span>

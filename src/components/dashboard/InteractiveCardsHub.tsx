@@ -95,7 +95,7 @@ export function InteractiveCardsHub({
 
       {/* Card Carousel Selector Tabs */}
       {cards.length > 1 && (
-        <div className="flex gap-2 pt-2 pb-2 overflow-x-auto scrollbar-none">
+        <div className="flex gap-2 pt-2 pb-2 overflow-x-auto hide-scrollbar">
           {cards.map((c, i) => (
             <button
               key={c.id}

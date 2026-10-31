@@ -21,6 +21,30 @@ import {
 } from "./shared";
 
 import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { sumMoney } from "@/lib/money";
+
+const num = (v: string | undefined) => Number((v ?? "").replace(/[^0-9.]/g, "")) || 0;
+
+/** What one member gets: their own change if the customer made one, else the group's amount (custom groups keep each member's own). */
+export function groupMemberAmount(
+  group: PaymentGroup,
+  perMember: string,
+  overrides: Record<string, string>,
+  memberId: string,
+): number {
+  const o = overrides[memberId];
+  if (o !== undefined) return num(o);
+  const m = group.members.find((x) => x.id === memberId);
+  if (group.splitType === "custom") return m?.defaultAmount ?? num(perMember);
+  return num(perMember);
+}
+
+/** The total that leaves the account for a group payment. */
+export function groupTotal(group: PaymentGroup, perMember: string, overrides: Record<string, string>): number {
+  return sumMoney(group.members.map((m) => groupMemberAmount(group, perMember, overrides, m.id)));
+}
+
 export interface GroupPaymentFormState {
   fromId: string;
   groupName: string;
@@ -34,6 +58,9 @@ interface GroupPaymentFlowProps {
   groups: PaymentGroup[];
   state: GroupPaymentFormState;
   onChange: (key: keyof GroupPaymentFormState, value: string) => void;
+  /** Amounts the customer changed for single members, by member id. */
+  memberAmounts: Record<string, string>;
+  onMemberAmountChange: (memberId: string, value: string) => void;
   onOpenCreateGroup: () => void;
   onProceed: () => void;
   detailsCollapsed?: boolean;
@@ -45,6 +72,8 @@ export function GroupPaymentFlow({
   groups,
   state,
   onChange,
+  memberAmounts,
+  onMemberAmountChange,
   onOpenCreateGroup,
   onProceed,
   detailsCollapsed,
@@ -67,11 +96,15 @@ export function GroupPaymentFlow({
     return groups.find((g) => g.name === state.groupName);
   }, [groups, state.groupName]);
 
-  const numAmount = Number(state.grpAmount.replace(/[^0-9.]/g, "")) || 0;
+  // Open by default for a custom split (each share is the point), closed for an equal one; the customer can flip either.
+  const [membersOpen, setMembersOpen] = useState<boolean | null>(null);
   const memberCount = selectedGroup?.members.length || 1;
-  const totalDebit = numAmount * (selectedGroup?.splitType === "equal" ? memberCount : 1);
+  const totalDebit = selectedGroup ? groupTotal(selectedGroup, state.grpAmount, memberAmounts) : 0;
   const overBalance = totalDebit > (fromAccount?.available ?? 0);
-  const isValid = Boolean(state.fromId) && Boolean(state.groupName) && numAmount > 0 && !overBalance;
+  const isValid = Boolean(state.fromId) && Boolean(state.groupName) && totalDebit > 0 && !overBalance;
+  const isEqual = selectedGroup?.splitType === "equal";
+  const showMembers = membersOpen ?? !isEqual;
+  const changedCount = Object.keys(memberAmounts).length;
 
   return (
     <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
@@ -83,7 +116,20 @@ export function GroupPaymentFlow({
       />
 
       {/* 2. Destination Group */}
-      <Field label="Contribution Group">
+      <Field
+        label="Contribution Group"
+        action={
+          !(selectedGroup && isCollapsed) && groups.length > 0 ? (
+            <button
+              type="button"
+              onClick={onOpenCreateGroup}
+              className="cursor-pointer text-[13px] text-foreground underline underline-offset-4"
+            >
+              Send to new group
+            </button>
+          ) : undefined
+        }
+      >
 
         {selectedGroup && isCollapsed ? (
           <CollapsedDetailsBadge
@@ -164,27 +210,53 @@ export function GroupPaymentFlow({
       {/* Progressive Disclosure: Only reveal Amount & subsequent form fields after group is selected */}
       {Boolean(selectedGroup) && (
         <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-          {/* 3. Amount */}
-          <div className="flex flex-col gap-2">
-            <AmountInput
-              value={state.grpAmount}
-              onChange={(val) => onChange("grpAmount", val)}
-              label={selectedGroup?.splitType === "equal" ? "Amount per Member (Preset)" : "Total Amount"}
-              disabled={Boolean(selectedGroup)}
-              error={
-                overBalance ? (
-                  <InsufficientFundsAlert />
-                ) : undefined
-              }
-            />
-            {selectedGroup && selectedGroup.splitType === "equal" && numAmount > 0 && (
-              <div className="flex items-center justify-between px-2 text-[13px] text-muted-foreground">
-                <span>Total Group Debit ({memberCount} members):</span>
-                <span className="font-semibold text-foreground tabular">
-                  {formatMoney(totalDebit, "GHS", true)}
-                </span>
+          {/* 3. Amount: one amount for everyone, with any member's share open to change */}
+          <div className="flex flex-col gap-3">
+            {isEqual && (
+              <AmountInput
+                value={state.grpAmount}
+                onChange={(val) => onChange("grpAmount", val)}
+                label="Amount per Member"
+              />
+            )}
+
+            <button
+              type="button"
+              onClick={() => setMembersOpen(!showMembers)}
+              aria-expanded={showMembers}
+              className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
+            >
+              {showMembers ? "Hide amounts" : changedCount > 0 ? `Change amounts (${changedCount} changed)` : "Change amounts"}
+            </button>
+
+            {showMembers && selectedGroup && (
+              <div className="flex flex-col gap-1 animate-in fade-in duration-150 ease-out">
+                {selectedGroup.members.map((m) => (
+                  <div key={m.id} className="flex items-center justify-between gap-3 rounded-xl p-2">
+                    <span className="flex min-w-0 flex-col">
+                      <span className="truncate text-[14px] text-foreground">{m.name}</span>
+                      <span className="truncate text-[12px] text-muted-foreground">{m.networkOrBank}</span>
+                    </span>
+                    <Input
+                      inputMode="decimal"
+                      aria-label={`Amount for ${m.name}`}
+                      value={memberAmounts[m.id] ?? String(groupMemberAmount(selectedGroup, state.grpAmount, memberAmounts, m.id))}
+                      onChange={(e) => onMemberAmountChange(m.id, e.target.value.replace(/[^0-9.]/g, ""))}
+                      className="tabular w-28 text-right"
+                    />
+                  </div>
+                ))}
               </div>
             )}
+
+            <div className="flex items-center justify-between gap-3 pb-2 pt-2">
+              <span className="text-[18px] text-muted-foreground">
+                Total Amount:
+                <span className="sr-only"> for {memberCount} {memberCount === 1 ? "member" : "members"}</span>
+              </span>
+              <span className="tabular text-[20px] text-foreground sm:text-[22px]">{formatMoney(totalDebit, "GHS", true)}</span>
+            </div>
+            {overBalance && <InsufficientFundsAlert />}
           </div>
 
           {/* 4. Narration */}

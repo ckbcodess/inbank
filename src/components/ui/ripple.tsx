@@ -82,7 +82,7 @@ export function createAndroidRipple(
   }
 
   const isDark = document.documentElement.classList.contains("dark");
-  const defaultOpacity = isDark ? 0.06 : 0.04;
+  const defaultOpacity = isDark ? 0.02 : 0.01;
   const targetOpacity = options.maxOpacity ?? defaultOpacity;
   const fillDuration = prefersReducedMotion ? 80 : (options.duration ?? 280);
   const fadeDuration = prefersReducedMotion ? 100 : (options.fadeDuration ?? 180);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { CreditCard } from "@/components/ui/icons";
 import { Account, cardsForProfile, formatMoney } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
@@ -25,6 +25,7 @@ import {
 
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { SavedRecipientLink } from "./SavedRecipients";
 export interface CardTopUpFormState {
   fromId: string;
   cardId: string;
@@ -95,6 +96,11 @@ export function CardTopUpFlow({
     state.cardId?.startsWith("ref-") ? state.cardId.replace("ref-", "") : ""
   );
 
+  // A saved card picked from the list arrives as a reference in the form's state: show it in the field
+  useEffect(() => {
+    if (state.cardId?.startsWith("ref-")) setRefCode(state.cardId.replace("ref-", ""));
+  }, [state.cardId]);
+
   const selectedCard = useMemo(() => {
     if (isOtherCard || !state.cardId || state.cardId.startsWith("ref-")) return undefined;
     return fundableCards.find((c) => c.id === state.cardId) ?? myCards.find((c) => c.id === state.cardId);
@@ -115,7 +121,10 @@ export function CardTopUpFlow({
       />
 
       {/* 2. Destination Card */}
-      <Field label={isOtherCard ? "Recipient Card Reference" : "Destination Card"}>
+      <Field
+        label={isOtherCard ? "Recipient Card Reference" : "Destination Card"}
+        action={isOtherCard && !(refCode.length === 8 && isCollapsed) ? <SavedRecipientLink value={refCode} /> : undefined}
+      >
         {isCardValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={isOtherCard ? `GCB Prepaid Card (${refCode})` : `GCB ${selectedCard?.name}`}

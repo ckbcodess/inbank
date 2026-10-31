@@ -1089,7 +1089,7 @@ export function RequestCardFlow() {
               <button
                 type="button"
                 onClick={() => router.replace(`/cards/${createdCard.id}`)}
-                className="relative overflow-hidden w-full rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-3 text-[14px] font-medium active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
+                className="relative overflow-hidden w-full rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-3 text-[14px] font-medium transition cursor-pointer text-center shadow-xs"
               >
                 {/* Single light sweep as the button arrives */}
                 <motion.div

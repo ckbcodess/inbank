@@ -125,7 +125,7 @@ export default function AuthLayout({
                       <Link
                         href={backHref}
                         aria-label={backLabel}
-                        className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95"
+                        className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
                       >
                         <div className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground">
                           <ChevronLeft size={16} className="transition-transform" />
@@ -137,7 +137,7 @@ export default function AuthLayout({
                         type="button"
                         onClick={onBack}
                         aria-label={backLabel}
-                        className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95 cursor-pointer"
+                        className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
                       >
                         <div className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground">
                           <ChevronLeft size={16} className="transition-transform" />
