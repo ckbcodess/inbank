@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { StateIllustration } from "@/components/states/StateIllustration";
 import type { StateIllustrationId } from "@/lib/state-illustrations";
 import { RowBones } from "@/components/states/PageSkeletons";
+import { Skeleton } from "skullet/react";
 
 /**
  * 13.1 Loading: the rows a list will have, as bones. The same skeleton the route's `loading.tsx` shows, so a
@@ -21,7 +22,9 @@ export function ListSkeleton({ rows = 6, avatar = true }: { rows?: number; avata
   return (
     <div role="status" aria-busy="true">
       <span className="sr-only">Loading</span>
-      <RowBones rows={rows} avatar={avatar} />
+      <Skeleton loading label="Loading">
+        <RowBones rows={rows} avatar={avatar} />
+      </Skeleton>
     </div>
   );
 }

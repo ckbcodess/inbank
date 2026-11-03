@@ -13,9 +13,9 @@
      inline one below) so a rounded-* class reads `var(--radius-*)` and the sandbox can tune them live. */
   --radius-sm: 4px;
   --radius-lg: 8px;
-  --radius-xl: 8px;
-  --radius-2xl: 16px;
-  --radius-3xl: 20px;
+  --radius-xl: 10px;
+  --radius-2xl: 10px;
+  --radius-3xl: 10px;
   --radius-xs: var(--radius-sm);
   --radius-md: var(--radius-lg);
   --radius-4xl: var(--radius-3xl);
@@ -73,18 +73,12 @@
    changes the brand colour carries it along. */
 @utility primary-sheen {
   background-color: var(--primary);
-  background-image:
-    radial-gradient(ellipse 70% 100% at 50% 0%, var(--primary-glow-top), transparent 72%),
-    radial-gradient(ellipse 70% 100% at 50% 100%, var(--primary-glow-bottom), transparent 72%),
-    linear-gradient(to bottom, var(--primary-fill-top), var(--primary));
+  border-width: 2px;
   border-color: var(--primary-edge);
   box-shadow:
-    0 1px 2px 0 var(--primary-shadow),
-    0 4px 4px 0 color-mix(in srgb, var(--primary-shadow) 87%, transparent),
-    0 10px 6px 0 color-mix(in srgb, var(--primary-shadow) 53%, transparent),
-    0 17px 7px 0 color-mix(in srgb, var(--primary-shadow) 13%, transparent);
+    inset 0 -4px 4px var(--primary-inset-bottom),
+    inset 0 4px 4px var(--primary-inset-top);
   &:disabled {
-    background-image: none;
     box-shadow: none;
   }
 }
@@ -401,7 +395,9 @@
   --primary-glow-top: #ffffff4d;
   --primary-glow-bottom: #ffffff59;
   --primary-fill-top: #ffc423;
-  --primary-edge: color-mix(in srgb, var(--primary) 88%, var(--amber-500));
+  --primary-edge: var(--primary);
+  --primary-inset-top: #ffda75;
+  --primary-inset-bottom: #ffb121;
   --primary-shadow: #dbaa2426;
   /* GCB Bank PLC brand amber: #FFC423 */
   --primary: var(--amber-400);
@@ -584,10 +580,10 @@
   --spend-other: #cbd5e1;
   --radius: 8px;
   /* Letter-spacing (tracking), one place. Kerning is the font's own and is left on. */
-  --ls-tight: -0.01em; /* titles inside cards, row names */
-  --ls-heading: -0.025em; /* page titles, section headings, large figures */
-  --ls-display: -0.03em; /* the biggest numbers */
-  --ls-label: 0.02em; /* small initials and codes */
+  --ls-tight: -0.02em; /* titles inside cards, row names */
+  --ls-heading: -0.04em; /* page titles, section headings, large figures */
+  --ls-display: -0.02em; /* the biggest numbers */
+  --ls-label: -0.02em; /* small initials and codes */
   /* Brand gradient: deep amber → brighter golden glow at bottom */
   /* Dashboard hero panel (Figma 1945:5108): a slate card with white type here; near-black with white type in dark. */
   --hero-surface: var(--smoke-700);
@@ -929,6 +925,8 @@ html.i18n-pending body {
   --primary-foreground: var(--white);
   --primary-fill-top: color-mix(in srgb, var(--primary) 90%, var(--white));
   --primary-edge: var(--primary);
+  --primary-inset-top: color-mix(in srgb, var(--primary) 70%, var(--white));
+  --primary-inset-bottom: color-mix(in srgb, var(--primary) 80%, var(--black));
   --primary-shadow: color-mix(in srgb, var(--smoke-950) 15%, transparent);
   --ring: var(--smoke-400);
   --tile-accent: var(--smoke-600);
@@ -956,6 +954,8 @@ html.i18n-pending body {
   --primary-foreground: var(--white);
   --primary-fill-top: color-mix(in srgb, var(--primary) 90%, var(--white));
   --primary-edge: var(--primary);
+  --primary-inset-top: color-mix(in srgb, var(--primary) 70%, var(--white));
+  --primary-inset-bottom: color-mix(in srgb, var(--primary) 80%, var(--black));
   --primary-shadow: color-mix(in srgb, var(--smoke-950) 15%, transparent);
   --ring: var(--smoke-300);
   --tile-accent: var(--smoke-300);
@@ -1687,23 +1687,8 @@ input[type="number"] {
 
 
 
-/* Loading skeletons: a soft highlight crosses each grey block. Still for people who ask for less motion. */
-/* Bones stay invisible for the first 150ms, so a route that is ready almost at once never flashes a skeleton. */
-@layer components {
-  .skeleton-shimmer { position: relative; overflow: hidden; opacity: 0; animation: skeleton-in var(--dur-reveal) var(--ease-settle) 150ms forwards; }
-}
-@keyframes skeleton-in { to { opacity: 1; } }
-.skeleton-shimmer::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, var(--skeleton-shine), transparent);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .skeleton-shimmer::after { animation: skeleton-shimmer 1.6s ease-in-out infinite; }
-}
-@keyframes skeleton-shimmer { to { transform: translateX(100%); } }
+/* Loading skeletons are drawn by skullet (`<Skeleton loading>`): its shimmer, its 150ms hold and its reduced-motion
+   handling. The `--skullet-*` tokens above set the colours. */
 
 /* Right after a modal or dropdown closes, focus goes back to the control that opened it. Keep its ring off until the person
    moves with the keyboard again (see lib/focus-ring.ts). The ring vars are set on the control, or on its children

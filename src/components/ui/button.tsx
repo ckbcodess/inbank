@@ -21,7 +21,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "primary-sheen text-primary-foreground hover:brightness-105",
+          "primary-sheen rounded-2xl border-2text-primary-foreground hover:brightness-105",
         outline:
           "border-border bg-background shadow-[0_1px_1px_0_color-mix(in_srgb,var(--black)_4%,transparent)] hover:bg-muted/50 hover:text-foreground aria-expanded:bg-muted/50 aria-expanded:text-foreground dark:bg-border/30 dark:hover:bg-border/45 dark:aria-expanded:bg-border/45",
         secondary:

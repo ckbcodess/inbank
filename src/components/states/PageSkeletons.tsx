@@ -9,7 +9,7 @@
  *
  * Rules:
  * - Match the destination's layout, not a generic spinner. Pick the variant closest to the page.
- * - Every bone has a soft shimmer sweep (`.skeleton-shimmer`). It stops under `prefers-reduced-motion`.
+ * - Every skeleton is measured by skullet (`<Skeleton loading>`), which draws the bones and the shimmer, and stops it under `prefers-reduced-motion`.
  * - Say it once for assistive tech (`role="status"` + one sr-only line); the bones are `aria-hidden`.
  * - No text in a skeleton: nothing to translate, nothing to go stale.
  * - A page that has two layouts (holding something or not) gets the skeleton of the one most customers see first. Pass a
@@ -26,11 +26,12 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "skullet/react";
 import { NARROW_COLUMN, PRODUCT_PHOTO_HEIGHT } from "@/lib/page-layout";
 
 /** One grey block. Everything below is built from these. */
 export function Bone({ className, style }: { className?: string; style?: CSSProperties }) {
-  return <div aria-hidden="true" className={cn("skeleton-shimmer rounded-lg bg-muted/60", className)} style={style} />;
+  return <div aria-hidden="true" className={cn("skullet-block rounded-lg bg-muted/60", className)} style={style} />;
 }
 
 /** The page frame: same vertical rhythm as a real page (`gap-4`), announced once to screen readers. */
@@ -106,12 +107,12 @@ export function RowBones({ rows, avatar = true, className }: { rows: number; ava
     <div className={cn("flex flex-col gap-0.5", className)}>
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex items-center gap-3 px-2 py-3 sm:px-3">
-          {avatar && <Bone className="size-9 shrink-0 rounded-full" style={{ animationDelay: `${i * 60}ms` }} />}
+          {avatar && <Bone className="size-9 shrink-0 rounded-full" />}
           <div className="flex min-w-0 flex-1 flex-col gap-2">
-            <Bone className="h-3 w-2/5" style={{ animationDelay: `${i * 60}ms` }} />
-            <Bone className="h-2.5 w-1/4" style={{ animationDelay: `${i * 60}ms` }} />
+            <Bone className="h-3 w-2/5" />
+            <Bone className="h-2.5 w-1/4" />
           </div>
-          <Bone className="h-3.5 w-17" style={{ animationDelay: `${i * 60}ms` }} />
+          <Bone className="h-3.5 w-17" />
         </div>
       ))}
     </div>
@@ -119,7 +120,7 @@ export function RowBones({ rows, avatar = true, className }: { rows: number; ava
 }
 
 /** Any list or table page: header, search and filters, then the panel of rows. */
-export function ListPageSkeleton({ rows = 8, toolbar = true, action = true, tabs = false }: { rows?: number; toolbar?: boolean; action?: boolean; tabs?: boolean }) {
+function ListPageSkeletonBody({ rows = 8, toolbar = true, action = true, tabs = false }: { rows?: number; toolbar?: boolean; action?: boolean; tabs?: boolean }) {
   return (
     <Frame>
       <HeaderBones action={action} />
@@ -139,7 +140,7 @@ export function ListPageSkeleton({ rows = 8, toolbar = true, action = true, tabs
 }
 
 /** A hub of action tiles (Send & Pay): header with one action, then headed groups of two-up tiles. */
-export function HubPageSkeleton({ groups = 2, tiles = 4 }: { groups?: number; tiles?: number }) {
+function HubPageSkeletonBody({ groups = 2, tiles = 4 }: { groups?: number; tiles?: number }) {
   return (
     <Frame className="gap-10">
       <HeaderBones />
@@ -150,7 +151,7 @@ export function HubPageSkeleton({ groups = 2, tiles = 4 }: { groups?: number; ti
           </div>
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {Array.from({ length: tiles }).map((_, t) => (
-              <Bone key={t} className="h-[72px] rounded-2xl" style={{ animationDelay: `${(g * tiles + t) * 50}ms` }} />
+              <Bone key={t} className="h-[72px] rounded-2xl" />
             ))}
           </div>
         </div>
@@ -160,7 +161,7 @@ export function HubPageSkeleton({ groups = 2, tiles = 4 }: { groups?: number; ti
 }
 
 /** A flow's first question: back arrow, the question as a title, then one tile per answer (e.g. "Which bank do you want to send to?"). */
-export function StepListSkeleton({ tiles = 4 }: { tiles?: number }) {
+function StepListSkeletonBody({ tiles = 4 }: { tiles?: number }) {
   return (
     <Frame className="mx-auto max-w-2xl gap-6">
       <div data-page-header className="flex items-center gap-2 sm:gap-2">
@@ -169,7 +170,7 @@ export function StepListSkeleton({ tiles = 4 }: { tiles?: number }) {
       </div>
       <div className="flex flex-col gap-3">
         {Array.from({ length: tiles }).map((_, i) => (
-          <Bone key={i} className="h-[86px] rounded-2xl" style={{ animationDelay: `${i * 60}ms` }} />
+          <Bone key={i} className="h-[86px] rounded-2xl" />
         ))}
       </div>
     </Frame>
@@ -177,7 +178,7 @@ export function StepListSkeleton({ tiles = 4 }: { tiles?: number }) {
 }
 
 /** One record: back link and title, a summary block, and the panels beneath it. */
-export function DetailPageSkeleton() {
+function DetailPageSkeletonBody() {
   return (
     <Frame className="gap-5">
       <div data-page-header className="flex items-center gap-2">
@@ -206,15 +207,15 @@ export function DetailPageSkeleton() {
 }
 
 /** A form or a step of a flow: back arrow and title, then labelled fields and the primary button, in the flows' centred 560px column. */
-export function FormPageSkeleton({ fields = 4 }: { fields?: number }) {
+function FormPageSkeletonBody({ fields = 4 }: { fields?: number }) {
   return (
     <Frame className="mx-auto max-w-[560px] gap-6">
       <BackHeaderBones title="w-49" />
       <div className="flex w-full flex-col gap-5">
         {Array.from({ length: fields }).map((_, i) => (
           <div key={i} className="flex flex-col gap-2">
-            <Bone className="h-3 w-24" style={{ animationDelay: `${i * 70}ms` }} />
-            <Bone className="h-10 w-full rounded-lg" style={{ animationDelay: `${i * 70}ms` }} />
+            <Bone className="h-3 w-24" />
+            <Bone className="h-10 w-full rounded-lg" />
           </div>
         ))}
         <Bone className="mt-1 h-10 w-full rounded-lg" />
@@ -224,13 +225,13 @@ export function FormPageSkeleton({ fields = 4 }: { fields?: number }) {
 }
 
 /** Insure and Loans home: the title, then a shelf of product cards (two across from 480px). */
-export function ShelfPageSkeleton({ cards = 4 }: { cards?: number }) {
+function ShelfPageSkeletonBody({ cards = 4 }: { cards?: number }) {
   return (
     <Frame className="gap-6">
       <HeaderBones action={false} />
       <div className="mx-auto grid w-full max-w-[720px] grid-cols-1 gap-3 min-[480px]:grid-cols-2 sm:gap-4">
         {Array.from({ length: cards }).map((_, i) => (
-          <Bone key={i} className="min-h-[184px] rounded-2xl" style={{ animationDelay: `${i * 60}ms` }} />
+          <Bone key={i} className="min-h-[184px] rounded-2xl" />
         ))}
       </div>
     </Frame>
@@ -243,8 +244,8 @@ function FactsBones({ rows }: { rows: number }) {
     <Panel className="flex flex-col p-2">
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex items-center justify-between gap-5 px-2 py-3">
-          <Bone className="h-3 w-24" style={{ animationDelay: `${i * 40}ms` }} />
-          <Bone className="h-3 w-28" style={{ animationDelay: `${i * 40}ms` }} />
+          <Bone className="h-3 w-24" />
+          <Bone className="h-3 w-28" />
         </div>
       ))}
     </Panel>
@@ -258,10 +259,10 @@ function ActionRowBones({ rows }: { rows: number }) {
       <div className="flex flex-col gap-0.5">
         {Array.from({ length: rows }).map((_, i) => (
           <div key={i} className="flex items-center gap-3 px-2 py-3 sm:px-3">
-            <Bone className="size-8 shrink-0 rounded-xl" style={{ animationDelay: `${i * 60}ms` }} />
+            <Bone className="size-8 shrink-0 rounded-xl" />
             <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <Bone className="h-3 w-1/4" style={{ animationDelay: `${i * 60}ms` }} />
-              <Bone className="h-2.5 w-2/5" style={{ animationDelay: `${i * 60}ms` }} />
+              <Bone className="h-3 w-1/4" />
+              <Bone className="h-2.5 w-2/5" />
             </div>
           </div>
         ))}
@@ -271,7 +272,7 @@ function ActionRowBones({ rows }: { rows: number }) {
 }
 
 /** One policy or loan: back and title, an optional figure, the facts box, then the action rows. */
-export function FactsPageSkeleton({ figure = false, facts = 6, actions = 2 }: { figure?: boolean; facts?: number; actions?: number }) {
+function FactsPageSkeletonBody({ figure = false, facts = 6, actions = 2 }: { figure?: boolean; facts?: number; actions?: number }) {
   return (
     <Frame className="mx-auto max-w-[560px] gap-6">
       <BackHeaderBones title="w-42" />
@@ -294,7 +295,7 @@ export function FactsPageSkeleton({ figure = false, facts = 6, actions = 2 }: { 
  * that is the default: back and title, the picture, the benefits, the one big button. A customer who holds something
  * sees an About chip and their list instead, so a caller that knows it passes `holding`.
  */
-export function ProductPageSkeleton({ holding = false, rows = 2 }: { holding?: boolean; rows?: number }) {
+function ProductPageSkeletonBody({ holding = false, rows = 2 }: { holding?: boolean; rows?: number }) {
   return (
     <Frame className={NARROW_COLUMN}>
       <BackHeaderBones title="w-42" action={holding} />
@@ -321,7 +322,7 @@ export function ProductPageSkeleton({ holding = false, rows = 2 }: { holding?: b
 }
 
 /** Scheduled payments: title with its action, the one number, then the headed list. */
-export function ScheduledListSkeleton() {
+function ScheduledListSkeletonBody() {
   return (
     <Frame className="gap-10">
       <HeaderBones />
@@ -342,7 +343,7 @@ export function ScheduledListSkeleton() {
 }
 
 /** The business overview: name, the available cash, the Accounts list without a box, then the shortcut buttons. */
-export function BusinessOverviewSkeleton() {
+function BusinessOverviewSkeletonBody() {
   return (
     <Frame className="gap-10">
       <HeaderBones action={false} />
@@ -366,7 +367,7 @@ export function BusinessOverviewSkeleton() {
 
 
 /** The overview: greeting row, the hero (account pill, balance, money actions), then the sheet of five panels. */
-export function DashboardSkeleton() {
+function DashboardSkeletonBody() {
   return (
     <Frame className="gap-5 sm:gap-10">
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
@@ -381,7 +382,7 @@ export function DashboardSkeleton() {
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex min-h-[300px] flex-col gap-3 rounded-3xl bg-card p-4">
-                <Bone className="h-3.5 w-28" style={{ animationDelay: `${i * 80}ms` }} />
+                <Bone className="h-3.5 w-28" />
                 <RowBones rows={i === 2 ? 2 : 3} className="-mx-4" />
               </div>
             ))}
@@ -393,7 +394,7 @@ export function DashboardSkeleton() {
 }
 
 /** The account page below its header: the card and two round actions, then the option tiles (side by side from lg). */
-export function AccountDetailBody() {
+function AccountDetailRows() {
   return (
     <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-5">
       <div className="flex flex-col gap-5 lg:mx-auto lg:w-[78%]">
@@ -401,7 +402,7 @@ export function AccountDetailBody() {
         <div className="flex w-full items-start justify-evenly">
           {[0, 1].map((i) => (
             <div key={i} className="flex flex-col items-center gap-2">
-              <Bone className="size-12 rounded-full" style={{ animationDelay: `${i * 60}ms` }} />
+              <Bone className="size-12 rounded-full" />
               <Bone className="h-2.5 w-14" />
             </div>
           ))}
@@ -423,20 +424,20 @@ export function AccountDetailBody() {
 }
 
 /** One account: back and title, then the body. One narrow column, two from lg. */
-export function AccountDetailSkeleton() {
+function AccountDetailSkeletonBody() {
   return (
     <Frame className="mx-auto max-w-[440px] gap-10 sm:gap-10 lg:max-w-[1000px]">
       <div data-page-header className="flex items-center gap-2">
         <Bone className="size-8 rounded-lg" />
         <Bone className="h-6 w-38 rounded-lg" />
       </div>
-      <AccountDetailBody />
+      <AccountDetailRows />
     </Frame>
   );
 }
 
 /** My Accounts: header with Add Account, the accounts panel, then the sources of funds section. */
-export function AccountsPageSkeleton() {
+function AccountsPageSkeletonBody() {
   return (
     <Frame className="gap-10">
       <HeaderBones />
@@ -457,7 +458,7 @@ export function AccountsPageSkeleton() {
 }
 
 /** Settings: title and description, the tab row on its hairline, then a panel of labelled fields. */
-export function SettingsPageSkeleton() {
+function SettingsPageSkeletonBody() {
   return (
     <Frame className="mx-auto max-w-4xl gap-5 py-2">
       <div className="flex flex-col gap-2">
@@ -466,7 +467,7 @@ export function SettingsPageSkeleton() {
       </div>
       <div className="flex items-center gap-2 border-b border-border pb-2">
         {[148, 124, 164, 112].map((w, i) => (
-          <Bone key={i} className="h-8 rounded-lg" style={{ width: w, animationDelay: `${i * 50}ms` }} />
+          <Bone key={i} className="h-8 rounded-lg" style={{ width: w }} />
         ))}
       </div>
       <Panel className="flex flex-col gap-4 p-4 sm:p-5">
@@ -480,8 +481,8 @@ export function SettingsPageSkeleton() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex flex-col gap-2">
-              <Bone className="h-3 w-21" style={{ animationDelay: `${i * 60}ms` }} />
-              <Bone className="h-10 w-full rounded-xl" style={{ animationDelay: `${i * 60}ms` }} />
+              <Bone className="h-3 w-21" />
+              <Bone className="h-10 w-full rounded-xl" />
             </div>
           ))}
         </div>
@@ -491,7 +492,7 @@ export function SettingsPageSkeleton() {
 }
 
 /** Transactions: header with Export, the search field, the filter row, then the rows. */
-export function TransactionsPageSkeleton() {
+function TransactionsPageSkeletonBody() {
   return (
     <Frame>
       <HeaderBones />
@@ -509,7 +510,7 @@ export function TransactionsPageSkeleton() {
 }
 
 /** A receipt: back and title with its actions, then the amount block and the details grid. */
-export function ReceiptPageSkeleton() {
+function ReceiptPageSkeletonBody() {
   return (
     <Frame className="gap-6">
       <div data-page-header className="flex w-full items-center justify-between gap-2">
@@ -534,8 +535,8 @@ export function ReceiptPageSkeleton() {
           <div className="grid grid-cols-1 gap-x-6 gap-y-4 pt-5 sm:grid-cols-2">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="flex flex-col gap-2">
-                <Bone className="h-2.5 w-21" style={{ animationDelay: `${i * 40}ms` }} />
-                <Bone className="h-3.5 w-35" style={{ animationDelay: `${i * 40}ms` }} />
+                <Bone className="h-2.5 w-21" />
+                <Bone className="h-3.5 w-35" />
               </div>
             ))}
           </div>
@@ -551,14 +552,14 @@ export function InvestRowBones({ rows = 3, className }: { rows?: number; classNa
     <div className={cn("flex flex-col gap-0.5", className)}>
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex items-center gap-3 px-2 py-3 sm:px-3">
-          <Bone className="size-8 shrink-0 rounded-xl" style={{ animationDelay: `${i * 60}ms` }} />
+          <Bone className="size-8 shrink-0 rounded-xl" />
           <div className="flex min-w-0 flex-1 flex-col gap-2">
-            <Bone className="h-3 w-2/5" style={{ animationDelay: `${i * 60}ms` }} />
-            <Bone className="h-2.5 w-1/4" style={{ animationDelay: `${i * 60}ms` }} />
+            <Bone className="h-3 w-2/5" />
+            <Bone className="h-2.5 w-1/4" />
           </div>
           <div className="flex shrink-0 flex-col items-end gap-2">
-            <Bone className="h-3 w-14" style={{ animationDelay: `${i * 60}ms` }} />
-            <Bone className="h-2 w-9" style={{ animationDelay: `${i * 60}ms` }} />
+            <Bone className="h-3 w-14" />
+            <Bone className="h-2 w-9" />
           </div>
         </div>
       ))}
@@ -567,7 +568,7 @@ export function InvestRowBones({ rows = 3, className }: { rows?: number; classNa
 }
 
 /** Invest home page: header with title, segmented control tab, and two investment sections with rows. */
-export function InvestHomeSkeleton() {
+function InvestHomeSkeletonBody() {
   return (
     <Frame className="gap-6">
       <HeaderBones action={false} />
@@ -598,7 +599,7 @@ export function InvestHomeSkeleton() {
  * Invest products page (Term Deposits, Treasury Bills & Bonds): the 560px column, an About chip on the product's own
  * page (`action`), and the offers under one heading each when there is more than one group.
  */
-export function InvestProductsSkeleton({ groups = 1, rows = 3, action = false }: { groups?: number; rows?: number; action?: boolean }) {
+function InvestProductsSkeletonBody({ groups = 1, rows = 3, action = false }: { groups?: number; rows?: number; action?: boolean }) {
   return (
     <Frame className={NARROW_COLUMN}>
       <BackHeaderBones title="w-42" action={action} />
@@ -621,7 +622,7 @@ export function InvestProductsSkeleton({ groups = 1, rows = 3, action = false }:
 }
 
 /** An Invest offer's page (/invest/offer/[key]): the same pitch as a product page, then Invest and Terms and Conditions. */
-export function OfferDetailSkeleton() {
+function OfferDetailSkeletonBody() {
   return (
     <Frame className={NARROW_COLUMN}>
       <BackHeaderBones title="w-45" />
@@ -637,7 +638,7 @@ export function OfferDetailSkeleton() {
 }
 
 /** Single investment holding/deposit detail page: hero amount, facts card, and 3 action tiles. */
-export function InvestmentDetailSkeleton() {
+function InvestmentDetailSkeletonBody() {
   return (
     <Frame className="gap-6">
       <div data-page-header className="flex items-center gap-2">
@@ -654,14 +655,14 @@ export function InvestmentDetailSkeleton() {
         <Panel className="flex flex-col gap-2 p-2">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="flex items-center justify-between gap-5 px-2 py-2">
-              <Bone className="h-3 w-24" style={{ animationDelay: `${i * 40}ms` }} />
-              <Bone className="h-3 w-28" style={{ animationDelay: `${i * 40}ms` }} />
+              <Bone className="h-3 w-24" />
+              <Bone className="h-3 w-28" />
             </div>
           ))}
         </Panel>
         <div className="flex flex-col gap-2">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Bone key={i} className="h-[72px] w-full rounded-2xl" style={{ animationDelay: `${i * 60}ms` }} />
+            <Bone key={i} className="h-[72px] w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -670,13 +671,13 @@ export function InvestmentDetailSkeleton() {
 }
 
 /** The admin dashboard: title, four summary cards across, then the work-queue panel with its link rows. */
-export function AdminDashboardSkeleton() {
+function AdminDashboardSkeletonBody() {
   return (
     <Frame>
       <HeaderBones action={false} />
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Bone key={i} className="h-[88px] rounded-2xl" style={{ animationDelay: `${i * 60}ms` }} />
+          <Bone key={i} className="h-[88px] rounded-2xl" />
         ))}
       </div>
       <Panel className="flex flex-col gap-3 p-4">
@@ -684,10 +685,186 @@ export function AdminDashboardSkeleton() {
         <Bone className="h-3 w-3/5 max-w-[360px]" />
         <div className="flex flex-col gap-2 pt-1">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Bone key={i} className="h-[52px] rounded-xl" style={{ animationDelay: `${i * 60}ms` }} />
+            <Bone key={i} className="h-[52px] rounded-xl" />
           ))}
         </div>
       </Panel>
     </Frame>
+  );
+}
+
+export function ListPageSkeleton(props?: Parameters<typeof ListPageSkeletonBody>[0]) {
+  return (
+    <Skeleton loading label="Loading">
+      <ListPageSkeletonBody {...props} />
+    </Skeleton>
+  );
+}
+
+export function HubPageSkeleton(props?: Parameters<typeof HubPageSkeletonBody>[0]) {
+  return (
+    <Skeleton loading label="Loading">
+      <HubPageSkeletonBody {...props} />
+    </Skeleton>
+  );
+}
+
+export function StepListSkeleton(props?: Parameters<typeof StepListSkeletonBody>[0]) {
+  return (
+    <Skeleton loading label="Loading">
+      <StepListSkeletonBody {...props} />
+    </Skeleton>
+  );
+}
+
+export function DetailPageSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <DetailPageSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function FormPageSkeleton(props?: Parameters<typeof FormPageSkeletonBody>[0]) {
+  return (
+    <Skeleton loading label="Loading">
+      <FormPageSkeletonBody {...props} />
+    </Skeleton>
+  );
+}
+
+export function ShelfPageSkeleton(props?: Parameters<typeof ShelfPageSkeletonBody>[0]) {
+  return (
+    <Skeleton loading label="Loading">
+      <ShelfPageSkeletonBody {...props} />
+    </Skeleton>
+  );
+}
+
+export function FactsPageSkeleton(props?: Parameters<typeof FactsPageSkeletonBody>[0]) {
+  return (
+    <Skeleton loading label="Loading">
+      <FactsPageSkeletonBody {...props} />
+    </Skeleton>
+  );
+}
+
+export function ProductPageSkeleton(props?: Parameters<typeof ProductPageSkeletonBody>[0]) {
+  return (
+    <Skeleton loading label="Loading">
+      <ProductPageSkeletonBody {...props} />
+    </Skeleton>
+  );
+}
+
+export function ScheduledListSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <ScheduledListSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function BusinessOverviewSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <BusinessOverviewSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function DashboardSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <DashboardSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function AccountDetailSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <AccountDetailSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function AccountsPageSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <AccountsPageSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function SettingsPageSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <SettingsPageSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function TransactionsPageSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <TransactionsPageSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function ReceiptPageSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <ReceiptPageSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function InvestHomeSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <InvestHomeSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function InvestProductsSkeleton(props?: Parameters<typeof InvestProductsSkeletonBody>[0]) {
+  return (
+    <Skeleton loading label="Loading">
+      <InvestProductsSkeletonBody {...props} />
+    </Skeleton>
+  );
+}
+
+export function OfferDetailSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <OfferDetailSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function InvestmentDetailSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <InvestmentDetailSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function AdminDashboardSkeleton() {
+  return (
+    <Skeleton loading label="Loading">
+      <AdminDashboardSkeletonBody />
+    </Skeleton>
+  );
+}
+
+export function AccountDetailBody() {
+  return (
+    <Skeleton loading label="Loading">
+      <AccountDetailRows />
+    </Skeleton>
   );
 }

@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import { Skeleton } from "skullet/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -445,10 +446,9 @@ export function HeroBalance({
   return (
     <div className={cn("relative flex items-center gap-2 text-[var(--hero-balance-foreground)]", className)}>
       {loading ? (
-        <span
-          className="h-[28px] w-49 skeleton-shimmer sm:h-[44px] rounded-lg bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] sm:w-63"
-          aria-label={t("dashboard.loadingBalance", "Loading balance")}
-        />
+        <Skeleton loading label={t("dashboard.loadingBalance", "Loading balance")}>
+          <span className="skullet-block h-[28px] w-49 rounded-lg bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] sm:h-[44px] sm:w-63" />
+        </Skeleton>
       ) : (
         <span className={cn("tabular whitespace-nowrap tracking-[var(--ls-heading)]", HERO_FIGURE[size])}>
           {account.currency} <RevealingAmount amount={account.balance ?? 0} currency="" showAmounts={showBalance} />
