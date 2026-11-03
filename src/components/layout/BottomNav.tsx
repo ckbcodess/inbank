@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeftRight, CreditCard, Home, LayoutGrid, Send, Wallet } from "@/components/ui/icons";
@@ -8,6 +9,7 @@ import { homePathForProfile } from "@/lib/navigation";
 import { isBusinessProfile } from "@/lib/profile";
 import { useSession } from "@/lib/session-store";
 import { useKeyboardOpen } from "@/lib/use-keyboard-open";
+import { useHideOnScrollDown } from "@/lib/use-scroll-hide";
 
 interface BottomNavProps {
   onOpenDrawer: () => void;
@@ -25,6 +27,13 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
   const pathname = usePathname();
   // The software keyboard would sit under this bar and cover what the person is typing, so it steps aside.
   const keyboardOpen = useKeyboardOpen();
+  // Reading down the page clears the bar away; the first scroll back up (or the top) brings it back.
+  const { hidden: scrolledAway, show } = useHideOnScrollDown(pathname);
+  // Other floating controls (the assistant button) follow the nav away and back through this flag.
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-nav-hidden", scrolledAway);
+    return () => document.documentElement.removeAttribute("data-nav-hidden");
+  }, [scrolledAway]);
 
   const activeProfile = useSession((s) => s.activeProfile);
   const homePath = homePathForProfile(activeProfile);
@@ -58,9 +67,11 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
       aria-label="Mobile Navigation"
       aria-hidden={keyboardOpen || undefined}
       inert={keyboardOpen}
+      onFocusCapture={show}
       className={cn(
         "fixed inset-x-0 bottom-0 z-30 w-full border-t border-border/70 bg-[var(--shell-top)]/95 backdrop-blur-2xl pt-3 pb-[max(1.5rem,calc(env(safe-area-inset-bottom)+1rem))] px-2 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] md:hidden dark:border-white/10 dark:shadow-[0_-4px_24px_rgba(0,0,0,0.3)] transition-transform duration-reveal ease-settle",
-        keyboardOpen && "translate-y-full",
+        // Past its own height by the shadow's reach, so no edge of it is left showing along the bottom.
+        (keyboardOpen || scrolledAway) && "translate-y-[calc(100%+2rem)]",
       )}
     >
       <div className="mx-auto flex w-full max-w-lg items-center justify-around">

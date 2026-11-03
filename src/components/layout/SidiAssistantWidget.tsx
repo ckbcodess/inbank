@@ -164,7 +164,10 @@ export function SidiAssistantWidget() {
   return (
     <>
       {/* Floating launcher: the avatar, which opens into a pill with its name on hover or focus. */}
-      <div data-intro={intro} className="group/fab fixed bottom-[calc(7rem+env(safe-area-inset-bottom))] md:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-3.5 z-40 select-none sm:right-5">
+      <div data-intro={intro} className={cn("group/fab fixed bottom-[calc(7rem+env(safe-area-inset-bottom))] md:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-3.5 z-40 select-none transition-transform duration-reveal ease-settle sm:right-5",
+          // Goes with the bottom nav: away while reading down, back on the first scroll up. Stays while the chat is open.
+          !open && "max-md:[html[data-nav-hidden]_&]:translate-y-[16rem]",
+        )}>
         {/* A golden glow circling the edge while hovered: a soft blurred halo behind a thin sharp ring. Not on the close button. */}
         {!open && (
           <span

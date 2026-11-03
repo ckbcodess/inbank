@@ -32,7 +32,7 @@ export function Field({
   children: React.ReactNode
 }) {
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div data-slot="field" className={cn("flex flex-col gap-2", className)}>
       <div className="flex items-center justify-between gap-2">
         <Label htmlFor={htmlFor}>
           {label}

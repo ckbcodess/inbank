@@ -9,6 +9,7 @@ import {
   RotateCcw,
 } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
+import { haptic } from "@/lib/haptics";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import {
@@ -266,6 +267,7 @@ export function PaymentSuccessScreen({
     const morphTimer = setTimeout(() => {
       setBadgePhase("checked");
       playDelightChime();
+      haptic("success");
     }, 1050);
 
     let revealTimer: ReturnType<typeof setTimeout> | undefined;

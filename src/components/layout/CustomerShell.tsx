@@ -25,6 +25,7 @@ import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { isBusinessProfile } from "@/lib/profile";
 import { getNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
+import { useMobileFields } from "@/lib/use-mobile-fields";
 import { AnimatePresence, motion } from "framer-motion";
 import { FxQuickModal } from "@/components/fx/FxQuickModal";
 import SettingsDialog from "@/components/settings/SettingsDialog";
@@ -43,6 +44,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const hydrated = useSessionHydrated();
+  useMobileFields();
   const ready = hydrated && !!actor && mfaVerified && !!activeProfile && actor.shell !== "admin";
 
   // First-load splash (see lib/app-splash): up from the first paint until the
@@ -162,6 +164,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
 
             <main
               key={activeProfile.id}
+              data-scroll-root
               className="custom-scrollbar scroll-fade flex-1 overflow-y-auto pt-12"
               style={{ scrollbarGutter: "stable" }}
             >
@@ -175,6 +178,8 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
               >
                 {children}
               </div>
+              {/* iOS leaves the layout under the keyboard; this is the room the last field needs to scroll up into. */}
+              <div aria-hidden="true" className="shrink-0" style={{ height: "var(--keyboard-inset, 0px)" }} />
             </main>
             <BottomNav onOpenDrawer={() => setSidebarOpen(true)} />
           </div>

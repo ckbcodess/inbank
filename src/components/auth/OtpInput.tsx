@@ -13,6 +13,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Input } from "@/components/ui/input";
+import { haptic } from "@/lib/haptics";
 export const OTP_LENGTH = 6;
 
 interface OtpInputProps {
@@ -46,6 +47,11 @@ export default function OtpInput({
 
   // When a wrong code or PIN is cleared, put the cursor back in the first box
   // (once the boxes are enabled again) so the customer can just start typing.
+  // A wrong code buzzes twice, once, when it turns wrong.
+  useEffect(() => {
+    if (invalid) haptic("error");
+  }, [invalid]);
+
   const hadValue = useRef(false);
   const needsFocus = useRef(false);
   useEffect(() => {

@@ -6,6 +6,7 @@ import { ArrowLeftRight, Landmark, AlertCircle, Check, User } from "@/components
 import { BankMark } from "@/components/ui/bank-mark";
 import { SearchPicker, type PickerItem } from "@/components/ui/search-picker";
 import { AppLoader } from "@/components/ui/loader";
+import { ActionBar } from "@/components/ui/action-bar";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -1179,7 +1180,7 @@ export function ProceedButton({
   loading?: boolean;
 }) {
   return (
-    <div className="pt-2">
+    <ActionBar>
       <Button
         size="xl"
         type="button"
@@ -1191,7 +1192,7 @@ export function ProceedButton({
       >
         {label}
       </Button>
-    </div>
+    </ActionBar>
   );
 }
 
