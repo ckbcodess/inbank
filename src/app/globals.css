@@ -76,8 +76,8 @@
   border-width: 2px;
   border-color: var(--primary-edge);
   box-shadow:
-    inset 0 -4px 4px var(--primary-inset-bottom),
-    inset 0 4px 4px var(--primary-inset-top);
+    inset 0 calc(var(--primary-inset-offset) * -1) var(--primary-inset-blur) var(--primary-inset-bottom),
+    inset 0 var(--primary-inset-offset) var(--primary-inset-blur) var(--primary-inset-top);
   &:disabled {
     box-shadow: none;
   }
@@ -390,15 +390,16 @@
   /* Account Details balance card (Figma 1896:15407) — slate tint over the page. */
   --account-card: color-mix(in srgb, var(--smoke-600) 7.8%, transparent);
   --popover: var(--menu);
-  /* Primary button finish (see `primary-sheen`): edge glows, the lit top of the fill, the border, and the shadow
-     (its opacity sets the strength of the whole stack). All follow --primary until tuned. */
-  --primary-glow-top: #ffffff4d;
-  --primary-glow-bottom: #ffffff59;
-  --primary-fill-top: #ffc423;
+  /* Primary button finish (see `primary-sheen`). Colours: --primary (fill), --primary-edge (border),
+     --primary-inset-top (light band under the top edge), --primary-inset-bottom (warm band above the bottom edge).
+     Shape: border width, radius, and the offset and blur of both inset bands. */
   --primary-edge: var(--primary);
   --primary-inset-top: #ffda75;
-  --primary-inset-bottom: #ffb121;
-  --primary-shadow: #dbaa2426;
+  --primary-inset-bottom: #ffbb00;
+  --primary-border-width: 2px;
+  --primary-radius: var(--radius-2xl);
+  --primary-inset-offset: 4px;
+  --primary-inset-blur: 4px;
   /* GCB Bank PLC brand amber: #FFC423 */
   --primary: var(--amber-400);
   --primary-hover: var(--amber-300);
@@ -546,8 +547,8 @@
   --edge-glass-angle: 180deg;
   --edge-glass-mid-at: 18%;
   --edge-glass-width: 0.5px;
-  --edge-glass-start: color-mix(in srgb, var(--white) 54%, transparent);
-  --edge-glass-mid: color-mix(in srgb, var(--white) 54%, transparent);
+  --edge-glass-start: #ffffff;
+  --edge-glass-mid: #fafafa;
   --edge-glass-end: color-mix(in srgb, var(--gray-100) 50%, var(--gray-200));
   --ring: var(--amber-950);
   /* Secondary chart palette (complementary warm hue) */
@@ -646,10 +647,6 @@
 
 .dark {
   /* Primary button finish, tuned for dark (the edge carries over from :root). */
-  --primary-glow-top: #ffffff40;
-  --primary-glow-bottom: #ffffff40;
-  --primary-fill-top: #ffbb00;
-  --primary-shadow: #70500026;
   /* Neutral palette FIXED (neutral scale, dark mode). The accent is the same GCB amber as light mode. */
   --background: var(--gray-950);
   --foreground: var(--gray-50);
@@ -772,9 +769,11 @@
   --success: var(--green-500);
   --warning: var(--amber-500);
   --border: var(--gray-800);
-  --edge-glass-start: var(--gray-750);
-  --edge-glass-mid: var(--gray-750);
-  --edge-glass-end: color-mix(in srgb, var(--gray-825) 6%, transparent);
+  --edge-glass-start: #262626;
+  --edge-glass-mid: #212121;
+  --edge-glass-end: #171717;
+  --primary-inset-top: #ffdd80;
+  --primary-inset-bottom: #ffae00;
   --ring: var(--amber-400);
   /* Same eight hue families, re-stepped for the dark surface — a selected dark
      palette, not an automatic flip. All five clear 3:1 on #171717. */
@@ -923,11 +922,9 @@ html.i18n-pending body {
   --primary: var(--smoke-600);
   --primary-hover: var(--smoke-500);
   --primary-foreground: var(--white);
-  --primary-fill-top: color-mix(in srgb, var(--primary) 90%, var(--white));
   --primary-edge: var(--primary);
   --primary-inset-top: color-mix(in srgb, var(--primary) 70%, var(--white));
   --primary-inset-bottom: color-mix(in srgb, var(--primary) 80%, var(--black));
-  --primary-shadow: color-mix(in srgb, var(--smoke-950) 15%, transparent);
   --ring: var(--smoke-400);
   --tile-accent: var(--smoke-600);
   --duo-accent: var(--smoke-400);
@@ -952,11 +949,9 @@ html.i18n-pending body {
   --primary: var(--smoke-600);
   --primary-hover: var(--smoke-500);
   --primary-foreground: var(--white);
-  --primary-fill-top: color-mix(in srgb, var(--primary) 90%, var(--white));
   --primary-edge: var(--primary);
   --primary-inset-top: color-mix(in srgb, var(--primary) 70%, var(--white));
   --primary-inset-bottom: color-mix(in srgb, var(--primary) 80%, var(--black));
-  --primary-shadow: color-mix(in srgb, var(--smoke-950) 15%, transparent);
   --ring: var(--smoke-300);
   --tile-accent: var(--smoke-300);
   --duo-accent: var(--smoke-300);
