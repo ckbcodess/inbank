@@ -92,9 +92,7 @@ export default function DepositMaturityPage() {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="When It Matures" backTo={back} />
       <div className="flex flex-col gap-5">
-        <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
-          {`This deposit matures on ${formatDate(d.maturity)}. Choose what happens then. You can change it any time before.`}
-        </p>
+        <p className="px-1 text-[13px] text-muted-foreground">{`Matures ${formatDate(d.maturity)}. You can change this until then.`}</p>
 
         <div role="radiogroup" aria-label="Maturity instruction" className="flex flex-col gap-2">
           {DEPOSIT_INSTRUCTIONS.map((i) => (

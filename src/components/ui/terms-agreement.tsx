@@ -70,9 +70,3 @@ export function TermsAgreement({
     </>
   );
 }
-
-/** The reason Confirm is off, under the buttons. */
-export function TermsHint({ agreed }: { agreed: boolean }) {
-  if (agreed) return null;
-  return <p className="px-1 text-center text-[12px] text-muted-foreground">Agree to the terms to confirm.</p>;
-}

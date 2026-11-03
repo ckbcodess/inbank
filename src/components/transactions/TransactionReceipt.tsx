@@ -340,7 +340,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
               ],
               [
                 ...(txn.category ? [{ label: "Category", value: txn.category }] : []),
-                { label: "Narration", value: txn.description },
+                ...(txn.paymentMethod === "loan" ? [] : [{ label: "Narration", value: txn.description }]),
               ],
               [
                 { label: "Amount", value: formatMoney(txn.amount, txn.currency, true) },

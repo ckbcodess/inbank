@@ -48,7 +48,8 @@ export default function TermDepositDetailPage() {
   const money = (n: number) => formatMoney(n, "GHS", showAmounts);
   const base = `${DEPOSITS_HOME}/${d.id}`;
   const open = d.status === "active";
-  const rolls = d.instruction === "rollover";
+  const rolls = d.instruction !== "close";
+  const rollsAll = d.instruction === "rollover-all";
 
   // A live deposit is a balance, so it has the figure; a closed one has only rows (CONSTITUTION §3).
   const rows: Array<[string, React.ReactNode]> = [
@@ -60,7 +61,7 @@ export default function TermDepositDetailPage() {
     ["Matures", open ? `${formatDate(d.maturity)} · ${daysLeftLabel(d.maturity)}` : formatDate(d.maturity)],
     ...(open
       ? ([
-          [rolls ? "Interest paid at maturity" : "You receive at maturity", money(paidAtMaturity(d))],
+          ...(rollsAll ? [] : ([[rolls ? "Interest paid at maturity" : "You receive at maturity", money(paidAtMaturity(d))]] as Array<[string, React.ReactNode]>)),
           ["When it matures", depositInstructionLabel(d.instruction)],
         ] as Array<[string, React.ReactNode]>)
       : []),

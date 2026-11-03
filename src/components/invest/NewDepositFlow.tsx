@@ -22,11 +22,11 @@ import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, InsufficientFundsAlert, ProceedButton } from "@/components/payments/flows/shared";
 import { ReviewSummary } from "@/components/ui/review-summary";
-import { INVEST_HOME } from "@/components/invest/parts";
+import { INVEST_HOME, TERM_PRODUCTS_HREF } from "@/components/invest/parts";
 import { DepositInstructionField, OutcomeFailure, postDepositEntry } from "@/components/invest/term-deposit-parts";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { sumMoney } from "@/lib/money";
-import { TermsAgreement, TermsHint } from "@/components/ui/terms-agreement";
+import { TermsAgreement } from "@/components/ui/terms-agreement";
 import { depositTerms } from "@/lib/terms";
 import { useSession } from "@/lib/session-store";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
@@ -72,7 +72,7 @@ export function NewDepositFlow() {
   }, [pickedFrom, accounts, defaultId]);
   const from = accounts.find((a) => a.id === fromId);
 
-  const back = { href: INVEST_HOME, label: "Invest" };
+  const back = { href: TERM_PRODUCTS_HREF, label: "Term Deposit" };
 
   function reset() {
     setScreen("form");
@@ -103,7 +103,8 @@ export function NewDepositFlow() {
   const tooSmall = num > 0 && num < MIN_DEPOSIT;
   const overBalance = Boolean(from) && num > (from?.available ?? 0);
   const valid = Boolean(from && tenure) && num >= MIN_DEPOSIT && !overBalance;
-  const atMaturity = instruction === "rollover" ? interest : sumMoney([num, interest]);
+  const atMaturity = instruction === "rollover-all" ? 0 : instruction === "rollover" ? interest : sumMoney([num, interest]);
+  const rolls = instruction !== "close";
 
   function authorised() {
     if (!from || !tenure) return;
@@ -163,7 +164,7 @@ export function NewDepositFlow() {
               ["Deposit period", `${tenure} days`],
               ["Interest rate", `${rate}%`],
               ["Interest earned", money(interest)],
-              ...(instruction === "rollover" ? [] : [["You get back at maturity", money(atMaturity)]]),
+              ...(rolls ? [] : [["You get back at maturity", money(atMaturity)]]),
               ["Matures", formatDate(maturity)],
               ["When it matures", depositInstructionLabel(instruction)],
             ].map(([label, value]) => ({ label, value }))}
@@ -179,7 +180,6 @@ export function NewDepositFlow() {
               Confirm
             </Button>
           </div>
-          <TermsHint agreed={accepted} />
         </div>
         <TransactionOtpModal
           open={authOpen}
@@ -207,7 +207,7 @@ export function NewDepositFlow() {
             <SelectContent>
               {TENURES.map((t) => (
                 <SelectItem key={t.days} value={String(t.days)} label={`${t.days} days · ${t.rate}%`}>
-                  <span className="flex w-full items-baseline justify-between gap-4">
+                  <span className="flex w-full items-center justify-between gap-4">
                     <span className="flex flex-col">
                       <span>{`${t.days} days`}</span>
                       <span className="text-[12px] text-muted-foreground">{`Matures ${formatDate(addDays(MOCK_TODAY, t.days))}`}</span>
@@ -226,6 +226,7 @@ export function NewDepositFlow() {
               value={amount}
               onChange={setAmount}
               label="Amount"
+              helper={`Minimum ${money(MIN_DEPOSIT)}.`}
               hasError={tooSmall || overBalance}
               error={
                 overBalance ? (
@@ -235,7 +236,6 @@ export function NewDepositFlow() {
                 ) : undefined
               }
             />
-            <p className="px-1 text-[12px] text-muted-foreground">{`Minimum ${money(MIN_DEPOSIT)}.`}</p>
           </div>
         )}
 
@@ -246,7 +246,7 @@ export function NewDepositFlow() {
               {(
                 [
                   ["Interest rate", `${rate}%`],
-                  ["You’ll receive", money(instruction === "rollover" ? interest : atMaturity)],
+                  ["You’ll receive", instruction === "rollover-all" ? "Nothing paid out" : money(atMaturity)],
                   ["Maturity date", formatDate(maturity)],
                 ] as Array<[string, string]>
               ).map(([label, value]) => (

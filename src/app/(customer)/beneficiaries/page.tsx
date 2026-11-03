@@ -405,7 +405,8 @@ export default function BeneficiariesPage() {
     for (const b of beneficiaries) out[b.transactionType] = (out[b.transactionType] ?? 0) + 1;
     return out;
   }, [beneficiaries]);
-  const kindsPresent = (Object.keys(TYPE_CONFIG) as TransactionType[]).filter((t) => (typeCounts[t] ?? 0) > 0);
+  const kindsPresent = (Object.keys(TYPE_CONFIG) as TransactionType[]).filter((t) => (typeCounts[t] ?? 0) > 0)
+    .sort((a, b) => TYPE_CONFIG[a].plural.localeCompare(TYPE_CONFIG[b].plural));
 
   const q = query.trim().toLowerCase();
 

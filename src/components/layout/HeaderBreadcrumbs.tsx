@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronRight } from "@/components/ui/icons";
-import { findOffer } from "@/components/invest/offers";
 import { findPlan } from "@/lib/insurance-plans";
 
 /** The full name of each Send & Pay flow, as the person knows it, never a clipped form of it. */
@@ -205,25 +204,6 @@ export default function HeaderBreadcrumbs() {
             href: pathname,
             isLast: true,
           },
-        ]}
-      />
-    );
-  }
-
-  // One option's details sits under the list it came from, named for the option itself. Its "offer" segment is not a page.
-  if (segments[0] === "invest" && segments[1] === "offer" && segments.length > 2) {
-    const offer = findOffer(segments[2]);
-    const term = offer ? offer.group === "term" : segments[2].startsWith("td-");
-    return (
-      <BreadcrumbView
-        list={[
-          { label: "Invest", href: "/invest", isLast: false },
-          term
-            ? { label: "Term Deposits", href: "/invest/products/term-deposits", isLast: false }
-            : offer?.security?.kind === "bond"
-              ? { label: "Bonds", href: "/invest/products/bonds", isLast: false }
-              : { label: "Treasury Bills", href: "/invest/products/treasury-bills", isLast: false },
-          { label: offer?.title ?? "Details", href: pathname, isLast: true },
         ]}
       />
     );

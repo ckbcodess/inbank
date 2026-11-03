@@ -128,12 +128,6 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={back} />
       <div className="flex flex-col gap-5 animate-in fade-in duration-200">
-        <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
-          {whole
-            ? `This closes the deposit. It would have matured on ${formatDate(d.maturity)}.`
-            : `The rest keeps earning until ${formatDate(d.maturity)}.`}
-        </p>
-
         <FromAccountSelector accounts={accounts} value={toId} onChange={setPickedTo} label="To Account" />
 
         {!whole && (
@@ -141,7 +135,8 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
             <AmountInput
               value={amount}
               onChange={setAmount}
-              label={`Amount to Redeem, Less Than ${money(d.principal)}`}
+              label="Amount to Redeem"
+              helper={`Less than ${money(d.principal)}.`}
               hasError={wholeByAccident}
               error={wholeByAccident ? <InlineError message="That’s the whole deposit. Choose Close the Deposit to take it all out." className="text-left" /> : undefined}
             />
@@ -150,21 +145,20 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
 
         {valid && (
           <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200">
-            <section className="flex flex-col gap-2 px-1">
-              <span className="text-[13px] text-muted-foreground">You receive today</span>
-              <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(cost.receive)}</span>
-            </section>
             <dl className="flex flex-col gap-2 px-1 text-[14px]">
-              <div className="flex items-baseline justify-between gap-5">
-                <dt className="text-muted-foreground">Interest you give up</dt>
-                <dd className="tabular text-right text-foreground">{money(cost.interestGivenUp)}</dd>
-              </div>
-              {!whole && (
-                <div className="flex items-baseline justify-between gap-5">
-                  <dt className="text-muted-foreground">Stays in the deposit</dt>
-                  <dd className="tabular text-right text-foreground">{money(cost.remaining)}</dd>
+              {(
+                [
+                  ["You receive today", money(cost.receive)],
+                  ["Interest you give up", money(cost.interestGivenUp)],
+                  ...(whole ? [] : [["Stays in the deposit", money(cost.remaining)]]),
+                  [whole ? "Would have matured" : "Matures", formatDate(d.maturity)],
+                ] as Array<[string, string]>
+              ).map(([label, value]) => (
+                <div key={label} className="flex items-baseline justify-between gap-5">
+                  <dt className="text-muted-foreground">{label}</dt>
+                  <dd className="tabular text-right text-foreground">{value}</dd>
                 </div>
-              )}
+              ))}
             </dl>
           </div>
         )}

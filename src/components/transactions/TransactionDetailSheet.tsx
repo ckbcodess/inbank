@@ -3,7 +3,7 @@
 import { personalRepeatHref } from "@/lib/repeat-payment";
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Copy, Check, Share2, FileDown, RotateCw } from "@/components/ui/icons";
+import { Copy, Check, Share2, FileDown, RotateCw, HandCoins, MessageSquareWarning } from "@/components/ui/icons";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -13,8 +13,10 @@ import { findAccount, type Transaction } from "@/lib/mock-data";
 import { getTransactionType } from "@/lib/transaction-type";
 import { receiptFields } from "@/lib/receipt-fields";
 import { useTransactionDetail } from "@/lib/transaction-detail";
+import { useLoans } from "@/lib/loans";
 import { Bone } from "@/components/states/PageSkeletons";
 import { ShareReceiptDialog, type ReceiptFormat } from "./ShareReceiptDialog";
+import { ReportIssueDialog } from "./ReportIssueDialog";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { roundMoney } from "@/lib/money";
@@ -64,6 +66,7 @@ export function TransactionDetailSheet({
   const router = useRouter();
   const [copied, setCopied] = React.useState(false);
   const [shareFormat, setShareFormat] = React.useState<ReceiptFormat | null>(null);
+  const [reporting, setReporting] = React.useState(false);
 
   // The list clears its selection the moment the sheet is closed. Keep showing the last transaction so the sheet
   // is still there to slide out; without this it vanished with no exit animation.
@@ -76,6 +79,11 @@ export function TransactionDetailSheet({
   // The row already knows the amount, who, when and the status; the rest comes from the detail call.
   const { status: detailStatus, retry } = useTransactionDetail(transaction);
   const detailReady = detailStatus === "ready";
+
+  // A loan line leads to the advance it belongs to, the way a payment leads to "Repeat".
+  const advanceId = useLoans((s) =>
+    transaction?.paymentMethod === "loan" ? s.advances.find((a) => a.reference === transaction.counterpartyAccount)?.id : undefined,
+  );
 
   if (!transaction) return null;
 
@@ -124,7 +132,8 @@ export function TransactionDetailSheet({
   const fromAccountLabel = account ? `${account.type} (***${account.number.slice(-4)})` : "";
 
   // Rows with nothing behind them are left out rather than filled with a stand-in.
-  const narration = transaction.description?.trim() ?? "";
+  // A loan line has no narration: the loan and its reference above already say what it is.
+  const narration = transaction.paymentMethod === "loan" ? "" : (transaction.description?.trim() ?? "");
   const categoryLabel = !isCredit && transaction.category ? transaction.category : "";
   const showBreakdown = feeKnown;
 
@@ -140,6 +149,11 @@ export function TransactionDetailSheet({
   };
 
   const repeatTo = repeatHref ? repeatHref(transaction) : null;
+  const handleViewAdvance = () => {
+    if (!advanceId) return;
+    onOpenChange(false);
+    router.push(`/loans/${advanceId}`);
+  };
   const handleRepeat = () => {
     if (!repeatTo) return;
     onOpenChange(false);
@@ -463,6 +477,22 @@ export function TransactionDetailSheet({
                   </span>
                 </button>
 
+                {/* View Advance: a loan line opens the advance behind it */}
+                {advanceId && (
+                  <button
+                    type="button"
+                    onClick={handleViewAdvance}
+                    className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
+                  >
+                    <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast group-hover:brightness-95">
+                      <HandCoins size={20} />
+                    </div>
+                    <span className="text-[12px] font-normal text-foreground tracking-tight">
+                      View Advance
+                    </span>
+                  </button>
+                )}
+
                 {/* Repeat Action: only where the app has somewhere to repeat it to */}
                 {repeatTo && (
                   <button
@@ -479,6 +509,20 @@ export function TransactionDetailSheet({
                     </span>
                   </button>
                 )}
+
+                {/* Report Issue */}
+                <button
+                  type="button"
+                  onClick={() => setReporting(true)}
+                  className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
+                >
+                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast group-hover:brightness-95">
+                    <MessageSquareWarning size={20} />
+                  </div>
+                  <span className="text-[12px] font-normal text-foreground tracking-tight">
+                    Report Issue
+                  </span>
+                </button>
               </div>
               {!detailReady && (
                 <p className="mt-3 text-center text-[12px] text-muted-foreground">
@@ -491,6 +535,8 @@ export function TransactionDetailSheet({
           </div>
         </SheetContent>
       </Sheet>
+
+      <ReportIssueDialog open={reporting} onOpenChange={setReporting} reference={transaction.reference} />
 
       {/* Share / PDF Privacy Dialog */}
       <ShareReceiptDialog

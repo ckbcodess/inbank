@@ -23,7 +23,7 @@ import { Plus, ShieldCheck, X } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/dialog";
-import { TermsAgreement, TermsHint } from "@/components/ui/terms-agreement";
+import { TermsAgreement } from "@/components/ui/terms-agreement";
 import { insuranceTerms } from "@/lib/terms";
 import { Field } from "@/components/ui/field";
 import { InlineError } from "@/components/ui/inline-error";
@@ -514,7 +514,6 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
               Confirm
             </Button>
           </div>
-          <TermsHint agreed={accepted} />
         </div>
         <TransactionOtpModal
           open={authOpen}
@@ -590,6 +589,13 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                   value={amount}
                   onChange={setAmount}
                   label={BASES.find((b) => b.value === basis)?.label}
+                  helper={
+                    basis === "monthly"
+                      ? `Minimum ${money(MIN_MONTHLY_PREMIUM)} a month.`
+                      : basis === "yearly"
+                        ? `Minimum ${money(MIN_MONTHLY_PREMIUM * 12)} a year.`
+                        : undefined
+                  }
                   hasError={Boolean(amountError)}
                   error={amountError ? <InlineError message={amountError} className="text-left" /> : undefined}
                 />

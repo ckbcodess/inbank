@@ -3,13 +3,16 @@
 /**
  * What is on offer, as rows. A term deposit, a bill or bond at auction (primary market) and one for resale (secondary
  * market) are different products, but a row reads the same for all of them: a name, one line, and the rate. Tapping a
- * row only ever opens its details; starting is a separate, deliberate button there.
+ * row opens its flow; a bill or bond that can't be started yet opens a modal that says why instead.
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, FileText, Landmark, PiggyBank } from "@/components/ui/icons";
 import { formatDate, formatMoney } from "@/lib/mock-data";
-import { addDays, daysLeftLabel, formatRate, MOCK_TODAY, securitiesFor, type Security } from "@/lib/treasury";
+import { addDays, daysLeftLabel, formatRate, MOCK_TODAY, securitiesFor, useMyTreasury, type Security } from "@/lib/treasury";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TENURES } from "@/lib/term-deposits";
 
 /** Which part of the market an offer belongs to. */
@@ -36,7 +39,7 @@ export function termOffers(): Offer[] {
     icon: "deposit",
     title: `${t.days}-day Term Deposit`,
     rate: t.rate,
-    href: `/invest/term-deposits/new?days=${t.days}`,
+    href: `/invest/products/term-deposits/new?days=${t.days}`,
     label: `${t.days}-day term deposit`,
     tenureDays: t.days,
   }));
@@ -55,13 +58,6 @@ export function securityOffers(market: "primary" | "secondary"): Offer[] {
   }));
 }
 
-/** Every offer, by its key, for the details screen. */
-export function findOffer(key: string): Offer | undefined {
-  return [...termOffers(), ...securityOffers("primary"), ...securityOffers("secondary")].find((o) => o.key === key);
-}
-
-export const detailsHref = (offer: Offer) => `/invest/offer/${offer.key}`;
-
 const ICONS = { deposit: PiggyBank, bill: FileText, bond: Landmark };
 
 export function OfferIcon({ icon }: { icon: Offer["icon"] }) {
@@ -73,9 +69,37 @@ export function OfferIcon({ icon }: { icon: Offer["icon"] }) {
   );
 }
 
-/** One offer. It always opens its details: looking costs nothing and commits to nothing. */
+/** Why a bill or bond can't be started right now, said in a modal on the row instead of on a page of its own. */
+type Gate = { title: string; text: string; action?: { label: string; href: string } };
+
+function gateFor(offer: Offer, csd: ReturnType<typeof useMyTreasury>["csd"], marketOpen: boolean): Gate | null {
+  if (offer.group === "term") return null;
+  if (!csd) {
+    return {
+      title: "Open a Securities Account",
+      text: "Bills and bonds are held in a securities account. You can start investing within 7 working days of creating it.",
+      action: {
+        label: "Open a Securities Account",
+        href: `/invest/profile?next=${encodeURIComponent(offer.href)}&label=${encodeURIComponent(offer.label)}`,
+      },
+    };
+  }
+  if (!marketOpen) return { title: "The Market Is Closed", text: "Bills and bonds can be bought while the market is open. Try again then." };
+  if (csd.status === "pending") {
+    return { title: "Your Securities Account Is Being Set Up", text: "You can invest once it’s ready. We’ll tell you when it is." };
+  }
+  return null;
+}
+
+const ROW_CLASS =
+  "flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3";
+
+/** One offer: it opens its flow, or, when a bill or bond can't be started yet, a modal that says why and what to do. */
 export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: boolean }) {
   const s = offer.security;
+  const { csd, marketOpen } = useMyTreasury();
+  const gate = gateFor(offer, csd, marketOpen);
+  const [gateOpen, setGateOpen] = useState(false);
 
   const meta =
     offer.group === "term" ? (
@@ -95,23 +119,55 @@ export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: bo
       ? `${formatMoney(s.available, "GHS", showAmounts)} available`
       : null;
 
+  const body = (
+    <>
+      <OfferIcon icon={offer.icon} />
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="truncate text-[14px] text-foreground">{offer.title}</span>
+        <span className="tabular flex min-w-0 gap-1 truncate text-[12px] text-muted-foreground">{meta}</span>
+      </span>
+      <span className="flex shrink-0 flex-col items-end">
+        <span className="tabular text-[14px] text-foreground">{formatRate(offer.rate)}</span>
+        {sub && <span className="tabular text-[12px] text-muted-foreground">{sub}</span>}
+      </span>
+      <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+    </>
+  );
+
   return (
     <li>
-      <Link
-        href={detailsHref(offer)}
-        className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
-      >
-        <OfferIcon icon={offer.icon} />
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-[14px] text-foreground">{offer.title}</span>
-          <span className="tabular flex min-w-0 gap-1 truncate text-[12px] text-muted-foreground">{meta}</span>
-        </span>
-        <span className="flex shrink-0 flex-col items-end">
-          <span className="tabular text-[14px] text-foreground">{formatRate(offer.rate)}</span>
-          {sub && <span className="tabular text-[12px] text-muted-foreground">{sub}</span>}
-        </span>
-        <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
-      </Link>
+      {gate ? (
+        <button type="button" onClick={() => setGateOpen(true)} className={ROW_CLASS}>
+          {body}
+        </button>
+      ) : (
+        <Link href={offer.href} className={ROW_CLASS}>
+          {body}
+        </Link>
+      )}
+      {gate && (
+        <Dialog open={gateOpen} onOpenChange={setGateOpen}>
+          <DialogContent size="sm">
+            <DialogHeader>
+              <DialogTitle>{gate.title}</DialogTitle>
+            </DialogHeader>
+            <DialogBody>
+              <p className="text-[14px] leading-relaxed text-muted-foreground">{gate.text}</p>
+            </DialogBody>
+            <DialogFooter>
+              {gate.action ? (
+                <Button size="md" nativeButton={false} className="w-full" render={<Link href={gate.action.href} />}>
+                  {gate.action.label}
+                </Button>
+              ) : (
+                <Button size="md" type="button" className="w-full" onClick={() => setGateOpen(false)}>
+                  Close
+                </Button>
+              )}
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </li>
   );
 }

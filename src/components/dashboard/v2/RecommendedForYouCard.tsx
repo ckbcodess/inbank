@@ -43,7 +43,7 @@ const RECOMMENDATIONS: Recommendation[] = [
     headline: "You could earn GHS 180.75 on GHS 5,000",
     reason: "14.5% a year, fixed for 91 days.",
     ctaLabel: "Open deposit",
-    ctaHref: "/invest/term-deposits/new",
+    ctaHref: "/invest/products/term-deposits/new",
   },
   // The salary advance is added from the customer's real offer (see `useRecommendations`), never a fixed figure.
   {

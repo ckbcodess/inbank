@@ -32,7 +32,7 @@ export function rateFor(days: number): number {
   return TENURES.find((t) => t.days === days)?.rate ?? TENURES[0].rate;
 }
 
-export type DepositInstruction = "close" | "rollover";
+export type DepositInstruction = "close" | "rollover" | "rollover-all";
 
 export const DEPOSIT_INSTRUCTIONS: readonly { id: DepositInstruction; label: string; detail: string }[] = [
   {
@@ -44,6 +44,11 @@ export const DEPOSIT_INSTRUCTIONS: readonly { id: DepositInstruction; label: str
     id: "rollover",
     label: "Roll over principal amount",
     detail: "The interest is paid into your account. The principal stays invested for the same period, at the rate on that day.",
+  },
+  {
+    id: "rollover-all",
+    label: "Roll over principal and interest",
+    detail: "Nothing is paid out. The principal and the interest stay invested for the same period, at the rate on that day.",
   },
 ] as const;
 
@@ -81,9 +86,10 @@ export function accruedInterest(d: Pick<TermDeposit, "principal" | "rate" | "ten
 /** The interest the whole term pays. */
 export const termInterest = (d: Pick<TermDeposit, "principal" | "rate" | "tenureDays">) => interestFor(d.principal, d.rate, d.tenureDays);
 
-/** What lands in the account at maturity: everything on close, only the interest on a rollover (the principal stays in). */
+/** What lands in the account at maturity: everything on close, only the interest on a rollover (the principal stays in), nothing when it all rolls over. */
 export function paidAtMaturity(d: Pick<TermDeposit, "principal" | "rate" | "tenureDays" | "instruction">): number {
   const interest = termInterest(d);
+  if (d.instruction === "rollover-all") return 0;
   return d.instruction === "rollover" ? interest : sumMoney([d.principal, interest]);
 }
 

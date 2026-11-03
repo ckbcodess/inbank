@@ -30,7 +30,7 @@ function scroller(el: HTMLElement): HTMLElement | null {
 }
 
 /**
- * Lift the field being typed in clear of the keyboard, and of the docked action bar if there is one. The page container
+ * Lift the field being typed in clear of the keyboard. The page container
  * (or a sheet's own scroller) is scrolled just far enough; nothing moves if the field is already in the clear part.
  */
 function reveal(el: HTMLElement) {
@@ -42,9 +42,7 @@ function reveal(el: HTMLElement) {
   const boxRect = onWindow ? { top: 0, bottom: window.innerHeight } : box.getBoundingClientRect();
   // Where the field may sit: below the sticky header (the page container pads its top for it) and above the keyboard.
   const top = Math.max(boxRect.top, vv?.offsetTop ?? 0) + (onWindow ? 0 : parseFloat(getComputedStyle(box).paddingTop)) + 12;
-  let bottom = Math.min(boxRect.bottom, vv ? vv.offsetTop + vv.height : window.innerHeight);
-  const bar = document.querySelector<HTMLElement>('[data-action-bar="docked"]');
-  if (bar) bottom = Math.min(bottom, bar.getBoundingClientRect().top);
+  const bottom = Math.min(boxRect.bottom, vv ? vv.offsetTop + vv.height : window.innerHeight);
   // Take the label and the error line with the control.
   const rect = (el.closest<HTMLElement>("[data-slot=field]") ?? el).getBoundingClientRect();
   const hiddenBelow = rect.bottom + 16 - bottom;

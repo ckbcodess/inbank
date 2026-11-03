@@ -6,6 +6,6 @@
 import type { Transaction } from "./mock-data";
 
 export function personalRepeatHref(t: Transaction): string | null {
-  if (t.direction !== "debit") return null;
+  if (t.direction !== "debit" || t.paymentMethod === "loan") return null;
   return `/payments/send?duplicate=${t.id}&amount=${t.amount}&payee=${encodeURIComponent(t.counterparty || t.description)}`;
 }

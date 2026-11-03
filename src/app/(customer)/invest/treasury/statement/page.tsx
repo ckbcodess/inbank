@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
@@ -36,7 +36,7 @@ export default function TreasuryStatementPage() {
   const forDeposits = useSearchParams().get("product") === "term-deposits";
   const actor = useSession((s) => s.actor);
 
-  const [type, setType] = useState<Type>("active");
+  const [type, setType] = useState<Type | "">("");
   const [typedEmail, setEmail] = useState<string | null>(null);
   const email = typedEmail ?? actor?.email ?? "";
   const [authOpen, setAuthOpen] = useState(false);
@@ -47,9 +47,9 @@ export default function TreasuryStatementPage() {
   if (csd?.status !== "active") return <AccountRequired status={csd?.status} title="Statement" backTo={back} />;
 
   const [activeCount, closedCount] = forDeposits ? [deposits.active.length, deposits.closed.length] : [holdings.length, closed.length];
-  const count = type === "active" ? activeCount : closedCount;
+  const count = type === "active" ? activeCount : type === "closed" ? closedCount : 0;
   const emailOk = EMAIL.test(email.trim());
-  const valid = emailOk && count > 0;
+  const valid = emailOk && type !== "" && count > 0;
 
   if (done) {
     return (
@@ -73,13 +73,30 @@ export default function TreasuryStatementPage() {
         </Field>
 
         <Field label="Statement Type">
-          <SegmentedControl aria-label="Statement type" options={TYPES} value={type} onChange={setType} />
+          <Select value={type} onValueChange={(v) => v && setType(v as Type)}>
+            <SelectTrigger aria-label="Statement type">
+              <SelectValue placeholder="Select statement type" />
+            </SelectTrigger>
+            <SelectContent>
+              {TYPES.map((t) => (
+                <SelectItem key={t.value} value={t.value} label={t.label}>
+                  {t.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </Field>
 
         <div>
           <ProceedButton disabled={!valid} onClick={() => setAuthOpen(true)} />
           <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">
-            {count === 0 ? (type === "active" ? "You have no active investments yet." : "You have no closed investments yet.") : "We’ll email it to the address above."}
+            {!type
+              ? "Select a statement type to continue."
+              : count === 0
+                ? type === "active"
+                  ? "You have no active investments yet."
+                  : "You have no closed investments yet."
+                : "We’ll email it to the address above."}
           </p>
         </div>
       </div>

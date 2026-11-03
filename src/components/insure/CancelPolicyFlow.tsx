@@ -16,7 +16,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
-import { FactsPanel } from "@/components/invest/parts";
 import { PolicyNotFound } from "@/components/insure/parts";
 import { formatMoney } from "@/lib/mock-data";
 import { MOCK_TODAY } from "@/lib/treasury";
@@ -80,13 +79,14 @@ export function CancelPolicyFlow({ policyId }: { policyId: string }) {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={{ href: base, label: plan?.name ?? "Policy" }} />
       <div className="flex flex-col gap-5">
-        <p className="tabular px-1 text-[13px] text-muted-foreground">{`${plan?.name} · ${policy.number}`}</p>
-        <FactsPanel rows={consequences} />
-        {savings && !withdraw && (
-          <p className="px-1 text-[12px] leading-relaxed text-muted-foreground">
-            {`Paid into your account once cancelled. ${PROVIDER} confirms the final amount.`}
-          </p>
-        )}
+        <dl className="flex flex-col gap-2 px-1 text-[14px]">
+          {consequences.map(([label, value]) => (
+            <div key={label} className="flex items-baseline justify-between gap-5">
+              <dt className="text-muted-foreground">{label}</dt>
+              <dd className="tabular text-right text-foreground">{value}</dd>
+            </div>
+          ))}
+        </dl>
 
         <Field label="Why Are You Cancelling?">
           <Select value={reason} onValueChange={(v) => v && setReason(v)}>

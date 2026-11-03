@@ -7,7 +7,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Receipt } from "@/components/ui/icons";
+import { MessageSquareWarning, Receipt } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { ReviewSummary } from "@/components/ui/review-summary";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
@@ -83,10 +83,15 @@ export function RepayAdvanceFlow({ advanceId }: { advanceId: string }) {
           ["Advance", `${name} · ${advance.reference}`],
           ["Fee", money(0)],
         ]}
-        customActionCards={[{ id: "receipt", label: "View Receipt", icon: Receipt }]}
+        customActionCards={[
+          { id: "receipt", label: "View Receipt", icon: Receipt },
+          { id: "report", label: "Report Issue", icon: MessageSquareWarning },
+        ]}
         showSaveBeneficiary={false}
-        onPrimaryAction={() => router.push(result.repaidInFull ? "/loans" : base)}
-        primaryActionLabel={result.repaidInFull ? "Back to Loans" : "Back to Advance"}
+        onPrimaryAction={() => router.push(base)}
+        primaryActionLabel="View Advance"
+        onSecondaryAction={() => router.push("/loans")}
+        secondaryActionLabel="Back to Loans"
       />
     );
   }
@@ -201,7 +206,6 @@ export function RepayAdvanceFlow({ advanceId }: { advanceId: string }) {
         open={authOpen}
         onOpenChange={setAuthOpen}
         amount={money(payAmount)}
-        summary={`${name} · ${advance.reference}`}
         onSuccess={() => {
           setAuthOpen(false);
           authorised();

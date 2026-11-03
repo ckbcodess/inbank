@@ -40,6 +40,9 @@ export interface ProductStatus {
   attention?: boolean;
 }
 
+/** Status chips are labels, so Title Case ("2 Policies · 1 Needs Attention"). */
+const titleCase = (t: string) => t.replace(/(^|\s)([a-z])/g, (_, sp: string, c: string) => sp + c.toUpperCase());
+
 export function ProductCard({
   id,
   name,
@@ -73,7 +76,7 @@ export function ProductCard({
   const showPrice = Boolean(price) && alwaysPrice;
 
   const statusLine = status && (
-    <span className={cn("tabular text-[12px]", status.attention ? "text-warning-text" : "text-muted-foreground")}>{status.text}</span>
+    <span className={cn("tabular text-[12px]", status.attention ? "text-warning-text" : "text-muted-foreground")}>{titleCase(status.text)}</span>
   );
 
   // Name, descriptor and price at the top left, clear of the icon; the status alone at the bottom left.
@@ -93,7 +96,7 @@ export function ProductCard({
   const foot = status && <span className="relative z-10 mt-4 max-w-[66%]">{statusLine}</span>;
 
   // In the image look what the customer holds is chips: the count, then (amber) what needs them.
-  const parts = status ? status.text.split(" · ") : [];
+  const parts = status ? titleCase(status.text).split(" · ") : [];
   const chips = status && (
     <span className="mt-3 flex flex-wrap gap-2">
       {parts.map((t, i) => (

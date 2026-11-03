@@ -41,7 +41,7 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
  * `sm` and up put these back to floating side panels (the `sm:` classes on each side).
  */
 const SHEET_MOBILE_BOTTOM =
-  "inset-x-0 bottom-[var(--keyboard-inset,0px)] top-auto h-auto max-h-[calc(92dvh-var(--keyboard-inset,0px))] w-full rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)] sm:rounded-3xl sm:pb-0";
+  "inset-x-0 bottom-0 top-auto h-auto max-h-[92dvh] w-full rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)] sm:rounded-3xl sm:pb-0";
 
 /** Dragged further than this (px), or flicked faster than DISMISS_VELOCITY (px/ms), and the sheet closes. */
 const DISMISS_DISTANCE = 110;

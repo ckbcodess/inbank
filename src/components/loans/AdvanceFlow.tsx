@@ -10,18 +10,18 @@
  *    what comes out of the next salary, so nothing on the review is a surprise.
  *  - A customer whose salary goes into an ordinary account is told on the form, not after Submit, that taking the
  *    advance switches it to a Salary Account, with what that costs. Agreeing is part of the one checkbox.
- *  - Figma shows an error dialog for someone who already has an advance; here the page says so in place, with the way
- *    to their advance. Someone who doesn't qualify gets the reason and what would change it.
+ *  - Figma shows an error dialog for someone who already has an advance; here they are sent straight to that advance.
+ *    Someone who doesn't qualify gets the reason and what would change it.
  *  - Figma authorises with a PIN; here it is the one-time code every payment uses.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { HandCoins } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { TermsAgreement, TermsHint } from "@/components/ui/terms-agreement";
+import { TermsAgreement } from "@/components/ui/terms-agreement";
 import { advanceTerms } from "@/lib/terms";
 import { InlineError } from "@/components/ui/inline-error";
 import { ReviewSummary } from "@/components/ui/review-summary";
@@ -94,7 +94,13 @@ export function AdvanceFlow() {
   const back = { href: LOANS_HOME, label: "Loans" };
   const title = product?.name ?? "Salary Advance";
 
-  if (!hydrated) return <FormPageSkeleton fields={2} />;
+  // Someone who already has an advance has nothing to do here: their advance is the page that helps.
+  const hasOpen = Boolean(open) && !made;
+  useEffect(() => {
+    if (hydrated && hasOpen && open) router.replace(`/loans/${open.id}`);
+  }, [hydrated, hasOpen, open, router]);
+
+  if (!hydrated || hasOpen) return <FormPageSkeleton fields={2} />;
 
   /* ── Outcomes come first: a request just made is "open" too ─────────── */
   if (screen === "success" && made) {
@@ -102,7 +108,7 @@ export function AdvanceFlow() {
     return (
       <PaymentSuccessScreen
         title="Advance paid in"
-        message={`${money(fees.received)} is in ${to?.name ?? "your account"}.`}
+        message="Your account will be credited shortly after approval."
         receiptRows={[
           ["Reference", made.reference],
           ["Advance", money(made.amount)],
@@ -143,24 +149,6 @@ export function AdvanceFlow() {
           action={
             <Button nativeButton={false} render={<Link href={LOANS_HOME} />}>
               Back to Loans
-            </Button>
-          }
-        />
-      </div>
-    );
-  }
-  if (open) {
-    return (
-      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
-        <PageHeader title={title} backTo={back} />
-        <LoansDevTools />
-        <TrueEmptyState
-          icon={<HandCoins size={22} strokeWidth={1.8} />}
-          title="You already have an advance"
-          description={`Repay it to take another. It’s due on ${formatDate(open.dueOn)}.`}
-          action={
-            <Button nativeButton={false} render={<Link href={`/loans/${open.id}`} />}>
-              View Advance
             </Button>
           }
         />
@@ -226,9 +214,6 @@ export function AdvanceFlow() {
             total={money(fees.received)}
             totalLabel="You receive"
           />
-          <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
-            {product.repaySentence(formatDate(dueOn), money(repay.total), money(num), money(repay.interest), repay.days)}
-          </p>
           <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject={`the ${title}`} terms={advanceTerms(needsSwitch)} also={needsSwitch ? "and to switching my account to a Salary Account" : undefined} />
           <div className="flex gap-2">
             <Button type="button" variant="outline" className="h-11 flex-1 text-[15px]" onClick={() => setScreen("form")}>
@@ -238,7 +223,6 @@ export function AdvanceFlow() {
               Confirm
             </Button>
           </div>
-          <TermsHint agreed={accepted} />
         </div>
         <TransactionOtpModal
           open={authOpen}
@@ -262,39 +246,29 @@ export function AdvanceFlow() {
           <FromAccountSelector accounts={accounts} value={toId} onChange={setPickedTo} label="Pay Into" />
         </div>
 
-        <div className="flex items-baseline justify-between gap-4 px-1">
-          <span className="flex flex-col">
-            <span className="text-[14px] text-foreground">You can take up to</span>
-            <span className="text-[12px] text-muted-foreground">{product.limitNote}</span>
-          </span>
-          <span className="tabular text-[18px] tracking-[var(--ls-tight)] text-foreground">{money(limit)}</span>
-        </div>
-
         <div className="flex flex-col gap-2">
           <AmountInput
             value={amount}
             onChange={setAmount}
             label="Amount"
+            helper={`You can take up to ${money(limit)}.`}
             hasError={tooSmall || tooBig}
             error={
               tooBig ? (
-                <InlineError message={`You can take up to ${money(limit)}.`} className="text-left" />
+                <InlineError message={`The maximum is ${money(limit)}.`} className="text-left" />
               ) : tooSmall ? (
                 <InlineError message={`The minimum is ${money(MIN_ADVANCE)}.`} className="text-left" />
               ) : undefined
             }
           />
-          <p className="px-1 text-[12px] text-muted-foreground">{`From ${money(MIN_ADVANCE)} to ${money(limit)}.`}</p>
         </div>
 
         {valid && (
           <div className={reveal}>
             <Rows
               rows={[
-                ["Fees, taken up front", money(fees.fees)],
                 ["You receive", money(fees.received)],
                 [`Repaid on ${formatDate(dueOn)}`, money(repay.total)],
-                ["Interest", `${money(dailyInterest(num))} a day`],
               ]}
             />
 

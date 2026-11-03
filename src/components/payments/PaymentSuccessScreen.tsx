@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
+  MessageSquareWarning,
   ReceiptText,
   Repeat,
   RotateCcw,
@@ -28,6 +29,7 @@ import { RoundAction } from "@/components/ui/round-action";
 import { Switch } from "@/components/ui/switch";
 import { DURATION, EASE } from "@/lib/motion";
 import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
+import { ReportIssueDialog } from "@/components/transactions/ReportIssueDialog";
 import { findTransaction } from "@/lib/mock-data";
 
 export interface SuccessActionCard {
@@ -43,6 +45,7 @@ const ACTION_LABEL: Record<string, string> = {
   feedback: "Feedback",
   schedule: "Schedule",
   receipt: "Receipt",
+  report: "Report Issue",
   download: "Receipt",
 };
 
@@ -334,6 +337,7 @@ export function PaymentSuccessScreen({
   // The receipt opens as a sheet over this page; there is no separate transaction page to leave for.
   const [receiptOpen, setReceiptOpen] = useState(false);
   const handleViewReceipt = () => setReceiptOpen(true);
+  const [reportOpen, setReportOpen] = useState(false);
 
   const handleSchedule = () => {
     if (onSchedulePayment) {
@@ -363,6 +367,11 @@ export function PaymentSuccessScreen({
       icon: ReceiptText,
       onClick: handleViewReceipt,
     },
+    {
+      id: "report",
+      label: "Report Issue",
+      icon: MessageSquareWarning,
+    },
   ];
 
   const actionCards = (customActionCards || defaultActionCards.filter((c) => !(hideSchedule && c.id === "schedule"))).map((card) => {
@@ -370,9 +379,12 @@ export function PaymentSuccessScreen({
       return {
         ...card,
         label: card.label === "Download Receipt" ? "View Receipt" : card.label,
-        icon: card.icon || ReceiptText,
+        icon: ReceiptText,
         onClick: handleViewReceipt,
       };
+    }
+    if (card.id === "report" && !card.onClick) {
+      return { ...card, icon: card.icon || MessageSquareWarning, onClick: () => setReportOpen(true) };
     }
     if (card.id === "feedback" && !card.onClick) {
       return {
@@ -663,6 +675,8 @@ export function PaymentSuccessScreen({
           )}
         </DialogContent>
       </Dialog>
+
+      <ReportIssueDialog open={reportOpen} onOpenChange={setReportOpen} reference={effectiveTxnId} />
 
       <TransactionDetailSheet
         transaction={receiptOpen ? findTransaction(effectiveTxnId) ?? null : null}

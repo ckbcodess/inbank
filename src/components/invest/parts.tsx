@@ -56,7 +56,7 @@ export function SecurityIcon({ kind, muted = false }: { kind: SecurityKind; mute
 /** Label on the left, value on the right, one line each. The same panel the scheduled payment and review screens use. */
 export function FactsPanel({ rows, keyRow }: { rows: Array<[React.ReactNode, React.ReactNode]>; keyRow?: number }) {
   return (
-    <div className="flex flex-col rounded-2xl border border-border bg-card p-2 text-[14px]">
+    <div className={cn(LIST_CARD_CLASS, "gap-0 text-[14px]")}>
       {rows.map(([label, value], i) =>
         i === keyRow ? (
           // The key fact, styled as the total on a payment review, with the same dashed line after it.

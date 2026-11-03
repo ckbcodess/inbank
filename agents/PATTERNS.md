@@ -409,8 +409,8 @@ When business needs a screen personal banking has (cards, beneficiaries, setting
   The picture's height follows the viewport (22%, 120 to 315px) so the action stays above the fold. Highlights live in
   `lib/insurance-plans.ts` (plans), `components/loans/AdvanceInfo.tsx` and `lib/product-highlights.ts` (bills, bonds); Term
   Deposits' come from its offers.
-- **Instrument page (Invest):** pitched like a plan (`OfferDetail`): picture of the kind, three benefits specific to the
-  instrument (rate, dates, how it ends), the worked example on the divider ("GHS 1,000.00 returns ..."), then Invest.
+- **Instrument (Invest):** no page of its own (designer, 2026-11-03). A row on a product's list opens its flow; a bill or bond that
+  can't start yet (no securities account, market closed, account pending) opens a modal that says why (`gateFor`, `components/invest/offers.tsx`).
 - **Header:** the back arrow and title sit inside the same centred column as the content, so they line up with it.
 - **Item:** a detail page (§5). Back goes to the product page, not the shelf.
 - **The gate** (insurance profile, securities account, a salary paid into GCB) appears only at the button, never as a

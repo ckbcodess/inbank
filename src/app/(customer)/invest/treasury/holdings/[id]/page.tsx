@@ -10,13 +10,12 @@ import { CalendarClock, FileText, Undo2 } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { ProductBanner } from "@/components/ui/product-banner";
 import { holdingAlert } from "@/lib/product-alerts";
-import { Badge } from "@/components/ui/badge";
 import { ActionTile } from "@/components/ui/action-tile";
 import { InvestmentDetailSkeleton } from "@/components/states/PageSkeletons";
 import { FactsPanel, HoldingNotFound, TREASURY_HOME, INVEST_HOME } from "@/components/invest/parts";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { formatDate, formatMoney } from "@/lib/mock-data";
-import { couponPerPeriod, daysLeftLabel, formatRate, instructionLabel, kindLabel, useHolding } from "@/lib/treasury";
+import { couponPerPeriod, daysLeftLabel, formatRate, instructionLabel, useHolding } from "@/lib/treasury";
 import { cn } from "@/lib/utils";
 
 export default function HoldingDetailPage() {
@@ -48,7 +47,6 @@ export default function HoldingDetailPage() {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader
         title={h.title}
-        badge={<Badge variant="secondary">{kindLabel(h.kind)}</Badge>}
         backTo={{ href: INVEST_HOME, label: "Invest" }}
       />
       <ProductBanner alert={holdingAlert(h)} />

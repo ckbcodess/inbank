@@ -621,22 +621,6 @@ function InvestProductsSkeletonBody({ groups = 1, rows = 3, action = false }: { 
   );
 }
 
-/** An Invest offer's page (/invest/offer/[key]): the same pitch as a product page, then Invest and Terms and Conditions. */
-function OfferDetailSkeletonBody() {
-  return (
-    <Frame className={NARROW_COLUMN}>
-      <BackHeaderBones title="w-45" />
-      <div className="flex flex-col gap-6">
-        <PitchBones />
-        <div className="flex flex-col gap-2">
-          <Bone className="h-11 w-full rounded-xl" />
-          <Bone className="h-11 w-full rounded-xl" />
-        </div>
-      </div>
-    </Frame>
-  );
-}
-
 /** Single investment holding/deposit detail page: hero amount, facts card, and 3 action tiles. */
 function InvestmentDetailSkeletonBody() {
   return (
@@ -833,14 +817,6 @@ export function InvestProductsSkeleton(props?: Parameters<typeof InvestProductsS
   return (
     <Skeleton loading label="Loading">
       <InvestProductsSkeletonBody {...props} />
-    </Skeleton>
-  );
-}
-
-export function OfferDetailSkeleton() {
-  return (
-    <Skeleton loading label="Loading">
-      <OfferDetailSkeletonBody />
     </Skeleton>
   );
 }

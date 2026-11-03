@@ -428,10 +428,10 @@ function ClaimForm({ policy }: { policy: Policy }) {
               value={amount}
               onChange={setAmount}
               label="How Much Do You Want to Borrow?"
+              helper={`Up to ${money(loanMax)}. ${PROVIDER} sets the interest when it approves.`}
               hasError={Boolean(loanError)}
               error={loanError ? <InlineError message={loanError} className="text-left" /> : undefined}
             />
-            <p className="-mt-3 px-1 text-[12px] text-muted-foreground">{`Up to ${money(loanMax)}. ${PROVIDER} sets the interest when it approves.`}</p>
           </div>
         )}
 

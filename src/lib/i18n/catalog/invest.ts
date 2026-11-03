@@ -267,6 +267,9 @@ const invest: Entry[] = [
   ["Close on maturity", "Clôturer à l’échéance", "Cerrar al vencimiento", "到期关闭"],
   ["Your deposit and its interest are paid into your account when it matures.", "Votre dépôt et ses intérêts sont versés sur votre compte à l’échéance.", "Tu depósito y sus intereses se abonan en tu cuenta al vencimiento.", "到期时，存款及利息将支付到您的账户。"],
   ["Roll over principal amount", "Reconduire le capital", "Renovar el capital", "本金展期"],
+  ["Roll over principal and interest", "Reconduire le capital et les intérêts", "Renovar el capital y los intereses", "本金和利息一并展期"],
+  ["Nothing is paid out. The principal and the interest stay invested for the same period, at the rate on that day.", "Rien n’est versé. Le capital et les intérêts restent placés pour la même durée, au taux en vigueur ce jour-là.", "No se abona nada. El capital y los intereses siguen invertidos por el mismo plazo, a la tasa de ese día.", "不会支付任何款项。本金和利息将按当日利率继续投资相同期限。"],
+  ["Nothing paid out", "Rien n’est versé", "No se abona nada", "无支付款项"],
   ["The interest is paid into your account. The principal stays invested for the same period, at the rate on that day.", "Les intérêts sont versés sur votre compte. Le capital reste placé pour la même durée, au taux en vigueur ce jour-là.", "Los intereses se abonan en tu cuenta. El capital sigue invertido por el mismo plazo, a la tasa de ese día.", "利息将支付到您的账户。本金按相同期限继续存入，利率按当日利率执行。"],
 
   // ── One Invest page ──

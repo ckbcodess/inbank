@@ -13,7 +13,7 @@
  */
 
 import { useMemo, useState } from "react";
-import { TermsAgreement, TermsHint } from "@/components/ui/terms-agreement";
+import { TermsAgreement } from "@/components/ui/terms-agreement";
 import { securityTerms } from "@/lib/terms";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -196,7 +196,6 @@ export function BuyFlow() {
               Confirm
             </Button>
           </div>
-          <TermsHint agreed={accepted} />
         </div>
         <TransactionOtpModal
           open={authOpen}
@@ -244,7 +243,6 @@ export function BuyFlow() {
               />
               {overBalance && <InsufficientFundsAlert />}
               {overLot && lot !== undefined && <InlineError message={`Only ${money(lot)} of face value is on offer.`} className="text-left" />}
-              <p className="px-1 text-[12px] text-muted-foreground">{sec.kind === "bond" ? "Face value is repaid at maturity, with interest every 6 months." : "Face value is what you receive at maturity."}</p>
             </div>
 
             {valid && (

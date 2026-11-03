@@ -43,7 +43,7 @@ export function LoansHome({ loading: forced = false }: { loading?: boolean }) {
 
   const status: ProductStatus | undefined =
     active.length > 0
-      ? { text: `${active.length === 1 ? "1 loan" : `${active.length} loans`}${overdue ? " · payment overdue" : ""}`, attention: overdue }
+      ? { text: `${active.length === 1 ? "1 Loan" : `${active.length} Loans`}${overdue ? " · Payment Overdue" : ""}`, attention: overdue }
       : undefined;
 
   return (
@@ -58,11 +58,9 @@ export function LoansHome({ loading: forced = false }: { loading?: boolean }) {
           <ProductCard
             id="advance"
             name={shown.name}
-            line={shown.line}
-            price={income ? { label: "Up to", amount: formatMoney(limit, "GHS", showAmounts) } : undefined}
+            line={income ? `Up to ${formatMoney(limit, "GHS", showAmounts)} · ${shown.limitNote}` : shown.line}
             status={loading ? undefined : status}
             image={PRODUCT_IMAGES.advance}
-            alwaysPrice
             look={look}
             layout={layout}
             href={ADVANCE_PRODUCT_HREF}

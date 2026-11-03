@@ -6,7 +6,6 @@ import { ArrowLeftRight, Landmark, AlertCircle, Check, User } from "@/components
 import { BankMark } from "@/components/ui/bank-mark";
 import { SearchPicker, type PickerItem } from "@/components/ui/search-picker";
 import { AppLoader } from "@/components/ui/loader";
-import { ActionBar } from "@/components/ui/action-bar";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -810,6 +809,7 @@ export function AmountInput({
   currency = "GHS",
   label = "Enter Amount",
   error,
+  helper,
   hasError,
   disabled,
   onNext,
@@ -822,6 +822,8 @@ export function AmountInput({
   currency?: string;
   label?: string;
   error?: React.ReactNode;
+  /** A quiet line under the amount ("You can take up to GHS 20,000.00"). An error takes its place. */
+  helper?: React.ReactNode;
   hasError?: boolean;
   disabled?: boolean;
   enterKeyHint?: "next" | "done" | "go" | "search" | "send" | "enter" | "previous";
@@ -1050,10 +1052,12 @@ export function AmountInput({
           </div>
         </div>
       </div>
-      {error && (
+      {error ? (
         <div className="animate-in fade-in slide-in-from-top-1 duration-150">
           {error}
         </div>
+      ) : (
+        helper && <p className="text-[13px] text-muted-foreground">{helper}</p>
       )}
 </Field>
   );
@@ -1180,19 +1184,17 @@ export function ProceedButton({
   loading?: boolean;
 }) {
   return (
-    <ActionBar>
-      <Button
-        size="xl"
-        type="button"
-        data-proceed-cta="true"
-        className="w-full"
-        disabled={disabled}
-        loading={loading}
-        onClick={onClick}
-      >
-        {label}
-      </Button>
-    </ActionBar>
+    <Button
+      size="xl"
+      type="button"
+      data-proceed-cta="true"
+      className="w-full"
+      disabled={disabled}
+      loading={loading}
+      onClick={onClick}
+    >
+      {label}
+    </Button>
   );
 }
 

@@ -11,7 +11,6 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
-import { Field } from "@/components/ui/field";
 import { InlineError } from "@/components/ui/inline-error";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
@@ -22,7 +21,7 @@ import { HoldingNotFound, TREASURY_HOME, INVEST_HOME } from "@/components/invest
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { roundMoney } from "@/lib/money";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
-import { formatRate, REDISCOUNT_RATE, rediscountNet, useHolding, useTreasury, useTreasuryAccounts } from "@/lib/treasury";
+import { rediscountNet, useHolding, useTreasury, useTreasuryAccounts } from "@/lib/treasury";
 
 type Kind = "full" | "partial";
 const KINDS: readonly { value: Kind; label: string }[] = [
@@ -86,33 +85,21 @@ export default function RediscountPage() {
     );
   }
 
-  const rows: Array<[string, string]> = [
-    ["Face value cashed in", money(redeem)],
-    ["Rediscount rate", formatRate(REDISCOUNT_RATE)],
-    ["Cost of cashing in early", money(costOfEarly)],
-    ...(full ? [] : ([["Stays invested", money(kept)]] as Array<[string, string]>)),
-  ];
-
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Rediscount" backTo={back} />
       <div className="flex flex-col gap-5 animate-in fade-in duration-200">
-        <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
-          {`Rediscounting means cashing in before it matures on ${formatDate(h.maturity)}. You’re paid today’s value, which is less than the face value.`}
-        </p>
-
         <FromAccountSelector accounts={accounts} value={toId} onChange={setPickedTo} label="To Account" />
 
-        <Field label="Rediscount Type">
-          <SegmentedControl aria-label="Rediscount type" options={KINDS} value={kind} onChange={setKind} />
-        </Field>
+        <SegmentedControl aria-label="Rediscount type" options={KINDS} value={kind} onChange={setKind} fullWidth />
 
         {!full && (
           <div className="animate-in fade-in slide-in-from-top-2 duration-200">
             <AmountInput
               value={amount}
               onChange={setAmount}
-              label={`Face Value to Cash In, Up to ${money(h.face)}`}
+              label="Face Value to Cash In"
+              helper={`Up to ${money(h.face)}.`}
               hasError={wholeByAccident}
               error={wholeByAccident ? <InlineError message="That’s the whole investment. Choose Full Rediscount to cash it all in." className="text-left" /> : undefined}
             />
@@ -120,23 +107,21 @@ export default function RediscountPage() {
         )}
 
         {valid && (
-          <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200">
-            <section className="flex flex-col gap-2 px-1">
-              <span className="text-[13px] text-muted-foreground">You receive today</span>
-              <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(net)}</span>
-              <span className="tabular text-[14px] text-muted-foreground">
-                {`Instead of ${money(redeem)} on ${formatDate(h.maturity)}`}
-              </span>
-            </section>
-            <dl className="flex flex-col gap-2 px-1 text-[14px]">
-              {rows.map(([label, value]) => (
-                <div key={label} className="flex items-baseline justify-between gap-5">
-                  <dt className="text-muted-foreground">{label}</dt>
-                  <dd className="tabular text-right text-foreground">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
+          <dl className="flex flex-col gap-2 px-1 text-[14px] animate-in fade-in slide-in-from-top-2 duration-200">
+            {(
+              [
+                ["You receive today", money(net)],
+                ["Cost of cashing in early", money(costOfEarly)],
+                ...(full ? [] : [["Stays invested", money(kept)]]),
+                ["Matures", formatDate(h.maturity)],
+              ] as Array<[string, string]>
+            ).map(([label, value]) => (
+              <div key={label} className="flex items-baseline justify-between gap-5">
+                <dt className="text-muted-foreground">{label}</dt>
+                <dd className="tabular text-right text-foreground">{value}</dd>
+              </div>
+            ))}
+          </dl>
         )}
 
         <div>
