@@ -19,6 +19,7 @@ import { RouteLoadingProvider } from "@/components/providers/RouteLoadingProvide
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { NavHistoryTracker } from "@/components/layout/NavHistoryTracker";
 import { SidiAssistantWidget } from "@/components/layout/SidiAssistantWidget";
+import { SkulletProvider } from "skullet/react";
 
 const openSans = Open_Sans({
   variable: "--font-sans",
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <NavHistoryTracker />
         <ThemeProvider>
+          <SkulletProvider theme={{ animation: "shimmer" }}>
           <MotionProvider>
           <LanguageProvider>
             <RouteLoadingProvider>
@@ -79,6 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </RouteLoadingProvider>
           </LanguageProvider>
           </MotionProvider>
+          </SkulletProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -57,6 +57,43 @@
 
 /* Type scale: sizes that step up at breakpoints. One name per step, so the numbers live here only.
    Named type-*, not text-*, so tailwind-merge doesn't mistake it for a colour. */
+/* The primary button's finish (Figma "Button" 2439:7372): the brand fill lit from the top and bottom edges, a hairline
+   border a shade deeper than the fill, and a short warm shadow stack. Built from --primary so a theme that
+   changes the brand colour carries it along. */
+@utility primary-sheen {
+  background-color: var(--primary);
+  background-image:
+    radial-gradient(ellipse 70% 100% at 50% 0%, var(--primary-glow-top), transparent 72%),
+    radial-gradient(ellipse 70% 100% at 50% 100%, var(--primary-glow-bottom), transparent 72%),
+    linear-gradient(to bottom, var(--primary-fill-top), var(--primary));
+  border-color: var(--primary-edge);
+  box-shadow:
+    0 1px 2px 0 var(--primary-shadow),
+    0 4px 4px 0 color-mix(in srgb, var(--primary-shadow) 87%, transparent),
+    0 10px 6px 0 color-mix(in srgb, var(--primary-shadow) 53%, transparent),
+    0 17px 7px 0 color-mix(in srgb, var(--primary-shadow) 13%, transparent);
+  &:disabled {
+    background-image: none;
+    box-shadow: none;
+  }
+}
+/* A field's edge, drawn as a box shadow rather than a stroke: a 1px ring in --field-border, a slight drop shadow
+   under it, and a 2px ring in the focus or error colour when the control (or anything inside it) has focus or is
+   invalid. Pair it with `border-transparent` so the box keeps its size. */
+@utility field-surface {
+  box-shadow: 0 0 0 1px var(--field-border), 0 2px 2px -1px var(--field-drop);
+  &:focus,
+  &:focus-visible,
+  &:focus-within,
+  &[data-open] {
+    box-shadow: 0 0 0 2px var(--field-border-focus), 0 2px 2px -1px var(--field-drop);
+  }
+  &[aria-invalid="true"],
+  &[data-invalid="true"],
+  &:has([aria-invalid="true"]) {
+    box-shadow: 0 0 0 2px var(--destructive), 0 2px 2px -1px var(--field-drop);
+  }
+}
 @utility type-page-title { @apply text-[18px] sm:text-[20px] lg:text-[22px]; }
 
 /* Page header to first content: 40px on a phone, 48px from sm, on every page. The header (`data-page-header`, set by
@@ -358,6 +395,13 @@
   /* Account Details balance card (Figma 1896:15407) — slate tint over the page. */
   --account-card: color-mix(in srgb, var(--smoke-600) 7.8%, transparent);
   --popover: var(--menu);
+  /* Primary button finish (see `primary-sheen`): edge glows, the lit top of the fill, the border, and the shadow
+     (its opacity sets the strength of the whole stack). All follow --primary until tuned. */
+  --primary-glow-top: #ffffff4d;
+  --primary-glow-bottom: #ffffff59;
+  --primary-fill-top: #ffc423;
+  --primary-edge: color-mix(in srgb, var(--primary) 88%, var(--amber-500));
+  --primary-shadow: #dbaa2426;
   /* GCB Bank PLC brand amber: #FFC423 */
   --primary: var(--amber-400);
   --primary-hover: var(--amber-300);
@@ -399,6 +443,10 @@
   --glass-shade: var(--amber-950);
   /* The soft highlight that sweeps across a loading skeleton. */
   --skeleton-shine: color-mix(in srgb, var(--white) 60%, transparent);
+  /* Skullet's skeletons (measured from real content) use the same bone and shine as the hand-built ones. */
+  --skullet-base: color-mix(in srgb, var(--muted) 60%, transparent);
+  --skullet-highlight: var(--skeleton-shine);
+  --skullet-radius: var(--radius-lg);
   /* The two circles of the Mastercard mark, wherever a card shows its network. */
   --mc-red: #eb001b;
   --mc-orange: #f79e1b;
@@ -452,6 +500,7 @@
   --field-hover: var(--gray-50);
   --field-focus: var(--white);
   --field-border: var(--gray-200);
+  --field-drop: color-mix(in srgb, var(--black) 6%, transparent);
   --field-border-focus: var(--gray-875);
   /* Dropdown menus. */
   --menu: var(--white);
@@ -480,6 +529,13 @@
   /* And the salary advance on Loans. */
   --plan-art-advance-1: #45ae58;
   --plan-art-advance-2: #28641f;
+  /* The loans taken out in the Loan Origination Solution. */
+  --plan-art-personal-loan-1: #8ec5ee;
+  --plan-art-personal-loan-2: #5aa0d8;
+  --plan-art-business-loan-1: var(--smoke-300);
+  --plan-art-business-loan-2: var(--smoke-500);
+  --plan-art-sme-loan-1: var(--amber-300);
+  --plan-art-sme-loan-2: var(--amber-500);
   /* Dashboard promo banners (gold, green, blue) and the total balance card: three stops each. */
   --banner-gold-1: #fefbf2;
   --banner-gold-2: #fbf3db;
@@ -585,6 +641,7 @@
                        kept on hover — the rest is mixed toward --hover-mix-color.
      Tune these (and their .dark overrides) to change hover feel app-wide. */
   --hover-overlay: 5%;
+  --press-overlay: 8%;
   --hover-fill: 90%;
   --hover-mix-color: #000;
   --active-bg: var(--white);
@@ -599,9 +656,22 @@
   --shadow-color: color-mix(in srgb, var(--black) 6%, transparent);
   --shadow-3: 0 0 0 1px var(--shadow-color), 0 1px 1px -0.5px var(--shadow-color), 0 3px 3px -1.5px var(--shadow-color);
   --shadow-5: 0 0 0 1px var(--shadow-color), 0 1px 1px -0.5px var(--shadow-color), 0 3px 3px -1.5px var(--shadow-color), 0 6px 6px -3px var(--shadow-color), 0 12px 12px -6px var(--shadow-color);
+
+  /* Tactile surfaces (Tactile design skill, mapped onto our tokens). A raised thing is a fine ring (its edge) plus a
+     crisp 1px drop, plus at most one short drop for height. The ring replaces the border, so a surface that takes one
+     of these never also gets `border` or `ring-*`. Dark redefines the same names below. */
+  --shadow-button: 0 0 0 1px color-mix(in srgb, var(--black) 9%, transparent), 0 1px 1px 0 color-mix(in srgb, var(--black) 5%, transparent);
+  --shadow-card: 0 0 0 1px color-mix(in srgb, var(--black) 10%, transparent), 0 1px 2px 0 color-mix(in srgb, var(--black) 10%, transparent), 0 3px 4px -2px color-mix(in srgb, var(--black) 6%, transparent);
+  --shadow-menu: 0 0 0 1px color-mix(in srgb, var(--black) 12%, transparent), 0 1px 2px 0 color-mix(in srgb, var(--black) 12%, transparent), 0 4px 8px -4px color-mix(in srgb, var(--black) 14%, transparent);
+  --shadow-modal: 0 0 0 1px color-mix(in srgb, var(--black) 10%, transparent), 0 1px 2px 0 color-mix(in srgb, var(--black) 12%, transparent), 0 6px 8px -4px color-mix(in srgb, var(--black) 16%, transparent);
 }
 
 .dark {
+  /* Primary button finish, tuned for dark (the edge carries over from :root). */
+  --primary-glow-top: #ffffff40;
+  --primary-glow-bottom: #ffffff40;
+  --primary-fill-top: #ffbb00;
+  --primary-shadow: #70500026;
   /* Neutral palette FIXED (neutral scale, dark mode). The accent is the same GCB amber as light mode. */
   --background: var(--gray-950);
   --foreground: var(--gray-50);
@@ -661,6 +731,8 @@
   --glass-shine: var(--white);
   --glass-shade: var(--red-500);
   --skeleton-shine: color-mix(in srgb, var(--white) 7%, transparent);
+  --skullet-base: color-mix(in srgb, var(--muted) 60%, transparent);
+  --skullet-highlight: var(--skeleton-shine);
   /* The two circles of the Mastercard mark, wherever a card shows its network. */
   --mc-red: #eb001b;
   --mc-orange: #f79e1b;
@@ -707,6 +779,7 @@
   --field-hover: var(--gray-825);
   --field-focus: var(--gray-875);
   --field-border: var(--gray-750);
+  --field-drop: color-mix(in srgb, var(--black) 30%, transparent);
   --field-border-focus: var(--gray-500);
   --menu: var(--gray-850);
   --menu-item-hover: var(--gray-800);
@@ -777,6 +850,7 @@
   --ripple-color: currentColor;
   /* Dark-mode hover intensity */
   --hover-overlay: 8%;
+  --press-overlay: 13%;
   --hover-fill: 85%;
   --hover-mix-color: #000;
   --active-bg: color-mix(in srgb, var(--white) 5.1%, transparent);
@@ -794,6 +868,13 @@
   --dm-drop: rgba(0,0,0,0.18);
   --shadow-3: inset 0 1px 0 0 var(--dm-hi-mid), inset 0 0 0 1px var(--dm-ring-base), 0 0 0 1px rgba(0,0,0,0.12), 0 1px 1px -0.5px var(--dm-drop), 0 3px 3px -1.5px var(--dm-drop);
   --shadow-5: inset 0 1px 0 0 var(--dm-hi-high), inset 0 0 0 1px var(--dm-ring-mid), 0 0 0 1px rgba(0,0,0,0.16), 0 1px 1px -0.5px var(--dm-drop), 0 3px 3px -1.5px var(--dm-drop), 0 6px 6px -3px var(--dm-drop), 0 12px 12px -6px var(--dm-drop);
+
+  /* Tactile surfaces, dark: one solid 0.5px outline lighter than the fill (the same colour all round, never a lit top
+     edge) and a black drop that is always darker than the parent, never a glow. */
+  --shadow-button: 0 0 0 0.5px color-mix(in srgb, var(--white) 16%, transparent), 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --shadow-card: 0 0 0 0.5px color-mix(in srgb, var(--white) 12%, transparent), 0 1px 2px 0 rgb(0 0 0 / 0.5), 0 3px 4px -2px rgb(0 0 0 / 0.5);
+  --shadow-menu: 0 0 0 0.5px color-mix(in srgb, var(--white) 16%, transparent), 0 1px 2px 0 rgb(0 0 0 / 0.5), 0 4px 8px -4px rgb(0 0 0 / 0.6);
+  --shadow-modal: 0 0 0 0.5px color-mix(in srgb, var(--white) 14%, transparent), 0 1px 2px 0 rgb(0 0 0 / 0.5), 0 6px 8px -4px rgb(0 0 0 / 0.6);
 }
 
 
@@ -881,6 +962,9 @@ html.i18n-pending body {
   --primary: var(--smoke-600);
   --primary-hover: var(--smoke-500);
   --primary-foreground: var(--white);
+  --primary-fill-top: color-mix(in srgb, var(--primary) 90%, var(--white));
+  --primary-edge: var(--primary);
+  --primary-shadow: color-mix(in srgb, var(--smoke-950) 15%, transparent);
   --ring: var(--smoke-400);
   --tile-accent: var(--smoke-600);
   --duo-accent: var(--smoke-400);
@@ -905,6 +989,9 @@ html.i18n-pending body {
   --primary: var(--smoke-600);
   --primary-hover: var(--smoke-500);
   --primary-foreground: var(--white);
+  --primary-fill-top: color-mix(in srgb, var(--primary) 90%, var(--white));
+  --primary-edge: var(--primary);
+  --primary-shadow: color-mix(in srgb, var(--smoke-950) 15%, transparent);
   --ring: var(--smoke-300);
   --tile-accent: var(--smoke-300);
   --duo-accent: var(--smoke-300);
@@ -956,6 +1043,10 @@ a,
   .hover-surface:hover {
     background-color: color-mix(in oklch, var(--foreground) var(--hover-overlay), transparent);
   }
+}
+/* Pressed: one step past hover, so a click has a cue that is not motion. */
+.hover-surface:active {
+  background-color: color-mix(in oklch, var(--foreground) var(--press-overlay), transparent);
 }
 .hover-surface[aria-expanded="true"],
 .hover-surface[data-popup-open] {
@@ -1217,7 +1308,6 @@ select {
 .dark [role="dialog"] textarea,
 .dark [role="dialog"] [data-slot="select-trigger"] {
   background-color: rgba(255, 255, 255, 0.075);
-  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .dark [data-slot="dialog-content"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="range"]):not(.bg-transparent):focus,
@@ -1229,7 +1319,6 @@ select {
 .dark [role="dialog"] textarea:focus,
 .dark [role="dialog"] [data-slot="select-trigger"]:focus-visible {
   background-color: rgba(255, 255, 255, 0.10);
-  border-color: var(--primary);
 }
 
 /* Dashboard hero: a very slow, subtle wave of light across the gradient.
@@ -1719,6 +1808,12 @@ html[data-hide-focus-ring] :focus-visible * {
   outline-color: transparent !important;
   outline: none !important;
   box-shadow: none !important;
+}
+/* A field's edge is its box shadow, so it keeps the resting edge while the focus ring is hidden. */
+html[data-hide-focus-ring] .field-surface:focus,
+html[data-hide-focus-ring] .field-surface:focus-visible,
+html[data-hide-focus-ring] .field-surface:focus-within {
+  box-shadow: 0 0 0 1px var(--field-border), 0 2px 2px -1px var(--field-drop) !important;
 }
 
 /* @kitlangton/rolling-number (the balance roll) ships `.rn-ink { will-change: transform }`

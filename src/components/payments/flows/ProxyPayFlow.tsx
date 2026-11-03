@@ -121,7 +121,7 @@ export function ProxyPayFlow({
                     onChange("benName", resolved);
                   }
                 }}
-                placeholder="Enter a proxy ID"
+                placeholder="Enter Proxy ID"
                 
               />
             </div>

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tactile: before and after</title>
+<style>
+:root{
+  --bg:#f4f4f3; --card:#fafaf9; --fg:#1a1a18; --muted:#6b6b66; --border:#dcdcd8; --menu:#fff; --modal:#fff;
+  --amber:#ffc423; --amber-fg:#3d2c00; --black:#000; --white:#fff;
+  --sb:0 0 0 1px color-mix(in srgb,var(--black) 9%,transparent),0 1px 1px 0 color-mix(in srgb,var(--black) 5%,transparent);
+  --sc:0 0 0 1px color-mix(in srgb,var(--black) 10%,transparent),0 1px 2px 0 color-mix(in srgb,var(--black) 10%,transparent),0 3px 4px -2px color-mix(in srgb,var(--black) 6%,transparent);
+  --sm:0 0 0 1px color-mix(in srgb,var(--black) 12%,transparent),0 1px 2px 0 color-mix(in srgb,var(--black) 12%,transparent),0 4px 8px -4px color-mix(in srgb,var(--black) 14%,transparent);
+  --smo:0 0 0 1px color-mix(in srgb,var(--black) 10%,transparent),0 1px 2px 0 color-mix(in srgb,var(--black) 12%,transparent),0 6px 8px -4px color-mix(in srgb,var(--black) 16%,transparent);
+  --hover:color-mix(in srgb,var(--fg) 6%,transparent);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+body.dark{
+  --bg:#0c0c0b; --card:#1b1b19; --fg:#eeeeec; --muted:#9a9a94; --border:#33332f; --menu:#222220; --modal:#1b1b19;
+  --sb:0 0 0 .5px color-mix(in srgb,var(--white) 16%,transparent),0 1px 2px 0 rgb(0 0 0/.5);
+  --sc:0 0 0 .5px color-mix(in srgb,var(--white) 12%,transparent),0 1px 2px 0 rgb(0 0 0/.5),0 3px 4px -2px rgb(0 0 0/.5);
+  --sm:0 0 0 .5px color-mix(in srgb,var(--white) 16%,transparent),0 1px 2px 0 rgb(0 0 0/.5),0 4px 8px -4px rgb(0 0 0/.6);
+  --smo:0 0 0 .5px color-mix(in srgb,var(--white) 14%,transparent),0 1px 2px 0 rgb(0 0 0/.5),0 6px 8px -4px rgb(0 0 0/.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 "Open Sans",system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:20px;font-weight:500;margin:0 0 4px}
+h2{font-size:16px;font-weight:500;margin:0 0 12px}
+p.note{color:var(--muted);font-size:12px;margin:0 0 12px}
+.bar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:40px}
+.theme{font:inherit;font-size:13px;padding:0 12px;height:36px;border-radius:12px;border:0;background:var(--card);color:var(--fg);box-shadow:var(--sb);cursor:pointer}
+section{margin-bottom:48px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.pair{grid-template-columns:1fr}}
+.col{background:var(--bg);border-radius:16px;padding:16px;border:1px dashed var(--border)}
+.tag{font-size:12px;color:var(--muted);margin-bottom:12px;display:block}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+/* buttons */
+.btn{font:inherit;font-size:13px;font-weight:500;height:36px;padding:0 12px;border-radius:12px;border:1px solid transparent;cursor:pointer;color:var(--fg);background:transparent;transition:transform 250ms var(--ease),background-color 150ms,box-shadow 150ms}
+.btn.sm{height:28px;font-size:12.5px;padding:0 8px}
+.btn.xs{height:20px;font-size:12px;padding:0 8px}
+.btn.primary{background:var(--amber);color:var(--amber-fg);box-shadow:0 1px 2px #dbaa2440}
+.btn.outline{background:var(--bg)}
+.before .btn.outline{border-color:var(--border)}
+
+.after .btn.outline{border-color:var(--border);box-shadow:0 1px 1px 0 rgb(0 0 0/.04)}
+
+
+.btn.outline:hover{background:color-mix(in srgb,var(--bg),var(--fg) 6%)}
+
+/* cards */
+.card{background:var(--card);border-radius:12px;padding:16px;transition:transform 250ms var(--ease);cursor:pointer;user-select:none}
+.card b{font-weight:500;display:block}.card span{font-size:12px;color:var(--muted)}
+.before .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 10%,transparent)}
+.after .card{box-shadow:var(--sc)}
+.after .card:active{transform:scale(.99)}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);border-radius:12px;overflow:hidden}
+th{text-align:left;font-weight:500;color:var(--muted);padding:8px 12px;background:color-mix(in srgb,var(--fg) 3%,transparent)}
+td{padding:8px 12px;border-top:1px solid var(--border)}
+tr.r{transition:background-color 150ms;cursor:default}
+tr.r:hover{background:color-mix(in srgb,var(--fg) 4%,transparent)}
+.after tr.r{cursor:pointer}.after tr.r:active{background:color-mix(in srgb,var(--fg) 9%,transparent)}
+td.n{font-variant-numeric:tabular-nums;text-align:right}
+
+/* chart */
+.chart{position:relative;height:120px;display:flex;align-items:flex-end;gap:8px;padding:0 4px}
+.chart i{flex:1;background:var(--amber);border-radius:4px 4px 0 0;opacity:.85}
+.tip{position:absolute;left:40%;top:-4px;background:var(--bg);border-radius:8px;padding:8px;font-size:12px}
+.before .tip{border:1px solid color-mix(in srgb,var(--border) 50%,transparent);box-shadow:0 20px 25px -5px rgb(0 0 0/.1),0 8px 10px -6px rgb(0 0 0/.1)}
+.after .tip{box-shadow:var(--sm)}
+
+/* dropdown */
+.menuwrap{display:flex;flex-direction:column;gap:8px}
+.menu{background:var(--menu);border-radius:12px;padding:4px;width:200px}
+.menu div{padding:8px;border-radius:8px;font-size:13px;transition:background-color 150ms}
+.menu div:hover{background:var(--hover)}
+.before .menu{box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 10%,transparent),0 0 0 1px color-mix(in srgb,var(--black) 6%,transparent),0 3px 3px -1.5px color-mix(in srgb,var(--black) 6%,transparent)}
+.after .menu{box-shadow:var(--sm)}
+
+/* sheet */
+.sheet{background:var(--modal);border-radius:20px;padding:16px;width:100%}
+.sheet b{font-weight:500;font-size:16px;display:block;margin-bottom:4px}
+.sheet p{margin:0 0 16px;color:var(--muted);font-size:13px}
+.before .sheet{border:1px solid color-mix(in srgb,var(--black) 8%,transparent);box-shadow:0 24px 64px rgba(0,0,0,.22),0 1px 3px rgba(0,0,0,.06)}
+.body.dark .before .sheet,body.dark .before .sheet{border-color:rgba(255,255,255,.1);box-shadow:0 28px 72px rgba(0,0,0,.72)}
+.after .sheet{box-shadow:var(--smo)}
+.sheetstage{padding:16px 0 40px}
+@media(prefers-reduced-motion:reduce){.btn,.card{transition:none}.after .btn:active,.after .card:active{transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <div>
+      <h1>Tactile: before and after</h1>
+      <p class="note" style="margin:0">Press the buttons, cards and rows to feel the difference. Same GCB amber and Open Sans; only the edge, drop and press change.</p>
+    </div>
+    <button class="theme" id="theme">Dark</button>
+  </div>
+
+  <section>
+    <h2>Buttons</h2>
+    <p class="note">Buttons no longer shrink when pressed. Outline buttons keep their border, with a faint drop and a solid hover fill.</p>
+    <div class="pair">
+      <div class="col before"><span class="tag">Before</span><div class="row"><button class="btn primary">Send money</button><button class="btn outline">Save for later</button><button class="btn outline sm">Filter</button><button class="btn outline xs">3</button></div></div>
+      <div class="col after"><span class="tag">After</span><div class="row"><button class="btn primary">Send money</button><button class="btn outline">Save for later</button><button class="btn outline sm">Filter</button><button class="btn outline xs">3</button></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Cards</h2>
+    <p class="note">The faint ring becomes a raised edge: ring, 1px drop and a short drop for height. A card you can tap settles to 0.99 under the finger.</p>
+    <div class="pair">
+      <div class="col before"><span class="tag">Before</span><div class="card"><b>Savings</b><span>GHS 12,400.00 · tap to open</span></div></div>
+      <div class="col after"><span class="tag">After</span><div class="card"><b>Savings</b><span>GHS 12,400.00 · tap to open</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tables</h2>
+    <p class="note">Hairlines and layout are unchanged (your calm rule). A row that opens something now presses one step darker while held; before it only hovered.</p>
+    <div class="pair">
+      <div class="col before"><span class="tag">Before</span>
+        <table><tr><th>Payee</th><th style="text-align:right">Amount</th></tr>
+        <tr class="r"><td>Ama Mensah</td><td class="n">GHS 250.00</td></tr><tr class="r"><td>ECG Prepaid</td><td class="n">GHS 100.00</td></tr><tr class="r"><td>MTN Data</td><td class="n">GHS 30.00</td></tr></table></div>
+      <div class="col after"><span class="tag">After</span>
+        <table><tr><th>Payee</th><th style="text-align:right">Amount</th></tr>
+        <tr class="r"><td>Ama Mensah</td><td class="n">GHS 250.00</td></tr><tr class="r"><td>ECG Prepaid</td><td class="n">GHS 100.00</td></tr><tr class="r"><td>MTN Data</td><td class="n">GHS 30.00</td></tr></table></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Charts</h2>
+    <p class="note">Only the tooltip changes, the one raised thing in a chart. It had a border and a big soft shadow; now it matches menus. Bars and lines stay flat because nothing about them is pressed.</p>
+    <div class="pair">
+      <div class="col before"><span class="tag">Before</span><div class="chart" style="padding-top:36px"><i style="height:40%"></i><i style="height:65%"></i><i style="height:50%"></i><i style="height:85%"></i><i style="height:60%"></i><i style="height:75%"></i><div class="tip">Oct · GHS 4,210.00</div></div></div>
+      <div class="col after"><span class="tag">After</span><div class="chart" style="padding-top:36px"><i style="height:40%"></i><i style="height:65%"></i><i style="height:50%"></i><i style="height:85%"></i><i style="height:60%"></i><i style="height:75%"></i><div class="tip">Oct · GHS 4,210.00</div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dropdowns</h2>
+    <p class="note">Ring plus border plus a stock shadow became one menu shadow: ring, drop, and a short 8px drop. Select, dropdown and popover share it.</p>
+    <div class="pair">
+      <div class="col before"><span class="tag">Before</span><div class="menu"><div>Statement</div><div>Share details</div><div>Rename</div></div></div>
+      <div class="col after"><span class="tag">After</span><div class="menu"><div>Statement</div><div>Share details</div><div>Rename</div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sheets and dialogs</h2>
+    <p class="note">A 64px soft blur plus a border (a double edge) became the crisp modal shadow: the ring is the edge, then a 1px drop and a short 8px drop.</p>
+    <div class="pair">
+      <div class="col before"><span class="tag">Before</span><div class="sheetstage"><div class="sheet"><b>Confirm transfer</b><p>GHS 250.00 to Ama Mensah.</p><div class="row"><button class="btn primary">Confirm</button><button class="btn outline">Cancel</button></div></div></div></div>
+      <div class="col after"><span class="tag">After</span><div class="sheetstage"><div class="sheet"><b>Confirm transfer</b><p>GHS 250.00 to Ama Mensah.</p><div class="row"><button class="btn primary">Confirm</button><button class="btn outline">Cancel</button></div></div></div></div>
+    </div>
+  </section>
+</div>
+<script>
+const b=document.getElementById('theme');
+b.onclick=()=>{document.body.classList.toggle('dark');b.textContent=document.body.classList.contains('dark')?'Light':'Dark'};
+</script>
+</body>
+</html>

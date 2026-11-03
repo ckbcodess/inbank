@@ -668,7 +668,7 @@ export function BillsPaymentFlow({
                             refInput(state.billRef, "billRef", `Enter ${fld.label.toLowerCase()}`)
                           ) : fld.type === "select" ? (
                             <Select value={payVals[fld.id] ?? ""} onValueChange={(val) => val && setPayVals((v) => ({ ...v, [fld.id]: val }))}>
-                              <SelectTrigger className="shadow-xs">
+                              <SelectTrigger>
                                 <SelectValue placeholder={`Select ${fld.label.toLowerCase()}`} />
                               </SelectTrigger>
                               <SelectContent>

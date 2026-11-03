@@ -155,10 +155,9 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
           setOpen(true);
           inputRef.current?.focus();
         }}
-        className={`h-11 px-3 w-full rounded-2xl border text-left transition shadow-none flex items-center gap-2 cursor-text ${
-          open
-            ? "border-field-border-focus bg-field-focus"
-            : "border-field-border bg-field hover:bg-field-hover"
+        data-open={open ? "" : undefined}
+        className={`field-surface h-11 px-3 w-full rounded-2xl border border-transparent text-left transition flex items-center gap-2 cursor-text ${
+          open ? "bg-field-focus" : "bg-field hover:bg-field-hover"
         }`}
       >
         <MapPin size={18} className="shrink-0 text-muted-foreground" />
@@ -193,7 +192,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
           aria-label="Toggle branch dropdown"
         >
           <ChevronDown
-            size={18}
+            size={16}
             className={`transition-transform duration-hover ${open ? "rotate-180 text-foreground" : ""}`}
           />
         </button>

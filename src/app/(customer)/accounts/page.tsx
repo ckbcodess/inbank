@@ -22,6 +22,7 @@
  * Dev Mode toggles the customer configuration and the screen state separately.
  */
 
+import { Skeleton } from "skullet/react";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -419,8 +420,6 @@ function AccountsContent() {
       <div className="stagger-items flex flex-col gap-10">
         <section aria-label="My accounts">
           <div className={LIST}>
-            {screenState === "loading" && <ListSkeleton rows={Math.max(accounts.length, 2)} />}
-
             {screenState === "error" && (
               <ListErrorState
                 onRetry={() => setScreenState("populated")}
@@ -428,7 +427,8 @@ function AccountsContent() {
               />
             )}
 
-            {screenState !== "loading" && screenState !== "error" && (
+            {screenState !== "error" && (
+              <Skeleton loading={screenState === "loading"}>
                 <ul className="flex flex-col gap-0.5 p-2">
                   {accounts.map((account) => (
                     <AccountRow
@@ -440,6 +440,7 @@ function AccountsContent() {
                     />
                   ))}
                 </ul>
+              </Skeleton>
             )}
           </div>
         </section>
@@ -460,7 +461,7 @@ function AccountsContent() {
 
             {/* The empty state sits straight on the page, with no card behind it. */}
             <div className={screenState === "populated" && sources.length === 0 ? undefined : LIST}>
-              {screenState === "loading" && <ListSkeleton rows={2} />}
+              {screenState === "loading" && sources.length === 0 && <ListSkeleton rows={2} />}
 
               {screenState === "sources-error" && (
                 <ListErrorState
@@ -482,7 +483,8 @@ function AccountsContent() {
                 />
               )}
 
-              {screenState === "populated" && sources.length > 0 && (
+              {(screenState === "populated" || screenState === "loading") && sources.length > 0 && (
+                <Skeleton loading={screenState === "loading"}>
                 <ul className="flex flex-col gap-0.5 p-2">
                   {sources.map((source) => (
                     <SourceRow key={source.id} source={source} onOpen={() => {
@@ -495,6 +497,7 @@ function AccountsContent() {
                       }} />
                   ))}
                 </ul>
+                </Skeleton>
               )}
             </div>
           </section>

@@ -4,8 +4,11 @@
  * flat scene in the product's colour. One place, so the shelf card and the product page always show the same picture.
  */
 
-export const PRODUCT_IMAGES: Partial<Record<"advance" | "term-deposits" | "treasury-bills" | "bonds" | "treasury", string>> = {
+export const PRODUCT_IMAGES: Partial<Record<"advance" | "personal-loan" | "business-loan" | "sme-loan" | "term-deposits" | "treasury-bills" | "bonds" | "treasury", string>> = {
   advance: "/plans/advance.webp",
+  "personal-loan": "/plans/personal-loan.webp",
+  "business-loan": "/plans/business-loan.webp",
+  "sme-loan": "/plans/sme-loan.webp",
   "term-deposits": "/plans/term-deposits.webp",
   "treasury-bills": "/plans/treasury-bills.webp",
   bonds: "/plans/bonds.webp",

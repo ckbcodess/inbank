@@ -172,7 +172,7 @@ export function DeliveryModeFields({
                   value={value.phone}
                   onValueChange={(phone) => onChange({ phone })}
                   aria-label="Delivery phone number"
-                  className="h-11 rounded-2xl border-field-border bg-field px-3 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
+                  className="h-11 rounded-2xl px-3 text-[14px]"
                 />
               </div>
             </div>

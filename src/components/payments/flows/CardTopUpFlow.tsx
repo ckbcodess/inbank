@@ -153,12 +153,9 @@ export function CardTopUpFlow({
                       onChange("cardId", "");
                     }
                   }}
-                  placeholder="e.g. 7X2K89AB"
-                  className="tabular font-mono tracking-widest text-[15px]"
+                  placeholder="Enter recipient's 8-character card reference number"
+                  className="tabular uppercase tracking-widest placeholder:normal-case placeholder:tracking-normal"
                 />
-                <p className="text-[12px] text-muted-foreground">
-                  Enter recipient&apos;s 8-character card top-up reference number
-                </p>
                 {refCode.length === 8 && (
                   <div className="flex items-center gap-2 rounded-xl bg-muted/40 p-2 text-[13px] text-foreground font-medium animate-in fade-in duration-150">
                     <CreditCard size={16} className="text-primary shrink-0" />

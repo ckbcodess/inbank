@@ -287,10 +287,8 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
 
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
-      <PageHeader title={STEP_TITLE[step]} backTo={{ ...back, onClick: goBack }} />
+      <PageHeader title={STEP_TITLE[step]} backTo={{ ...back, onClick: goBack }} actions={<StepBar current={STEPS_SHOWN.indexOf(step) + 1} total={STEPS_SHOWN.length} compact />} />
       <div className="flex flex-col gap-5">
-        <StepBar current={STEPS_SHOWN.indexOf(step) + 1} total={STEPS_SHOWN.length} />
-
         {step === "about" && (
           <>
             <Field label="Title">

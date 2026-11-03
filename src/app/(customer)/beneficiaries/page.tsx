@@ -917,7 +917,7 @@ export default function BeneficiariesPage() {
                   }));
                 }}
               >
-                <SelectTrigger className="shadow-xs">
+                <SelectTrigger>
                   <div className="flex items-center gap-2 truncate">
                     {(() => {
                       const meta = TYPE_CONFIG[form.transactionType] || TYPE_CONFIG.bank;
@@ -957,7 +957,7 @@ export default function BeneficiariesPage() {
                     value={form.network}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
                   >
-                    <SelectTrigger className="shadow-xs">
+                    <SelectTrigger>
                       <SelectValue placeholder="Select network" />
                     </SelectTrigger>
                     <SelectContent>

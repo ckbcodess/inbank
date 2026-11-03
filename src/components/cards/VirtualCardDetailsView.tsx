@@ -1345,7 +1345,7 @@ export function VirtualCardDetailsView({
                 <select
                   value={topUpSourceAccountId}
                   onChange={(e) => setTopUpSourceAccountId(e.target.value)}
-                  className="w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-2 py-2 text-[14px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
+                  className="w-full rounded-xl field-surface border border-transparent bg-field hover:bg-field-hover px-2 py-2 text-[14px] text-foreground transition-colors focus:outline-none focus:bg-field-focus"
                 >
                   {availableAccounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>

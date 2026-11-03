@@ -10,6 +10,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Skeleton } from "skullet/react";
+import { ACTIVITY_SAMPLE } from "@/lib/skeleton-samples";
 import { CalendarClock } from "@/components/ui/icons";
 import { TransactionMark } from "@/components/transactions/TransactionMark";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
@@ -33,7 +35,6 @@ import {
   MoneyActions,
   Notices,
   PanelEmpty,
-  PanelSkeleton,
   RefreshControl,
   SPRING,
   type DashViewProps,
@@ -104,7 +105,19 @@ function Feed({ data, loading, showAmounts }: Pick<DashViewProps, "data" | "show
   const { t } = useTranslation();
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
 
-  if (loading) return <PanelSkeleton rows={7} />;
+  if (loading) {
+    // Skullet measures the real rows (sample data) and draws the bones over them.
+    return (
+      <Skeleton loading>
+        <ul className="flex flex-col">
+          <DayHeading>Sample day</DayHeading>
+          {ACTIVITY_SAMPLE.map((txn) => (
+            <TxnRow key={txn.id} t={txn} showAmounts={showAmounts} onSelect={() => {}} />
+          ))}
+        </ul>
+      </Skeleton>
+    );
+  }
 
   const txns = data.latestTxns.slice(0, FEED_LIMIT);
   if (data.upcoming.length === 0 && txns.length === 0) {

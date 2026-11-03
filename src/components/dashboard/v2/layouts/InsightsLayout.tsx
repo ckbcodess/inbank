@@ -9,7 +9,9 @@
  */
 
 import { motion } from "framer-motion";
+import { Skeleton } from "skullet/react";
 import { formatMoney } from "@/lib/mock-data";
+import type { Slice } from "@/lib/dashboard-insights";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import {
   AccountSwitcher,
@@ -23,7 +25,6 @@ import {
   MoneyActions,
   Notices,
   PanelEmpty,
-  PanelSkeleton,
   RefreshControl,
   SPRING,
   selectedAccount,
@@ -58,6 +59,14 @@ function StatTile({
   );
 }
 
+/** Stand-in categories for the skeleton; skullet draws bars over their text. */
+const SAMPLE_SLICES: Slice[] = ["a", "b", "c", "d"].map((k) => ({
+  label: `Sample category ${k}`,
+  amount: 100,
+  share: 0.25,
+  color: "var(--spend-other)",
+}));
+
 /** Last month's categories, largest first, each with its share of the total. */
 function TopCategories({ data, loading, showAmounts }: { data: DashData; loading: boolean; showAmounts: boolean }) {
   const { t } = useTranslation();
@@ -67,13 +76,12 @@ function TopCategories({ data, loading, showAmounts }: { data: DashData; loading
   return (
     <Card>
       <CardHeader title={t("dashboard.topCategories", "Top categories")} href="/reports" />
-      {loading ? (
-        <PanelSkeleton rows={4} />
-      ) : slices.length === 0 ? (
+      {!loading && slices.length === 0 ? (
         <PanelEmpty text="No spending on this account in the past month." />
       ) : (
+        <Skeleton loading={loading}>
         <ul className="flex flex-col gap-3 sm:gap-3">
-          {slices.map((s) => (
+          {(loading ? slices.concat(SAMPLE_SLICES).slice(0, 4) : slices).map((s) => (
             <li key={s.label} className="flex flex-col gap-2">
               <span className="flex items-baseline justify-between gap-2 text-[13px]">
                 <span className="truncate text-foreground">{s.label}</span>
@@ -92,6 +100,7 @@ function TopCategories({ data, loading, showAmounts }: { data: DashData; loading
           ))}
           <li className="text-[12px] text-muted-foreground">Past month</li>
         </ul>
+        </Skeleton>
       )}
     </Card>
   );

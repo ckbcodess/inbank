@@ -6,6 +6,7 @@
  * picks the account to pay from by what is in it. Only the accounts this person was given are listed (UAR-05).
  */
 
+import { Skeleton } from "skullet/react";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Landmark } from "@/components/ui/icons";
@@ -39,7 +40,7 @@ export default function BusinessAccountsPage() {
 
       <StateSwitcher section="13.9 baseline" states={BASELINE} value={state} onChange={setState} />
 
-      {state === "loading" && (
+      {state === "loading" && !(accounts.length > 0) && (
         <div className={LIST_CARD_CLASS}>
           <ListSkeleton rows={4} />
         </div>
@@ -52,11 +53,13 @@ export default function BusinessAccountsPage() {
         />
       )}
 
-      {(state === "empty" || (state === "populated" && accounts.length === 0)) && (
+      {(state === "empty" || ((state === "populated" || state === "loading") && accounts.length === 0)) && (
+      <Skeleton loading={state === "loading"}>
         <TrueEmptyState
           title="No accounts yet"
           description="Accounts linked to this business will show here."
         />
+      </Skeleton>
       )}
 
       {state === "populated" && accounts.length > 0 && (

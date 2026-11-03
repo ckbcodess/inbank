@@ -13,6 +13,8 @@
 
 import { SearchField } from "@/components/ui/search-field";
 import { ListCard } from "@/components/ui/list-card";
+import { Skeleton } from "skullet/react";
+import { ACTIVITY_SAMPLE } from "@/lib/skeleton-samples";
 import { getTransactionType, transactionRail } from "@/lib/transaction-type";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { amountStyling } from "@/lib/transaction-display";
@@ -39,7 +41,6 @@ import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
   FilteredEmptyState,
   ListErrorState,
-  ListSkeleton,
   PartialLoadFooter,
   TrueEmptyState,
 } from "@/components/states/ListStates";
@@ -165,6 +166,47 @@ interface TransactionListProps {
   emptyTitle?: string;
   /** Start filtered to one account (e.g. "View All Transactions" from Account Details). */
   initialAccountId?: string;
+}
+
+/** One payment in the list. Also what the loading skeleton is measured from, so the two can't drift apart. */
+function TransactionRow({ t, onSelect }: { t: Transaction; onSelect: (t: Transaction) => void }) {
+  const { colorClass, prefix } = amountStyling(t);
+
+  return (
+    <div
+      onClick={() => onSelect(t)}
+      className="flex items-center gap-3.5 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover cursor-pointer active:bg-item-hover/80 sm:px-3"
+    >
+      {/* What it was, as one quiet mark; which way it went is the sign on the amount */}
+      <TransactionMark transaction={t} />
+
+      {/* Counterparty & Metadata */}
+      <div className="flex-1 min-w-0 flex flex-col gap-2">
+        <span className="font-normal text-foreground text-[14px] leading-tight truncate">
+          {t.counterparty || t.description}
+        </span>
+        <div className="flex items-center gap-2 text-[12px] text-muted-foreground truncate">
+          <span className="truncate">{getTransactionType(t)}</span>
+          <span>·</span>
+          <span>{formatTableDate(t.date)}</span>
+        </div>
+      </div>
+
+      {/* Amount & State / Account Number */}
+      <div className="shrink-0 flex flex-col items-end gap-2">
+        <span className={cn("tabular text-[14px]", colorClass)}>
+          {prefix}
+          {t.currency}{" "}
+          {t.amount.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </span>
+        {/* Only what needs a word: a completed payment says nothing */}
+        {t.state !== "completed" && <TransactionStatusBadge state={t.state} />}
+      </div>
+    </div>
+  );
 }
 
 export default function TransactionList({
@@ -643,7 +685,15 @@ export default function TransactionList({
       )}
 
       {/* List States Handling */}
-      {effective === "loading" && <ListSkeleton rows={8} />}
+      {effective === "loading" && (
+        <Skeleton loading>
+          <ListCard as="div">
+            {ACTIVITY_SAMPLE.map((t) => (
+              <TransactionRow key={t.id} t={t} onSelect={() => {}} />
+            ))}
+          </ListCard>
+        </Skeleton>
+      )}
 
       {effective === "error" && <ListErrorState onRetry={() => setState("populated")} />}
 
@@ -690,48 +740,9 @@ export default function TransactionList({
           >
           {/* One list at every breakpoint, in the same white box as Beneficiaries and Accounts. */}
           <ListCard as="div">
-            {paginatedRows.map((t) => {
-              const { colorClass, prefix } = amountStyling(t);
-
-              return (
-                <div
-                  key={t.id}
-                  onClick={() => setSelectedTransaction(t)}
-                  className="flex items-center gap-3.5 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover cursor-pointer active:bg-item-hover/80 sm:px-3"
-                >
-                  {/* What it was, as one quiet mark; which way it went is the sign on the amount */}
-                  <TransactionMark transaction={t} />
-
-                  {/* Counterparty & Metadata */}
-                  <div className="flex-1 min-w-0 flex flex-col gap-2">
-                    <span className="font-normal text-foreground text-[14px] leading-tight truncate">
-                      {t.counterparty || t.description}
-                    </span>
-                    <div className="flex items-center gap-2 text-[12px] text-muted-foreground truncate">
-                      <span className="truncate">{getTransactionType(t)}</span>
-                      <span>·</span>
-                      <span>{formatTableDate(t.date)}</span>
-                    </div>
-                  </div>
-
-                  {/* Amount & State / Account Number */}
-                  <div className="shrink-0 flex flex-col items-end gap-2">
-                    <span className={cn("tabular text-[14px]", colorClass)}>
-                      {prefix}
-                      {t.currency}{" "}
-                      {t.amount.toLocaleString("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                    {/* Only what needs a word: a completed payment says nothing */}
-                    {t.state !== "completed" && (
-                      <TransactionStatusBadge state={t.state} />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+            {paginatedRows.map((t) => (
+              <TransactionRow key={t.id} t={t} onSelect={setSelectedTransaction} />
+            ))}
           </ListCard>
 
           {effective === "partial-load" && <PartialLoadFooter />}

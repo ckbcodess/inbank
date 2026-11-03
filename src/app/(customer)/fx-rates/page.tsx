@@ -12,6 +12,7 @@
  * carries Loading / Empty / Populated / Error and nothing more.
  */
 
+import { Skeleton } from "skullet/react";
 import { useMemo, useState } from "react";
 import {
   ArrowUpDown,
@@ -33,7 +34,7 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
-import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
+import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
 import { FX_PUBLISHED_AT, FX_RATES, formatDateTime } from "@/lib/mock-data";
 import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
@@ -155,8 +156,6 @@ export default function FxRatesPage() {
         labels={BASELINE_LABEL}
       />
 
-      {state === "loading" && <ListSkeleton rows={6} />}
-
       {state === "error" && (
         <ListErrorState
           onRetry={() => setState("populated")}
@@ -171,7 +170,8 @@ export default function FxRatesPage() {
         />
       )}
 
-      {state === "populated" && (
+      {(state === "populated" || state === "loading") && (
+      <Skeleton loading={state === "loading"}>
         <>
           {/* Indicative converter */}
           <section className="rounded-2xl border border-border bg-card p-4 sm:p-5 w-full">
@@ -186,7 +186,7 @@ export default function FxRatesPage() {
               {/* Stacked Pills with Overlap Swap */}
               <div className="flex flex-col w-full">
                 {/* Top Input Card */}
-                <div className="flex items-center justify-between rounded-2xl border border-field-border bg-field px-3 py-3 sm:px-4 sm:py-3 shadow-xs transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
+                <div className="flex items-center justify-between rounded-2xl field-surface border border-transparent bg-field px-3 py-3 sm:px-4 sm:py-3 shadow-xs transition-colors focus-within:bg-field-focus">
                   <div className="relative flex-1 min-w-0 flex items-center pr-2">
                     <span
                       aria-hidden="true"
@@ -402,6 +402,7 @@ export default function FxRatesPage() {
             </div>
           </div>
         </>
+      </Skeleton>
       )}
     </div>
   );

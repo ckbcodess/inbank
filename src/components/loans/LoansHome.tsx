@@ -10,18 +10,21 @@
  * Eligibility" belongs to the Personal Loan, which isn't offered online yet.
  */
 
+import { useState } from "react";
 import { ProductBanner } from "@/components/ui/product-banner";
 import { useProductAlertItems } from "@/lib/product-alerts";
 import { LoansWelcome } from "@/components/loans/LoansWelcome";
+import { LosRedirectDialog } from "@/components/loans/LosRedirectDialog";
 import PageHeader from "@/components/layout/PageHeader";
 import { ShelfPageSkeleton } from "@/components/states/PageSkeletons";
 import { ADVANCE_PRODUCT_HREF, LoansDevTools } from "@/components/loans/parts";
 import { ProductCard, useCardLooks, type ProductStatus } from "@/components/insure/PlanCards";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { formatMoney } from "@/lib/mock-data";
-import { ADVANCE_PRODUCTS, useLoansHydrated, useMyLoans } from "@/lib/loans";
+import { ADVANCE_PRODUCTS, LOS_LOANS, useLoansHydrated, useMyLoans } from "@/lib/loans";
 import { MOCK_TODAY } from "@/lib/treasury";
 import { PRODUCT_IMAGES } from "@/lib/product-images";
+import { cn } from "@/lib/utils";
 
 export function LoansHome() {
   const alerts = useProductAlertItems().loans;
@@ -29,6 +32,7 @@ export function LoansHome() {
   const { income, advances, limit, product } = useMyLoans();
   const { showAmounts } = useAmountVisibility();
   const { look, layout, groups: cardGroups } = useCardLooks();
+  const [losLoan, setLosLoan] = useState<string | null>(null);
 
   if (!hydrated) return <ShelfPageSkeleton cards={1} />;
 
@@ -48,10 +52,11 @@ export function LoansHome() {
       <LoansWelcome />
       <div className="mx-auto flex w-full max-w-[720px] flex-col gap-10">
         <ProductBanner items={alerts} noun="advances" />
-        <div className={layout === "grid" ? "stagger-items grid grid-cols-1 min-[480px]:grid-cols-2" : "stagger-items grid grid-cols-1"}>
+        <div className={cn("stagger-items grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
           <ProductCard
             id="advance"
             name={shown.name}
+            line={shown.line}
             price={income ? { label: "Up to", amount: formatMoney(limit, "GHS", showAmounts) } : undefined}
             status={status}
             image={PRODUCT_IMAGES.advance}
@@ -60,8 +65,12 @@ export function LoansHome() {
             layout={layout}
             href={ADVANCE_PRODUCT_HREF}
           />
+          {LOS_LOANS.map((loan) => (
+            <ProductCard key={loan.id} id={loan.id} name={loan.name} line={loan.line} image={PRODUCT_IMAGES[loan.id]} look={look} layout={layout} onOpen={() => setLosLoan(loan.name)} />
+          ))}
         </div>
       </div>
+      <LosRedirectDialog loan={losLoan} onClose={() => setLosLoan(null)} />
     </div>
   );
 }

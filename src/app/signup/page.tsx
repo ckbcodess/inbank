@@ -397,7 +397,7 @@ function SignupContent() {
             <div className="space-y-2">
               <Label htmlFor="reviewTitle">Title</Label>
               <Select value={title} onValueChange={(val) => val && setTitle(val)}>
-                <SelectTrigger id="reviewTitle" className="border-border text-left flex items-center justify-between">
+                <SelectTrigger id="reviewTitle" className="text-left flex items-center justify-between">
                   <span className={title ? undefined : "text-muted-foreground/60"}>{title || "Select title"}</span>
                 </SelectTrigger>
                 <SelectContent>

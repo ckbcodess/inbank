@@ -432,7 +432,7 @@ export default function CreateGroupFlow({
                     <select
                       value={customBank}
                       onChange={(e) => setCustomBank(e.target.value)}
-                      className="h-9 w-full rounded-xl border border-input bg-background px-2 text-[13px] text-foreground outline-none"
+                      className="h-9 w-full rounded-xl field-surface border border-transparent bg-field px-2 text-[13px] text-foreground outline-none"
                     >
                       {OTHER_BANKS.map((b) => (
                         <option key={b} value={b}>{b}</option>
@@ -444,7 +444,7 @@ export default function CreateGroupFlow({
                     <select
                       value={customWalletNetwork}
                       onChange={(e) => setCustomWalletNetwork(e.target.value)}
-                      className="h-9 w-full rounded-xl border border-input bg-background px-2 text-[13px] text-foreground outline-none"
+                      className="h-9 w-full rounded-xl field-surface border border-transparent bg-field px-2 text-[13px] text-foreground outline-none"
                     >
                       {WALLET_NETWORKS.map((w) => (
                         <option key={w} value={w}>{w}</option>
@@ -617,7 +617,7 @@ export default function CreateGroupFlow({
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0 bg-field border border-field-border rounded-xl px-2 py-2 focus-within:border-field-border-focus focus-within:ring-0 transition">
+                    <div className="flex items-center gap-2 shrink-0 bg-field field-surface border border-transparent rounded-xl px-2 py-2 transition">
                       <span className="text-[12px] font-medium text-muted-foreground select-none">GHS</span>
                       <input
                         type="text"

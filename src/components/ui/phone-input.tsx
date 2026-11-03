@@ -93,7 +93,7 @@ function CountryDropdown({
               placeholder="Search country or code"
               aria-label="Search countries"
               autoComplete="off"
-              className="h-9 w-full rounded-lg border border-field-border bg-field pl-8 pr-2 text-[14px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-field-border-focus focus:bg-field-focus"
+              className="field-surface h-9 w-full rounded-lg border border-transparent bg-field pl-8 pr-2 text-[14px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:bg-field-focus"
             />
           </div>
           <ul className="scroll-fade max-h-[260px] overflow-y-auto" role="listbox" aria-label="Countries">
@@ -147,10 +147,9 @@ export function PhoneInput({
     <div
       data-slot="phone-input"
       className={cn(
-        "flex h-(--control-xl) w-full items-center gap-2 rounded-xl border border-field-border bg-field px-3 text-[14px] transition-all outline-none",
-        "focus-within:outline-none focus-within:border-field-border-focus focus-within:ring-1 focus-within:ring-field-border-focus",
+        "flex h-(--control-xl) w-full items-center gap-2 field-surface rounded-xl border border-transparent bg-field px-3 text-[14px] transition-all outline-none",
+        "focus-within:outline-none",
         "hover:bg-field-hover focus-within:bg-field-focus",
-        "has-aria-invalid:border-destructive has-aria-invalid:ring-1 has-aria-invalid:ring-destructive dark:has-aria-invalid:ring-destructive",
         disabled && "pointer-events-none opacity-50",
         className
       )}

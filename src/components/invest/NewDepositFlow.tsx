@@ -14,7 +14,7 @@ import { Receipt } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { InlineError } from "@/components/ui/inline-error";
-import { OptionTile } from "@/components/ui/option-tile";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Field } from "@/components/ui/field";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import { TrueEmptyState } from "@/components/states/ListStates";
@@ -200,18 +200,24 @@ export function NewDepositFlow() {
         </div>
 
         <Field label="Deposit Period">
-          <div role="radiogroup" aria-label="Deposit period" className="flex flex-col gap-2">
-            {TENURES.map((t) => (
-              <OptionTile
-                key={t.days}
-                title={`${t.days} days`}
-                detail={`Matures ${formatDate(addDays(MOCK_TODAY, t.days))}`}
-                value={`${t.rate}%`}
-                selected={tenure === t.days}
-                onSelect={() => setTenure(t.days)}
-              />
-            ))}
-          </div>
+          <Select value={tenure ? String(tenure) : ""} onValueChange={(v) => v && setTenure(Number(v))}>
+            <SelectTrigger aria-label="Deposit period">
+              <SelectValue placeholder="Select deposit period" />
+            </SelectTrigger>
+            <SelectContent>
+              {TENURES.map((t) => (
+                <SelectItem key={t.days} value={String(t.days)} label={`${t.days} days · ${t.rate}%`}>
+                  <span className="flex w-full items-baseline justify-between gap-4">
+                    <span className="flex flex-col">
+                      <span>{`${t.days} days`}</span>
+                      <span className="text-[12px] text-muted-foreground">{`Matures ${formatDate(addDays(MOCK_TODAY, t.days))}`}</span>
+                    </span>
+                    <span className="tabular text-foreground">{`${t.rate}%`}</span>
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </Field>
 
         {tenure && (

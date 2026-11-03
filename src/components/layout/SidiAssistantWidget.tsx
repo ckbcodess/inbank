@@ -344,7 +344,7 @@ export function SidiAssistantWidget() {
                   e.preventDefault();
                   handleSendQuery();
                 }}
-                className="flex items-center gap-2 rounded-2xl border border-field-border bg-field py-2 pl-3 pr-2 transition-colors duration-hover focus-within:border-ring"
+                className="flex items-center gap-2 rounded-2xl field-surface border border-transparent bg-field py-2 pl-3 pr-2 transition-colors duration-hover"
               >
                 <input
                   ref={inputRef}

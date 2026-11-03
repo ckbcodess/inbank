@@ -346,8 +346,8 @@ export default function EditGroupModal({
                 <Label>{splitType === "equal" ? "Amount per Person" : "Starting Amount"}</Label>
                 <div
                   className={cn(
-                    "h-11 w-full rounded-2xl border border-field-border bg-field px-3 flex items-center gap-2 focus-within:border-field-border-focus focus-within:ring-0 transition",
-                    errors.amount && "border-destructive focus-within:border-destructive"
+                    "h-11 w-full rounded-2xl field-surface border border-transparent bg-field px-3 flex items-center gap-2 transition",
+                    errors.amount && "shadow-[0_0_0_2px_var(--destructive)]"
                   )}
                 >
                   <span className="text-[14px] font-medium text-muted-foreground select-none">GHS</span>
@@ -440,7 +440,7 @@ export default function EditGroupModal({
                           value={savedSearch}
                           onChange={(e) => setSavedSearch(e.target.value)}
                           placeholder="Search contacts"
-                          className="h-9 w-full pl-8 pr-6 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                          className="h-9 w-full pl-8 pr-6 rounded-xl field-surface border border-transparent bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:bg-field-focus transition"
                         />
                         {savedSearch && (
                           <button
@@ -525,7 +525,7 @@ export default function EditGroupModal({
                             setCustomType(t);
                             setCustomBankOrNet(t === "wallet" ? WALLET_NETWORKS[0] : GHANA_BANKS[0]);
                           }}
-                          className="h-9 rounded-xl border border-border/80 bg-card px-2 text-[12px] text-foreground outline-none cursor-pointer"
+                          className="h-9 rounded-xl field-surface border border-transparent bg-field px-2 text-[12px] text-foreground outline-none cursor-pointer"
                         >
                           <option value="wallet">Mobile Wallet</option>
                           <option value="bank">Bank Account</option>
@@ -536,7 +536,7 @@ export default function EditGroupModal({
                         <select
                           value={customBankOrNet}
                           onChange={(e) => setCustomBankOrNet(e.target.value)}
-                          className="h-8 flex-1 rounded-xl border border-border/80 bg-card px-2 text-[12px] text-foreground outline-none cursor-pointer"
+                          className="h-8 flex-1 rounded-xl field-surface border border-transparent bg-field px-2 text-[12px] text-foreground outline-none cursor-pointer"
                         >
                           {(customType === "wallet" ? WALLET_NETWORKS : GHANA_BANKS).map((opt) => (
                             <option key={opt} value={opt}>
@@ -571,7 +571,7 @@ export default function EditGroupModal({
                     value={searchMember}
                     onChange={(e) => setSearchMember(e.target.value)}
                     placeholder="Search members"
-                    className="h-10 w-full pl-8 pr-6 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                    className="h-10 w-full pl-8 pr-6 rounded-xl field-surface border border-transparent bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:bg-field-focus transition"
                   />
                   {searchMember && (
                     <button
@@ -613,7 +613,7 @@ export default function EditGroupModal({
 
                     <div className="flex items-center gap-2 shrink-0">
                       {splitType === "custom" && (
-                        <div className="flex items-center gap-1 shrink-0 bg-field border border-field-border rounded-lg px-2 py-1 focus-within:border-field-border-focus">
+                        <div className="flex items-center gap-1 shrink-0 bg-field field-surface border border-transparent rounded-lg px-2 py-1">
                           <span className="text-[11px] text-muted-foreground select-none">GHS</span>
                           <input
                             type="text"

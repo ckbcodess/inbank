@@ -163,7 +163,7 @@ export function GroupPaymentFlow({
               }
             }}
           >
-            <SelectTrigger className="min-h-[52px] h-auto border-border/80 bg-card text-left flex items-center">
+            <SelectTrigger className="min-h-[52px] h-auto bg-card text-left flex items-center">
               {!selectedGroup ? (
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">

@@ -217,7 +217,7 @@ export function MobilePromoBanner() {
             </p>
 
             <Field label="Deposit Amount (GHS)">
-              <div className="flex items-center rounded-xl border border-field-border bg-field px-3 py-2 focus-within:border-field-border-focus focus-within:bg-field-focus">
+              <div className="flex items-center rounded-xl field-surface border border-transparent bg-field px-3 py-2 focus-within:bg-field-focus">
                 <span className="text-[14px] font-medium text-muted-foreground mr-2">GHS</span>
                 <input
                   type="number"

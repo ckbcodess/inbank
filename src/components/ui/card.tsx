@@ -17,8 +17,8 @@ function Card({
       data-interactive={isInteractive ? "true" : undefined}
       data-ripple={isInteractive ? "true" : undefined}
       className={cn(
-        "group/card relative flex flex-col gap-3 overflow-hidden rounded-xl bg-card py-3 text-sm text-foreground ring-1 ring-foreground/10 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-2 data-[size=sm]:py-2 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
-        isInteractive && "cursor-pointer select-none transition duration-hover",
+        "group/card relative flex flex-col gap-3 overflow-hidden rounded-xl bg-card py-3 text-sm text-foreground shadow-[var(--shadow-card)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-2 data-[size=sm]:py-2 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        isInteractive && "cursor-pointer select-none transition duration-press ease-settle active:scale-[0.99]",
         className
       )}
       {...props}

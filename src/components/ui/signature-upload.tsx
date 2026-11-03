@@ -53,7 +53,7 @@ export function SignatureUpload({
         }}
       />
       {file ? (
-        <div className="flex min-h-[58px] items-center justify-between gap-2 rounded-2xl border border-field-border bg-field px-3 py-2">
+        <div className="flex min-h-[58px] items-center justify-between gap-2 field-surface rounded-2xl border border-transparent bg-field px-3 py-2">
           <div className="flex min-w-0 items-center gap-2">
             <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground">
               <FileText size={16} aria-hidden="true" />

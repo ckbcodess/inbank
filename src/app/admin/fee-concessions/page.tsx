@@ -12,6 +12,7 @@
  * Bank Admin only (FR-37 addresses a Bank Administrator). State model: 13.1.
  */
 
+import { Skeleton } from "skullet/react";
 import { useMemo, useState } from "react";
 import { Percent, Plus } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
@@ -96,7 +97,7 @@ export default function FeeConcessionsPage() {
         />
       </div>
 
-      {effective === "loading" && (
+      {effective === "loading" && !(rows.length > 0) && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ListSkeleton rows={4} />
         </div>
@@ -133,7 +134,8 @@ export default function FeeConcessionsPage() {
         />
       )}
 
-      {(effective === "populated" || effective === "partial-load") && (
+      {(effective === "populated" || effective === "partial-load" || (effective === "loading" && rows.length > 0)) && (
+      <Skeleton loading={effective === "loading"}>
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-[13px]">
@@ -170,6 +172,7 @@ export default function FeeConcessionsPage() {
 
           {effective === "partial-load" && <PartialLoadFooter />}
         </div>
+      </Skeleton>
       )}
     </div>
   );

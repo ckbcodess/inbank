@@ -10,6 +10,8 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Skeleton } from "skullet/react";
+import { UPCOMING_SAMPLE } from "@/lib/skeleton-samples";
 import { formatMoney } from "@/lib/mock-data";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import {
@@ -23,7 +25,6 @@ import {
   Greeting,
   MoneyActions,
   Notices,
-  PanelSkeleton,
   RefreshControl,
   SPRING,
   selectedAccount,
@@ -104,7 +105,9 @@ export function FocusLayout(props: DashViewProps) {
         <Section>
           <CardHeader title={t("dashboard.comingUp", "Coming up")} href="/payments/standing" cta={t("common.manage", "Manage")} />
           {loading ? (
-            <PanelSkeleton rows={3} />
+            <Skeleton loading>
+              <UpcomingList items={UPCOMING_SAMPLE} showAmounts={showAmounts} />
+            </Skeleton>
           ) : data.upcoming.length === 0 ? (
             <ComingUpEmpty accountId={data.selectedAccountId} />
           ) : (

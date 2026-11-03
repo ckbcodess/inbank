@@ -42,6 +42,16 @@ interface AdvanceProduct {
   switchSentence: (account: string, number: string, fee: string) => string;
 }
 
+/**
+ * The loans that are taken out in the bank's Loan Origination Solution (LOS) rather than here: the shelf shows them and
+ * hands the customer over. The salary advance is the only loan this app originates itself.
+ */
+export const LOS_LOANS = [
+  { id: "personal-loan", name: "Personal Loan", line: "For personal needs and expenses" },
+  { id: "business-loan", name: "Business Loan", line: "For business operations and growth" },
+  { id: "sme-loan", name: "Small and Medium Enterprises (SME) Loan", line: "For everyday business needs and growth" },
+] as const;
+
 /** One whole sentence per product, so each translates on its own. */
 export const ADVANCE_PRODUCTS: Record<IncomeKind, AdvanceProduct> = {
   salary: {

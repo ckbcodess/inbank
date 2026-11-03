@@ -8,7 +8,7 @@
 import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Car, ChevronRight, FileText, GraduationCap, HandCoins, HandHeart, Landmark, PiggyBank, Plane, ShieldCheck, ShieldPlus, Umbrella } from "@/components/ui/icons";
+import { Briefcase, Car, ChevronRight, FileText, GraduationCap, HandCoins, HandHeart, Landmark, PiggyBank, Plane, ShieldCheck, ShieldPlus, Store, Umbrella, UserRound } from "@/components/ui/icons";
 import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -23,10 +23,13 @@ import { useTreasuryAccounts } from "@/lib/treasury";
 import { cn } from "@/lib/utils";
 
 /** Anything that gets a card: an insurance plan, the salary advance on Loans, or a kind of investment on Invest. */
-export type ProductKey = PlanId | "advance" | "term-deposits" | "treasury-bills" | "bonds" | "treasury";
+export type ProductKey = PlanId | "advance" | "personal-loan" | "business-loan" | "sme-loan" | "term-deposits" | "treasury-bills" | "bonds" | "treasury";
 
 const PLAN_ICONS: Record<ProductKey, typeof ShieldCheck> = {
   advance: HandCoins,
+  "personal-loan": UserRound,
+  "business-loan": Briefcase,
+  "sme-loan": Store,
   "term-deposits": PiggyBank,
   "treasury-bills": FileText,
   bonds: Landmark,
@@ -56,6 +59,9 @@ export function PlanIcon({ planId, muted = false }: { planId: PlanId; muted?: bo
  */
 const PLAN_TONES: Partial<Record<ProductKey, string>> = {
   advance: "var(--plan-art-advance-1)",
+  "personal-loan": "var(--plan-art-personal-loan-1)",
+  "business-loan": "var(--plan-art-business-loan-1)",
+  "sme-loan": "var(--plan-art-sme-loan-1)",
   "term-deposits": "var(--plan-art-term-deposits-1)",
   "treasury-bills": "var(--plan-art-treasury-bills-1)",
   treasury: "var(--plan-art-treasury-1)",
@@ -108,6 +114,9 @@ const PLAN_ART: Partial<Record<ProductKey, true>> = {
   bonds: true,
   "term-deposits": true,
   advance: true,
+  "personal-loan": true,
+  "business-loan": true,
+  "sme-loan": true,
 };
 
 const SCENES: Partial<Record<ProductKey, React.ReactNode>> = {

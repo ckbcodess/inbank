@@ -61,6 +61,8 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
       data-slot="table-row"
       className={cn(
         "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        // A row that does something is pressed like a button: it settles one step darker while the pointer is down.
+        props.onClick && "cursor-pointer active:bg-muted",
         className
       )}
       {...props}

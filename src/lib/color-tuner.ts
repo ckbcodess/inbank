@@ -25,6 +25,7 @@ export interface TunerGroup {
 const GROUP_RULES: [string, RegExp][] = [
   ["Chips and pills", /^(chip|pill-)/],
   ["Text", /(^foreground$|-foreground$)/],
+  ["Primary button", /^primary-(glow|fill|edge|shadow)/],
   ["Brand", /^(primary|ring|active-|action-icon|tile-accent)/],
   ["Status", /^(success|warning|destructive|info)/],
   ["Interactive & Hovers", /^(hover|item-hover|tile-hover|field-hover|menu-item-hover)/],

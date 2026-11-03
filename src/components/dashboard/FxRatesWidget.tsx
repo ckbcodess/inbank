@@ -115,7 +115,7 @@ export function FxRatesWidget() {
 
           {/* From Input */}
           <div className="relative w-full">
-            <div className="flex w-full items-center justify-between rounded-xl border border-field-border bg-field px-3 py-2 transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
+            <div className="flex w-full items-center justify-between rounded-xl field-surface border border-transparent bg-field px-3 py-2 transition-colors focus-within:bg-field-focus">
               <input
                 type="number"
                 min="0"

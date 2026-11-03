@@ -16,23 +16,23 @@ export const GLASS_CLASS =
   "backdrop-blur-md transition-[color,background-color,box-shadow,transform] duration-hover bg-[linear-gradient(to_bottom,var(--hero-glass-top),var(--hero-glass-bottom))] text-[var(--hero-button-foreground)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_transparent] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)] group-hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)]";
 
 const buttonVariants = cva(
-  "group/button relative overflow-hidden inline-flex shrink-0 items-center justify-center rounded-xl border border-transparent bg-clip-padding text-[13px] font-medium whitespace-nowrap [transition:color_var(--dur-hover)_var(--ease-in-out),background-color_var(--dur-hover)_var(--ease-in-out),border-color_var(--dur-hover)_var(--ease-in-out),box-shadow_var(--dur-hover)_var(--ease-in-out),transform_var(--dur-press)_var(--ease-settle)] active:scale-[0.995] outline-none select-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground disabled:border-transparent disabled:opacity-60 aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive dark:aria-invalid:border-destructive dark:aria-invalid:ring-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 cursor-pointer",
+  "group/button relative overflow-hidden inline-flex shrink-0 items-center justify-center rounded-xl border border-transparent text-[13px] font-medium whitespace-nowrap [transition:color_var(--dur-hover)_var(--ease-in-out),background-color_var(--dur-hover)_var(--ease-in-out),border-color_var(--dur-hover)_var(--ease-in-out),box-shadow_var(--dur-hover)_var(--ease-in-out),scale_var(--dur-hover)_var(--ease-snappy)] select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground disabled:border-transparent disabled:shadow-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 cursor-pointer",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary-hover active:brightness-95",
+          "primary-sheen text-primary-foreground hover:brightness-105 active:brightness-95",
         outline:
-          "border-border bg-background hover-surface hover:text-foreground aria-expanded:text-foreground dark:border-border dark:bg-border/30",
+          "border-border bg-background shadow-[0_1px_1px_0_color-mix(in_srgb,var(--black)_4%,transparent)] hover:bg-muted/50 hover:text-foreground aria-expanded:bg-muted/50 aria-expanded:text-foreground active:bg-muted/80 dark:bg-border/30 dark:hover:bg-border/45 dark:aria-expanded:bg-border/45 dark:active:bg-border/60",
         secondary:
-          "bg-muted text-accent-foreground hover:[background-color:color-mix(in_oklch,var(--muted)_var(--hover-fill),var(--hover-mix-color))] aria-expanded:bg-muted aria-expanded:text-accent-foreground",
+          "bg-muted text-accent-foreground hover:[background-color:color-mix(in_oklch,var(--muted)_var(--hover-fill),var(--hover-mix-color))] active:[background-color:color-mix(in_oklch,var(--muted)_78%,var(--hover-mix-color))] aria-expanded:bg-muted aria-expanded:text-accent-foreground",
         ghost:
           "hover-surface hover:text-foreground aria-expanded:text-foreground",
         destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:border-destructive focus-visible:ring-1 focus-visible:ring-destructive dark:bg-destructive dark:text-white dark:hover:bg-destructive/90",
+          "bg-destructive text-white shadow-[0_1px_2px_0_color-mix(in_srgb,var(--black)_20%,transparent)] hover:bg-destructive/90 active:bg-destructive/80 focus-visible:outline-destructive dark:bg-destructive dark:text-white dark:hover:bg-destructive/90 dark:active:bg-destructive/80",
         link: "text-foreground underline-offset-4 hover:underline",
         // The same fill as a hub list tile (--tile), for a button that sits beside or above tiles.
-        tile: "bg-[var(--tile)] text-foreground hover:bg-[var(--tile-hover)]",
+        tile: "bg-[var(--tile)] text-foreground hover:bg-[var(--tile-hover)] active:[background-color:color-mix(in_oklch,var(--tile-hover),var(--foreground)_6%)]",
         // Frosted control for the dark hero panel on the dashboard (white type, tinted by --hero-foreground).
         glass: GLASS_CLASS,
       },
@@ -47,19 +47,19 @@ const buttonVariants = cva(
        * A full-width button in a flow is `xl`. Never override height or text size with className.
        */
       size: {
-        xs: "h-(--control-xs) gap-1 rounded-xl px-2 text-xs in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-2.5",
-        sm: "h-(--control-sm) gap-2 rounded-xl px-2 text-[12.5px] in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xs: "active:scale-[0.96] h-(--control-xs) gap-1 rounded-xl px-2 text-xs in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-2.5",
+        sm: "active:scale-[0.97] h-(--control-sm) gap-2 rounded-xl px-2 text-[12.5px] in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         default:
-          "h-(--control-default) gap-2 px-3 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        md: "h-(--control-md) gap-2 px-3 text-[14px] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xl: "h-(--control-xl) gap-2 px-4 text-[16px] has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+          "active:scale-[0.98] h-(--control-default) gap-2 px-3 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        md: "active:scale-[0.98] h-(--control-md) gap-2 px-3 text-[14px] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xl: "active:scale-[0.98] h-(--control-xl) gap-2 px-4 text-[16px] has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
         // Icon-only buttons are square on the same steps.
         "icon-xs":
-          "size-(--control-xs) rounded-xl in-data-[slot=button-group]:rounded-xl [&_svg:not([class*='size-'])]:size-2.5",
+          "active:scale-[0.96] size-(--control-xs) rounded-xl in-data-[slot=button-group]:rounded-xl [&_svg:not([class*='size-'])]:size-2.5",
         "icon-sm":
-          "size-(--control-sm) rounded-xl in-data-[slot=button-group]:rounded-xl",
-        icon: "size-8",
-        "icon-lg": "size-(--control-default)",
+          "active:scale-[0.97] size-(--control-sm) rounded-xl in-data-[slot=button-group]:rounded-xl",
+        icon: "active:scale-[0.97] size-8",
+        "icon-lg": "active:scale-[0.98] size-(--control-default)",
       },
     },
     defaultVariants: {
@@ -90,6 +90,7 @@ function Button({
       data-slot="button"
       data-ripple="true"
       aria-busy={loading || undefined}
+      aria-disabled={loading || undefined}
       className={cn(buttonVariants({ variant, size, className }), loading && "pointer-events-none opacity-70")}
       onClick={loading ? (e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault() : onClick}
       {...props}

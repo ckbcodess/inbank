@@ -253,7 +253,7 @@ export function FxQuickModal() {
               {/* Conversion Inputs */}
               <div className="relative flex flex-col gap-2">
                 {/* "You Convert" Container */}
-                <div className="flex flex-col rounded-xl border border-field-border bg-field p-2 transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
+                <div className="flex flex-col rounded-xl field-surface border border-transparent bg-field p-2 transition-colors focus-within:bg-field-focus">
                   <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                     <span>You convert</span>
                     <span className="tabular text-[11px]">Available balance</span>

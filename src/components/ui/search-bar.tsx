@@ -23,7 +23,7 @@ export function SearchBar({ value, onChange, placeholder = 'Search...', classNam
   return (
     <div
       className={cn(
-        'flex items-center gap-[5px] h-9 px-[13px] border border-border rounded-lg bg-background focus-within:border-foreground/30 transition-colors w-[342px]',
+        'field-surface flex items-center gap-[5px] h-9 px-[13px] border border-transparent rounded-lg bg-field focus-within:bg-field-focus transition-colors w-[342px]',
         className,
       )}
     >

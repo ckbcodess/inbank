@@ -19,7 +19,7 @@
     "framer-motion": "^13.1.0",
     "loading-dev": "^0.3.4",
     "motion": "^13.1.0",
-    "next": "^15.5.23",
+    "next": "^16.4.4",
     "next-themes": "^0.4.6",
     "numora": "^4.0.0",
     "react": "19.1.1",
@@ -28,6 +28,7 @@
     "recharts": "^2.15.4",
     "reicon-react": "^1.2.6",
     "shadcn": "^4.0.8",
+    "skullet": "^0.0.3",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "torph": "^0.1.3",
@@ -41,7 +42,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "^15.5.23",
+    "eslint-config-next": "^16.4.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

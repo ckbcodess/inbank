@@ -587,7 +587,7 @@ export default function LinkSourceAccountModal({
                       value={selectedSourceId || (linkedSources[0]?.id ?? "")}
                       onValueChange={(val) => val && setSelectedSourceId(val)}
                     >
-                      <SelectTrigger className="w-full h-12 rounded-2xl border-field-border bg-field px-3">
+                      <SelectTrigger className="w-full h-12 rounded-2xl px-3">
                         <SelectValue placeholder="Select payment method" />
                       </SelectTrigger>
                       <SelectContent>

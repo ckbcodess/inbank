@@ -102,7 +102,7 @@ export function ExpandableSearch({
             placeholder={placeholder}
             aria-label={label}
             className={cn(
-              "h-8 rounded-xl border border-field-border bg-field pl-8 pr-6 text-[14px] text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-field-border-focus focus:ring-0",
+              "field-surface h-8 rounded-xl border border-transparent bg-field pl-8 pr-6 text-[14px] text-foreground outline-none transition placeholder:text-muted-foreground",
               inputWidthClassName
             )}
           />

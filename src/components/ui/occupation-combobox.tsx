@@ -196,10 +196,9 @@ export function OccupationCombobox({
           setOpen(true);
           inputRef.current?.focus();
         }}
-        className={`flex h-11 w-full cursor-text items-center gap-2 rounded-2xl border px-3 transition ${
-          open
-            ? "border-foreground bg-field"
-            : "border-field-border bg-field hover:bg-field-hover"
+        data-open={open ? "" : undefined}
+        className={`field-surface flex h-11 w-full cursor-text items-center gap-2 rounded-2xl border border-transparent px-3 transition ${
+          open ? "bg-field" : "bg-field hover:bg-field-hover"
         }`}
       >
         <Briefcase size={16} className="shrink-0 text-muted-foreground" />

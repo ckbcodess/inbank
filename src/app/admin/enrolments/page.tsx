@@ -9,6 +9,7 @@
  * Pattern: Admin List Pattern (same as /admin/transactions and /admin/trade).
  */
 
+import { Skeleton } from "skullet/react";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
@@ -157,7 +158,7 @@ export default function AdminEnrolmentsPage() {
             <select
               value={stageFilter}
               onChange={(e) => setStageFilter(e.target.value as StageFilter)}
-              className="h-8 rounded-lg border border-border bg-background px-2.5 text-[12px] text-foreground outline-hidden cursor-pointer"
+              className="h-8 rounded-lg field-surface border border-transparent bg-field px-2.5 text-[12px] text-foreground outline-hidden cursor-pointer"
             >
               <option value="all">All Stages</option>
               <option value="waiting-letter">Waiting on signed letter</option>
@@ -195,7 +196,7 @@ export default function AdminEnrolmentsPage() {
       </section>
 
       {/* Main List Rendering */}
-      {effective === "loading" && <ListSkeleton rows={4} />}
+      {effective === "loading" && !(displayRows.length > 0) && <ListSkeleton rows={4} />}
 
       {effective === "empty" && (
         <TrueEmptyState
@@ -212,7 +213,8 @@ export default function AdminEnrolmentsPage() {
         />
       )}
 
-      {(effective === "populated" || effective === "partial-load") && (
+      {(effective === "populated" || effective === "partial-load" || (effective === "loading" && displayRows.length > 0)) && (
+      <Skeleton loading={effective === "loading"}>
         <div className="flex flex-col gap-2">
           {displayRows.map((app) => (
             <Link
@@ -288,6 +290,7 @@ export default function AdminEnrolmentsPage() {
 
           {effective === "partial-load" && <PartialLoadFooter />}
         </div>
+      </Skeleton>
       )}
     </div>
   );

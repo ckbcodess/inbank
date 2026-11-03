@@ -17,6 +17,7 @@
  * here, where an empty report is easily misread as "no activity").
  */
 
+import { Skeleton } from "skullet/react";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { BarChart3, Download, Search } from "@/components/ui/icons";
@@ -209,7 +210,7 @@ export default function ReportsPage() {
         </Button>
       </div>
 
-      {effective === "loading" && <ListSkeleton rows={6} />}
+      {effective === "loading" && !(rowCount > 0) && <ListSkeleton rows={6} />}
 
       {effective === "error" && (
         <ListErrorState
@@ -235,7 +236,8 @@ export default function ReportsPage() {
         />
       )}
 
-      {effective === "populated" && (
+      {(effective === "populated" || (effective === "loading" && rowCount > 0)) && (
+      <Skeleton loading={effective === "loading"}>
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-[13px]">
@@ -275,6 +277,7 @@ export default function ReportsPage() {
             </table>
           </div>
         </div>
+      </Skeleton>
       )}
     </div>
   );

@@ -1,11 +1,5 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({ baseDirectory: __dirname });
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 
 // Shell firewall: retail (`(customer)`) and business (`/business`) are separate products that share only
 // `components/ui`, tokens and the plain libs (money, motion, i18n, authorisation). Zones are by folder:
@@ -82,10 +76,22 @@ const shellFirewall = [
   },
 ];
 
-// eslint-config-next 15.x ships legacy (eslintrc) configs, so they are bridged
-// into flat config here rather than imported directly.
+// eslint-config-next 16 ships flat configs, so they are imported directly.
+// Its React Compiler rules (react-hooks v7) flag ~125 existing spots (setState in effects, ref reads in render).
+// They are off until those are cleaned up deliberately; see WORKING_LOG.
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  {
+    rules: {
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/immutability": "off",
+      "react-hooks/purity": "off",
+      "react-hooks/refs": "off",
+      "react-hooks/preserve-manual-memoization": "off",
+      "react-hooks/static-components": "off",
+    },
+  },
   {
     ignores: [".next/**", "out/**", "build/**", "next-env.d.ts", "node_modules/**"],
   },

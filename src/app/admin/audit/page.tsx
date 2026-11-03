@@ -14,6 +14,7 @@
  * State model: 13.1 list pattern.
  */
 
+import { Skeleton } from "skullet/react";
 import { useMemo, useState } from "react";
 import { Lock, ShieldCheck } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
@@ -120,7 +121,7 @@ export default function AuditLogPage() {
         />
       </div>
 
-      {effective === "loading" && (
+      {effective === "loading" && !(rows.length > 0) && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ListSkeleton rows={6} />
         </div>
@@ -148,7 +149,8 @@ export default function AuditLogPage() {
         />
       )}
 
-      {(effective === "populated" || effective === "partial-load") && (
+      {(effective === "populated" || effective === "partial-load" || (effective === "loading" && rows.length > 0)) && (
+      <Skeleton loading={effective === "loading"}>
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ul className="divide-y divide-border">
             {rows.map((event) => (
@@ -181,6 +183,7 @@ export default function AuditLogPage() {
 
           {effective === "partial-load" && <PartialLoadFooter />}
         </div>
+      </Skeleton>
       )}
 
       <p className="text-[12px] leading-relaxed text-muted-foreground">

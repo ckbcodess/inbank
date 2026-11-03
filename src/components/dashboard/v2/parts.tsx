@@ -11,6 +11,8 @@
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Skeleton } from "skullet/react";
+import { ACTIVITY_SAMPLE, CARDS_SAMPLE } from "@/lib/skeleton-samples";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Eye,
@@ -783,8 +785,7 @@ export function ActivityBody({
   onOpenFundModal?: () => void;
 }) {
   const { t } = useTranslation();
-  if (loading) return <PanelSkeleton rows={limit} />;
-  if (data.latestTxns.length === 0) {
+  if (!loading && data.latestTxns.length === 0) {
     const account = selectedAccount(data);
     const isUnfunded = (account?.balance ?? 0) === 0;
     if (isUnfunded && onOpenFundModal) {
@@ -798,7 +799,12 @@ export function ActivityBody({
     }
     return <PanelEmpty icon={History} text={t("dashboard.noActivityYet", "No activity on this account yet.")} />;
   }
-  return <RecentTransactions txns={data.latestTxns} showAmounts={showAmounts} limit={limit} />;
+  // Skullet measures the real rows (filled with sample data while loading) and draws the bones over them.
+  return (
+    <Skeleton loading={loading}>
+      <RecentTransactions txns={loading ? ACTIVITY_SAMPLE.slice(0, limit) : data.latestTxns} showAmounts={showAmounts} limit={limit} />
+    </Skeleton>
+  );
 }
 
 export function ActivityCard({
@@ -844,7 +850,9 @@ export function CardsCard({
     <Card className={className}>
       <CardHeader title={t("dashboard.cards", "Cards")} href="/cards" />
       {loading ? (
-        <PanelSkeleton rows={2} />
+        <Skeleton loading>
+          <CardsMini cards={CARDS_SAMPLE} limit={2} />
+        </Skeleton>
       ) : data.cards.length === 0 ? (
         <PanelEmpty icon={CreditCard} text={t("dashboard.noCardsOnAccount", "No card on this account.")} action={{ label: t("dashboard.requestCard", "Request a card"), href: "/cards/request" }} />
       ) : (

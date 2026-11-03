@@ -978,14 +978,13 @@ export function AmountInput({
     <Field label={label}>
       <div
         onClick={handleClick}
+        data-invalid={isError || undefined}
         onAnimationEnd={() => setNudge(false)}
         className={cn(
-          "relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border bg-field transition-colors px-3",
+          "field-surface relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border border-transparent bg-field transition-colors px-3",
           nudge && "animate-amount-shake",
           disabled ? "bg-muted/30 cursor-not-allowed opacity-80" : "hover:bg-field-hover cursor-text",
-          isError
-            ? "border-destructive focus-within:border-destructive focus-within:ring-1 focus-within:ring-destructive"
-            : "border-field-border focus-within:border-field-border-focus focus-within:bg-field-focus focus-within:ring-1 focus-within:ring-field-border-focus"
+          "focus-within:bg-field-focus",
         )}
       >
         <div className="inline-flex items-center justify-center gap-2">

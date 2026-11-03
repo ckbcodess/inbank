@@ -15,6 +15,7 @@
  * State model: 13.1 list pattern.
  */
 
+import { Skeleton } from "skullet/react";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
@@ -144,7 +145,7 @@ export default function NotificationsPage() {
         )}
       </div>
 
-      {effective === "loading" && (
+      {effective === "loading" && !(items.length > 0) && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ListSkeleton rows={5} />
         </div>
@@ -174,7 +175,8 @@ export default function NotificationsPage() {
         />
       )}
 
-      {(effective === "populated" || effective === "partial-load") && (
+      {(effective === "populated" || effective === "partial-load" || (effective === "loading" && items.length > 0)) && (
+      <Skeleton loading={effective === "loading"}>
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ul className="divide-y divide-border">
             {items.map((n) => {
@@ -231,6 +233,7 @@ export default function NotificationsPage() {
 
           {effective === "partial-load" && <PartialLoadFooter />}
         </div>
+      </Skeleton>
       )}
 
       {/* FR-22 — "delivered via configured channels" */}

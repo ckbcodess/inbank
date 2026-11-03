@@ -148,6 +148,15 @@ const loans: Entry[] = [
   ["Was due", "Était due le", "Vencía el", "原定还款日"],
   ["If your credit is late", "Si votre versement est en retard", "Si tu ingreso se retrasa", "若您的款项延迟"],
   ["Repay it to take another. It’s due on {0}.", "Remboursez-la pour en prendre une autre. Échéance le {0}.", "Devuélvelo para pedir otro. Vence el {0}.", "还清后可再次申请。到期日为 {0}。"],
+  // ── Loans taken out in the Loan Origination Solution ──
+  ["Personal Loan", "Prêt personnel", "Préstamo personal", "个人贷款"],
+  ["Business Loan", "Prêt professionnel", "Préstamo empresarial", "企业贷款"],
+  ["Small and Medium Enterprises (SME) Loan", "Prêt aux petites et moyennes entreprises (PME)", "Préstamo para pequeñas y medianas empresas (PYME)", "中小企业（SME）贷款"],
+  ["For personal needs and expenses", "Pour vos besoins et dépenses personnels", "Para necesidades y gastos personales", "用于个人需求和开支"],
+  ["For business operations and growth", "Pour l’activité et la croissance de l’entreprise", "Para la operación y el crecimiento del negocio", "用于企业运营和发展"],
+  ["For everyday business needs and growth", "Pour les besoins courants et la croissance de l’entreprise", "Para las necesidades diarias y el crecimiento del negocio", "用于日常经营需求和发展"],
+  ["You will be redirected to our Loan Origination Solution (LOS) to continue your loan application.", "Vous serez redirigé vers notre solution d’octroi de prêts (LOS) pour poursuivre votre demande de prêt.", "Serás redirigido a nuestra solución de originación de préstamos (LOS) para continuar tu solicitud.", "您将被转到我们的贷款申请系统（LOS）以继续办理贷款申请。"],
+  ["Opening the Loan Origination Solution", "Ouverture de la solution d’octroi de prêts", "Abriendo la solución de originación de préstamos", "正在打开贷款申请系统"],
 ];
 
 export default loans;

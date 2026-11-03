@@ -113,11 +113,11 @@ function SelectTrigger({
       data-size={size}
       data-active={isActive ? "true" : undefined}
       className={cn(
-        "flex w-full items-center justify-between gap-2 rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 py-2 text-[14px] text-foreground transition-all outline-none select-none",
-        "focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:border-field-border-focus focus-visible:ring-1 focus-visible:ring-field-border-focus",
-        "disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive dark:aria-invalid:ring-destructive data-placeholder:text-muted-foreground data-[size=default]:min-h-(--control-xl) data-[size=sm]:min-h-(--control-sm) data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 dark:bg-field dark:text-foreground cursor-pointer",
+        "field-surface flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-transparent bg-field px-3 py-2 text-[14px] text-foreground transition-all outline-none select-none hover:bg-field-hover focus:outline-none focus-visible:outline-none dark:bg-field dark:text-foreground",
+        "disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-muted-foreground data-[size=default]:min-h-(--control-xl) data-[size=sm]:min-h-(--control-sm) data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2",
+        // A filter that is on: a stronger edge (the same ring, a darker colour) and a tinted fill.
         isActive &&
-          "border-foreground/35 bg-muted/65 text-foreground font-medium dark:border-white/30 dark:bg-muted/40 shadow-xs",
+          "bg-muted/65 font-medium text-foreground [--field-border:color-mix(in_srgb,var(--foreground)_35%,transparent)] dark:bg-muted/40",
         className
       )}
       {...props}
@@ -156,7 +156,7 @@ function SelectTrigger({
         {!hideChevron && (
           <SelectPrimitive.Icon
             render={
-              <ChevronDown className="pointer-events-none size-3 text-muted-foreground shrink-0" />
+              <ChevronDown className="pointer-events-none size-4 text-muted-foreground shrink-0" />
             }
           />
         )}
@@ -193,7 +193,7 @@ function SelectContent({
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
           className={cn(
-            "isolate z-50 max-h-[min(var(--available-height,22rem),22rem)] min-w-(--anchor-width) w-max max-w-[min(calc(100vw-2rem),26rem)] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl p-2 text-foreground shadow-2xl border border-border duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 relative bg-menu **:data-[slot$=-item]:focus:bg-menu-item-hover **:data-[slot$=-item]:data-highlighted:bg-menu-item-hover **:data-[slot$=-separator]:bg-foreground/5",
+            "isolate z-50 max-h-[min(var(--available-height,22rem),22rem)] min-w-(--anchor-width) w-max max-w-[min(calc(100vw-2rem),26rem)] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl p-2 text-foreground shadow-[var(--shadow-menu)] duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 relative bg-menu **:data-[slot$=-item]:focus:bg-menu-item-hover **:data-[slot$=-item]:data-highlighted:bg-menu-item-hover **:data-[slot$=-separator]:bg-foreground/5",
             className
           )}
           {...props}
@@ -239,7 +239,7 @@ function SelectItem({
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
         render={
-          <span className="pointer-events-none absolute right-1.5 flex size-3.5 items-center justify-center text-foreground" />
+          <span className="pointer-events-none absolute right-1.5 top-1/2 flex size-3.5 -translate-y-1/2 items-center justify-center text-foreground" />
         }
       >
         <HugeiconsIcon icon={Tick02Icon} size={14} className="pointer-events-none size-3 text-foreground shrink-0" />

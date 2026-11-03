@@ -86,6 +86,8 @@ function PersonModal({
   title,
   ownerId,
   trustee,
+  existing,
+  onPlanIds,
   onSaved,
   top,
 }: {
@@ -95,6 +97,10 @@ function PersonModal({
   ownerId: string;
   /** A trustee also needs an email and an address, and must be an adult. */
   trustee?: boolean;
+  /** Everyone already saved, so the same person is never added twice. */
+  existing: InsuredPerson[];
+  /** Who is already named on this plan. */
+  onPlanIds: string[];
   onSaved: (person: InsuredPerson) => void;
   /** Shown above the fields, such as the people already saved. */
   top?: React.ReactNode;
@@ -126,8 +132,16 @@ function PersonModal({
   const tooYoung = trustee && dob !== "" && !dobInFuture && ageOn(dob) < 18;
   const emailInvalid = email.trim() !== "" && !EMAIL.test(email.trim());
   const nameOk = fullName.trim().split(/\s+/).filter(Boolean).length >= 2;
+  const norm = (n: string) => n.trim().replace(/\s+/g, " ").toLowerCase();
+  const twin = nameOk && dob !== "" ? existing.find((p) => norm(p.fullName) === norm(fullName) && p.dateOfBirth === dob) : undefined;
+  const dupError = twin
+    ? onPlanIds.includes(twin.id)
+      ? `${twin.fullName} is already on this plan.`
+      : `${twin.fullName} is already saved. Choose them from Saved.`
+    : null;
   const ready =
     nameOk &&
+    !twin &&
     dob !== "" &&
     !dobInFuture &&
     !tooYoung &&
@@ -176,7 +190,7 @@ function PersonModal({
       <Field
         label="Date of Birth"
         htmlFor={`${id}-dob`}
-        error={dobInFuture ? "That date is in the future." : tooYoung ? "A trustee must be 18 or older." : null}
+        error={dobInFuture ? "That date is in the future." : tooYoung ? "A trustee must be 18 or older." : dupError}
       >
         <Input id={`${id}-dob`} type="date" value={dob} max={MOCK_TODAY} onChange={(e) => setDob(e.target.value)} />
       </Field>
@@ -421,6 +435,8 @@ export function BeneficiaryEditor({
           onOpenChange={setAdding}
           title="Add a Beneficiary"
           ownerId={ownerId}
+          existing={people}
+          onPlanIds={value.map((b) => b.personId)}
           onSaved={add}
           top={
             saved.length > 0 ? (
@@ -495,6 +511,8 @@ export function BeneficiaryEditor({
             title="Add a Trustee"
             ownerId={ownerId}
             trustee
+            existing={people}
+            onPlanIds={trusteeId ? [trusteeId] : []}
             onSaved={(p) => {
               onTrusteeChange(p.id);
               setAddingTrustee(false);

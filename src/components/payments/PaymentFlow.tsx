@@ -191,7 +191,7 @@ const RAIL_LABEL: Record<Rail, string> = {
   ecg: "ECG Prepaid",
   bill: "Bills",
   ghanagov: "Ghana.gov",
-  "card-topup": "Card Top up",
+  "card-topup": "Prepaid Card Top Up",
   qr: "QR Payment",
   cardless: "Cardless Withdrawal",
 };

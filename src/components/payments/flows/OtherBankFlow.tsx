@@ -133,8 +133,7 @@ export function OtherBankFlow({
           <div className="flex flex-col gap-2">
             <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={OTHER_BANKS} />
 
-            {isBankValid && (
-              <div className="relative flex items-center animate-in fade-in duration-200 ease-out">
+            <div className="relative flex items-center">
                 <Input
                   type="text"
                   inputMode="numeric"
@@ -177,8 +176,7 @@ export function OtherBankFlow({
                     </span>
                   )}
                 </button>
-              </div>
-            )}
+            </div>
 
             {/* Verification Status */}
             <AccountVerificationStatus

@@ -17,6 +17,7 @@
  * authorisers; the nav hides it otherwise (12.3).
  */
 
+import { Skeleton } from "skullet/react";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, FileText, Send, UserCog } from "@/components/ui/icons";
@@ -156,7 +157,7 @@ export default function ApprovalQueuePage() {
           </div>
         </div>
 
-        {effective === "loading" && (
+        {effective === "loading" && !(rows.length > 0) && (
           <div className={LIST_CARD_CLASS}>
             <ListSkeleton rows={4} />
           </div>
@@ -180,7 +181,8 @@ export default function ApprovalQueuePage() {
           />
         )}
 
-        {(effective === "populated" || effective === "partial-load") && (
+        {(effective === "populated" || effective === "partial-load" || (effective === "loading" && rows.length > 0)) && (
+        <Skeleton loading={effective === "loading"}>
           <ListCard as="div">
             <ul className="flex flex-col gap-0.5">
               {rows.map((item) => {
@@ -218,6 +220,7 @@ export default function ApprovalQueuePage() {
             </ul>
             {effective === "partial-load" && <PartialLoadFooter />}
           </ListCard>
+        </Skeleton>
         )}
       </section>
     </div>

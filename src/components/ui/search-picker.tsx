@@ -71,13 +71,13 @@ export function SearchPicker({
         data-invalid={invalid || undefined}
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}
-        className="flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 rounded-xl border border-field-border bg-field px-3 py-2 text-left text-[14px] text-foreground outline-none transition-all hover:bg-field-hover focus-visible:border-field-border-focus focus-visible:ring-1 focus-visible:ring-field-border-focus data-[invalid=true]:border-destructive data-[invalid=true]:ring-1 data-[invalid=true]:ring-destructive"
+        className="flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 field-surface rounded-xl border border-transparent bg-field px-3 py-2 text-left text-[14px] text-foreground outline-none transition-all hover:bg-field-hover"
       >
         <span className="flex min-w-0 items-center gap-3">
           {chosen ? chosen.mark(28) : emptyMark}
           <span className={cn("truncate", !chosen && "text-muted-foreground")}>{chosen ? chosen.label : placeholder}</span>
         </span>
-        <ChevronDown aria-hidden="true" className="pointer-events-none ml-1 size-3 shrink-0 text-muted-foreground" />
+        <ChevronDown aria-hidden="true" className="pointer-events-none ml-1 size-4 shrink-0 text-muted-foreground" />
       </button>
 
       <Modal open={open} onOpenChange={close} title={title} size="md">
