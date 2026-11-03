@@ -182,7 +182,18 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-03
+- Decision: route skeletons come from skullet, not hand-built bones. A landing page's body is a component with a `loading` prop (`InsureHome`, `InvestHome`, `LoansHome`, `SendAndPayHub`); its `loading.tsx` renders it with `loading`, so skullet measures the real cards. Page entrance animations (`page-stagger`, `stagger-items`, the shell fade) are gone; the skeleton is the only arrival.
+- Gap: only the landing pages (Insure, Invest, Loans, Send & Pay, Accounts, Overview) draw route loading with skullet. The other ~85 routes still use `PageSkeletons.tsx`. Overview's cards still draw their own bones in `dashboard/v2/parts.tsx` (hand-built, except a few skullet lists).
+- Decision: `stagger-items` stays on the product shelves and hub sections as the one arrival motion; pages themselves and the shell do not fade.
+
 ### 2026-11-02
+- Decision (designer, from the tuner, 2026-11-03): baked into globals.css, light: `--pill-warning`, `--pill-violet`, `--pill-success`, `--pill-teal`, `--pill-teal-text`, `--pill-orange`, `--destructive` `#ea3446`, `--destructive-text` `#b72a38`; dark: `--pill-violet`, `--destructive`, `--destructive-text` (same red, so dark text is now the light-theme red; check its contrast on dark surfaces).
+- Gap: button pressed state lost its colour change (kept shrink and ripple). Modal close animation ("collapses weirdly") not yet fixed; look at `modal-desktop-out` in globals.css against the centred `-translate-*` popup in `ui/dialog.tsx`.
+- Decision (designer, from the sandbox, 2026-11-03): baked into globals.css `--radius-xl` 12 to 8, `--ls-heading` -0.02em to -0.025em, light `--shadow-menu` and `--shadow-modal` (softer, wider drop). Dark shadows untouched. CONSTITUTION §6 radius line updated: xl is now 8, the same as lg, so the two steps no longer differ. Check insets (`rounded-xl`) still read as a step apart from controls.
+- Decision: `/sandbox/components` is the design-system sandbox (dev only, `SHOW_DEMO_TOOLS`). Tabs hold the real components (`components/dev/sandbox/gallery.tsx`); a side panel tunes radius, control heights, type size and tracking, motion and shadows live (`lib/sandbox-tweaks.ts`, applied only while the page is open, saved in the browser, "Copy CSS" for globals.css). Colours open the existing colour tuner. When a component joins `components/ui`, add a specimen to the gallery.
+- Discovery: the radius tokens were in `@theme inline`, so `rounded-*` compiled to literal px and could not be tuned. Moved them to the plain `@theme` block in globals.css (xs, md, 4xl now alias sm, lg, 3xl). Same values, so nothing should change visually; check a few screens.
+- Gap: sandbox not viewed in a browser. Shadow overrides apply per theme; the sliders for control heights only move components that use `h-(--control-*)`.
 - Override (designer): the Loans shelf now also lists Personal Loan, Business Loan and SME Loan. Each opens a "You will be redirected to our Loan Origination Solution (LOS)" dialog (Cancel / Proceed); Proceed only toasts, there is no LOS behind the prototype. Data `LOS_LOANS` in `lib/loans.ts`, dialog `components/loans/LosRedirectDialog.tsx`. Salary Advance keeps its own in-app flow.
 - Conflict: Business and SME Loan sit on the personal Loans page, which CONSTITUTION §10 forbids ("no business control on a personal screen"). Proposal: move those two to a business Loans page once there is one, or amend the rule. Card art: `public/plans/{personal,business,sme}-loan.webp` (640px, from the 4096px PNGs), gradients `--plan-art-*-loan-*` in globals.css.
 - Decision: upgraded to Next 16.4.4 (eslint-config-next 16, flat config imported directly in `eslint.config.mjs`, no FlatCompat). React stays 19.1.1.
@@ -818,7 +829,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
     (`--surface-1` page raise, `--surface-2` floating layer, `--surface-3` stacked); levels 1 to 8 still exist and map onto
     them in `surface-classes.ts`, with the colours of the levels that were actually reached (3 and 5) kept as they were.
   - Candidates left alone: `--cat-*` and `--spend-*` are two category palettes for different charts (merging changes
-    one chart's colours); `--balance-card-*` and `--banner-gold-*` share their dark stops.
+    one chart's colours). (`--banner-*` and `--tint-*` were deleted on 2026-11-03.)
   - Amount fields: besides the shared `AmountInput`, the amount boxes in the onboarding funding card, Quick Fund, the FX
     converter, the FX rates page, and the dashboard deposit and pay-a-biller boxes had their own card or muted fills and
     now use the field fill, border and focus like every other input.

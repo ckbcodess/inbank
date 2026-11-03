@@ -11,12 +11,12 @@
  */
 
 import { useState } from "react";
+import { Skeleton } from "skullet/react";
 import { ProductBanner } from "@/components/ui/product-banner";
 import { useProductAlertItems } from "@/lib/product-alerts";
 import { LoansWelcome } from "@/components/loans/LoansWelcome";
 import { LosRedirectDialog } from "@/components/loans/LosRedirectDialog";
 import PageHeader from "@/components/layout/PageHeader";
-import { ShelfPageSkeleton } from "@/components/states/PageSkeletons";
 import { ADVANCE_PRODUCT_HREF, LoansDevTools } from "@/components/loans/parts";
 import { ProductCard, useCardLooks, type ProductStatus } from "@/components/insure/PlanCards";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
@@ -26,7 +26,8 @@ import { MOCK_TODAY } from "@/lib/treasury";
 import { PRODUCT_IMAGES } from "@/lib/product-images";
 import { cn } from "@/lib/utils";
 
-export function LoansHome() {
+/** `loading` forces the skeleton: the route's loading.tsx draws the page itself, so skullet measures the real cards. */
+export function LoansHome({ loading: forced = false }: { loading?: boolean }) {
   const alerts = useProductAlertItems().loans;
   const hydrated = useLoansHydrated();
   const { income, advances, limit, product } = useMyLoans();
@@ -34,7 +35,7 @@ export function LoansHome() {
   const { look, layout, groups: cardGroups } = useCardLooks();
   const [losLoan, setLosLoan] = useState<string | null>(null);
 
-  if (!hydrated) return <ShelfPageSkeleton cards={1} />;
+  const loading = forced || !hydrated;
 
   const shown = product ?? ADVANCE_PRODUCTS.salary;
   const active = advances.filter((a) => a.status === "active");
@@ -48,17 +49,18 @@ export function LoansHome() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader title="Loans" />
-      <LoansDevTools extraGroups={cardGroups} />
-      <LoansWelcome />
+      {hydrated && !forced && <LoansDevTools extraGroups={cardGroups} />}
+      {!loading && <LoansWelcome />}
       <div className="mx-auto flex w-full max-w-[720px] flex-col gap-10">
-        <ProductBanner items={alerts} noun="advances" />
+        {!loading && <ProductBanner items={alerts} noun="advances" />}
+        <Skeleton loading={loading}>
         <div className={cn("stagger-items grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
           <ProductCard
             id="advance"
             name={shown.name}
             line={shown.line}
             price={income ? { label: "Up to", amount: formatMoney(limit, "GHS", showAmounts) } : undefined}
-            status={status}
+            status={loading ? undefined : status}
             image={PRODUCT_IMAGES.advance}
             alwaysPrice
             look={look}
@@ -69,6 +71,7 @@ export function LoansHome() {
             <ProductCard key={loan.id} id={loan.id} name={loan.name} line={loan.line} image={PRODUCT_IMAGES[loan.id]} look={look} layout={layout} onOpen={() => setLosLoan(loan.name)} />
           ))}
         </div>
+        </Skeleton>
       </div>
       <LosRedirectDialog loan={losLoan} onClose={() => setLosLoan(null)} />
     </div>

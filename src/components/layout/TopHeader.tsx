@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import {
   Bell,
   ChevronDown,
+  CircleHelp,
   Eye,
   Globe,
   EyeOff,
@@ -177,6 +178,22 @@ export default function TopHeader({
         )}
 
         {/* Global FX Header Ticker */}
+
+        {/* Help & Support: personal banking only, since the help centre is a personal screen. */}
+        {actor.shell === "customer" && !business && (
+          <SimpleTooltip content={t("header.help", "Help & Support")} side="bottom">
+            <Button
+              nativeButton={false}
+              render={<Link href="/help" />}
+              variant="ghost"
+              size="icon-sm"
+              className="shrink-0"
+              aria-label={t("header.help", "Help & Support")}
+            >
+              <CircleHelp size={16} />
+            </Button>
+          </SimpleTooltip>
+        )}
 
         {/* FR-22 — notifications */}
         {actor.shell === "customer" && !business && (

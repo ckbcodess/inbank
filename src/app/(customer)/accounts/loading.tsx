@@ -1,5 +1,5 @@
-import { AccountsPageSkeleton } from "@/components/states/PageSkeletons";
+import { AccountsContent } from "@/components/accounts/AccountsContent";
 
 export default function Loading() {
-  return <AccountsPageSkeleton />;
+  return <AccountsContent loading />;
 }

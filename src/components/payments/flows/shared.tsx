@@ -900,7 +900,6 @@ export function AmountInput({
       const container =
         inputRef.current?.closest("form") ||
         inputRef.current?.closest(".animate-in") ||
-        inputRef.current?.closest(".page-stagger") ||
         document;
       const narrationEl = container.querySelector<HTMLInputElement>(
         'input[data-field="narration"], input[data-narration="true"], input[name="narration"], input[placeholder*="narration" i]'

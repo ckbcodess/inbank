@@ -1,5 +1,5 @@
-import { DashboardSkeleton } from "@/components/states/PageSkeletons";
+import { OverviewContent } from "@/components/dashboard/v2/OverviewContent";
 
 export default function Loading() {
-  return <DashboardSkeleton />;
+  return <OverviewContent loading />;
 }

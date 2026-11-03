@@ -388,7 +388,7 @@ export function PaymentSuccessScreen({
   });
 
   return (
-    <div className="success-entrance relative mx-auto flex w-full max-w-[500px] min-h-[75vh] flex-col items-center justify-center gap-6 py-10 px-3 text-center overflow-visible">
+    <div className="relative mx-auto flex w-full max-w-[500px] min-h-[75vh] flex-col items-center justify-center gap-6 py-10 px-3 text-center overflow-visible">
       {/* ── Replay control — DEV/testing only, stripped from production builds ── */}
       {process.env.NODE_ENV !== "production" && (
         <button

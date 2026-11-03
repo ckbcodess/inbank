@@ -1,5 +1,5 @@
-import { ShelfPageSkeleton } from "@/components/states/PageSkeletons";
+import { LoansHome } from "@/components/loans/LoansHome";
 
 export default function Loading() {
-  return <ShelfPageSkeleton cards={1} />;
+  return <LoansHome loading />;
 }

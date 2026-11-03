@@ -1,5 +1,5 @@
-import { InvestHomeSkeleton } from "@/components/states/PageSkeletons";
+import { InvestHome } from "@/components/invest/InvestHome";
 
 export default function Loading() {
-  return <InvestHomeSkeleton />;
+  return <InvestHome loading />;
 }

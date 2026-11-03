@@ -67,7 +67,7 @@ export const useCardPayment = create<CardPaymentState>()(
 );
 
 /** Runs `onResult` once when the customer lands back from their bank, if the payment was this flow's. */
-export function useCardPaymentReturn(flow: CardPaymentFlow, onResult: (result: CardPaymentResult) => void) {
+export function useCardPaymentReturn(flow: CardPaymentFlow, onResult: (result: CardPaymentResult) => void, enabled = true) {
   const result = useCardPayment((s) => s.result);
   const clearResult = useCardPayment((s) => s.clearResult);
   const handler = useRef(onResult);
@@ -76,8 +76,8 @@ export function useCardPaymentReturn(flow: CardPaymentFlow, onResult: (result: C
   });
 
   useEffect(() => {
-    if (!result || result.payment.flow !== flow) return;
+    if (!enabled || !result || result.payment.flow !== flow) return;
     clearResult();
     handler.current(result);
-  }, [result, flow, clearResult]);
+  }, [result, flow, clearResult, enabled]);
 }

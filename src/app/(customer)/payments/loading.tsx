@@ -1,5 +1,5 @@
-import { HubPageSkeleton } from "@/components/states/PageSkeletons";
+import { SendAndPayHub } from "@/components/payments/SendAndPayHub";
 
 export default function Loading() {
-  return <HubPageSkeleton />;
+  return <SendAndPayHub loading />;
 }

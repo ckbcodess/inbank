@@ -21,18 +21,18 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "primary-sheen text-primary-foreground hover:brightness-105 active:brightness-95",
+          "primary-sheen text-primary-foreground hover:brightness-105",
         outline:
-          "border-border bg-background shadow-[0_1px_1px_0_color-mix(in_srgb,var(--black)_4%,transparent)] hover:bg-muted/50 hover:text-foreground aria-expanded:bg-muted/50 aria-expanded:text-foreground active:bg-muted/80 dark:bg-border/30 dark:hover:bg-border/45 dark:aria-expanded:bg-border/45 dark:active:bg-border/60",
+          "border-border bg-background shadow-[0_1px_1px_0_color-mix(in_srgb,var(--black)_4%,transparent)] hover:bg-muted/50 hover:text-foreground aria-expanded:bg-muted/50 aria-expanded:text-foreground dark:bg-border/30 dark:hover:bg-border/45 dark:aria-expanded:bg-border/45",
         secondary:
-          "bg-muted text-accent-foreground hover:[background-color:color-mix(in_oklch,var(--muted)_var(--hover-fill),var(--hover-mix-color))] active:[background-color:color-mix(in_oklch,var(--muted)_78%,var(--hover-mix-color))] aria-expanded:bg-muted aria-expanded:text-accent-foreground",
+          "bg-muted text-accent-foreground hover:[background-color:color-mix(in_oklch,var(--muted)_var(--hover-fill),var(--hover-mix-color))] aria-expanded:bg-muted aria-expanded:text-accent-foreground",
         ghost:
-          "hover-surface hover:text-foreground aria-expanded:text-foreground",
+          "hover-surface hover:text-foreground aria-expanded:text-foreground active:[background-color:color-mix(in_oklch,var(--foreground)_var(--hover-overlay),transparent)]",
         destructive:
-          "bg-destructive text-white shadow-[0_1px_2px_0_color-mix(in_srgb,var(--black)_20%,transparent)] hover:bg-destructive/90 active:bg-destructive/80 focus-visible:outline-destructive dark:bg-destructive dark:text-white dark:hover:bg-destructive/90 dark:active:bg-destructive/80",
+          "bg-destructive text-white shadow-[0_1px_2px_0_color-mix(in_srgb,var(--black)_20%,transparent)] hover:bg-destructive/90 focus-visible:outline-destructive dark:bg-destructive dark:text-white dark:hover:bg-destructive/90",
         link: "text-foreground underline-offset-4 hover:underline",
         // The same fill as a hub list tile (--tile), for a button that sits beside or above tiles.
-        tile: "bg-[var(--tile)] text-foreground hover:bg-[var(--tile-hover)] active:[background-color:color-mix(in_oklch,var(--tile-hover),var(--foreground)_6%)]",
+        tile: "bg-[var(--tile)] text-foreground hover:bg-[var(--tile-hover)]",
         // Frosted control for the dark hero panel on the dashboard (white type, tinted by --hero-foreground).
         glass: GLASS_CLASS,
       },

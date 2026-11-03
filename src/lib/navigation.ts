@@ -49,8 +49,7 @@ function retailNav(): NavItem[] {
     { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "records" },
     { key: "transactions", label: "Transactions", path: "/transactions", icon: "ArrowLeftRight", group: "records" },
     ...MORE_SERVICES,
-    // Profile and settings live in the header's account menu, so the sidebar carries only Help.
-    { key: "help", label: "Help & Support", path: "/help", icon: "CircleHelp", group: "support" },
+    // Profile, settings and Help & Support live in the header, so the sidebar carries only the products and records.
   ];
 }
 

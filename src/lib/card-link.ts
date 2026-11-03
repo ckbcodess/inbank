@@ -110,7 +110,7 @@ export const useCardLink = create<CardLinkState>()(
 );
 
 /** Runs `onResult` once when the customer lands back from their bank. */
-export function useCardLinkReturn(onResult: (result: CardLinkResult) => void) {
+export function useCardLinkReturn(onResult: (result: CardLinkResult) => void, enabled = true) {
   const result = useCardLink((s) => s.result);
   const clearResult = useCardLink((s) => s.clearResult);
   const handler = useRef(onResult);
@@ -119,8 +119,8 @@ export function useCardLinkReturn(onResult: (result: CardLinkResult) => void) {
   });
 
   useEffect(() => {
-    if (!result) return;
+    if (!enabled || !result) return;
     clearResult();
     handler.current(result);
-  }, [result, clearResult]);
+  }, [result, clearResult, enabled]);
 }

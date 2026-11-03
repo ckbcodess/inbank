@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @variant dark (&:where(.dark, .dark *));
@@ -8,6 +8,17 @@
   /* One spacing step is 4px, independent of the 14px root font size. Padding, margin and gap use only
      2 4 8 12 16 20 24 32 40 48 64 (steps 0.5 1 2 3 4 5 6 8 10 12 16); see CONSTITUTION §6. */
   --spacing: 4px;
+  /* Five radii (CONSTITUTION §6): sm 4 · lg 8 · xl 8 · 2xl 16 · 3xl 20, plus full. xs, md and 4xl are
+     aliases so stray classes still land on the scale; write sm / lg / 3xl. They sit in this plain @theme (not the
+     inline one below) so a rounded-* class reads `var(--radius-*)` and the sandbox can tune them live. */
+  --radius-sm: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-xs: var(--radius-sm);
+  --radius-md: var(--radius-lg);
+  --radius-4xl: var(--radius-3xl);
   --ease-settle: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-standard: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
@@ -211,16 +222,6 @@
   --color-card-auth: var(--card-auth);
   --color-card-item: var(--card-item);
   --color-modal: var(--modal);
-  /* Five radii (CONSTITUTION §6): sm 4 · lg 8 · xl 12 · 2xl 16 · 3xl 20, plus full. xs, md and 4xl are
-     aliases so stray classes still land on the scale; write sm / lg / 3xl. */
-  --radius-xs: 4px;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
-  --radius-3xl: 20px;
-  --radius-4xl: 20px;
   /* Sidebar transition */
 
   /* Fluid Functionalism Elevated Surface theme mappings */
@@ -458,24 +459,24 @@
   --chip-selected-foreground: var(--gray-950);
   --chip-foreground: var(--gray-600);
   /* Status pills ("Active", "Blocked", "Default"): a tint and the text on it. They follow the status colours until set. */
-  --pill-success: color-mix(in srgb, var(--green-300) 23.9%, transparent);
+  --pill-success: #86eeab4d;
   --pill-success-text: var(--green-800);
   --pill-info: color-mix(in oklch, var(--info) 20%, transparent);
   --pill-info-text: var(--blue-800);
-  --pill-warning: color-mix(in srgb, var(--amber-200) 40%, transparent);
+  --pill-warning: #fce68a80;
   --pill-warning-text: var(--amber-950);
   --pill-destructive: color-mix(in oklch, var(--destructive) 20%, transparent);
   --pill-destructive-text: var(--red-700);
   --pill-neutral: var(--muted);
   --pill-neutral-text: var(--accent-foreground);
   /* Card status hues beyond success, info, warning and destructive, so each delivery state has its own colour. */
-  --pill-violet: color-mix(in srgb, var(--violet-500) 18%, transparent);
+  --pill-violet: #8b5ef433;
   --pill-violet-text: var(--violet-950);
   --pill-slate: color-mix(in srgb, var(--smoke-600) 16%, transparent);
   --pill-slate-text: var(--smoke-700);
-  --pill-teal: color-mix(in srgb, var(--teal-500) 20%, transparent);
-  --pill-teal-text: var(--teal-700);
-  --pill-orange: color-mix(in srgb, var(--orange-500) 22%, transparent);
+  --pill-teal: #35f3f03d;
+  --pill-teal-text: #0484ae;
+  --pill-orange: #fa72174d;
   --pill-orange-text: var(--orange-950);
   /* Initials circles on payees and billers: the same pastel in both modes, with dark ink on top. */
   --avatar-teal: #f1f8f9;
@@ -493,7 +494,7 @@
   --info: var(--blue-500);
   --success-text: var(--green-600);
   --warning-text: var(--amber-700);
-  --destructive-text: var(--red-700);
+  --destructive-text: #b72a38;
   --info-text: var(--blue-700);
   /* Input fields, text areas, selects and the PIN boxes. */
   --field: var(--white);
@@ -536,30 +537,11 @@
   --plan-art-business-loan-2: var(--smoke-500);
   --plan-art-sme-loan-1: var(--amber-300);
   --plan-art-sme-loan-2: var(--amber-500);
-  /* Dashboard promo banners (gold, green, blue) and the total balance card: three stops each. */
-  --banner-gold-1: #fefbf2;
-  --banner-gold-2: #fbf3db;
-  --banner-gold-3: #f7e8bd;
-  --banner-green-1: #f0fbf5;
-  --banner-green-2: #e2f7ec;
-  --banner-green-3: #cbf0dc;
-  --banner-blue-1: #f0f6ff;
-  --banner-blue-2: #e1eeff;
-  --banner-blue-3: #cfe2fe;
-  /* The four tints behind the suggestions on the dashboard: a fill and the text on it. */
-  --tint-teal-bg: #f1f8f9;
-  --tint-teal-text: #0d4f5b;
-  --tint-sand-bg: #ebe8de;
-  --tint-sand-text: #544d32;
-  --tint-green-bg: #e0eedd;
-  --tint-green-text: #2c532f;
-  --tint-plum-bg: #e7dce8;
-  --tint-plum-text: #5a2e5d;
   --muted: var(--gray-200);
   --muted-foreground: var(--gray-500);
   --accent: var(--gray-100);
   --accent-foreground: var(--gray-875);
-  --destructive: var(--red-600);
+  --destructive: #ea3446;
   --destructive-foreground: var(--white);
   --success: var(--green-600);
   --warning: var(--amber-500);
@@ -603,7 +585,7 @@
   --radius: 8px;
   /* Letter-spacing (tracking), one place. Kerning is the font's own and is left on. */
   --ls-tight: -0.01em; /* titles inside cards, row names */
-  --ls-heading: -0.02em; /* page titles, section headings, large figures */
+  --ls-heading: -0.025em; /* page titles, section headings, large figures */
   --ls-display: -0.03em; /* the biggest numbers */
   --ls-label: 0.02em; /* small initials and codes */
   /* Brand gradient: deep amber → brighter golden glow at bottom */
@@ -662,8 +644,8 @@
      of these never also gets `border` or `ring-*`. Dark redefines the same names below. */
   --shadow-button: 0 0 0 1px color-mix(in srgb, var(--black) 9%, transparent), 0 1px 1px 0 color-mix(in srgb, var(--black) 5%, transparent);
   --shadow-card: 0 0 0 1px color-mix(in srgb, var(--black) 10%, transparent), 0 1px 2px 0 color-mix(in srgb, var(--black) 10%, transparent), 0 3px 4px -2px color-mix(in srgb, var(--black) 6%, transparent);
-  --shadow-menu: 0 0 0 1px color-mix(in srgb, var(--black) 12%, transparent), 0 1px 2px 0 color-mix(in srgb, var(--black) 12%, transparent), 0 4px 8px -4px color-mix(in srgb, var(--black) 14%, transparent);
-  --shadow-modal: 0 0 0 1px color-mix(in srgb, var(--black) 10%, transparent), 0 1px 2px 0 color-mix(in srgb, var(--black) 12%, transparent), 0 6px 8px -4px color-mix(in srgb, var(--black) 16%, transparent);
+  --shadow-menu: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.08), 0px 4px 16px -4px rgba(0, 0, 0, 0.11);
+  --shadow-modal: 0px 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 6px 16px -4px rgba(0, 0, 0, 0.08);
 }
 
 .dark {
@@ -752,7 +734,7 @@
   --pill-neutral: var(--muted);
   --pill-neutral-text: var(--accent-foreground);
   /* Card status hues beyond success, info, warning and destructive, so each delivery state has its own colour. */
-  --pill-violet: color-mix(in srgb, var(--violet-400) 26%, transparent);
+  --pill-violet: #a68bfb2e;
   --pill-violet-text: var(--violet-300);
   --pill-slate: color-mix(in srgb, var(--smoke-400) 22%, transparent);
   --pill-slate-text: var(--smoke-200);
@@ -773,7 +755,7 @@
   --info: var(--blue-400);
   --success-text: var(--green-600);
   --warning-text: var(--amber-400);
-  --destructive-text: var(--red-700);
+  --destructive-text: #b72a38;
   --info-text: var(--blue-300);
   --field: var(--gray-850);
   --field-hover: var(--gray-825);
@@ -785,28 +767,11 @@
   --menu-item-hover: var(--gray-800);
   --device-frame: #2a2a2a;
   --device-screen: #141414;
-  --banner-gold-1: #211a0c;
-  --banner-gold-2: #191409;
-  --banner-gold-3: #130f07;
-  --banner-green-1: #0d2118;
-  --banner-green-2: #091711;
-  --banner-green-3: #07110c;
-  --banner-blue-1: #0d1a2d;
-  --banner-blue-2: #091220;
-  --banner-blue-3: #060d17;
-  --tint-teal-bg: #1a2d32;
-  --tint-teal-text: #7ee2f3;
-  --tint-sand-bg: #312e25;
-  --tint-sand-text: #e4d8a5;
-  --tint-green-bg: #203222;
-  --tint-green-text: #a0e4a7;
-  --tint-plum-bg: #342436;
-  --tint-plum-text: #e9b6ec;
   --muted: var(--gray-800);
   --muted-foreground: var(--gray-400);
   --accent: var(--gray-700);
   --accent-foreground: var(--gray-50);
-  --destructive: var(--red-600);
+  --destructive: #ea3446;
   --destructive-foreground: var(--white);
   --success: var(--green-500);
   --warning: var(--amber-500);
@@ -1053,65 +1018,17 @@ a,
   background-color: color-mix(in oklch, var(--foreground) var(--hover-overlay), transparent);
 }
 
-/* Page entrance — staggered fade-up of each top-level section. Applied via the
-   app shells (AppShell / SuperAdminShell) so every page animates in the same way
-   the inventory page does. Re-runs on each navigation because the page subtree
-   remounts. `> * > *` targets the sections inside a page's root wrapper.
-   Timing note: the fill mode is `both`, so a section is held at opacity 0 for
-   the whole of its delay. Delay and duration therefore ADD — the last section
-   is not readable until delay + duration has elapsed. At 480ms + 500ms that
-   was ~1s of blank page on every tab switch, which reads as loading rather
-   than as motion. Kept the cascade, scaled it so the last section lands by
-   ~360ms and the shorter travel makes it feel like arrival, not a wait. */
+/* While the first-load splash covers the app, entrance animations wait (held at their starting frame), so they
+   play once the splash has gone instead of finishing unseen underneath it. */
+.splash-hold * { animation-play-state: paused !important; }
+
+/* Product lists rise in: each card arrives after the one before it. Opt in with `stagger-items` on the parent (the
+   shelves on Insure, Invest and Loans, and the Send & Pay and Accounts sections). Uses the `reveal` duration and the
+   settle curve; the step is 60ms and stops growing after the eighth, so a long list never takes long to land. */
 @keyframes page-stagger-in {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .page-stagger > *:only-child > *,
-  .page-stagger > *:not(:only-child) {
-    animation: page-stagger-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-  .page-stagger > *:only-child > *:nth-child(1),
-  .page-stagger > *:not(:only-child):nth-child(1) { animation-delay: 0ms; }
-
-  .page-stagger > *:only-child > *:nth-child(2),
-  .page-stagger > *:not(:only-child):nth-child(2) { animation-delay: 30ms; }
-
-  .page-stagger > *:only-child > *:nth-child(3),
-  .page-stagger > *:not(:only-child):nth-child(3) { animation-delay: 60ms; }
-
-  .page-stagger > *:only-child > *:nth-child(4),
-  .page-stagger > *:not(:only-child):nth-child(4) { animation-delay: 85ms; }
-
-  .page-stagger > *:only-child > *:nth-child(5),
-  .page-stagger > *:not(:only-child):nth-child(5) { animation-delay: 105ms; }
-
-  .page-stagger > *:only-child > *:nth-child(6),
-  .page-stagger > *:not(:only-child):nth-child(6) { animation-delay: 120ms; }
-
-  .page-stagger > *:only-child > *:nth-child(7),
-  .page-stagger > *:not(:only-child):nth-child(7) { animation-delay: 130ms; }
-
-  .page-stagger > *:only-child > *:nth-child(8),
-  .page-stagger > *:not(:only-child):nth-child(8) { animation-delay: 140ms; }
-
-  .page-stagger > *:only-child > *:nth-child(n+9),
-  .page-stagger > *:not(:only-child):nth-child(n+9) { animation-delay: 150ms; }
-}
-
-/* The page header (title, back arrow, its actions) is the frame the page arrives in, so it never staggers: it is there
-   from the first frame and only the content under it rises in. */
-.page-stagger > [data-page-header],
-.page-stagger > * > [data-page-header] { animation: none !important; }
-
-/* While the first-load splash covers the app, the page's entrance animations wait (held at their starting frame), so they
-   play once the splash has gone instead of finishing unseen underneath it. */
-.splash-hold * { animation-play-state: paused !important; }
-
-/* Items inside a landing page's list (the product cards on Insure, Invest and Loans): each rises in after the one before
-   it, once the page's own sections are in. Opt in with `stagger-items` on the parent. Uses the `reveal` duration and the
-   settle curve; the step is 60ms and stops growing after the eighth, so a long list never takes long to land. */
 @media (prefers-reduced-motion: no-preference) {
   .stagger-items > * {
     animation: page-stagger-in var(--dur-reveal) var(--ease-settle) both;
@@ -1124,15 +1041,6 @@ a,
   .stagger-items > :nth-child(6) { animation-delay: 420ms; }
   .stagger-items > :nth-child(7) { animation-delay: 480ms; }
   .stagger-items > :nth-child(n+8) { animation-delay: 540ms; }
-}
-
-/* Opt-out: the payment success screen runs its own framer-motion entrance.
-   Cancel the shell's inherited CSS page-stagger on its sections so the two
-   don't fight (the CSS fill:both was pinning elements visible, overriding
-   framer's hidden state and making them appear before their reveal). Only
-   kills the CSS animation — framer drives via inline styles / WAAPI, untouched. */
-.success-entrance > * {
-  animation: none !important;
 }
 
 /* App shell card surface: the page's content card, a top-to-bottom gradient between two tokens. Light mode is a flat

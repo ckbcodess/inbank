@@ -35,6 +35,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     "header.themeDark": "Switch to dark mode",
     "header.language": "Language",
     "header.settings": "Settings",
+    "header.help": "Help & Support",
     "header.signOut": "Log out",
     "header.locator": "Branch and ATM locator",
 
@@ -116,6 +117,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     "header.themeDark": "Passer au thème sombre",
     "header.language": "Langue",
     "header.settings": "Paramètres",
+    "header.help": "Aide et assistance",
     "header.signOut": "Se déconnecter",
     "header.locator": "Agences et distributeurs",
 
@@ -197,6 +199,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     "header.themeDark": "Cambiar a modo oscuro",
     "header.language": "Idioma",
     "header.settings": "Configuración",
+    "header.help": "Ayuda y soporte",
     "header.signOut": "Cerrar sesión",
     "header.locator": "Buscador de sucursales y cajeros",
 
@@ -278,6 +281,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     "header.themeDark": "切换至夜间模式",
     "header.language": "界面语言",
     "header.settings": "个人设置",
+    "header.help": "帮助与支持",
     "header.signOut": "退出登录",
     "header.locator": "网点与自动柜员机查询",
 

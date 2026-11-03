@@ -1,5 +1,5 @@
-import { ShelfPageSkeleton } from "@/components/states/PageSkeletons";
+import { InsureHome } from "@/components/insure/InsureHome";
 
 export default function Loading() {
-  return <ShelfPageSkeleton cards={4} />;
+  return <InsureHome loading />;
 }

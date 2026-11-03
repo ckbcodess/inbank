@@ -117,7 +117,7 @@ here. Never fall back to dense, boxed layouts.
   (ramps `gray`, `amber`, `orange`, `red`, `pink`, `green`, `teal`, `blue`, `violet`, `smoke`, 50–950, plus
   `white`/`black`). Semantic and component tokens point at primitives (`--destructive: var(--red-600)`), and
   translucent ones use `color-mix(in srgb, var(--prim) N%, transparent)`. Components use semantic tokens only.
-  The one exception is illustration families (avatar, tx, tint, banner, duotone icon, spend, ticket), which keep
+  The one exception is illustration families (avatar, tx, duotone icon, spend, ticket), which keep
   raw values. Figma mirrors this: Color Primitives ← Theme core groups ← `component/`, plus `illustration/`.
 - **Semantic tokens only.** No hex values and no Tailwind palette colours (`text-blue-500`,
   `bg-gray-100`) in components. Use `bg-background`, `bg-card`, `bg-muted`, `text-foreground`,
@@ -182,7 +182,7 @@ here. Never fall back to dense, boxed layouts.
   `0.5 1 2 3 4 5 6 8 10 12 16`. Nothing in between (no `p-1.5`, `gap-2.5`, `p-7`). Bigger values are layout
   clearances (the phone tab bar), not spacing. Component sizes (`h-*`, `size-*`, `w-*`) aren't spacing tokens.
 - **Radius: five values plus full.** `rounded-sm` 4 (small bits), `rounded-lg` 8 (controls, icon tiles),
-  `rounded-xl` 12 (insets), `rounded-2xl` 16 (panels), `rounded-3xl` 20 (hero and large sheets), `rounded-full`
+  `rounded-xl` 8 (insets, set by the designer from the sandbox on 2026-11-03, now equal to lg), `rounded-2xl` 16 (panels), `rounded-3xl` 20 (hero and large sheets), `rounded-full`
   (badges and pills). Don't write `rounded`, `-md`, `-xs`, `-4xl` or px radii (the only exceptions are swatches
   of 3px or less). For concentric corners, add padding and border to the inner radius:
   `rounded-[calc(var(--radius-3xl)+var(--spacing)*N+1px)]`.
