@@ -25,11 +25,11 @@ import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { isBusinessProfile } from "@/lib/profile";
 import { getNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-import { useMobileFields } from "@/lib/use-mobile-fields";
 import { AnimatePresence, motion } from "framer-motion";
 import { FxQuickModal } from "@/components/fx/FxQuickModal";
 import SettingsDialog from "@/components/settings/SettingsDialog";
 import { BottomNav } from "./BottomNav";
+import { PullToRefresh } from "./PullToRefresh";
 
 const COLLAPSE_KEY = "nibs-sidebar-collapsed";
 
@@ -44,7 +44,6 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const hydrated = useSessionHydrated();
-  useMobileFields();
   const ready = hydrated && !!actor && mfaVerified && !!activeProfile && actor.shell !== "admin";
 
   // First-load splash (see lib/app-splash): up from the first paint until the
@@ -181,6 +180,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
               {/* iOS leaves the layout under the keyboard; this is the room the last field needs to scroll up into. */}
               <div aria-hidden="true" className="shrink-0" style={{ height: "var(--keyboard-inset, 0px)" }} />
             </main>
+            <PullToRefresh />
             <BottomNav onOpenDrawer={() => setSidebarOpen(true)} />
           </div>
         </div>

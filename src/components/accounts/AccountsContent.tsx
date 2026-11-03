@@ -73,6 +73,7 @@ import { useAmountVisibility } from "@/components/providers/AmountVisibilityProv
 import LinkSourceAccountModal from "@/components/dashboard/LinkSourceAccountModal";
 import { useCardLinkReturn } from "@/lib/card-link";
 import { useCardPaymentReturn } from "@/lib/card-payment";
+import { useRefreshHandler } from "@/lib/pull-refresh";
 
 type ScreenState = "populated" | "loading" | "error" | "sources-error";
 
@@ -242,6 +243,17 @@ export function AccountsContent({ linkSource = false, loading: forced = false }:
 
   const [pickedState, setScreenState] = useState<ScreenState>("populated");
   const screenState: ScreenState = forced ? "loading" : pickedState;
+  // Pull down at the top of the page: the accounts redraw from their skeleton, as a reload would.
+  useRefreshHandler(
+    () =>
+      new Promise<void>((done) => {
+        setScreenState("loading");
+        window.setTimeout(() => {
+          setScreenState("populated");
+          done();
+        }, 700);
+      }),
+  );
   const [linkOpen, setLinkOpen] = useState(false);
   // Opened by sign-up (not the pill) → the onboarding version of the link choice.
   const [linkOnboarding, setLinkOnboarding] = useState(false);

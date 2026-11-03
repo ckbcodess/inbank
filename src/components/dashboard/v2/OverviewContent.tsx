@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { GcbDashboard, type DashStatus } from "@/components/dashboard/v2/GcbDashboard";
 import { HeroWaveTuner } from "@/components/dashboard/v2/HeroWaveTuner";
 import { OPEN_FUND_EVENT } from "@/lib/payment-options";
+import { useRefreshHandler } from "@/lib/pull-refresh";
 import { FirstRunWelcome } from "@/components/dashboard/v2/FirstRunWelcome";
 import { QuickFundModal, type FundResume } from "@/components/dashboard/v2/QuickFundModal";
 import { useCardPaymentReturn } from "@/lib/card-payment";
@@ -91,12 +92,6 @@ export function OverviewContent({ accountId = null, loading: forced = false }: {
     return getSimulatedDashboardData({ actor, activeProfile, usageType, accountId, defaultAccountId });
   }, [actor, activeProfile, usageType, accountId, defaultAccountId]);
 
-  if (!actor || !activeProfile || !data) return null;
-
-  // Dev Mode can pin either state; otherwise it follows a real refresh.
-  const status: DashStatus =
-    forced || usageType === "loading" || fetching ? "loading" : usageType === "error" ? "error" : "ready";
-
   const refresh = () => {
     if (usageType === "error") setUsageType("active"); // a retry recovers the demo
     setFetching(true);
@@ -106,6 +101,17 @@ export function OverviewContent({ accountId = null, loading: forced = false }: {
       setUpdatedAt(Date.now());
     }, FETCH_MS);
   };
+  // Pulling down at the top of the page runs the same refresh as the button, and waits for it.
+  useRefreshHandler(() => {
+    refresh();
+    return new Promise<void>((done) => window.setTimeout(done, FETCH_MS));
+  });
+
+  if (!actor || !activeProfile || !data) return null;
+
+  // Dev Mode can pin either state; otherwise it follows a real refresh.
+  const status: DashStatus =
+    forced || usageType === "loading" || fetching ? "loading" : usageType === "error" ? "error" : "ready";
 
   const selectAccount = (id: string) => {
     // The default needs no param — keep its URL clean.

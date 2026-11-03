@@ -24,7 +24,9 @@ function scroller(el: HTMLElement): HTMLElement | null {
     const oy = getComputedStyle(p).overflowY;
     if ((oy === "auto" || oy === "scroll") && p.scrollHeight > p.clientHeight) return p;
   }
-  return null;
+  // Pages that scroll the window itself (sign-in, onboarding) have no container of their own.
+  const page = document.scrollingElement;
+  return page instanceof HTMLElement && page.scrollHeight > page.clientHeight ? page : null;
 }
 
 /**
@@ -36,9 +38,10 @@ function reveal(el: HTMLElement) {
   const box = scroller(el);
   if (!box) return;
   const vv = window.visualViewport;
-  const boxRect = box.getBoundingClientRect();
+  const onWindow = box === document.scrollingElement;
+  const boxRect = onWindow ? { top: 0, bottom: window.innerHeight } : box.getBoundingClientRect();
   // Where the field may sit: below the sticky header (the page container pads its top for it) and above the keyboard.
-  const top = Math.max(boxRect.top, vv?.offsetTop ?? 0) + parseFloat(getComputedStyle(box).paddingTop) + 12;
+  const top = Math.max(boxRect.top, vv?.offsetTop ?? 0) + (onWindow ? 0 : parseFloat(getComputedStyle(box).paddingTop)) + 12;
   let bottom = Math.min(boxRect.bottom, vv ? vv.offsetTop + vv.height : window.innerHeight);
   const bar = document.querySelector<HTMLElement>('[data-action-bar="docked"]');
   if (bar) bottom = Math.min(bottom, bar.getBoundingClientRect().top);

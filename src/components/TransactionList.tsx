@@ -60,6 +60,7 @@ import {
   type Transaction,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { useRefreshHandler } from "@/lib/pull-refresh";
 
 const LIST_STATES: readonly ListState[] = [
   "loading",
@@ -220,6 +221,17 @@ export default function TransactionList({
 }: TransactionListProps) {
 
   const [state, setState] = useState<ListState>("populated");
+  // Pull down at the top of the page: the list redraws from its skeleton, as a reload would.
+  useRefreshHandler(
+    () =>
+      new Promise<void>((done) => {
+        setState("loading");
+        window.setTimeout(() => {
+          setState("populated");
+          done();
+        }, 700);
+      }),
+  );
   const [query, setQuery] = useState("");
   const [accountFilter, setAccountFilter] = useState<string>(initialAccountId ?? "all");
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);

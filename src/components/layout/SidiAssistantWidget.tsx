@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { X, Maximize2, Minimize2, ArrowUp, FileText, ArrowRightLeft, Search, SquarePen, CircleHelp, Phone, MapPin } from "@/components/ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "@/lib/session-store";
@@ -61,6 +62,9 @@ const PRESET_ANSWERS: Record<string, string> = {
     "I'm here to assist with all your GCB Internet Banking needs!\n\nYou can ask me about:\n• Checking balances, statements & transaction search\n• Domestic bank transfers (GIP, ACH) and GhanaPay QR\n• Mobile Money wallet cash-in and cash-out\n• Card management, limits, blocking and replacements\n• 24/7 GCB Customer Care hotline: +233 302 681 531",
 };
 
+/** Where the assistant shows (designer, 2026-11-03): personal home, and the screens a new customer passes through. */
+const ASSISTANT_PAGES = ["/overview", "/get-started", "/signup", "/activate", "/migrate", "/card-verification", "/forgot-password"];
+
 const INTRO_KEY = "sidi-intro-seen";
 const INTRO_DELAY = 1500;
 const INTRO_HOLD = 6000;
@@ -88,7 +92,10 @@ export function SidiAssistantWidget() {
 
   // Depend on whether someone is signed in, not on the actor object: the session store hands out a new object when
   // it hydrates or refreshes, and re-running this effect would cancel the timers that end the greeting, leaving it stuck.
-  const signedIn = Boolean(actor);
+  const pathname = usePathname();
+  const onAssistantPage = ASSISTANT_PAGES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  // The greeting waits for a page where the assistant shows, so it is never spent unseen.
+  const signedIn = Boolean(actor) && onAssistantPage;
   useEffect(() => {
     if (!signedIn) return;
     try {
@@ -160,6 +167,8 @@ export function SidiAssistantWidget() {
 
   // The assistant answers personal banking questions and links into personal screens; business has none yet.
   if (isBusinessProfile(activeProfile)) return null;
+  // And it stays out of the way everywhere else: the home page and the onboarding screens only.
+  if (!onAssistantPage) return null;
 
   return (
     <>

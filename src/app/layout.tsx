@@ -10,6 +10,7 @@ import { DevStateProvider } from "@/components/providers/DevStateProvider";
 import PersonaFlowSwitcher from "@/components/dev/PersonaFlowSwitcher";
 import { ColorTuner } from "@/components/dev/ColorTuner";
 import { MotionProvider } from "@/components/providers/MotionProvider";
+import { MobileFields } from "@/components/providers/MobileFields";
 import { SHOW_DEMO_HUB, SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import TourOverlay from "@/components/dev/TourOverlay";
 import { AndroidRippleProvider } from "@/components/providers/AndroidRippleProvider";
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased">
         <NavHistoryTracker />
+        <MobileFields />
         <ThemeProvider>
           <SkulletProvider theme={{ animation: "shimmer" }}>
           <MotionProvider>
