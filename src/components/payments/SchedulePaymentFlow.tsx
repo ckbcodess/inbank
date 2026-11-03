@@ -120,6 +120,7 @@ export function SchedulePaymentFlow() {
         primaryActionLabel="View scheduled payments"
         showSaveBeneficiary={false}
         hideSchedule
+        hideReceipt
       />
     );
   }

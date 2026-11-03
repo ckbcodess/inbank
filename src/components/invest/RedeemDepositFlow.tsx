@@ -26,11 +26,18 @@ import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import { useTreasuryAccounts } from "@/lib/treasury";
 import { earlyRedemption, useDeposit, useTermDeposits } from "@/lib/term-deposits";
 import Link from "next/link";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 const asNumber = (v: string) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
 const money = (n: number) => formatMoney(n, "GHS", true);
 
-export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
+type RedeemMode = "full" | "part";
+const MODES: readonly { value: RedeemMode; label: string }[] = [
+  { value: "full", label: "In Full" },
+  { value: "part", label: "In Part" },
+];
+
+export function RedeemDepositFlow() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { hydrated, deposit: d } = useDeposit(id);
@@ -39,14 +46,15 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
   const accounts = useTreasuryAccounts();
   const { defaultId } = useCustomerAccounts();
 
+  const [mode, setMode] = useState<RedeemMode>("full");
   const [screen, setScreen] = useState<"form" | "success" | "failed">("form");
   const [pickedTo, setPickedTo] = useState("");
   const [amount, setAmount] = useState("");
   const [authOpen, setAuthOpen] = useState(false);
   const [paid, setPaid] = useState<{ trn: string; amount: number; closed: boolean; toName: string } | null>(null);
 
-  const whole = mode === "close";
-  const title = whole ? "Close the Deposit" : "Redeem Part of the Deposit";
+  const whole = mode === "full";
+  const title = "Redeem Term Deposit";
   const back = { href: d ? `${DEPOSITS_HOME}/${d.id}` : INVEST_HOME, label: d ? `${d.tenureDays}-day deposit` : "Invest" };
 
   if (!hydrated) return <FormPageSkeleton fields={2} />;
@@ -130,6 +138,17 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
       <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <FromAccountSelector accounts={accounts} value={toId} onChange={setPickedTo} label="To Account" />
 
+        <SegmentedControl<RedeemMode>
+          aria-label="Redemption"
+          options={MODES}
+          value={mode}
+          onChange={(m) => {
+            setMode(m);
+            if (m === "full") setAmount("");
+          }}
+          fullWidth
+        />
+
         {!whole && (
           <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
             <AmountInput
@@ -138,7 +157,7 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
               label="Amount to Redeem"
               helper={`Less than ${money(d.principal)}.`}
               hasError={wholeByAccident}
-              error={wholeByAccident ? <InlineError message="That’s the whole deposit. Choose Close the Deposit to take it all out." className="text-left" /> : undefined}
+              error={wholeByAccident ? <InlineError message="That’s the whole deposit. Choose In Full to take it all out." className="text-left" /> : undefined}
             />
           </div>
         )}

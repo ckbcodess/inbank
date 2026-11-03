@@ -72,7 +72,7 @@ export function GroupDetailSheet({ group, open, onOpenChange, onEdit, onDelete }
             />
             <RoundAction
               label="Edit"
-              icon={Pencil} chipClassName="bg-muted text-foreground group-hover:bg-muted/70"
+              icon={Pencil} chipClassName="bg-action-chip text-foreground group-hover:bg-action-chip-hover"
               onClick={() => {
                 onOpenChange(false);
                 onEdit(group);
@@ -80,7 +80,7 @@ export function GroupDetailSheet({ group, open, onOpenChange, onEdit, onDelete }
             />
             <RoundAction
               label="Delete"
-              icon={Trash2} chipClassName="bg-muted text-destructive-text group-hover:bg-muted/70"
+              icon={Trash2} chipClassName="bg-action-chip text-destructive-text group-hover:bg-action-chip-hover"
               onClick={() => {
                 onOpenChange(false);
                 onDelete(group);

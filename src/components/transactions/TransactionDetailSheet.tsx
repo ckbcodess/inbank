@@ -4,6 +4,7 @@ import { personalRepeatHref } from "@/lib/repeat-payment";
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Copy, Check, Share2, FileDown, RotateCw, HandCoins, MessageSquareWarning } from "@/components/ui/icons";
+import { RoundAction } from "@/components/ui/round-action";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -159,6 +160,17 @@ export function TransactionDetailSheet({
     onOpenChange(false);
     router.push(repeatTo);
   };
+
+  // The round actions under the receipt, in order. Each one is a RoundAction, so they look the same as the ones on the
+  // success screen; the ones that need the receipt's details wait for them.
+  const actions: Array<{ id: string; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }>; onClick: () => void; needsDetails?: boolean }> = [
+    { id: "share", label: "Share", icon: Share2, onClick: () => setShareFormat("text"), needsDetails: true },
+    { id: "pdf", label: "Save as PDF", icon: FileDown, onClick: () => setShareFormat("pdf"), needsDetails: true },
+    ...(advanceId ? [{ id: "advance", label: "View Advance", icon: HandCoins, onClick: handleViewAdvance }] : []),
+    ...(repeatTo ? [{ id: "repeat", label: "Repeat", icon: RotateCw, onClick: handleRepeat, needsDetails: true }] : []),
+    // Only a payment that went wrong has something to report.
+    ...(isFailed ? [{ id: "report", label: "Report Issue", icon: MessageSquareWarning, onClick: () => setReporting(true) }] : []),
+  ];
 
   // Receipt text copy / share
   const receiptText = (masked: boolean) => {
@@ -446,83 +458,20 @@ export function TransactionDetailSheet({
           {/* ── Bottom Circular Action Buttons (Share, Save as PDF, Repeat): pinned to the foot of the sheet ── */}
           <div className="relative z-10 shrink-0 px-5 sm:px-8 pb-6 pt-3">
             <div>
-              <div className="flex items-center justify-center gap-6">
-                {/* Share Action */}
-                <button
-                  type="button"
-                  onClick={() => setShareFormat("text")}
-                  disabled={!detailReady}
-                  className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast group-hover:brightness-95">
-                    <Share2 size={20} />
-                  </div>
-                  <span className="text-[12px] font-normal text-foreground tracking-tight">
-                    Share
-                  </span>
-                </button>
-
-                {/* Save as PDF Action */}
-                <button
-                  type="button"
-                  onClick={() => setShareFormat("pdf")}
-                  disabled={!detailReady}
-                  className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast group-hover:brightness-95">
-                    <FileDown size={20} />
-                  </div>
-                  <span className="text-[12px] font-normal text-foreground tracking-tight">
-                    Save as PDF
-                  </span>
-                </button>
-
-                {/* View Advance: a loan line opens the advance behind it */}
-                {advanceId && (
-                  <button
-                    type="button"
-                    onClick={handleViewAdvance}
-                    className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
-                  >
-                    <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast group-hover:brightness-95">
-                      <HandCoins size={20} />
-                    </div>
-                    <span className="text-[12px] font-normal text-foreground tracking-tight">
-                      View Advance
-                    </span>
-                  </button>
-                )}
-
-                {/* Repeat Action: only where the app has somewhere to repeat it to */}
-                {repeatTo && (
-                  <button
-                    type="button"
-                    onClick={handleRepeat}
-                  disabled={!detailReady}
-                    className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast group-hover:brightness-95">
-                      <RotateCw size={20} />
-                    </div>
-                    <span className="text-[12px] font-normal text-foreground tracking-tight">
-                      Repeat
-                    </span>
-                  </button>
-                )}
-
-                {/* Report Issue */}
-                <button
-                  type="button"
-                  onClick={() => setReporting(true)}
-                  className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
-                >
-                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast group-hover:brightness-95">
-                    <MessageSquareWarning size={20} />
-                  </div>
-                  <span className="text-[12px] font-normal text-foreground tracking-tight">
-                    Report Issue
-                  </span>
-                </button>
+              <div className="grid auto-cols-fr grid-flow-col gap-2">
+                {actions.map((a) => (
+                  <RoundAction
+                    key={a.id}
+                    icon={a.icon}
+                    label={a.label}
+                    onClick={a.onClick}
+                    disabled={a.needsDetails && !detailReady}
+                    fill
+                    popup={a.id === "share" || a.id === "pdf" || a.id === "report"}
+                    chipClassName="bg-action-chip text-foreground group-hover:bg-action-chip-hover"
+                    labelClassName="text-[12px] leading-[17px]"
+                  />
+                ))}
               </div>
               {!detailReady && (
                 <p className="mt-3 text-center text-[12px] text-muted-foreground">

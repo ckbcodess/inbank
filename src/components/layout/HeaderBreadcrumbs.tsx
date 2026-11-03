@@ -59,8 +59,8 @@ const ROUTE_LABELS: Record<string, string> = {
   treasury: "Treasury Bills & Bonds",
   profile: "Securities Account",
   "term-deposits": "Term Deposit",
-  redeem: "Redeem Part of the Deposit",
-  close: "Close the Deposit",
+  redeem: "Redeem Term Deposit",
+  close: "Redeem Term Deposit",
   maturity: "When It Matures",
 };
 
@@ -253,6 +253,20 @@ export default function HeaderBreadcrumbs() {
         />
       );
     }
+  }
+
+  // Loans: the advance's own page and what hangs off it ("products" is not a page; "history" is Past Advances).
+  if (segments[0] === "loans" && segments[1] === "products" && segments[2] === "salary-advance") {
+    const sub = segments[3] === "history" ? "Past Advances" : segments[3] === "about" ? "About" : undefined;
+    return (
+      <BreadcrumbView
+        list={[
+          { label: "Loans", href: "/loans", isLast: false },
+          { label: "Salary Advance", href: "/loans/products/salary-advance", isLast: !sub },
+          ...(sub ? [{ label: sub, href: pathname, isLast: true }] : []),
+        ]}
+      />
+    );
   }
 
   // Loans: an advance is "Advance", and its id is never shown. "salary-advance" is the request form.

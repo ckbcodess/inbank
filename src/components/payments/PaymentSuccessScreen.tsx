@@ -4,7 +4,6 @@ import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
-  MessageSquareWarning,
   ReceiptText,
   Repeat,
   RotateCcw,
@@ -29,7 +28,6 @@ import { RoundAction } from "@/components/ui/round-action";
 import { Switch } from "@/components/ui/switch";
 import { DURATION, EASE } from "@/lib/motion";
 import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
-import { ReportIssueDialog } from "@/components/transactions/ReportIssueDialog";
 import { findTransaction } from "@/lib/mock-data";
 
 export interface SuccessActionCard {
@@ -45,7 +43,6 @@ const ACTION_LABEL: Record<string, string> = {
   feedback: "Feedback",
   schedule: "Schedule",
   receipt: "Receipt",
-  report: "Report Issue",
   download: "Receipt",
 };
 
@@ -134,6 +131,8 @@ export interface PaymentSuccessScreenProps {
   onSchedulePayment?: () => void;
   /** Leave out the Schedule Payment card (e.g. the payment already is a scheduled payment). */
   hideSchedule?: boolean;
+  /** Leave out the Receipt card: nothing has been paid yet (a scheduled payment, or one waiting for approval), so there is no receipt. */
+  hideReceipt?: boolean;
   /** Name of the beneficiary to display in the toast notification */
   beneficiaryName?: string;
   /** Rail or category name for the beneficiary toast (e.g. "Send to Wallet", "Bank Transfer") */
@@ -182,6 +181,7 @@ export function PaymentSuccessScreen({
   primaryActionLabel = "Back to Overview",
   showSaveBeneficiary = true,
   hideSchedule = false,
+  hideReceipt = false,
   saveBeneficiaryLabel = "Save as Beneficiary?",
   initialSaveBeneficiary = false,
   onSaveBeneficiaryChange,
@@ -337,7 +337,6 @@ export function PaymentSuccessScreen({
   // The receipt opens as a sheet over this page; there is no separate transaction page to leave for.
   const [receiptOpen, setReceiptOpen] = useState(false);
   const handleViewReceipt = () => setReceiptOpen(true);
-  const [reportOpen, setReportOpen] = useState(false);
 
   const handleSchedule = () => {
     if (onSchedulePayment) {
@@ -367,11 +366,6 @@ export function PaymentSuccessScreen({
       icon: ReceiptText,
       onClick: handleViewReceipt,
     },
-    {
-      id: "report",
-      label: "Report Issue",
-      icon: MessageSquareWarning,
-    },
   ];
 
   const actionCards = (customActionCards || defaultActionCards.filter((c) => !(hideSchedule && c.id === "schedule"))).map((card) => {
@@ -382,9 +376,6 @@ export function PaymentSuccessScreen({
         icon: ReceiptText,
         onClick: handleViewReceipt,
       };
-    }
-    if (card.id === "report" && !card.onClick) {
-      return { ...card, icon: card.icon || MessageSquareWarning, onClick: () => setReportOpen(true) };
     }
     if (card.id === "feedback" && !card.onClick) {
       return {
@@ -399,7 +390,7 @@ export function PaymentSuccessScreen({
       };
     }
     return card;
-  });
+  }).filter((card) => !(hideReceipt && (card.id === "receipt" || card.id === "download")));
 
   return (
     <div className="relative mx-auto flex w-full max-w-[500px] min-h-[75vh] flex-col items-center justify-center gap-6 py-10 px-3 text-center overflow-visible">
@@ -548,7 +539,7 @@ export function PaymentSuccessScreen({
               icon={card.icon}
               label={ACTION_LABEL[card.id] ?? card.label}
               onClick={card.onClick}
-              chipClassName={cn("bg-muted text-foreground group-hover:bg-muted/70", card.active && "bg-primary/15 ring-1 ring-primary/40")}
+              chipClassName={cn("bg-action-chip text-foreground group-hover:bg-action-chip-hover", card.active && "bg-primary/15 ring-1 ring-primary/40")}
               labelClassName="text-[12px] leading-[17px]"
             />
           ))}
@@ -675,8 +666,6 @@ export function PaymentSuccessScreen({
           )}
         </DialogContent>
       </Dialog>
-
-      <ReportIssueDialog open={reportOpen} onOpenChange={setReportOpen} reference={effectiveTxnId} />
 
       <TransactionDetailSheet
         transaction={receiptOpen ? findTransaction(effectiveTxnId) ?? null : null}

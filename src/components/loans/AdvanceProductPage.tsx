@@ -24,7 +24,7 @@ import { ListCard } from "@/components/ui/list-card";
 import { SetupPrompt, type SetupStep } from "@/components/ui/setup-prompt";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProductPageSkeleton } from "@/components/states/PageSkeletons";
-import { ADVANCE_HREF, LOANS_HOME, LoansDevTools } from "@/components/loans/parts";
+import { ADVANCE_HISTORY_HREF, ADVANCE_HREF, LOANS_HOME, LoansDevTools } from "@/components/loans/parts";
 import { advanceHighlights } from "@/components/loans/AdvanceInfo";
 import { useCardLooks } from "@/components/insure/PlanCards";
 import { ProductPitchBody } from "@/components/insure/ProductPitch";
@@ -32,6 +32,7 @@ import { useAmountVisibility } from "@/components/providers/AmountVisibilityProv
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { ADVANCE_PRODUCTS, owedBy, useLoansHydrated, useMyLoans, type Advance } from "@/lib/loans";
 import { MOCK_TODAY, useTreasuryAccounts } from "@/lib/treasury";
+import { sumMoney } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
 /** What happens once pay arrives, for the setup card and the progress track. */
@@ -50,7 +51,7 @@ function statusLine(a: Advance): string {
   }
 }
 
-function AdvanceRow({ advance, showAmounts }: { advance: Advance; showAmounts: boolean }) {
+export function AdvanceRow({ advance, showAmounts }: { advance: Advance; showAmounts: boolean }) {
   const overdue = advance.status === "active" && advance.dueOn < MOCK_TODAY;
   const figure = advance.status === "active" ? owedBy(advance) : advance.status === "repaid" ? (advance.repaidAmount ?? advance.amount) : advance.amount;
   const muted = advance.status === "repaid";
@@ -91,6 +92,11 @@ export function AdvanceProductPage() {
   // The overdue one first, then the one waiting or unpaid, then the newest.
   const rank = (a: Advance) => (a.status === "active" && a.dueOn < MOCK_TODAY ? 0 : a === open ? 1 : 2);
   const sorted = [...advances].sort((a, b) => rank(a) - rank(b) || b.requestedOn.localeCompare(a.requestedOn));
+  // What is happening now stays on the page; everything finished is one row to its own page, so a long history never
+  // pushes the button down (designer, 2026-11-03).
+  const current = sorted.filter((a) => a.status !== "repaid");
+  const repaid = sorted.filter((a) => a.status === "repaid");
+  const borrowed = sumMoney(repaid.map((a) => a.amount));
   const account = accounts[0];
   const gateText = account
     ? `You can take up to 80% of your salary, national service allowance or pension once it’s paid into a GCB account. Ask your employer or pension office to pay into ${account.name} (${account.number}). Your first advance is available after the first credit arrives.`
@@ -114,12 +120,32 @@ export function AdvanceProductPage() {
       {advances.length > 0 ? (
         <div className="flex flex-col gap-10">
           <section className="flex flex-col gap-3">
-            <SectionHeading title="Your Loans" />
-            <ListCard>
-              {sorted.map((a) => (
-                <AdvanceRow key={a.id} advance={a} showAmounts={showAmounts} />
-              ))}
-            </ListCard>
+            {current.length > 0 && (
+              <>
+                <SectionHeading title="Your Loans" />
+                <ListCard>
+                  {current.map((a) => (
+                    <AdvanceRow key={a.id} advance={a} showAmounts={showAmounts} />
+                  ))}
+                </ListCard>
+              </>
+            )}
+            {repaid.length > 0 && (
+              <ListCard>
+                <li>
+                  <Link
+                    href={ADVANCE_HISTORY_HREF}
+                    className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
+                  >
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-[14px] text-foreground">Past Advances</span>
+                      <span className="tabular truncate text-[12px] text-muted-foreground">{`${repaid.length} repaid · ${money(borrowed)} borrowed`}</span>
+                    </span>
+                    <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                  </Link>
+                </li>
+              </ListCard>
+            )}
             {open && (
               <p className="px-1 text-[12px] text-muted-foreground">
                 Repay your current advance to take another.

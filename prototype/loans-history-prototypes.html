@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Loans: Presenting Past Advances: 8 Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amt:#a16207;--ink:#0b0b0c;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--tile:#1a1a1a;--tileh:#222;--bd:#2c2c2c;--tx:#f5f5f5;--mu:#a3a3a3;--amt:#fbbf24;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p,ul{margin:0;padding:0} ul{list-style:none}
+  .mu{color:var(--mu)} .am{color:var(--amt)} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills{display:flex;gap:4px;overflow-x:auto;padding:2px 0}
+  .pill{flex:none;font-size:13px;padding:8px 12px;border-radius:8px;color:var(--mu);min-height:36px;white-space:nowrap}
+  .pill:hover{background:var(--tile);color:var(--tx)} .pill.on{background:var(--am);color:#111;font-weight:500}
+  .seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:4px}
+  .seg button{padding:8px 14px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctrls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.55;max-width:1100px}
+  .stage{padding:32px 24px 80px;display:flex;justify-content:center;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  .cell{display:flex;flex-direction:column;gap:12px;width:620px;max-width:100%}
+  .cap{font-size:13px;color:var(--mu);padding:0 4px;line-height:1.5} .cap b{color:var(--tx);font-weight:500}
+  .frame{background:var(--surf);border:1px solid var(--bd);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;min-height:520px;display:flex;flex-direction:column;position:relative}
+  .scroll{flex:1;padding:28px 32px 32px;display:flex;flex-direction:column;gap:24px;width:100%;max-width:560px;margin:0 auto}
+  .hd{display:flex;align-items:center;gap:10px}
+  .hd h2{font-size:20px;font-weight:500;letter-spacing:-.02em}
+  .bk{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border-radius:50%}
+  .btn{height:44px;padding:0 20px;border-radius:14px;background:var(--am);color:#111;font-weight:500;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)} .btn.ghost:hover{background:var(--tile);filter:none}
+  .btn.sm{height:36px;padding:0 14px;font-size:13px;border-radius:12px}
+  .btn.full{width:100%}
+  .h3{font-size:16px;font-weight:500}
+  .big{font-size:44px;letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+  .sech{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:36px}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .grp{background:var(--tile);border-radius:20px;padding:8px}
+  .li{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:12px;width:100%}
+  .li:hover{background:var(--tileh)}
+  .li .ic{width:36px;height:36px;border-radius:10px;background:var(--tileh);display:flex;align-items:center;justify-content:center;color:var(--mu);flex:none}
+  .li .g{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .li .t{font-size:14px} .li .m{font-size:12px;color:var(--mu)} .li .m.am{color:var(--amt)}
+  .li .e{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:14px} .li .e small{font-size:12px;color:var(--mu)}
+  .li .e.am small{color:var(--amt)}
+  .lnk{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 12px;border-radius:12px;width:100%;font-size:14px}
+  .lnk:hover{background:var(--tileh)}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tile{background:var(--tile);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:104px}
+  .tile:hover{background:var(--tileh)}
+  .tile.pri{background:var(--am);color:#111} .tile.pri:hover{filter:brightness(1.06)}
+  .tile .d{width:36px;height:36px;border-radius:50%;background:var(--tileh);display:flex;align-items:center;justify-content:center}
+  .tile.pri .d{background:rgba(0,0,0,.12)}
+  .tile .n{font-size:14px;font-weight:500} .tile .s{font-size:12px;color:var(--mu);margin-top:2px} .tile.pri .s{color:rgba(0,0,0,.6)}
+  .add{display:flex;align-items:center;gap:12px;padding:14px 12px;border:1px dashed var(--bd);border-radius:12px;width:100%;color:var(--mu);font-size:14px;margin-top:4px}
+  .add:hover{background:var(--tileh);color:var(--tx)}
+  .u{text-decoration:underline;text-underline-offset:3px}
+  .dock{position:sticky;bottom:0;margin-top:auto;padding:16px 0 0;background:linear-gradient(transparent,var(--surf) 30%);display:flex;gap:8px}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--bd)}
+  .tabs button{padding:10px 14px;font-size:14px;color:var(--mu);border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tabs button.on{color:var(--tx);border-color:var(--am)}
+  .tab2{display:flex;gap:4px;border-bottom:1px solid var(--bd)}.tab2 button{padding:10px 14px;font-size:14px;color:var(--mu);border-bottom:2px solid transparent;margin-bottom:-1px}.tab2 button.on{color:var(--tx);border-color:var(--am)}
+  .ibtn{width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);border:1px solid var(--bd)}.ibtn:hover{background:var(--tile);color:var(--tx)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--tx);color:var(--surf);font-size:13px;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.16,1,.3,1);z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  .yr{font-size:12px;color:var(--mu);padding:12px 12px 4px;display:flex;justify-content:space-between}
+  .mini{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;font-size:13px;border-radius:10px;width:100%}
+  .mini:hover{background:var(--tileh)} .mini span:first-child{color:var(--mu)}
+  .rw{display:flex;justify-content:space-between;gap:16px;font-size:14px;padding:0 4px}
+  .more{align-self:center;font-size:14px;color:var(--mu);padding:8px 12px}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="row">
+    <h1>Loans · Salary Advance page · how past advances are shown, and how it scales</h1>
+    <div class="ctrls">
+      <div class="seg" id="sizesel"></div>
+      <div class="seg" id="themesel"></div>
+    </div>
+  </div>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <p class="note-bar" id="vnote"></p>
+</header>
+<main class="stage" id="stage"></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const svg=(p,s=18,sw=1.7)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={coin:'<circle cx="12" cy="12" r="8.5"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.4 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1.1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6.5v1.5M12 16v1.5"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'};
+const back=svg('<path d="M15 6l-6 6 6 6"/>',20,1.8);
+const chev=svg('<path d="M9 6l6 6-6 6"/>',16,1.8);
+const down=svg('<path d="M6 9l6 6 6-6"/>',16,1.8);
+const ghs=c=>'GHS '+(c/100).toLocaleString('en-GH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const ACTIVE={t:'Salary Advance',sub:'Due 25 Oct 2026',fig:212353,left:'Owed today'};
+function makePast(n){const out=[];let y=2026,m=9;for(let i=0;i<n;i++){const amt=(300+((i*7919)%1700))*100+((i*37)%100);out.push({t:'Salary Advance',date:'08 '+MON[m]+' '+y,y:y,m:m,fig:amt});m--;if(m<0){m=11;y--}}return out}
+const S={v:1,n:6,dark:true,tab:'now',filter:'all',open:{2026:1},shown:5};
+const past=()=>makePast(S.n);
+const total=()=>past().reduce((a,b)=>a+b.fig,0);
+const byYear=()=>{const g={};past().forEach(p=>{(g[p.y]=g[p.y]||[]).push(p)});return g};
+const hd=(t,right)=>`<div class="hd" style="justify-content:space-between"><span style="display:flex;align-items:center;gap:10px"><span class="bk">${back}</span><h2>${t}</h2></span>${right||''}</div>`;
+const sech=(t,right)=>`<div class="sech"><h3 class="h3">${t}</h3>${right||''}</div>`;
+const li=(t,m,fig,sm,mut)=>`<button class="li" data-a="toast:Opens the advance"><span class="ic">${svg(IC.coin,16)}</span><span class="g"><span class="t" style="${mut?'color:var(--mu)':''}">${t}</span><span class="m">${m}</span></span><span class="e"><span class="tab" style="${mut?'color:var(--mu)':''}">${fig}</span>${sm?`<small>${sm}</small>`:''}</span><span class="mu">${chev}</span></button>`;
+const cur=()=>li(ACTIVE.t,ACTIVE.sub,ghs(ACTIVE.fig),ACTIVE.left,0);
+const pastRow=p=>li(p.t,'Repaid '+p.date,ghs(p.fig),'',1);
+const frame=h=>`<div class="frame"><div class="scroll">${h}</div></div>`;
+const cell=(c,h)=>`<div class="cell"><p class="cap">${c}</p>${h}</div>`;
+const apply=()=>`<div style="display:flex;flex-direction:column;gap:8px"><button class="btn full" style="opacity:.45;cursor:default;height:44px;border-radius:16px">Apply for Another</button><p class="mu" style="font-size:12px;text-align:center">Repay your current advance to take another.</p></div>`;
+const historyRow=(label,meta)=>`<button class="lnk" data-a="toast:Opens the history page"><span style="display:flex;flex-direction:column;gap:2px"><span>${label}</span><span class="mu" style="font-size:12px">${meta}</span></span><span class="mu">${chev}</span></button>`;
+const summary=()=>`${S.n} repaid · ${ghs(total())} borrowed`;
+const sumYear=a=>ghs(a.reduce((x,y)=>x+y.fig,0));
+const yearBlocks=()=>{const g=byYear();return Object.keys(g).sort((a,b)=>b-a).map(y=>`<div class="yr"><span>${y}</span><span class="tab">${g[y].length} ${g[y].length>1?'advances':'advance'} · ${sumYear(g[y])}</span></div>${g[y].map(pastRow).join('')}`).join('')};
+
+const V={};
+V[1]={name:'1. One History row, its own page',note:'The page stays about what is happening now: what is owed, and the button. Everything finished collapses to one row, "Past advances", with the count and what has been borrowed. Tapping it opens a page grouped by year. The row is the same size at 2 advances or 200, so the page never grows.',
+ f:()=>[cell('<b>Advance page.</b> Change the size at the top: this page does not move.',frame(hd('Salary Advance')+`<div class="sec">${sech('Your Loans')}<div class="grp">${cur()}</div></div><div class="grp">${historyRow('Past advances',summary())}</div>`+apply())),
+  cell('<b>History page.</b> Grouped by year; each year says how many and how much.',frame(hd('Past Advances')+`<div class="grp">${yearBlocks()}</div>`))]};
+V[2]={name:'2. Latest three, then See all',note:'Recent history stays in view: the three newest repaid advances sit under the current one in a quiet list, then "See all N". Short histories show everything with no extra tap; long ones stop at three.',
+ f:()=>{const p=past();return [cell('<b>Advance page.</b> At 2 past advances there is no "See all".',frame(hd('Salary Advance')+`<div class="sec">${sech('Your Loans')}<div class="grp">${cur()}</div></div><div class="sec">${sech('Recent')}<div class="grp">${p.slice(0,3).map(pastRow).join('')}</div>${p.length>3?`<button class="more u" data-a="toast:Opens the history page">See all ${p.length}</button>`:''}</div>`+apply()))]}};
+V[3]={name:'3. Two tabs: Current and History',note:'Tabs separate "what I owe" from "what I did". Current is short and fixed; History is the long list and can grow, grouped by year, without pushing the button down. The cost is one more control on the page, and the button lives only on Current.',
+ f:()=>[cell('<b>Tabs.</b> Tap History.',frame(hd('Salary Advance')+`<div class="tab2"><button class="${S.tab==='now'?'on':''}" data-a="tab:now">Current</button><button class="${S.tab==='hist'?'on':''}" data-a="tab:hist">History</button></div>`+(S.tab==='now'?`<div class="grp">${cur()}</div>`+apply():`<div class="grp">${yearBlocks()}</div>`)))]};
+V[4]={name:'4. A filter that pages the list',note:'One list, filtered by a segmented control (All, Active, Repaid) with counts, showing five rows and "Show more". Familiar from Transactions. It keeps everything on one page, but the list still lengthens as you load more.',
+ f:()=>{const all=[Object.assign({act:1},ACTIVE)].concat(past());const list=S.filter==='all'?all:S.filter==='active'?all.filter(x=>x.act):all.filter(x=>!x.act);const shown=list.slice(0,S.shown);
+  const sg=`<div class="seg" style="display:flex">${[['all','All '+all.length],['active','Active 1'],['repaid','Repaid '+(all.length-1)]].map(([k,l])=>`<button style="flex:1;text-align:center" class="${S.filter===k?'on':''}" data-a="filter:${k}">${l}</button>`).join('')}</div>`;
+  return [cell('<b>Filtered list.</b>',frame(hd('Salary Advance')+sg+`<div class="grp">${shown.map(x=>x.act?cur():pastRow(x)).join('')}</div>`+(list.length>S.shown?`<button class="more u" data-a="more:5">Show more (${list.length-S.shown})</button>`:'')+apply()))]}};
+V[5]={name:'5. Years that fold',note:'Everything is on the page, grouped by year. The current year is open; earlier years are folded to one line each (count and total). A long history is a short column of year rows until someone opens one.',
+ f:()=>{const g=byYear();const blocks=Object.keys(g).sort((a,b)=>b-a).map(y=>{const o=S.open[y];return `<button class="lnk" data-a="year:${y}"><span style="display:flex;flex-direction:column;gap:2px"><span>${y}</span><span class="mu" style="font-size:12px">${g[y].length} ${g[y].length>1?'advances':'advance'} · ${sumYear(g[y])}</span></span><span class="mu" style="transform:${o?'rotate(180deg)':'none'}">${down}</span></button>${o?g[y].map(pastRow).join(''):''}`}).join('');
+  return [cell('<b>Folding years.</b> Tap a year.',frame(hd('Salary Advance')+`<div class="sec">${sech('Your Loans')}<div class="grp">${cur()}</div></div><div class="sec">${sech('Past advances')}<div class="grp">${blocks}</div></div>`+apply()))]}};
+V[6]={name:'6. Totals first, detail on request',note:'Three plain rows answer the question most people have: how many, how much have I borrowed, and what did it cost me. The list is behind "See every advance". It follows the house rule that the summary comes first and detail is one tap away.',
+ f:()=>[cell('<b>Summary rows.</b>',frame(hd('Salary Advance')+`<div class="sec">${sech('Your Loans')}<div class="grp">${cur()}</div></div><div class="sec">${sech('Since you started')}<div class="rw"><span class="mu">Advances taken</span><span class="tab">${S.n+1}</span></div><div class="rw"><span class="mu">Borrowed in total</span><span class="tab">${ghs(total()+ACTIVE.fig)}</span></div><div class="rw"><span class="mu">Interest and fees paid</span><span class="tab">${ghs(Math.round(total()*0.027))}</span></div><button class="more u" style="align-self:flex-start;padding-left:4px" data-a="toast:Opens the history page">See every advance</button></div>`+apply()))]};
+V[7]={name:'7. A compact ledger for the past',note:'Past advances stop being rows with an icon and become a dense ledger: date and amount, nothing else, in one card. About twice as many fit on screen, and it reads as a record, not a set of things to act on. Tap a line for the advance.',
+ f:()=>{const p=past();return [cell('<b>Ledger.</b> About eight lines show; the rest scroll inside the card.',frame(hd('Salary Advance')+`<div class="sec">${sech('Your Loans')}<div class="grp">${cur()}</div></div><div class="sec">${sech('Past advances','<span class="mu tab" style="font-size:13px">'+p.length+'</span>')}<div class="grp" style="max-height:304px;overflow:auto">${p.map(x=>`<button class="mini" data-a="toast:Opens the advance"><span>${x.date}</span><span class="tab">${ghs(x.fig)}</span></button>`).join('')}</div></div>`+apply()))]}};
+V[8]={name:'8. History as a header action',note:'The page body is only the current advance and the button. History is a clock icon in the header, the same place About sits on other product pages. The page is never longer than one screen, whatever the history. The cost: past advances are less discoverable.',
+ f:()=>[cell('<b>Header action.</b>',frame(hd('Salary Advance',`<button class="ibtn" aria-label="Past advances" data-a="toast:Opens the history page">${svg(IC.clock,16)}</button>`)+`<div class="sec">${sech('Your Loans')}<div class="grp">${cur()}</div></div>`+apply())),
+  cell('<b>History page.</b>',frame(hd('Past Advances')+`<div class="grp">${yearBlocks()}</div>`))]};
+
+const $=id=>document.getElementById(id);
+const seg=(id,list,cur,key)=>{$(id).innerHTML=list.map(([k,l])=>`<button class="${String(cur)===String(k)?'on':''}" data-a="${key}:${k}">${l}</button>`).join('')};
+function render(){
+  seg('sizesel',[[2,'2 past'],[6,'6 past'],[40,'40 past']],S.n,'n');
+  seg('themesel',[['dark','Dark'],['light','Light']],S.dark?'dark':'light','theme');
+  $('pills').innerHTML=Object.keys(V).map(k=>`<button class="pill ${+k===S.v?'on':''}" data-a="v:${k}">${V[k].name}</button>`).join('');
+  $('vnote').textContent=V[S.v].note;
+  document.documentElement.dataset.theme=S.dark?'dark':'light';
+  $('stage').innerHTML=V[S.v].f().join('');
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800)}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const [a,...r]=el.dataset.a.split(':'),arg=r.join(':');
+  if(a==='toast'){toast(arg);return}
+  if(a==='v'){S.v=+arg;S.tab='now';S.filter='all';S.shown=5}
+  else if(a==='n'){S.n=+arg;S.shown=5}
+  else if(a==='theme')S.dark=arg==='dark';
+  else if(a==='tab')S.tab=arg;
+  else if(a==='filter'){S.filter=arg;S.shown=5}
+  else if(a==='more')S.shown+=+arg;
+  else if(a==='year')S.open[arg]=!S.open[arg];
+  render();
+});
+render();
+</script>
+</body>
+</html>

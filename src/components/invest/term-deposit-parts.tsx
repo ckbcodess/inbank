@@ -5,8 +5,7 @@
  * maturity instruction picker and the Dev Mode switches.
  */
 
-import { AlertCircle } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
+import { PaymentFailedScreen } from "@/components/payments/PaymentFailedScreen";
 import { Field } from "@/components/ui/field";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { recordTransaction, type Account } from "@/lib/mock-data";
@@ -74,25 +73,7 @@ export function OutcomeFailure({
   onLeave: () => void;
   leaveLabel: string;
 }) {
-  return (
-    <div className="mx-auto flex min-h-[60vh] w-full max-w-[460px] flex-col items-center justify-center gap-5 px-3 py-10 text-center animate-in fade-in duration-200">
-      <span className="flex size-14 items-center justify-center rounded-full bg-warning/15 text-warning-text">
-        <AlertCircle size={28} aria-hidden="true" />
-      </span>
-      <div className="flex flex-col gap-2">
-        <h1 className="text-[24px] font-medium leading-[30px] tracking-[var(--ls-heading)] text-foreground">{title}</h1>
-        <p className="text-[15px] leading-[23px] text-muted-foreground">{message}</p>
-      </div>
-      <div className="flex w-full items-center gap-2">
-        <Button size="md" type="button" variant="outline" className="flex-1" onClick={onLeave}>
-          {leaveLabel}
-        </Button>
-        <Button size="md" type="button" className="flex-1" onClick={onRetry}>
-          Try again
-        </Button>
-      </div>
-    </div>
-  );
+  return <PaymentFailedScreen title={title} message={message} onRetry={onRetry} onLeave={onLeave} leaveLabel={leaveLabel} />;
 }
 
 /** What happens at maturity, described right where it's chosen. */

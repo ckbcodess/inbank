@@ -195,6 +195,8 @@
   --color-avatar-pink: var(--avatar-pink);
   --color-tile: var(--tile);
   --color-tile-hover: var(--tile-hover);
+  --color-action-chip: var(--action-chip);
+  --color-action-chip-hover: var(--action-chip-hover);
   --color-item-hover: var(--item-hover);
   --color-field: var(--field);
   --color-field-hover: var(--field-hover);
@@ -380,6 +382,9 @@
   --ticket-ink: #0a0a0a;
   --ticket-rule: #cbc8bf;
   --tile-hover: var(--gray-200);
+  /* The round quick actions (Share, Receipt, Report Issue, Edit): the chip behind the icon, and its hover. */
+  --action-chip: var(--gray-100);
+  --action-chip-hover: var(--gray-200);
   /* The action tile on a modal, dialog or sheet: a step lighter than the page tile. */
   --tile-modal: var(--tile);
   --tile-modal-hover: var(--tile-hover);
@@ -661,6 +666,8 @@
   --ticket-ink: #0a0a0a;
   --ticket-rule: #cbc8bf;
   --tile-hover: var(--gray-850);
+  --action-chip: var(--gray-850);
+  --action-chip-hover: var(--gray-800);
   --tile-modal: var(--gray-875);
   --tile-modal-hover: var(--gray-850);
   --item-hover: color-mix(in srgb, var(--white) 5%, transparent);

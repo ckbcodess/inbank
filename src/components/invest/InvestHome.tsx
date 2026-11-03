@@ -66,7 +66,7 @@ export function InvestHome({ loading: forced = false }: { loading?: boolean }) {
     }
     return {
       text: `${mine.length === 1 ? "1 holding" : `${mine.length} holdings`}${waiting > 0 ? ` · ${waiting} waiting to settle` : ""}${mineSoon > 0 ? ` · ${mineSoon} matures soon` : ""}`,
-      attention: mineSoon > 0,
+      attention: mineSoon > 0 || waiting > 0,
     };
   };
 

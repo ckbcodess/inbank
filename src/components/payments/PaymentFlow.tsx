@@ -63,6 +63,8 @@ import { useSession } from "@/lib/session-store";
 import { resolveDefaultAccountId, useAccountPrefs } from "@/lib/accounts-store";
 import { roundMoney, sumMoney } from "@/lib/money";
 import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
+import { PaymentFailedScreen } from "./PaymentFailedScreen";
+import { useDevState } from "@/components/providers/DevStateProvider";
 import TransactionOtpModal from "./TransactionOtpModal";
 import { ReviewSummary } from "@/components/ui/review-summary";
 import { useAuthorisation } from "./useAuthorisation";
@@ -870,9 +872,16 @@ const ALL_RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
 ];
 
-type Phase = "form" | "submitting" | "success";
+type Phase = "form" | "submitting" | "success" | "failed";
+
+/** Dev Mode: whether the next payment is accepted or fails, so the failed screen can be seen. */
+const PAYMENT_OUTCOMES = ["succeed", "fail"] as const;
+type PaymentOutcome = (typeof PAYMENT_OUTCOMES)[number];
+const PAYMENT_OUTCOME_LABELS: Record<PaymentOutcome, string> = { succeed: "Payments succeed", fail: "Payments fail" };
 type ReceiptData = {
   pending: boolean;
+  /** A scheduled payment: it has not run yet, so it has no receipt and nothing left to schedule. */
+  scheduled: boolean;
   title: string;
   msg: string;
   trn: string;
@@ -939,6 +948,18 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const [cardTopupCategory, setCardTopupCategory] = useState<"my" | "other" | null>(null);
   const [billCategory, setBillCategory] = useState<BillerCategory | null>(null);
   const [phase, setPhase] = useState<Phase>("form");
+  const [outcome, setOutcome] = useState<PaymentOutcome>("succeed");
+  const { registerState, unregisterState } = useDevState();
+  useEffect(() => {
+    registerState({
+      section: "Send & Pay",
+      label: "Payments",
+      states: PAYMENT_OUTCOMES.map((id) => ({ id, label: PAYMENT_OUTCOME_LABELS[id] })),
+      value: outcome,
+      onChange: (id: string) => setOutcome(id as PaymentOutcome),
+    });
+    return unregisterState;
+  }, [outcome, registerState, unregisterState]);
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
   const { groups } = useGroupsStore();
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
@@ -1921,6 +1942,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (!auth.verify(codeOverride) || phase === "submitting") return;
     setPhase("submitting");
     window.setTimeout(() => {
+      if (outcome === "fail") {
+        setPhase("failed");
+        return;
+      }
       const trn = "TRN-" + Math.floor(10000000 + Math.random() * 90000000);
       const d = new Date();
       const isOwnTransfer = rail === "bank" && bankCategory === "own";
@@ -2006,6 +2031,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
       setReceipt({
         pending: Boolean(isDualMandate),
+        scheduled: Boolean(f.isScheduled) && !isDualMandate,
         title: successTitle,
         msg: successMsg,
         trn,
@@ -2155,6 +2181,25 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     return RAIL_LABEL[rail] || "Send Money";
   };
 
+  // A payment that was not accepted: nothing left the account, and the customer can go again or say what happened.
+  if (phase === "failed") {
+    return (
+      <>
+        <PaymentFailedScreen
+          title="Payment didn’t go through"
+          message="Nothing was taken from your account. Check the details and try again."
+          onRetry={() => {
+            auth.reset();
+            setStage(2);
+            setPhase("form");
+          }}
+          onLeave={handleBackNavigation}
+          leaveLabel="Back to Overview"
+        />
+      </>
+    );
+  }
+
   // A cardless withdrawal gets its own success page: the code, as a ticket.
   if (phase === "success" && receipt?.cashout) {
     return (
@@ -2177,6 +2222,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         message={receipt.msg}
         transactionId={receipt.trn}
         receiptRows={receipt.rows}
+        hideSchedule={receipt.scheduled}
+        hideReceipt={receipt.scheduled || receipt.pending}
         onSecondaryAction={() => {
           savedBeneficiary.current = null;
           setPhase("form");

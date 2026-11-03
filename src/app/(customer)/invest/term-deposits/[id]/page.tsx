@@ -83,8 +83,7 @@ export default function TermDepositDetailPage() {
         {open && (
           <section className="flex flex-col gap-2">
             <ActionTile icon={CalendarClock} title="Change What Happens at Maturity" description="Choose what happens when it matures" href={`${base}/maturity`} />
-            <ActionTile icon={CircleMinus} title="Redeem Part of the Deposit" description="Take some of it out early. You give up the interest earned so far." href={`${base}/redeem`} />
-            <ActionTile icon={XCircle} title="Close the Deposit" description="Take it all out and close it. You give up the interest earned so far." href={`${base}/close`} />
+            <ActionTile icon={CircleMinus} title="Redeem Term Deposit" description="Take all or part of it out early. You give up the interest earned so far." href={`${base}/redeem`} />
           </section>
         )}
       </div>

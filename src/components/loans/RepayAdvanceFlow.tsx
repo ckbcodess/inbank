@@ -7,7 +7,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { MessageSquareWarning, Receipt } from "@/components/ui/icons";
+import { Receipt } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import { ReviewSummary } from "@/components/ui/review-summary";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
@@ -85,7 +85,6 @@ export function RepayAdvanceFlow({ advanceId }: { advanceId: string }) {
         ]}
         customActionCards={[
           { id: "receipt", label: "View Receipt", icon: Receipt },
-          { id: "report", label: "Report Issue", icon: MessageSquareWarning },
         ]}
         showSaveBeneficiary={false}
         onPrimaryAction={() => router.push(base)}

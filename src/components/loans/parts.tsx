@@ -22,6 +22,8 @@ export const LOANS_HOME = "/loans";
 export const ADVANCE_PRODUCT_HREF = "/loans/products/salary-advance";
 /** The apply flow. */
 export const ADVANCE_HREF = "/loans/salary-advance";
+/** Every advance that has been repaid, by year. */
+export const ADVANCE_HISTORY_HREF = "/loans/products/salary-advance/history";
 
 /**
  * Posts one line to the ledger when an advance is paid in (credit) or repaid (debit), so it shows in Transactions with

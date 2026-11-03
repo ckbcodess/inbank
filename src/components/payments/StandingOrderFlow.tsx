@@ -637,6 +637,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         primaryActionLabel="Back to Overview"
         showSaveBeneficiary={false}
         hideSchedule
+        hideReceipt
       />
     );
   }

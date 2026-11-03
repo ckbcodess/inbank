@@ -23,8 +23,8 @@ export function ReportIssueDialog({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** The transaction being reported. */
-  reference: string;
+  /** The transaction being reported, when there is one. */
+  reference?: string;
 }) {
   const [reason, setReason] = useState<string | null>(null);
   const [note, setNote] = useState("");
@@ -77,7 +77,7 @@ export function ReportIssueDialog({
             </Select>
           </Field>
           <Field label="Details" optional>
-            <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={`Anything that helps us look into ${reference}`} />
+            <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={reference ? `Anything that helps us look into ${reference}` : "Anything that helps us look into it"} />
           </Field>
         </DialogBody>
         <DialogFooter>
