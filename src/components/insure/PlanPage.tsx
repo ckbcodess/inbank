@@ -15,6 +15,7 @@
 
 import Link from "next/link";
 import PageHeader from "@/components/layout/PageHeader";
+import { NARROW_COLUMN } from "@/lib/page-layout";
 import { Button } from "@/components/ui/button";
 import { Info } from "@/components/ui/icons";
 import { AboutSheet } from "@/components/ui/about-sheet";
@@ -47,7 +48,7 @@ export function PlanPage({ planId }: { planId: PlanId }) {
   const startHref = profile ? buyHref : `/insure/profile?next=${encodeURIComponent(buyHref)}&label=${encodeURIComponent(plan.name)}`;
 
   return (
-    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
+    <div className={NARROW_COLUMN}>
       <PageHeader
         title={plan.name}
         backTo={{ href: INSURE_HOME, label: "Insure" }}

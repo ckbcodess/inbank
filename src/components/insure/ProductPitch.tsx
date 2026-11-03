@@ -25,6 +25,7 @@ import {
 import { FactsPanel } from "@/components/invest/parts";
 import { PlanImage, planToneStyle, type ProductKey } from "@/components/insure/parts";
 import type { HighlightIcon, PlanHighlight } from "@/lib/product-highlights";
+import { PRODUCT_PHOTO_HEIGHT } from "@/lib/page-layout";
 import { PRODUCT_IMAGES } from "@/lib/product-images";
 import { cn } from "@/lib/utils";
 
@@ -52,13 +53,10 @@ export interface PitchPrice {
   suffix?: string;
 }
 
-/** The picture's height follows the viewport (22% of it, between 120px and 315px) so the button stays above the fold. */
-const PHOTO_HEIGHT = "h-[clamp(120px,22vh,315px)]";
-
 /** The product's picture: its own image when one is supplied, otherwise a flat scene in its colour, always shown whole. */
 function ProductPhoto({ productId, image }: { productId: ProductKey; image?: string }) {
   const src = image ?? (productId in PRODUCT_IMAGES ? PRODUCT_IMAGES[productId as keyof typeof PRODUCT_IMAGES] : undefined);
-  return <PlanImage planId={productId} src={src} className={cn("w-full rounded-3xl", PHOTO_HEIGHT)} />;
+  return <PlanImage planId={productId} src={src} className={cn("w-full rounded-3xl", PRODUCT_PHOTO_HEIGHT)} />;
 }
 
 /** The benefits, one under another. */

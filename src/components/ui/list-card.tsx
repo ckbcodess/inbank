@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
  */
 /** The box's classes, for a wrapper that needs the same look around something other than plain rows (a skeleton, an error). */
 export const LIST_CARD_CLASS =
-  "flex flex-col gap-0.5 overflow-hidden rounded-2xl border border-transparent border-[length:var(--edge-glass-width)] p-2 " +
+  "flex flex-col gap-0.5 overflow-hidden rounded-2xl border border-transparent border-[length:var(--edge-glass-width)] p-2 shadow-[var(--shadow-card)] " +
   "[background:linear-gradient(var(--card),var(--card))_padding-box,linear-gradient(var(--edge-glass-angle),var(--edge-glass-start),var(--edge-glass-mid)_var(--edge-glass-mid-at),var(--edge-glass-end))_border-box]";
 
 /**

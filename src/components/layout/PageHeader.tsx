@@ -21,7 +21,7 @@ interface PageHeaderProps {
 export default function PageHeader({ title, badge, actions, backTo }: PageHeaderProps) {
   return (
     // data-page-header gives the 40px (phone) / 48px gap down to the page's first content; see globals.css.
-    <div data-page-header className="flex items-center justify-between gap-2 w-full">
+    <div data-page-header className="flex min-h-9 items-center justify-between gap-2 w-full">
       <div className="flex items-center gap-2 sm:gap-2 min-w-0 flex-1">
         {backTo && (
           backTo.onClick ? (

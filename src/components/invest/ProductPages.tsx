@@ -11,6 +11,7 @@ import { Clock } from "@/components/ui/icons";
 import { AboutSheet } from "@/components/ui/about-sheet";
 import { HolderActions } from "@/components/ui/holder-actions";
 import PageHeader from "@/components/layout/PageHeader";
+import { NARROW_COLUMN } from "@/lib/page-layout";
 import { ListCard } from "@/components/ui/list-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { TrueEmptyState } from "@/components/states/ListStates";
@@ -66,10 +67,10 @@ function termFacts() {
 export function TermDepositProducts() {
   const hydrated = useTreasuryHydrated();
   const { active: deposits } = useMyDeposits();
-  if (!hydrated) return <InvestProductsSkeleton groups={1} rows={3} />;
+  if (!hydrated) return <InvestProductsSkeleton groups={1} rows={3} action />;
   const { offers } = termFacts();
   return (
-    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
+    <div className={NARROW_COLUMN}>
       <PageHeader
         title="Term Deposits"
         backTo={back}
@@ -98,7 +99,7 @@ export function TermDepositOpen() {
   const hydrated = useTreasuryHydrated();
   if (!hydrated) return <InvestProductsSkeleton groups={1} rows={3} />;
   return (
-    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
+    <div className={NARROW_COLUMN}>
       <PageHeader title="Open a Deposit" backTo={{ href: TERM_PRODUCTS_HREF, label: "Term Deposits" }} />
       <InvestDevTools section="Invest" />
       <OfferList offers={termFacts().offers} />
@@ -173,10 +174,10 @@ function TreasuryMarket({ marketOpen }: { marketOpen: boolean }) {
 export function TreasuryProducts() {
   const hydrated = useTreasuryHydrated();
   const { marketOpen, holdings, orders } = useMyTreasury();
-  if (!hydrated) return <InvestProductsSkeleton groups={2} rows={3} />;
+  if (!hydrated) return <InvestProductsSkeleton groups={2} rows={3} action />;
   const holds = holdings.length > 0 || orders.length > 0;
   return (
-    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
+    <div className={NARROW_COLUMN}>
       <PageHeader
         title="Treasury Bills & Bonds"
         backTo={back}
@@ -210,7 +211,7 @@ export function TreasuryOpen() {
   const { marketOpen } = useMyTreasury();
   if (!hydrated) return <InvestProductsSkeleton groups={2} rows={3} />;
   return (
-    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
+    <div className={NARROW_COLUMN}>
       <PageHeader title="Buy Bills & Bonds" backTo={{ href: TREASURY_PRODUCTS_HREF, label: "Treasury Bills & Bonds" }} />
       <InvestDevTools section="Invest" />
       <TreasuryMarket marketOpen={marketOpen} />

@@ -9,7 +9,6 @@
  *   - Pay: 4 cards (Bills, Internet, Airtime, Card Top up)
  */
 
-import { Skeleton } from "skullet/react";
 import { SectionHeading } from "@/components/ui/section-heading";
 import Link from "next/link";
 import PageHeader from "@/components/layout/PageHeader";
@@ -21,6 +20,7 @@ import { duotoneOf, toneOutlineOf } from "@/components/ui/reicon-styles";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import type { IconTone } from "@/lib/icon-tones";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { Bone } from "@/components/states/PageSkeletons";
 import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { useIconStyle, type IconPalette, type IconStyle } from "@/lib/icon-style-store";
 import {
@@ -204,7 +204,38 @@ function ActionSection({
   );
 }
 
-/** `loading` forces the skeleton: the route's loading.tsx draws the hub itself, so skullet measures the real tiles. */
+/**
+ * The loading shape, drawn by hand from the real tiles (`ActionTile`: `rounded-2xl p-3`, a 40px icon, the label, a chevron
+ * from `sm`) and the real sections (heading row, two columns), one tile per action. Skullet's measured guess came out as
+ * generic bars, so this is the skeleton instead.
+ */
+function HubSkeleton() {
+  return (
+    <div role="status" aria-busy="true" className="flex flex-col gap-10">
+      <span className="sr-only">Loading</span>
+      {[SEND_ACTIONS, PAY_ACTIONS].map((actions, s) => (
+        <div key={s} className="flex flex-col gap-3">
+          <div className="flex min-h-7 items-center px-1">
+            <Bone className="h-4 w-10" />
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            {actions.map((a) => (
+              <div key={a.id} className="flex w-full items-center justify-between gap-3 rounded-2xl bg-tile p-3">
+                <div className="flex min-w-0 flex-1 items-center gap-3 max-sm:gap-2">
+                  <Bone className="size-10 shrink-0 rounded-lg" />
+                  <Bone className="h-4 w-3/5" />
+                </div>
+                <Bone className="size-5 shrink-0 rounded-full max-sm:hidden" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** `loading` forces the skeleton: the route's loading.tsx draws the hub with `loading`. */
 export function SendAndPayHub({ loading = false }: { loading?: boolean }) {
   const stored = useIconStyle((s) => s.style);
   const palette = useIconStyle((s) => s.palette);
@@ -235,12 +266,14 @@ export function SendAndPayHub({ loading = false }: { loading?: boolean }) {
       />
 
       {/* Action Sections */}
-      <Skeleton loading={loading}>
+      {loading ? (
+        <HubSkeleton />
+      ) : (
         <div className="stagger-items flex flex-col gap-10">
           <ActionSection title="Send" actions={SEND_ACTIONS} look={look} />
           <ActionSection title="Pay" actions={PAY_ACTIONS} look={look} />
         </div>
-      </Skeleton>
+      )}
     </div>
   );
 }

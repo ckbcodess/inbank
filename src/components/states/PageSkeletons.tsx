@@ -12,6 +12,10 @@
  * - Every bone has a soft shimmer sweep (`.skeleton-shimmer`). It stops under `prefers-reduced-motion`.
  * - Say it once for assistive tech (`role="status"` + one sr-only line); the bones are `aria-hidden`.
  * - No text in a skeleton: nothing to translate, nothing to go stale.
+ * - A page that has two layouts (holding something or not) gets the skeleton of the one most customers see first. Pass a
+ *   prop when the caller knows better.
+ * - Widths and heights the page and the skeleton must agree on (`NARROW_COLUMN`, `PRODUCT_PHOTO_HEIGHT`) live in
+ *   `lib/page-layout.ts`. The page and its skeleton both import them; never retype them.
  *
  * Variants: `ListPageSkeleton` (the default for any list or table page), `HubPageSkeleton`
  * (tile hubs), `DetailPageSkeleton` (one record), `FormPageSkeleton` (a form or flow),
@@ -22,6 +26,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { NARROW_COLUMN, PRODUCT_PHOTO_HEIGHT } from "@/lib/page-layout";
 
 /** One grey block. Everything below is built from these. */
 export function Bone({ className, style }: { className?: string; style?: CSSProperties }) {
@@ -41,7 +46,7 @@ function Frame({ children, className }: { children: ReactNode; className?: strin
 /** Title on the left, an optional primary action on the right: the PageHeader's footprint. */
 function HeaderBones({ action = true }: { action?: boolean }) {
   return (
-    <div data-page-header className="flex w-full items-center justify-between gap-2">
+    <div data-page-header className="flex min-h-9 w-full items-center justify-between gap-2">
       <Bone className="h-6 w-38 rounded-lg" />
       {action && <Bone className="h-8 w-28 rounded-lg" />}
     </div>
@@ -58,11 +63,39 @@ function ListPanel({ children, className }: { children: ReactNode; className?: s
 }
 
 /** Back arrow and a title: the PageHeader of a detail page, a flow or any page that has a parent. */
-function BackHeaderBones({ title = "w-45" }: { title?: string }) {
+function BackHeaderBones({ title = "w-45", action = false }: { title?: string; action?: boolean }) {
   return (
-    <div data-page-header className="flex items-center gap-2">
-      <Bone className="size-7 shrink-0 rounded-lg sm:size-8" />
-      <Bone className={cn("h-6 rounded-lg", title)} />
+    <div data-page-header className="flex min-h-9 w-full items-center justify-between gap-2">
+      <div className="flex items-center gap-2">
+        <Bone className="size-7 shrink-0 rounded-lg sm:size-8" />
+        <Bone className={cn("h-6 rounded-lg", title)} />
+      </div>
+      {action && <Bone className="h-9 w-20 shrink-0 rounded-lg" />}
+    </div>
+  );
+}
+
+/** The pitch a customer who holds nothing sees (`ProductPitchBody`): the picture, three benefits, the dashed divider. */
+function PitchBones() {
+  return (
+    <div className="flex flex-col gap-6">
+      <Bone className={cn("w-full rounded-3xl", PRODUCT_PHOTO_HEIGHT)} />
+      <div className="flex flex-col gap-5">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-4">
+            <Bone className="size-10 shrink-0 rounded-full" />
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
+              <Bone className="h-4 w-3/5" />
+              <Bone className="h-3 w-4/5" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-10 flex items-center gap-4">
+        <Bone className="h-px flex-1 rounded-none" />
+        <Bone className="h-4 w-32" />
+        <Bone className="h-px flex-1 rounded-none" />
+      </div>
     </div>
   );
 }
@@ -256,22 +289,33 @@ export function FactsPageSkeleton({ figure = false, facts = 6, actions = 2 }: { 
   );
 }
 
-/** A product's or plan's own page: back and title, the headed list of what the customer holds, then the one big button. */
-export function ProductPageSkeleton({ rows = 2 }: { rows?: number }) {
+/**
+ * A product's or plan's own page (Insure plan, Loans advance). Most customers hold nothing yet and see the pitch, so
+ * that is the default: back and title, the picture, the benefits, the one big button. A customer who holds something
+ * sees an About chip and their list instead, so a caller that knows it passes `holding`.
+ */
+export function ProductPageSkeleton({ holding = false, rows = 2 }: { holding?: boolean; rows?: number }) {
   return (
-    <Frame className="mx-auto max-w-[560px] gap-6">
-      <BackHeaderBones title="w-42" />
-      <div className="flex flex-col gap-10">
-        <div className="flex flex-col gap-3">
-          <div className="flex min-h-6 items-center px-1">
-            <Bone className="h-3.5 w-28" />
+    <Frame className={NARROW_COLUMN}>
+      <BackHeaderBones title="w-42" action={holding} />
+      {holding ? (
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-3">
+            <div className="flex min-h-7 items-center px-1">
+              <Bone className="h-3.5 w-28" />
+            </div>
+            <ListPanel>
+              <RowBones rows={rows} />
+            </ListPanel>
           </div>
-          <ListPanel>
-            <RowBones rows={rows} />
-          </ListPanel>
+          <Bone className="h-12 w-full rounded-2xl" />
         </div>
-        <Bone className="h-12 w-full rounded-2xl" />
-      </div>
+      ) : (
+        <div className="flex flex-col gap-6">
+          <PitchBones />
+          <Bone className="h-12 w-full rounded-2xl" />
+        </div>
+      )}
     </Frame>
   );
 }
@@ -286,7 +330,7 @@ export function ScheduledListSkeleton() {
         <Bone className="h-8 w-42 rounded-lg" />
       </div>
       <div className="flex flex-col gap-3">
-        <div className="flex min-h-6 items-center px-1">
+        <div className="flex min-h-7 items-center px-1">
           <Bone className="h-3.5 w-28" />
         </div>
         <ListPanel>
@@ -550,21 +594,20 @@ export function InvestHomeSkeleton() {
   );
 }
 
-/** Invest products page (Term Deposits, Treasury Bills & Bonds). */
-export function InvestProductsSkeleton({ groups = 1, rows = 3 }: { groups?: number; rows?: number }) {
+/**
+ * Invest products page (Term Deposits, Treasury Bills & Bonds): the 560px column, an About chip on the product's own
+ * page (`action`), and the offers under one heading each when there is more than one group.
+ */
+export function InvestProductsSkeleton({ groups = 1, rows = 3, action = false }: { groups?: number; rows?: number; action?: boolean }) {
   return (
-    <Frame className="gap-6">
-      <div data-page-header className="flex items-center gap-2">
-        <Bone className="size-8 rounded-lg" />
-        <Bone className="h-6 w-42 rounded-lg" />
-      </div>
-      <div className="flex flex-col gap-10">
+    <Frame className={NARROW_COLUMN}>
+      <BackHeaderBones title="w-42" action={action} />
+      <div className="flex flex-col gap-8">
         {Array.from({ length: groups }).map((_, g) => (
           <div key={g} className="flex flex-col gap-3">
             {groups > 1 && (
-              <div className="flex min-h-7 flex-col gap-2 px-1">
+              <div className="flex min-h-7 items-center px-1">
                 <Bone className="h-3.5 w-31" />
-                <Bone className="h-2.5 w-42" />
               </div>
             )}
             <ListPanel>
@@ -577,37 +620,17 @@ export function InvestProductsSkeleton({ groups = 1, rows = 3 }: { groups?: numb
   );
 }
 
-/** Invest offer overview/calculator page (e.g. /invest/offer/[key]): single-column facts, worked example, CTA. */
+/** An Invest offer's page (/invest/offer/[key]): the same pitch as a product page, then Invest and Terms and Conditions. */
 export function OfferDetailSkeleton() {
   return (
-    <Frame className="gap-6">
-      <div data-page-header className="flex items-center gap-2">
-        <Bone className="size-8 rounded-lg" />
-        <Bone className="h-6 w-45 rounded-lg" />
-      </div>
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
-        <Panel className="flex flex-col gap-2 p-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center justify-between gap-5 px-2 py-2">
-              <Bone className="h-3 w-24" />
-              <Bone className="h-3 w-28" />
-            </div>
-          ))}
-        </Panel>
+    <Frame className={NARROW_COLUMN}>
+      <BackHeaderBones title="w-45" />
+      <div className="flex flex-col gap-6">
+        <PitchBones />
         <div className="flex flex-col gap-2">
-          <div className="px-1">
-            <Bone className="h-3 w-31" />
-          </div>
-          <Panel className="flex flex-col gap-2 p-2">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="flex items-center justify-between gap-5 px-2 py-2">
-                <Bone className="h-3 w-21" />
-                <Bone className="h-3 w-24" />
-              </div>
-            ))}
-          </Panel>
+          <Bone className="h-11 w-full rounded-xl" />
+          <Bone className="h-11 w-full rounded-xl" />
         </div>
-        <Bone className="h-11 w-full rounded-2xl" />
       </div>
     </Frame>
   );

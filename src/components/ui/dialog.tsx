@@ -8,10 +8,25 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { hideFocusRingUntilNextMove } from "@/lib/focus-ring"
 
+/**
+ * The closing popup, so the Dialog can hold its size while it fades out. A page usually clears what the dialog was
+ * showing (the chosen item, a form's fields) in the same update that closes it, so without this the content vanishes
+ * first and the box collapses to nothing while it is still on screen.
+ */
+const DialogPopupContext = React.createContext<React.RefObject<HTMLDivElement | null> | null>(null)
+
 function Dialog({ onOpenChange, open, ...props }: DialogPrimitive.Root.Props) {
   // Whichever way a modal closes (its own buttons, Esc, or the page setting `open` to false), keep the focus ring
   // off the control that gets focus back until the person moves with the keyboard again.
   const wasOpen = React.useRef(false)
+  const popupRef = React.useRef<HTMLDivElement | null>(null)
+  const frozenSize = React.useRef<{ width: number; height: number } | null>(null)
+  // Render runs before the DOM changes, so this is the last moment the popup still has the content it was showing.
+  if (open) frozenSize.current = null
+  else if (wasOpen.current && popupRef.current) {
+    frozenSize.current = { width: popupRef.current.offsetWidth, height: popupRef.current.offsetHeight }
+  }
+
   React.useEffect(() => {
     if (open) wasOpen.current = true
     else if (wasOpen.current) {
@@ -20,16 +35,28 @@ function Dialog({ onOpenChange, open, ...props }: DialogPrimitive.Root.Props) {
     }
   }, [open])
 
+  // Before the browser paints the new (emptier) content, pin the popup to the size it had.
+  React.useLayoutEffect(() => {
+    const el = popupRef.current
+    const size = frozenSize.current
+    if (!open && el && size) {
+      el.style.height = `${size.height}px`
+      el.style.minHeight = `${size.height}px`
+    }
+  }, [open])
+
   return (
-    <DialogPrimitive.Root
-      data-slot="dialog"
-      open={open}
-      onOpenChange={(next, details) => {
-        if (!next) hideFocusRingUntilNextMove()
-        onOpenChange?.(next, details)
-      }}
-      {...props}
-    />
+    <DialogPopupContext.Provider value={popupRef}>
+      <DialogPrimitive.Root
+        data-slot="dialog"
+        open={open}
+        onOpenChange={(next, details) => {
+          if (!next) hideFocusRingUntilNextMove()
+          onOpenChange?.(next, details)
+        }}
+        {...props}
+      />
+    </DialogPopupContext.Provider>
   )
 }
 
@@ -85,10 +112,12 @@ function DialogContent({
   showDragHandle = true,
   ...props
 }: DialogContentProps) {
+  const popupRef = React.useContext(DialogPopupContext)
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Popup
+        ref={popupRef}
         data-slot="dialog-content"
         data-fullscreen={size === "full" ? "true" : undefined}
         className={cn(

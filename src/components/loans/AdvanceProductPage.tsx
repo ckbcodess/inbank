@@ -15,6 +15,7 @@ import Link from "next/link";
 import { ChevronRight, HandCoins } from "@/components/ui/icons";
 import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
+import { NARROW_COLUMN } from "@/lib/page-layout";
 import { Button } from "@/components/ui/button";
 import { AboutSheet } from "@/components/ui/about-sheet";
 import { AdvanceAboutContent } from "@/components/loans/AdvanceAbout";
@@ -96,7 +97,7 @@ export function AdvanceProductPage() {
     : "You can take up to 80% of your salary, national service allowance or pension once it’s paid into a GCB account.";
 
   return (
-    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
+    <div className={NARROW_COLUMN}>
       <PageHeader
         title={shown.name}
         backTo={{ href: LOANS_HOME, label: "Loans" }}

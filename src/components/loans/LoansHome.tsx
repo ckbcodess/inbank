@@ -54,7 +54,7 @@ export function LoansHome({ loading: forced = false }: { loading?: boolean }) {
       <div className="mx-auto flex w-full max-w-[720px] flex-col gap-10">
         {!loading && <ProductBanner items={alerts} noun="advances" />}
         <Skeleton loading={loading}>
-        <div className={cn("stagger-items grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
+        <div className={cn(!loading && "stagger-items", "grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
           <ProductCard
             id="advance"
             name={shown.name}

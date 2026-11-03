@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Info, SearchX } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
+import { NARROW_COLUMN } from "@/lib/page-layout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { OfferDetailSkeleton } from "@/components/states/PageSkeletons";
@@ -93,7 +94,7 @@ export function OfferDetail() {
   if (!hydrated) return <OfferDetailSkeleton />;
   if (!offer) {
     return (
-      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
+      <div className={NARROW_COLUMN}>
         <PageHeader title="Investment" backTo={{ href: "/invest", label: "Invest" }} />
         <TrueEmptyState
           icon={<SearchX size={22} strokeWidth={1.8} />}
@@ -134,7 +135,7 @@ export function OfferDetail() {
   const goes = canStart && (hasAccess || needsAccount);
 
   return (
-    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
+    <div className={NARROW_COLUMN}>
       <PageHeader title={offer.title} backTo={product.back} />
       <div className="flex flex-col gap-6">
         <ProductPitchBody productId={product.id} highlights={highlightsOf(offer)} price={priceOf(offer)} />

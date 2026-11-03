@@ -642,10 +642,10 @@
   /* Tactile surfaces (Tactile design skill, mapped onto our tokens). A raised thing is a fine ring (its edge) plus a
      crisp 1px drop, plus at most one short drop for height. The ring replaces the border, so a surface that takes one
      of these never also gets `border` or `ring-*`. Dark redefines the same names below. */
-  --shadow-button: 0 0 0 1px color-mix(in srgb, var(--black) 9%, transparent), 0 1px 1px 0 color-mix(in srgb, var(--black) 5%, transparent);
-  --shadow-card: 0 0 0 1px color-mix(in srgb, var(--black) 10%, transparent), 0 1px 2px 0 color-mix(in srgb, var(--black) 10%, transparent), 0 3px 4px -2px color-mix(in srgb, var(--black) 6%, transparent);
-  --shadow-menu: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.08), 0px 4px 16px -4px rgba(0, 0, 0, 0.11);
-  --shadow-modal: 0px 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 6px 16px -4px rgba(0, 0, 0, 0.08);
+  --shadow-button: 0px 0px 0px 1px rgba(0, 0, 0, 0.06), 0px 3px 5px 0px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0px 0px 0px 1px rgba(0, 0, 0, 0), 0px 1px 2px 0px rgba(0, 0, 0, 0.02), 0px 2px 8px -2px rgba(0, 0, 0, 0.04);
+  --shadow-menu: 0px 0px 0px 1px rgba(0, 0, 0, 0.02), 0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 4px 16px -4px rgba(0, 0, 0, 0.11);
+  --shadow-modal: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 6px 16px -4px rgba(0, 0, 0, 0.08);
 }
 
 .dark {
@@ -1688,9 +1688,11 @@ input[type="number"] {
 
 
 /* Loading skeletons: a soft highlight crosses each grey block. Still for people who ask for less motion. */
+/* Bones stay invisible for the first 150ms, so a route that is ready almost at once never flashes a skeleton. */
 @layer components {
-  .skeleton-shimmer { position: relative; overflow: hidden; }
+  .skeleton-shimmer { position: relative; overflow: hidden; opacity: 0; animation: skeleton-in var(--dur-reveal) var(--ease-settle) 150ms forwards; }
 }
+@keyframes skeleton-in { to { opacity: 1; } }
 .skeleton-shimmer::after {
   content: "";
   position: absolute;

@@ -419,7 +419,7 @@ export function AccountsContent({ linkSource = false, loading: forced = false }:
       )}
 
       {/* ── My accounts — the page title is the heading; Add Account sits with it ── */}
-      <div className="stagger-items flex flex-col gap-10">
+      <div className={cn("flex flex-col gap-10", screenState !== "loading" && "stagger-items")}>
         <section aria-label="My accounts">
           <div className={LIST}>
             {screenState === "error" && (

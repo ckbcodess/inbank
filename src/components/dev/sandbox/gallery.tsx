@@ -659,6 +659,14 @@ export function SurfacesTab() {
             </div>
           ))}
         </Wrap>
+        <ListCard className="max-w-sm">
+          {ROWS.slice(0, 2).map((r) => (
+            <li key={r.name} className="flex items-center justify-between gap-3 px-3 py-3">
+              <span className="text-[14px]">{r.name}</span>
+              <span className="tabular text-[14px]">{r.amount}</span>
+            </li>
+          ))}
+        </ListCard>
       </Specimen>
       <Specimen title="Colour tokens" note="Change them in the colour tuner (header).">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">

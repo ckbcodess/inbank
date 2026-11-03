@@ -81,7 +81,7 @@ export function InvestHome({ loading: forced = false }: { loading?: boolean }) {
           <ListErrorState onRetry={() => setState("populated")} />
         ) : (
           <Skeleton loading={loading}>
-          <div className={cn("stagger-items grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
+          <div className={cn(!loading && "stagger-items", "grid gap-3 sm:gap-4", layout === "grid" ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1")}>
             <ProductCard
               id="term-deposits"
               name="Term Deposits"
