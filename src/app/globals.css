@@ -414,7 +414,7 @@
   /* Icon tones (Send & Pay icon styles). light, mid and dark are the glass gradient (top, middle, bottom);
      ink is the line colour for outline and duotone icons, picked to read on a tile in this theme. */
   --icon-amber-light: #fee39a;
-  --icon-amber-mid: #ffbb00;
+  --icon-amber-mid: #f0a400;
   --icon-amber-dark: #ffc524;
   --icon-amber-ink: #ffcc00;
   --icon-blue-light: #d6e6ff;
@@ -681,8 +681,8 @@
   --duo-outline: var(--smoke-500);
   /* Icon tones (Send & Pay icon styles). light, mid and dark are the glass gradient (top, middle, bottom);
      ink is the line colour for outline and duotone icons, picked to read on a tile in this theme. */
-  --icon-amber-light: #ffe799;
-  --icon-amber-mid: #564124;
+  --icon-amber-light: #ffdc6b;
+  --icon-amber-mid: #462901;
   --icon-amber-dark: #a26716;
   --icon-amber-ink: #f2dca1;
   --icon-blue-light: #d6e6ff;
