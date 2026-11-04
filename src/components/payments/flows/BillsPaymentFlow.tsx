@@ -185,8 +185,6 @@ export function BillsPaymentFlow({
     return "";
   });
 
-  const [isVerifying, setIsVerifying] = useState(false);
-
   // Synchronize if beneficiary was pre-selected from external avatar/preset
   useEffect(() => {
     if (needsCheck && state.benName && ref.length >= 4 && verifiedRef !== ref) {
@@ -194,25 +192,6 @@ export function BillsPaymentFlow({
       setVerifiedName(state.benName);
     }
   }, [needsCheck, state.benName, ref, verifiedRef]);
-
-  // The name is checked on its own once the reference is complete: nothing to press, and it starts again if the reference changes
-  useEffect(() => {
-    if (!needsCheck || !canVerify || verifiedRef === ref) return;
-    setIsVerifying(true);
-    const timer = setTimeout(() => {
-      let finalName: string;
-      if (state.subType === "ecg") finalName = "Samuel Quartey";
-      else finalName = resolveAccountName(ref, state.benName || "") || defaultUserName;
-      setVerifiedRef(ref);
-      setVerifiedName(finalName);
-      onChangeRef.current("benName", finalName);
-      setIsVerifying(false);
-    }, 600);
-    return () => {
-      clearTimeout(timer);
-      setIsVerifying(false);
-    };
-  }, [needsCheck, canVerify, ref, verifiedRef, state.subType, state.benName, defaultUserName]);
 
   // An invoice number is looked up on request, not as it is typed, and says nothing about who owns it
   const [rememberedService, setRememberedService] = useState(false);
@@ -249,6 +228,18 @@ export function BillsPaymentFlow({
   useEffect(() => () => {
     if (searchTimer.current) clearTimeout(searchTimer.current);
   }, []);
+  // A name-checked biller is looked up only when the person presses Search, never as they type
+  const startVerify = () => {
+    stopSearch();
+    setSearching(true);
+    searchTimer.current = setTimeout(() => {
+      const finalName = state.subType === "ecg" ? "Samuel Quartey" : resolveAccountName(ref, state.benName || "") || defaultUserName;
+      setVerifiedRef(ref);
+      setVerifiedName(finalName);
+      onChangeRef.current("benName", finalName);
+      setSearching(false);
+    }, 600);
+  };
   const isVerified = isGhanaGov && govMode === "pay"
     ? searchedRef !== null && searchedRef === ref && ref.length >= minRef
     : needsCheck
@@ -281,19 +272,6 @@ export function BillsPaymentFlow({
     // Fill it once per account, not on every keystroke in the amount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chargeKey]);
-
-  const statusChip = needsCheck ? (
-    <span className="pointer-events-none absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2 text-[12px]">
-      {isVerifying ? (
-        <>
-          <AppLoader size={12} className="text-muted-foreground" />
-          <span className="text-muted-foreground">Checking...</span>
-        </>
-      ) : isVerified ? (
-        <span className="text-success-text">Verified</span>
-      ) : null}
-    </span>
-  ) : null;
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
@@ -330,12 +308,25 @@ export function BillsPaymentFlow({
         onChange={(e) => {
           const val = e.target.value;
           onChange(key, val);
+          stopSearch();
           if (verifiedRef && verifiedRef !== val.trim()) resetVerification();
         }}
         placeholder={placeholder}
-        className={needsCheck ? "tabular pr-24" : "tabular"}
+        className={needsCheck ? "tabular pr-20" : "tabular"}
       />
-      {statusChip}
+      {needsCheck &&
+        (isVerified ? (
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[12px] text-success-text">Verified</span>
+        ) : (
+          <button
+            type="button"
+            disabled={!canVerify || searching}
+            onClick={startVerify}
+            className="absolute right-3 top-1/2 flex -translate-y-1/2 select-none items-center text-[13px] text-muted-foreground transition-colors enabled:cursor-pointer enabled:hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {searching ? <AppLoader size={12} className="text-muted-foreground" /> : "Search"}
+          </button>
+        ))}
     </div>
   );
 
@@ -622,10 +613,9 @@ export function BillsPaymentFlow({
                             type="button"
                             disabled={ref.length < minRef || searchedRef === ref || searching}
                             onClick={startSearch}
-                            aria-label={searching ? "Searching" : "Search"}
-                            className="absolute right-3 top-1/2 flex min-h-6 -translate-y-1/2 cursor-pointer items-center text-[13px] text-foreground underline underline-offset-4 disabled:cursor-default disabled:no-underline disabled:opacity-40"
+                            className="absolute right-3 top-1/2 flex -translate-y-1/2 select-none items-center text-[13px] text-muted-foreground transition-colors enabled:cursor-pointer enabled:hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                           >
-                            {searching ? <AppLoader size={14} className="text-muted-foreground" /> : "Search"}
+                            {searching ? <AppLoader size={12} className="text-muted-foreground" /> : "Search"}
                           </button>
                         </div>
                         {govInvoices.length > 0 && (

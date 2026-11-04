@@ -3,7 +3,6 @@
 import { SavedRecipientLink } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
-import { Search } from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import { cn } from "@/lib/utils";
 import {
@@ -156,9 +155,9 @@ export function OtherBankFlow({
                   onClick={handleVerify}
                   disabled={!isDetailsValid || resolving}
                   className={cn(
-                    "absolute right-2 top-1/2 flex -translate-y-1/2 select-none items-center gap-2 rounded-lg px-2 py-1 text-[12px] font-medium transition-all",
+                    "absolute right-3 top-1/2 flex -translate-y-1/2 select-none items-center text-[13px] transition-colors",
                     isDetailsValid
-                      ? "cursor-pointer text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                      ? "cursor-pointer text-muted-foreground hover:text-foreground"
                       : "pointer-events-none cursor-not-allowed text-muted-foreground/35"
                   )}
                 >
@@ -170,10 +169,7 @@ export function OtherBankFlow({
                   ) : isVerified ? (
                     <span className="text-[12px] font-medium text-success-text">Verified</span>
                   ) : (
-                    <span className="flex items-center gap-1">
-                      <Search size={13} />
-                      <span>Verify</span>
-                    </span>
+                    <span>Search</span>
                   )}
                 </button>
             </div>
