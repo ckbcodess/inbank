@@ -25,17 +25,16 @@ import {
   ArrowLeftRight,
   Files,
   Landmark,
-  MoreVertical,
   PieChart,
   Plus,
   Repeat,
   Share,
+  Trash2,
 } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
@@ -53,6 +52,7 @@ import { useCardPaymentReturn } from "@/lib/card-payment";
 import PageHeader from "@/components/layout/PageHeader";
 import { ActionTile } from "@/components/ui/action-tile";
 import { RoundAction } from "@/components/ui/round-action";
+import { ToggleTile } from "@/components/ui/toggle-tile";
 import { ShareDetailsDialog } from "@/components/accounts/ShareDetailsDialog";
 import { AccountDetailBody } from "@/components/states/PageSkeletons";
 import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
@@ -209,6 +209,8 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   const canBeDefault = choosable && !isDefault;
   // The rule comes from the data, not from the Dev Mode switches: the default (and the last account) can't be removed.
   const inList = customerAccounts.some((a) => a.id === account.id);
+  // Set as default and remove only appear when there's another account to fall back on.
+  const managed = inList && customerAccounts.length > 1;
   const removalBlock = accountRemovalBlock(customerAccounts, defaultId, account.id);
 
   function handleRemove() {
@@ -265,24 +267,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
         // Two columns from lg: the card and its two actions on the left, the options on the right. One column below.
         <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-5">
           <div className="flex flex-col gap-5 lg:mx-auto lg:w-[78%]">
-            <BalanceCard
-              account={account}
-              isDefault={isDefault}
-              menu={
-                inList && customerAccounts.length > 1 ? (
-                  <AccountMenu
-                    name={account.name}
-                    canBeDefault={canBeDefault}
-                    removalBlock={removalBlock}
-                    onSetDefault={() => {
-                      setDefaultAccount(account.id);
-                      toast.success(`${account.name} is now your default`);
-                    }}
-                    onRemove={() => setRemoveOpen(true)}
-                  />
-                ) : null
-              }
-            />
+            <BalanceCard account={account} isDefault={isDefault} />
             <div className="flex w-full items-start justify-evenly">
               <RoundAction icon={Plus} label="Top Up" onClick={() => setFundOpen(true)} />
               <RoundAction icon={Share} label="Share Details" onClick={() => setShareOpen(true)} />
@@ -304,6 +289,30 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
                 description="Statements, cheque books, bank letters"
               />
             </div>
+            {/* The card's badge shows which account is the default; these rows are the only way to change either setting. */}
+            {managed && (
+              <div className="flex flex-col gap-3">
+                {/* Greyed out, with the reason under it, when the account can't be removed. */}
+                <ActionTile
+                  leading={<Trash2 size={20} strokeWidth={1.8} aria-hidden="true" className="text-destructive" />}
+                  title="Remove Account"
+                  description={removalBlock ?? undefined}
+                  disabled={Boolean(removalBlock)}
+                  onClick={() => setRemoveOpen(true)}
+                />
+                {canBeDefault && (
+                  <ToggleTile
+                    variant="row"
+                    title="Set as Default"
+                    checked={false}
+                    onCheckedChange={() => {
+                      setDefaultAccount(account.id);
+                      toast.success(`${account.name} is now your default`);
+                    }}
+                  />
+                )}
+              </div>
+            )}
           </nav>
         </div>
       )}
@@ -384,45 +393,7 @@ function HeaderPill({ onClick, children }: { onClick: () => void; children: Reac
 
 /* ── Balance card ──────────────────────────────────────────────────────────── */
 
-/** The ⋯ on the account card: the two things done rarely, set as default and remove. Only what applies is offered. */
-function AccountMenu({
-  name,
-  canBeDefault,
-  removalBlock,
-  onSetDefault,
-  onRemove,
-}: {
-  name: string;
-  canBeDefault: boolean;
-  /** Why the account can't be removed, or null when it can. */
-  removalBlock: string | null;
-  onSetDefault: () => void;
-  onRemove: () => void;
-}) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        aria-label={`More actions for ${name}`}
-        className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-border bg-card text-foreground outline-none transition-colors duration-hover hover:bg-muted focus-visible:ring-1 focus-visible:ring-ring"
-      >
-        <MoreVertical size={17} />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64">
-        {canBeDefault && (
-          <DropdownMenuItem onClick={onSetDefault} className="text-[13px]">
-            Set as Default
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuItem onClick={onRemove} disabled={Boolean(removalBlock)} className="text-[13px]">
-          Remove Account
-        </DropdownMenuItem>
-        {removalBlock && <p className="px-2 pb-1.5 text-[12px] text-muted-foreground">{removalBlock}</p>}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-function BalanceCard({ account, isDefault, menu }: { account: Account; isDefault: boolean; menu?: React.ReactNode }) {
+function BalanceCard({ account, isDefault }: { account: Account; isDefault: boolean }) {
   // Type and currency are already on the card, and "Active" is the expected state: only a status that needs attention is said.
   const needsAttention = account.status !== "Active";
 
@@ -442,12 +413,7 @@ function BalanceCard({ account, isDefault, menu }: { account: Account; isDefault
         className="pointer-events-none absolute -right-[207.7px] top-[8.68px] h-[343.429px] w-[430.279px] max-w-none select-none dark:opacity-40"
       />
 
-      {(isDefault || menu) && (
-        <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
-          {isDefault && <Badge variant="brand">Default</Badge>}
-          {menu}
-        </div>
-      )}
+      {isDefault && <Badge variant="brand" className="absolute right-3 top-3 z-10">Default</Badge>}
 
       <div className="relative flex flex-col gap-2 text-[14px] leading-5 tracking-[-0.005em] text-muted-foreground">
         <span className="flex items-center gap-1">
