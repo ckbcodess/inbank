@@ -552,9 +552,9 @@
   --edge-glass-angle: 180deg;
   --edge-glass-mid-at: 18%;
   --edge-glass-width: 0.5px;
-  --edge-glass-start: #ffffff;
-  --edge-glass-mid: #fafafa;
-  --edge-glass-end: color-mix(in srgb, var(--gray-100) 50%, var(--gray-200));
+  --edge-glass-start: #f5f5f5;
+  --edge-glass-mid: #f5f5f5;
+  --edge-glass-end: #f5f5f5;
   --ring: var(--amber-950);
   /* Secondary chart palette (complementary warm hue) */
   /*
