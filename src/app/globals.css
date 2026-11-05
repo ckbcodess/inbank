@@ -149,7 +149,7 @@
   --breakpoint-2xl: 1440px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-base);
   --font-mono: var(--font-sans);
   --color-ring: var(--ring);
   --color-border: var(--border);
@@ -376,18 +376,18 @@
   --modal: var(--white);
   /* Tile surface tokens. Hub tiles are filled with --tile, with no stroke, and --tile-hover on hover; the fill also
      serves the empty PIN dots. Single source for both modes so a change reflects everywhere. */
-  --tile: var(--gray-100);
+  --tile: #f7f7f7;
   /* The cash-out ticket is warm paper with black ink in both themes. */
   --ticket-paper: #f1efe8;
   --ticket-ink: #0a0a0a;
   --ticket-rule: #cbc8bf;
-  --tile-hover: var(--gray-200);
+  --tile-hover: #eeeeee;
   /* The round quick actions (Share, Receipt, Report Issue, Edit): the chip behind the icon, and its hover. */
   --action-chip: var(--gray-100);
   --action-chip-hover: var(--gray-200);
   /* The action tile on a modal, dialog or sheet: a step lighter than the page tile. */
-  --tile-modal: var(--tile);
-  --tile-modal-hover: var(--tile-hover);
+  --tile-modal: #f7f7f7;
+  --tile-modal-hover: #eeeeee;
   /* Shared list item hover token for lists, accounts, and dashboard panels (replaces raw muted/tile-hover) */
   --item-hover: color-mix(in srgb, var(--black) 4%, transparent);
   /* Hub tile icon (INTERFACE §E): amber-500 on light. */

@@ -23,7 +23,7 @@ import { SidiAssistantWidget } from "@/components/layout/SidiAssistantWidget";
 import { SkulletProvider } from "skullet/react";
 
 const openSans = Open_Sans({
-  variable: "--font-sans",
+  variable: "--font-base",
   subsets: ["latin"],
 });
 
