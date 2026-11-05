@@ -184,6 +184,15 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ### 2026-11-05
 
+- Decision (designer): every total uses `TotalRow` (14px label, 20px figure), replacing the 18px/22px form rows and the 16px/24px review total. Covers Send & Pay, Create Group, invoices, every `ReviewSummary`, Invest key rows, the Insure statement, and the transaction sheet and receipt. CONSTITUTION §5 has no row for it yet: add one at the next consolidation.
+- Decision: a group payment picks its group by id (`f.groupId`), not name. Names aren't unique and a group can be renamed mid-payment. Links into the flow pass the id; `?group=` still accepts an exact name, then a partial one.
+- Decision: in a group payment a member at zero is left out of that payment, not an error. The fee is per payment made (`groupPaidCount`). The form shows one line, what the members get (designer: no fee row there); the fee and Total Debit are on the review, and the form's balance check still counts the fee. `GROUP_FEE_PER_MEMBER` in `flows/shared.tsx` is the one source.
+- Decision: the group review lists each member, where it goes and the amount (BRD §13), through `ReviewSummary`'s new `detailsExtra`. The receipt has one row per member paid.
+- Decision: the code step in Send & Pay now restates the payment on every rail (`summary` on `TransactionOtpModal`). It was passing nothing, which broke CONSTITUTION §2.
+- Gap: a group payment can't partly fail. BRD §13 wants a failed member reported alone with a retry; the flow only has whole success or whole failure, and the ledger records one row.
+- Gap: Standing orders still pick groups by name (`StandingOrderFlow.tsx`), and a payment scheduled from a group receipt carries the total, not each member's amount.
+- Gap: duplicate group names aren't blocked in `CreateGroupFlow` or `EditGroupModal`. Safe for the payment now, but the two look the same in the list.
+- Gap: nothing stops a group member being the account paid from, and retail limits aren't checked on group payments (no retail limit data exists yet). `EditGroupModal` starts on an invented GHS 200.00 when a group has no saved amount.
 - Decision: Pay again's Manage opens a sheet (`PayAgainManage`), not /beneficiaries. The tiles are suggestions from who the customer pays, not saved beneficiaries, so Manage hides or shows them (`lib/pay-again-store.ts`, keyed by rail + recipient, per customer). Saved people stay on /beneficiaries, linked from the sheet.
 - Decision: Pay again is ranked from the ledger (`lib/pay-again-rank.ts`, wired through `payAgainFor`): one entry per rail and recipient, at least 3 completed payments in 90 days, recency decay (60-day half-life), a boost when a steady rhythm says it is due, the usual amount if it makes up half the payments, else the last. The sheet's "why" line reads from that history, so it only appears where there is history.
 - Decision: the retail ledger now holds seven regular payees' payments (`REPEAT_PAYMENT_SEED` in `mock-data.ts`, Aug to Nov 2026, account acc-ret-001), so Pay again is derived for the everyday persona. It also lands on the Transactions page and in spend totals. Clean and single personas keep their own data; the migrated persona keeps its carried-over payees. Dates are fixed, so "due about now" only fits around early November 2026.
@@ -1255,6 +1264,11 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Decision: period pickers (1w, 1m, 3m, 6m, 1y) use `RangePills` (`components/ui/range-pills.tsx`): outlined pills, the chosen one amber like the sidebar's active item. Used by `SpendsRadialChart` and `DashboardAnalyticsWidget`.
 - Decision: repeated UI is now shared. `SegmentedControl` (now with optional `count`) drives the Cards filter, Beneficiaries tabs, Insights period, Account expenses view and Create Group split. New in `components/ui`: `SectionHeading` (title, optional info hint, optional action), `ListCard` (the white rows box, `as="div"` for non-list children), `SearchField`, `Fact`, `HorizontalScrollStrip`; `GcbEagleEmblem` is in `components/brand`. Payment sent now uses `Switch` and `RoundAction`.
 - Gap: still hand-drawn and not worth a component yet: the theme switch in `TopHeader` (icon-only round segments), the `bg-card` panels in admin and business pages (they hold tables and forms, not rows), `AttentionBand` and `Collapsible` in `MinimalKit`, and the Feedback face picker (a selectable choice, not an action).
+
+### 2026-11-05
+- Decision (designer): the group "Add new contact" modal verifies the number with the inline Search inside the field (same pattern as Send & Pay's Other Bank flow). Add Member stays disabled until the lookup resolves; a miss puts the message under the field. Verification is tied to the type, bank/network and number, so editing any of them clears it.
+- Gap: Add Member is disabled with no reason line under it (CONSTITUTION §9 asks for one). Left as-is because the Search step is the reason. Decide whether the footer needs a muted hint.
+- Gap: the inline Search markup is copied from `OtherBankFlow.tsx`, not shared. Extract it into `flows/shared.tsx` when a third flow needs it.
 
 ## Consolidation history
 - **2026-10-03:** Bootstrap. Built the five files from these sources:

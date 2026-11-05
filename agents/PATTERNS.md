@@ -230,7 +230,9 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 - **Behavior:**
   - Fees and arrival times come from `RAIL_FACTS`.
   - Foreign rails (`papss`, `swift`) share the foreign-currency handling.
-  - Insufficient funds shows as a toast (`InsufficientFundsAlert`).
+  - Insufficient funds sits inline under the amount (`InsufficientFundsAlert`, or `InlineError` with the shortfall).
+  - Every sum ends on `TotalRow` (`ui/total-row.tsx`): a 14px label and a 20px regular figure, on forms, reviews,
+    receipts and invoices. `ReviewSummary` already uses it.
   - "Proceed to Pay" spins while the payment settles; there is no full-screen processing view.
 - **Examples:** `components/payments/PaymentFlow.tsx`, `StandingOrderFlow.tsx`, `RequestFlow.tsx`.
 

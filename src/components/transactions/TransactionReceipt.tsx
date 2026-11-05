@@ -38,6 +38,7 @@ import { toast } from "sonner";
 import { getTransactionType } from "@/lib/transaction-type";
 import { ShareReceiptDialog, type ReceiptFormat } from "@/components/transactions/ShareReceiptDialog";
 import { RoundAction } from "@/components/ui/round-action";
+import { TotalRow } from "@/components/ui/total-row";
 import { TransactionStatusBadge, transactionStatusLabel } from "@/components/StatusBadge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { TRANSACTION_STATE_LABEL, type TransactionState } from "@/lib/states";
@@ -349,14 +350,16 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
               ],
             ].map((group, gi) => (
               <dl key={gi} className="flex flex-col gap-2 py-4 first:pt-2 last:pb-0">
-                {group.map((row) => (
-                  <div key={row.label} className="flex items-baseline justify-between gap-5">
-                    <dt className="shrink-0 text-[13px] text-muted-foreground">{row.label}</dt>
-                    <dd className={cn("tabular min-w-0 text-right text-[14px] text-foreground", "strong" in row && row.strong && "text-[15px]")}>
-                      {row.value}
-                    </dd>
-                  </div>
-                ))}
+                {group.map((row) =>
+                  "strong" in row && row.strong ? (
+                    <TotalRow key={row.label} label={row.label} value={row.value} definition />
+                  ) : (
+                    <div key={row.label} className="flex items-baseline justify-between gap-5">
+                      <dt className="shrink-0 text-[13px] text-muted-foreground">{row.label}</dt>
+                      <dd className="tabular min-w-0 text-right text-[14px] text-foreground">{row.value}</dd>
+                    </div>
+                  )
+                )}
               </dl>
             ))}
           </div>

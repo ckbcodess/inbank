@@ -22,6 +22,8 @@ import {
   Modal,
 } from "@/components/ui/dialog";
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
+import { TotalRow } from "@/components/ui/total-row";
+import { AppLoader } from "@/components/ui/loader";
 import { cn } from "@/lib/utils";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { toast } from "sonner";
@@ -106,12 +108,28 @@ export default function CreateGroupFlow({
   type CustomErrors = { name?: string; category?: string; bank?: string; network?: string; dest?: string };
   const [customErrors, setCustomErrors] = useState<CustomErrors>({});
   const clearCustomErrors = () => setCustomErrors({});
-  const [verifyingContact, setVerifyingContact] = useState(false);
+  // Inline Search in the destination field: the lookup result is kept against the exact type, bank/network and number it verified,
+  // so editing any of them drops the verification.
+  const [verifyingDest, setVerifyingDest] = useState(false);
+  const [verifiedDestKey, setVerifiedDestKey] = useState<string | null>(null);
+  const [verifiedContactName, setVerifiedContactName] = useState("");
   const [customName, setCustomName] = useState("");
   const [customDest, setCustomDest] = useState("");
   const [customCategory, setCustomCategory] = useState<"" | "gcb" | "other_bank" | "wallet">("");
   const [customBank, setCustomBank] = useState("");
   const [customWalletNetwork, setCustomWalletNetwork] = useState("");
+  // Closing the New contact modal (Escape, the X, a saved contact, or the toggle) clears everything it held.
+  const resetNewContact = () => {
+    setCustomErrors({});
+    setCustomName("");
+    setCustomDest("");
+    setCustomCategory("");
+    setCustomBank("");
+    setCustomWalletNetwork("");
+    setVerifyingDest(false);
+    setVerifiedDestKey(null);
+    setVerifiedContactName("");
+  };
 
   // Unsaved changes confirmation dialog
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -191,59 +209,61 @@ export default function CreateGroupFlow({
     );
   };
 
-  // Add member: check the details first (as Send & Pay does), then save. A failed check puts the message under the
-  // field that caused it and throws a toast; nothing is saved until the number resolves to an account.
-  const handleAddCustomContact = () => {
-    const name = customName.trim();
-    const clean = customDest.replace(/[\s-]/g, "");
-    const nextErrors: CustomErrors = {};
-    if (!name) nextErrors.name = "Enter the contact's name.";
-    if (!customCategory) nextErrors.category = "Choose an account type.";
-    if (customCategory === "other_bank" && !customBank) nextErrors.bank = "Choose a bank.";
-    if (customCategory === "wallet" && !customWalletNetwork) nextErrors.network = "Choose a network.";
-    if (customCategory === "wallet") {
-      if (!isCompleteGhanaMobile(customDest)) nextErrors.dest = "Enter a complete 10-digit mobile number.";
-    } else if (customCategory && !/^\d{8,16}$/.test(clean)) {
-      nextErrors.dest = "Enter a valid account number (8 to 16 digits).";
-    }
-    const firstError = Object.values(nextErrors)[0];
-    if (firstError) {
-      setCustomErrors(nextErrors);
-      return;
-    }
+  // New contact modal: the destination is checked with the inline Search (as Send & Pay does) before Add Member unlocks.
+  const cleanDest = customDest.replace(/[\s-]/g, "");
+  const destFormatValid =
+    customCategory === "wallet" ? isCompleteGhanaMobile(customDest) : /^\d{8,16}$/.test(cleanDest);
+  const destKey = `${customCategory}|${customBank}|${customWalletNetwork}|${cleanDest}`;
+  const isDestVerified = Boolean(verifiedContactName) && verifiedDestKey === destKey;
+  const canAddContact =
+    Boolean(customName.trim()) &&
+    Boolean(customCategory) &&
+    (customCategory !== "other_bank" || Boolean(customBank)) &&
+    (customCategory !== "wallet" || Boolean(customWalletNetwork)) &&
+    isDestVerified;
 
+  // Search: looks the number up. A miss puts the message under the field and keeps Add Member disabled.
+  const handleVerifyDest = () => {
+    if (!destFormatValid || verifyingDest || isDestVerified) return;
+    const key = destKey;
     clearCustomErrors();
-    setVerifyingContact(true);
+    setVerifyingDest(true);
     window.setTimeout(() => {
-      setVerifyingContact(false);
-      if (!resolveAccountName(clean, "")) {
-        const message = "We couldn't find an account for this number. Check it and try again.";
-        setCustomErrors({ dest: message });
+      setVerifyingDest(false);
+      const resolved = resolveAccountName(cleanDest, "");
+      if (!resolved) {
+        setVerifiedDestKey(null);
+        setVerifiedContactName("");
+        setCustomErrors({ dest: "We couldn't find an account for this number. Check it and try again." });
         return;
       }
-
-      const amt = parseFloat(defaultAmount) || 0;
-      const networkOrBank =
-        customCategory === "gcb"
-          ? "GCB Bank"
-          : customCategory === "other_bank"
-          ? customBank
-          : customWalletNetwork;
-
-      const newMember: GroupMember = {
-        id: `m-custom-${Date.now()}`,
-        name,
-        destination: clean,
-        type: customCategory === "wallet" ? "wallet" : "bank",
-        networkOrBank,
-        defaultAmount: amt,
-      };
-      setMembers((prev) => [...prev, newMember]);
-      setCustomName("");
-      setCustomDest("");
-      setShowNewContact(false);
-      toast.success(`Added ${newMember.name} to participants`);
+      setVerifiedDestKey(key);
+      setVerifiedContactName(resolved);
     }, 400);
+  };
+
+  const handleAddCustomContact = () => {
+    if (!canAddContact) return;
+    const amt = parseFloat(defaultAmount) || 0;
+    const networkOrBank =
+      customCategory === "gcb"
+        ? "GCB Bank"
+        : customCategory === "other_bank"
+        ? customBank
+        : customWalletNetwork;
+
+    const newMember: GroupMember = {
+      id: `m-custom-${Date.now()}`,
+      name: customName.trim(),
+      destination: cleanDest,
+      type: customCategory === "wallet" ? "wallet" : "bank",
+      networkOrBank,
+      defaultAmount: amt,
+    };
+    setMembers((prev) => [...prev, newMember]);
+    resetNewContact();
+    setShowNewContact(false);
+    toast.success(`Added ${newMember.name} to participants`);
   };
 
   // Running Total Calculation
@@ -385,7 +405,7 @@ export default function CreateGroupFlow({
 
             {/* Who is in the group: the people picked, then a button that opens the saved recipients */}
             {members.length > 0 && (
-              <div className="flex flex-col gap-0.5">
+              <div className="custom-scrollbar scroll-fade -mx-1 flex max-h-[288px] flex-col gap-0.5 overflow-y-auto overscroll-contain px-1">
                 {members.map((m) => (
                   <div key={m.id || m.destination} className="flex items-center justify-between gap-3 rounded-xl p-2">
                     <div className="flex min-w-0 items-center gap-3">
@@ -410,14 +430,17 @@ export default function CreateGroupFlow({
               </div>
             )}
             <div className="flex items-center gap-2">
-              <Button type="button" size="xl" variant="outline" onClick={() => setPickerOpen(true)} className="flex-1">
-                <Plus size={14} /> {members.length > 0 ? "Add from beneficiaries" : "Add members"}
+              <Button type="button" size="md" variant="outline" onClick={() => setPickerOpen(true)} className="flex-1">
+                <Plus size={14} /> Add from beneficiaries
               </Button>
               <Button
                 type="button"
-                size="xl"
+                size="md"
                 variant="outline"
-                onClick={() => setShowNewContact(!showNewContact)}
+                onClick={() => {
+                  if (showNewContact) resetNewContact();
+                  setShowNewContact(!showNewContact);
+                }}
                 className="flex-1"
               >
                 <Plus size={14} /> New contact
@@ -494,12 +517,12 @@ export default function CreateGroupFlow({
               open={showNewContact}
               onOpenChange={(o) => {
                 setShowNewContact(o);
-                if (!o) clearCustomErrors();
+                if (!o) resetNewContact();
               }}
               title="Add new contact"
               size="md"
               footer={
-                <Button type="button" onClick={handleAddCustomContact} loading={verifyingContact} className="w-full">
+                <Button type="button" onClick={handleAddCustomContact} disabled={!canAddContact} className="w-full">
                   Add Member
                 </Button>
               }
@@ -581,32 +604,63 @@ export default function CreateGroupFlow({
                   </Field>
                 )}
 
-                {customCategory === "wallet" && (
-                  <Field label="Phone Number" error={customErrors.dest}>
-                    <AccountVerificationStatus resolving={verifyingContact} resolvingMessage="Verifying..." />
-                    <Input
-                      type="text"
-                      value={customDest}
-                      onChange={(e) => {
-                        setCustomDest(e.target.value);
-                        clearCustomErrors();
-                      }}
-                      placeholder="Phone number"
-                    />
-                  </Field>
-                )}
-
-                {(customCategory === "gcb" || customCategory === "other_bank") && (
-                  <Field label="Account Number" error={customErrors.dest}>
-                    <AccountVerificationStatus resolving={verifyingContact} resolvingMessage="Verifying..." />
-                    <Input
-                      type="text"
-                      value={customDest}
-                      onChange={(e) => {
-                        setCustomDest(e.target.value);
-                        clearCustomErrors();
-                      }}
-                      placeholder="Account number"
+                {customCategory && (
+                  <Field label={customCategory === "wallet" ? "Phone Number" : "Account Number"} error={customErrors.dest}>
+                    <div className="relative flex items-center">
+                      <Input
+                        type="text"
+                        inputMode={customCategory === "wallet" ? "tel" : "numeric"}
+                        value={customDest}
+                        onChange={(e) => {
+                          setCustomDest(e.target.value.replace(/\D/g, ""));
+                          clearCustomErrors();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && destFormatValid && !isDestVerified) {
+                            e.preventDefault();
+                            handleVerifyDest();
+                          }
+                        }}
+                        placeholder={customCategory === "wallet" ? "Phone number" : "Account number"}
+                        className="numorainput tabular pr-24"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleVerifyDest}
+                        disabled={!destFormatValid || verifyingDest}
+                        className={cn(
+                          "absolute inset-y-0 right-3 flex select-none items-center gap-1.5 text-[13px] transition-colors",
+                          destFormatValid
+                            ? "cursor-pointer text-muted-foreground hover:text-foreground"
+                            : "pointer-events-none cursor-not-allowed text-muted-foreground/35"
+                        )}
+                      >
+                        {verifyingDest ? (
+                          <>
+                            <AppLoader size={12} className="text-muted-foreground" />
+                            <span className="text-[12px] text-muted-foreground">Verifying...</span>
+                          </>
+                        ) : isDestVerified ? (
+                          <span className="text-[12px] font-medium text-success-text">Verified</span>
+                        ) : (
+                          <span
+                            className={cn(
+                              "text-foreground transition-[opacity,translate] ease-out",
+                              // In: 200ms. Out: 150ms, so leaving is quicker than arriving.
+                              destFormatValid
+                                ? "translate-x-0 opacity-100 duration-200"
+                                : "translate-x-2 opacity-0 duration-150"
+                            )}
+                          >
+                            Search
+                          </span>
+                        )}
+                      </button>
+                    </div>
+                    <AccountVerificationStatus
+                      resolving={verifyingDest}
+                      name={isDestVerified ? verifiedContactName : null}
+                      resolvingMessage="Verifying..."
                     />
                   </Field>
                 )}
@@ -650,7 +704,7 @@ export default function CreateGroupFlow({
             />
           ) : (
             /* Custom Amounts List */
-            <div className="custom-scrollbar -mx-2 flex max-h-[360px] flex-col overflow-y-auto overscroll-contain px-2">
+            <div className="custom-scrollbar scroll-fade -mx-2 flex max-h-[360px] flex-col overflow-y-auto overscroll-contain px-2">
               {members.map((member) => (
                 <div
                   key={member.id || member.destination}
@@ -688,15 +742,11 @@ export default function CreateGroupFlow({
             </div>
           )}
 
-          {/* Total Amount Row matching Design Mockup 2 */}
-          <div className="flex items-center justify-between pt-2 pb-2">
-            <span className="text-[18px] text-muted-foreground font-normal">
-              Total Amount:
-            </span>
-            <span className="text-[20px] sm:text-[22px] text-foreground font-normal tabular-nums numorainput">
-              GHS {totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </span>
-          </div>
+          <TotalRow
+            label="Total Amount"
+            value={`GHS ${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+            className="pb-2 pt-6"
+          />
 
           {/* Action Buttons: [ Back | Create Group ] */}
           <div className="flex items-center gap-2 w-full">

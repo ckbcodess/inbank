@@ -8,6 +8,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
+import { TotalRow } from "@/components/ui/total-row";
 import { FileText, Landmark, ShieldCheck } from "@/components/ui/icons";
 import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
@@ -61,10 +62,7 @@ export function FactsPanel({ rows, keyRow }: { rows: Array<[React.ReactNode, Rea
         i === keyRow ? (
           // The key fact, styled as the total on a payment review, with the same dashed line after it.
           <div key={i}>
-            <div className="flex items-baseline justify-between gap-4 px-3 py-3">
-              <span className="text-[16px] font-medium text-foreground">{label}</span>
-              <span className="tabular text-[24px] leading-none tracking-[var(--ls-heading)] text-foreground">{value}</span>
-            </div>
+            <TotalRow label={label} value={value} className="px-3 py-3" />
             <div aria-hidden="true" className="mx-3 my-2 h-px bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />
           </div>
         ) : (
@@ -96,10 +94,7 @@ export function FactGroups({ groups, boxed = false }: { groups: FactGroup[]; box
         .map((g, i) => (
           <div key={i} className="flex flex-col">
             {g.rows.map((r, j) => r.total ? (
-              <div key={j} className="flex items-baseline justify-between gap-5 rounded-xl px-2 py-3">
-                <span className="shrink-0 text-[18px] text-foreground">{r.label}</span>
-                <span className="tabular min-w-0 text-right text-[24px] leading-none tracking-[var(--ls-heading)] text-foreground">{r.value}</span>
-              </div>
+              <TotalRow key={j} label={r.label} value={r.value} className="px-2 py-3" />
             ) : (
               <div
                 key={j}

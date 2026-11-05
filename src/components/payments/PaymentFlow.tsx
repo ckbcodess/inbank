@@ -90,13 +90,22 @@ import { CashoutCodeSuccess } from "./CashoutCodeSuccess";
 import { ActiveCodeDialog } from "./ActiveCodeDialog";
 import { findCountryByName } from "@/lib/countries";
 import { needsNameCheck } from "@/lib/biller-rules";
-import { GroupPaymentFlow, groupTotal } from "./flows/GroupPaymentFlow";
+import {
+  GroupMemberBreakdown,
+  GroupPaymentFlow,
+  groupMemberAmount,
+  groupPaidCount,
+  groupPeopleLabel,
+  groupStartAmount,
+  groupTotal,
+} from "./flows/GroupPaymentFlow";
 import { ProxyPayFlow } from "./flows/ProxyPayFlow";
 import { ScanAndPayFlow } from "./flows/ScanAndPayFlow";
 import {
   PAYMENT_METHODS,
   getPaymentMethodName,
   getDetailedFeeBreakdown,
+  GROUP_FEE_PER_MEMBER,
   ScheduleFrequency,
   detectTelcoNetwork,
   normalizeNetworkName,
@@ -1003,7 +1012,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     pxId: "",
     pxAmount: "",
     pxRef: "",
-    groupName: "",
+    groupId: "",
     grpAmount: "",
     grpRef: "",
     aPhone: "",
@@ -1092,12 +1101,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (item.rail === "group") {
       setRail("group");
       setGroupCategory("transfer");
-      const matchedGrp = groups.find((g) => g.name === item.name || g.id === item.id);
-      setF((p) => ({
-        ...p,
-        groupName: item.name,
-        grpAmount: matchedGrp?.defaultPerMemberAmount ? String(matchedGrp.defaultPerMemberAmount) : p.grpAmount || "200",
-      }));
+      const matchedGrp = groups.find((g) => g.id === item.id) ?? groups.find((g) => g.name === item.name);
+      setF((p) => ({ ...p, groupId: matchedGrp?.id ?? "", grpAmount: groupStartAmount(matchedGrp) }));
       setStage(1);
       setStage1Collapsed(true);
       return;
@@ -1297,11 +1302,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     return RECENT_AVATARS.filter((item) => item.rail === "bill" && item.category === billCategory);
   }, [billCategory, RECENT_AVATARS]);
 
-  const selectedGroupObj = useMemo(() => groups.find((g) => g.name === f.groupName), [groups, f.groupName]);
+  // Picked by id: two groups can share a name, and a group can be renamed in the middle of a payment.
+  const selectedGroupObj = useMemo(() => groups.find((g) => g.id === f.groupId), [groups, f.groupId]);
   // Changes to single members belong to the group they were made in.
   useEffect(() => {
     setGrpMemberAmounts({});
-  }, [f.groupName]);
+  }, [f.groupId]);
 
   // A cash-out code is texted to a number, so only people with a number are offered: wallets and phone lines, once each
   const cardlessRecipients = useMemo(() => {
@@ -1380,9 +1386,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       case "proxy":
         return num(f.pxAmount);
       case "group":
-        return selectedGroupObj
-          ? groupTotal(selectedGroupObj, f.grpAmount, grpMemberAmounts)
-          : num(f.grpAmount) * 5;
+        return selectedGroupObj ? groupTotal(selectedGroupObj, f.grpAmount, grpMemberAmounts) : 0;
       case "airtime":
         return num(f.airtimeAmount);
       case "data":
@@ -1424,14 +1428,18 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     selectedGroupObj,
   ]);
 
+  // The fee is per payment made, so a member left out of this one costs nothing.
+  const groupPaid = selectedGroupObj ? groupPaidCount(selectedGroupObj, f.grpAmount, grpMemberAmounts) : 0;
+  const groupPeople = groupPeopleLabel(groupPaid, selectedGroupObj?.members.length ?? 0);
+
   const feeDetails = useMemo(() => {
     return getDetailedFeeBreakdown({
       rail,
       bankCategory,
       paymentMethod: f.paymentMethod,
-      membersCount: selectedGroupObj?.members.length ?? 5,
+      membersCount: groupPaid,
     });
-  }, [rail, bankCategory, f.paymentMethod, selectedGroupObj]);
+  }, [rail, bankCategory, f.paymentMethod, groupPaid]);
 
   const fee = feeDetails.feeAmount;
 
@@ -1527,7 +1535,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     }
     if (rail === "proxy") return verifiedAccountName || f.pxId || "Proxy Recipient";
     if (isForeign) return f.wBenName || "International Beneficiary";
-    if (rail === "group") return f.groupName || "Group Contribution";
+    if (rail === "group") return selectedGroupObj?.name || "Group Contribution";
     if (rail === "data") return verifiedAccountName || (f.aPhone ? `${topupCategory === "broadband" ? "Broadband" : "Internet"} (${f.aPhone})` : "Recipient");
     if (rail === "airtime") return verifiedAccountName || (f.aPhone ? `Airtime (${f.aPhone})` : "Recipient");
     if (rail === "card-topup") {
@@ -1556,7 +1564,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     f.wName,
     f.pxId,
     f.wBenName,
-    f.groupName,
+    selectedGroupObj?.name,
     f.aPhone,
     f.cardId,
     biller?.name,
@@ -1578,7 +1586,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "bill") return biller?.reference || "Account / Reference";
     if (rail === "ghanagov") return "Invoice / Reference";
     if (rail === "proxy") return "Proxy ID";
-    if (rail === "group") return "Split Type";
     if (rail === "qr") return "Terminal / Merchant ID";
     if (rail === "swift" || rail === "papss") return "Recipient Account";
     return "Account";
@@ -1598,11 +1605,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "bill") return f.billRef;
     if (rail === "ghanagov") return f.govRef;
     if (rail === "proxy") return f.pxId;
-    if (rail === "group") return selectedGroupObj ? `${selectedGroupObj.members.length} members (${selectedGroupObj.splitType === "equal" ? `GHS ${selectedGroupObj.defaultPerMemberAmount} each` : "Custom"})` : "Group";
+    // A group has no one account: the review lists each member and what they get instead.
+    if (rail === "group") return "";
     if (rail === "qr") return f.qrRef || "Verified GCB QR";
     if (rail === "swift" || rail === "papss") return f.wIban;
     return f.benAcct;
-  }, [bankCategory, toOwnAccount?.number, account?.number, rail, f.wIban, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj, f.qrRef]);
+  }, [bankCategory, toOwnAccount?.number, account?.number, rail, f.wIban, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, f.qrRef]);
 
   const reviewInstitutionLabel = useMemo(() => {
     if (rail === "wallet-to-bank") return "Destination Bank";
@@ -1748,14 +1756,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }
     } else if (r === "group" && (searchParams.get("group") || recipientParam)) {
       const gName = decodeURIComponent(searchParams.get("group") || recipientParam || "");
-      const matchedG = groups.find((g) => g.name.toLowerCase().includes(gName.toLowerCase()));
+      // Exact first: a loose match could land on the wrong people.
+      const lowerName = gName.toLowerCase();
+      const matchedG =
+        groups.find((g) => g.id === gName) ??
+        groups.find((g) => g.name.toLowerCase() === lowerName) ??
+        groups.find((g) => g.name.toLowerCase().includes(lowerName));
       if (matchedG) {
         setGroupCategory("transfer");
-        setF((p) => ({
-          ...p,
-          groupName: matchedG.name,
-          grpAmount: String(matchedG.defaultPerMemberAmount || p.grpAmount || 200),
-        }));
+        setF((p) => ({ ...p, groupId: matchedG.id, grpAmount: groupStartAmount(matchedG) }));
         setStage1Collapsed(true);
       }
     } else if (recipientParam) {
@@ -1974,6 +1983,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       } else if (isOwnTransfer) {
         successTitle = "Transfer complete!";
         successMsg = `You’ve moved ${formattedAmount} to your ${toOwnAccount?.name || "account"}. It’s ready to use.`;
+      } else if (rail === "group") {
+        successMsg = `You’ve sent ${formattedAmount} to ${groupPeople} of ${recipientDisplayName}.`;
       } else if (rail === "card-topup") {
         successTitle = "Card topped up!";
         successMsg = `You’ve added ${formattedAmount} to your ${cardObj?.name || "card"}. It’s ready to spend.`;
@@ -2070,6 +2081,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             ? f.billRef
             : rail === "ghanagov"
             ? f.govRef
+            : rail === "group"
+            ? ""
             : f.benAcct,
         bank:
           rail === "card-topup"
@@ -2080,11 +2093,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             ? f.wNetwork
             : rail === "bill"
             ? (biller?.name || "Biller")
+            : rail === "group"
+            ? ""
             : "GCB Bank",
         amount: currentAmount,
         fee,
         total: totalDebit,
-        narration: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : rail === "wallet-to-bank" ? "Wallet to Bank" : "Online Payment"),
+        narration: f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "group" ? "Group payment" : rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : rail === "wallet-to-bank" ? "Wallet to Bank" : "Online Payment"),
         rows: [
           ...(isDualMandate
             ? ([
@@ -2100,6 +2115,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           ["Delivery Speed", isDualMandate ? "Upon Co-Signatory Approval" : (f.isScheduled ? `Scheduled for ${f.scheduleDate}` : deliverySpeed)],
           ["Payment Timing", f.isScheduled ? `Scheduled · ${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${f.scheduleDate})` : "Immediate Transfer"],
           ["Fee", feeDetails.feeAmount === 0 ? "Free (GHS 0.00)" : formatMoney(feeDetails.feeAmount, "GHS", true)],
+          // Who got what stays on the receipt, one line each, for the customer's own records.
+          ...(rail === "group" && selectedGroupObj
+            ? ([
+                ["Members", groupPeople],
+                ...selectedGroupObj.members
+                  .map((m) => [m.name, groupMemberAmount(selectedGroupObj, f.grpAmount, grpMemberAmounts, m.id)] as const)
+                  .filter(([, amount]) => amount > 0)
+                  .map(([name, amount]) => [name, formatMoney(amount, "GHS", true)]),
+              ] as [string, string][])
+            : []),
           ...(f.saveBeneficiary ? ([["Beneficiary Saved", `Yes — ${f.beneficiaryNickname || resolvedName || "Saved to Payees"}`]] as [string, string][]) : []),
           ["From Account", `${account?.name} (∗∗${account?.number.slice(-4)})`],
           ...(isOwnTransfer ? ([["To Account", `${toOwnAccount?.name} (∗∗${toOwnAccount?.number.slice(-4)})`]] as [string, string][]) : []),
@@ -2112,7 +2137,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         date: d.toISOString().slice(0, 10),
         time: d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
         valueDate: d.toISOString().slice(0, 10),
-        description: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : rail === "wallet-to-bank" ? "Wallet to Bank" : "Online Payment"),
+        description: f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "group" ? "Group payment" : rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : rail === "wallet-to-bank" ? "Wallet to Bank" : "Online Payment"),
         counterparty: isOwnTransfer ? (toOwnAccount?.name || "My Account") : rail === "card-topup" ? (cardObj?.name || "Card") : (resolvedName || "Recipient"),
         counterpartyAccount: isOwnTransfer
           ? (toOwnAccount?.number || "")
@@ -2130,6 +2155,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           ? f.billRef
           : rail === "ghanagov"
           ? f.govRef
+          : rail === "group"
+          ? ""
           : f.benAcct,
         accountId: account?.id || "acc-ret-001",
         currency: isForeign ? f.wCurrency : "GHS",
@@ -2232,6 +2259,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           setWalletCategory(null);
           setCardlessCategory(null);
           setBillCategory(null);
+          setGroupCategory(null);
           setF((p) => ({
             ...p,
             toOwnAccountId: "",
@@ -2248,7 +2276,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             pxId: "",
             pxAmount: "",
             pxRef: "",
-            groupName: "",
+            groupId: "",
             grpAmount: "",
             grpRef: "",
             aPhone: "",
@@ -2295,6 +2323,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           !(rail === "card-topup" && cardTopupCategory === "my") &&
           bankCategory !== "own" &&
           !f.toOwnAccountId &&
+          // A group is already saved
+          rail !== "group" &&
           // An invoice number is spent once paid; what is worth keeping is the service, saved when it is generated
           !(rail === "bill" && f.billerId === "bil-004b")
         }
@@ -2330,6 +2360,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               ...(receipt.account ? ([[numberLabel, receipt.account]] as Array<[string, string]>) : []),
               ...(showBank && receipt.bank ? ([[bankLabel, receipt.bank]] as Array<[string, string]>) : []),
               ...(rail === "data" && bundle ? ([["Bundle", bundle.name]] as Array<[string, string]>) : []),
+              ...(rail === "group" ? ([["Members", groupPeople]] as Array<[string, string]>) : []),
               ...(isOtherBank && method ? ([["Payment method", method]] as Array<[string, string]>) : []),
             ],
             amount: receipt.amount,
@@ -2337,7 +2368,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             currency: isForeign ? f.wCurrency : "GHS",
             fromId: account?.id ?? f.fromId,
             fromLabel: receipt.rows.find(([label]) => label === "From Account")?.[1] ?? account?.name ?? "",
-            narration: f.bankRef || f.wRef || f.pxRef || "",
+            narration: f.bankRef || f.wRef || f.pxRef || f.grpRef || "",
           });
           router.push("/payments/schedule");
         }}
@@ -2874,16 +2905,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       <CreateGroupFlow
         onCancel={() => {
           setCreateGroupOpen(false);
-          if (!f.groupName) setGroupCategory(null);
+          if (!f.groupId) setGroupCategory(null);
         }}
         onDone={(newGroup) => {
           setCreateGroupOpen(false);
           setGrpMemberAmounts({});
-          setF((prev) => ({
-            ...prev,
-            groupName: newGroup.name,
-            grpAmount: String(newGroup.defaultPerMemberAmount || prev.grpAmount || 200),
-          }));
+          setF((prev) => ({ ...prev, groupId: newGroup.id, grpAmount: groupStartAmount(newGroup) }));
           setStage1Collapsed(true);
         }}
       />
@@ -2953,7 +2980,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             title="Send to New Group"
             onClick={() => {
               setGroupCategory("transfer");
-              setF((p) => ({ ...p, groupName: "", grpAmount: "", grpRef: "" }));
+              setF((p) => ({ ...p, groupId: "", grpAmount: "", grpRef: "" }));
               setStage(1);
               setStage1Collapsed(false);
               setCreateGroupOpen(true);
@@ -3579,7 +3606,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 groups={groups}
                 state={{
                   fromId: f.fromId,
-                  groupName: f.groupName,
+                  groupId: f.groupId,
                   grpAmount: f.grpAmount,
                   narration: f.grpRef,
                   category: f.category,
@@ -3588,10 +3615,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   if (key === "narration") set("grpRef", val);
                   else set(key, val);
                 }}
-                detailsCollapsed={stage1Collapsed}
-                onToggleCollapsed={setStage1Collapsed}
                 memberAmounts={grpMemberAmounts}
                 onMemberAmountChange={(id, val) => setGrpMemberAmounts((p) => ({ ...p, [id]: val }))}
+                onClearMemberAmounts={() => setGrpMemberAmounts({})}
+                onResetMemberAmount={(id) =>
+                  setGrpMemberAmounts((p) => {
+                    const next = { ...p };
+                    delete next[id];
+                    return next;
+                  })
+                }
                 onOpenCreateGroup={() => setCreateGroupOpen(true)}
                 onProceed={() => {
                   auth.reset();
@@ -3757,13 +3790,22 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     ]
                   : []),
                 { label: "Arrives", value: f.isScheduled ? `Executes on ${f.scheduleDate}` : deliverySpeed },
+                ...(rail === "group" ? [{ label: "Members", value: groupPeople, tabular: true }] : []),
               ]}
+              detailsExtra={
+                rail === "group" && selectedGroupObj ? (
+                  <GroupMemberBreakdown group={selectedGroupObj} perMember={f.grpAmount} overrides={grpMemberAmounts} />
+                ) : undefined
+              }
               breakdown={[
                 { label: "Transfer Amount", value: formatMoney(currentAmount, isForeign ? f.wCurrency : "GHS", true), tabular: true },
                 ...(feeDetails.feeAmount > 0
                   ? [
                       {
-                        label: `Fee${rail === "swift" && f.wCharges === "recipient" ? " (taken from the amount)" : ""}`,
+                        label:
+                          rail === "group"
+                            ? `Fee (${formatMoney(GROUP_FEE_PER_MEMBER, "GHS", true)} a member)`
+                            : `Fee${rail === "swift" && f.wCharges === "recipient" ? " (taken from the amount)" : ""}`,
                         value: formatMoney(feeDetails.feeAmount, "GHS", true),
                         tabular: true,
                       },
@@ -3813,6 +3855,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           open={pinModalOpen || stage === 3}
           isUssd={rail === "wallet-to-bank"}
           amount={currentAmount}
+          summary={
+            <p className="tabular text-[13px] text-foreground">
+              {rail === "group"
+                ? `Pay ${formatMoney(totalDebit, "GHS", true)} to ${groupPeople} of ${recipientDisplayName} from ${account?.name}.`
+                : `Pay ${formatMoney(totalDebit, "GHS", true)} to ${recipientDisplayName} from ${account?.name}.`}
+            </p>
+          }
           onOpenChange={(isOpen) => {
             setPinModalOpen(isOpen);
             if (!isOpen && stage === 3) setStage(2);

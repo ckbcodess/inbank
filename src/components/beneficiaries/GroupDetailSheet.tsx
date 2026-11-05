@@ -67,7 +67,7 @@ export function GroupDetailSheet({ group, open, onOpenChange, onEdit, onDelete }
               icon={Send}
               onClick={() => {
                 onOpenChange(false);
-                router.push(`/payments/send?rail=group&group=${encodeURIComponent(group.name)}`);
+                router.push(`/payments/send?rail=group&group=${encodeURIComponent(group.id)}`);
               }}
             />
             <RoundAction

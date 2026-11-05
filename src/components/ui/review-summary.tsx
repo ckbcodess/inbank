@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ListCard } from "@/components/ui/list-card";
+import { TotalRow } from "@/components/ui/total-row";
 import { cn } from "@/lib/utils";
 
 export interface ReviewRow {
@@ -16,11 +17,14 @@ export interface ReviewRow {
  */
 export function ReviewSummary({
   details,
+  detailsExtra,
   breakdown = [],
   total,
   totalLabel = "Total Debit",
 }: {
   details: ReviewRow[];
+  /** Sits under the rows, above the dashed line: a list the rows can't hold, such as who in a group gets what. */
+  detailsExtra?: ReactNode;
   /** Amount, fee, rate: the lines above the total. Left out when the total says it all. */
   breakdown?: ReviewRow[];
   /** Already formatted, and already respecting the hide-amounts setting. */
@@ -33,6 +37,7 @@ export function ReviewSummary({
       {details.map((row, i) => (
         <Row key={`${i}-${row.label}`} row={row} />
       ))}
+      {detailsExtra}
 
       {/* One box: what it is above, what it costs below, parted by a dashed line */}
       <div
@@ -43,10 +48,7 @@ export function ReviewSummary({
       {breakdown.map((row, i) => (
         <Row key={`${i}-${row.label}`} row={row} />
       ))}
-      <div className="flex items-baseline justify-between gap-4 px-3 py-3">
-        <span className="text-[16px] font-medium text-foreground">{totalLabel}</span>
-        <span className="tabular text-[24px] leading-none tracking-[var(--ls-heading)] text-foreground">{total}</span>
-      </div>
+      <TotalRow label={totalLabel} value={total} className="px-3 py-3" />
     </ListCard>
   );
 }

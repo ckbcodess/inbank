@@ -5,6 +5,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Copy, Check, Share2, FileDown, RotateCw, HandCoins, MessageSquareWarning } from "@/components/ui/icons";
 import { RoundAction } from "@/components/ui/round-action";
+import { TotalRow } from "@/components/ui/total-row";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -442,12 +443,7 @@ export function TransactionDetailSheet({
                           {formattedFee}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-[13px]">
-                        <span className="text-muted-foreground font-normal">{totalLabel}</span>
-                        <span className="text-foreground font-medium tabular text-right">
-                          {formattedTotal}
-                        </span>
-                      </div>
+                      <TotalRow label={totalLabel} value={formattedTotal} />
                     </>
                   )}
                 </div>

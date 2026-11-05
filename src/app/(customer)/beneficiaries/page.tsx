@@ -715,7 +715,7 @@ export default function BeneficiariesPage() {
           >
             <SimpleTooltip content={`Send to ${g.name}`}>
               <Link
-                href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`}
+                href={`/payments/send?rail=group&group=${encodeURIComponent(g.id)}`}
                 className="flex size-6 items-center justify-center rounded-lg hover:text-foreground hover:bg-muted/60 transition-colors"
                 aria-label={`Send to ${g.name}`}
                 title={`Send to ${g.name}`}

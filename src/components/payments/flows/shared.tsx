@@ -1,5 +1,6 @@
 "use client";
 
+import { multiplyMoney } from "@/lib/money";
 import { InlineError } from "@/components/ui/inline-error";
 import React, { useMemo, useRef, useState, useEffect } from "react";
 import { ArrowLeftRight, Landmark, AlertCircle, Check, User } from "@/components/ui/icons";
@@ -125,6 +126,9 @@ export interface DetailedFeeBreakdown {
   commissionText: string;
 }
 
+/** What each payment inside a group costs. */
+export const GROUP_FEE_PER_MEMBER = 0.5;
+
 export function getDetailedFeeBreakdown({
   rail,
   bankCategory,
@@ -228,7 +232,7 @@ export function getDetailedFeeBreakdown({
     return {
       feeName: `Group Batch Transfer Fee (${membersCount} members × GHS 0.50)`,
       feeShortName: "Group Batch",
-      feeAmount: 0.5 * membersCount,
+      feeAmount: multiplyMoney(GROUP_FEE_PER_MEMBER, membersCount),
       eLevyText: "GHS 0.00 (Exempt)",
       commissionText: "GHS 0.00 (Waived)",
     };
@@ -790,7 +794,7 @@ export function DualAmountFields({
 /* Subcomponent 2: Animated Amount Input with Numora & Torph                  */
 /* -------------------------------------------------------------------------- */
 /** Upper ceiling for any amount entry: 900 billion. */
-const MAX_AMOUNT = 900_000_000_000;
+export const MAX_AMOUNT = 900_000_000_000;
 
 /** Formats a raw or numeric string for display with thousands commas. */
 function getFormatted(val: string): string {
@@ -814,6 +818,7 @@ export function AmountInput({
   disabled,
   onNext,
   enterKeyHint = "next",
+  action,
 }: {
   value: string;
   onChange: (val: string) => void;
@@ -821,6 +826,8 @@ export function AmountInput({
   onNext?: () => void;
   currency?: string;
   label?: string;
+  /** A link or control that sits on the label row, right-aligned, as Send to new group does on a group field. */
+  action?: React.ReactNode;
   error?: React.ReactNode;
   /** A quiet line under the amount ("You can take up to GHS 20,000.00"). An error takes its place. */
   helper?: React.ReactNode;
@@ -977,7 +984,7 @@ export function AmountInput({
   }
 
   return (
-    <Field label={label}>
+    <Field label={label} action={action}>
       <div
         onClick={handleClick}
         data-invalid={isError || undefined}

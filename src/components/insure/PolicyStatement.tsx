@@ -9,6 +9,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import PageHeader from "@/components/layout/PageHeader";
+import { TotalRow } from "@/components/ui/total-row";
 import { Button } from "@/components/ui/button";
 import { ListCard } from "@/components/ui/list-card";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -59,10 +60,7 @@ export function PolicyStatement({ policyId }: { policyId: string }) {
         {yearsHeld.length > 0 ? (
           <>
             <SegmentedControl aria-label="Year" options={options} value={year} onChange={setPicked} />
-            <div className="flex items-baseline justify-between gap-4 px-1">
-              <span className="text-[14px] text-muted-foreground">{year === "all" ? "Paid in total" : `Paid in ${year}`}</span>
-              <span className="tabular text-[22px] tracking-[var(--ls-tight)] text-foreground">{money(total)}</span>
-            </div>
+            <TotalRow label={year === "all" ? "Paid in total" : `Paid in ${year}`} value={money(total)} className="px-1" />
             <ListCard>
               {shown.map((p) => (
                 <li key={p.date} className="flex items-center justify-between gap-3 rounded-xl px-2 py-3 sm:px-3">

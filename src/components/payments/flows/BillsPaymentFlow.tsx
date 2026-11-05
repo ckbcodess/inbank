@@ -3,6 +3,7 @@
 import { SavedRecipientLink } from "./SavedRecipients";
 import { BillerPicker } from "./BillerPicker";
 import { useState, useMemo, useEffect, useRef } from "react";
+import { TotalRow } from "@/components/ui/total-row";
 import { AppLoader } from "@/components/ui/loader";
 import { Account, BILLERS, formatMoney } from "@/lib/mock-data";
 import { billerRule } from "@/lib/biller-rules";
@@ -473,10 +474,7 @@ export function BillsPaymentFlow({
                               <span className="text-[13px] text-muted-foreground">Invoice number</span>
                               <span className="tabular text-[14px] text-foreground">{madeInvoice.number}</span>
                             </div>
-                            <div className="flex items-center justify-between gap-3">
-                              <span className="text-[18px] text-muted-foreground">Amount due</span>
-                              <span className="tabular text-[20px] text-foreground sm:text-[22px]">{formatMoney(madeInvoice.amount, "GHS", true)}</span>
-                            </div>
+                            <TotalRow label="Amount due" value={formatMoney(madeInvoice.amount, "GHS", true)} />
                             {rememberedService ? (
                               <span className="text-[13px] text-muted-foreground">Details saved to Beneficiaries</span>
                             ) : (
