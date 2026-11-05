@@ -146,7 +146,10 @@ export function findSecurity(id: string | null | undefined): Security | undefine
 }
 
 export function securitiesFor(market: Market): Security[] {
-  return SECURITIES.filter((s) => s.market === market);
+  // Bills before bonds, and the nearest maturity first within each.
+  return SECURITIES.filter((s) => s.market === market).sort(
+    (a, b) => Number(a.kind === "bond") - Number(b.kind === "bond") || a.maturity.localeCompare(b.maturity),
+  );
 }
 
 /* ── Pricing ───────────────────────────────────────────────────────────── */

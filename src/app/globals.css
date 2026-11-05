@@ -437,8 +437,8 @@
   --icon-teal-mid: #1fb5ad;
   --icon-teal-dark: #0b6661;
   --icon-teal-ink: #12908a;
-  --icon-slate-light: #18353e;
-  --icon-slate-mid: #88a1b4;
+  --icon-slate-light: #a4ced5;
+  --icon-slate-mid: #53676e;
   --icon-slate-dark: #3d72ae;
   --icon-slate-ink: #3f6b8d;
   /* The edges of every glass icon, whatever its tone. */
@@ -705,12 +705,12 @@
   --icon-teal-mid: #1fb5ad;
   --icon-teal-dark: #0b6661;
   --icon-teal-ink: #5fd8d1;
-  --icon-slate-light: #d8e4ee;
+  --icon-slate-light: #4e9ec6;
   --icon-slate-mid: #192f43;
   --icon-slate-dark: #c5ccd3;
   --icon-slate-ink: #2f96e4;
   /* The edges of every glass icon, whatever its tone. */
-  --glass-shine: var(--white);
+  --glass-shine: #fff7d1;
   --glass-shade: var(--red-500);
   --skeleton-shine: color-mix(in srgb, var(--white) 7%, transparent);
   --skullet-base: color-mix(in srgb, var(--muted) 60%, transparent);

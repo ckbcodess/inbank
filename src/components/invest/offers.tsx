@@ -8,7 +8,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronRight, FileText, Landmark, PiggyBank } from "@/components/ui/icons";
+import { ChevronRight } from "@/components/ui/icons";
+import { OFFER_ICONS } from "@/components/invest/offer-icons";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { addDays, daysLeftLabel, formatRate, MOCK_TODAY, securitiesFor, useMyTreasury, type Security } from "@/lib/treasury";
 import { Button } from "@/components/ui/button";
@@ -58,13 +59,11 @@ export function securityOffers(market: "primary" | "secondary"): Offer[] {
   }));
 }
 
-const ICONS = { deposit: PiggyBank, bill: FileText, bond: Landmark };
-
 export function OfferIcon({ icon }: { icon: Offer["icon"] }) {
-  const Icon = ICONS[icon];
+  const Icon = OFFER_ICONS[icon];
   return (
-    <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
-      <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
+    <span className="flex size-10 shrink-0 items-center justify-center">
+      <Icon size={24} />
     </span>
   );
 }
@@ -92,7 +91,7 @@ function gateFor(offer: Offer, csd: ReturnType<typeof useMyTreasury>["csd"], mar
 }
 
 const ROW_CLASS =
-  "flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3";
+  "flex w-full items-center gap-3 rounded-xl px-2 py-4 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3";
 
 /** One offer: it opens its flow, or, when a bill or bond can't be started yet, a modal that says why and what to do. */
 export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: boolean }) {
@@ -107,11 +106,7 @@ export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: bo
     ) : s && offer.group === "primary" ? (
       <span className="truncate">{`Settles ${formatDate(s.settlement ?? s.maturity)}`}</span>
     ) : s ? (
-      <>
-        <span className="shrink-0">{`Matures ${formatDate(s.maturity)}`}</span>
-        <span aria-hidden="true">·</span>
-        <span className="truncate">{daysLeftLabel(s.maturity)}</span>
-      </>
+      <span className="truncate">{daysLeftLabel(s.maturity)}</span>
     ) : null;
 
   const sub =
