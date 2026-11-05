@@ -1706,6 +1706,14 @@ html[data-hide-focus-ring] :focus-visible * {
   outline: none !important;
   box-shadow: none !important;
 }
+/* The primary button's sheen is its box shadow too, so it keeps its finish while the focus ring is hidden. Without this
+   it lost its inset edge whenever focus came back to it after a sheet or dialog closed. */
+html[data-hide-focus-ring] .primary-sheen:focus,
+html[data-hide-focus-ring] .primary-sheen:focus-visible {
+  box-shadow:
+    inset 0 calc(var(--primary-inset-offset) * -1) var(--primary-inset-blur) var(--primary-inset-bottom),
+    inset 0 var(--primary-inset-offset) var(--primary-inset-blur) var(--primary-inset-top) !important;
+}
 /* A field's edge is its box shadow, so it keeps the resting edge while the focus ring is hidden. */
 html[data-hide-focus-ring] .field-surface:focus,
 html[data-hide-focus-ring] .field-surface:focus-visible,
