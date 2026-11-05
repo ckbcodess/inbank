@@ -182,6 +182,25 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-05
+
+- Decision: Pay again's Manage opens a sheet (`PayAgainManage`), not /beneficiaries. The tiles are suggestions from who the customer pays, not saved beneficiaries, so Manage hides or shows them (`lib/pay-again-store.ts`, keyed by rail + recipient, per customer). Saved people stay on /beneficiaries, linked from the sheet.
+- Decision: Pay again is ranked from the ledger (`lib/pay-again-rank.ts`, wired through `payAgainFor`): one entry per rail and recipient, at least 3 completed payments in 90 days, recency decay (60-day half-life), a boost when a steady rhythm says it is due, the usual amount if it makes up half the payments, else the last. The sheet's "why" line reads from that history, so it only appears where there is history.
+- Decision: the retail ledger now holds seven regular payees' payments (`REPEAT_PAYMENT_SEED` in `mock-data.ts`, Aug to Nov 2026, account acc-ret-001), so Pay again is derived for the everyday persona. It also lands on the Transactions page and in spend totals. Clean and single personas keep their own data; the migrated persona keeps its carried-over payees. Dates are fixed, so "due about now" only fits around early November 2026.
+- Gap: "Save as beneficiary" from the sheet is not built. A suggestion is unverified until the flow resolves its name, and saving it as `verified: false` would show "Pending approval" on a person the customer has paid several times. The flow's own save switch still works.
+- Gap: the tile still shows the rail (MTN MoMo) and not the amount it will prefill. The sheet shows "Last GHS x".
+
+### 2026-11-04
+- `Question` Proxy ID card explorations (`prototype/proxy-id-card-prototypes.html`, 8 variations). Variation 5 switches Phone number / Ghana Card in place: do payments to the old number stop at once? Ask the bank before picking a direction.
+- `Gap` Proxy Payments (`/proxy` page) doesn't say which account receives money to the proxy ID. Variations 3 and 8 show it. Fintech gate "in control?" fails without it.
+- `Decision` (pending designer pick) Proxy card: Statement layout (2) for the number, plus the receiving account line (3) if the designer agrees.
+- `Decision` (pending designer pick) Proxy card round 2 (`prototype/proxy-id-card-2-prototypes.html`, 8 card treatments). Recommended: 6, the card owns its actions and Transfer stands alone, with the name line from 4 if the bank confirms what payers see.
+- `Gap` Settings > Profile shows a made-up Proxy Pay ID (`GH-<NAME>-01`, `SettingsPanes.tsx`), not `useProxyStore`, so it disagrees with `/proxy`. Breaks one source per fact.
+- `Gap` `proxy-store` seeds `linkedAccountId: ""`, so a "Money lands in" line has nothing to show until the seed is fixed.
+- `Question` Changing the receiving account redirects incoming money, but Update and Deregister ask for no code. Does the bank want step-up here?
+- `Question` A Ghana Card proxy: can it be masked on screen, and should Share be off for it? Round 2 masks it and hides Share. Also, what do payers see when they resolve a proxy? Store allows email and custom types; PRODUCT lists phone and Ghana Card only.
+- `Conflict` CONSTITUTION §6 says `rounded-2xl` 16 and `rounded-3xl` 20; `globals.css` has `--radius-xl`, `-2xl` and `-3xl` all at 10. Check with the designer which is meant before correcting the rule.
+
 ### 2026-11-03
 - Decision: phone keyboard and bottom nav. One watcher (`lib/use-keyboard-open.ts`) sets `--keyboard-inset` on `:root`; `CustomerShell` uses it for the keyboard-room spacer. `useMobileFields` sets the Return-key hint (Next/Done), moves Next, and scrolls the focused field clear of the keyboard. (Designer removed the docked `ActionBar` and the dialog/sheet lift above the keyboard: Proceed and sheets stay where they were.) The bottom nav hides on scroll down and returns on scroll up, or at the top, never at the end of the page (designer: it stays hidden until they scroll up) (`lib/use-scroll-hide.ts`, keyed on `main[data-scroll-root]`). Haptics (`lib/haptics.ts`): payment success, wrong code, switch; Android only. None of it viewed on a phone.
 - Discovery: `loans/loading.tsx` (the hub skeleton) sat above every loans route, so opening an advance could flash the hub's four cards instead of its own facts skeleton. The hub's page and loading now live in `loans/(hub)/`, so that skeleton only covers `/loans`. Invest and Insure got the same fix (`(hub)` folders). Other top-level `loading.tsx` files that draw a landing page's skeleton may still sit above their sub-routes.

@@ -9,6 +9,7 @@
 import { useRef, useState } from "react";
 import { FileText, Upload, X } from "@/components/ui/icons";
 import { Field } from "@/components/ui/field";
+import { FilePreviewDialog } from "@/components/ui/file-preview";
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const FILE_TYPES = ["image/jpeg", "image/png", "application/pdf"];
@@ -23,19 +24,27 @@ export function SignatureUpload({
   onChange,
   label = "Signature",
 }: {
-  file: { name: string; size: number } | null;
-  onChange: (next: { name: string; size: number } | null) => void;
+  /** `url` is the local preview of the chosen file; it is made when the file is picked. */
+  file: { name: string; size: number; url?: string } | null;
+  onChange: (next: { name: string; size: number; url?: string } | null) => void;
   label?: string;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   function pick(f: File | undefined) {
     if (!f) return;
     if (!FILE_TYPES.includes(f.type)) return setError("That file type isn’t supported. Choose a JPG, PNG or PDF.");
     if (f.size > MAX_FILE_BYTES) return setError("That file is over 5 MB. Choose a smaller one.");
     setError("");
-    onChange({ name: f.name, size: f.size });
+    if (file?.url) URL.revokeObjectURL(file.url);
+    onChange({ name: f.name, size: f.size, url: URL.createObjectURL(f) });
+  }
+
+  function remove() {
+    if (file?.url) URL.revokeObjectURL(file.url);
+    onChange(null);
   }
 
   return (
@@ -63,14 +72,26 @@ export function SignatureUpload({
               <span className="tabular text-[12px] text-muted-foreground">{fileSize(file.size)}</span>
             </span>
           </div>
-          <button
-            type="button"
-            onClick={() => onChange(null)}
-            aria-label={`Remove ${label.toLowerCase()}`}
-            className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <X size={16} aria-hidden="true" />
-          </button>
+          <div className="flex shrink-0 items-center gap-1">
+            {file.url && (
+              <button
+                type="button"
+                onClick={() => setPreviewOpen(true)}
+                className="cursor-pointer px-2 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Preview
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={remove}
+              aria-label={`Remove ${label.toLowerCase()}`}
+              className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <X size={16} aria-hidden="true" />
+            </button>
+          </div>
+          {file.url && <FilePreviewDialog open={previewOpen} onOpenChange={setPreviewOpen} name={file.name} url={file.url} />}
         </div>
       ) : (
         <button
