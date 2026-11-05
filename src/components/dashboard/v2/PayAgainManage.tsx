@@ -11,15 +11,15 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
-import { formatDate, formatMoney } from "@/lib/mock-data";
+import { formatMoney } from "@/lib/mock-data";
 import { payeeKey, payeeLastAmount, type PayAgainPayee } from "@/lib/payees";
 import type { PayAgainHistory } from "@/lib/pay-again-rank";
 import { usePayAgainStore } from "@/lib/pay-again-store";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 
-/** Why a suggestion is here, read from the payments behind it. Only said when there are payments to read. */
+/** Why a suggestion is here, in one short line read from the payments behind it: how often, and whether it is due. */
 function whyLine(h: PayAgainHistory, t: ReturnType<typeof useTranslation>["t"]): string {
-  const parts = [t("dashboard.payAgainWhy", { count: h.count, date: formatDate(h.since) })];
+  const parts = [t("dashboard.payAgainTimes", { count: h.count })];
   if (h.due) parts.push(t("dashboard.payAgainDue", "Due about now"));
   else if (h.usualDay) parts.push(t("dashboard.payAgainMonthly", { day: h.usualDay }));
   else if (h.everyDays) parts.push(t("dashboard.payAgainEvery", { days: h.everyDays }));
