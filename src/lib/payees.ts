@@ -8,11 +8,27 @@
  */
 
 import { MIGRATED_DATA } from "./migration";
+import { rankPayAgain, type PayAgainHistory } from "./pay-again-rank";
+import type { Transaction } from "./mock-data";
 
 export interface PayAgainPayee {
   name: string;
   detail: string;
   href: string;
+  /** What the ledger says about this suggestion. Absent on hand-written ones, which have nothing to back a "why". */
+  history?: PayAgainHistory;
+}
+
+/** Who a suggestion is, stable across amounts: the rail plus the recipient (or the biller and reference). */
+export function payeeKey(p: PayAgainPayee): string {
+  const q = new URL(p.href, "http://x").searchParams;
+  return [q.get("rail"), q.get("recipient") ?? q.get("billerId"), q.get("ref")].filter(Boolean).join(":");
+}
+
+/** The amount of their last payment, when it is a fixed one (data bundles are priced by the bundle, so they have none). */
+export function payeeLastAmount(p: PayAgainPayee): number | null {
+  const n = Number(new URL(p.href, "http://x").searchParams.get("amount"));
+  return Number.isFinite(n) && n > 0 ? n : null;
 }
 
 type Rail = "wallet" | "bank" | "airtime" | "data" | "ecg" | "bill";
@@ -55,8 +71,15 @@ const SINGLE_PAYEES: PayAgainPayee[] = [
   { name: "ECG Electricity", detail: "ECG prepaid", href: payHref("bill", "ECG Electricity", { ref: "P-992014", amount: "180" }) },
 ];
 
-export function payAgainFor(actorId: string): PayAgainPayee[] {
+/**
+ * The customer's Pay again. Worked out from their payments when there is enough history (lib/pay-again-rank); until
+ * then the hand-written lists above stand in, and those carry no history, so nothing claims a reason it can't back.
+ */
+export function payAgainFor(actorId: string, transactions: Transaction[] = [], today = new Date().toISOString().slice(0, 10)): PayAgainPayee[] {
   if (actorId === "u-clean") return [];
+  // A migrated customer shares the retail ledger but keeps the payees that came across with them.
+  const derived = actorId === "u-legacy" ? [] : rankPayAgain(transactions, today);
+  if (derived.length > 0) return derived;
   if (actorId === "u-single") return SINGLE_PAYEES;
   return actorId === "u-legacy" ? migratedPayees() : DEFAULT_PAYEES;
 }

@@ -55,7 +55,10 @@ import {
 import { RecentTransactions, CardsMini, AttentionBand, FxRatesMini, fxPeek } from "./MinimalKit";
 import { SpendsRadialChart } from "@/components/dashboard/SpendsRadialChart";
 import { withFrom } from "@/lib/payment-options";
-import type { PayAgainPayee } from "@/lib/payees";
+import { payeeKey, type PayAgainPayee } from "@/lib/payees";
+import { usePayAgainStore } from "@/lib/pay-again-store";
+import { PayAgainManage } from "@/components/dashboard/v2/PayAgainManage";
+import { useSession } from "@/lib/session-store";
 import { MoneyActionPicker, type MoneyActionKind } from "./MoneyActionPicker";
 import { UnfundedNudge } from "./UnfundedNudge";
 import { SPRING as MOTION_SPRING } from "@/lib/motion";
@@ -145,12 +148,16 @@ export function Card({ children, className }: { children: React.ReactNode; class
   );
 }
 
-export function CardHeader({ title, href, cta }: { title: string; href?: string; cta?: string }) {
+export function CardHeader({ title, href, cta, onCta }: { title: string; href?: string; cta?: string; onCta?: () => void }) {
   const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between">
       <span className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">{title}</span>
-      {href && (
+      {onCta ? (
+        <button type="button" onClick={onCta} className="-my-2 cursor-pointer py-2 text-[12px] text-muted-foreground transition-colors hover:text-foreground">
+          {cta ?? t("dashboard.viewAll", "View all")}
+        </button>
+      ) : href && (
         // Taller hit area for a thumb without moving the text.
         <Link href={href} className="-my-2 py-2 text-[12px] text-muted-foreground transition-colors hover:text-foreground">
           {cta ?? t("dashboard.viewAll", "View all")}
@@ -683,6 +690,8 @@ export function ComingUpCard({
   );
 }
 
+const NO_KEYS: readonly string[] = [];
+
 /* ── Pay again (saved payees) ────────────────────────────────────────────── */
 
 /**
@@ -692,9 +701,18 @@ export function ComingUpCard({
  */
 export function PayAgainCard({ data, loading = false, className }: { data: DashData; loading?: boolean; className?: string }) {
   const { t } = useTranslation();
+  const actorId = useSession((s) => s.actor?.id) ?? "";
+  const hiddenKeys = usePayAgainStore((s) => s.hidden[actorId]) ?? NO_KEYS;
+  const [manageOpen, setManageOpen] = useState(false);
+  const visible = data.payAgain.filter((p) => !hiddenKeys.includes(payeeKey(p)));
   return (
     <Card className={className}>
-      <CardHeader title={t("dashboard.payAgain", "Pay again")} href="/beneficiaries" cta={t("common.manage", "Manage")} />
+      <CardHeader
+        title={t("dashboard.payAgain", "Pay again")}
+        cta={t("common.manage", "Manage")}
+        {...(data.payAgain.length > 0 ? { onCta: () => setManageOpen(true) } : { href: "/beneficiaries" })}
+      />
+      <PayAgainManage open={manageOpen} onOpenChange={setManageOpen} actorId={actorId} payees={data.payAgain} hiddenKeys={hiddenKeys} />
       {loading ? (
         // Balanced grid of avatar skeletons
         <div className="flex flex-1 flex-col justify-around">
@@ -716,10 +734,16 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
           text={t("dashboard.payAgainEmpty", "Save the people and bills you pay often.")}
           action={{ label: t("dashboard.addSomeone", "Add someone"), href: "/beneficiaries?add=1" }}
         />
-      ) : data.payAgain.length <= 3 ? (
+      ) : visible.length === 0 ? (
+        <PanelEmpty
+          icon={CediReceiptIcon}
+          text={t("dashboard.payAgainAllHidden", "You've hidden everyone here.")}
+          action={{ label: t("common.manage", "Manage"), onClick: () => setManageOpen(true) }}
+        />
+      ) : visible.length <= 3 ? (
         // When there are 1 to 3 payees (e.g. single-account user), render as clean payee rows starting from the top
         <div className="flex flex-1 flex-col justify-start gap-1">
-          {data.payAgain.map((p) => (
+          {visible.map((p) => (
             <Link
               key={p.href}
               href={withFrom(p.href, data.selectedAccountId)}
@@ -746,7 +770,7 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
         // When 4 or more payees, render as a balanced 4-column avatar grid
         <div className="flex flex-1 flex-col justify-around">
           <div className="grid grid-cols-4 gap-x-2 gap-y-3">
-            {data.payAgain.slice(0, 8).map((p) => (
+            {visible.slice(0, 8).map((p) => (
               <Link
                 key={p.href}
                 href={withFrom(p.href, data.selectedAccountId)}

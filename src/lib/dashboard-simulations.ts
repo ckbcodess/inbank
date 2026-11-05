@@ -396,6 +396,6 @@ export function getSimulatedDashboardData({
         ? DEMO_ATTENTION_ITEMS
         : attention.filter((i) => !i.accountId || i.accountId === selectedId),
     // A brand-new (or empty) customer hasn't paid anyone yet.
-    payAgain: usageType === "new_customer" || usageType === "empty" ? [] : payAgainFor(actor.id),
+    payAgain: usageType === "new_customer" || usageType === "empty" ? [] : payAgainFor(actor.id, baseTxns, today),
   };
 }

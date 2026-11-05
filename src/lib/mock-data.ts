@@ -575,8 +575,55 @@ export interface Transaction {
   fee?: number;
 }
 
+/**
+ * The retail customer's regular payments over the last three months. Pay again is worked out from these (lib/pay-again-rank),
+ * so each one is a real completed debit in the ledger: a monthly rent-style transfer, a weekly wallet top-up, a bill that
+ * changes every month, an irregular one. Names, numbers and accounts are the ones Send & Pay already knows, so a tap
+ * resolves the person.
+ */
+const REPEAT_PAYMENT_SEED: Array<{
+  to: string;
+  account: string;
+  method: "momo" | "gip" | "airtime" | "bill";
+  bank?: string;
+  category: (typeof RETAIL_CATEGORIES)[number];
+  payments: Array<[date: string, amount: number]>;
+}> = [
+  { to: "Ransford Gyasi", account: "0244 123 456", method: "momo", category: "Family & Friends", payments: [["2026-08-12", 150], ["2026-09-12", 150], ["2026-10-12", 150]] },
+  { to: "Ishmael Gyan", account: "0201 987 654", method: "momo", category: "Family & Friends", payments: [["2026-10-11", 80], ["2026-10-18", 80], ["2026-10-25", 80], ["2026-11-01", 80]] },
+  { to: "Justice Oduro", account: "0231 4455 88901", method: "gip", bank: "GCB Bank", category: "Other", payments: [["2026-08-08", 500], ["2026-09-08", 500], ["2026-10-08", 500]] },
+  { to: "Abena Osei", account: "1089 3322 1100", method: "gip", bank: "Stanbic Bank", category: "Household", payments: [["2026-08-25", 1200], ["2026-09-25", 1200], ["2026-10-25", 1200]] },
+  { to: "Kofi Boateng", account: "0277 456 789", method: "momo", category: "Family & Friends", payments: [["2026-08-20", 40], ["2026-10-02", 60], ["2026-10-30", 40]] },
+  { to: "Ransford Gyasi", account: "0244 123 456", method: "airtime", category: "Data", payments: [["2026-10-06", 20], ["2026-10-20", 20], ["2026-11-03", 10]] },
+  { to: "ECG Prepaid", account: "P-8839210", method: "bill", category: "Bills", payments: [["2026-08-30", 170], ["2026-09-29", 185], ["2026-10-30", 180]] },
+];
+
+const REPEAT_PAYMENTS: Transaction[] = REPEAT_PAYMENT_SEED.flatMap((p, i) =>
+  p.payments.map(([date, amount], j) => ({
+    id: `txn-rep-${String(i + 1).padStart(2, "0")}${j + 1}`,
+    reference: `NIB-2026-95${String(i + 1).padStart(2, "0")}${String(j + 1).padStart(2, "0")}`,
+    date,
+    valueDate: date,
+    description: `${p.to} — ${p.method === "momo" ? "Mobile money" : p.method === "gip" ? "Bank transfer" : p.method === "airtime" ? "Airtime" : "Bill payment"}`,
+    counterparty: p.to,
+    counterpartyAccount: p.account,
+    ...(p.bank ? { counterpartyBank: p.bank } : {}),
+    accountId: "acc-ret-001",
+    currency: "GHS",
+    amount,
+    direction: "debit" as const,
+    kind: "single" as const,
+    state: "completed" as const,
+    channel: "Mobile Banking",
+    paymentMethod: p.method,
+    category: p.category,
+    profileKind: "RETAIL" as const,
+  })),
+);
+
 export const TRANSACTIONS: Transaction[] = [
   ...CORPORATE_TRANSACTIONS,
+  ...REPEAT_PAYMENTS,
   {
     id: "txn-ret-001",
     reference: "NIB-2026-901124",
