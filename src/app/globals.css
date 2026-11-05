@@ -1720,6 +1720,11 @@ html[data-hide-focus-ring] .field-surface:focus-visible,
 html[data-hide-focus-ring] .field-surface:focus-within {
   box-shadow: 0 0 0 1px var(--field-border), 0 2px 2px -1px var(--field-drop) !important;
 }
+/* The rule above zeroes the box shadow of everything inside a focused container (a modal's dialog, say), so a field that
+   is merely a sibling of the focused control lost its edge. Restore the resting edge on every field that isn't invalid. */
+html[data-hide-focus-ring] .field-surface:not([aria-invalid="true"]):not([data-invalid="true"]) {
+  box-shadow: 0 0 0 1px var(--field-border), 0 2px 2px -1px var(--field-drop) !important;
+}
 
 /* @kitlangton/rolling-number (the balance roll) ships `.rn-ink { will-change: transform }`
    and never releases it, so every settled digit stays on its own GPU layer. Its antialiased

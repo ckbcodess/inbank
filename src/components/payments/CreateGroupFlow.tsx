@@ -11,7 +11,8 @@ import {
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import { Button } from "@/components/ui/button";
-import { AmountInput, OTHER_BANKS } from "@/components/payments/flows/shared";
+import { AccountVerificationStatus, AmountInput, OTHER_BANKS, resolveAccountName } from "@/components/payments/flows/shared";
+import { isCompleteGhanaMobile } from "@/lib/phone";
 import {
   Dialog,
   DialogContent,
@@ -26,8 +27,8 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Field } from "@/components/ui/field";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 interface CreateGroupFlowProps {
   groupToEdit?: PaymentGroup | null;
   onCancel?: () => void;
@@ -102,11 +103,15 @@ export default function CreateGroupFlow({
 
   // Inline "+ New Contact" toggle
   const [showNewContact, setShowNewContact] = useState(false);
+  type CustomErrors = { name?: string; category?: string; bank?: string; network?: string; dest?: string };
+  const [customErrors, setCustomErrors] = useState<CustomErrors>({});
+  const clearCustomErrors = () => setCustomErrors({});
+  const [verifyingContact, setVerifyingContact] = useState(false);
   const [customName, setCustomName] = useState("");
   const [customDest, setCustomDest] = useState("");
-  const [customCategory, setCustomCategory] = useState<"gcb" | "other_bank" | "wallet">("gcb");
-  const [customBank, setCustomBank] = useState("Ecobank Ghana Ltd");
-  const [customWalletNetwork, setCustomWalletNetwork] = useState(WALLET_NETWORKS[0]);
+  const [customCategory, setCustomCategory] = useState<"" | "gcb" | "other_bank" | "wallet">("");
+  const [customBank, setCustomBank] = useState("");
+  const [customWalletNetwork, setCustomWalletNetwork] = useState("");
 
   // Unsaved changes confirmation dialog
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -174,6 +179,8 @@ export default function CreateGroupFlow({
   };
 
   // Update individual member custom amount in step 2
+  // What the person typed per member, so "0." or "0.5" stays as typed while the numeric amount updates underneath.
+  const [amountDrafts, setAmountDrafts] = useState<Record<string, string>>({});
   const updateMemberAmount = (identifier: string, amtStr: string) => {
     const cleanStr = amtStr.replace(/[^0-9.]/g, "");
     const val = parseFloat(cleanStr) || 0;
@@ -184,33 +191,59 @@ export default function CreateGroupFlow({
     );
   };
 
-  // Add custom contact inline
+  // Add member: check the details first (as Send & Pay does), then save. A failed check puts the message under the
+  // field that caused it and throws a toast; nothing is saved until the number resolves to an account.
   const handleAddCustomContact = () => {
-    if (!customName.trim() || !customDest.trim()) {
-      toast.error("Please enter both contact name and account/phone number");
+    const name = customName.trim();
+    const clean = customDest.replace(/[\s-]/g, "");
+    const nextErrors: CustomErrors = {};
+    if (!name) nextErrors.name = "Enter the contact's name.";
+    if (!customCategory) nextErrors.category = "Choose an account type.";
+    if (customCategory === "other_bank" && !customBank) nextErrors.bank = "Choose a bank.";
+    if (customCategory === "wallet" && !customWalletNetwork) nextErrors.network = "Choose a network.";
+    if (customCategory === "wallet") {
+      if (!isCompleteGhanaMobile(customDest)) nextErrors.dest = "Enter a complete 10-digit mobile number.";
+    } else if (customCategory && !/^\d{8,16}$/.test(clean)) {
+      nextErrors.dest = "Enter a valid account number (8 to 16 digits).";
+    }
+    const firstError = Object.values(nextErrors)[0];
+    if (firstError) {
+      setCustomErrors(nextErrors);
       return;
     }
-    const amt = parseFloat(defaultAmount) || 0;
-    const networkOrBank =
-      customCategory === "gcb"
-        ? "GCB Bank"
-        : customCategory === "other_bank"
-        ? customBank
-        : customWalletNetwork;
 
-    const newMember: GroupMember = {
-      id: `m-custom-${Date.now()}`,
-      name: customName.trim(),
-      destination: customDest.trim(),
-      type: customCategory === "wallet" ? "wallet" : "bank",
-      networkOrBank,
-      defaultAmount: amt,
-    };
-    setMembers((prev) => [...prev, newMember]);
-    setCustomName("");
-    setCustomDest("");
-    setShowNewContact(false);
-    toast.success(`Added ${newMember.name} to participants`);
+    clearCustomErrors();
+    setVerifyingContact(true);
+    window.setTimeout(() => {
+      setVerifyingContact(false);
+      if (!resolveAccountName(clean, "")) {
+        const message = "We couldn't find an account for this number. Check it and try again.";
+        setCustomErrors({ dest: message });
+        return;
+      }
+
+      const amt = parseFloat(defaultAmount) || 0;
+      const networkOrBank =
+        customCategory === "gcb"
+          ? "GCB Bank"
+          : customCategory === "other_bank"
+          ? customBank
+          : customWalletNetwork;
+
+      const newMember: GroupMember = {
+        id: `m-custom-${Date.now()}`,
+        name,
+        destination: clean,
+        type: customCategory === "wallet" ? "wallet" : "bank",
+        networkOrBank,
+        defaultAmount: amt,
+      };
+      setMembers((prev) => [...prev, newMember]);
+      setCustomName("");
+      setCustomDest("");
+      setShowNewContact(false);
+      toast.success(`Added ${newMember.name} to participants`);
+    }, 400);
   };
 
   // Running Total Calculation
@@ -316,11 +349,8 @@ export default function CreateGroupFlow({
       {/* ────────────────────────────────────────────────────────────────────────── */}
       {step === 1 && (
         <div className="flex flex-col gap-4">
-          {/* Group Name * */}
-          <div className="flex flex-col gap-2">
-            <Label>
-              Group Name <span className="text-destructive">*</span>
-            </Label>
+          {/* Group Name (required: no marker, only optional fields say so) */}
+          <Field label="Group Name">
             <Input
               ref={nameInputRef}
               type="text"
@@ -328,9 +358,8 @@ export default function CreateGroupFlow({
               maxLength={50}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter narration"
-              
             />
-          </div>
+          </Field>
 
           {/* Description (Optional) */}
           <Field label="Description" optional>
@@ -349,122 +378,10 @@ export default function CreateGroupFlow({
               <span className="text-[14px] font-medium text-foreground">
                 Select Members{" "}
                 <span className="text-muted-foreground font-normal">
-                  ({members.length} {members.length === 1 ? "member" : "members"})
+                  ({members.length})
                 </span>
               </span>
-
-              {/* Inline + New Contact Toggle */}
-              <button
-                type="button"
-                onClick={() => setShowNewContact(!showNewContact)}
-                className="text-[13px] text-foreground hover:underline cursor-pointer flex items-center gap-1 font-medium transition-colors"
-              >
-                <Plus size={14} /> New contact
-              </button>
             </div>
-
-            {/* Inline Add Custom Contact Form */}
-            {showNewContact && (
-              <div className="rounded-2xl border border-border/80 bg-card p-3 flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-150 shadow-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-[13px] text-foreground font-medium">Add Unsaved Counterparty</span>
-                  <button
-                    type="button"
-                    onClick={() => setShowNewContact(false)}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <Input
-                    type="text"
-                    value={customName}
-                    onChange={(e) => setCustomName(e.target.value)}
-                    placeholder="Full name"
-                    
-                  />
-                  <Input
-                    type="text"
-                    value={customDest}
-                    onChange={(e) => setCustomDest(e.target.value)}
-                    placeholder="Phone or Account Number"
-                    
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2 pt-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setCustomCategory("gcb")}
-                      className={cn(
-                        "px-2 py-2 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
-                        customCategory === "gcb" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      GCB Account
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCustomCategory("other_bank")}
-                      className={cn(
-                        "px-2 py-2 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
-                        customCategory === "other_bank" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      Other Local Bank
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCustomCategory("wallet")}
-                      className={cn(
-                        "px-2 py-2 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
-                        customCategory === "wallet" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      Mobile Wallet
-                    </button>
-                  </div>
-
-                  {customCategory === "other_bank" && (
-                    <select
-                      value={customBank}
-                      onChange={(e) => setCustomBank(e.target.value)}
-                      className="h-9 w-full rounded-xl field-surface border border-transparent bg-field px-2 text-[13px] text-foreground outline-none"
-                    >
-                      {OTHER_BANKS.map((b) => (
-                        <option key={b} value={b}>{b}</option>
-                      ))}
-                    </select>
-                  )}
-
-                  {customCategory === "wallet" && (
-                    <select
-                      value={customWalletNetwork}
-                      onChange={(e) => setCustomWalletNetwork(e.target.value)}
-                      className="h-9 w-full rounded-xl field-surface border border-transparent bg-field px-2 text-[13px] text-foreground outline-none"
-                    >
-                      {WALLET_NETWORKS.map((w) => (
-                        <option key={w} value={w}>{w}</option>
-                      ))}
-                    </select>
-                  )}
-
-                  <div className="flex justify-end pt-1">
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={handleAddCustomContact}
-                      className="h-8 px-3 text-[13px]"
-                    >
-                      Add Member
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Who is in the group: the people picked, then a button that opens the saved recipients */}
             {members.length > 0 && (
@@ -492,9 +409,20 @@ export default function CreateGroupFlow({
                 ))}
               </div>
             )}
-            <Button type="button" size="xl" variant="outline" onClick={() => setPickerOpen(true)} className="w-full">
-              <Plus size={14} /> {members.length > 0 ? "Add more members" : "Add members"}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button type="button" size="xl" variant="outline" onClick={() => setPickerOpen(true)} className="flex-1">
+                <Plus size={14} /> {members.length > 0 ? "Add from beneficiaries" : "Add members"}
+              </Button>
+              <Button
+                type="button"
+                size="xl"
+                variant="outline"
+                onClick={() => setShowNewContact(!showNewContact)}
+                className="flex-1"
+              >
+                <Plus size={14} /> New contact
+              </Button>
+            </div>
 
             <Modal
               open={pickerOpen}
@@ -561,6 +489,129 @@ export default function CreateGroupFlow({
                 )}
               </div>
             </Modal>
+
+            <Modal
+              open={showNewContact}
+              onOpenChange={(o) => {
+                setShowNewContact(o);
+                if (!o) clearCustomErrors();
+              }}
+              title="Add new contact"
+              size="md"
+              footer={
+                <Button type="button" onClick={handleAddCustomContact} loading={verifyingContact} className="w-full">
+                  Add Member
+                </Button>
+              }
+            >
+              <div className="flex flex-col gap-5">
+                <Field label="Name" error={customErrors.name}>
+                  <Input
+                    type="text"
+                    value={customName}
+                    onChange={(e) => {
+                      setCustomName(e.target.value);
+                      clearCustomErrors();
+                    }}
+                    placeholder="Full name"
+                  />
+                </Field>
+
+                <Field label="Type" error={customErrors.category}>
+                  <Select
+                    value={customCategory}
+                    onValueChange={(v) => {
+                      if (!v) return;
+                      setCustomCategory(v as "gcb" | "other_bank" | "wallet");
+                      clearCustomErrors();
+                    }}
+                  >
+                    <SelectTrigger aria-label="Account type">
+                      <SelectValue placeholder="Select account type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="gcb" label="GCB Account">GCB Account</SelectItem>
+                      <SelectItem value="other_bank" label="Other Local Bank">Other Local Bank</SelectItem>
+                      <SelectItem value="wallet" label="Mobile Wallet">Mobile Wallet</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                {customCategory === "other_bank" && (
+                  <Field label="Bank" error={customErrors.bank}>
+                    <Select
+                      value={customBank}
+                      onValueChange={(v) => {
+                        if (!v) return;
+                        setCustomBank(v);
+                        clearCustomErrors();
+                      }}
+                    >
+                      <SelectTrigger aria-label="Bank">
+                        <SelectValue placeholder="Select bank" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {OTHER_BANKS.map((b) => (
+                          <SelectItem key={b} value={b} label={b}>{b}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                )}
+
+                {customCategory === "wallet" && (
+                  <Field label="Network" error={customErrors.network}>
+                    <Select
+                      value={customWalletNetwork}
+                      onValueChange={(v) => {
+                        if (!v) return;
+                        setCustomWalletNetwork(v);
+                        clearCustomErrors();
+                      }}
+                    >
+                      <SelectTrigger aria-label="Wallet network">
+                        <SelectValue placeholder="Select network" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {WALLET_NETWORKS.map((w) => (
+                          <SelectItem key={w} value={w} label={w}>{w}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                )}
+
+                {customCategory === "wallet" && (
+                  <Field label="Phone Number" error={customErrors.dest}>
+                    <AccountVerificationStatus resolving={verifyingContact} resolvingMessage="Verifying..." />
+                    <Input
+                      type="text"
+                      value={customDest}
+                      onChange={(e) => {
+                        setCustomDest(e.target.value);
+                        clearCustomErrors();
+                      }}
+                      placeholder="Phone number"
+                    />
+                  </Field>
+                )}
+
+                {(customCategory === "gcb" || customCategory === "other_bank") && (
+                  <Field label="Account Number" error={customErrors.dest}>
+                    <AccountVerificationStatus resolving={verifyingContact} resolvingMessage="Verifying..." />
+                    <Input
+                      type="text"
+                      value={customDest}
+                      onChange={(e) => {
+                        setCustomDest(e.target.value);
+                        clearCustomErrors();
+                      }}
+                      placeholder="Account number"
+                    />
+                  </Field>
+                )}
+              </div>
+            </Modal>
           </div>
 
           {/* Primary CTA */}
@@ -599,43 +650,41 @@ export default function CreateGroupFlow({
             />
           ) : (
             /* Custom Amounts List */
-            <div className="flex flex-col gap-2">
-              <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[320px] overflow-y-auto scroll-fade">
-                {members.map((member) => (
-                  <div
-                    key={member.id || member.destination}
-                    className="flex items-center justify-between px-3 py-2"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <PayeeAvatar name={member.name} initials={initials(member.name)} size="md" />
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-[14px] text-foreground font-normal truncate">
-                          {member.name}
-                        </span>
-                        <span className="text-[12px] text-muted-foreground font-normal truncate tabular-nums numorainput">
-                          {member.destination}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0 bg-field field-surface border border-transparent rounded-xl px-2 py-2 transition">
-                      <span className="text-[12px] font-medium text-muted-foreground select-none">GHS</span>
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        value={
-                          member.defaultAmount !== undefined
-                            ? String(member.defaultAmount)
-                            : defaultAmount
-                        }
-                        onChange={(e) =>
-                          updateMemberAmount(member.id || member.destination, e.target.value)
-                        }
-                        className="w-21 bg-transparent text-right text-[14px] font-normal tabular-nums outline-none border-none text-foreground"
-                      />
-                    </div>
+            <div className="custom-scrollbar -mx-2 flex max-h-[360px] flex-col overflow-y-auto overscroll-contain px-2">
+              {members.map((member) => (
+                <div
+                  key={member.id || member.destination}
+                  className="flex items-center justify-between gap-4 rounded-xl px-2 py-3 transition-colors hover:bg-muted/50"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <PayeeAvatar name={member.name} initials={initials(member.name)} size="md" />
+                    <span className="flex min-w-0 flex-col">
+                      <span className="truncate text-[14px] text-foreground">{member.name}</span>
+                      <span className="truncate text-[12px] text-muted-foreground tabular">{member.destination}</span>
+                    </span>
                   </div>
-                ))}
-              </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span className="select-none text-[13px] text-muted-foreground">GHS</span>
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      aria-label={`Amount for ${member.name}`}
+                      placeholder="0.00"
+                      value={
+                        amountDrafts[member.id || member.destination] ??
+                        (member.defaultAmount ? String(member.defaultAmount) : "")
+                      }
+                      onChange={(e) => {
+                        const key = member.id || member.destination;
+                        const cleaned = e.target.value.replace(/[^0-9.]/g, "");
+                        setAmountDrafts((prev) => ({ ...prev, [key]: cleaned }));
+                        updateMemberAmount(key, cleaned);
+                      }}
+                      className="w-28 text-right tabular"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 

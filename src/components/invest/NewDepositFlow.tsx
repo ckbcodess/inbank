@@ -221,7 +221,7 @@ export function NewDepositFlow() {
         </Field>
 
         {tenure && (
-          <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="flex flex-col gap-2">
             <AmountInput
               value={amount}
               onChange={setAmount}
