@@ -85,7 +85,7 @@ export function InvestHome({ loading: forced = false }: { loading?: boolean }) {
             <ProductCard
               id="term-deposits"
               name="Term Deposits"
-              line="Lock money away at a fixed rate"
+              line="Save for a fixed term and earn interest"
               status={loading ? undefined : termStatus}
               image={PRODUCT_IMAGES["term-deposits"]}
               look={look}
