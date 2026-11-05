@@ -29,13 +29,13 @@ export const DURATION = {
   slow: SPEED.slow,
 
   // Semantic mappings
-  press: SPEED.base,
-  hover: SPEED.fast,
+  press: 0.2,
+  hover: 0.14,
   reveal: SPEED.base,
   move: SPEED.base,
   entrance: SPEED.fast,
-  modal: SPEED.fast,
-  toast: SPEED.fast,
+  modal: 0.15,
+  toast: 0.15,
   /** A highlight passing once across a control, e.g. the Sidi launcher's amber sweep. */
   sweep: 1.6,
 } as const;

@@ -7,13 +7,12 @@ import { cn } from "@/lib/utils"
 import { AppLoader } from "@/components/ui/loader"
 
 /**
- * The hero's glass control, in one place: a translucent gradient over the panel with the backdrop blur, a faint top
- * highlight, and a hover wash. The wash is an inset shadow, not a background swap, because a gradient can't
+ * The hero's glass control, in one place: a translucent gradient over the panel with the backdrop blur, a single hairline border, and a hover wash. The wash is an inset shadow, not a background swap, because a gradient can't
  * transition to a flat colour. Every glass control uses this: the Button `glass` variant, the account pill and
  * the round-action chips (`HERO_GLASS`). Its colours are the `--hero-glass-*` tokens in globals.css.
  */
 export const GLASS_CLASS =
-  "backdrop-blur-md transition-[color,background-color,box-shadow,transform] duration-hover bg-[linear-gradient(to_bottom,var(--hero-glass-top),var(--hero-glass-bottom))] text-[var(--hero-button-foreground)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_transparent] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)] group-hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)]";
+  "overflow-visible border-[color-mix(in_srgb,var(--white)_16%,transparent)] bg-clip-padding backdrop-blur-md transition-[color,background-color,box-shadow,transform] duration-hover bg-[linear-gradient(to_bottom,var(--hero-glass-top),var(--hero-glass-bottom))] text-[var(--hero-button-foreground)] shadow-[inset_0_0_0_999px_transparent] hover:shadow-[inset_0_0_0_999px_var(--hero-glass-hover)] group-hover:shadow-[inset_0_0_0_999px_var(--hero-glass-hover)]";
 
 const buttonVariants = cva(
   "group/button relative overflow-hidden inline-flex shrink-0 items-center justify-center rounded-xl border border-transparent text-[13px] font-medium whitespace-nowrap [transition:color_var(--dur-hover)_var(--ease-in-out),background-color_var(--dur-hover)_var(--ease-in-out),border-color_var(--dur-hover)_var(--ease-in-out),box-shadow_var(--dur-hover)_var(--ease-in-out),scale_var(--dur-hover)_var(--ease-snappy)] select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground disabled:border-transparent disabled:shadow-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 cursor-pointer",

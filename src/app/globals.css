@@ -35,13 +35,13 @@
   --dur-slow: 600ms;
 
   /* Semantic aliases (in lockstep with DURATION in src/lib/motion.ts) */
-  --dur-press: var(--dur-base);
-  --dur-hover: var(--dur-fast);
+  --dur-press: 200ms;
+  --dur-hover: 140ms;
   --dur-reveal: var(--dur-base);
   --dur-move: var(--dur-base);
   --dur-entrance: var(--dur-fast);
-  --dur-modal: var(--dur-fast);
-  --dur-toast: var(--dur-fast);
+  --dur-modal: 150ms;
+  --dur-toast: 150ms;
   --dur-sweep: 1600ms;
 }
 @utility duration-fast { transition-duration: var(--dur-fast); }
@@ -503,7 +503,7 @@
   --field-hover: var(--gray-50);
   --field-focus: var(--white);
   --field-border: var(--gray-200);
-  --field-drop: color-mix(in srgb, var(--black) 6%, transparent);
+  --field-drop: rgba(0, 0, 0, 0.04);
   --field-border-focus: var(--gray-875);
   /* Dropdown menus. */
   --menu: var(--white);
@@ -586,10 +586,10 @@
   --spend-other: #cbd5e1;
   --radius: 8px;
   /* Letter-spacing (tracking), one place. Kerning is the font's own and is left on. */
-  --ls-tight: -0.02em; /* titles inside cards, row names */
-  --ls-heading: -0.04em; /* page titles, section headings, large figures */
-  --ls-display: -0.02em; /* the biggest numbers */
-  --ls-label: -0.02em; /* small initials and codes */
+  --ls-tight: 0em; /* titles inside cards, row names */
+  --ls-heading: -0.01em; /* page titles, section headings, large figures */
+  --ls-display: -0.01em; /* the biggest numbers */
+  --ls-label: 0em; /* small initials and codes */
   /* Brand gradient: deep amber → brighter golden glow at bottom */
   /* Dashboard hero panel (Figma 1945:5108): a slate card with white type here; near-black with white type in dark. */
   --hero-surface: var(--smoke-700);
@@ -644,9 +644,9 @@
   /* Tactile surfaces (Tactile design skill, mapped onto our tokens). A raised thing is a fine ring (its edge) plus a
      crisp 1px drop, plus at most one short drop for height. The ring replaces the border, so a surface that takes one
      of these never also gets `border` or `ring-*`. Dark redefines the same names below. */
-  --shadow-button: 0px 0px 0px 1px rgba(0, 0, 0, 0.06), 0px 3px 5px 0px rgba(0, 0, 0, 0.03);
+  --shadow-button: 0px 0px 0px 1px rgba(0, 0, 0, 0.05), 0px 4px 6px 0px rgba(0, 0, 0, 0.05);
   --shadow-card: 0px 0px 0px 1px rgba(0, 0, 0, 0), 0px 1px 2px 0px rgba(0, 0, 0, 0.02), 0px 2px 8px -2px rgba(0, 0, 0, 0.04);
-  --shadow-menu: 0px 0px 0px 1px rgba(0, 0, 0, 0.02), 0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 4px 16px -4px rgba(0, 0, 0, 0.11);
+  --shadow-menu: 0px 0px 0px 1px rgba(0, 0, 0, 0.02), 0px 1px 2px 0px rgba(0, 0, 0, 0.09), 0px 4px 16px -4px rgba(0, 0, 0, 0.29);
   --shadow-modal: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 6px 16px -4px rgba(0, 0, 0, 0.08);
 }
 

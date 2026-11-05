@@ -434,7 +434,7 @@ export function VirtualCardDetailsView({
     setActiveModal("details");
   };
   // ...and they close themselves after a short while, like the PIN view, with the seconds left shown.
-  const [detailsCountdown, setDetailsCountdown] = useState(DETAILS_SECONDS);
+  const [, setDetailsCountdown] = useState(DETAILS_SECONDS);
   useEffect(() => {
     if (activeModal !== "details") return;
     const interval = setInterval(() => {
@@ -1539,9 +1539,6 @@ export function VirtualCardDetailsView({
                 onCopy={() => handleCopy(displayCvv, securityCodeLabel(effectiveCard.scheme))}
               />
             </div>
-            <p className="tabular pt-1 text-center text-[12px] text-muted-foreground">
-              Closes automatically in {detailsCountdown}s for your security
-            </p>
           </DialogBody>
         </DialogContent>
       </Dialog>

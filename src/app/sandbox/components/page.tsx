@@ -6,7 +6,7 @@
  * look is decided; "Copy CSS" gives the values to bake into globals.css. Development only.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { notFound } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Palette } from "@/components/ui/icons";
@@ -52,7 +52,13 @@ export default function ComponentSandboxPage() {
 function Sandbox() {
   const { resolvedTheme, setTheme } = useTheme();
   const [tab, setTab] = useState<string>("buttons");
-  const theme: TweakTheme = resolvedTheme === "dark" ? "dark" : "light";
+  // The theme is only known in the browser, so the server and the first client render both say "light".
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const theme: TweakTheme = mounted && resolvedTheme === "dark" ? "dark" : "light";
 
   useEffect(() => mountSandboxTweaks(), []);
   useEffect(() => {
