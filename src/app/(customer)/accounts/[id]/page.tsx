@@ -55,7 +55,6 @@ import { RoundAction } from "@/components/ui/round-action";
 import { ToggleTile } from "@/components/ui/toggle-tile";
 import { ShareDetailsDialog } from "@/components/accounts/ShareDetailsDialog";
 import { AccountDetailBody } from "@/components/states/PageSkeletons";
-import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
 
 const BASELINE: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 const MINI_STATEMENT_SIZE = 10;
@@ -142,7 +141,6 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   const [fundOpen, setFundOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [recentOpen, setRecentOpen] = useState(false);
-  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [fundResume, setFundResume] = useState<{
     screen: ModalScreen;
     sourceId?: string;
@@ -362,14 +360,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
         transactions={recent}
         onSelectTransaction={(t) => {
           setRecentOpen(false);
-          setSelectedTx(t);
-        }}
-      />
-      <TransactionDetailSheet
-        transaction={selectedTx}
-        open={Boolean(selectedTx)}
-        onOpenChange={(o) => {
-          if (!o) setSelectedTx(null);
+          router.push(`/transactions/${t.id}`);
         }}
       />
     </div>

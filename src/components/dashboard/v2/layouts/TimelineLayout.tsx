@@ -8,7 +8,6 @@
  * day. The balance, cards and rates sit in a quiet rail beside it.
  */
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Skeleton } from "skullet/react";
 import { ACTIVITY_SAMPLE } from "@/lib/skeleton-samples";
@@ -18,7 +17,7 @@ import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { amountStyling } from "@/lib/transaction-display";
 import { cn } from "@/lib/utils";
 import { formatMoney, type Transaction } from "@/lib/mock-data";
-import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import type { UpcomingPayment } from "@/lib/dashboard-insights";
 import {
@@ -103,7 +102,8 @@ function TxnRow({
 
 function Feed({ data, loading, showAmounts }: Pick<DashViewProps, "data" | "showAmounts"> & { loading: boolean }) {
   const { t } = useTranslation();
-  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const router = useRouter();
+  const openReceipt = (t: Transaction) => router.push(`/transactions/${t.id}`);
 
   if (loading) {
     // Skullet measures the real rows (sample data) and draws the bones over them.
@@ -148,19 +148,12 @@ function Feed({ data, loading, showAmounts }: Pick<DashViewProps, "data" | "show
             <ul className="flex flex-col">
               <DayHeading>{dayLabel(d.day)}</DayHeading>
               {d.items.map((txn) => (
-                <TxnRow key={txn.id} t={txn} showAmounts={showAmounts} onSelect={setSelectedTx} />
+                <TxnRow key={txn.id} t={txn} showAmounts={showAmounts} onSelect={openReceipt} />
               ))}
             </ul>
           </li>
         ))}
       </ul>
-      <TransactionDetailSheet
-        transaction={selectedTx}
-        open={Boolean(selectedTx)}
-        onOpenChange={(o) => {
-          if (!o) setSelectedTx(null);
-        }}
-      />
     </>
   );
 }

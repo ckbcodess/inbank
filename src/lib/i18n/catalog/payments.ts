@@ -747,7 +747,6 @@ const payments: Entry[] = [
   ["Amounts", "Montants", "Importes", "金额"],
   ["Members", "Membres", "Miembros", "成员"],
   ["Changed for this payment", "Modifié pour ce paiement", "Cambiado para este pago", "已为本次付款更改"],
-  ["Each member's own amount", "Le montant propre à chaque membre", "El importe de cada miembro", "每位成员各自的金额"],
   ["Was {0}", "Était {0}", "Antes {0}", "原为 {0}"],
   ["Add back", "Réintégrer", "Volver a incluir", "重新加入"],
   ["Add {0} back", "Réintégrer {0}", "Volver a incluir a {0}", "重新加入 {0}"],

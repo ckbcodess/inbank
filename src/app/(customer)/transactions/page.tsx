@@ -11,7 +11,6 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import TransactionList from "@/components/TransactionList";
 import { accountsForProfile, transactionsForProfile } from "@/lib/mock-data";
-import { personalRepeatHref } from "@/lib/repeat-payment";
 
 function TransactionsContent() {
   const transactions = transactionsForProfile("RETAIL");
@@ -24,7 +23,7 @@ function TransactionsContent() {
         transactions={transactions}
         accounts={accountsForProfile("RETAIL")}
         startHref="/payments"
-        repeatHref={personalRepeatHref}
+        receiptHref={(t) => `/transactions/${t.id}`}
         initialAccountId={accountId}
       />
     </div>

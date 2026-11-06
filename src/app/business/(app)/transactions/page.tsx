@@ -9,7 +9,6 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import TransactionList from "@/components/TransactionList";
 import { businessAccounts, businessTransactions } from "@/lib/corporate/accounts";
-import { businessRepeatHref } from "@/lib/corporate/repeat-payment";
 
 function BusinessTransactionsContent() {
   const accountId = useSearchParams().get("account") ?? undefined;
@@ -21,7 +20,7 @@ function BusinessTransactionsContent() {
         transactions={businessTransactions()}
         accounts={businessAccounts()}
         startHref="/business/payments"
-        repeatHref={businessRepeatHref}
+        receiptHref={(t) => `/business/transactions/${t.id}`}
         initialAccountId={accountId}
       />
     </div>

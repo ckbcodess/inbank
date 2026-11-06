@@ -972,6 +972,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
   const { groups } = useGroupsStore();
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
+  const [groupAmountsOpen, setGroupAmountsOpen] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
   // Cash-out codes that haven't been used yet (mock until codes are stored). A code opens in its own dialog.
   const [activeCodes, setActiveCodes] = useState(ACTIVE_CASHOUT_CODES);
@@ -2899,6 +2900,46 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
+  // Group payment. Its Edit amounts page takes over the whole flow, so this flow's header stays hidden (as Send to new group does).
+  const groupFlow = (
+    <GroupPaymentFlow
+      accounts={accounts}
+      groups={groups}
+      state={{
+        fromId: f.fromId,
+        groupId: f.groupId,
+        grpAmount: f.grpAmount,
+        narration: f.grpRef,
+        category: f.category,
+      }}
+      onChange={(key, val) => {
+        if (key === "narration") set("grpRef", val);
+        else set(key, val);
+      }}
+      memberAmounts={grpMemberAmounts}
+      onMemberAmountChange={(id, val) => setGrpMemberAmounts((p) => ({ ...p, [id]: val }))}
+      onClearMemberAmounts={() => setGrpMemberAmounts({})}
+      onResetMemberAmount={(id) =>
+        setGrpMemberAmounts((p) => {
+          const next = { ...p };
+          delete next[id];
+          return next;
+        })
+      }
+      onOpenCreateGroup={() => setCreateGroupOpen(true)}
+      onProceed={() => {
+        auth.reset();
+        setStage1Collapsed(true);
+        setStage(2);
+      }}
+      amountsOpen={groupAmountsOpen}
+      onAmountsOpenChange={setGroupAmountsOpen}
+    />
+  );
+  if (rail === "group" && groupAmountsOpen) {
+    return <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">{groupFlow}</div>;
+  }
+
   // Group — a new group is made on its own page (the same one Beneficiaries opens), then paid straight away.
   if (rail === "group" && createGroupOpen) {
     return (
@@ -3600,39 +3641,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             )}
 
             {/* Flow 9: Group Payments */}
-            {rail === "group" && (
-              <GroupPaymentFlow
-                accounts={accounts}
-                groups={groups}
-                state={{
-                  fromId: f.fromId,
-                  groupId: f.groupId,
-                  grpAmount: f.grpAmount,
-                  narration: f.grpRef,
-                  category: f.category,
-                }}
-                onChange={(key, val) => {
-                  if (key === "narration") set("grpRef", val);
-                  else set(key, val);
-                }}
-                memberAmounts={grpMemberAmounts}
-                onMemberAmountChange={(id, val) => setGrpMemberAmounts((p) => ({ ...p, [id]: val }))}
-                onClearMemberAmounts={() => setGrpMemberAmounts({})}
-                onResetMemberAmount={(id) =>
-                  setGrpMemberAmounts((p) => {
-                    const next = { ...p };
-                    delete next[id];
-                    return next;
-                  })
-                }
-                onOpenCreateGroup={() => setCreateGroupOpen(true)}
-                onProceed={() => {
-                  auth.reset();
-                  setStage1Collapsed(true);
-                  setStage(2);
-                }}
-              />
-            )}
+            {rail === "group" && groupFlow}
 
             {/* Flow 10: Proxy Pay */}
             {rail === "proxy" && (
@@ -3790,11 +3799,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     ]
                   : []),
                 { label: "Arrives", value: f.isScheduled ? `Executes on ${f.scheduleDate}` : deliverySpeed },
-                ...(rail === "group" ? [{ label: "Members", value: groupPeople, tabular: true }] : []),
               ]}
               detailsExtra={
                 rail === "group" && selectedGroupObj ? (
-                  <GroupMemberBreakdown group={selectedGroupObj} perMember={f.grpAmount} overrides={grpMemberAmounts} />
+                  <GroupMemberBreakdown
+                    group={selectedGroupObj}
+                    perMember={f.grpAmount}
+                    overrides={grpMemberAmounts}
+                    summary={groupPeople}
+                  />
                 ) : undefined
               }
               breakdown={[

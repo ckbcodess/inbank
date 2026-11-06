@@ -267,9 +267,15 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
 
       {/* Official GCB Digital Transaction Receipt */}
       <div className="relative mx-auto flex w-full max-w-xl flex-col gap-6 rounded-2xl border border-border/80 bg-card p-5 sm:p-6 overflow-hidden shadow-xs">
-        {/* Subtle background eagle watermark */}
-        <div className="pointer-events-none absolute -top-9 -right-9 size-70 opacity-[0.03] select-none text-foreground">
-          <GCBLogo className="size-full" showWordmark={false} />
+        {/* Large faint outline eagle, centred behind the receipt and cropped by its edges */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.1] select-none">
+          <GCBLogo
+            outline
+            outlineWeight={0.75}
+            showWordmark={false}
+            className="w-[170%] translate-x-[22px] translate-y-[-13px] text-muted-foreground"
+            viewBox="-4.55 -5.46 54 47.5"
+          />
         </div>
 
         <section className="relative z-10 flex flex-col items-center gap-2 pt-2 text-center">

@@ -31,7 +31,7 @@ import { maskDigits } from "@/components/providers/AmountVisibilityProvider";
 import { FX_RATES, FX_PUBLISHED_AT, setCardStatus, type Account, type Transaction, type PaymentCard } from "@/lib/mock-data";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { BlockReasonDialog } from "@/components/cards/BlockReasonDialog";
-import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
+import { useRouter } from "next/navigation";
 import type {
   BalancePoint,
   Slice,
@@ -552,7 +552,8 @@ export function RecentTransactions({
   showAmounts: boolean;
   limit?: number;
 }) {
-  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const router = useRouter();
+  const openReceipt = (t: Transaction) => router.push(`/transactions/${t.id}`);
 
   if (txns.length === 0) {
     return (
@@ -567,7 +568,7 @@ export function RecentTransactions({
             <li key={t.id}>
               <button
                 type="button"
-                onClick={() => setSelectedTx(t)}
+                onClick={() => openReceipt(t)}
                 className="group flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left transition-colors hover:bg-item-hover -mx-2 cursor-pointer"
               >
                 <TransactionMark transaction={t} />
@@ -592,13 +593,6 @@ export function RecentTransactions({
           );
         })}
       </ul>
-      <TransactionDetailSheet
-        transaction={selectedTx}
-        open={Boolean(selectedTx)}
-        onOpenChange={(o) => {
-          if (!o) setSelectedTx(null);
-        }}
-      />
     </>
   );
 }

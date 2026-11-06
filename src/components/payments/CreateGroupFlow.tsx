@@ -209,6 +209,14 @@ export default function CreateGroupFlow({
     );
   };
 
+  // Custom amounts back to the starting amount, for every member at once
+  const startingAmount = parseFloat(defaultAmount) || 0;
+  const customAmountsChanged = members.some((m) => (m.defaultAmount ?? startingAmount) !== startingAmount);
+  const resetMemberAmounts = () => {
+    setMembers((prev) => prev.map((m) => ({ ...m, defaultAmount: startingAmount })));
+    setAmountDrafts({});
+  };
+
   // New contact modal: the destination is checked with the inline Search (as Send & Pay does) before Add Member unlocks.
   const cleanDest = customDest.replace(/[\s-]/g, "");
   const destFormatValid =
@@ -704,6 +712,18 @@ export default function CreateGroupFlow({
             />
           ) : (
             /* Custom Amounts List */
+            <>
+            {customAmountsChanged && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={resetMemberAmounts}
+                  className="cursor-pointer text-[12px] text-foreground underline underline-offset-4"
+                >
+                  Reset amounts
+                </button>
+              </div>
+            )}
             <div className="custom-scrollbar scroll-fade -mx-2 flex max-h-[360px] flex-col overflow-y-auto overscroll-contain px-2">
               {members.map((member) => (
                 <div
@@ -740,6 +760,7 @@ export default function CreateGroupFlow({
                 </div>
               ))}
             </div>
+            </>
           )}
 
           <TotalRow

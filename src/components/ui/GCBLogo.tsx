@@ -5,6 +5,10 @@ interface GCBLogoProps extends React.SVGProps<SVGSVGElement> {
   showWordmark?: boolean;
   eagleColor?: string;
   wordmarkColor?: string;
+  /** The eagle as a hairline outline in the current colour, for large faint watermarks. */
+  outline?: boolean;
+  /** Outline stroke width in screen pixels (the stroke does not scale with the logo). */
+  outlineWeight?: number;
 }
 
 /**
@@ -17,6 +21,8 @@ export function GCBLogo({
   showWordmark = true,
   eagleColor = "#FFC423",
   wordmarkColor = "currentColor",
+  outline = false,
+  outlineWeight = 1,
   ...props
 }: GCBLogoProps) {
   return (
@@ -61,7 +67,11 @@ export function GCBLogo({
           fillRule="evenodd"
           clipRule="evenodd"
           d="M44.9074 6.32962C44.9074 6.32962 40.4102 9.33665 32.6556 12.0057C27.8179 13.673 22.0648 14.4336 22.0688 14.4384C21.1542 15.874 19.7723 16.4979 18.7134 16.7679C19.7946 16.7911 20.5394 16.8694 20.5394 16.8694C22.2522 17.0955 21.8822 17.8073 21.8822 17.8073C22.6014 18.0182 23.1085 18.2771 23.1085 18.2771C24.2113 18.7652 22.8829 20.0298 22.8829 20.0298C22.8956 19.4858 22.4348 19.3635 22.4348 19.3635C22.0544 19.2373 21.5289 19.318 21.5289 19.318C20.5729 19.4283 19.4924 20.0194 19.4924 20.0194C18.1791 20.6897 17.2773 21.3248 17.2773 21.3248C16.3021 21.9192 15.3468 22.6078 15.3468 22.6078C13.9362 19.906 15.3835 17.1554 15.5693 16.8239C10.2763 15.8404 10.2675 10.2945 10.2675 10.2945C10.2619 5.09294 13.7528 0 13.7656 0C12.4276 0.074297 10.5769 0.400245 9.80421 0.690243L8.02843 6.04282L8.0994 1.20872C7.20952 1.50751 6.56045 1.86222 6.17053 2.10188L4.8381 6.94637L4.72567 2.90237C3.94264 3.44322 3.73373 3.66771 3.39325 4.10551L2.48024 8.15589L1.68047 6.75463C-2.30804 13.7641 2.05524 24.0083 2.05524 24.0083L6.41214 24.0019L1.58956 26.945C1.22117 27.8869 0.951658 28.812 0.882286 29.6716L3.07509 29.2482L0.942887 31.267C1.03459 31.8814 1.19725 32.459 1.40776 32.991L3.54076 31.132L1.86307 33.9553C2.72504 35.5763 3.85971 36.5741 3.85971 36.5741C5.63469 28.1857 12.5376 24.8527 12.5376 24.8527L12.5384 28.2001C29.75 26.3722 36.1609 21.9192 39.4445 18.7316L37.0667 17.9847L40.9938 17.0196C41.438 16.5722 41.8853 15.9179 42.1812 15.3819L38.3202 15.0879L42.8478 14.0437C43.1579 13.6115 43.5718 12.5993 43.7368 12.1839L38.7652 12.4851L44.181 10.1747C44.6825 8.44269 44.9074 6.32962 44.9074 6.32962Z"
-          fill={eagleColor}
+          // Outline mode draws the eagle as a hairline in the current colour, for watermarks.
+          fill={outline ? "none" : eagleColor}
+          stroke={outline ? "currentColor" : undefined}
+          strokeWidth={outline ? outlineWeight : undefined}
+          vectorEffect={outline ? "non-scaling-stroke" : undefined}
         />
       </g>
     </svg>

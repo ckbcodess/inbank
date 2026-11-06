@@ -20,6 +20,7 @@ import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { amountStyling } from "@/lib/transaction-display";
 import { TransactionMark } from "@/components/transactions/TransactionMark";
 import { useMemo, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowDownToLine,
   ChevronLeft,
@@ -27,7 +28,6 @@ import {
 } from "@/components/ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -160,8 +160,8 @@ interface TransactionListProps {
   accounts: Account[];
   /** Where "Start a transaction" goes when the list is empty. Left out, the empty list has no action. */
   startHref?: string;
-  /** Where "Repeat" goes from a transaction's sheet (see `TransactionDetailSheet`). */
-  repeatHref?: ((t: Transaction) => string | null) | null;
+  /** Where a row's receipt lives. Each surface has its own receipt page, so the list only needs to know the address. */
+  receiptHref: (t: Transaction) => string;
   /** Show the 13.1 state switcher — off when embedded in a screen that owns its own. */
   showStateSwitcher?: boolean;
   emptyTitle?: string;
@@ -214,7 +214,7 @@ export default function TransactionList({
   transactions,
   accounts,
   startHref,
-  repeatHref,
+  receiptHref,
   showStateSwitcher = true,
   emptyTitle = "No transactions yet",
   initialAccountId,
@@ -244,15 +244,19 @@ export default function TransactionList({
   const [dateTo, setDateTo] = useState<string>("");
 
   // Selected transaction for details sheet
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const router = useRouter();
+  const openReceipt = (t: Transaction) => router.push(receiptHref(t));
 
-  // A link such as /transactions?open=<id> (a notification, a report) opens that payment's sheet over the list.
+  // A link such as /transactions?open=<id> (a notification, a report) goes straight to that payment's receipt.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("open");
     if (!id) return;
     const match = transactions.find((t) => t.id === id || t.reference === id);
-    if (match) setSelectedTransaction(match);
+    if (match) {
+      router.push(receiptHref(match));
+      return;
+    }
     params.delete("open");
     const rest = params.toString();
     window.history.replaceState(null, "", window.location.pathname + (rest ? `?${rest}` : ""));
@@ -753,7 +757,7 @@ export default function TransactionList({
           {/* One list at every breakpoint, in the same white box as Beneficiaries and Accounts. */}
           <ListCard as="div">
             {paginatedRows.map((t) => (
-              <TransactionRow key={t.id} t={t} onSelect={setSelectedTransaction} />
+              <TransactionRow key={t.id} t={t} onSelect={openReceipt} />
             ))}
           </ListCard>
 
@@ -796,15 +800,6 @@ export default function TransactionList({
       )}
       </AnimatePresence>
 
-      {/* Transaction Details Sheet */}
-      <TransactionDetailSheet
-        transaction={selectedTransaction}
-        repeatHref={repeatHref}
-        open={Boolean(selectedTransaction)}
-        onOpenChange={(open) => {
-          if (!open) setSelectedTransaction(null);
-        }}
-      />
     </div>
   );
 }

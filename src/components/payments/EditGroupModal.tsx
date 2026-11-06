@@ -12,25 +12,32 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  Modal,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Landmark,
-  Smartphone,
-  X,
-  Trash2,
-  Plus,
-  Search,
-  UserPlus,
-} from "@/components/ui/icons";
+import { Check, Plus, Trash2, X } from "@/components/ui/icons";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore, type BeneficiaryRecord } from "@/lib/beneficiaries-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Field } from "@/components/ui/field";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PayeeAvatar } from "@/components/ui/payee-avatar";
+import { SearchField } from "@/components/ui/search-field";
+import { AmountInput } from "@/components/payments/flows/shared";
+import { MemberAmountInput } from "@/components/payments/MemberAmountInput";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+
+/** A long group gets a search box above its members. */
+const SEARCH_FROM_MEMBERS = 8;
+/** Same two splits as Create group, so a group reads the same on both screens. */
+const SPLIT_OPTIONS = [
+  { value: "equal", label: "Equal Split" },
+  { value: "custom", label: "Custom Amounts" },
+] as const;
+
 interface EditGroupModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -74,12 +81,13 @@ export default function EditGroupModal({
   // Search strictly within this group's members
   const [searchMember, setSearchMember] = useState("");
 
-  // Add Member section states
-  const [showAddMember, setShowAddMember] = useState(false);
-  const [addMode, setAddMode] = useState<"saved" | "custom">("saved");
+  // Add Member: the same two entry points as Create group (saved picker, new contact)
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [showNewContact, setShowNewContact] = useState(false);
   const [savedSearch, setSavedSearch] = useState("");
+  const [pickedIds, setPickedIds] = useState<string[]>([]);
 
-  // Custom new contact states
+  // New contact states
   const [customName, setCustomName] = useState("");
   const [customDest, setCustomDest] = useState("");
   const [customType, setCustomType] = useState<"wallet" | "bank">("wallet");
@@ -109,7 +117,9 @@ export default function EditGroupModal({
       setSplitType(group.splitType || "equal");
       setMembers(group.members ? [...group.members] : []);
       setSearchMember("");
-      setShowAddMember(false);
+      setPickerOpen(false);
+      setShowNewContact(false);
+      setPickedIds([]);
       setSavedSearch("");
       setCustomName("");
       setCustomDest("");
@@ -185,23 +195,27 @@ export default function EditGroupModal({
     );
   };
 
-  // Add an existing saved beneficiary into this group
-  const handleAddSavedBeneficiary = (b: BeneficiaryRecord) => {
-    const amt = parseFloat(amountPerPerson) || 0;
-    const newMember: GroupMember = {
-      id: b.id.startsWith("m-") ? b.id : `m-${b.id}`,
-      name: b.name,
-      destination: b.accountNumber || b.phoneNumber || b.proxyId || b.detail || b.id,
-      type: b.transactionType === "bank" ? "bank" : "wallet",
-      networkOrBank: b.bankName || b.network || "GCB Bank",
-      defaultAmount: amt,
-    };
+  // Turns a saved beneficiary into a group member at the group's current amount
+  const memberFromBeneficiary = (b: BeneficiaryRecord): GroupMember => ({
+    id: b.id.startsWith("m-") ? b.id : `m-${b.id}`,
+    name: b.name,
+    destination: b.accountNumber || b.phoneNumber || b.proxyId || b.detail || b.id,
+    type: b.transactionType === "bank" ? "bank" : "wallet",
+    networkOrBank: b.bankName || b.network || "GCB Bank",
+    defaultAmount: parseFloat(amountPerPerson) || 0,
+  });
 
-    setMembers((prev) => [...prev, newMember]);
+  // Done in the saved picker: every ticked beneficiary joins the group
+  const handleAddPicked = () => {
+    const picked = availableSavedBeneficiaries.filter((b) => pickedIds.includes(b.id));
+    if (picked.length > 0) {
+      setMembers((prev) => [...prev, ...picked.map(memberFromBeneficiary)]);
+      if (errors.members) setErrors((prev) => ({ ...prev, members: undefined }));
+      toast.success(`Added ${picked.length} ${picked.length === 1 ? "member" : "members"} to ${name || "group"}.`);
+    }
+    setPickedIds([]);
     setSavedSearch("");
-    setShowAddMember(false);
-    if (errors.members) setErrors((prev) => ({ ...prev, members: undefined }));
-    toast.success(`Added ${newMember.name} to ${name || "group"}.`);
+    setPickerOpen(false);
   };
 
   // Add a brand-new custom contact
@@ -228,7 +242,7 @@ export default function EditGroupModal({
     setMembers((prev) => [...prev, newMember]);
     setCustomName("");
     setCustomDest("");
-    setShowAddMember(false);
+    setShowNewContact(false);
     if (errors.members) setErrors((prev) => ({ ...prev, members: undefined }));
     toast.success(`Added ${newMember.name} to ${name || "group"}.`);
   };
@@ -342,313 +356,86 @@ export default function EditGroupModal({
                 />
               </Field>
 
-              <div className="flex flex-col gap-2">
-                <Label>{splitType === "equal" ? "Amount per Person" : "Starting Amount"}</Label>
-                <div
-                  className={cn(
-                    "h-11 w-full rounded-2xl field-surface border border-transparent bg-field px-3 flex items-center gap-2 transition",
-                    errors.amount && "shadow-[0_0_0_2px_var(--destructive)]"
-                  )}
-                >
-                  <span className="text-[14px] font-medium text-muted-foreground select-none">GHS</span>
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    value={amountPerPerson}
-                    onChange={(e) => {
-                      const clean = e.target.value.replace(/[^0-9.]/g, "");
-                      setAmountPerPerson(clean);
-                      if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
-                    }}
-                    placeholder="0.00"
-                    className="w-full bg-transparent text-[14px] font-normal text-foreground placeholder:text-muted-foreground/60 outline-none tabular-nums"
-                  />
-                </div>
-                {errors.amount && <p className="text-[12px] text-destructive">{errors.amount}</p>}
-                <button
-                  type="button"
-                  onClick={() => setSplitType(splitType === "equal" ? "custom" : "equal")}
-                  className="self-start text-[12px] text-muted-foreground underline underline-offset-4 decoration-border hover:text-foreground transition-colors cursor-pointer"
-                >
-                  {splitType === "equal" ? "Set a different amount for each person" : "Give everyone the same amount"}
-                </button>
-              </div>
+              <SegmentedControl
+                aria-label="How to split"
+                fullWidth
+                options={SPLIT_OPTIONS}
+                value={splitType}
+                onChange={setSplitType}
+              />
+              <AmountInput
+                value={amountPerPerson}
+                onChange={(val) => {
+                  setAmountPerPerson(val);
+                  if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
+                }}
+                label={splitType === "equal" ? "Amount per Person" : "Starting Amount"}
+                error={errors.amount}
+                enterKeyHint="done"
+              />
             </div>
 
             {/* Members Section Header + Add Button */}
-            <div className="flex flex-col gap-2 pt-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-[14px] font-medium text-foreground">
-                    Members ({members.length})
-                  </span>
-                </div>
+            <div className="flex flex-col gap-3 pt-2">
+              <div className="flex min-h-6 items-center justify-between">
+                <span className="text-[16px] font-medium text-foreground">Members ({members.length})</span>
 
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setShowAddMember((prev) => !prev)}
-                  className="h-7 gap-2 px-2 text-[12px]"
-                >
-                  <UserPlus size={14} />
-                  <span>{showAddMember ? "Close" : "+ Add Member"}</span>
-                </Button>
               </div>
 
-              {/* Expandable Add Member Drawer */}
-              {showAddMember && (
-                <div className="rounded-2xl border border-border/80 bg-muted/20 p-3 flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-150 shadow-xs">
-                  {/* Mode switcher: Saved Beneficiary vs Custom Contact */}
-                  <div className="flex items-center gap-2 p-1 bg-card rounded-xl border border-border/70">
-                    <button
-                      type="button"
-                      onClick={() => setAddMode("saved")}
-                      className={cn(
-                        "flex-1 py-2 rounded-lg text-[12px] font-medium transition cursor-pointer",
-                        addMode === "saved"
-                          ? "bg-primary text-primary-foreground shadow-xs"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      From Saved Beneficiaries
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAddMode("custom")}
-                      className={cn(
-                        "flex-1 py-2 rounded-lg text-[12px] font-medium transition cursor-pointer",
-                        addMode === "custom"
-                          ? "bg-primary text-primary-foreground shadow-xs"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      New Contact
-                    </button>
-                  </div>
-
-                  {/* Mode A: Pick from Saved Beneficiaries */}
-                  {addMode === "saved" ? (
-                    <div className="flex flex-col gap-2">
-                      <div className="relative w-full">
-                        <Search
-                          size={15}
-                          className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-                        />
-                        <input
-                          type="text"
-                          value={savedSearch}
-                          onChange={(e) => setSavedSearch(e.target.value)}
-                          placeholder="Search contacts"
-                          className="h-9 w-full pl-8 pr-6 rounded-xl field-surface border border-transparent bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:bg-field-focus transition"
-                        />
-                        {savedSearch && (
-                          <button
-                            type="button"
-                            onClick={() => setSavedSearch("")}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-                            aria-label="Clear search"
-                          >
-                            <X size={13} />
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="scroll-fade max-h-[180px] overflow-y-auto rounded-xl border border-border/70 bg-card divide-y divide-border/50">
-                        {availableSavedBeneficiaries.length > 0 ? (
-                          availableSavedBeneficiaries.map((b) => (
-                            <div
-                              key={b.id}
-                              className="flex items-center justify-between px-3 py-2 hover:bg-muted/30 transition-colors"
-                            >
-                              <div className="flex items-center gap-2 min-w-0">
-                                <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                                  {b.transactionType === "bank" ? (
-                                    <Landmark size={13} />
-                                  ) : (
-                                    <Smartphone size={13} />
-                                  )}
-                                </div>
-                                <div className="flex flex-col min-w-0">
-                                  <span className="text-[13px] text-foreground font-normal truncate">
-                                    {b.name}
-                                  </span>
-                                  <span className="text-[11px] text-muted-foreground font-normal truncate tabular-nums numorainput">
-                                    {b.bankName || b.network} • {b.accountNumber || b.phoneNumber || b.proxyId}
-                                  </span>
-                                </div>
-                              </div>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleAddSavedBeneficiary(b)}
-                                className="h-6 px-2 text-[11px] shrink-0"
-                              >
-                                <Plus size={12} className="mr-1" /> Add
-                              </Button>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="py-5 text-center text-muted-foreground text-[12px]">
-                            {savedSearch
-                              ? "No saved beneficiaries match your search."
-                              : "All saved beneficiaries are already in this group."}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    /* Mode B: Add Custom Contact Inline */
-                    <div className="flex flex-col gap-2">
-                      <Input
-                        type="text"
-                        value={customName}
-                        onChange={(e) => setCustomName(e.target.value)}
-                        placeholder="Recipient full name"
-                        
-                      />
-
-                      <div className="flex items-center gap-2">
-                        <Input
-                          type="text"
-                          value={customDest}
-                          onChange={(e) => setCustomDest(e.target.value)}
-                          placeholder="Account or Phone number"
-                          className="flex-1"
-                        />
-
-                        <select
-                          value={customType}
-                          onChange={(e) => {
-                            const t = e.target.value as "wallet" | "bank";
-                            setCustomType(t);
-                            setCustomBankOrNet(t === "wallet" ? WALLET_NETWORKS[0] : GHANA_BANKS[0]);
-                          }}
-                          className="h-9 rounded-xl field-surface border border-transparent bg-field px-2 text-[12px] text-foreground outline-none cursor-pointer"
-                        >
-                          <option value="wallet">Mobile Wallet</option>
-                          <option value="bank">Bank Account</option>
-                        </select>
-                      </div>
-
-                      <div className="flex items-center justify-between gap-2 pt-1">
-                        <select
-                          value={customBankOrNet}
-                          onChange={(e) => setCustomBankOrNet(e.target.value)}
-                          className="h-8 flex-1 rounded-xl field-surface border border-transparent bg-field px-2 text-[12px] text-foreground outline-none cursor-pointer"
-                        >
-                          {(customType === "wallet" ? WALLET_NETWORKS : GHANA_BANKS).map((opt) => (
-                            <option key={opt} value={opt}>
-                              {opt}
-                            </option>
-                          ))}
-                        </select>
-
-                        <Button
-                          type="button"
-                          size="sm"
-                          onClick={handleAddCustomMember}
-                          className="h-8 px-3 text-[12.5px] shrink-0"
-                        >
-                          Add to Group
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
               {/* Member search bar */}
-              {members.length > 3 && (
-                <div className="relative w-full">
-                  <Search
-                    size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
-                  />
-                  <input
-                    type="text"
-                    value={searchMember}
-                    onChange={(e) => setSearchMember(e.target.value)}
-                    placeholder="Search members"
-                    className="h-10 w-full pl-8 pr-6 rounded-xl field-surface border border-transparent bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:bg-field-focus transition"
-                  />
-                  {searchMember && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchMember("")}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
-                      aria-label="Clear search"
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
+              {members.length > SEARCH_FROM_MEMBERS && (
+                <SearchField value={searchMember} onChange={setSearchMember} placeholder="Search members" />
               )}
 
-              {/* Members List Container */}
-              <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[360px] overflow-y-auto scroll-fade">
+              {/* Member rows: no box around the list. The amount sits on the right, as it does in the payment flow. */}
+              <div className="custom-scrollbar scroll-fade -mx-1 flex max-h-[288px] flex-col gap-0.5 overflow-y-auto overscroll-contain px-1">
                 {filteredMembers.map((m) => (
-                  <div
-                    key={m.id || m.destination}
-                    className="flex items-center justify-between px-3 py-2 hover:bg-muted/20 transition-colors"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                        {m.type === "wallet" ? (
-                          <Smartphone size={16} />
-                        ) : (
-                          <Landmark size={16} />
-                        )}
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-[14px] text-foreground font-normal truncate">
-                          {m.name}
-                        </span>
-                        <span className="text-[12px] text-muted-foreground font-normal truncate tabular-nums numorainput">
+                  <div key={m.id || m.destination} className="flex items-center justify-between gap-3 rounded-xl p-2">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <PayeeAvatar name={m.name} size="md" />
+                      <span className="flex min-w-0 flex-col">
+                        <span className="truncate text-[14px] text-foreground">{m.name}</span>
+                        <span className="truncate text-[12px] text-muted-foreground">
                           {m.networkOrBank || "GCB Bank"} • {m.destination}
                         </span>
-                      </div>
+                      </span>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex shrink-0 items-center">
                       {splitType === "custom" && (
-                        <div className="flex items-center gap-1 shrink-0 bg-field field-surface border border-transparent rounded-lg px-2 py-1">
-                          <span className="text-[11px] text-muted-foreground select-none">GHS</span>
-                          <input
-                            type="text"
-                            inputMode="decimal"
-                            value={
-                              m.defaultAmount !== undefined
-                                ? String(m.defaultAmount)
-                                : amountPerPerson
-                            }
-                            onChange={(e) =>
-                              handleUpdateMemberAmount(m.id || m.destination, e.target.value)
-                            }
-                            className="w-17 bg-transparent text-right text-[13px] font-normal tabular-nums outline-none border-none text-foreground"
-                          />
-                        </div>
+                        <MemberAmountInput
+                          name={m.name}
+                          value={m.defaultAmount !== undefined ? String(m.defaultAmount) : amountPerPerson}
+                          amount={Number(m.defaultAmount ?? amountPerPerson) || 0}
+                          onChange={(val) => handleUpdateMemberAmount(m.id || m.destination, val)}
+                        />
                       )}
 
                       <button
                         type="button"
                         onClick={() => setMemberToDelete(m)}
-                        className="size-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                        className="flex size-10 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                         title="Remove member"
                         aria-label={`Remove ${m.name}`}
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </div>
                 ))}
 
                 {filteredMembers.length === 0 && (
-                  <div className="py-6 text-center text-muted-foreground text-[13px]">
-                    No members found matching “{searchMember}”.
-                  </div>
+                  <p className="p-2 text-[13px] text-muted-foreground">{`No members found matching “${searchMember.trim()}”.`}</p>
                 )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button type="button" size="md" variant="outline" onClick={() => setPickerOpen(true)} className="flex-1">
+                  <Plus size={14} /> Add from beneficiaries
+                </Button>
+                <Button type="button" size="md" variant="outline" onClick={() => setShowNewContact(true)} className="flex-1">
+                  <Plus size={14} /> New contact
+                </Button>
               </div>
 
               {errors.members && (
@@ -687,6 +474,150 @@ export default function EditGroupModal({
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* ── Add from beneficiaries: tick people, then Done (same as Create group) ── */}
+      <Modal
+        open={pickerOpen}
+        onOpenChange={(o) => {
+          setPickerOpen(o);
+          if (!o) {
+            setPickedIds([]);
+            setSavedSearch("");
+          }
+        }}
+        title="Select a Beneficiary"
+        size="md"
+        footer={
+          <Button type="button" onClick={handleAddPicked} className="w-full">
+            Done{pickedIds.length > 0 ? ` (${pickedIds.length})` : ""}
+          </Button>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <Input
+            value={savedSearch}
+            onChange={(e) => setSavedSearch(e.target.value)}
+            placeholder="Search by name, bank or number"
+            aria-label="Search recipients"
+          />
+          {availableSavedBeneficiaries.length === 0 ? (
+            <p className="py-8 text-center text-[13px] text-muted-foreground">
+              {savedSearch
+                ? "Nobody saved matches that. Clear the search to see everyone."
+                : "Everyone you have saved is already in this group."}
+            </p>
+          ) : (
+            <div className="custom-scrollbar scroll-fade -mx-1 flex max-h-[50vh] flex-col gap-0.5 overflow-y-auto overscroll-contain px-1">
+              {availableSavedBeneficiaries.map((b) => {
+                const isPicked = pickedIds.includes(b.id);
+                return (
+                  <button
+                    key={b.id}
+                    type="button"
+                    onClick={() =>
+                      setPickedIds((prev) => (prev.includes(b.id) ? prev.filter((id) => id !== b.id) : [...prev, b.id]))
+                    }
+                    aria-pressed={isPicked}
+                    className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl p-2 text-left transition-colors duration-hover hover:bg-muted/50"
+                  >
+                    <span className="flex min-w-0 items-center gap-3">
+                      <PayeeAvatar name={b.name} size="md" />
+                      <span className="flex min-w-0 flex-col">
+                        <span className="truncate text-[14px] text-foreground">{b.name}</span>
+                        <span className="truncate text-[12px] text-muted-foreground">
+                          {b.bankName || b.network} <span className="tabular">· {b.accountNumber || b.phoneNumber || b.proxyId}</span>
+                        </span>
+                      </span>
+                    </span>
+                    <span
+                      className={cn(
+                        "flex size-4 shrink-0 items-center justify-center rounded-full border transition",
+                        isPicked ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground/30 bg-transparent"
+                      )}
+                    >
+                      {isPicked && <Check size={11} className="shrink-0" />}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </Modal>
+
+      {/* ── New contact: same fields as Create group ── */}
+      <Modal
+        open={showNewContact}
+        onOpenChange={(o) => {
+          setShowNewContact(o);
+          if (!o) {
+            setCustomName("");
+            setCustomDest("");
+          }
+        }}
+        title="Add new contact"
+        size="md"
+        footer={
+          <Button
+            type="button"
+            onClick={handleAddCustomMember}
+            disabled={!customName.trim() || !customDest.trim()}
+            className="w-full"
+          >
+            Add Member
+          </Button>
+        }
+      >
+        <div className="flex flex-col gap-5">
+          <Field label="Name">
+            <Input value={customName} onChange={(e) => setCustomName(e.target.value)} placeholder="Full name" />
+          </Field>
+
+          <Field label="Type">
+            <Select
+              value={customType}
+              onValueChange={(v) => {
+                if (!v) return;
+                const t = v as "wallet" | "bank";
+                setCustomType(t);
+                setCustomBankOrNet(t === "wallet" ? WALLET_NETWORKS[0] : GHANA_BANKS[0]);
+              }}
+            >
+              <SelectTrigger aria-label="Account type">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="wallet" label="Mobile Wallet">Mobile Wallet</SelectItem>
+                <SelectItem value="bank" label="Bank Account">Bank Account</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+
+          <Field label={customType === "wallet" ? "Mobile Wallet" : "Bank"}>
+            <Select value={customBankOrNet} onValueChange={(v) => v && setCustomBankOrNet(v)}>
+              <SelectTrigger aria-label={customType === "wallet" ? "Mobile wallet" : "Bank"}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(customType === "wallet" ? WALLET_NETWORKS : GHANA_BANKS).map((opt) => (
+                  <SelectItem key={opt} value={opt} label={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+
+          <Field label={customType === "wallet" ? "Mobile number" : "Account number"}>
+            <Input
+              value={customDest}
+              onChange={(e) => setCustomDest(e.target.value)}
+              placeholder={customType === "wallet" ? "024 000 0000" : "Account number"}
+              inputMode="numeric"
+            />
+          </Field>
+        </div>
+      </Modal>
 
       {/* ── MODAL 1: Confirm Remove Member Dialog ─────────────────────── */}
       <Dialog open={Boolean(memberToDelete)} onOpenChange={(isOpen) => !isOpen && setMemberToDelete(null)}>

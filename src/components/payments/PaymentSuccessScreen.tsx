@@ -27,8 +27,6 @@ import { GcbEagleEmblem } from "@/components/brand/GcbEagleEmblem";
 import { RoundAction } from "@/components/ui/round-action";
 import { Switch } from "@/components/ui/switch";
 import { DURATION, EASE } from "@/lib/motion";
-import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
-import { findTransaction } from "@/lib/mock-data";
 
 export interface SuccessActionCard {
   id: string;
@@ -334,9 +332,8 @@ export function PaymentSuccessScreen({
     return "txn-ret-020";
   }, [transactionId, receiptRows]);
 
-  // The receipt opens as a sheet over this page; there is no separate transaction page to leave for.
-  const [receiptOpen, setReceiptOpen] = useState(false);
-  const handleViewReceipt = () => setReceiptOpen(true);
+  // The receipt is its own page; it comes back here through `from=success`.
+  const handleViewReceipt = () => router.push(`/transactions/${effectiveTxnId}?from=success`);
 
   const handleSchedule = () => {
     if (onSchedulePayment) {
@@ -667,11 +664,6 @@ export function PaymentSuccessScreen({
         </DialogContent>
       </Dialog>
 
-      <TransactionDetailSheet
-        transaction={receiptOpen ? findTransaction(effectiveTxnId) ?? null : null}
-        open={receiptOpen}
-        onOpenChange={setReceiptOpen}
-      />
     </div>
   );
 }
