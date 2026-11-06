@@ -511,32 +511,35 @@ function TransactionsPageSkeletonBody() {
 
 /** A receipt: back and title with its actions, then the amount block and the details grid. */
 function ReceiptPageSkeletonBody() {
+  // Mirrors TransactionReceipt: a back arrow and title, a narrow centred card with the amount, label/value rows, and
+  // three round actions at the foot.
   return (
     <Frame className="gap-6">
-      <div data-page-header className="flex w-full items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <Bone className="size-8 rounded-lg" />
-          <Bone className="h-6 w-42 rounded-lg" />
-          <Bone className="h-5 w-17 rounded-full" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Bone className="h-7 w-17 rounded-lg" />
-          <Bone className="h-7 w-21 rounded-lg" />
-        </div>
+      <div data-page-header className="flex w-full items-center gap-2">
+        <Bone className="size-7 rounded-lg" />
+        <Bone className="h-6 w-44 rounded-lg" />
       </div>
-      <div className="mx-auto w-full max-w-3xl">
-        <Panel className="p-5 sm:p-6">
-          <div className="flex flex-col items-center gap-2 border-b border-border pb-5">
-            <Bone className="size-10 rounded-2xl" />
-            <Bone className="h-2.5 w-24" />
-            <Bone className="h-9 w-42 rounded-lg" />
-            <Bone className="h-3 w-35" />
+      <div className="mx-auto w-full max-w-xl">
+        <Panel className="flex flex-col gap-6 p-5 sm:p-6">
+          <div className="flex flex-col items-center gap-3 pt-2">
+            <Bone className="h-7 w-14 rounded-md" />
+            <Bone className="h-4 w-24" />
+            <Bone className="h-10 w-56 rounded-lg" />
+            <Bone className="h-3 w-40" />
           </div>
-          <div className="grid grid-cols-1 gap-x-6 gap-y-4 pt-5 sm:grid-cols-2">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="flex flex-col gap-2">
-                <Bone className="h-2.5 w-21" />
-                <Bone className="h-3.5 w-35" />
+          <div className="flex flex-col gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between gap-4">
+                <Bone className="h-3 w-24" />
+                <Bone className="h-3.5 w-36" />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center gap-6 pt-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex flex-col items-center gap-2">
+                <Bone className="size-12 rounded-full" />
+                <Bone className="h-2.5 w-12" />
               </div>
             ))}
           </div>

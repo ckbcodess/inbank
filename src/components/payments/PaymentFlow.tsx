@@ -3868,13 +3868,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           open={pinModalOpen || stage === 3}
           isUssd={rail === "wallet-to-bank"}
           amount={currentAmount}
-          summary={
-            <p className="tabular text-[13px] text-foreground">
-              {rail === "group"
-                ? `Pay ${formatMoney(totalDebit, "GHS", true)} to ${groupPeople} of ${recipientDisplayName} from ${account?.name}.`
-                : `Pay ${formatMoney(totalDebit, "GHS", true)} to ${recipientDisplayName} from ${account?.name}.`}
-            </p>
-          }
           onOpenChange={(isOpen) => {
             setPinModalOpen(isOpen);
             if (!isOpen && stage === 3) setStage(2);

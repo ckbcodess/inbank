@@ -179,12 +179,6 @@ export default function PaymentApprovalPage({ params }: { params: Promise<{ id: 
           setOtpOpen(false);
           approve();
         }}
-        summary={
-          <p className="text-[13px] text-foreground">
-            Release <span className="tabular">{formatMoney(item.amount, item.currency, true)}</span> to {item.counterparty}
-            {account ? ` from ${account.name}` : ""}. It leaves the account once you confirm.
-          </p>
-        }
       />
     </div>
   );

@@ -122,7 +122,6 @@ export default function UserChangeApprovalPage({ params }: { params: Promise<{ i
           approveUserChange(change.id, actor.name);
           finish(`Approved. It applies to ${name} now.`);
         }}
-        summary={<p className="text-[13px] text-foreground">{`${title}, as proposed by ${change.proposedBy}.`}</p>}
       />
     </div>
   );

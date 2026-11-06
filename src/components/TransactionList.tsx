@@ -642,9 +642,9 @@ export default function TransactionList({
         <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
           Transaction History
         </h1>
-        <Button variant="outline"
+        <Button variant="outline" size="md"
           onClick={() => exportTransactionsCSV(results)}
-          className="h-8 gap-2 sm:gap-2 px-2 sm:px-3 text-[13px] shrink-0"
+          className="gap-2 px-2 sm:px-3 shrink-0"
         >
           <ArrowDownToLine size={14} className="text-muted-foreground shrink-0" />
           <span className="hidden sm:inline">Export Transactions</span>
@@ -658,7 +658,7 @@ export default function TransactionList({
         <FilterPanel
           groups={filterGroups}
           onClear={clearFilterGroups}
-          className="h-10 sm:h-10 px-3"
+          className="px-3"
         />
       </div>
 

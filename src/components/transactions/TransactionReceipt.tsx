@@ -32,6 +32,7 @@ import {
   ShieldQuestion,
 } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
+import { useContextualBack } from "@/lib/contextual-back";
 import { Button } from "@/components/ui/button";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import { toast } from "sonner";
@@ -108,6 +109,8 @@ export function TransactionReceipt({ id, list, success, repeatHref, extraStates 
   const searchParams = useSearchParams();
   const fromSuccess = searchParams.get("from") === "success";
   const back = fromSuccess ? success : list;
+  // Back returns to the page the receipt was opened from. The list (or Overview) is only the fallback for a direct visit.
+  const { handleBack } = useContextualBack(back.href);
   const txn = findTransaction(id);
   const [state, setState] = useState<TransactionState>(txn?.state ?? "completed");
   const [copied, setCopied] = useState(false);
@@ -262,7 +265,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
       {/* Page Header with Back, Title, Status, and Action Controls */}
       <PageHeader
         title="Transaction Details"
-        backTo={back}
+        backTo={fromSuccess ? back : { ...back, onClick: handleBack }}
       />
 
       {/* Official GCB Digital Transaction Receipt */}

@@ -1632,3 +1632,84 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
     </Select>
   );
 }
+
+/**
+ * Any value that is looked up before it can be used (an account or phone number, a bill reference): the field, with
+ * the lookup as a quiet "Search" inside its right edge. It slides in once the value is complete, then turns into
+ * "Verifying..." and "Verified". A name, when there is one, sits under the field. Every lookup uses this, so they all
+ * look and behave the same. The caller owns the lookup itself.
+ */
+export function LookupInput({
+  value,
+  onChange,
+  placeholder,
+  inputMode = "numeric",
+  canVerify,
+  verified,
+  resolving,
+  verifiedName,
+  onVerify,
+}: {
+  value: string;
+  onChange: (raw: string) => void;
+  placeholder: string;
+  inputMode?: "numeric" | "tel";
+  /** The number is complete enough to look up. */
+  canVerify: boolean;
+  verified: boolean;
+  resolving: boolean;
+  verifiedName?: string | null;
+  onVerify: () => void;
+}) {
+  return (
+    <>
+      <div className="relative flex items-center">
+        <Input
+          type="text"
+          inputMode={inputMode}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && canVerify && !verified && !resolving) {
+              e.preventDefault();
+              onVerify();
+            }
+          }}
+          placeholder={placeholder}
+          className="numorainput tabular pr-24"
+        />
+        <button
+          type="button"
+          onClick={onVerify}
+          disabled={!canVerify || resolving}
+          className={cn(
+            "absolute inset-y-0 right-3 flex select-none items-center gap-1.5 text-[13px] transition-colors",
+            canVerify
+              ? "cursor-pointer text-muted-foreground hover:text-foreground"
+              : "pointer-events-none cursor-not-allowed text-muted-foreground/35"
+          )}
+        >
+          {resolving ? (
+            <>
+              <AppLoader size={12} className="text-muted-foreground" />
+              <span className="text-[12px] text-muted-foreground">Verifying...</span>
+            </>
+          ) : verified ? (
+            <span className="text-[12px] font-medium text-success-text">Verified</span>
+          ) : (
+            <span
+              className={cn(
+                "text-foreground transition-[opacity,translate] ease-out",
+                // In: 200ms. Out: 150ms, so leaving is quicker than arriving.
+                canVerify ? "translate-x-0 opacity-100 duration-200" : "translate-x-2 opacity-0 duration-150"
+              )}
+            >
+              Search
+            </span>
+          )}
+        </button>
+      </div>
+      <AccountVerificationStatus resolving={false} name={verified ? verifiedName : null} />
+    </>
+  );
+}

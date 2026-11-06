@@ -14,8 +14,8 @@
 import { SearchField } from "@/components/ui/search-field";
 import { ListCard } from "@/components/ui/list-card";
 import { SegmentedControl } from "@/components/ui/segmented-control";
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import {
@@ -328,7 +328,7 @@ const INITIAL_FORM: FormState = {
   nickname: "",
 };
 
-export default function BeneficiariesPage() {
+function BeneficiariesContent() {
   const {
     beneficiaries: stored,
     addBeneficiary,
@@ -344,7 +344,9 @@ export default function BeneficiariesPage() {
   const beneficiaries = useMemo(() => [...stored, ...policyPeople], [stored, policyPeople]);
 
   // Two tabs: Beneficiaries (people and billers together) and Groups
-  const [activeTab, setActiveTab] = useState<ActiveTab>("people");
+  // Read from the URL on the first render, so a deep link such as "Manage groups" never paints the People tab first.
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => (searchParams.get("tab") === "groups" ? "groups" : "people"));
 
   // Open a specific tab when deep-linked (e.g. "Manage groups" → ?tab=groups).
   useEffect(() => {
@@ -800,12 +802,14 @@ export default function BeneficiariesPage() {
             setActiveTab(tab);
             setTypeFilter("all");
             setQuery("");
+            // Keep the URL in step with the tab, replacing rather than pushing so Back is not a tab change.
+            router.replace(tab === "groups" ? "/beneficiaries?tab=groups" : "/beneficiaries");
           }}
         />
       </div>
 
       {/* Search, with one type dropdown beside it */}
-      <div className="flex w-full items-center gap-2">
+      <div className="flex h-(--control-md) w-full items-center gap-2">
         <SearchField
           value={query}
           onChange={setQuery}
@@ -815,7 +819,7 @@ export default function BeneficiariesPage() {
 
         {activeTab === "people" && kindsPresent.length > 1 && (
           <Select value={typeFilter} onValueChange={(v) => v && setTypeFilter(v as TypeFilter)}>
-            <SelectTrigger aria-label="Type" className="h-10 w-auto min-w-[10.5rem] shrink-0">
+            <SelectTrigger aria-label="Type" className="h-(--control-md) data-[size=default]:min-h-(--control-md) w-auto min-w-[10.5rem] shrink-0">
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">
@@ -1398,5 +1402,15 @@ export default function BeneficiariesPage() {
         }}
       />
     </div>
+  );
+}
+
+
+export default function BeneficiariesPage() {
+  // The search params need a Suspense boundary; the list itself is the same either way.
+  return (
+    <Suspense fallback={null}>
+      <BeneficiariesContent />
+    </Suspense>
   );
 }

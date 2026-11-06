@@ -259,7 +259,7 @@ export default function LocateUsPage() {
             )}
           </div>
 
-          <FilterPanel groups={filterGroups} onClear={clearFilters} className="h-9" />
+          <FilterPanel groups={filterGroups} onClear={clearFilters} />
         </div>
         <AppliedFilters groups={filterGroups} />
       </div>

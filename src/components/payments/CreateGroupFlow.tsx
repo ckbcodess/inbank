@@ -11,7 +11,7 @@ import {
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import { Button } from "@/components/ui/button";
-import { AccountVerificationStatus, AmountInput, OTHER_BANKS, resolveAccountName } from "@/components/payments/flows/shared";
+import { LookupInput, AmountInput, OTHER_BANKS, resolveAccountName } from "@/components/payments/flows/shared";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 import {
   Dialog,
@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/dialog";
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import { TotalRow } from "@/components/ui/total-row";
-import { AppLoader } from "@/components/ui/loader";
 import { cn } from "@/lib/utils";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { toast } from "sonner";
@@ -614,61 +613,19 @@ export default function CreateGroupFlow({
 
                 {customCategory && (
                   <Field label={customCategory === "wallet" ? "Phone Number" : "Account Number"} error={customErrors.dest}>
-                    <div className="relative flex items-center">
-                      <Input
-                        type="text"
-                        inputMode={customCategory === "wallet" ? "tel" : "numeric"}
-                        value={customDest}
-                        onChange={(e) => {
-                          setCustomDest(e.target.value.replace(/\D/g, ""));
-                          clearCustomErrors();
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && destFormatValid && !isDestVerified) {
-                            e.preventDefault();
-                            handleVerifyDest();
-                          }
-                        }}
-                        placeholder={customCategory === "wallet" ? "Phone number" : "Account number"}
-                        className="numorainput tabular pr-24"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleVerifyDest}
-                        disabled={!destFormatValid || verifyingDest}
-                        className={cn(
-                          "absolute inset-y-0 right-3 flex select-none items-center gap-1.5 text-[13px] transition-colors",
-                          destFormatValid
-                            ? "cursor-pointer text-muted-foreground hover:text-foreground"
-                            : "pointer-events-none cursor-not-allowed text-muted-foreground/35"
-                        )}
-                      >
-                        {verifyingDest ? (
-                          <>
-                            <AppLoader size={12} className="text-muted-foreground" />
-                            <span className="text-[12px] text-muted-foreground">Verifying...</span>
-                          </>
-                        ) : isDestVerified ? (
-                          <span className="text-[12px] font-medium text-success-text">Verified</span>
-                        ) : (
-                          <span
-                            className={cn(
-                              "text-foreground transition-[opacity,translate] ease-out",
-                              // In: 200ms. Out: 150ms, so leaving is quicker than arriving.
-                              destFormatValid
-                                ? "translate-x-0 opacity-100 duration-200"
-                                : "translate-x-2 opacity-0 duration-150"
-                            )}
-                          >
-                            Search
-                          </span>
-                        )}
-                      </button>
-                    </div>
-                    <AccountVerificationStatus
+                    <LookupInput
+                      value={customDest}
+                      onChange={(raw) => {
+                        setCustomDest(raw.replace(/\D/g, ""));
+                        clearCustomErrors();
+                      }}
+                      placeholder={customCategory === "wallet" ? "Phone number" : "Account number"}
+                      inputMode={customCategory === "wallet" ? "tel" : "numeric"}
+                      canVerify={destFormatValid}
+                      verified={isDestVerified}
                       resolving={verifyingDest}
-                      name={isDestVerified ? verifiedContactName : null}
-                      resolvingMessage="Verifying..."
+                      verifiedName={verifiedContactName}
+                      onVerify={handleVerifyDest}
                     />
                   </Field>
                 )}

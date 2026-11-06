@@ -3,8 +3,6 @@
 import { SavedRecipientLink } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
-import { AppLoader } from "@/components/ui/loader";
-import { cn } from "@/lib/utils";
 import {
   FromAccountSelector,
   AmountInput,
@@ -12,7 +10,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
-  AccountVerificationStatus,
+  LookupInput,
   CollapsedDetailsBadge,
   OTHER_BANKS,
   SchedulePaymentSection,
@@ -22,7 +20,6 @@ import {
   PaymentMethodSelect,
 } from "./shared";
 
-import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 export interface OtherBankFormState {
   fromId: string;
@@ -132,52 +129,18 @@ export function OtherBankFlow({
           <div className="flex flex-col gap-2">
             <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={OTHER_BANKS} />
 
-            <div className="relative flex items-center">
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  value={state.benAcct}
-                  onChange={(e) => {
-                    onChange("benAcct", e.target.value.replace(/[^0-9]/g, ""));
-                    if (state.benName) onChange("benName", "");
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && isDetailsValid && !isVerified) {
-                      e.preventDefault();
-                      handleVerify();
-                    }
-                  }}
-                  placeholder="Enter account number"
-                  className="numorainput tabular pr-24"
-                />
-                <button
-                  type="button"
-                  onClick={handleVerify}
-                  disabled={!isDetailsValid || resolving}
-                  className={cn(
-                    "absolute right-3 top-1/2 flex -translate-y-1/2 select-none items-center text-[13px] transition-colors",
-                    isDetailsValid
-                      ? "cursor-pointer text-muted-foreground hover:text-foreground"
-                      : "pointer-events-none cursor-not-allowed text-muted-foreground/35"
-                  )}
-                >
-                  {resolving ? (
-                    <>
-                      <AppLoader size={12} className="text-muted-foreground" />
-                      <span className="text-[12px] text-muted-foreground">Verifying...</span>
-                    </>
-                  ) : isVerified ? (
-                    <span className="text-[12px] font-medium text-success-text">Verified</span>
-                  ) : (
-                    <span>Search</span>
-                  )}
-                </button>
-            </div>
-
-            {/* Verification Status */}
-            <AccountVerificationStatus
-              resolving={false}
-              name={isVerified ? verifiedName : null}
+            <LookupInput
+              value={state.benAcct}
+              onChange={(raw) => {
+                onChange("benAcct", raw.replace(/[^0-9]/g, ""));
+                if (state.benName) onChange("benName", "");
+              }}
+              placeholder="Enter account number"
+              canVerify={isDetailsValid}
+              verified={isVerified}
+              resolving={resolving}
+              verifiedName={verifiedName}
+              onVerify={handleVerify}
             />
           </div>
         )}

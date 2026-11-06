@@ -757,10 +757,10 @@
   --warning-text: var(--amber-400);
   --destructive-text: #b72a38;
   --info-text: var(--blue-300);
-  --field: var(--gray-850);
+  --field: #181818;
   --field-hover: var(--gray-825);
   --field-focus: var(--gray-875);
-  --field-border: var(--gray-750);
+  --field-border: #212121;
   --field-drop: color-mix(in srgb, var(--black) 30%, transparent);
   --field-border-focus: var(--gray-500);
   --menu: var(--gray-850);

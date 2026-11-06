@@ -140,7 +140,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
           <Button
             variant="outline"
             className={cn(
-              "h-8 shrink-0 gap-2 rounded-xl px-3 text-[13px] transition-transform duration-hover",
+              "h-(--control-md) shrink-0 gap-2 rounded-xl border-transparent px-3 text-[13px] text-foreground shadow-none transition-transform duration-hover field-surface bg-field dark:bg-field hover:bg-field-hover dark:hover:bg-field-hover aria-expanded:bg-field-hover dark:aria-expanded:bg-field-hover",
               className
             )}
           />

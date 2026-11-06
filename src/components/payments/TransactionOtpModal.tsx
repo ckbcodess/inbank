@@ -28,8 +28,6 @@ export interface TransactionOtpModalProps {
   phone?: string;
   isUssd?: boolean;
   amount?: string | number;
-  /** What is being authorised, restated above the code boxes (payee, amount, account). */
-  summary?: React.ReactNode;
 }
 
 export default function TransactionOtpModal({
@@ -40,7 +38,6 @@ export default function TransactionOtpModal({
   phone = REGISTERED_PHONE,
   isUssd = false,
   amount,
-  summary,
 }: TransactionOtpModalProps) {
   const displayPhone = maskMobile(phone);
   const auth = useAuthorisation();
@@ -145,7 +142,6 @@ export default function TransactionOtpModal({
         </DialogHeader>
 
         <form id={formId} onSubmit={handleConfirm} className="flex flex-col items-center justify-center px-5 py-10 text-center sm:py-10">
-          {summary && <div className="mb-6 w-full text-left">{summary}</div>}
           <div className="flex size-10 items-center justify-center rounded-full bg-muted text-foreground">
             <Smartphone size={22} />
           </div>
