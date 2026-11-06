@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proxy ID card, round 2: 8 variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0&display=block">
+<style>
+  /* Values copied from src/app/globals.css */
+  :root {
+    --background: #ffffff; --foreground: #0a0a0a; --card: #fafafa; --modal: #ffffff;
+    --tile: #f5f5f5; --tile-hover: #ebebeb; --muted: #ebebeb; --muted-foreground: #737373;
+    --border: #ebebeb; --field-border: #d9d9d9;
+    --primary: #ffc423; --primary-hover: #fcd34d; --primary-foreground: #451a03;
+    --destructive: #ea3446;
+    --hero-surface: #38434c; --hero-border: #818d9a; --hero-foreground: #ffffff;
+    --r: 10px; --r-control: 8px;
+    --ls-heading: -0.04em; --ls-tight: -0.02em;
+    --ease-settle: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --reveal: 250ms; --move: 500ms; --hover: 150ms;
+    --page: #f5f5f5;
+  }
+  :root[data-theme="dark"] {
+    --background: #0a0a0a; --foreground: #fafafa; --card: #181818; --modal: #121212;
+    --tile: #141414; --tile-hover: #1c1c1c; --muted: #262626; --muted-foreground: #a1a1a1;
+    --border: #262626; --field-border: #404040;
+    --hero-surface: #121212; --hero-border: #212121;
+    --page: #050505;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--page); color: var(--foreground);
+    font-family: "Open Sans", system-ui, sans-serif; font-size: 14px; font-weight: 400;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  button, input, select { font: inherit; color: inherit; }
+  button { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+  h1, h2, h3, p { margin: 0; font-weight: inherit; font-size: inherit; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  .ms {
+    font-family: "Material Symbols Rounded"; font-weight: 400; font-style: normal; line-height: 1;
+    font-size: 20px; width: 1em; height: 1em; overflow: hidden; display: inline-block; flex: none;
+    font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; white-space: nowrap;
+  }
+  :focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
+
+  /* Top bar */
+  .bar {
+    position: sticky; top: 0; z-index: 30; background: var(--background);
+    border-bottom: 1px solid var(--border); padding: 12px 24px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
+  }
+  .bar h1 { font-size: 14px; font-weight: 500; }
+  .pills { display: flex; gap: 4px; }
+  .pill { width: 32px; height: 32px; border-radius: var(--r-control); text-align: center; font-size: 13px; color: var(--muted-foreground); }
+  .pill:hover { background: var(--tile); color: var(--foreground); }
+  .pill.on { background: var(--primary); color: var(--primary-foreground); font-weight: 500; }
+  .ctrls { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+  .seg { display: inline-flex; background: var(--tile); border-radius: var(--r); padding: 2px; }
+  .seg button { height: 32px; padding: 0 12px; border-radius: var(--r-control); font-size: 13px; color: var(--muted-foreground); white-space: nowrap; }
+  .seg button[aria-pressed="true"] { background: var(--background); color: var(--foreground); font-weight: 500; }
+
+  /* Stage */
+  .stage { display: grid; gap: 40px 24px; padding: 32px 24px 64px; justify-content: center; grid-template-columns: repeat(auto-fill, 375px); }
+  .stage.desktop { grid-template-columns: repeat(auto-fill, 672px); }
+  .slot { scroll-margin-top: 80px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+  .slot-head { display: flex; gap: 8px; align-items: baseline; }
+  .slot-head span { font-size: 12px; color: var(--muted-foreground); }
+  .slot-head h2 { font-size: 14px; font-weight: 500; }
+  .frame { background: var(--background); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; min-height: 580px; display: flex; flex-direction: column; }
+  .note { font-size: 13px; line-height: 1.55; color: var(--muted-foreground); }
+  .note b { font-weight: 500; color: var(--foreground); }
+
+  /* Screen, matching the Proxy Payments page */
+  .screen { flex: 1; display: flex; flex-direction: column; padding: 20px 12px 24px; }
+  .desktop .screen { padding: 24px 24px 32px; }
+  .head { display: flex; align-items: center; gap: 8px; margin-bottom: 40px; }
+  .desktop .head { margin-bottom: 48px; }
+  .head .bk { width: 32px; height: 32px; display: grid; place-items: center; color: var(--muted-foreground); border-radius: var(--r-control); }
+  .head h3 { font-size: 20px; font-weight: 500; letter-spacing: var(--ls-heading); }
+  .desktop .head h3 { font-size: 22px; }
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+  .gap24 { display: flex; flex-direction: column; gap: 24px; }
+
+  .tile {
+    display: flex; align-items: center; gap: 12px; width: 100%; padding: 16px;
+    background: var(--tile); border-radius: var(--r); transition: background var(--hover) var(--ease-settle);
+  }
+  .tile:hover { background: var(--tile-hover); }
+  .tile .t { flex: 1; min-width: 0; }
+  .tile .chev { color: var(--muted-foreground); font-size: 18px; }
+  .tile .bin { color: var(--destructive); }
+
+  .lbl { font-size: 12px; color: var(--muted-foreground); }
+  .val { font-size: 20px; letter-spacing: var(--ls-tight); }
+  .row-t { font-size: 14px; }
+  .links { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; }
+  .lk { min-height: 24px; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .lk:hover { opacity: .7; }
+  .lk.danger { color: var(--destructive); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px;
+    border-radius: var(--r-control); font-weight: 500; font-size: 13px; background: var(--primary); color: var(--primary-foreground);
+  }
+  .btn:hover { background: var(--primary-hover); }
+  .btn.ghost { background: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--field-border); }
+  .btn.ghost:hover { background: var(--tile); }
+  .btn.bad { background: var(--destructive); color: #fff; }
+
+  .on-hero { color: var(--hero-foreground); }
+  .on-hero .lbl { color: color-mix(in srgb, var(--hero-foreground) 72%, transparent); }
+  .logo { display: block; width: 37px; height: 32px; }
+  .logo svg { display: block; width: 100%; height: 100%; }
+  .wing { position: absolute; pointer-events: none; opacity: .09; }
+  .wing svg { display: block; width: 100%; height: 100%; }
+
+  /* 1 Bank card */
+  .bc {
+    position: relative; overflow: hidden; aspect-ratio: 1.586; width: 100%; max-width: 380px;
+    background: var(--hero-surface); box-shadow: inset 0 0 0 1px var(--hero-border); border-radius: var(--r);
+    padding: 20px; display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .bc .top, .bc .bot { display: flex; justify-content: space-between; gap: 12px; }
+  .bc .top { align-items: flex-start; } .bc .bot { align-items: flex-end; }
+  .bc .right { text-align: right; }
+  .bc .wing { right: -40px; bottom: -40px; width: 240px; height: 196px; }
+
+  /* 2 Amber pass */
+  .amber { position: relative; overflow: hidden; background: var(--primary); color: var(--primary-foreground); border-radius: var(--r); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .amber .lbl { color: color-mix(in srgb, var(--primary-foreground) 78%, transparent); }
+  .amber .wing { right: -32px; top: -24px; width: 200px; height: 164px; opacity: .06; }
+  .amber > * { position: relative; }
+  .amber > .wing { position: absolute; }
+
+  /* 3 Flip */
+  .flip { perspective: 1200px; }
+  .flip-in { display: grid; transform-style: preserve-3d; transition: transform var(--move) var(--ease-settle); }
+  .flip.on .flip-in { transform: rotateY(180deg); }
+  .face { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: var(--r); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; min-height: 196px; }
+  .face.front { background: var(--hero-surface); box-shadow: inset 0 0 0 1px var(--hero-border); }
+  .face.back { background: var(--tile); transform: rotateY(180deg); }
+  .kv { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+
+  /* 4 Payer preview */
+  .preview { background: var(--tile); border-radius: var(--r); padding: 16px; display: flex; align-items: center; gap: 12px; }
+  .ini { width: 40px; height: 40px; border-radius: 9999px; background: var(--muted); display: grid; place-items: center; font-size: 13px; font-weight: 500; flex: none; }
+  .sec-h { font-size: 16px; font-weight: 500; }
+
+  /* 5 Ticket */
+  .ticket { position: relative; background: var(--tile); border-radius: var(--r); }
+  .ticket .main { padding: 20px 16px; display: flex; flex-direction: column; gap: 12px; }
+  .ticket .stub { position: relative; padding: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .ticket .stub::before { content: ""; position: absolute; left: 16px; right: 16px; top: 0; border-top: 1px dashed var(--field-border); }
+  .ticket .stub::after, .ticket .punch { content: ""; position: absolute; top: -8px; width: 16px; height: 16px; border-radius: 9999px; background: var(--background); }
+  .ticket .stub::after { right: -8px; }
+  .ticket .punch { left: -8px; }
+
+  /* 6 Card owns its actions */
+  .own { background: var(--tile); border-radius: var(--r); padding: 20px 16px 16px; display: flex; flex-direction: column; gap: 20px; }
+  .acts { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; }
+  .act { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 0; border-radius: var(--r-control); font-size: 12px; text-align: center; }
+  .act:hover { background: var(--tile-hover); }
+  .act .ic { width: 40px; height: 40px; border-radius: 9999px; background: var(--background); display: grid; place-items: center; }
+  .act.danger .ms { color: var(--destructive); }
+
+  /* 7 Hero band */
+  .screen.bleed { padding: 0; }
+  .band { background: var(--hero-surface); padding: 20px 12px 48px; display: flex; flex-direction: column; }
+  .desktop .band { padding: 24px 24px 56px; }
+  .band .head { margin-bottom: 32px; }
+  .band .head .bk { color: inherit; }
+  .sheet { flex: 1; background: var(--background); border-radius: var(--r) var(--r) 0 0; margin-top: -16px; padding: 16px 12px 24px; }
+  .desktop .sheet { padding: 24px 24px 32px; }
+
+  /* 8 Peek */
+  .peek { background: var(--tile); border-radius: var(--r); }
+  .peek-h { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; border-radius: var(--r); }
+  .peek-h:hover { background: var(--tile-hover); }
+  .peek-h .ms { color: var(--muted-foreground); transition: transform var(--reveal) var(--ease-settle); }
+  .peek.on .peek-h .ms { transform: rotate(180deg); }
+  .peek-b { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--reveal) var(--ease-settle); }
+  .peek.on .peek-b { grid-template-rows: 1fr; }
+  .peek-b > div { overflow: hidden; min-height: 0; visibility: hidden; transition: visibility var(--reveal); }
+  .peek.on .peek-b > div { visibility: visible; }
+  .peek-in { padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+
+  .empty { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .empty p { line-height: 1.5; max-width: 300px; }
+
+  /* Dialog and toast */
+  dialog { border: 0; padding: 0; width: min(420px, calc(100vw - 24px)); background: var(--modal); color: var(--foreground); border-radius: var(--r); }
+  dialog::backdrop { background: rgba(0, 0, 0, .5); }
+  .dlg { display: flex; flex-direction: column; gap: 16px; padding: 20px; }
+  .dlg h3 { font-size: 16px; font-weight: 500; }
+  .dlg p { font-size: 13px; line-height: 1.6; color: var(--muted-foreground); }
+  .dlg p b { font-weight: 400; color: var(--foreground); }
+  .fld { display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 500; }
+  .fld input, .fld select { height: 44px; padding: 0 12px; font-size: 14px; font-weight: 400; background: var(--background); border: 0; border-radius: var(--r-control); box-shadow: 0 0 0 1px var(--field-border); width: 100%; }
+  .dlg-f { display: flex; justify-content: flex-end; gap: 8px; }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 16px); opacity: 0; pointer-events: none; z-index: 50;
+    background: var(--foreground); color: var(--background); padding: 12px 16px; border-radius: var(--r); font-size: 13px;
+    transition: opacity var(--reveal) var(--ease-settle), transform var(--reveal) var(--ease-settle);
+  }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition-duration: 0ms !important; } }
+  @media (max-width: 760px) {
+    .bar { padding: 12px; }
+    .ctrls { margin-left: 0; }
+    .stage, .stage.desktop { grid-template-columns: minmax(0, 1fr); padding: 24px 12px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <h1>Proxy ID card, round 2</h1>
+  <nav class="pills" id="pills" aria-label="Variations"></nav>
+  <div class="ctrls">
+    <div class="seg" id="seg-state" role="group" aria-label="Customer state">
+      <button type="button" data-v="phone">Phone number</button>
+      <button type="button" data-v="ghana">Ghana Card</button>
+      <button type="button" data-v="none">Not registered</button>
+    </div>
+    <div class="seg" id="seg-view" role="group" aria-label="Screen width">
+      <button type="button" data-v="phone">Phone</button>
+      <button type="button" data-v="desktop">Desktop</button>
+    </div>
+    <div class="seg" id="seg-theme" role="group" aria-label="Theme">
+      <button type="button" data-v="light">Light</button>
+      <button type="button" data-v="dark">Dark</button>
+    </div>
+  </div>
+</header>
+
+<main class="stage" id="stage"></main>
+
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const LOGO = "<svg viewBox=\"0 0 37.1621 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <g> <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M16.1974 23.3605L15.8641 24.9513C15.8641 24.9513 15.8442 25.1152 15.6163 25.0229C15.6163 25.0229 14.4783 24.6241 14.145 24.5733C14.145 24.5733 13.4868 24.4112 12.8334 24.4112C12.8334 24.4112 11.6382 24.3402 10.8076 24.7998C10.8076 24.7998 9.98844 25.1654 9.59304 26.1433C9.59304 26.1433 8.98064 27.7128 9.87392 29.129C9.87392 29.129 10.6123 30.4246 12.646 30.3643C12.646 30.3643 13.3729 30.3938 14.2234 30.1276C14.2234 30.1276 14.4398 30.0702 14.4114 29.7413V28.5085C14.4114 28.5085 14.4295 28.2742 14.1312 28.2742H12.4272C12.4272 28.2742 12.2403 28.2949 12.221 28.0808L11.9389 26.7751H16.861V31.0659C16.861 31.0659 15.2426 31.9952 12.4688 31.9952C12.4688 31.9952 8.65937 32.2183 7.12175 29.6094C7.12175 29.6094 5.84452 27.6217 7.06931 25.2471C7.06931 25.2471 7.82577 23.6498 10.1446 23.0251C10.1446 23.0251 11.2723 22.7116 12.5525 22.7104C12.5525 22.7104 14.4627 22.6577 16.1974 23.3605Z\" fill=\"currentColor\"/> <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.5493 27.4665C17.4754 24.8272 19.6466 23.6454 19.6466 23.6454C20.3372 23.2173 21.6512 22.7095 23.468 22.7095C25.2835 22.7095 26.6302 23.2599 26.6302 23.2599L26.3067 24.868C26.3067 24.868 26.2437 25.0726 26.0759 24.9703C26.0759 24.9703 24.9703 24.3998 23.7381 24.4205C23.7381 24.4205 22.1322 24.3182 21.1302 25.3582C21.1302 25.3582 20.3832 26.0919 20.399 27.4558C20.399 27.4558 20.4196 29.1154 21.7554 29.8189C21.7554 29.8189 22.5272 30.2872 23.7181 30.2872C23.7181 30.2872 25.0024 30.3079 26.2849 29.615C26.2849 29.615 26.4527 29.5139 26.4939 29.6759L26.838 31.3461C26.838 31.3461 25.4713 31.9994 23.4043 31.9994C23.4043 31.9994 21.2762 32.0602 19.5442 31.0002C19.5442 31.0002 18.5416 30.3682 18.0606 29.4009C18.0606 29.4009 17.5814 28.5768 17.5493 27.4665Z\" fill=\"currentColor\"/> <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M36.5754 27.7337C35.9088 27.1215 34.6996 26.9378 34.6996 26.9378C35.2525 26.7944 35.8254 26.4672 35.8254 26.4672C36.7421 25.9007 36.6998 25.0194 36.6998 25.0194C36.7198 24.0588 36.0955 23.5888 36.0955 23.5888C35.0567 22.6549 32.7646 22.7106 32.7646 22.7106H28.0504C27.8933 22.6952 27.8716 22.8487 27.8716 22.8487V31.5111C27.8716 31.6758 28.0172 31.6551 28.0172 31.6551H32.7858C34.5757 31.6551 35.545 31.2053 35.545 31.2053C37.3035 30.5 37.1591 29.1643 37.1591 29.1643C37.2105 28.2451 36.5754 27.7337 36.5754 27.7337ZM33.6705 26.1211C33.6705 26.1211 33.2656 26.4127 32.4316 26.3955H30.5577V24.1601V24.1512H32.5567C32.5567 24.1512 33.2849 24.1459 33.6608 24.3853C33.6608 24.3853 34.1908 24.6307 34.1908 25.2221C34.1908 25.2221 34.2427 25.743 33.6705 26.1211ZM33.9309 29.9193C33.9309 29.9193 33.4934 30.2102 32.5779 30.2114H30.5577V27.6987V27.6869H32.7126C32.7126 27.6869 33.4723 27.678 33.9049 27.9518C33.9049 27.9518 34.4772 28.2261 34.4772 28.8917C34.4772 28.8917 34.5757 29.5507 33.9309 29.9193Z\" fill=\"currentColor\"/> <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M33.377 4.70443C33.377 4.70443 30.0345 6.93938 24.271 8.92316C20.6754 10.1624 16.3995 10.7276 16.4024 10.7312C15.7227 11.7982 14.6956 12.2619 13.9086 12.4626C14.7122 12.4798 15.2657 12.538 15.2657 12.538C16.5387 12.7061 16.2638 13.2351 16.2638 13.2351C16.7983 13.3919 17.1752 13.5843 17.1752 13.5843C17.9949 13.947 17.0075 14.887 17.0075 14.887C17.017 14.4826 16.6745 14.3918 16.6745 14.3918C16.3918 14.298 16.0012 14.3579 16.0012 14.3579C15.2906 14.4399 14.4876 14.8793 14.4876 14.8793C13.5115 15.3774 12.8412 15.8495 12.8412 15.8495C12.1164 16.2912 11.4064 16.8031 11.4064 16.8031C10.358 14.7949 11.4337 12.7506 11.5718 12.5042C7.63777 11.7733 7.63125 7.65131 7.63125 7.65131C7.6271 3.78528 10.2217 0 10.2312 0C9.23673 0.0552205 7.8612 0.297478 7.28692 0.513017L5.96709 4.49127L6.01984 0.898373C5.35845 1.12044 4.87603 1.38408 4.58623 1.56221L3.59591 5.16282L3.51235 2.15716C2.93037 2.55914 2.77509 2.72599 2.52203 3.05138L1.84345 6.06179L1.24903 5.02032C-1.7154 10.23 1.52757 17.8439 1.52757 17.8439L4.7658 17.8392L1.18146 20.0266C0.907661 20.7267 0.707346 21.4143 0.655786 22.0532L2.28557 21.7385L0.700827 23.2389C0.768981 23.6955 0.889882 24.1248 1.04634 24.5203L2.63167 23.1386L1.38474 25.237C2.02539 26.4417 2.86873 27.1833 2.86873 27.1833C4.18797 20.9488 9.31852 18.4716 9.31852 18.4716L9.31911 20.9595C22.1114 19.6009 26.8763 16.2912 29.3168 13.9221L27.5495 13.3669L30.4683 12.6497C30.7984 12.3171 31.1309 11.8308 31.3508 11.4324L28.4812 11.2139L31.8462 10.4379C32.0768 10.1166 32.3844 9.36433 32.507 9.05557L28.8119 9.27942L32.8371 7.56224C33.2099 6.27495 33.377 4.70443 33.377 4.70443Z\" fill=\"currentColor\"/> </g> </svg> ";
+const WING = "<svg viewBox=\"0 0 410.101 334\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <g> <path d=\"M114.278 226.509L114.496 226.959C114.287 226.526 114.278 226.509 114.277 226.509C114.277 226.509 114.276 226.51 114.274 226.511C114.272 226.512 114.269 226.513 114.266 226.515C114.258 226.519 114.245 226.525 114.229 226.532C114.198 226.548 114.152 226.571 114.091 226.602C113.969 226.663 113.789 226.754 113.554 226.876C113.084 227.12 112.393 227.487 111.511 227.98C109.746 228.968 107.21 230.462 104.118 232.494C97.9338 236.559 89.5217 242.776 80.6025 251.394C62.8968 268.501 43.1869 295.075 34.9443 333.04C34.6642 332.776 34.2967 332.426 33.8574 331.99C32.7709 330.913 31.2388 329.32 29.4609 327.267C25.9438 323.204 21.4715 317.342 17.5879 310.096L32.7646 284.558L32.0059 283.926L13.0635 300.434C11.3078 295.866 9.94383 290.939 9.14453 285.717L28.4258 267.463L29.6709 266.283L27.9873 266.608L8.61328 270.35C9.31749 262.801 11.6902 254.69 14.9209 246.404L58.8174 219.616L60.3398 218.687L58.5557 218.689L19.1006 218.746C19.0275 218.57 18.9247 218.318 18.7939 217.994C18.5122 217.296 18.1026 216.263 17.5947 214.925C16.5789 212.249 15.1682 208.352 13.5879 203.476C10.4268 193.722 6.59088 180.051 3.8916 164.386C-1.46696 133.287 -2.3287 94.4166 15.3506 62.7012L22.2158 74.7285L22.8545 75.8477L23.1377 74.5908L31.4512 37.71C34.3727 33.9592 36.238 31.9455 42.6807 27.4443L43.6826 63.4492L44.6641 63.5684L56.7783 19.5195C60.2313 17.4094 65.8389 14.3652 73.4541 11.7432L72.8174 55.1768L73.791 55.3418L89.9307 6.69043C96.8487 4.16063 112.744 1.33253 124.71 0.560547C124.489 0.889417 124.211 1.31048 123.882 1.81934C122.995 3.18956 121.737 5.19841 120.231 7.75586C117.22 12.8705 113.216 20.1839 109.219 28.9854C101.227 46.5799 93.2391 70.1585 93.2646 94.0117L93.7646 94.0107C93.3114 94.0115 93.2686 94.0122 93.2646 94.0127V94.0527C93.2649 94.0784 93.2648 94.1159 93.2656 94.165C93.2673 94.2638 93.2711 94.4093 93.2773 94.5986C93.2899 94.9773 93.3145 95.5318 93.3633 96.2393C93.4607 97.654 93.6543 99.6817 94.0381 102.142C94.8056 107.06 96.3357 113.716 99.3887 120.658C105.444 134.426 117.496 149.321 141.417 153.999C140.17 156.34 136.941 162.977 135.208 171.835C133.288 181.65 133.197 194.222 139.706 206.689L139.974 207.201L140.441 206.864H140.442V206.863H140.443C140.444 206.863 140.446 206.861 140.448 206.859C140.452 206.856 140.459 206.852 140.467 206.846C140.483 206.834 140.508 206.816 140.541 206.793C140.607 206.746 140.705 206.676 140.832 206.585C141.087 206.403 141.462 206.136 141.939 205.8C142.895 205.127 144.262 204.172 145.906 203.048C149.196 200.8 153.596 197.877 158.039 195.169L158.053 195.16L158.067 195.15L158.068 195.149C158.069 195.149 158.071 195.148 158.072 195.146C158.076 195.144 158.082 195.14 158.09 195.135C158.105 195.124 158.128 195.107 158.159 195.086C158.222 195.043 158.315 194.977 158.438 194.893C158.685 194.723 159.052 194.474 159.53 194.155C160.486 193.518 161.886 192.605 163.66 191.501C167.209 189.292 172.254 186.318 178.235 183.266L178.241 183.263L178.248 183.259H178.249C178.25 183.258 178.252 183.257 178.254 183.256C178.258 183.253 178.265 183.25 178.274 183.245C178.293 183.235 178.32 183.22 178.356 183.2C178.429 183.161 178.538 183.104 178.68 183.03C178.963 182.882 179.379 182.669 179.906 182.41C180.96 181.892 182.456 181.19 184.224 180.457C187.766 178.988 192.366 177.408 196.663 176.912L196.672 176.91L196.682 176.909H196.684C196.685 176.909 196.688 176.908 196.692 176.907C196.701 176.906 196.714 176.905 196.73 176.902C196.765 176.898 196.816 176.891 196.883 176.882C197.017 176.864 197.213 176.84 197.46 176.815C197.954 176.765 198.65 176.71 199.451 176.69C201.065 176.651 203.065 176.757 204.72 177.306L204.734 177.311L204.749 177.314V177.313C204.75 177.314 204.751 177.315 204.753 177.315C204.758 177.317 204.767 177.32 204.779 177.323C204.804 177.331 204.842 177.343 204.893 177.36C204.994 177.396 205.143 177.453 205.323 177.536C205.684 177.704 206.164 177.975 206.64 178.388C207.578 179.202 208.524 180.585 208.47 182.903L208.441 184.108L209.314 183.277L208.97 182.915C209.314 183.277 209.315 183.278 209.315 183.277V183.276C209.316 183.276 209.317 183.275 209.317 183.274C209.319 183.273 209.322 183.271 209.325 183.268C209.332 183.261 209.341 183.253 209.353 183.241C209.376 183.218 209.412 183.184 209.456 183.14C209.545 183.051 209.673 182.922 209.832 182.757C210.15 182.426 210.591 181.95 211.089 181.365C212.081 180.198 213.31 178.582 214.222 176.812C215.128 175.054 215.755 173.076 215.451 171.21C215.159 169.419 214.026 167.83 211.712 166.677L211.233 166.451C211.225 166.447 211.214 166.441 211.201 166.435C211.164 166.416 211.11 166.389 211.039 166.354C210.897 166.285 210.688 166.184 210.417 166.057C209.875 165.802 209.084 165.444 208.088 165.025C206.199 164.232 203.567 163.222 200.481 162.293C200.533 162.109 200.582 161.885 200.611 161.627C200.694 160.898 200.616 159.908 199.996 158.856C198.763 156.765 195.49 154.596 187.634 153.559L187.621 153.557H187.615C187.612 153.556 187.607 153.555 187.601 153.555C187.587 153.553 187.566 153.552 187.54 153.549C187.487 153.543 187.409 153.535 187.306 153.525C187.099 153.505 186.793 153.477 186.396 153.441C185.601 153.371 184.439 153.274 182.969 153.171C180.698 153.012 177.691 152.839 174.161 152.719C183.327 149.857 194.275 144.054 201.833 132.312C201.926 132.298 202.049 132.281 202.201 132.259C202.595 132.202 203.179 132.118 203.939 132.006C205.46 131.782 207.685 131.447 210.492 130.999C216.107 130.103 224.058 128.754 233.391 126.93C251.47 123.397 274.751 118.079 296.299 110.819L298.379 110.111C333.813 97.9151 361.806 84.946 380.944 75.0244C390.513 70.0636 397.869 65.8643 402.834 62.9043C405.316 61.4243 407.201 60.2539 408.466 59.4531C408.869 59.1981 409.207 58.978 409.483 58.7998C409.419 59.345 409.33 60.0897 409.213 61.002C408.949 63.0541 408.55 65.9551 408.008 69.3496C406.934 76.0772 405.299 84.7299 403.051 92.5508L353.813 113.556L354.04 114.515L398.653 111.812C397.877 113.748 396.7 116.614 395.394 119.493C393.944 122.688 392.352 125.861 390.991 127.806L349.834 137.298L349.908 138.283L384.384 140.907C381.725 145.601 377.897 151.123 374.101 154.975L338.38 163.753L336.644 164.18L338.35 164.716L359.259 171.284C329.225 200.221 270.634 240.362 115.002 256.97L114.996 226.959L114.995 226.162L114.278 226.509Z\" stroke=\"currentColor\"/> </g> </svg> ";
+
+const ACCOUNTS = ["Current Account ···4561", "Savings Account ···7730"];
+const NAME = "Ransford Gyasi";
+const state = {
+  type: "phone", view: "phone", acct: 0,
+  values: { phone: "0244 123 821", ghana: "GHA-012345678-9" },
+  flipped: {}, open: {}
+};
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const ms = n => `<span class="ms" aria-hidden="true">${n}</span>`;
+const none = () => state.type === "none";
+const isPhone = () => state.type === "phone";
+const kind = () => (isPhone() ? "Phone number" : "Ghana Card");
+const landing = () => ACCOUNTS[state.acct];
+// A Ghana Card is a government ID, so it stays masked on screen. Copy still gives the full number.
+const shown = () => {
+  if (isPhone()) return esc(state.values.phone);
+  const v = state.values.ghana;
+  return esc(v.slice(0, 8) + "•••••" + v.slice(-2));
+};
+
+const head = () => `<div class="head"><button class="bk" type="button" aria-label="Back">${ms("chevron_left")}</button><h3>Proxy Payments</h3></div>`;
+const tile = (icon, title, act, bin) => `<button class="tile" type="button" data-act="${act}"><span class="${bin ? "bin" : ""}" style="display:flex">${ms(icon)}</span><span class="t">${title}</span><span class="chev" style="display:flex">${ms("chevron_right")}</span></button>`;
+const tTransfer = () => tile("swap_horiz", "Transfer to a Proxy ID", "transfer");
+const tUpdate = () => tile("edit", "Update Proxy ID", "update");
+const tDereg = () => tile("delete", "Deregister Proxy ID", "dereg", true);
+const threeTiles = () => `<div class="stack">${tTransfer()}${none() ? "" : tUpdate() + tDereg()}</div>`;
+const shareLinks = () => `<div class="links"><button class="lk" type="button" data-act="copy">Copy</button>${isPhone() ? `<button class="lk" type="button" data-act="share">Share</button>` : ""}</div>`;
+const emptyCopy = "No proxy ID yet. Add one and people can pay you with just your phone number.";
+const empty = () => `<div class="empty"><p>${emptyCopy}</p><button class="btn" type="button" data-act="create">Create a Proxy ID</button></div>`;
+const wing = () => `<span class="wing" aria-hidden="true">${WING}</span>`;
+const logo = () => `<span class="logo" aria-hidden="true">${LOGO}</span>`;
+
+const VARIATIONS = [
+  {
+    title: "Bank card",
+    note: "The ID as an object, in the hero slate with the GCB mark, at real card size. <b>Cost:</b> it can read as a debit card with a number you pay with. It also brings a big visual to a utility page, so <b>Lighter?</b> is a no.",
+    body: () => `${head()}<div class="gap24">
+      <div class="stack">
+        <div class="bc on-hero">${wing()}
+          <div class="top">${logo()}${none() ? "" : `<span class="lbl">${kind()}</span>`}</div>
+          ${none() ? `<div class="empty"><p style="font-size:13px">${emptyCopy}</p><button class="btn" type="button" data-act="create">Create a Proxy ID</button></div>` : `
+          <div class="val tabular">${shown()}</div>
+          <div class="bot"><span class="row-t">${NAME}</span><span class="right"><span class="lbl" style="display:block">Money lands in</span><span class="tabular" style="font-size:13px">${landing()}</span></span></div>`}
+        </div>
+        ${none() ? "" : shareLinks()}
+      </div>
+      ${threeTiles()}</div>`
+  },
+  {
+    title: "Amber pass",
+    note: "The one branded moment on the page, for something people hand out. Dark text on amber passes contrast. <b>Cost:</b> the loudest thing on the page isn't a balance, which pulls against §3. Amber also usually means act or attention here, so a calm fact wears an alarm colour.",
+    body: () => `${head()}<div class="gap24">
+      <div class="amber">${wing()}
+        ${none() ? empty().replace('class="btn"', 'class="btn" style="background:var(--primary-foreground);color:var(--primary)"') : `
+        <div><div class="lbl">Your proxy ID</div><div class="val tabular" style="margin-top:4px">${shown()}</div></div>
+        <div><div class="lbl">Money lands in</div><div class="row-t tabular" style="margin-top:2px">${landing()}</div></div>
+        ${shareLinks()}`}
+      </div>
+      ${threeTiles()}</div>`
+  },
+  {
+    title: "Flip card",
+    note: "Front is what you hand out. Tap Details and the back holds the account and the management, so the page drops to one tile. <b>Cost:</b> Deregister sits one tap deeper than Create does, which pushes against “stopping is never harder than starting”. <b>In control?</b> is a partial no, the receiving account is hidden on arrival.",
+    body: i => `${head()}<div class="gap24">
+      ${none() ? `<div class="face front on-hero" style="min-height:0">${empty()}</div>` : `
+      <div class="flip ${state.flipped[i] ? "on" : ""}" data-flip="${i}"><div class="flip-in">
+        <div class="face front on-hero" ${state.flipped[i] ? "inert" : ""}>
+          <div class="kv" style="align-items:flex-start">${logo()}<button class="lk" type="button" data-act="flip" data-i="${i}" style="font-size:13px">Details</button></div>
+          <div><div class="lbl">Your proxy ID · ${kind()}</div><div class="val tabular" style="margin-top:4px">${shown()}</div></div>
+          ${shareLinks()}
+        </div>
+        <div class="face back" ${state.flipped[i] ? "" : "inert"}>
+          <div class="stack">
+            <div class="kv"><span class="lbl">Money lands in</span><span class="tabular" style="font-size:13px">${landing()}</span></div>
+            <div class="kv"><span class="lbl">Registered</span><span class="tabular" style="font-size:13px">1 Jan 2026</span></div>
+          </div>
+          <div class="kv" style="align-items:center"><div class="links"><button class="lk" type="button" data-act="update">Update</button><button class="lk danger" type="button" data-act="dereg">Deregister</button></div><button class="lk" type="button" data-act="flip" data-i="${i}" style="font-size:13px">Done</button></div>
+        </div>
+      </div></div>`}
+      <div class="stack">${tTransfer()}</div></div>`
+  },
+  {
+    title: "What payers see",
+    note: "The card is the payer's own confirmation row, the one they meet in Transfer to a Proxy ID. It answers “what happens when I give this out?” and uses a row people already know. The privacy line needs the bank to confirm it. <b>Cost:</b> one more line of text, and a preview can look tappable.",
+    body: () => `${head()}<div class="gap24">
+      ${none() ? `<div class="preview">${empty()}</div>` : `
+      <div class="stack">
+        <div class="sec-h">What people see when they pay you</div>
+        <div class="preview"><span class="ini">RG</span><span style="flex:1;min-width:0"><span class="row-t" style="display:block">${NAME}</span><span class="lbl tabular" style="display:block;margin-top:2px">GCB Bank · ${shown()}</span></span></div>
+        <p class="lbl" style="line-height:1.5">Your account number stays private. Money lands in <span class="tabular" style="color:var(--foreground)">${landing()}</span>.</p>
+        ${shareLinks()}
+      </div>`}
+      ${threeTiles()}</div>`
+  },
+  {
+    title: "Ticket with stub",
+    note: "Two facts, two parts: the top is public, the stub is yours. The perforation says that without a label, and Change sits on the one fact most people will change. <b>Cost:</b> a new shape on a page of plain tiles, and Change repeats part of Update.",
+    body: () => `${head()}<div class="gap24">
+      ${none() ? `<div class="ticket"><div class="main">${empty()}</div></div>` : `
+      <div class="ticket">
+        <div class="main"><div><div class="lbl">Your proxy ID · ${kind()}</div><div class="val tabular" style="margin-top:4px">${shown()}</div></div>${shareLinks()}</div>
+        <div class="stub"><i class="punch"></i><div><div class="lbl">Money lands in</div><div class="row-t tabular" style="margin-top:2px">${landing()}</div></div><button class="lk" type="button" data-act="update" style="font-size:13px">Change</button></div>
+      </div>`}
+      ${threeTiles()}</div>`
+  },
+  {
+    title: "Card owns its actions",
+    note: "Today one list mixes paying someone with managing your own ID. Here everything about your ID lives on the card, and Transfer stands alone. All three gates pass: the account shows, stopping stays one tap away, and two tiles go. It adds no new visual language. <b>Cost:</b> Deregister becomes a small button, so it needs the existing confirm.",
+    body: () => `${head()}<div class="gap24">
+      ${none() ? `<div class="own">${empty()}</div>` : `
+      <div class="own">
+        <div><div class="lbl">Your proxy ID</div><div class="val tabular" style="margin-top:4px">${shown()}</div><div class="lbl tabular" style="margin-top:4px">${kind()} · lands in ${landing()}</div></div>
+        <div class="acts">
+          <button class="act" type="button" data-act="copy"><span class="ic">${ms("content_copy")}</span>Copy</button>
+          ${isPhone() ? `<button class="act" type="button" data-act="share"><span class="ic">${ms("share")}</span>Share</button>` : ""}
+          <button class="act" type="button" data-act="update"><span class="ic">${ms("edit")}</span>Update</button>
+          <button class="act danger" type="button" data-act="dereg"><span class="ic">${ms("delete")}</span>Deregister</button>
+        </div>
+      </div>`}
+      <div class="stack">${tTransfer()}</div></div>`
+  },
+  {
+    title: "Hero band",
+    bleed: true,
+    note: "The same frame as home: slate panel, sheet rising over it, so Proxy Payments feels like a place. The real build would use <b>HeroSurface</b>. <b>Cost:</b> §3 keeps this weight for balances, and no other sub-page has a hero, so this one would need a reason the others don't have.",
+    body: () => `<div class="band on-hero">${head()}
+        ${none() ? empty() : `<div class="stack"><div><div class="lbl">Your proxy ID · ${kind()}</div><div class="val tabular" style="margin-top:4px">${shown()}</div><div class="lbl tabular" style="margin-top:4px">Lands in ${landing()}</div></div>${shareLinks()}</div>`}
+      </div>
+      <div class="sheet">${threeTiles()}</div>`
+  },
+  {
+    title: "Transfer first, ID folded",
+    note: "Most visits here are to pay someone, so that goes first and your ID folds to one line that opens in place. The lightest of the eight. <b>Cost:</b> the account and Deregister wait behind a tap, so <b>In control?</b> is a partial no. Worth checking how often people really come here to manage their ID.",
+    body: i => `${head()}<div class="gap24">
+      <div class="stack">${tTransfer()}</div>
+      ${none() ? `<div class="peek"><div class="peek-in" style="padding-top:16px">${empty()}</div></div>` : `
+      <div class="peek ${state.open[i] ? "on" : ""}" data-peek="${i}">
+        <button class="peek-h" type="button" data-act="peek" data-i="${i}" aria-expanded="${!!state.open[i]}"><span style="flex:1;min-width:0"><span class="lbl" style="display:block">Your proxy ID</span><span class="row-t tabular">${shown()}</span></span>${ms("expand_more")}</button>
+        <div class="peek-b"><div><div class="peek-in">
+          <div class="kv"><span class="lbl">Money lands in</span><span class="tabular" style="font-size:13px">${landing()}</span></div>
+          <div class="links"><button class="lk" type="button" data-act="copy">Copy</button>${isPhone() ? `<button class="lk" type="button" data-act="share">Share</button>` : ""}<button class="lk" type="button" data-act="update">Update</button><button class="lk danger" type="button" data-act="dereg">Deregister</button></div>
+        </div></div></div>
+      </div>`}</div>`
+  }
+];
+
+const stage = document.getElementById("stage");
+const pills = document.getElementById("pills");
+
+VARIATIONS.forEach((v, i) => {
+  const pill = document.createElement("button");
+  pill.className = "pill"; pill.type = "button"; pill.textContent = i + 1;
+  pill.setAttribute("aria-label", `Variation ${i + 1}: ${v.title}`);
+  pill.addEventListener("click", () => document.getElementById("v" + (i + 1)).scrollIntoView({ behavior: "smooth", block: "start" }));
+  pills.appendChild(pill);
+
+  const slot = document.createElement("section");
+  slot.className = "slot"; slot.id = "v" + (i + 1);
+  slot.innerHTML = `<div class="slot-head"><span>${i + 1}</span><h2>${v.title}</h2></div><div class="frame"><div class="screen ${v.bleed ? "bleed" : ""}"></div></div><p class="note">${v.note}</p>`;
+  stage.appendChild(slot);
+});
+
+function render() {
+  VARIATIONS.forEach((v, i) => { stage.children[i].querySelector(".screen").innerHTML = v.body(i); });
+  stage.classList.toggle("desktop", state.view === "desktop");
+  mark("seg-state", state.type);
+  mark("seg-view", state.view);
+}
+function mark(id, val) {
+  document.querySelectorAll(`#${id} button`).forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === val)));
+}
+
+const toastEl = document.getElementById("toast");
+let toastT;
+function toast(msg) {
+  toastEl.textContent = msg; toastEl.classList.add("on");
+  clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove("on"), 1800);
+}
+
+const dlg = document.getElementById("dlg");
+function openForm(mode) {
+  const startType = none() ? "phone" : state.type;
+  dlg.innerHTML = `<form class="dlg" method="dialog">
+    <h3>${mode === "edit" ? "Update Your Proxy ID" : "Create a Proxy ID"}</h3>
+    <label class="fld">Proxy Type<select id="f-type"><option value="phone">Phone Number</option><option value="ghana">Ghana Card</option></select></label>
+    <label class="fld"><span id="f-label">Phone Number</span><input id="f-value" class="tabular" autocomplete="off"></label>
+    <label class="fld">Receives Into<select id="f-acct">${ACCOUNTS.map((a, i) => `<option value="${i}">${a}</option>`).join("")}</select></label>
+    <div class="dlg-f"><button class="btn ghost" type="button" data-close>Cancel</button><button class="btn" type="submit">${mode === "edit" ? "Save changes" : "Create proxy ID"}</button></div>
+  </form>`;
+  const t = dlg.querySelector("#f-type"), val = dlg.querySelector("#f-value"), lab = dlg.querySelector("#f-label"), acct = dlg.querySelector("#f-acct");
+  const fill = () => { val.value = state.values[t.value]; lab.textContent = t.value === "phone" ? "Phone Number" : "Ghana Card Number"; };
+  t.value = startType; acct.value = String(state.acct); fill();
+  t.addEventListener("change", fill);
+  dlg.querySelector("form").addEventListener("submit", e => {
+    e.preventDefault();
+    if (val.value.trim().length < 3) { val.focus(); return; }
+    state.values[t.value] = val.value.trim(); state.type = t.value; state.acct = Number(acct.value);
+    dlg.close(); render(); toast(mode === "edit" ? "Proxy ID updated" : "Proxy ID created");
+  });
+  dlg.showModal();
+}
+function openDereg() {
+  const v = isPhone() ? esc(state.values.phone) : shown();
+  dlg.innerHTML = `<div class="dlg"><h3>Deregister your proxy ID?</h3>
+    <p>People will no longer be able to pay you using <b class="tabular">${v}</b>. You can register a new one at any time.</p>
+    <div class="dlg-f"><button class="btn ghost" type="button" data-close>Keep it</button><button class="btn bad" type="button" id="do-dereg">Deregister</button></div></div>`;
+  dlg.querySelector("#do-dereg").addEventListener("click", () => { state.type = "none"; dlg.close(); render(); toast("Proxy ID deregistered"); });
+  dlg.showModal();
+}
+dlg.addEventListener("click", e => { if (e.target.closest("[data-close]") || e.target === dlg) dlg.close(); });
+
+stage.addEventListener("click", async e => {
+  const el = e.target.closest("[data-act]");
+  if (!el) return;
+  const act = el.dataset.act, i = el.dataset.i;
+  if (act === "copy") {
+    try { await navigator.clipboard.writeText(state.values[state.type].replace(/\s/g, "")); } catch (err) { /* blocked on file:// in some browsers */ }
+    toast("Proxy ID copied");
+  } else if (act === "share") toast("Opens the phone's share sheet");
+  else if (act === "transfer") toast("Opens the transfer flow");
+  else if (act === "update") openForm("edit");
+  else if (act === "create") openForm("create");
+  else if (act === "dereg") openDereg();
+  else if (act === "flip") {
+    state.flipped[i] = !state.flipped[i];
+    const f = stage.querySelector(`[data-flip="${i}"]`);
+    f.classList.toggle("on", state.flipped[i]);
+    f.querySelector(".front").toggleAttribute("inert", state.flipped[i]);
+    f.querySelector(".back").toggleAttribute("inert", !state.flipped[i]);
+  } else if (act === "peek") {
+    state.open[i] = !state.open[i];
+    stage.querySelector(`[data-peek="${i}"]`).classList.toggle("on", state.open[i]);
+    el.setAttribute("aria-expanded", String(state.open[i]));
+  }
+});
+
+document.getElementById("seg-state").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { state.type = b.dataset.v; render(); } });
+document.getElementById("seg-view").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { state.view = b.dataset.v; render(); } });
+
+function setTheme(t) { document.documentElement.setAttribute("data-theme", t); mark("seg-theme", t); }
+document.getElementById("seg-theme").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setTheme(b.dataset.v); });
+setTheme(matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+
+const io = new IntersectionObserver(entries => entries.forEach(en => {
+  if (en.isIntersecting) [...pills.children].forEach((p, k) => p.classList.toggle("on", "v" + (k + 1) === en.target.id));
+}), { rootMargin: "-30% 0px -60% 0px" });
+document.querySelectorAll(".slot").forEach(s => io.observe(s));
+
+render();
+</script>
+</body>
+</html>

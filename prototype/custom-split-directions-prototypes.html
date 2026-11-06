@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Custom split: five directions</title>
+<style>
+:root{--bg:#f5f5f3;--card:#ffffff;--field:#f1f1ef;--border:#dcdcd7;--fg:#111111;--muted:#6b6b6b;--primary:#FFC423}
+body.dark{--bg:#0e0e0e;--card:#161616;--field:#242424;--border:#363636;--fg:#fafafa;--muted:#9a9a9a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:28px 24px 48px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.top h1{font-size:20px;font-weight:500;margin:0 0 4px}
+.top p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0}
+.tabs button{height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--fg);font:inherit;font-size:13px;cursor:pointer}
+.tabs button.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.how{font-size:13px;line-height:1.55;color:var(--muted);margin:0 0 16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.how h2{font-size:15px;font-weight:500;color:var(--fg);margin:0 0 6px}
+.how b{color:var(--fg);font-weight:500}
+.head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px;font-size:13px;color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:2px;max-height:380px;overflow-y:auto;margin:0 -8px;padding:0 8px}
+.line{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 8px;border-radius:10px}
+.line:hover{background:rgba(127,127,127,.08)}
+.who{display:flex;flex-direction:column;min-width:0}
+.who b{font-weight:500;font-size:14px}
+.muted{color:var(--muted);font-size:12px;line-height:1.4}
+.amt{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.amt input,.inp{width:120px;height:36px;background:var(--field);border:1px solid var(--border);border-radius:8px;color:var(--fg);font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:0 10px}
+.amtv{width:120px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.link{background:none;border:0;color:var(--fg);text-decoration:underline;text-underline-offset:4px;font:inherit;font-size:12px;cursor:pointer;padding:0}
+.total{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.total span{color:var(--muted);font-size:16px}
+.total strong{font-size:22px;font-weight:400;font-variant-numeric:tabular-nums}
+.after{font-size:12px;color:var(--muted);margin-top:4px;text-align:right}
+.after span{font-variant-numeric:tabular-nums}
+.btn{height:36px;padding:0 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--fg);font:inherit;font-size:13px;cursor:pointer}
+.btn.pri{background:var(--primary);color:#111111;border-color:var(--primary)}
+.row-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:2px;flex-shrink:0}
+.seg button{border:0;background:none;color:var(--muted);font:inherit;font-size:12px;padding:4px 10px;border-radius:999px;cursor:pointer}
+.seg button.on{background:var(--fg);color:var(--bg)}
+.toast{margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--field);font-size:13px}
+.stepper{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.stepper button{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--fg);font:inherit;font-size:16px;cursor:pointer}
+.stepper span{min-width:112px;text-align:right;font-variant-numeric:tabular-nums}
+.sub{font-size:12px;color:var(--muted);margin:0 0 10px}
+.addrow{display:flex;gap:8px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.addrow select{flex:1;height:36px;background:var(--field);border:1px solid var(--border);border-radius:8px;color:var(--fg);font:inherit;padding:0 8px}
+.base{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.base b{font-weight:500}
+</style>
+</head>
+<body class="dark">
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Custom split: five directions</h1>
+      <p>Mock: Trip to a welfare group, 8 members, each with their own amount. Total GHS 8,000.00 from Current Account (GHS 42,300.00). Every direction is live. Aim: easy to follow, easy to reverse.</p>
+    </div>
+    <button id="theme" class="btn" type="button">Light / dark</button>
+  </div>
+  <div id="tabs" class="tabs"></div>
+  <div class="panel">
+    <div id="how" class="how"></div>
+    <div id="body"></div>
+  </div>
+</div>
+
+<script>
+const MEMBERS = [
+  {name:'Ransford Gyasi', bank:'GCB Bank', def:1200},
+  {name:'Akua Mansah', bank:'Ecobank Ghana', def:800},
+  {name:'Kofi Boateng', bank:'Stanbic Bank', def:1000},
+  {name:'Ama Osei', bank:'MTN Mobile Money', def:500},
+  {name:'Kwesi Owusu', bank:'GCB Bank', def:1500},
+  {name:'Abena Asante', bank:'Absa Ghana', def:900},
+  {name:'Yaw Darko', bank:'Fidelity Bank', def:1100},
+  {name:'Efua Mensah', bank:'GCB Bank', def:1000}
+];
+const BALANCE = 42300;
+const fmt = n => 'GHS ' + Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+const sum = a => a.reduce((x, y) => x + y, 0);
+const num = v => parseFloat(String(v).replace(/[^0-9.]/g, '')) || 0;
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const totalRow = t => `<div class="total"><span>Total amount</span><strong data-total>${fmt(t)}</strong></div><div class="after">After this payment: <span data-after>${fmt(BALANCE - t)}</span> left in Current Account</div>`;
+function setTotal(root, t) {
+  root.querySelectorAll('[data-total]').forEach(e => e.textContent = fmt(t));
+  root.querySelectorAll('[data-after]').forEach(e => e.textContent = fmt(BALANCE - t));
+}
+// Actions fire on pointerdown, so a blur-triggered re-render can't swallow the click.
+function act(root, sel, fn) {
+  root.querySelectorAll(sel).forEach(el => el.addEventListener('pointerdown', () => fn(el)));
+}
+
+/* 1. Always-visible ledger */
+let a1 = MEMBERS.map(m => m.def);
+function D1(root) {
+  const render = () => {
+    const changed = a1.filter((v, i) => v !== MEMBERS[i].def).length;
+    root.innerHTML = `
+      <div class="head"><span>${changed} of ${MEMBERS.length} changed from the group amount</span>${changed ? '<button class="link" data-all>Reset all</button>' : ''}</div>
+      <div class="list">${MEMBERS.map((m, i) => `
+        <div class="line">
+          <div class="who"><b>${esc(m.name)}</b><span class="muted">${m.bank}${a1[i] !== m.def ? ' · group amount ' + fmt(m.def) : ''}</span></div>
+          <div class="amt">
+            <input data-i="${i}" inputmode="decimal" value="${a1[i]}" aria-label="Amount for ${esc(m.name)}">
+            ${a1[i] !== m.def ? `<button class="link" data-reset="${i}">Reset</button>` : '<span style="width:44px"></span>'}
+          </div>
+        </div>`).join('')}
+      </div>
+      ${totalRow(sum(a1))}`;
+    root.querySelectorAll('input[data-i]').forEach(inp => {
+      inp.addEventListener('input', () => { a1[+inp.dataset.i] = num(inp.value); setTotal(root, sum(a1)); });
+      inp.addEventListener('change', render);
+    });
+    act(root, '[data-reset]', el => { a1[+el.dataset.reset] = MEMBERS[+el.dataset.reset].def; render(); });
+    act(root, '[data-all]', () => { a1 = MEMBERS.map(m => m.def); render(); });
+  };
+  render();
+}
+
+/* 2. Draft and review sheet */
+let c2 = MEMBERS.map(m => m.def);
+let d2 = c2.slice();
+let open2 = false;
+function D2(root) {
+  const render = () => {
+    if (!open2) {
+      const changed = c2.filter((v, i) => v !== MEMBERS[i].def).length;
+      root.innerHTML = `
+        <p class="sub">${changed ? changed + ' of ' + MEMBERS.length + ' members differ from their group amount.' : 'Everyone pays their group amount.'}</p>
+        ${totalRow(sum(c2))}
+        <div class="row-foot"><span class="muted">Nothing changes until you apply.</span><button class="btn" data-open>Review amounts</button></div>`;
+      act(root, '[data-open]', () => { d2 = c2.slice(); open2 = true; render(); });
+      return;
+    }
+    root.innerHTML = `
+      <div class="list">${MEMBERS.map((m, i) => `
+        <div class="line">
+          <div class="who"><b>${esc(m.name)}</b><span class="muted">Group amount ${fmt(m.def)}</span></div>
+          <div class="amt"><input data-i="${i}" inputmode="decimal" value="${d2[i]}" aria-label="Draft amount for ${esc(m.name)}"></div>
+        </div>`).join('')}
+      </div>
+      <div class="total"><span>Draft total</span><strong data-total>${fmt(sum(d2))}</strong></div>
+      <div class="after">Was ${fmt(sum(c2))}. Nothing is paid or saved yet.</div>
+      <div class="row-foot">
+        <button class="link" data-reset>Reset to group amounts</button>
+        <div style="display:flex;gap:8px"><button class="btn" data-cancel>Cancel</button><button class="btn pri" data-apply>Apply</button></div>
+      </div>`;
+    root.querySelectorAll('input[data-i]').forEach(inp => inp.addEventListener('input', () => {
+      d2[+inp.dataset.i] = num(inp.value); setTotal(root, sum(d2));
+    }));
+    act(root, '[data-cancel]', () => { open2 = false; render(); });
+    act(root, '[data-apply]', () => { c2 = d2.slice(); open2 = false; render(); });
+    act(root, '[data-reset]', () => { d2 = MEMBERS.map(m => m.def); render(); });
+  };
+  render();
+}
+
+/* 3. Steppers with a single undo */
+let c3 = MEMBERS.map(m => m.def);
+let last3 = null, t3 = null;
+function D3(root) {
+  const render = () => {
+    root.innerHTML = `
+      <div class="list">${MEMBERS.map((m, i) => `
+        <div class="line">
+          <div class="who"><b>${esc(m.name)}</b><span class="muted">${m.bank}${c3[i] !== m.def ? ' · changed from ' + fmt(m.def) : ''}</span></div>
+          <div class="stepper">
+            <button data-dec="${i}" aria-label="Lower ${esc(m.name)}">−</button>
+            <span>${fmt(c3[i])}</span>
+            <button data-inc="${i}" aria-label="Raise ${esc(m.name)}">+</button>
+          </div>
+        </div>`).join('')}
+      </div>
+      ${totalRow(sum(c3))}
+      ${last3 ? `<div class="toast"><span>${esc(MEMBERS[last3.i].name)} now ${fmt(c3[last3.i])}</span><button class="link" data-undo>Undo</button></div>` : ''}`;
+    act(root, '[data-dec]', el => step(+el.dataset.dec, -100));
+    act(root, '[data-inc]', el => step(+el.dataset.inc, 100));
+    act(root, '[data-undo]', () => {
+      if (!last3) return;
+      c3[last3.i] = last3.prev; last3 = null; clearTimeout(t3); render();
+    });
+  };
+  const step = (i, d) => {
+    const prev = c3[i];
+    c3[i] = Math.max(0, prev + d);
+    last3 = {i, prev};
+    clearTimeout(t3);
+    t3 = setTimeout(() => { last3 = null; render(); }, 6000);
+    render();
+  };
+  render();
+}
+
+/* 4. Default or custom, per member */
+let c4 = MEMBERS.map(m => m.def);
+let mode4 = MEMBERS.map(() => 'default');
+c4[0] = 1300; mode4[0] = 'custom';
+c4[3] = 600; mode4[3] = 'custom';
+function D4(root) {
+  const render = () => {
+    const customs = mode4.filter(x => x === 'custom').length;
+    root.innerHTML = `
+      <p class="sub">${customs} custom · ${MEMBERS.length - customs} default. A default is the group's amount for that person, locked until you choose Custom.</p>
+      <div class="list">${MEMBERS.map((m, i) => `
+        <div class="line">
+          <div class="who"><b>${esc(m.name)}</b><span class="muted">${m.bank}</span></div>
+          <div class="amt">
+            ${mode4[i] === 'custom'
+              ? `<input data-i="${i}" inputmode="decimal" value="${c4[i]}" aria-label="Custom amount for ${esc(m.name)}">`
+              : `<span class="amtv">${fmt(m.def)}</span>`}
+            <div class="seg">
+              <button class="${mode4[i] === 'default' ? 'on' : ''}" data-set="${i}:default">Default</button>
+              <button class="${mode4[i] === 'custom' ? 'on' : ''}" data-set="${i}:custom">Custom</button>
+            </div>
+          </div>
+        </div>`).join('')}
+      </div>
+      ${totalRow(sum(c4))}`;
+    root.querySelectorAll('input[data-i]').forEach(inp => inp.addEventListener('input', () => {
+      c4[+inp.dataset.i] = num(inp.value); setTotal(root, sum(c4));
+    }));
+    act(root, '[data-set]', el => {
+      const [i, mode] = el.dataset.set.split(':');
+      mode4[+i] = mode;
+      c4[+i] = mode === 'default' ? MEMBERS[+i].def : c4[+i];
+      render();
+    });
+  };
+  render();
+}
+
+/* 5. One base amount, plus named exceptions */
+let base5 = 1000;
+let ex5 = {};
+MEMBERS.forEach((m, i) => { if (m.def !== base5) ex5[i] = m.def; });
+const tot5 = () => base5 * (MEMBERS.length - Object.keys(ex5).length) + sum(Object.values(ex5));
+function D5(root) {
+  const render = () => {
+    const exIdx = Object.keys(ex5).map(Number);
+    const others = MEMBERS.map((m, i) => i).filter(i => !(i in ex5));
+    const free = MEMBERS.map((m, i) => i).filter(i => !(i in ex5));
+    root.innerHTML = `
+      <div class="base">
+        <div class="who"><b>Everyone else pays</b><span class="muted">${others.length} members, ${others.map(i => esc(MEMBERS[i].name.split(' ')[0])).join(', ') || 'nobody'}</span></div>
+        <input class="inp" id="base5" inputmode="decimal" value="${base5}" aria-label="Amount for everyone else">
+      </div>
+      <p class="sub">Exceptions (${exIdx.length}). Each one pays their own amount. Remove one and they go back to the base.</p>
+      <div class="list">${exIdx.map(i => `
+        <div class="line">
+          <div class="who"><b>${esc(MEMBERS[i].name)}</b><span class="muted">${MEMBERS[i].bank}</span></div>
+          <div class="amt">
+            <input data-ex="${i}" inputmode="decimal" value="${ex5[i]}" aria-label="Exception for ${esc(MEMBERS[i].name)}">
+            <button class="link" data-rm="${i}">Remove</button>
+          </div>
+        </div>`).join('') || '<p class="muted">No exceptions. Everyone pays the base.</p>'}
+      </div>
+      ${free.length ? `<div class="addrow">
+        <select id="who5" aria-label="Add an exception for">${free.map(i => `<option value="${i}">${esc(MEMBERS[i].name)}</option>`).join('')}</select>
+        <button class="btn" data-add>Add exception</button>
+      </div>` : ''}
+      ${totalRow(tot5())}`;
+    root.querySelector('#base5').addEventListener('input', e => { base5 = num(e.target.value); setTotal(root, tot5()); });
+    root.querySelectorAll('input[data-ex]').forEach(inp => inp.addEventListener('input', () => {
+      ex5[+inp.dataset.ex] = num(inp.value); setTotal(root, tot5());
+    }));
+    act(root, '[data-rm]', el => { delete ex5[+el.dataset.rm]; render(); });
+    act(root, '[data-add]', () => {
+      const i = Number(root.querySelector('#who5').value);
+      ex5[i] = base5; render();
+    });
+  };
+  render();
+}
+
+const DIRS = [
+  {name:'1 · Ledger', fn:D1,
+   how:`<h2>Every amount on one screen</h2>
+     <b>Easy to follow:</b> all eight people and their amounts are visible at once. A changed row says what the group amount was.<br>
+     <b>Easy to reverse:</b> Reset on each row, or Reset all at the top. Nothing is saved until the payment is confirmed.<br>
+     <b>Trade-off:</b> long for large groups, so the list scrolls.`},
+  {name:'2 · Review sheet', fn:D2,
+   how:`<h2>Edit a draft, then apply</h2>
+     <b>Easy to follow:</b> the summary shows one total. Review opens the amounts as a draft, with the old total beside the new one.<br>
+     <b>Easy to reverse:</b> Cancel throws the draft away. Nothing changes until Apply.<br>
+     <b>Trade-off:</b> one extra step to change a single amount.`},
+  {name:'3 · Steppers and undo', fn:D3,
+   how:`<h2>Nudge a person, undo the last nudge</h2>
+     <b>Easy to follow:</b> plus and minus in GHS 100 steps. Every change is named in a line at the bottom.<br>
+     <b>Easy to reverse:</b> Undo restores the last change. The offer lasts six seconds, then the change stands.<br>
+     <b>Trade-off:</b> undo covers one step, not the whole session. Big changes take many taps.`},
+  {name:'4 · Default or custom', fn:D4,
+   how:`<h2>Each person is on Default or Custom</h2>
+     <b>Easy to follow:</b> the label says what each amount is. Default is the group's amount, locked. Custom is yours to type.<br>
+     <b>Easy to reverse:</b> switch a person back to Default and their amount returns to the group's.<br>
+     <b>Trade-off:</b> one segmented control per row, so the list is busier.`},
+  {name:'5 · Base and exceptions', fn:D5,
+   how:`<h2>One amount for everyone, named exceptions</h2>
+     <b>Easy to follow:</b> set what everyone pays, then add only the people who differ. The list shows only the exceptions.<br>
+     <b>Easy to reverse:</b> Remove an exception and that person goes back to the base. Change the base and everyone on it moves.<br>
+     <b>Trade-off:</b> changes how the group's own amounts are stored. Would need a decision on the data model before it ships.`}
+];
+
+let current = 0;
+function show(n) {
+  current = n;
+  const d = DIRS[n];
+  document.getElementById('tabs').innerHTML = DIRS.map((x, i) => `<button class="${i === n ? 'on' : ''}" data-t="${i}">${x.name}</button>`).join('');
+  document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => show(+b.dataset.t));
+  document.getElementById('how').innerHTML = d.how;
+  const body = document.getElementById('body');
+  body.innerHTML = '';
+  d.fn(body);
+}
+show(0);
+document.getElementById('theme').addEventListener('click', () => document.body.classList.toggle('dark'));
+</script>
+</body>
+</html>

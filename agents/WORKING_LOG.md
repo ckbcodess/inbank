@@ -1270,6 +1270,12 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Gap: Add Member is disabled with no reason line under it (CONSTITUTION §9 asks for one). Left as-is because the Search step is the reason. Decide whether the footer needs a muted hint.
 - Gap: the inline Search markup is copied from `OtherBankFlow.tsx`, not shared. Extract it into `flows/shared.tsx` when a third flow needs it.
 
+### 2026-11-06
+- Question: proposed token restructure in `docs/design-system-token-plan.md` (442 Figma variables down to about 70 core, project tokens to a NIBS layer, tokens as a private npm package). Waiting on the designer; nothing changed yet. It replaces Phase 2 of `docs/figma-cleanup-plan.md`.
+- Discovery: Figma has drifted from code on 8 of 51 core tokens, including `--destructive` and `--ring`. Radius disagrees three ways (Figma, code, constitution), and motion press and hover differ between code and constitution.
+- Discovery: CORE COMPONENTS still binds foreign collections (`Semantic`, the old UI kit, `Padding`, `Margin`) and `data/yellow`, despite the cleanup plan's 0 count. Scan by collection name, not only by retired key.
+- Discovery: the team is on Figma Pro, so extended collections and the Variables REST API aren't available. Brand has to be modes, and sync has to go through a plugin or MCP.
+
 ## Consolidation history
 - **2026-10-03:** Bootstrap. Built the five files from these sources:
   - `.ai/INTERFACE.md`, `LEARNINGS.md`, `EXECUTION.md` and `STATES.md`

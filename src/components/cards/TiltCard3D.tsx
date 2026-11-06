@@ -127,7 +127,7 @@ export function TiltCard3D({
             rotateY,
             transformStyle: "preserve-3d",
           }}
-          className="relative size-full rounded-3xl will-change-transform overflow-hidden"
+          className="relative size-full rounded-3xl overflow-hidden"
         >
           {children}
 

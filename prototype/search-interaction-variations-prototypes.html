@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search interaction variations</title>
+<style>
+:root{--bg:#f5f5f3;--card:#ffffff;--field:#ffffff;--border:#dcdcd7;--fg:#111111;--muted:#6b6b6b;--primary:#FFC423;--ring:rgba(255,196,35,.55)}
+body.dark{--bg:#0e0e0e;--card:#161616;--field:#242424;--border:#363636;--fg:#fafafa;--muted:#9a9a9a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+.top{max-width:1120px;margin:0 auto;padding:28px 32px 8px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.top h1{font-size:20px;font-weight:500;margin:0 0 4px}
+.top p{margin:0;color:var(--muted);font-size:13px;line-height:1.5;max-width:600px}
+.grid{max-width:1120px;margin:0 auto;padding:16px 32px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.card.ref{border-style:dashed}
+.head{display:flex;align-items:baseline;gap:10px}
+.num{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.head h2{font-size:15px;font-weight:500;margin:0}
+.card > p{color:var(--muted);font-size:13px;line-height:1.5;margin:6px 0 16px}
+.trade{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
+.trade strong{color:var(--fg);font-weight:500}
+.controls{display:flex;gap:8px;margin-top:14px}
+.btn{height:28px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--fg);font:inherit;font-size:12px;cursor:pointer}
+.foot{max-width:1120px;margin:0 auto;padding:0 32px 48px;color:var(--muted);font-size:12px;line-height:1.5}
+
+/* Shared field */
+.label{font-size:13px;font-weight:500;margin-bottom:6px}
+.box{position:relative;display:flex;align-items:center;gap:8px;height:44px;padding:0 12px;background:var(--field);border:1px solid var(--border);border-radius:10px}
+.box input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--fg);font:inherit;font-size:14px;font-variant-numeric:tabular-nums;padding:0}
+.box input::placeholder{color:var(--muted)}
+.search{position:relative;display:inline-flex;align-items:center;gap:6px;padding:4px 2px;border:0;background:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.search:disabled{cursor:not-allowed}
+.field[data-valid="1"] .search{color:var(--fg)}
+.status{min-height:22px;margin-top:8px;font-size:13px;color:var(--fg)}
+.status.muted{color:var(--muted)}
+.arrow{display:none}
+
+/* Keyframes */
+@keyframes nudge{0%{transform:translateX(-6px);opacity:0}50%{transform:translateX(3px);opacity:1}100%{transform:translateX(0);opacity:1}}
+@keyframes nudge2{0%{opacity:0;transform:translateX(-6px)}25%{opacity:1;transform:translateX(3px)}45%{transform:translateX(0)}65%{transform:translateX(3px)}85%{transform:translateX(0)}100%{opacity:1;transform:translateX(0)}}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes fillin{from{background-color:transparent;color:var(--fg)}to{background-color:var(--primary);color:#111111}}
+@keyframes overshoot{0%{opacity:0;transform:translateX(12px)}60%{opacity:1;transform:translateX(-2px)}100%{opacity:1;transform:translateX(0)}}
+
+/* References: the three picked ideas, unchanged */
+.i2 .search{padding:6px 12px;border-radius:999px;transition:background-color 200ms ease-out,color 200ms ease-out}
+.i2[data-valid="1"] .search{background:var(--primary);color:#111111}
+.i4 .arrow{display:inline-block;opacity:0}
+.i4[data-valid="1"] .arrow{opacity:1;animation:nudge 800ms cubic-bezier(.23,1,.32,1) 1}
+.i9 .search{opacity:0;transform:translateX(8px);transition:opacity 180ms ease-out,transform 180ms ease-out}
+.i9[data-valid="1"] .search{opacity:1;transform:none}
+
+/* V01 Pill slides in (02 + 09) */
+.v1 .search{padding:6px 12px;border-radius:999px;opacity:0;transform:translateX(8px);transition:opacity 180ms ease-out,transform 180ms ease-out,background-color 200ms ease-out,color 200ms ease-out}
+.v1[data-valid="1"] .search{opacity:1;transform:none;background:var(--primary);color:#111111}
+
+/* V02 Pill pops in (02) */
+.v2 .search{padding:6px 12px;border-radius:999px;transition:background-color 200ms ease-out,color 200ms ease-out}
+.v2[data-valid="1"] .search{background:var(--primary);color:#111111;animation:pop 200ms cubic-bezier(.23,1,.32,1) 1}
+
+/* V03 Outline, then fill (02) */
+.v3 .search{padding:6px 12px;border-radius:999px;border:1px solid transparent;transition:border-color 150ms ease-out}
+.v3[data-valid="1"] .search{border-color:var(--primary);animation:fillin 250ms ease-out 150ms 1 both}
+
+/* V04 Pill with press (02) */
+.v4 .search{padding:6px 12px;border-radius:999px;transition:transform 160ms ease-out,background-color 200ms ease-out,color 200ms ease-out}
+.v4[data-valid="1"] .search{background:var(--primary);color:#111111}
+.v4[data-valid="1"] .search:active{transform:scale(.96)}
+
+/* V05 Rise in (09) */
+.v5 .search{opacity:0;transform:translateY(6px);transition:opacity 200ms ease-out,transform 200ms ease-out}
+.v5[data-valid="1"] .search{opacity:1;transform:none}
+
+/* V06 Overshoot slide (09) */
+.v6 .search{opacity:0}
+.v6[data-valid="1"] .search{animation:overshoot 320ms cubic-bezier(.23,1,.32,1) 1 both}
+
+/* V07 Arrow slides in beside a still label (04 + 09) */
+.v7 .arrow{display:inline-block;opacity:0;transform:translateX(-8px);transition:opacity 180ms ease-out,transform 180ms ease-out}
+.v7[data-valid="1"] .arrow{opacity:1;transform:none}
+
+/* V08 Arrow nudges twice, then rests (04) */
+.v8 .arrow{display:inline-block;opacity:0}
+.v8[data-valid="1"] .arrow{opacity:1;animation:nudge2 900ms cubic-bezier(.23,1,.32,1) 1}
+
+/* V09 Arrow in a gold chip (04 + 02) */
+.v9 .arrow{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;opacity:0;color:#111111}
+.v9[data-valid="1"] .arrow{opacity:1;background:var(--primary);animation:nudge 800ms cubic-bezier(.23,1,.32,1) 1}
+
+/* V10 Gold pill with the arrow inside (02 + 04) */
+.v10 .search{padding:6px 12px;border-radius:999px;transition:background-color 200ms ease-out,color 200ms ease-out}
+.v10 .arrow{display:inline-block;opacity:0}
+.v10[data-valid="1"] .search{background:var(--primary);color:#111111}
+.v10[data-valid="1"] .arrow{opacity:1;animation:nudge 800ms cubic-bezier(.23,1,.32,1) 1}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body class="dark">
+
+<div class="top">
+  <div>
+    <h1>Search interaction variations</h1>
+    <p>The three picked ideas (02 Gold pill, 04 Arrow nudge, 09 Slide in) are shown first with dashed borders as references. Below them are 10 variations built from those three. Each card is live: type 8 or more digits, then press Search or Enter. Replay re-runs it.</p>
+  </div>
+  <button id="theme" class="btn" type="button">Light / dark</button>
+</div>
+
+<div id="grid" class="grid"></div>
+
+<p class="foot">Every variation keeps the lookup honest: Search stays disabled until the number is complete, and the name shows only after a successful lookup. Under reduced motion, all motion here is switched off and the state still changes.</p>
+
+<script>
+const IDEAS = [
+  {ref:true, cls:'i2', num:'REF 02', title:'Gold pill (picked)', feel:'Search becomes a solid gold pill with dark text once the number is valid.', trade:'Reference only, unchanged from the first prototype.'},
+  {ref:true, cls:'i4', num:'REF 04', title:'Arrow nudge (picked)', feel:'An arrow slides in beside Search and nudges once toward it.', trade:'Reference only, unchanged from the first prototype.'},
+  {ref:true, cls:'i9', num:'REF 09', title:'Slide in (picked)', feel:'Search slides in from the right and fades up when the number becomes valid.', trade:'Reference only, unchanged from the first prototype.'},
+
+  {cls:'v1', num:'V01', title:'Pill slides in', feel:'The gold pill slides in from the right and settles into place.', trade:'Combines the pill and the slide. Two cues at once, but the pill already carries the attention.'},
+  {cls:'v2', num:'V02', title:'Pill pops in', feel:'The pill grows in from 90% and fades up over 200ms.', trade:'Reads as a button appearing. It does not travel, so it is a weaker arrival cue than the slide.'},
+  {cls:'v3', num:'V03', title:'Outline, then fill', feel:'A gold outline appears first, then the fill floods in 150ms later.', trade:'The two steps read as deliberate. Slower to resolve, and the fill is the payoff.'},
+  {cls:'v4', num:'V04', title:'Pill with press', feel:'A solid gold pill that presses down (scale 0.96) when tapped.', trade:'Confirms the tap for people who expect it. The pill itself is static until the number is valid.'},
+  {cls:'v5', num:'V05', title:'Rise in', feel:'Search rises 6px from below and fades in as the number becomes valid.', trade:'Quieter than the slide. Reads as the label waking up rather than arriving.'},
+  {cls:'v6', num:'V06', title:'Overshoot slide', feel:'Search slides past its place, then settles back over 320ms.', trade:'A little playful. Fine as a single moment, but not for every field on every screen.'},
+  {cls:'v7', num:'V07', title:'Arrow slides in', feel:'The arrow slides in from the left beside a label that stays still.', trade:'The label holds still, so the eye lands on the arrow. Small, so it can still be missed.'},
+  {cls:'v8', num:'V08', title:'Arrow nudges twice', feel:'The arrow nudges twice, then rests where it is.', trade:'Two cues are harder to miss than one. Still one-shot, so it never loops.'},
+  {cls:'v9', num:'V09', title:'Arrow in a gold chip', feel:'The arrow sits in a small gold circle and nudges once.', trade:'A button-like cue in a small field. Adds a shape where the label was plain text.'},
+  {cls:'v10', num:'V10', title:'Gold pill with the arrow', feel:'A gold pill with the arrow nudging inside it.', trade:'The most explicit: a shape plus direction. Check it does not compete with the page’s main call to action.'}
+];
+
+const tpl = c => `
+<section class="card${c.ref ? ' ref' : ''}">
+  <div class="head"><span class="num">${c.num}</span><h2>${c.title}</h2></div>
+  <p>${c.feel}</p>
+  <div class="field ${c.cls}" data-valid="0" data-verifying="0" data-verified="0">
+    <div class="label">Account Number</div>
+    <div class="box">
+      <input type="text" inputmode="numeric" autocomplete="off" placeholder="Account number" aria-label="Account number">
+      <button class="search" type="button" disabled><span class="lbl">Search</span><span class="arrow">&rarr;</span></button>
+    </div>
+    <div class="status"></div>
+  </div>
+  <div class="controls"><button class="btn replay" type="button">Replay</button><button class="btn clear" type="button">Clear</button></div>
+  <p class="trade"><strong>Notes.</strong> ${c.trade}</p>
+</section>`;
+
+document.getElementById('grid').innerHTML = IDEAS.map(tpl).join('');
+
+document.querySelectorAll('.card').forEach(card => {
+  const f = card.querySelector('.field');
+  const input = f.querySelector('input');
+  const btn = f.querySelector('.search');
+  const lbl = f.querySelector('.lbl');
+  const status = f.querySelector('.status');
+  let timer = null;
+  const valid = () => input.value.replace(/\D/g, '').length >= 8;
+
+  function setState(s) {
+    f.dataset.verifying = s === 'verifying' ? '1' : '0';
+    f.dataset.verified = s === 'verified' ? '1' : '0';
+    lbl.textContent = s === 'verifying' ? 'Looking up' : s === 'verified' ? 'Verified' : 'Search';
+    status.textContent = s === 'verifying' ? 'Looking up…' : s === 'verified' ? 'Ama Boateng' : '';
+    status.className = 'status' + (s === 'verifying' ? ' muted' : '');
+    btn.disabled = s !== 'idle' || !valid();
+  }
+
+  function lookup() {
+    if (!valid() || f.dataset.verified === '1' || f.dataset.verifying === '1') return;
+    clearTimeout(timer);
+    setState('verifying');
+    timer = setTimeout(() => setState('verified'), 900);
+  }
+
+  input.addEventListener('input', () => {
+    input.value = input.value.replace(/\D/g, '');
+    clearTimeout(timer);
+    setState('idle');
+    f.dataset.valid = valid() ? '1' : '0';
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); lookup(); }
+  });
+
+  btn.addEventListener('click', lookup);
+
+  card.querySelector('.replay').addEventListener('click', () => {
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+    setTimeout(() => {
+      input.value = '2221121212';
+      input.dispatchEvent(new Event('input'));
+    }, 350);
+  });
+
+  card.querySelector('.clear').addEventListener('click', () => {
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+  });
+
+  setState('idle');
+  f.dataset.valid = '0';
+});
+
+document.getElementById('theme').addEventListener('click', () => document.body.classList.toggle('dark'));
+</script>
+</body>
+</html>
