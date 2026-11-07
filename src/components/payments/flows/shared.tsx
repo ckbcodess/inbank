@@ -1235,7 +1235,7 @@ export function AccountVerificationStatus({
   if (name) {
     return (
       <div className={cn("flex items-center gap-2 pt-2 pb-3 text-[13px] text-foreground select-none animate-verify-in", className)}>
-        <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
+        <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success text-white shadow-xs animate-badge-pop">
           <Check size={10} className="shrink-0" />
         </span>
         <span className="truncate font-normal animate-in fade-in-0 duration-200">
@@ -1252,7 +1252,7 @@ export function VerifiedAccountBadge({ name, className }: { name: string; classN
   if (!name) return null;
   return (
     <div className={cn("flex items-center gap-2 pt-2 text-[13px] text-foreground select-none animate-verify-in", className)}>
-      <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
+      <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success text-white shadow-xs animate-badge-pop">
         <Check size={10} className="shrink-0" />
       </span>
       <span className="truncate font-normal animate-in fade-in-0 duration-200">
@@ -1347,10 +1347,10 @@ export function CollapsedDetailsBadge({
             <span className="truncate text-[14px] font-medium leading-tight tracking-[var(--ls-tight)] text-foreground">{title}</span>
             {nameCheck?.confirmed && (
               <span
-                className="flex size-3 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop"
+                className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success text-white shadow-xs animate-badge-grow"
                 title={`Name confirmed${nameCheck.by ? ` by ${nameCheck.by}` : ""}`}
               >
-                <Check size={9} className="shrink-0" />
+                <Check size={10} className="shrink-0" />
                 <span className="sr-only">Name confirmed{nameCheck.by ? ` by ${nameCheck.by}` : ""}</span>
               </span>
             )}
@@ -1636,7 +1636,7 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
 /**
  * Any value that is looked up before it can be used (an account or phone number, a bill reference): the field, with
  * the lookup as a quiet "Search" inside its right edge. It slides in once the value is complete, then turns into
- * "Verifying..." and "Verified". A name, when there is one, sits under the field. Every lookup uses this, so they all
+ * "Verifying..." and then the resolved name, in the same slot. Every lookup uses this, so they all
  * look and behave the same. The caller owns the lookup itself.
  */
 export function LookupInput({
@@ -1676,40 +1676,44 @@ export function LookupInput({
             }
           }}
           placeholder={placeholder}
-          className="numorainput tabular pr-24"
+          // Verified: leave room on the right for the name, which replaces the Search label.
+          className={cn("numorainput tabular", verified && verifiedName ? "pr-[55%]" : "pr-24")}
         />
         <button
           type="button"
           onClick={onVerify}
           disabled={!canVerify || resolving}
           className={cn(
-            "absolute inset-y-0 right-3 flex select-none items-center gap-1.5 text-[13px] transition-colors",
+            "absolute inset-y-0 right-3 flex min-w-0 max-w-[55%] select-none items-center gap-1.5 text-[13px] transition-colors",
             canVerify
               ? "cursor-pointer text-muted-foreground hover:text-foreground"
               : "pointer-events-none cursor-not-allowed text-muted-foreground/35"
           )}
         >
+          {/* Keyed by state so each label plays the same short enter when the lookup moves on. */}
           {resolving ? (
-            <>
+            <span key="verifying" className="animate-lookup-state flex items-center gap-1.5">
               <AppLoader size={12} className="text-muted-foreground" />
               <span className="text-[12px] text-muted-foreground">Verifying...</span>
-            </>
+            </span>
           ) : verified ? (
-            <span className="text-[12px] font-medium text-success-text">Verified</span>
-          ) : (
-            <span
-              className={cn(
-                "text-foreground transition-[opacity,translate] ease-out",
-                // In: 200ms. Out: 150ms, so leaving is quicker than arriving.
-                canVerify ? "translate-x-0 opacity-100 duration-200" : "translate-x-2 opacity-0 duration-150"
-              )}
-            >
+            // The resolved name, in the slot the Search label uses. It's announced politely so it isn't missed.
+            <span key="verified" role="status" className="animate-lookup-state flex min-w-0 items-center gap-1.5 text-[13px] text-foreground">
+              <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success text-white shadow-xs animate-badge-grow">
+                <Check size={10} className="shrink-0" />
+              </span>
+              <span className="truncate" title={verifiedName || undefined}>
+                {verifiedName || "Verified"}
+              </span>
+            </span>
+          ) : canVerify ? (
+            // Only once the value is complete: it slides in, and is gone while the number is still being typed.
+            <span key="search" className="animate-lookup-state text-foreground">
               Search
             </span>
-          )}
+          ) : null}
         </button>
       </div>
-      <AccountVerificationStatus resolving={false} name={verified ? verifiedName : null} />
     </>
   );
 }
