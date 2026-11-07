@@ -57,7 +57,7 @@ export function HeroLayout(props: DashViewProps) {
               <HeroQrAction />
               <HeroFxAction />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" data-product-tour="account">
               <AccountSwitcher data={data} onSelect={onSelectAccount} align="center" tone="hero" />
               <HeroAccountOptionsMenu data={data} />
             </div>
@@ -75,7 +75,7 @@ export function HeroLayout(props: DashViewProps) {
 
         <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
 
-        <AccountScoped accountId={data.selectedAccountId} className="dash-grid items-stretch gap-2 sm:gap-4">
+        <AccountScoped accountId={data.selectedAccountId} tour="glance" className="dash-grid items-stretch gap-2 sm:gap-4">
           <ActivityCard
             data={data}
             loading={loading}

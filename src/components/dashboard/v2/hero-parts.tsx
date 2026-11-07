@@ -320,6 +320,7 @@ export function HeroQrAction({ className }: { className?: string }) {
       )}
       aria-label="My QR Code"
       title="My QR Code"
+      data-product-tour="qr"
     >
       <QrCode size={32} className="size-7 max-sm:size-5" />
     </Link>
@@ -598,14 +599,18 @@ export function AccountScoped({
   accountId,
   className,
   children,
+  tour,
 }: {
   accountId: string | null;
   className?: string;
   children: React.ReactNode;
+  /** The product tour's name for this block (`data-product-tour`). */
+  tour?: string;
 }) {
   return (
     <motion.div
       key={accountId ?? "none"}
+      data-product-tour={tour}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={SPRING}

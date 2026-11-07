@@ -1767,6 +1767,18 @@ html[data-hide-focus-ring] .field-surface:not([aria-invalid="true"]):not([data-i
   animation: verify-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Dims the page around the control a tour step is about. The box is the control; its shadow is the dim. */
+@keyframes tour-dim-in {
+  from {
+    opacity: 0;
+  }
+}
+.tour-dim {
+  pointer-events: none;
+  box-shadow: 0 0 0 9999px color-mix(in srgb, var(--black) 45%, transparent);
+  animation: tour-dim-in var(--dur-reveal) var(--ease-settle) both;
+}
+
 /* A lookup field's right-hand label (Search, Verifying..., Verified) cross-fades when its state changes. Remount it
    with a new key per state to play it. */
 @keyframes lookup-state-enter {

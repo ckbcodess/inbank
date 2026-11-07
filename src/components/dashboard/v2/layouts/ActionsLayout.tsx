@@ -74,6 +74,7 @@ export function ActionsLayout(props: DashViewProps) {
 
         <motion.div
           key={data.selectedAccountId ?? "none"}
+          data-product-tour="glance"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={SPRING}

@@ -51,6 +51,7 @@ import {
   setHasSkippedFunding,
   type PendingFundingSource,
 } from "@/lib/device-trust";
+import { requestProductTour } from "@/lib/product-tour";
 import ReferralStep from "@/components/auth/ReferralStep";
 import { SourceSummary, sourceFromFunding, useSaveSource } from "./SaveSourcePrompt";
 import { SPRING } from "@/lib/motion";
@@ -240,6 +241,8 @@ export function FirstRunWelcome({
     if (k === "migrated") {
       clearFirstRun();
       setKind(null);
+      // No welcome for someone moving over, but the dashboard is new to them: show them around.
+      requestProductTour();
     } else if (k === "new") {
       const fund = peekPendingFundPrompt();
       const ref = peekPendingReferral();
@@ -251,6 +254,7 @@ export function FirstRunWelcome({
       } else {
         clearFirstRun();
         setKind(null);
+        requestProductTour();
       }
     }
   }, [searchParams]);
@@ -296,6 +300,8 @@ export function FirstRunWelcome({
     clearPendingReferral();
     clearPendingFundPrompt();
     setKind(null);
+    // Welcome done, funded or skipped: now the tour of the dashboard behind it (once per customer).
+    requestProductTour();
     if (searchParams.get("welcome")) {
       const params = new URLSearchParams(searchParams.toString());
       params.delete("welcome");

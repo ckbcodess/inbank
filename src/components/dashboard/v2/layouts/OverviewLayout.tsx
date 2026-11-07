@@ -55,6 +55,7 @@ export function OverviewLayout(props: DashViewProps) {
         {/* Re-keyed per account so a switch visibly reloads the account's panels. */}
         <motion.div
           key={data.selectedAccountId ?? "none"}
+          data-product-tour="glance"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={SPRING}

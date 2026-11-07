@@ -32,6 +32,8 @@ function Popover({ open, onOpenChange, ...props }: PopoverPrimitive.Root.Props) 
 
 const PopoverTrigger = PopoverPrimitive.Trigger
 const PopoverClose = PopoverPrimitive.Close
+const PopoverTitle = PopoverPrimitive.Title
+const PopoverDescription = PopoverPrimitive.Description
 
 function PopoverContent({
   className,
@@ -39,12 +41,18 @@ function PopoverContent({
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
+  anchor,
+  collisionPadding,
+  arrow = false,
   children,
   ...props
-}: PopoverPrimitive.Popup.Props &
+}: PopoverPrimitive.Popup.Props & {
+    /** A small pointed edge toward the anchor, for a popover that points at something (the product tour). */
+    arrow?: boolean
+  } &
   Pick<
     PopoverPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset"
+    "align" | "alignOffset" | "side" | "sideOffset" | "anchor" | "collisionPadding"
   >) {
   return (
     <PopoverPrimitive.Portal>
@@ -53,6 +61,9 @@ function PopoverContent({
         sideOffset={sideOffset}
         align={align}
         alignOffset={alignOffset}
+        // For a popover that points at an element it has no trigger for (the product tour).
+        anchor={anchor}
+        collisionPadding={collisionPadding}
         className="isolate z-50"
       >
                   <PopoverPrimitive.Popup
@@ -68,10 +79,17 @@ function PopoverContent({
             {...props}
           >
             {children}
+            {arrow && (
+              <PopoverPrimitive.Arrow
+                className="flex size-3 data-[side=bottom]:-top-1.5 data-[side=top]:-bottom-1.5 data-[side=left]:-right-1.5 data-[side=right]:-left-1.5"
+              >
+                <span aria-hidden className="block size-3 rotate-45 rounded-[2px] bg-menu" />
+              </PopoverPrimitive.Arrow>
+            )}
           </PopoverPrimitive.Popup>
               </PopoverPrimitive.Positioner>
     </PopoverPrimitive.Portal>
   )
 }
 
-export { Popover, PopoverTrigger, PopoverContent, PopoverClose }
+export { Popover, PopoverTrigger, PopoverContent, PopoverClose, PopoverTitle, PopoverDescription }

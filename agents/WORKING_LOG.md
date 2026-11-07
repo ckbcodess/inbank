@@ -1312,6 +1312,16 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Gap: the Spinner frame in CORE COMPONENTS has four stacked dividers; one came from removing the colour row, the others were already empty rows.
 - Discovery: the team is on Figma Pro, so extended collections and the Variables REST API aren't available. Brand has to be modes, and sync has to go through a plugin or MCP.
 
+### 2026-11-07 (product tour, branch `product-tour`)
+- Decision (designer): the dashboard gets a customer product tour of tooltips (not the QA tours in `tour-store.ts`). Built on the shared Popover anchored to `data-product-tour` targets; there is no shadcn tour component. Steps and copy are in `src/lib/product-tour.ts`, the runner is `components/dashboard/v2/ProductTour.tsx`.
+- Decision: step order follows the eye, not the request's list: account and kebab, QR, Send and pay, Recent activity, Pay again, More services, Profile, Settings. A step whose control isn't on screen is skipped, so the count is honest (no sidebar on a tablet, no Pay again in other layouts).
+- Decision: it starts by itself once per customer, after the first-run welcome closes (or straight away for a migrated customer who gets no welcome). It is not modal and dims nothing, Skip is on every step, and Esc ends it. Dev Mode, Dashboard menu, "Replay the tour" plays it any time.
+- Override (designer, 2026-11-07): CONSTITUTION §1 says nothing sits between the person and their balance. The tour is a skippable, non-modal overlay on the dashboard, so it is the closest thing to that rule. The designer chose to keep the automatic start. It runs only on a first visit, and the Account step sits beside the balance. If the bank reads this as an interstitial, switch the auto-start off and keep it as a "Take the tour" row in Help.
+- Gap: a customer who skips has no way back yet. The natural home is a "Take the tour again" row on Help & Support; only Dev Mode replays it today.
+- Gap: the tour points at controls in the hero-split layout and the shared parts. `HeroLayout` carries the same attributes; the other layouts skip steps they lack.
+- Gap: not viewed in a browser. Check the Settings step in particular (the header menu is held open by the tour and made non-modal), the phone More step (it sits in the tab bar, which hides on scroll, so the tour scrolls to the top first), and tooltip placement at 375px.
+- Candidate pattern: `ui/popover` `PopoverContent` now takes `anchor`, so a popover can point at an element it has no trigger for.
+
 ## Consolidation history
 - **2026-10-03:** Bootstrap. Built the five files from these sources:
   - `.ai/INTERFACE.md`, `LEARNINGS.md`, `EXECUTION.md` and `STATES.md`

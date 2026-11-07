@@ -289,7 +289,7 @@ export function MoneyActions({
 
   if (variant === "row") {
     return (
-      <div className={cn("grid grid-cols-3 gap-2", className)}>
+      <div data-product-tour="send-pay" className={cn("grid grid-cols-3 gap-2", className)}>
         {actions.map(({ kind: k, icon, label, primary }) => (
           <RoundAction
             key={k}
@@ -321,7 +321,7 @@ export function MoneyActions({
   );
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-2 max-sm:w-full max-sm:gap-2", className)}>
+    <div data-product-tour="send-pay" className={cn("flex flex-wrap items-center gap-2 max-sm:w-full max-sm:gap-2", className)}>
       {actions.map(({ kind: k, icon: Icon, label, primary }) => (
         <Button
           key={k}

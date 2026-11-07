@@ -3,7 +3,7 @@
 import { isBusinessProfile } from "@/lib/profile";
 import { useSession } from "@/lib/session-store";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
   ChevronDown,
@@ -16,7 +16,9 @@ import {
   Menu,
   Monitor,
   Moon,
+  Play,
   Settings,
+  Sparkles,
   Sun,
   SunMoon,
 } from "@/components/ui/icons";
@@ -51,12 +53,16 @@ import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { switchTheme } from "@/lib/theme-transition";
 import { openSettings } from "@/lib/settings-modal";
+import { useProductTour } from "@/lib/product-tour";
 
 interface TopHeaderProps {
   actor: Actor;
   onMenuToggle: () => void;
   onSignOut: () => void;
 }
+
+const HELP_ITEM =
+  "flex items-center gap-2 py-2 px-2 text-[13px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors";
 
 const THEME_CHOICES = [
   { value: "light", label: "Light", Icon: Sun },
@@ -135,6 +141,12 @@ export default function TopHeader({
   const simBadge = business ? businessDevBadge(actor.id) : DEMO_USER_CONFIGS[simUserType]?.badgeLabel || "Dev";
   const { t } = useTranslation();
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const pathname = usePathname();
+  // The tour points at the dashboard, so playing it from another page goes there first.
+  const playTour = () => {
+    useProductTour.getState().start();
+    if (pathname !== "/overview") router.push("/overview");
+  };
 
   const initials = actor.name
     .split(" ")
@@ -181,18 +193,47 @@ export default function TopHeader({
 
         {/* Help & Support: personal banking only, since the help centre is a personal screen. */}
         {actor.shell === "customer" && !business && (
-          <SimpleTooltip content={t("header.help", "Help & Support")} side="bottom">
-            <Button
-              nativeButton={false}
-              render={<Link href="/help" />}
-              variant="ghost"
-              size="icon-sm"
-              className="shrink-0"
-              aria-label={t("header.help", "Help & Support")}
-            >
-              <CircleHelp size={16} />
-            </Button>
-          </SimpleTooltip>
+          <DropdownMenu>
+            <SimpleTooltip content={t("header.help", "Help & Support")} side="bottom">
+              <DropdownMenuTrigger
+                render={<Button variant="ghost" size="icon-sm" className="shrink-0" />}
+                aria-label={t("header.help", "Help & Support")}
+              >
+                <CircleHelp size={16} />
+              </DropdownMenuTrigger>
+            </SimpleTooltip>
+            <DropdownMenuContent align="end" sideOffset={6} className="w-[220px] p-2 rounded-2xl">
+              <DropdownMenuItem
+                render={<Link href="/help" />}
+                className={HELP_ITEM}
+              >
+                <CircleHelp size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.helpItem", "Help")}</span>
+              </DropdownMenuItem>
+              {/* There is no release-notes screen yet, so this goes nowhere until one exists. */}
+              <DropdownMenuItem className={HELP_ITEM}>
+                <Sparkles size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.whatsNew", "What's new?")}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={playTour} className={HELP_ITEM}>
+                <Play size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.playTour", "Play tour guide")}</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="my-1" />
+              <DropdownMenuItem
+                render={<a href="https://www.gcbbank.com.gh/privacy-policy" target="_blank" rel="noopener noreferrer" />}
+                className={HELP_ITEM}
+              >
+                <span>{t("header.privacyPolicy", "Privacy policy")}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={<a href="https://www.gcbbank.com.gh" target="_blank" rel="noopener noreferrer" />}
+                className={HELP_ITEM}
+              >
+                <span>{t("header.terms", "Terms")}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
 
         {/* FR-22 — notifications */}
@@ -226,6 +267,7 @@ export default function TopHeader({
           <DropdownMenuTrigger
             className="hover-surface flex shrink-0 items-center gap-2 rounded-lg px-2 py-1 outline-none cursor-pointer"
             aria-label="Account menu"
+            data-product-tour="profile"
           >
             <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">
               {initials}
@@ -320,21 +362,6 @@ export default function TopHeader({
               </span>
             </DropdownMenuItem>
 
-            <DropdownMenuSeparator className="my-1" />
-
-            <div className="px-2 py-2 text-[12px] text-muted-foreground">
-              <span className="flex items-center gap-2">
-                {[
-                  { key: "privacy", label: t("header.privacy", "Privacy"), href: "https://www.gcbbank.com.gh/privacy-policy" },
-                  { key: "terms", label: t("header.terms", "Terms"), href: "https://www.gcbbank.com.gh" },
-                  { key: "copyright", label: t("header.copyright", "Copyright"), href: "https://www.gcbbank.com.gh" },
-                ].map((l) => (
-                  <a key={l.key} href={l.href} target="_blank" rel="noopener noreferrer" className="transition-colors duration-hover hover:text-foreground">
-                    {l.label}
-                  </a>
-                ))}
-              </span>
-            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

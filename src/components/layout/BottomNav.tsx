@@ -114,6 +114,7 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
               type="button"
               onClick={tab.onClick}
               aria-label="Open full services menu"
+              data-product-tour={tab.key === "more" ? "more" : undefined}
               className="flex-1 flex justify-center outline-none bg-transparent border-0 p-0"
             >
               {content}

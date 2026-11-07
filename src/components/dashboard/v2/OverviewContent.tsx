@@ -11,6 +11,9 @@ import { HeroWaveTuner } from "@/components/dashboard/v2/HeroWaveTuner";
 import { OPEN_FUND_EVENT } from "@/lib/payment-options";
 import { useRefreshHandler } from "@/lib/pull-refresh";
 import { FirstRunWelcome } from "@/components/dashboard/v2/FirstRunWelcome";
+import { ProductTour } from "@/components/dashboard/v2/ProductTour";
+import type { DevStateGroup } from "@/components/providers/DevStateProvider";
+import { useProductTour } from "@/lib/product-tour";
 import { QuickFundModal, type FundResume } from "@/components/dashboard/v2/QuickFundModal";
 import { useCardPaymentReturn } from "@/lib/card-payment";
 import { SaveSourcePrompt, sourceFromFunding, useIsLinked } from "@/components/dashboard/v2/SaveSourcePrompt";
@@ -92,6 +95,19 @@ export function OverviewContent({ accountId = null, loading: forced = false }: {
     return getSimulatedDashboardData({ actor, activeProfile, usageType, accountId, defaultAccountId });
   }, [actor, activeProfile, usageType, accountId, defaultAccountId]);
 
+  // Dev Mode: play the customer's product tour on demand (it starts by itself once, after the first-run welcome).
+  const tourDevGroups = useMemo<DevStateGroup[]>(
+    () => [
+      {
+        label: "Product tour",
+        states: [{ id: "replay", label: "Replay the tour" }],
+        value: "",
+        onChange: () => useProductTour.getState().start(),
+      },
+    ],
+    [],
+  );
+
   const refresh = () => {
     if (usageType === "error") setUsageType("active"); // a retry recovers the demo
     setFetching(true);
@@ -148,6 +164,7 @@ export function OverviewContent({ accountId = null, loading: forced = false }: {
           value={usageType}
           onChange={setUsageType}
           labels={DASHBOARD_STATE_LABELS}
+          groups={tourDevGroups}
         />
       )}
       <GcbDashboard
@@ -164,6 +181,10 @@ export function OverviewContent({ accountId = null, loading: forced = false }: {
       {isHero && !forced && <HeroWaveTuner />}
       {/* Once, right after onboarding or moving from the old internet banking. */}
       {!forced && <FirstRunWelcome firstName={data.firstName} onFunded={applyFunding} />}
+      {/* A few tooltips pointing at the controls above, started once after the welcome. */}
+      {!forced && (
+        <ProductTour multiAccount={data.accounts.length > 1} />
+      )}
       {/* Interactive Quick Fund Modal */}
       <QuickFundModal
         open={fundModalOpen}

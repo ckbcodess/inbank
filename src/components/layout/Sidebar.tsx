@@ -311,6 +311,7 @@ export default function Sidebar({
                     type="button"
                     onClick={() => setOpenGroups((p) => ({ ...p, [name]: !open }))}
                     aria-expanded={open}
+                    data-product-tour={name === "More Services" ? "more" : undefined}
                     className={`relative flex h-8 items-center gap-2 rounded-lg px-2 text-[13px] font-medium transition duration-hover cursor-pointer hover:bg-muted/50 hover:text-foreground ${
                       hasActiveChild && !open ? "text-foreground" : "text-muted-foreground"
                     }`}

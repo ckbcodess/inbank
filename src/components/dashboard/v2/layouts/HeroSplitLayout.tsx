@@ -54,7 +54,7 @@ export function HeroSplitLayout(props: DashViewProps) {
           // spacing scale (pt-7, gap-18, px-9, still 4px multiples): it keeps the designer's original proportions.
           <HeroSurface className="flex flex-col justify-between gap-10 rounded-t-3xl px-3 pb-[56px] pt-5 sm:gap-18 sm:px-9 sm:pb-[72px] sm:pt-7">
             <div className="relative z-10 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2" data-product-tour="account">
                 <AccountSwitcher data={data} onSelect={onSelectAccount} tone="hero" />
                 <HeroAccountOptionsMenu data={data} />
               </div>
@@ -76,7 +76,7 @@ export function HeroSplitLayout(props: DashViewProps) {
       >
         <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
 
-        <AccountScoped accountId={data.selectedAccountId} className="dash-grid items-stretch gap-2 sm:gap-4">
+        <AccountScoped accountId={data.selectedAccountId} tour="glance" className="dash-grid items-stretch gap-2 sm:gap-4">
           <ActivityCard
             data={data}
             loading={loading}
