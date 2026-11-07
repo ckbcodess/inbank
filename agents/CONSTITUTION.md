@@ -191,7 +191,9 @@ here. Never fall back to dense, boxed layouts.
   (globals.css), so a button beside a field lines up. Pick a Button `size` by role: `sm` in a row or chip strip,
   `default` in a toolbar, `md` in a panel, dialog or auth screen, `xl` for a flow or form step's action (a full-width
   flow button is `xl`, the same height as a field). Never override height or text size with `className` and never
-  write a raw `h-*` on a control. There is no `lg`. A new size needs a new token and a reason.
+  write a raw `h-*` on a control. There is no `lg`. A new size needs a new token and a reason. **Controls that share
+  a row share a height:** `SegmentedControl`, the filter trigger and a search field are `md` (40px), so a button or
+  dropdown beside them is `Button size="md"` or `SelectTrigger size="md"` (designer, 2026-11-07).
 - **Page rhythm:** the page root is `flex flex-col gap-4`. Between sections on a calm page use
   `gap-10`. Each section has a 16px medium heading row (`min-h-6`) and `gap-3` down to its content.
 - **Header to first content is 40px on a phone and 48px from `sm`, on every page,** whatever the root's gap. It comes

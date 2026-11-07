@@ -90,7 +90,8 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
 }
 
 export interface SelectTriggerProps extends SelectPrimitive.Trigger.Props {
-  size?: "sm" | "default";
+  /** `md` is the toolbar height (`--control-md`, 40px): use it beside a segmented control, a search field or a filter button. */
+  size?: "sm" | "md" | "default";
   isActive?: boolean;
   onClear?: () => void;
   clearLabel?: string;
@@ -114,7 +115,7 @@ function SelectTrigger({
       data-active={isActive ? "true" : undefined}
       className={cn(
         "field-surface flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-transparent bg-field px-3 py-2 text-[14px] text-foreground transition-all outline-none select-none hover:bg-field-hover focus:outline-none focus-visible:outline-none dark:bg-field dark:text-foreground",
-        "disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-muted-foreground data-[size=default]:min-h-(--control-xl) data-[size=sm]:min-h-(--control-sm) data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2",
+        "disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-muted-foreground data-[size=default]:min-h-(--control-xl) data-[size=md]:min-h-(--control-md) data-[size=sm]:min-h-(--control-sm) data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2",
         // A filter that is on: a stronger edge (the same ring, a darker colour) and a tinted fill.
         isActive &&
           "bg-muted/65 font-medium text-foreground [--field-border:color-mix(in_srgb,var(--foreground)_35%,transparent)] dark:bg-muted/40",

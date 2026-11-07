@@ -232,7 +232,6 @@ const accounts: Entry[] = [
   ["Cross-border", "Transfrontalier", "Transfronterizo", "跨境"],
   ["Bank fees", "Frais bancaires", "Comisiones bancarias", "银行费用"],
   ["Full statement", "Relevé complet", "Extracto completo", "完整对账单"],
-  ["Look at the last 12 months", "Voir les 12 derniers mois", "Ver los últimos 12 meses", "查看近 12 个月"],
   ["Payments and card spend from this account will show here. Transfers between your own accounts aren't counted.", "Les paiements et dépenses par carte de ce compte s’afficheront ici. Les virements entre vos propres comptes ne sont pas comptés.", "Aquí aparecerán los pagos y gastos con tarjeta de esta cuenta. Las transferencias entre tus propias cuentas no se cuentan.", "此账户的付款和刷卡支出将显示在这里。您本人账户之间的转账不计入。"],
   ["We couldn't load expenses for this account. Your money hasn't moved — try again.", "Impossible de charger les dépenses de ce compte. Votre argent n’a pas bougé — réessayez.", "No pudimos cargar los gastos de esta cuenta. Tu dinero no se ha movido; inténtalo de nuevo.", "无法加载此账户的支出。您的资金没有变动，请重试。"],
   ["No {0} payments to list for the last {1}. The full statement has every entry.", "Aucun paiement {0} à afficher sur les {1} derniers. Le relevé complet contient toutes les opérations.", "No hay pagos de {0} en los últimos {1}. El extracto completo tiene todos los movimientos.", "近 {1} 内没有 {0} 付款记录。完整对账单包含所有条目。"],

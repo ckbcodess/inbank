@@ -447,7 +447,7 @@
   /* The soft highlight that sweeps across a loading skeleton. */
   --skeleton-shine: color-mix(in srgb, var(--white) 60%, transparent);
   /* Skullet's skeletons (measured from real content) use the same bone and shine as the hand-built ones. */
-  --skullet-base: color-mix(in srgb, var(--muted) 60%, transparent);
+  --skullet-base: color-mix(in srgb, var(--muted) 20%, transparent);
   --skullet-highlight: var(--skeleton-shine);
   --skullet-radius: var(--radius-lg);
   /* The two circles of the Mastercard mark, wherever a card shows its network. */
@@ -712,8 +712,8 @@
   /* The edges of every glass icon, whatever its tone. */
   --glass-shine: #fff7d1;
   --glass-shade: var(--red-500);
-  --skeleton-shine: color-mix(in srgb, var(--white) 7%, transparent);
-  --skullet-base: color-mix(in srgb, var(--muted) 60%, transparent);
+  --skeleton-shine: color-mix(in srgb, var(--white) 4%, transparent);
+  --skullet-base: color-mix(in srgb, var(--muted) 20%, transparent);
   --skullet-highlight: var(--skeleton-shine);
   /* The two circles of the Mastercard mark, wherever a card shows its network. */
   --mc-red: #eb001b;

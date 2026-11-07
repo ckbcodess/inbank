@@ -110,16 +110,9 @@ export function AccountExpensesView({
 
       {(state === "populated" || state === "empty") && isEmpty && (
         <div className="rounded-2xl border border-border bg-card">
-          <TrueEmptyState illustration="empty-chart"
+          <TrueEmptyState illustration="empty-spends"
             title={`Nothing spent from this account in the last ${periodLabel}`}
             description="Payments and card spend will show here."
-            action={
-              period !== "12m" ? (
-                <Button variant="outline" onClick={() => changePeriod("12m")}>
-                  Look at the last 12 months
-                </Button>
-              ) : undefined
-            }
           />
         </div>
       )}
@@ -253,7 +246,7 @@ function PeriodMenu({ value, onChange }: { value: ExpensePeriod; onChange: (p: E
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="outline" className="h-8 gap-2 px-2 text-[13.5px]">
+          <Button variant="outline" size="md" className="rounded-xl">
             <Calendar size={15} className="text-muted-foreground" />
             <span className="tabular">{`Last ${EXPENSE_PERIOD_LABEL[value]}`}</span>
             <ChevronDown size={15} className="text-muted-foreground" />

@@ -63,6 +63,8 @@ import { MoneyActionPicker, type MoneyActionKind } from "./MoneyActionPicker";
 import { UnfundedNudge } from "./UnfundedNudge";
 import { SPRING as MOTION_SPRING } from "@/lib/motion";
 import { Bone } from "@/components/states/PageSkeletons";
+import { StateIllustration } from "@/components/states/StateIllustration";
+import type { StateIllustrationId } from "@/lib/state-illustrations";
 import Image from "next/image";
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
@@ -172,15 +174,19 @@ export function PanelEmpty({
   text,
   action,
   icon: Icon,
+  illustration,
 }: {
   text: string;
   action?: { label: string; href?: string; onClick?: () => void };
   icon?: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>;
+  /** A drawn state instead of the bare icon (the icon stays as its fallback). */
+  illustration?: StateIllustrationId;
 }) {
+  const bareIcon = Icon && <Icon size={30} className="mb-0.5 text-muted-foreground/70" />;
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 py-5 text-center sm:py-6">
       {/* Bare and thin: nothing around it, so an empty panel stays quiet. */}
-      {Icon && <Icon size={30} className="mb-0.5 text-muted-foreground/70" />}
+      {illustration ? <StateIllustration id={illustration} fallback={bareIcon} height={104} /> : bareIcon}
       <p className="text-[13px] text-muted-foreground">{text}</p>
       {action &&
         (action.href ? (
@@ -954,7 +960,7 @@ export function AnalyticsCard({
           href={data.selectedAccountId ? `/accounts/${data.selectedAccountId}/expenses` : "/accounts"}
           cta={t("dashboard.details", "Details")}
         />
-        <PanelEmpty icon={PieChart} text={t("dashboard.noSpendingYet", "No spending on this account yet.")} />
+        <PanelEmpty icon={PieChart} illustration="empty-spends" text={t("dashboard.noSpendingYet", "No spending on this account yet.")} />
       </Card>
     );
   }

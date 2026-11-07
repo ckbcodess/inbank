@@ -41,6 +41,7 @@ export const STATE_ILLUSTRATIONS = {
   "empty-statements": { placement: "empty", brief: "No statements available.", drawn: false },
   "empty-rates": { placement: "empty", brief: "No FX rates published today.", drawn: false },
   "empty-chart": { placement: "empty", brief: "No spend in this period.", drawn: false },
+  "empty-spends": { placement: "empty", brief: "Nothing spent on this account yet (My Spends).", drawn: false },
 
   // Success screens
   "success-sent": { placement: "success", brief: "Money sent or paid.", drawn: false },

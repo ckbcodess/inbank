@@ -33,6 +33,7 @@ const RENDERS: Partial<Record<StateIllustrationId, { w: number; h: number; show:
   "empty-people": { w: 800, h: 718, show: 170, file: "empty-groups" },
   "empty-sources": { w: 800, h: 734, show: 170 },
   "empty-activity": { w: 680, h: 800, show: 176 },
+  "empty-spends": { w: 518, h: 800, show: 176 },
 };
 
 /** Drawings that live in code (they follow the theme) rather than as files. */
@@ -48,10 +49,13 @@ export function StateIllustration({
   id,
   fallback = null,
   className,
+  height,
 }: {
   id: StateIllustrationId;
   fallback?: ReactNode;
   className?: string;
+  /** Show a 3D render smaller (or larger) than its default height, in CSS px. A compact panel wants less than a page. */
+  height?: number;
 }) {
   const render = RENDERS[id];
   const Inline = INLINE_ART[id];
@@ -69,7 +73,7 @@ export function StateIllustration({
         unoptimized
         draggable={false}
         className={cn("mx-auto w-auto max-w-full select-none object-contain", className)}
-        style={{ height: render.show }}
+        style={{ height: height ?? render.show }}
       />
     );
   }

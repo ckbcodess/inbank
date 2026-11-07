@@ -182,6 +182,14 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-07
+
+- Decision (designer): controls that share a row share a height. `SegmentedControl` is now fixed at `--control-md` (it was about 43px from its padding), and `SelectTrigger` has a `size="md"`. My Spends, Insights and Beneficiaries use them; the row rule is in CONSTITUTION §6.
+- Gap: about 25 buttons still write a raw `h-7`, `h-8`, `h-9` or `h-11` (Insure and Invest flows, Settings panes, `holder-actions`, `ListStates`). None sits beside a toggle today, but they break the control-height rule. Move them to `size` when each file is next touched.
+- Gap: `Tabs` (`ui/tabs.tsx`) has its own height and hasn't been checked against `md`. Check it before putting one in a row with a filter.
+
+- Reuse: `/sandbox/skeleton` (dev only) tunes every skullet skeleton: bone strength, highlight strength per theme, animation, pace, radius, text-bar top and bottom. "Copy CSS" gives the lines for globals.css (`--skullet-*`, `--skeleton-shine`) and the `SkulletProvider` theme in layout.tsx. Skullet 0.0.3 only offers slow or fast for pace (shimmer 4s or 2s, pulse 2.4s or 1.2s) and a fixed 20deg slant, so a finer pace needs a patch or a different library.
+
 ### 2026-11-05
 
 - Decision (designer): every total uses `TotalRow` (14px label, 20px figure), replacing the 18px/22px form rows and the 16px/24px review total. Covers Send & Pay, Create Group, invoices, every `ReviewSummary`, Invest key rows, the Insure statement, and the transaction sheet and receipt. CONSTITUTION §5 has no row for it yet: add one at the next consolidation.

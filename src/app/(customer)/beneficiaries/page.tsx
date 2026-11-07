@@ -819,7 +819,7 @@ function BeneficiariesContent() {
 
         {activeTab === "people" && kindsPresent.length > 1 && (
           <Select value={typeFilter} onValueChange={(v) => v && setTypeFilter(v as TypeFilter)}>
-            <SelectTrigger aria-label="Type" className="h-(--control-md) data-[size=default]:min-h-(--control-md) w-auto min-w-[10.5rem] shrink-0">
+            <SelectTrigger size="md" aria-label="Type" className="w-auto min-w-[10.5rem] shrink-0">
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">

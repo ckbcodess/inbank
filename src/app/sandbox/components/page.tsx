@@ -7,6 +7,7 @@
  */
 
 import { useEffect, useState, useSyncExternalStore } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Palette } from "@/components/ui/icons";
@@ -97,6 +98,9 @@ function Sandbox() {
                 { value: "dark", label: "Dark" },
               ]}
             />
+            <Button nativeButton={false} variant="outline" size="md" render={<Link href="/sandbox/skeleton" />}>
+              Skeletons
+            </Button>
             <Button type="button" variant="outline" size="md" onClick={() => setTunerOpen(true)}>
               <Palette aria-hidden="true" />
               Colours
