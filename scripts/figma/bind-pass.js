@@ -24,8 +24,8 @@ const entries = active.map(v => ({ v, c: resolve(v) })).filter(e => e.c && e.c.a
 const i255 = x => Math.round(x * 255);
 const rgbNear = (a, b) => Math.abs(i255(a.r) - i255(b.r)) <= 1 && Math.abs(i255(a.g) - i255(b.g)) <= 1 && Math.abs(i255(a.b) - i255(b.b)) <= 1;
 const PREF = {
-  text: ['text/primary', 'text/secondary', 'text/on-amber', 'text/on-accent', 'status/error-text', 'status/success-text', 'status/warning-text', 'status/info-text', 'component/hero/foreground', 'component/chip/foreground'],
-  icon: ['icon/icon', 'text/primary', 'text/secondary', 'text/on-amber', 'component/icon/tile-accent', 'action/primary', 'component/hero/foreground', 'status/on-error'],
+  text: ['text/primary', 'text/secondary', 'text/on-primary', 'text/on-accent', 'status/error-text', 'status/success-text', 'status/warning-text', 'status/info-text', 'component/hero/foreground', 'component/chip/foreground'],
+  icon: ['icon/primary', 'icon/secondary', 'icon/on-primary', 'component/icon/tile-accent', 'action/primary', 'component/hero/foreground', 'status/on-error'],
   stroke: ['border/default', 'input/border', 'border/active', 'border/focus', 'component/hero/border', 'status/warning', 'status/error'],
   fill: ['surface/background', 'surface/card', 'surface/muted', 'surface/tile', 'surface/modal', 'input/surface', 'action/primary', 'surface/surface', 'surface/hover', 'status/warning', 'status/error'],
 };

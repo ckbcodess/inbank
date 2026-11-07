@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search interaction ideas</title>
+<style>
+:root{--bg:#f5f5f3;--card:#ffffff;--field:#ffffff;--border:#dcdcd7;--fg:#111111;--muted:#6b6b6b;--primary:#FFC423;--ring:rgba(255,196,35,.55)}
+body.dark{--bg:#0e0e0e;--card:#161616;--field:#242424;--border:#363636;--fg:#fafafa;--muted:#9a9a9a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+.top{max-width:1120px;margin:0 auto;padding:28px 32px 8px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.top h1{font-size:20px;font-weight:500;margin:0 0 4px}
+.top p{margin:0;color:var(--muted);font-size:13px;line-height:1.5;max-width:580px}
+.grid{max-width:1120px;margin:0 auto;padding:16px 32px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.head{display:flex;align-items:baseline;gap:10px}
+.num{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.head h2{font-size:15px;font-weight:500;margin:0}
+.card > p{color:var(--muted);font-size:13px;line-height:1.5;margin:6px 0 16px}
+.trade{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
+.trade strong{color:var(--fg);font-weight:500}
+.controls{display:flex;gap:8px;margin-top:14px}
+.btn{height:28px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--fg);font:inherit;font-size:12px;cursor:pointer}
+.foot{max-width:1120px;margin:0 auto;padding:0 32px 48px;color:var(--muted);font-size:12px;line-height:1.5}
+
+/* Shared field */
+.label{font-size:13px;font-weight:500;margin-bottom:6px}
+.box{position:relative;display:flex;align-items:center;gap:8px;height:44px;padding:0 12px;background:var(--field);border:1px solid var(--border);border-radius:10px}
+.box input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--fg);font:inherit;font-size:14px;font-variant-numeric:tabular-nums;padding:0}
+.box input::placeholder{color:var(--muted)}
+.search{position:relative;display:inline-flex;align-items:center;gap:6px;padding:4px 2px;border:0;background:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.search:disabled{cursor:not-allowed}
+.field[data-valid="1"] .search{color:var(--fg)}
+.status{min-height:22px;margin-top:8px;font-size:13px;color:var(--fg)}
+.status.muted{color:var(--muted)}
+.dot,.kbd,.arrow{display:none}
+
+/* 00 Baseline: shimmer, as in the app today */
+@keyframes sweep{from{background-position:100% 0}to{background-position:0 0}}
+.field.s0[data-valid="1"] .search{background-image:linear-gradient(100deg,var(--fg) 40%,var(--primary) 50%,var(--fg) 60%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sweep 1.2s linear 1 both}
+
+/* 01 Underline draws in */
+.field.i1 .search::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;background:var(--primary);transform:scaleX(0);transform-origin:left;transition:transform 500ms cubic-bezier(.23,1,.32,1)}
+.field.i1[data-valid="1"] .search::after{transform:scaleX(1)}
+
+/* 02 Gold pill */
+.field.i2 .search{padding:6px 12px;border-radius:999px;transition:background-color 200ms ease-out,color 200ms ease-out}
+.field.i2[data-valid="1"] .search{background:var(--primary);color:#111111}
+
+/* 03 Field ring */
+@keyframes ring{0%{border-color:var(--border);box-shadow:0 0 0 0 transparent}25%{border-color:var(--primary);box-shadow:0 0 0 3px var(--ring)}100%{border-color:var(--border);box-shadow:0 0 0 0 transparent}}
+.field.i3[data-valid="1"] .box{animation:ring 900ms cubic-bezier(.23,1,.32,1) 1}
+
+/* 04 Arrow nudge */
+@keyframes nudge{0%{transform:translateX(-6px);opacity:0}50%{transform:translateX(3px);opacity:1}100%{transform:translateX(0);opacity:1}}
+.field.i4 .arrow{display:inline-block;opacity:0}
+.field.i4[data-valid="1"][data-verified="0"] .arrow{opacity:1;animation:nudge 800ms cubic-bezier(.23,1,.32,1) 1}
+
+/* 05 Enter keycap */
+.field.i5 .kbd{display:inline-block;opacity:0;transition:opacity 150ms ease-out,transform 150ms ease-out,background-color 150ms ease-out;font-size:11px;color:var(--muted);border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:1px 6px;white-space:nowrap}
+.field.i5[data-valid="1"][data-verified="0"][data-verifying="0"] .kbd{opacity:1}
+.field.i5 .kbd.press{transform:scale(.94);background:var(--primary);color:#111111;border-color:var(--primary)}
+
+/* 06 Look up on pause (behaviour only; styled like the baseline) */
+
+/* 07 Hairline progress */
+.field.i7 .box::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;width:0;border-radius:2px;background:var(--primary);transition:width 600ms linear,opacity 300ms ease 400ms}
+.field.i7[data-verifying="1"] .box::after{width:100%}
+.field.i7[data-verified="1"] .box::after{opacity:0}
+
+/* 08 Pulse dot */
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--ring)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.field.i8 .dot{display:none;width:6px;height:6px;border-radius:50%;background:var(--primary)}
+.field.i8[data-valid="1"] .dot{display:inline-block;animation:pulse 1.2s cubic-bezier(.23,1,.32,1) 1}
+
+/* 09 Slide in */
+.field.i9 .search{opacity:0;transform:translateX(8px);transition:opacity 180ms ease-out,transform 180ms ease-out}
+.field.i9[data-valid="1"] .search{opacity:1;transform:none}
+
+/* 10 Field wash */
+@keyframes wash{0%{background-color:color-mix(in srgb,var(--primary) 22%,var(--field))}100%{background-color:var(--field)}}
+.field.i10[data-valid="1"] .box{animation:wash 800ms ease-out 1}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body class="dark">
+
+<div class="top">
+  <div>
+    <h1>Search interaction ideas</h1>
+    <p>Each card is live. Type 8 or more digits (non-digits are dropped, as in the real field), then press Search or Enter. The name appears only after the lookup succeeds. Replay re-runs the sequence.</p>
+  </div>
+  <button id="theme" class="btn" type="button">Light / dark</button>
+</div>
+
+<div id="grid" class="grid"></div>
+
+<p class="foot">Every option keeps the lookup honest: Search stays disabled until the number is complete, and the name shows only after a successful lookup. Under reduced motion, all motion here is switched off and the state still changes.</p>
+
+<script>
+const IDEAS = [
+  {cls:'s0', num:'00', title:'Shimmer (current)', feel:'One gold sweep across the label, then it settles in the primary text colour.', trade:'Easy to miss on a busy screen. One pass lasts about 1.2 seconds.'},
+  {cls:'i1', num:'01', title:'Underline draws in', feel:'A gold underline draws under Search from left to right and stays.', trade:'Reads as a link, not a button. Quiet, so it can be missed.'},
+  {cls:'i2', num:'02', title:'Gold pill', feel:'Search becomes a solid gold pill with dark text once the number is valid.', trade:'The strongest signal here. Gold fill with dark text is allowed by the constitution; gold text on a light surface is not.'},
+  {cls:'i3', num:'03', title:'Field ring', feel:'The whole field gets a gold ring once, then settles to its normal border.', trade:'Draws the eye to the field, not to the action itself.'},
+  {cls:'i4', num:'04', title:'Arrow nudge', feel:'An arrow slides in beside Search and nudges once toward it.', trade:'A clear direction cue. It adds a glyph to a small label.'},
+  {cls:'i5', num:'05', title:'Enter keycap', feel:'An Enter keycap appears in the field. Pressing Enter flashes it and runs the lookup.', trade:'Teaches the keyboard shortcut, but a mouse user may never notice it.'},
+  {cls:'i6', num:'06', auto:true, title:'Look up on pause', feel:'Once the number is complete, the lookup starts itself after 0.7 seconds. No tap needed.', trade:'Fewest taps. But it looks up before the person has finished, so they may see a name while still typing.'},
+  {cls:'i7', num:'07', title:'Hairline progress', feel:'A gold hairline fills along the bottom edge while the lookup runs, then fades out.', trade:'Shows the lookup is working, but says nothing about the action itself.'},
+  {cls:'i8', num:'08', title:'Pulse dot', feel:'A small gold dot beside Search pulses once when the number becomes valid.', trade:'Subtle and calm. Small enough to miss on a dense screen.'},
+  {cls:'i9', num:'09', title:'Slide in', feel:'Search slides in from the right and fades up when the number becomes valid.', trade:'Calm, and it reads as something appearing rather than a call to act. Least attention-grabbing.'},
+  {cls:'i10', num:'10', title:'Field wash', feel:'The field takes a faint gold wash that fades out over 0.8 seconds.', trade:'Ties the whole field to the state. Faint on light backgrounds.'}
+];
+
+const tpl = c => `
+<section class="card">
+  <div class="head"><span class="num">${c.num}</span><h2>${c.title}</h2></div>
+  <p>${c.feel}</p>
+  <div class="field ${c.cls}" data-valid="0" data-verifying="0" data-verified="0" data-auto="${c.auto ? 1 : 0}">
+    <div class="label">Account Number</div>
+    <div class="box">
+      <input type="text" inputmode="numeric" autocomplete="off" placeholder="Account number" aria-label="Account number">
+      <span class="dot"></span>
+      <button class="search" type="button" disabled><span class="lbl">Search</span><span class="arrow">&rarr;</span></button>
+      <span class="kbd">Enter</span>
+    </div>
+    <div class="status"></div>
+  </div>
+  <div class="controls"><button class="btn replay" type="button">Replay</button><button class="btn clear" type="button">Clear</button></div>
+  <p class="trade"><strong>Trade-off.</strong> ${c.trade}</p>
+</section>`;
+
+document.getElementById('grid').innerHTML = IDEAS.map(tpl).join('');
+
+document.querySelectorAll('.card').forEach(card => {
+  const f = card.querySelector('.field');
+  const input = f.querySelector('input');
+  const btn = f.querySelector('.search');
+  const lbl = f.querySelector('.lbl');
+  const status = f.querySelector('.status');
+  const kbd = f.querySelector('.kbd');
+  const auto = f.dataset.auto === '1';
+  let timer = null;
+  const valid = () => input.value.replace(/\D/g, '').length >= 8;
+
+  function setState(s) {
+    f.dataset.verifying = s === 'verifying' ? '1' : '0';
+    f.dataset.verified = s === 'verified' ? '1' : '0';
+    lbl.textContent = s === 'verifying' ? 'Looking up' : s === 'verified' ? 'Verified' : 'Search';
+    status.textContent = s === 'verifying' ? 'Looking up…' : s === 'verified' ? 'Ama Boateng' : '';
+    status.className = 'status' + (s === 'verifying' ? ' muted' : '');
+    btn.disabled = s !== 'idle' || !valid();
+  }
+
+  function lookup() {
+    if (!valid() || f.dataset.verified === '1' || f.dataset.verifying === '1') return;
+    clearTimeout(timer);
+    setState('verifying');
+    timer = setTimeout(() => setState('verified'), 900);
+  }
+
+  input.addEventListener('input', () => {
+    input.value = input.value.replace(/\D/g, '');
+    clearTimeout(timer);
+    setState('idle');
+    f.dataset.valid = valid() ? '1' : '0';
+    if (auto && valid()) timer = setTimeout(lookup, 700);
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    kbd.classList.add('press');
+    setTimeout(() => kbd.classList.remove('press'), 160);
+    lookup();
+  });
+
+  btn.addEventListener('click', lookup);
+
+  card.querySelector('.replay').addEventListener('click', () => {
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+    setTimeout(() => {
+      input.value = '2221121212';
+      input.dispatchEvent(new Event('input'));
+    }, 350);
+  });
+
+  card.querySelector('.clear').addEventListener('click', () => {
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+  });
+
+  setState('idle');
+  f.dataset.valid = '0';
+});
+
+document.getElementById('theme').addEventListener('click', () => document.body.classList.toggle('dark'));
+</script>
+</body>
+</html>

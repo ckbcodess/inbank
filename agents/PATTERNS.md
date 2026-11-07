@@ -430,8 +430,8 @@ When business needs a screen personal banking has (cards, beneficiaries, setting
 - **Next.js 15:** route `params` and `searchParams` are async (`await params`). `devIndicators: false`
   is deliberate, to keep screen captures clean.
 - **Tailwind v4:** there is no `tailwind.config`; tokens live in `globals.css` under `@theme inline`.
-  `--radius-3xl` and similar aren't emitted as CSS variables, so derive values from `--radius` and
-  `--spacing`.
+  The radius scale sits in the plain `@theme` block instead, so `--radius-3xl` and the rest are real CSS
+  variables and can be tuned live.
 - **HugeIcons** goes in `experimental.optimizePackageImports`, never in `transpilePackages`. The barrel
   is 73MB.
 - **StrictMode runs effects twice.** Don't read-and-clear storage in a mount effect. Peek on mount and

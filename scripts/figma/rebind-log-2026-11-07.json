@@ -1,0 +1,71 @@
+{
+  "file": "lgNxPD7Kn0ZaFZ7Ev1rVwu",
+  "note": "Undo record for the stray rebind in CORE COMPONENTS, 2026-11-07. Values did not change. To reverse, bind each node field back to the old variable by key. old is the stray variable name and key; new is the TOKENS variable.",
+  "changes": [
+    { "old": "white", "oldKey": "d358ae529c07dad769ec6272e4c37284da51e1a3", "new": "status/on-error", "newKey": "94878b9e343fd17c2e29462c5407964546ee0877",
+      "nodes": { "fills": ["4:517", "4:519", "4:521", "4:523", "4:525", "4:527"] } },
+    { "old": "space-y-4", "oldKey": "044321a5cf7f80f3a5debf5ee4046b82d254e0c7", "new": "size-16", "newKey": "f557f6dbd6b99883110fe66c9027c1c3201ebf31",
+      "nodes": { "itemSpacing": ["4:1200", "4:1300", "4:8748"] } },
+    { "old": "space-x-4", "oldKey": "ff340093bf182646f056ab8a763bfddff38c5fc4", "new": "size-16", "newKey": "f557f6dbd6b99883110fe66c9027c1c3201ebf31",
+      "nodes": { "itemSpacing": ["4:8796", "4:8809", "4:8835", "4:8855"] } },
+    { "old": "space-y-2", "oldKey": "cced9e3afca9998cc5f63a8382de6bb97d6812c5", "new": "size-8", "newKey": "7f4c77270f5f968ecc7df89ebff2f2cf919dac6f",
+      "nodes": { "itemSpacing": ["4:2964"] } },
+    { "old": "space-y-1", "oldKey": "d80d5bbdb52dc1449a1d85e0537692761671bc82", "new": "size-4", "newKey": "500b53b7d12ba02a6073b8307e9b299cd274bca5",
+      "nodes": { "itemSpacing": ["4:3050", "4:4196", "4:8184"] } },
+    { "old": "space-x-1", "oldKey": "cdef39dee61ecdecd01c766f2e00a90c253ec0ed", "new": "size-4", "newKey": "500b53b7d12ba02a6073b8307e9b299cd274bca5",
+      "nodes": { "itemSpacing": ["4:4234", "4:4324", "4:8061"] } },
+    { "old": "space-y-10", "oldKey": "c5b76a9b7f6b4033ef4d6a2997aee85621d82040", "new": "size-40", "newKey": "02685b996d066b7408906b7b6a2189bc2c1fcf3b",
+      "nodes": { "itemSpacing": ["4:7009"] } },
+    { "old": "p-1", "oldKey": "187a60607d431e984c404a34324699eff6e72127", "new": "size-4", "newKey": "500b53b7d12ba02a6073b8307e9b299cd274bca5",
+      "nodes": { "paddingLeft": ["4:1425"], "paddingRight": ["4:1425"], "paddingTop": ["4:1425"], "paddingBottom": ["4:1425"] } },
+    { "old": "px-2", "oldKey": "25371f405db71b8c0eaba44ccacf88bdc96157b6", "new": "size-8", "newKey": "7f4c77270f5f968ecc7df89ebff2f2cf919dac6f",
+      "nodes": { "paddingLeft": ["4:1426", "4:1431", "4:1434", "4:3420", "4:3447"], "paddingRight": ["4:1426", "4:1431", "4:1434", "4:3420", "4:3447"] } },
+    { "old": "mr-2", "oldKey": "60cfbae77f5886050ef6eb71eb71f9a82a374bb0", "new": "size-8", "newKey": "7f4c77270f5f968ecc7df89ebff2f2cf919dac6f",
+      "nodes": { "paddingRight": ["4:3427", "4:3457"] } },
+    { "old": "px-4", "oldKey": "5c02707f752b0366247d700f33fcda084da35fe2", "new": "size-16", "newKey": "f557f6dbd6b99883110fe66c9027c1c3201ebf31",
+      "nodes": { "paddingLeft": ["4:8273", "73:112", "67:3433", "67:3419"], "paddingRight": ["4:8273", "73:112", "67:3433", "67:3419"] } },
+    { "old": "py-3", "oldKey": "adb625ef8e9140e42bd63db76fe697d474ee25b3", "new": "size-12", "newKey": "f17b82fa005242c3655d3c399b2dbc78e35ca0e9",
+      "nodes": { "paddingTop": ["4:8273", "73:112", "67:3433", "67:3419"], "paddingBottom": ["4:8273", "73:112", "67:3433", "67:3419"] } },
+    { "old": "ml-6", "oldKey": "e377823483fd22397da36f95b4b6e3f0d7b6de25", "new": "size-24", "newKey": "f72094a6eb74112f91a52e4f0c4521404fa2e0e2",
+      "nodes": { "paddingLeft": ["67:3411", "73:119", "67:3440", "67:3426", "4:8329", "67:3396"] } },
+    { "old": "py-2", "oldKey": "dc40e486832a816ae84cec1fb2d1797eb0bc0ac1", "new": "size-8", "newKey": "7f4c77270f5f968ecc7df89ebff2f2cf919dac6f",
+      "nodes": { "paddingTop": ["4:8864"], "paddingBottom": ["4:8864"] } },
+    { "old": "space-y-2", "oldKey": "cced9e3afca9998cc5f63a8382de6bb97d6812c5", "new": "size-8", "newKey": "7f4c77270f5f968ecc7df89ebff2f2cf919dac6f",
+      "nodes": { "itemSpacing": ["I4:8184;76:8839"] } }
+  ],
+  "visibleChanges": {
+    "note": "Designer-approved changes that alter appearance. Values before are listed so they can be restored.",
+    "backdropOpacity": { "was": 1, "now": { "4:7665 Sheet": 0.35, "4:8038 Drawer": 0.35, "4:7729 Dialog": 0.6, "4:7974 Alert dialog": 0.6, "4:8086 Responsive Dialog": 0.6 } },
+    "unbound": { "4:8038 paddingTop": "was Margin mt-24, keeps 96" },
+    "rowPadding": { "was": "py-1,5 at 6", "now": "size-8", "nodes": ["4:1426", "4:1431", "4:1434", "4:3029", "4:3420", "4:3447"] },
+    "heightToHug": { "4:1420 Input": "was fixed 32", "4:1425 Wrapper": "was fixed 104" },
+    "switchThumbs": { "was": "Color Primitives white", "4:3206 off": "surface/background", "4:3212 on": "text/on-amber" }
+  },
+  "mergedVariables": {
+    "note": "8 Theme variables deleted from 1. TOKENS after their bindings moved to the target. Deleting is permanent: recreating one gives it a new key. Light and dark values are the old definitions.",
+    "merges": [
+      { "old": "icon/icon", "key": "a370d2b897ce29e305216ca9afa80afc454269e4", "into": "text/primary", "light": "gray/950", "dark": "gray/50", "code": "var(--foreground)" },
+      { "old": "input/text", "key": "e1695aeb25923ca803a2b45c16a3a3010c983204", "into": "text/primary", "light": "gray/950", "dark": "gray/50", "code": "var(--foreground)" },
+      { "old": "input/placeholder", "key": "02c2572b93e518e15d8cf5ecb08c14019266fd15", "into": "text/secondary", "light": "gray/500", "dark": "gray/400", "code": "var(--muted-foreground)" },
+      { "old": "input/border-error", "key": "9838261cb4be8107cc889a8fb5f21ef2e95ce491", "into": "status/error", "light": "status/error", "dark": "status/error", "code": "var(--destructive)" },
+      { "old": "surface/item-hover", "key": "c07c4de72df42487d69bb32d64d6667b7da7c271", "into": "surface/hover", "light": "#0000000a", "dark": "#ffffff0d", "code": "var(--item-hover)" },
+      { "old": "component/hero/sheet-border", "key": "4c70d2ed59352d42b18c792c24c913bc0d45b07b", "into": "border/default", "light": "border/default", "dark": "border/default", "code": "var(--hero-sheet-border)" },
+      { "old": "component/badge-tint/gray", "key": "63b8201913d800479035b709ae81e0d1b7ad9c5e", "into": "surface/muted", "light": "surface/muted", "dark": "surface/muted", "code": "var(--pill-neutral)" },
+      { "old": "component/badge-text/gray", "key": "db20f121690cce9fd4592ebb4d0edd8bde5c7067", "into": "text/on-accent", "light": "text/on-accent", "dark": "text/on-accent", "code": "var(--pill-neutral-text)" }
+    ]
+  },
+  "phase6": {
+    "note": "Removed from 1. TOKENS after moving project tokens to the local NIBS collection in Internet Banking (JcCeoeiauwHBrJmtaDSqzl). Values for the kept tokens are in that collection; every value is also in src/app/globals.css.",
+    "deletedGroups": ["illustration/* (79)", "component/hero/* (14)", "component/chip/* (4)", "component/shell/* (4)", "component/icon/* (4)", "surface/surface, panel, card-auth, card-item, tile, tile-hover, account-card, logo-disc, skeleton-shine (9)", "border/sheet-rim", "input/surface-hover", "input/surface-focus", "component/badge-tint and badge-text violet, slate, orange, teal (8)"],
+    "deletedStyles": ["shell/backdrop", "shell/card"],
+    "deletedBadgeColours": ["Slate", "Indigo", "Purple", "Pink", "Orange"]
+  },
+  "deleted": {
+    "helperComponentKey": "ec49dbf8d2718d5b31afff27bb018ab94289e704",
+    "helperNotes": [
+      { "page": "Forms", "id": "4:2219", "x": 1228, "y": -1001, "text": "An all in one input field. Every single input can be configured with this. Just toggle as you see fit for the function, in the right panel" },
+      { "page": "Data, Card section", "id": "10:12807", "x": 107, "y": 77, "author": "Ransford, 2 June 2026", "text": "all card components on a dashboard should be built with this card component. What you do is that you just place the title and then the button next to it with the preferred button and then the contents in the middle can be anything else" }
+    ],
+    "spinnerColorSet": { "id": "4:8588", "key": "3b2ab340abc5c3bad6e9d9fc504b51cdd71dfaae", "variants": ["red", "green", "blue", "yellow"], "instances": 0 }
+  }
+}

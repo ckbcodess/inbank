@@ -181,9 +181,10 @@ here. Never fall back to dense, boxed layouts.
 - **Spacing scale (padding, margin, gap): 2 · 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64**, i.e. steps
   `0.5 1 2 3 4 5 6 8 10 12 16`. Nothing in between (no `p-1.5`, `gap-2.5`, `p-7`). Bigger values are layout
   clearances (the phone tab bar), not spacing. Component sizes (`h-*`, `size-*`, `w-*`) aren't spacing tokens.
-- **Radius: five values plus full.** `rounded-sm` 4 (small bits), `rounded-lg` 8 (controls, icon tiles),
-  `rounded-xl` 8 (insets, set by the designer from the sandbox on 2026-11-03, now equal to lg), `rounded-2xl` 16 (panels), `rounded-3xl` 20 (hero and large sheets), `rounded-full`
-  (badges and pills). Don't write `rounded`, `-md`, `-xs`, `-4xl` or px radii (the only exceptions are swatches
+- **Radius: five names plus full.** `rounded-sm` 4 (small bits), `rounded-lg` 8 (controls, icon tiles),
+  `rounded-xl` 10 (insets), `rounded-2xl` 10 (panels), `rounded-3xl` 10 (hero and large sheets), `rounded-full`
+  (badges and pills). The code is the source for these values (designer, 2026-11-06). xl, 2xl and 3xl are equal
+  today but stay separate names, because they mark different roles. Don't write `rounded`, `-md`, `-xs`, `-4xl` or px radii (the only exceptions are swatches
   of 3px or less). For concentric corners, add padding and border to the inner radius:
   `rounded-[calc(var(--radius-3xl)+var(--spacing)*N+1px)]`.
 - **One control-height scale.** Buttons and fields take their height from `--control-xs 20 · sm 28 · default 36 · md 40 · xl 44`
@@ -214,13 +215,16 @@ here. Never fall back to dense, boxed layouts.
 - **Animate the data, not decoration.** Live thousands-formatting while typing, morphing digits,
   tabular numbers. No ornamental loops.
 - **Use the tokens, never raw numbers.** Pick by purpose:
-  - `press` (100ms): feedback while a finger or cursor is down
-  - `hover` (150ms): hover and small state changes
-  - `reveal` (250ms): something appearing or disappearing in place
-  - `move` (500ms): a larger thing travelling or turning
-  - `entrance` (900ms): a value settling in after the page loads
+  - `press` (200ms): feedback while a finger or cursor is down
+  - `hover` (140ms): hover and small state changes
+  - `reveal` (400ms): something appearing or disappearing in place
+  - `move` (400ms): a larger thing travelling or turning
+  - `entrance` (200ms): a value settling in after the page loads
+  - `modal` (150ms): a dialog and its backdrop opening or closing
+  - `toast` (150ms): a toast sliding into view
+  - `sweep` (1600ms): a highlight passing once across a control
 
-  In CSS these are `duration-*` with `ease-settle`. In JS use `DURATION`, `EASE` and `SPRING` from
+  The code is the source for these values (designer, 2026-11-06). In CSS these are `duration-*` with `ease-settle`. In JS use `DURATION`, `EASE` and `SPRING` from
   `@/lib/motion`. No `duration-[…]`, no handwritten `cubic-bezier`, no inline spring settings. If a
   purpose is missing, add the token in `globals.css` and `motion.ts` together.
 - **Reduced motion is handled once,** globally (`globals.css` plus `MotionProvider`). Never add
