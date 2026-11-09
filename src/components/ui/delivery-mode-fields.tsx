@@ -7,6 +7,7 @@
  */
 
 import { BranchCombobox } from "@/components/ui/branch-combobox";
+import { RadioGroup, type RadioOption } from "@/components/ui/radio-group";
 import { SmoothHeight } from "@/components/ui/smooth-height";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { GCB_BRANCHES, type DeliveryMethod, type GcbBranch } from "@/lib/mock-data";
@@ -36,6 +37,11 @@ export function deliverySummary(d: DeliveryDetails): string {
   return "";
 }
 
+const METHOD_OPTIONS: readonly RadioOption<DeliveryMethod>[] = [
+  { value: "BRANCH_PICKUP", label: "Branch pickup", description: "Collect at branch" },
+  { value: "DELIVERY", label: "Doorstep delivery", description: "Courier delivery" },
+];
+
 export function DeliveryModeFields({
   value,
   onChange,
@@ -49,67 +55,12 @@ export function DeliveryModeFields({
         Mode of Delivery
       </Label>
 
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          role="radio"
-          aria-checked={value.method === "BRANCH_PICKUP"}
-          onClick={() => onChange({ method: "BRANCH_PICKUP" })}
-          className={`p-3 sm:p-3 rounded-2xl border text-left transition cursor-pointer flex items-center gap-2 ${
-            value.method === "BRANCH_PICKUP"
-              ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
-              : "border-border bg-card hover:bg-muted/50 text-foreground"
-          }`}
-        >
-          <div
-            className={`size-3.5 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-              value.method === "BRANCH_PICKUP"
-                ? "border-[var(--active-border)] bg-[var(--active-border)]"
-                : "border-border bg-transparent"
-            }`}
-          >
-            {value.method === "BRANCH_PICKUP" && (
-              <div className="size-1.5 rounded-full bg-background" />
-            )}
-          </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-[14px] font-medium leading-tight">Branch pickup</span>
-            <span className="text-[11px] text-muted-foreground mt-0.5">
-              Collect at branch
-            </span>
-          </div>
-        </button>
-
-        <button
-          type="button"
-          role="radio"
-          aria-checked={value.method === "DELIVERY"}
-          onClick={() => onChange({ method: "DELIVERY" })}
-          className={`p-3 sm:p-3 rounded-2xl border text-left transition cursor-pointer flex items-center gap-2 ${
-            value.method === "DELIVERY"
-              ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
-              : "border-border bg-card hover:bg-muted/50 text-foreground"
-          }`}
-        >
-          <div
-            className={`size-3.5 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-              value.method === "DELIVERY"
-                ? "border-[var(--active-border)] bg-[var(--active-border)]"
-                : "border-border bg-transparent"
-            }`}
-          >
-            {value.method === "DELIVERY" && (
-              <div className="size-1.5 rounded-full bg-background" />
-            )}
-          </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-[14px] font-medium leading-tight">Doorstep delivery</span>
-            <span className="text-[11px] text-muted-foreground mt-0.5">
-              Courier delivery
-            </span>
-          </div>
-        </button>
-      </div>
+      <RadioGroup<DeliveryMethod>
+        aria-label="Mode of Delivery"
+        options={METHOD_OPTIONS}
+        value={value.method}
+        onChange={(method) => onChange({ method })}
+      />
 
       {/* One height-animated region for both modes, so the two panels swap inside it. Two separate collapses left an
           exiting panel and its flex gap behind, and the layout jumped when the exit finished. */}
@@ -140,7 +91,7 @@ export function DeliveryModeFields({
                 value={value.recipientName}
                 onChange={(e) => onChange({ recipientName: e.target.value })}
                 placeholder="Full name"
-                
+
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -152,7 +103,7 @@ export function DeliveryModeFields({
                 value={value.address}
                 onChange={(e) => onChange({ address: e.target.value })}
                 placeholder="Street or digital address"
-                
+
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -163,7 +114,7 @@ export function DeliveryModeFields({
                   value={value.city}
                   onChange={(e) => onChange({ city: e.target.value })}
                   placeholder="City"
-                  
+
                 />
               </div>
               <div className="flex flex-col gap-2">

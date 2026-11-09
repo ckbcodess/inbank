@@ -28,7 +28,7 @@ import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import { SearchField } from "@/components/ui/search-field";
 import { AmountInput } from "@/components/payments/flows/shared";
 import { MemberAmountInput } from "@/components/payments/MemberAmountInput";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
 
 /** A long group gets a search box above its members. */
 const SEARCH_FROM_MEMBERS = 8;
@@ -356,9 +356,8 @@ export default function EditGroupModal({
                 />
               </Field>
 
-              <SegmentedControl
+              <RadioGroup
                 aria-label="How to split"
-                fullWidth
                 options={SPLIT_OPTIONS}
                 value={splitType}
                 onChange={setSplitType}

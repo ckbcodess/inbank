@@ -25,7 +25,7 @@ import { ListCard } from "@/components/ui/list-card";
 import { OptionTile } from "@/components/ui/option-tile";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RELATIONSHIPS } from "@/lib/insurance-plans";
 import { ageOn, useInsurance, type BeneficiaryShare, type InsuredPerson } from "@/lib/insurance";
@@ -195,7 +195,7 @@ function PersonModal({
         <Input id={`${id}-dob`} type="date" value={dob} max={MOCK_TODAY} onChange={(e) => setDob(e.target.value)} />
       </Field>
       <Field label="Gender">
-        <SegmentedControl<"Female" | "Male" | ""> aria-label="Gender" options={GENDERS} value={gender} onChange={setGender} fullWidth />
+        <RadioGroup<"Female" | "Male" | ""> aria-label="Gender" options={GENDERS} value={gender} onChange={setGender} />
       </Field>
       <Field label="Relationship">
         <Select value={relationship} onValueChange={(v) => v && setRelationship(v)}>

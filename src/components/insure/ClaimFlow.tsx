@@ -26,7 +26,7 @@ import { Field } from "@/components/ui/field";
 import { InlineError } from "@/components/ui/inline-error";
 import { Input } from "@/components/ui/input";
 import { ReviewSummary } from "@/components/ui/review-summary";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SignatureUpload } from "@/components/ui/signature-upload";
 import { Textarea } from "@/components/ui/textarea";
@@ -358,7 +358,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
               <Input id="claim-cause" value={cause} onChange={(e) => setCause(e.target.value)} />
             </Field>
             <Field label="Was the Death Accidental?">
-              <SegmentedControl<YesNo> aria-label="Was the death accidental" options={YES_NO} value={accidental} onChange={setAccidental} fullWidth />
+              <RadioGroup<YesNo> aria-label="Was the death accidental" options={YES_NO} value={accidental} onChange={setAccidental} />
             </Field>
             {withinWaiting && (
               <p className="px-1 text-[13px] leading-relaxed text-warning-text">

@@ -26,7 +26,7 @@ import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import { useTreasuryAccounts } from "@/lib/treasury";
 import { earlyRedemption, useDeposit, useTermDeposits } from "@/lib/term-deposits";
 import Link from "next/link";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
 
 const asNumber = (v: string) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
 const money = (n: number) => formatMoney(n, "GHS", true);
@@ -138,7 +138,7 @@ export function RedeemDepositFlow() {
       <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <FromAccountSelector accounts={accounts} value={toId} onChange={setPickedTo} label="To Account" />
 
-        <SegmentedControl<RedeemMode>
+        <RadioGroup<RedeemMode>
           aria-label="Redemption"
           options={MODES}
           value={mode}
@@ -146,7 +146,6 @@ export function RedeemDepositFlow() {
             setMode(m);
             if (m === "full") setAmount("");
           }}
-          fullWidth
         />
 
         {!whole && (

@@ -24,7 +24,7 @@ import {
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import { TotalRow } from "@/components/ui/total-row";
 import { cn } from "@/lib/utils";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
@@ -651,9 +651,8 @@ export default function CreateGroupFlow({
       {/* ────────────────────────────────────────────────────────────────────────── */}
       {step === 2 && (
         <div className="flex flex-col gap-5">
-          <SegmentedControl
+          <RadioGroup
             aria-label="How to split"
-            fullWidth
             options={SPLIT_OPTIONS}
             value={splitType}
             onChange={setSplitType}

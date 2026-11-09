@@ -28,7 +28,7 @@ import { Label } from "@/components/ui/label";
 import { Field } from "@/components/ui/field";
 import { useSession } from "@/lib/session-store";
 import { Button } from "@/components/ui/button";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { DEFAULT_INVOICE_FIELDS, GHANAGOV_AGENCIES, findGovAgency, govAgencyForBiller, type GovMode } from "@/lib/government-services";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -448,9 +448,8 @@ export function BillsPaymentFlow({
                 />
                 {isGhanaGov && (
                   <>
-                    <SegmentedControl
+                    <RadioGroup
                       aria-label="Pay or generate an invoice"
-                      fullWidth
                       options={[
                         { value: "pay", label: "Pay an Invoice" },
                         { value: "invoice", label: "Generate an Invoice" },

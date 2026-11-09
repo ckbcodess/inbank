@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
 import { InlineError } from "@/components/ui/inline-error";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
@@ -91,7 +91,7 @@ export default function RediscountPage() {
       <div className="flex flex-col gap-5 animate-in fade-in duration-200">
         <FromAccountSelector accounts={accounts} value={toId} onChange={setPickedTo} label="To Account" />
 
-        <SegmentedControl aria-label="Rediscount type" options={KINDS} value={kind} onChange={setKind} fullWidth />
+        <RadioGroup aria-label="Rediscount type" options={KINDS} value={kind} onChange={setKind} />
 
         {!full && (
           <div className="animate-in fade-in slide-in-from-top-2 duration-200">

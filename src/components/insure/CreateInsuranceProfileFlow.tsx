@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { ListCard } from "@/components/ui/list-card";
 import { MultiChoice } from "@/components/ui/multi-choice";
 import { OccupationCombobox } from "@/components/ui/occupation-combobox";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { StepBar } from "@/components/ui/step-bar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SignatureUpload } from "@/components/ui/signature-upload";
@@ -83,7 +83,7 @@ function Question({ text, note, children }: { text: string; note?: string; child
 function YesNoQuestion({ text, note, value, onChange }: { text: string; note?: string; value: YesNo; onChange: (v: YesNo) => void }) {
   return (
     <Question text={text} note={note}>
-      <SegmentedControl<YesNo> options={YES_NO} value={value} onChange={onChange} aria-label={text} fullWidth />
+      <RadioGroup<YesNo> options={YES_NO} value={value} onChange={onChange} aria-label={text} />
     </Question>
   );
 }

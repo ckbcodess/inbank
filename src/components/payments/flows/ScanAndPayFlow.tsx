@@ -24,7 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { QrCode } from "@/components/ui/qr-code";
@@ -173,12 +173,11 @@ export function ScanAndPayFlow({
       {/* ── STAGE A: IDENTIFY / VIEW QR (When no merchant is selected yet) ── */}
       {!isMerchantSelected ? (
         <div className="flex flex-col w-full max-w-xl mx-auto min-h-[calc(100dvh-200px)] sm:min-h-[calc(100dvh-240px)]">
-          {/* Segmented Control Switcher stays anchored at top */}
-          <SegmentedControl
+          {/* Mode choice stays anchored at top */}
+          <RadioGroup
             aria-label="QR Mode"
             value={activeMode}
             onChange={(val) => setActiveMode(val as "scan" | "myqr")}
-            fullWidth
             options={[
               { value: "myqr", label: "My QR" },
               { value: "scan", label: "Scan & Pay" },

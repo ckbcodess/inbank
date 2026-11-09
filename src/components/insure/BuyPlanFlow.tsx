@@ -33,6 +33,7 @@ import { OptionTile } from "@/components/ui/option-tile";
 import { ReviewSummary } from "@/components/ui/review-summary";
 import { StepBar } from "@/components/ui/step-bar";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
@@ -211,7 +212,7 @@ function MemberModal({ open, onOpenChange, onAdd }: { open: boolean; onOpenChang
             <Input id="member-dob" type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
           </Field>
           <Field label="Gender">
-            <SegmentedControl<"Female" | "Male" | ""> aria-label="Gender" options={GENDERS} value={gender} onChange={setGender} fullWidth />
+            <RadioGroup<"Female" | "Male" | ""> aria-label="Gender" options={GENDERS} value={gender} onChange={setGender} />
           </Field>
           <Field label="Their Cover">
             <Select value={tier} onValueChange={(v) => v && setTier(v as CoverTierId)}>
@@ -601,7 +602,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                 />
                 {basis === "sum" && (
                   <Field label="Payment Frequency">
-                    <SegmentedControl aria-label="Payment frequency" options={FREQUENCIES} value={sumFrequency} onChange={setSumFrequency} fullWidth />
+                    <RadioGroup aria-label="Payment frequency" options={FREQUENCIES} value={sumFrequency} onChange={setSumFrequency} />
                   </Field>
                 )}
               </div>
@@ -641,7 +642,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                   </div>
                 </Field>
                 <Field label="Payment Frequency">
-                  <SegmentedControl aria-label="Payment frequency" options={FREQUENCIES} value={frequency} onChange={setFrequency} fullWidth />
+                  <RadioGroup aria-label="Payment frequency" options={FREQUENCIES} value={frequency} onChange={setFrequency} />
                 </Field>
               </div>
             )}
@@ -669,7 +670,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
             </Field>
             {tier && (
               <Field label="Payment Frequency">
-                <SegmentedControl aria-label="Payment frequency" options={FREQUENCIES} value={frequency} onChange={setFrequency} fullWidth />
+                <RadioGroup aria-label="Payment frequency" options={FREQUENCIES} value={frequency} onChange={setFrequency} />
               </Field>
             )}
           </>
@@ -704,12 +705,11 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
               </Select>
             </Field>
             <Field label="Deduction Date">
-              <SegmentedControl<DeductionWindow | "">
+              <RadioGroup<DeductionWindow | "">
                 aria-label="Deduction date"
                 options={DEDUCTION_WINDOWS.map((w) => ({ value: w.value, label: w.label }))}
                 value={window}
                 onChange={setWindow}
-                fullWidth
               />
             </Field>
           </div>

@@ -29,7 +29,7 @@ import {
   useLoansHydrated,
   useMyLoans,
 } from "@/lib/loans";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { roundMoney } from "@/lib/money";
 
 const money = (n: number) => formatMoney(n, "GHS", true);
@@ -158,7 +158,7 @@ export function RepayAdvanceFlow({ advanceId }: { advanceId: string }) {
           {overBalance && <InsufficientFundsAlert />}
         </div>
 
-        <SegmentedControl<RepayMode>
+        <RadioGroup<RepayMode>
           aria-label="Repayment"
           options={REPAY_OPTIONS}
           value={mode}
@@ -166,7 +166,6 @@ export function RepayAdvanceFlow({ advanceId }: { advanceId: string }) {
             setMode(m);
             if (m === "full") setPartAmount("");
           }}
-          fullWidth
         />
 
         {isPart && (
