@@ -26,6 +26,7 @@ import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
   getSimulatedDashboardData,
   DASHBOARD_USAGE_STATES,
+  DASHBOARD_BANNER_STATES,
   DASHBOARD_STATE_LABELS,
   DASHBOARD_LAYOUTS,
   DEFAULT_DASHBOARD_LAYOUT,
@@ -95,9 +96,16 @@ export function OverviewContent({ accountId = null, loading: forced = false }: {
     return getSimulatedDashboardData({ actor, activeProfile, usageType, accountId, defaultAccountId });
   }, [actor, activeProfile, usageType, accountId, defaultAccountId]);
 
-  // Dev Mode: play the customer's product tour on demand (it starts by itself once, after the first-run welcome).
-  const tourDevGroups = useMemo<DevStateGroup[]>(
+  // Dev Mode: the banner scenarios, and the customer's product tour on demand (it starts by itself once, after the first-run welcome).
+  const devGroups = useMemo<DevStateGroup[]>(
     () => [
+      {
+        label: "Banner",
+        states: DASHBOARD_BANNER_STATES.map((id) => ({ id, label: DASHBOARD_STATE_LABELS[id] })),
+        // Empty while a data state is picked, so only one of the two lists shows a selection.
+        value: DASHBOARD_BANNER_STATES.includes(usageType) ? usageType : "",
+        onChange: (next) => setUsageType(next as DashboardUsageType),
+      },
       {
         label: "Product tour",
         states: [{ id: "replay", label: "Replay the tour" }],
@@ -105,7 +113,7 @@ export function OverviewContent({ accountId = null, loading: forced = false }: {
         onChange: () => useProductTour.getState().start(),
       },
     ],
-    [],
+    [usageType],
   );
 
   const refresh = () => {
@@ -164,7 +172,8 @@ export function OverviewContent({ accountId = null, loading: forced = false }: {
           value={usageType}
           onChange={setUsageType}
           labels={DASHBOARD_STATE_LABELS}
-          groups={tourDevGroups}
+          label="Data state"
+          groups={devGroups}
         />
       )}
       <GcbDashboard

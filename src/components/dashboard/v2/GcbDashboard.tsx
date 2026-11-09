@@ -17,6 +17,7 @@
 
 import type { DashboardLayout } from "@/lib/dashboard-simulations";
 import type { DashViewProps } from "./parts";
+import { DashboardBanner } from "./DashboardBanner";
 import { OverviewLayout } from "./layouts/OverviewLayout";
 import { FocusLayout } from "./layouts/FocusLayout";
 import { TimelineLayout } from "./layouts/TimelineLayout";
@@ -39,5 +40,11 @@ const LAYOUTS: Record<DashboardLayout, (props: DashViewProps) => React.JSX.Eleme
 
 export function GcbDashboard({ layout, ...props }: DashViewProps & { layout: DashboardLayout }) {
   const Layout = LAYOUTS[layout] ?? OverviewLayout;
-  return <Layout {...props} />;
+  return (
+    <div className="flex flex-col gap-5 sm:gap-6">
+      {/* Above the greeting in every layout: everything that needs the customer, in one banner. */}
+      <DashboardBanner data={props.data} onOpenFundModal={props.onOpenFundModal} />
+      <Layout {...props} />
+    </div>
+  );
 }

@@ -21,7 +21,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   ChevronDown,
-  ChevronRight,
   Lock,
 } from "@/components/ui/icons";
 import { toast } from "sonner";
@@ -36,7 +35,6 @@ import type {
   BalancePoint,
   Slice,
   SpendBreakdown,
-  AttentionItem,
 } from "@/lib/dashboard-insights";
 
 /* ── Formatting ──────────────────────────────────────────────────────────── */
@@ -455,47 +453,6 @@ export function AccountsDisclosure({
           <AccountRows accounts={accounts} showAmounts={showAmounts} />
         </div>
       )}
-    </div>
-  );
-}
-
-/* ── Needs attention ─────────────────────────────────────────────────────── */
-
-const TONE_DOT: Record<AttentionItem["tone"], string> = {
-  destructive: "bg-destructive",
-  warning: "bg-warning",
-  muted: "bg-muted-foreground",
-};
-
-/** A compact high-priority strip — only render when there are items. */
-export function AttentionBand({ items }: { items: AttentionItem[] }) {
-  if (items.length === 0) return null;
-  return (
-    <div className="rounded-2xl border border-border bg-card">
-      <div className="px-3 pt-3 sm:px-5 sm:pt-4">
-        <span className="text-[15px] font-medium leading-none text-foreground sm:text-[16px]">Needs attention</span>
-      </div>
-      <ul className="flex flex-col divide-y divide-border/50 px-3 pb-2 pt-1 sm:px-5">
-        {items.map((it) => (
-          <li key={it.id}>
-            <Link
-              href={it.href}
-              className="group flex items-center gap-2 py-2 transition-colors"
-            >
-              <span className={cn("size-1.5 shrink-0 rounded-full", TONE_DOT[it.tone])} aria-hidden="true" />
-              {/* Title over detail on a phone; one line from sm up. */}
-              <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:block">
-                <span className="text-[13px] text-foreground">{it.title}</span>
-                <span className="text-[12px] text-muted-foreground sm:ml-2">{it.detail}</span>
-              </span>
-              <ChevronRight
-                size={15}
-                className="shrink-0 text-muted-foreground transition-transform"
-              />
-            </Link>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

@@ -23,6 +23,24 @@ export function AlertMark({ tone, success = false, className }: { tone: ProductA
   );
 }
 
+const ACTION_CLASS = "shrink-0 text-[13px] text-foreground underline underline-offset-4";
+
+/** The underlined text action at the end of a banner row: a link when it goes to a page, a button when it opens something in place. */
+function AlertAction({ action }: { action: NonNullable<ProductAlert["action"]> }) {
+  if (action.href) {
+    return (
+      <Link href={action.href} onClick={action.onClick} className={ACTION_CLASS}>
+        {action.label}
+      </Link>
+    );
+  }
+  return (
+    <button type="button" onClick={action.onClick} className={cn(ACTION_CLASS, "cursor-pointer")}>
+      {action.label}
+    </button>
+  );
+}
+
 const SHOWN = 3;
 
 /** "policies" becomes "policy" for a count of one. */
@@ -39,6 +57,7 @@ export function ProductBanner({
   alert,
   items,
   noun,
+  summary,
   className,
 }: {
   /** A single alert, for a record's own page. */
@@ -47,6 +66,8 @@ export function ProductBanner({
   items?: AlertItem[];
   /** What the records are called, plural: "policies", "investments". */
   noun?: string;
+  /** The collapsed headline for two or more alerts, when "needs you" and the noun don't say it (the dashboard mixes kinds). */
+  summary?: (total: number, acting: number) => string;
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -67,11 +88,7 @@ export function ProductBanner({
           <span className="text-[14px] font-medium text-foreground">{one.headline}</span>
           {one.detail && <span className="text-[12px] text-muted-foreground">{one.detail}</span>}
         </span>
-        {one.action && (
-          <Link href={one.action.href} onClick={one.action.onClick} className="shrink-0 text-[13px] text-foreground underline underline-offset-4">
-            {one.action.label}
-          </Link>
-        )}
+        {one.action && <AlertAction action={one.action} />}
       </div>
     );
   }
@@ -79,7 +96,7 @@ export function ProductBanner({
   const acting = list.filter((i) => i.alert.tone === "act").length;
   const tone: ProductAlert["tone"] = acting > 0 ? "act" : "wait";
   const word = noun ?? "items";
-  const headline = acting > 0 ? `${acting} ${acting === 1 ? singular(word) : word} ${acting === 1 ? "needs" : "need"} you` : `${list.length} ${word} in progress`;
+  const headline = summary ? summary(list.length, acting) : acting > 0 ? `${acting} ${acting === 1 ? singular(word) : word} ${acting === 1 ? "needs" : "need"} you` : `${list.length} ${word} in progress`;
   const rows = all ? list : list.slice(0, SHOWN);
 
   return (
@@ -103,11 +120,7 @@ export function ProductBanner({
                 <span className="truncate text-[14px] text-foreground">{i.alert.headline}</span>
                 <span className="truncate text-[12px] text-muted-foreground">{i.label}</span>
               </span>
-              {i.alert.action && (
-                <Link href={i.alert.action.href} onClick={i.alert.action.onClick} className="shrink-0 text-[13px] text-foreground underline underline-offset-4">
-                  {i.alert.action.label}
-                </Link>
-              )}
+              {i.alert.action && <AlertAction action={i.alert.action} />}
             </li>
           ))}
           {list.length > SHOWN && !all && (

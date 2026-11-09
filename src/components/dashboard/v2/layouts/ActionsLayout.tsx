@@ -64,7 +64,7 @@ export function ActionsLayout(props: DashViewProps) {
           {!loading && <BalanceMeta data={data} showAmounts={showAmounts} updatedAt={updatedAt} />}
         </div>
 
-        <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
+        <Notices status={status} onRefresh={onRefresh} />
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
           {tiles.map((tile) => (

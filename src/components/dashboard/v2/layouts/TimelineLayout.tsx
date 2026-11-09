@@ -173,7 +173,7 @@ export function TimelineLayout(props: DashViewProps) {
         </div>
       </div>
 
-      <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
+      <Notices status={status} onRefresh={onRefresh} />
 
       <motion.div
         key={data.selectedAccountId ?? "none"}

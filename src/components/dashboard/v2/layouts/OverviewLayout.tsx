@@ -50,7 +50,7 @@ export function OverviewLayout(props: DashViewProps) {
           <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-2 sm:hidden" />
         </div>
 
-        <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
+        <Notices status={status} onRefresh={onRefresh} />
 
         {/* Re-keyed per account so a switch visibly reloads the account's panels. */}
         <motion.div

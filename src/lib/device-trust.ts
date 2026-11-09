@@ -181,7 +181,6 @@ export function clearPendingReferral() {
 /* ── Post-onboarding unfunded state & nudge ───────────────────────────────── */
 
 const SKIPPED_FUNDING_KEY = "nibs-skipped-funding";
-const UNFUNDED_NUDGE_DISMISSED_KEY = "nibs-unfunded-nudge-dismissed";
 
 export function setHasSkippedFunding(skipped: boolean) {
   try {
@@ -205,23 +204,6 @@ export function clearHasSkippedFunding() {
     localStorage.removeItem(SKIPPED_FUNDING_KEY);
   } catch {
     // Storage blocked.
-  }
-}
-
-export function setUnfundedNudgeDismissed(dismissed: boolean) {
-  try {
-    if (dismissed) localStorage.setItem(UNFUNDED_NUDGE_DISMISSED_KEY, "true");
-    else localStorage.removeItem(UNFUNDED_NUDGE_DISMISSED_KEY);
-  } catch {
-    // Storage blocked.
-  }
-}
-
-export function peekUnfundedNudgeDismissed(): boolean {
-  try {
-    return localStorage.getItem(UNFUNDED_NUDGE_DISMISSED_KEY) === "true";
-  } catch {
-    return false;
   }
 }
 

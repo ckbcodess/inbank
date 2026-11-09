@@ -31,6 +31,10 @@ import type { Actor, Profile } from "@/lib/roles";
 export type DashboardUsageType =
   | "active"
   | "attention"
+  | "banner_one"
+  | "banner_calm"
+  | "banner_unfunded"
+  | "banner_many"
   | "new_customer"
   | "new_unfunded"
   | "salary_surge"
@@ -49,6 +53,14 @@ export const DASHBOARD_USAGE_STATES: readonly DashboardUsageType[] = [
   "empty" as const,
   "loading" as const,
   "error" as const,
+] as const;
+
+/** The top banner's scenarios, a Dev Mode section of their own beside the data states. */
+export const DASHBOARD_BANNER_STATES: readonly DashboardUsageType[] = [
+  "banner_one" as const,
+  "banner_calm" as const,
+  "banner_unfunded" as const,
+  "banner_many" as const,
 ] as const;
 
 /**
@@ -90,6 +102,10 @@ export const DASHBOARD_LAYOUT_LABELS: Record<DashboardLayout, string> = {
 export const DASHBOARD_STATE_LABELS: Record<DashboardUsageType, string> = {
   active: "Active (Clean Default)",
   attention: "Needs Attention / Alerts",
+  banner_one: "One Alert (Card Blocked)",
+  banner_calm: "Calm Items Only",
+  banner_unfunded: "Unfunded Wallet + Card Expiring",
+  banner_many: "Four Alerts (Show All)",
   new_customer: "New Customer (Funded)",
   new_unfunded: "New Customer (Unfunded / Skipped)",
   salary_surge: "Salary Day / Inflow",
@@ -130,6 +146,48 @@ const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     href: "/cards",
   },
 ];
+
+const ITEM_CARD_BLOCKED: AttentionItem = { id: "card-blocked-demo", tone: "destructive", title: "Card blocked", detail: "Visa Debit · ∗∗∗∗ 4012", href: "/cards" };
+const ITEM_CARD_EXPIRING: AttentionItem = { id: "card-expsoon-demo", tone: "warning", title: "Card expiring soon", detail: "Mastercard Virtual · expires next month", href: "/cards" };
+const ITEM_CARD_PICKUP: AttentionItem = { id: "card-pickup-demo", tone: "muted", title: "Card ready for pickup", detail: "Visa Platinum · Osu branch", href: "/cards" };
+const ITEM_ACCOUNT_DORMANT: AttentionItem = { id: "acct-dormant-demo", tone: "muted", title: "Account dormant", detail: "Savings", href: "/accounts" };
+
+/** A freshly onboarded virtual wallet with nothing in it, the account the fund-wallet offer is about. */
+function unfundedWallet(holder: string): { accounts: Account[]; cards: PaymentCard[] } {
+  return {
+    accounts: [
+      {
+        id: "acc-new-unfunded",
+        name: "Virtual Wallet",
+        number: "1011 8920 1920",
+        currency: "GHS",
+        balance: 0,
+        available: 0,
+        type: "Savings",
+        status: "Active",
+        profileKind: "RETAIL",
+      },
+    ],
+    cards: [
+      {
+        id: "card-new-unfunded",
+        name: "Visa Virtual Debit",
+        maskedNumber: "∗∗∗∗ 8920",
+        scheme: "Visa",
+        type: "Virtual",
+        balance: 0,
+        currency: "GHS",
+        status: "Active",
+        expiry: "12/28",
+        spendLimit: 2000,
+        linkedAccountId: "acc-new-unfunded",
+        holder,
+        fundable: true,
+        isVirtual: true,
+      },
+    ],
+  };
+}
 
 interface GetSimulatedDashboardDataOptions {
   actor: Actor;
@@ -236,49 +294,45 @@ export function getSimulatedDashboardData({
       attention = [];
       break;
 
-    case "new_unfunded":
-      // Freshly onboarded customer who skipped the Fund Account step (Zero Balance)
-      accounts = [
-        {
-          id: "acc-new-unfunded",
-          name: "Virtual Wallet",
-          number: "1011 8920 1920",
-          currency: "GHS",
-          balance: 0,
-          available: 0,
-          type: "Savings",
-          status: "Active",
-          profileKind: "RETAIL",
-        },
-      ];
-      cards = [
-        {
-          id: "card-new-unfunded",
-          name: "Visa Virtual Debit",
-          maskedNumber: "∗∗∗∗ 8920",
-          scheme: "Visa",
-          type: "Virtual",
-          balance: 0,
-          currency: "GHS",
-          status: "Active",
-          expiry: "12/28",
-          spendLimit: 2000,
-          linkedAccountId: "acc-new-unfunded",
-          holder: actor.name,
-          fundable: true,
-          isVirtual: true,
-        },
-      ];
+    case "new_unfunded": {
+      // Freshly onboarded customer who skipped the Fund Account step. The banner's fund-wallet row is the only alert.
+      const wallet = unfundedWallet(actor.name);
+      accounts = wallet.accounts;
+      cards = wallet.cards;
       latestTxns = [];
       spendByRange = EMPTY_SPEND_BREAKDOWN;
+      attention = [];
+      break;
+    }
+
+    case "banner_one":
+      // One alert is one line, with its detail and action.
+      attention = [ITEM_CARD_BLOCKED];
+      break;
+
+    case "banner_calm":
+      // Nothing is wrong: the banner stays neutral and counts "to look at", not "need you".
+      attention = [ITEM_CARD_PICKUP, ITEM_ACCOUNT_DORMANT];
+      break;
+
+    case "banner_unfunded": {
+      // The fund-wallet row beside another amber alert: both count as "needs you", the card trouble first.
+      const wallet = unfundedWallet(actor.name);
+      accounts = wallet.accounts;
+      cards = wallet.cards;
+      latestTxns = [];
+      spendByRange = EMPTY_SPEND_BREAKDOWN;
+      attention = [ITEM_CARD_EXPIRING];
+      break;
+    }
+
+    case "banner_many":
+      // Past three rows the banner shows "Show all 4".
       attention = [
-        {
-          id: "att-fund-account",
-          title: "Account not funded yet",
-          detail: "Add money via Mobile Money or bank card to start transacting.",
-          href: "#fund-account",
-          tone: "warning",
-        },
+        { id: "fail-demo-1", tone: "warning", title: "Payment didn't go through", detail: "ECG Prepaid Electricity · GHS 150.00 · see why and retry", href: "/payments/bills" },
+        ITEM_CARD_BLOCKED,
+        ITEM_CARD_EXPIRING,
+        ITEM_CARD_PICKUP,
       ];
       break;
 

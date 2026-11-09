@@ -74,7 +74,7 @@ export function HeroSplitLayout(props: DashViewProps) {
           </HeroSurface>
         }
       >
-        <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
+        <Notices status={status} onRefresh={onRefresh} />
 
         <AccountScoped accountId={data.selectedAccountId} tour="glance" className="dash-grid items-stretch gap-2 sm:gap-4">
           <ActivityCard

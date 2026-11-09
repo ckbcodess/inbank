@@ -75,6 +75,7 @@ const payments: Entry[] = [
   ["Send & Pay", "Envoyer et payer", "Enviar y pagar", "转账与支付"],
   ["Scheduled Payments", "Paiements programmés", "Pagos programados", "预约付款"],
   ["View Scheduled Payments", "Voir les paiements programmés", "Ver pagos programados", "查看预约付款"],
+  ["Scheduled", "Programmés", "Programados", "预约"],
   ["Send", "Envoyer", "Enviar", "转账"],
 
   // ── Standing orders hub ──

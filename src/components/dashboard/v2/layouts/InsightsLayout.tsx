@@ -131,7 +131,7 @@ export function InsightsLayout(props: DashViewProps) {
           <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-2 sm:hidden" />
         </div>
 
-        <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
+        <Notices status={status} onRefresh={onRefresh} />
 
         <motion.div
           key={data.selectedAccountId ?? "none"}

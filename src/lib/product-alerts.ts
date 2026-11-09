@@ -24,8 +24,11 @@ export interface ProductAlert {
   detail?: string;
   /** Good news rather than a to-do: drawn in the success colour with a tick (the securities account is ready). */
   success?: boolean;
-  /** The one thing to do, when there is one. */
-  action?: { label: string; href: string; /** Runs first, when the link has something to tidy up on the way. */ onClick?: () => void };
+  /**
+   * The one thing to do, when there is one. With an `href` it is a link; without one it is a button that runs
+   * `onClick` (opening the fund sheet in place, where there is no page to go to).
+   */
+  action?: { label: string; href?: string; /** Runs first, when the link has something to tidy up on the way. */ onClick?: () => void };
 }
 
 /** A holding is flagged this many days before it matures. */

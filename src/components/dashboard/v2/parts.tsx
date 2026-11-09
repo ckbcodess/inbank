@@ -52,7 +52,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { RecentTransactions, CardsMini, AttentionBand, FxRatesMini, fxPeek } from "./MinimalKit";
+import { RecentTransactions, CardsMini, FxRatesMini, fxPeek } from "./MinimalKit";
 import { SpendsRadialChart } from "@/components/dashboard/SpendsRadialChart";
 import { withFrom } from "@/lib/payment-options";
 import { payeeKey, type PayAgainPayee } from "@/lib/payees";
@@ -60,7 +60,6 @@ import { usePayAgainStore } from "@/lib/pay-again-store";
 import { PayAgainManage } from "@/components/dashboard/v2/PayAgainManage";
 import { useSession } from "@/lib/session-store";
 import { MoneyActionPicker, type MoneyActionKind } from "./MoneyActionPicker";
-import { UnfundedNudge } from "./UnfundedNudge";
 import { SPRING as MOTION_SPRING } from "@/lib/motion";
 import { Bone } from "@/components/states/PageSkeletons";
 import { StateIllustration } from "@/components/states/StateIllustration";
@@ -605,37 +604,9 @@ export function RefreshFailed({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-/** The error notice, unfunded nudge, and Needs attention band, in that order, when they apply. */
-export function Notices({
-  data,
-  status,
-  onRefresh,
-  onOpenFundModal,
-}: Pick<DashViewProps, "data" | "status" | "onRefresh" | "onOpenFundModal">) {
-  const account = selectedAccount(data);
-  const isUnfunded = (account?.balance ?? 0) === 0 && data.latestTxns.length === 0;
-
-  return (
-    <>
-      {status === "error" && <RefreshFailed onRetry={onRefresh} />}
-      {isUnfunded && onOpenFundModal && (
-        <UnfundedNudge onFundClick={onOpenFundModal} />
-      )}
-      <AnimatePresence>
-        {data.attention.length > 0 && (
-          <motion.div
-            key="attention-band"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-          >
-            <AttentionBand items={data.attention} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
+/** The "couldn't refresh" notice, when the last fetch failed. Everything else that needs the customer is the banner above the greeting. */
+export function Notices({ status, onRefresh }: Pick<DashViewProps, "status" | "onRefresh">) {
+  return status === "error" ? <RefreshFailed onRetry={onRefresh} /> : null;
 }
 
 /* ── Content blocks ──────────────────────────────────────────────────────── */

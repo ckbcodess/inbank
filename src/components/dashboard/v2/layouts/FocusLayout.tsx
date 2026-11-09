@@ -100,7 +100,7 @@ export function FocusLayout(props: DashViewProps) {
         transition={SPRING}
         className="mx-auto flex w-full max-w-2xl flex-col gap-6 sm:gap-10"
       >
-        <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
+        <Notices status={status} onRefresh={onRefresh} />
 
         <Section>
           <CardHeader title={t("dashboard.comingUp", "Coming up")} href="/payments/standing" cta={t("common.manage", "Manage")} />
