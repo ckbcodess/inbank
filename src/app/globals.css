@@ -504,7 +504,7 @@
   --destructive-text: #b72a38;
   --info-text: var(--blue-700);
   /* Input fields, text areas, selects and the PIN boxes. */
-  --field: #fdfcfc;
+  --field: #ffffff;
   --field-focus: var(--white);
   --field-border: var(--gray-200);
   --field-border-hover: color-mix(in srgb, var(--gray-900) 12%, var(--gray-200));
