@@ -55,6 +55,20 @@ function visiblePart(el: HTMLElement): TourAnchor {
 }
 
 /**
+ * The left-hand edge of a block, as far as it shows: a line the tooltip hangs off, so for a block that spans the
+ * whole width it opens to the left of it (over the sidebar), with its arrow pointing at that edge, instead of floating over the middle.
+ */
+function leftEdgeOf(el: HTMLElement): TourAnchor {
+  const part = visiblePart(el);
+  return {
+    getBoundingClientRect: () => {
+      const r = part.getBoundingClientRect();
+      return new DOMRect(r.left, r.top, 0, r.height);
+    },
+  };
+}
+
+/**
  * Dims everything but the control a step is about: a transparent box laid over it whose huge shadow is the dim.
  * It follows the control every frame (the page is scrolling toward it), and lets clicks through, so the page stays live.
  */
@@ -172,8 +186,9 @@ function TourRun({ ctx }: { ctx: TourContext }) {
           target.style.scrollMarginBottom = `${TOOLTIP_ROOM_PX}px`;
           target.scrollIntoView({ block: "end", behavior: "smooth", inline: "nearest" });
         } else target.scrollIntoView({ block: tall ? "start" : "center", behavior: "smooth", inline: "nearest" });
-        // The tooltip points at the whole block, as much of it as is on screen.
-        const anchorEl = step.id === "glance" ? visiblePart(target) : target;
+        // The tooltip points at the whole block, as much of it as is on screen. On a wide screen the panels span the
+        // page, so it opens to the left of them, where the sidebar is; on a phone it hangs below.
+        const anchorEl = step.id === "glance" ? (narrow ? visiblePart(target) : leftEdgeOf(target)) : target;
         setAnchored({ id: step.id, el: anchorEl, target });
         return;
       }

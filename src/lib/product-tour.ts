@@ -91,7 +91,7 @@ export const PRODUCT_TOUR_STEPS: TourStep[] = [
     id: "profile",
     title: "Your profile",
     body: () =>
-      "Your name and email are in this menu, with Settings for your profile, security and alerts, and your theme and language. You can log out from here too.",
+      "Manage your profile, theme, security and alerts here. Log out when you're done.",
     side: "bottom",
     sideNarrow: "bottom",
   },
