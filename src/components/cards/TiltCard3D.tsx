@@ -18,12 +18,15 @@ interface TiltCard3DProps {
   children: React.ReactNode;
   className?: string;
   maxRotation?: number; // Maximum tilt angle in degrees, default 12
+  /** The moving light across the card and its logo. Off gives a plain tilt. Default on. */
+  sheen?: boolean;
 }
 
 export function TiltCard3D({
   children,
   className = "",
   maxRotation = 12,
+  sheen = true,
 }: TiltCard3DProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -110,7 +113,7 @@ export function TiltCard3D({
   );
 
   return (
-    <TiltContext.Provider value={{ glareX, glareY, springX, springY, isHovered }}>
+    <TiltContext.Provider value={{ glareX, glareY, springX, springY, isHovered: sheen && isHovered }}>
       <div
         ref={cardRef}
         onPointerEnter={handlePointerEnter}
@@ -131,6 +134,8 @@ export function TiltCard3D({
         >
           {children}
 
+          {sheen && (
+            <>
           {/* Dynamic Specular Card Sheen (Overlay reflection) with enhanced blur diffusion */}
           <motion.div
             className="pointer-events-none absolute -inset-1.5 rounded-3xl mix-blend-overlay blur-[20px] transition-opacity duration-300 z-10"
@@ -148,6 +153,8 @@ export function TiltCard3D({
               background: colorDodgeSheen,
             }}
           />
+            </>
+          )}
 
           {/* 1.5px Base Ambient Rim Stroke */}
           <div
@@ -158,6 +165,7 @@ export function TiltCard3D({
           />
 
           {/* 1.5px Dynamic Light-Reactive Specular Stroke (Tracks mouse glare position) */}
+          {sheen && (
           <motion.div
             className="pointer-events-none absolute inset-0 rounded-3xl p-[1.5px] z-20"
             style={{
@@ -169,6 +177,7 @@ export function TiltCard3D({
               transition: "opacity 0.25s ease-settle",
             }}
           />
+          )}
         </motion.div>
       </div>
     </TiltContext.Provider>

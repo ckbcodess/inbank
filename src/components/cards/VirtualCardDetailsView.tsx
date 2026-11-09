@@ -55,6 +55,7 @@ import { CardFace, themeForCard } from "@/components/cards/CardFace";
 import { EmvChip } from "@/components/cards/EmvChip";
 import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import { TiltCard3D } from "@/components/cards/TiltCard3D";
+import { HangingArrival } from "@/components/ui/hanging-arrival";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { CardDeliveryTrackerModal } from "@/components/cards/CardDeliveryTracker";
@@ -682,7 +683,13 @@ export function VirtualCardDetailsView({
   // The shared card face, the same one the Cards page draws, with the block state applied.
   const cardNode = (
     <div className="relative mx-auto w-full max-w-[360px] lg:w-[78%] lg:max-w-none">
-      <CardFace card={{ ...effectiveCard, status: isFrozen ? "Blocked" : effectiveCard.status }} />
+      {/* A very slight tilt (3° at most, against the Cards page's 12°), with no moving sheen. */}
+      {/* It arrives the way the cash-out ticket does: hanging from its top edge and dropping into place. */}
+      <HangingArrival>
+        <TiltCard3D className="w-full" maxRotation={3} sheen={false}>
+          <CardFace card={{ ...effectiveCard, status: isFrozen ? "Blocked" : effectiveCard.status }} />
+        </TiltCard3D>
+      </HangingArrival>
     </div>
   );
 
