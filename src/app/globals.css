@@ -660,9 +660,9 @@
   /* Neutral palette FIXED (neutral scale, dark mode). The accent is the same GCB amber as light mode. */
   --background: var(--gray-950);
   --foreground: var(--gray-50);
-  --card: var(--gray-875);
+  --card: #141414;
   --panel: var(--gray-875);
-  --card-auth: var(--gray-875);
+  --card-auth: #141414;
   --card-item: var(--gray-825);
   --modal: var(--gray-900);
   --tile: color-mix(in srgb, var(--gray-875) 33%, var(--gray-900));
@@ -1062,10 +1062,10 @@ a,
   --shell-surface-bottom: #f8f7f6;
 }
 .dark {
-  --shell-top: var(--gray-900);
+  --shell-top: #161616;
   --shell-bottom: var(--surface);
   --shell-surface-top: #141414;
-  --shell-surface-bottom: var(--surface);
+  --shell-surface-bottom: #050505;
 }
 .shell-backdrop {
   background: linear-gradient(to bottom, var(--shell-surface-top) 0%, var(--shell-surface-bottom) 100%);

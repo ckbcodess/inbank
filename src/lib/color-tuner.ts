@@ -219,7 +219,11 @@ export const TUNER_PRESETS: TunerPreset[] = [
         chip: "#f5f5f5",
       },
       dark: {
+        "shell-top": "#121212",
         "shell-surface-top": "#121212",
+        "shell-surface-bottom": "#080808",
+        card: "#181818",
+        "card-auth": "#181818",
         border: "#262626",
       },
     },
