@@ -71,7 +71,7 @@ export function SearchPicker({
         data-invalid={invalid || undefined}
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}
-        className="flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 field-surface rounded-xl border border-transparent bg-field px-3 py-2 text-left text-[14px] text-foreground outline-none transition-all hover:bg-field-hover"
+        className="flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 field-surface rounded-xl border border-transparent bg-field px-3 py-2 text-left text-[14px] text-foreground outline-none transition-all "
       >
         <span className="flex min-w-0 items-center gap-3">
           {chosen ? chosen.mark(28) : emptyMark}

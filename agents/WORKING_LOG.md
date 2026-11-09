@@ -182,6 +182,17 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-09
+
+- Decision (designer): a field's hover is only a slightly deeper edge, never a new fill. It lives in the `field-surface` utility (`--field-border-hover`, both themes), so every field gets it by using the utility. Fields with a real border use `hover:border-field-border-hover`. `bg-field-hover` is gone from every field and the `--field-hover` token is deleted (the filter button's open state now uses the hover edge too). Focus, open and invalid rings always beat hover: the hover rule sits in `:where()` so it can't outrank them. The Figma `input/surface-hover` variable can be removed. Worth promoting to the constitution (§4 or §9) at the next consolidation.
+
+- Question: sign-in and onboarding layout is open. Eight options are in `prototype/auth-layouts-prototypes.html` (banner and card as today, two splits, full-bleed, quiet column, photo-topped card, form with context rail, wide two-column card). Nothing is picked or built. Any split or full-bleed pick needs a tall crop of `public/images/auth-banner.webp` (2560 × 812, so ~780px tall is the most it gives). Layout 7 adds copy to translate (FR, ES, ZH).
+
+### 2026-11-08
+
+- Discovery: Ported NIBS design system into standalone Storybook workbench in toolcraft-app (C:/Users/rnsfo/Desktop/newprojects/toolcraft-app). Includes all GCB Bank tokens, 4px spacing scale, control heights, tabular typography, and fintech patterns with live interactive Storybook controls, event log stream, and docs view.
+- Decision (designer): Workbench shell adopts native Toolcraft studio design language (@/toolcraft/ui primitives, neutral dark studio palette, Inter typography, ToggleGroup segmented controls, Toolcraft tabs and inspector layout) while the canvas stage authentically preserves GCB Bank light/dark fintech component contracts without artificial AI gradients or styling.
+
 ### 2026-11-07
 
 - Decision (designer): controls that share a row share a height. `SegmentedControl` is now fixed at `--control-md` (it was about 43px from its padding), and `SelectTrigger` has a `size="md"`. My Spends, Insights and Beneficiaries use them; the row rule is in CONSTITUTION §6.

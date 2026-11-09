@@ -87,6 +87,11 @@
    invalid. Pair it with `border-transparent` so the box keeps its size. */
 @utility field-surface {
   box-shadow: 0 0 0 1px var(--field-border), 0 2px 2px -1px var(--field-drop);
+  /* Hover only deepens the edge. The fill never changes. `:where()` keeps it at the utility's own specificity, so the
+     focus, open and invalid rings below always win over it, even while the pointer is still over the field. */
+  &:where(:hover:not(:disabled):not([aria-disabled="true"])) {
+    box-shadow: 0 0 0 1px var(--field-border-hover), 0 2px 2px -1px var(--field-drop);
+  }
   &:focus,
   &:focus-visible,
   &:focus-within,
@@ -199,9 +204,9 @@
   --color-action-chip-hover: var(--action-chip-hover);
   --color-item-hover: var(--item-hover);
   --color-field: var(--field);
-  --color-field-hover: var(--field-hover);
   --color-field-focus: var(--field-focus);
   --color-field-border: var(--field-border);
+  --color-field-border-hover: var(--field-border-hover);
   --color-field-border-focus: var(--field-border-focus);
   --color-menu: var(--menu);
   --color-menu-item-hover: var(--menu-item-hover);
@@ -500,9 +505,9 @@
   --info-text: var(--blue-700);
   /* Input fields, text areas, selects and the PIN boxes. */
   --field: var(--white);
-  --field-hover: var(--gray-50);
   --field-focus: var(--white);
   --field-border: var(--gray-200);
+  --field-border-hover: color-mix(in srgb, var(--gray-900) 12%, var(--gray-200));
   --field-drop: rgba(0, 0, 0, 0.04);
   --field-border-focus: var(--gray-875);
   /* Dropdown menus. */
@@ -758,9 +763,9 @@
   --destructive-text: #b72a38;
   --info-text: var(--blue-300);
   --field: #181818;
-  --field-hover: var(--gray-825);
   --field-focus: var(--gray-875);
   --field-border: #212121;
+  --field-border-hover: color-mix(in srgb, var(--white) 10%, #212121);
   --field-drop: color-mix(in srgb, var(--black) 30%, transparent);
   --field-border-focus: var(--gray-500);
   --menu: var(--gray-850);
@@ -1198,6 +1203,15 @@ select {
 }
 .animate-amount-shake {
   animation: amount-shake 0.3s ease-in-out;
+}
+
+/* A digit typed into the amount field grows in from small to full size. */
+@keyframes digit-in {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.animate-digit-in {
+  animation: digit-in var(--dur-entrance) var(--ease-settle) both;
 }
 
 /* Numora numeric input utility for all numeric-only fields */
@@ -1720,6 +1734,10 @@ html[data-hide-focus-ring] .field-surface:focus-within {
    is merely a sibling of the focused control lost its edge. Restore the resting edge on every field that isn't invalid. */
 html[data-hide-focus-ring] .field-surface:not([aria-invalid="true"]):not([data-invalid="true"]) {
   box-shadow: 0 0 0 1px var(--field-border), 0 2px 2px -1px var(--field-drop) !important;
+}
+/* ...and the hover edge still shows while the ring is hidden, but never on a field that is focused or open. */
+html[data-hide-focus-ring] .field-surface:not([aria-invalid="true"]):not([data-invalid="true"]):not([data-open]):not(:focus):not(:focus-within):hover:not(:disabled):not([aria-disabled="true"]) {
+  box-shadow: 0 0 0 1px var(--field-border-hover), 0 2px 2px -1px var(--field-drop) !important;
 }
 
 /* @kitlangton/rolling-number (the balance roll) ships `.rn-ink { will-change: transform }`

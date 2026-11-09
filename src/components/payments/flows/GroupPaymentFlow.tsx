@@ -570,7 +570,7 @@ export function GroupPaymentFlow({
                   type="button"
                   onClick={() => setMembersExpanded((v) => !v)}
                   aria-expanded={membersExpanded}
-                  className="field-surface flex min-h-(--control-xl) w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-transparent bg-field px-3 py-2 text-left transition-colors hover:bg-field-hover"
+                  className="field-surface flex min-h-(--control-xl) w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-transparent bg-field px-3 py-2 text-left transition-colors "
                 >
                   <span className="flex min-w-0 items-center gap-3">
                     <span aria-hidden="true" className="flex shrink-0 items-center">

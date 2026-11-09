@@ -151,7 +151,7 @@ Usage before the rebind:
 | text/ | on-accent → `--accent-foreground` |
 | border/ | sheet-rim → `--sheet-rim` |
 | menu/ | surface → `--menu` · item-hover → `--menu-item-hover` (`--popover` points to `--menu` in code, so no separate variable) |
-| input/ | surface-hover → `--field-hover` · surface-focus → `--field-focus` |
+| input/ | surface-focus → `--field-focus` · border-hover → `--field-border-hover` (surface-hover is retired in code: a field's hover is only a deeper border, so the Figma variable can go) |
 | status/ | success-text → `--success-text` · warning-text → `--warning-text` · error-text → `--destructive-text` · info-text → `--info-text` · on-error → `--destructive-foreground` |
 | badge-tint/, badge-text/ | teal → `--pill-teal`, `--pill-teal-text` |
 | chip/ | surface → `--chip` · foreground → `--chip-foreground` · selected → `--chip-selected` · selected-foreground → `--chip-selected-foreground` |
@@ -186,7 +186,7 @@ Left out on purpose: `--mc-*` (Mastercard logo colours), `--device-*` and `--dm-
 
 Several code tokens share a value, so a captured colour can't tell you which token it came from:
 - `#ffffff` (light) is shared by background, modal, menu, field, card-auth, chip-selected and active-bg
-- `#fafafa` (light) is shared by card, card-item, surface, field-hover and menu-item-hover
+- `#fafafa` (light) is shared by card, card-item, surface and menu-item-hover
 - `#ebebeb` (light) is shared by muted, border and field-border
 
 The binding pass picks one by property: strokes go to border/default, text to text/primary and text/secondary,

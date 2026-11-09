@@ -42,7 +42,7 @@ export function CountryPicker({
         onClick={() => setOpen(true)}
         className={
           triggerClassName ??
-          "flex h-11 w-full cursor-pointer items-center gap-2 rounded-2xl field-surface border border-transparent bg-field px-3 text-left text-[14px] transition-colors hover:bg-field-hover"
+          "flex h-11 w-full cursor-pointer items-center gap-2 rounded-2xl field-surface border border-transparent bg-field px-3 text-left text-[14px] transition-colors "
         }
       >
         {selected && <CountryFlag code={selected.code} size={24} />}

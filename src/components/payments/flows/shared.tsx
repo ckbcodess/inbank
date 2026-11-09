@@ -20,7 +20,6 @@ import { cn } from "@/lib/utils";
 import { OperatorLogo } from "@/components/ui/operator-logo";
 import { OPERATORS, OPERATOR_IDS, operatorFromName, telcoName, type Operator } from "@/lib/operators";
 import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
-import { TextMorph } from "torph/react";
 
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
@@ -843,6 +842,9 @@ export function AmountInput({
   const [nudge, setNudge] = useState(false);
 
   const [displayValue, setDisplayValue] = useState(() => getFormatted(value));
+  // The one character just typed, so only it grows in. `id` remounts it to replay the animation on every keystroke.
+  const [entering, setEntering] = useState<{ index: number; id: number } | null>(null);
+  const enterId = useRef(0);
 
   // Sync when parent component updates the value externally (e.g. form reset, preset amount)
   useEffect(() => {
@@ -886,6 +888,16 @@ export function AmountInput({
         rawCount++;
       }
       newCursor = i + 1;
+    }
+
+    // Exactly one digit or dot added: that character grows in. A paste, a delete or an external change doesn't.
+    const grewByOne = formatted.replace(/,/g, "").length === displayValue.replace(/,/g, "").length + 1;
+    if (grewByOne) {
+      let at = newCursor - 1;
+      if (formatted[at] === ",") at -= 1;
+      setEntering(at >= 0 ? { index: at, id: ++enterId.current } : null);
+    } else {
+      setEntering(null);
     }
 
     setDisplayValue(formatted);
@@ -992,7 +1004,7 @@ export function AmountInput({
         className={cn(
           "field-surface relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border border-transparent bg-field transition-colors px-3",
           nudge && "animate-amount-shake",
-          disabled ? "bg-muted/30 cursor-not-allowed opacity-80" : "hover:bg-field-hover cursor-text",
+          disabled ? "bg-muted/30 cursor-not-allowed opacity-80" : "cursor-text",
           "focus-within:bg-field-focus",
         )}
       >
@@ -1018,7 +1030,7 @@ export function AmountInput({
               {displayValue || "0"}
             </span>
 
-            {/* Visible animated digit-morphing layer rendered by Torph TextMorph */}
+            {/* Visible layer: the digit just typed grows in from small to full size */}
             <span
               aria-hidden="true"
               className={cn(
@@ -1031,9 +1043,17 @@ export function AmountInput({
                   : "text-muted-foreground/35"
               )}
             >
-              <TextMorph ease={{ stiffness: 400, damping: 30 }}>
-                {displayValue || "0"}
-              </TextMorph>
+              {(displayValue || "0").split("").map((ch, i) =>
+                entering && !!displayValue && i === entering.index ? (
+                  <span key={`e${entering.id}`} className="animate-digit-in inline-block">
+                    {ch}
+                  </span>
+                ) : (
+                  <span key={`c${i}`} className="inline-block">
+                    {ch}
+                  </span>
+                )
+              )}
             </span>
 
             {/* Pure React controlled input: 100% deterministic, zero duplicate keystrokes, native IME, cursor & selection */}
@@ -1329,7 +1349,7 @@ export function CollapsedDetailsBadge({
 }) {
   const initials = initialsOf(title);
   return (
-    <div className="flex min-h-(--control-xl) items-center justify-between gap-2 rounded-xl border border-field-border bg-field px-3 py-2 transition-colors animate-in fade-in duration-150 ease-out hover:bg-field-hover">
+    <div className="flex min-h-(--control-xl) items-center justify-between gap-2 rounded-xl border border-field-border bg-field px-3 py-2 transition-colors animate-in fade-in duration-150 ease-out hover:border-field-border-hover">
       <div className="flex min-w-0 items-center gap-2">
         {icon ? (
           <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full text-foreground [&>svg]:size-5">

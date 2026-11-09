@@ -97,7 +97,7 @@ export function SignatureUpload({
         <button
           type="button"
           onClick={() => input.current?.click()}
-          className="flex min-h-[96px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-field-border bg-field px-3 py-4 text-center transition-colors hover:bg-field-hover"
+          className="flex min-h-[96px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-field-border bg-field px-3 py-4 text-center transition-colors hover:border-field-border-hover"
         >
           <Upload size={18} className="text-muted-foreground" aria-hidden="true" />
           <span className="text-[13px] text-muted-foreground">Upload a JPG, PNG or PDF, up to 5 MB</span>

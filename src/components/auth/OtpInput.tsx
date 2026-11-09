@@ -142,7 +142,7 @@ export default function OtpInput({
               onKeyDown={(e) => handleKeyDown(i, e)}
               aria-label={mask ? `PIN Digit ${i + 1} of ${length}` : `Digit ${i + 1} of ${length}`}
               aria-invalid={invalid || undefined}
-              className={`numorainput field-surface size-10 sm:size-10 rounded-xl border bg-field hover:bg-field-hover text-center text-[19px] sm:text-[20px] font-medium tracking-tight text-foreground outline-none transition tabular focus:bg-field-focus focus-visible:bg-field-focus disabled:opacity-60 dark:bg-field ${
+              className={`numorainput field-surface size-10 sm:size-10 rounded-xl border bg-field text-center text-[19px] sm:text-[20px] font-medium tracking-tight text-foreground outline-none transition tabular focus:bg-field-focus focus-visible:bg-field-focus disabled:opacity-60 dark:bg-field ${
                 invalid ? "border-transparent bg-destructive/5 shadow-[0_0_0_2px_var(--destructive)]" : "border-transparent"
               }`}
             />

@@ -157,7 +157,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
         }}
         data-open={open ? "" : undefined}
         className={`field-surface h-11 px-3 w-full rounded-2xl border border-transparent text-left transition flex items-center gap-2 cursor-text ${
-          open ? "bg-field-focus" : "bg-field hover:bg-field-hover"
+          open ? "bg-field-focus" : "bg-field"
         }`}
       >
         <MapPin size={18} className="shrink-0 text-muted-foreground" />

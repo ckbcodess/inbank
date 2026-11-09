@@ -149,7 +149,7 @@ export function PhoneInput({
       className={cn(
         "flex h-(--control-xl) w-full items-center gap-2 field-surface rounded-xl border border-transparent bg-field px-3 text-[14px] transition-all outline-none",
         "focus-within:outline-none",
-        "hover:bg-field-hover focus-within:bg-field-focus",
+        "focus-within:bg-field-focus",
         disabled && "pointer-events-none opacity-50",
         className
       )}

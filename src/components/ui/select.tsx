@@ -114,7 +114,7 @@ function SelectTrigger({
       data-size={size}
       data-active={isActive ? "true" : undefined}
       className={cn(
-        "field-surface flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-transparent bg-field px-3 py-2 text-[14px] text-foreground transition-all outline-none select-none hover:bg-field-hover focus:outline-none focus-visible:outline-none dark:bg-field dark:text-foreground",
+        "field-surface flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-transparent bg-field px-3 py-2 text-[14px] text-foreground transition-all outline-none select-none focus:outline-none focus-visible:outline-none dark:bg-field dark:text-foreground",
         "disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-muted-foreground data-[size=default]:min-h-(--control-xl) data-[size=md]:min-h-(--control-md) data-[size=sm]:min-h-(--control-sm) data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2",
         // A filter that is on: a stronger edge (the same ring, a darker colour) and a tinted fill.
         isActive &&

@@ -198,7 +198,7 @@ export function OccupationCombobox({
         }}
         data-open={open ? "" : undefined}
         className={`field-surface flex h-11 w-full cursor-text items-center gap-2 rounded-2xl border border-transparent px-3 transition ${
-          open ? "bg-field" : "bg-field hover:bg-field-hover"
+          open ? "bg-field" : "bg-field"
         }`}
       >
         <Briefcase size={16} className="shrink-0 text-muted-foreground" />

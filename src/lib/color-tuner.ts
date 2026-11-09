@@ -28,7 +28,7 @@ const GROUP_RULES: [string, RegExp][] = [
   ["Primary button", /^primary-(glow|fill|edge|shadow)/],
   ["Brand", /^(primary|ring|active-|action-icon|tile-accent)/],
   ["Status", /^(success|warning|destructive|info)/],
-  ["Interactive & Hovers", /^(hover|item-hover|tile-hover|field-hover|menu-item-hover)/],
+  ["Interactive & Hovers", /^(hover|item-hover|tile-hover|menu-item-hover)/],
   ["Fields and menus", /^(field|menu|input$)/],
   ["Glass border", /^edge-glass-/],
   ["Borders", /(^border$|-border$|-border-focus$|^duo-outline$)/],
