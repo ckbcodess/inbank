@@ -370,7 +370,7 @@
    */
   --background: var(--white);
   --foreground: var(--gray-950);
-  --card: var(--gray-50);
+  --card: #faf9f8;
   /* Dashboard panels (Recent activity, Cards, Accounts...). Follows the page background; tune on its own. */
   --panel: var(--background);
   /* Card surface for auth & onboarding screens (distinct from in-app --card). */
@@ -381,18 +381,18 @@
   --modal: var(--white);
   /* Tile surface tokens. Hub tiles are filled with --tile, with no stroke, and --tile-hover on hover; the fill also
      serves the empty PIN dots. Single source for both modes so a change reflects everywhere. */
-  --tile: #f7f7f7;
+  --tile: #f7f6f5;
   /* The cash-out ticket is warm paper with black ink in both themes. */
   --ticket-paper: #f1efe8;
   --ticket-ink: #0a0a0a;
   --ticket-rule: #cbc8bf;
-  --tile-hover: #eeeeee;
+  --tile-hover: #f2f1f0;
   /* The round quick actions (Share, Receipt, Report Issue, Edit): the chip behind the icon, and its hover. */
-  --action-chip: var(--gray-100);
-  --action-chip-hover: var(--gray-200);
+  --action-chip: #f7f6f5;
+  --action-chip-hover: #f2f1f0;
   /* The action tile on a modal, dialog or sheet: a step lighter than the page tile. */
   --tile-modal: #f7f7f7;
-  --tile-modal-hover: #eeeeee;
+  --tile-modal-hover: #f2f1f0;
   /* Shared list item hover token for lists, accounts, and dashboard panels (replaces raw muted/tile-hover) */
   --item-hover: color-mix(in srgb, var(--black) 4%, transparent);
   /* Hub tile icon (INTERFACE §E): amber-500 on light. */
@@ -461,7 +461,7 @@
   --mc-overlap: #ff5f00;
   /* The ring drawn around a button or link reached with the keyboard. Follows --ring until set. */
   /* Chips: the grey rail of a segmented filter, the chip that is selected, and the text on each. */
-  --chip: var(--gray-100);
+  --chip: #f7f6f5;
   --chip-selected: var(--white);
   --chip-selected-foreground: var(--gray-950);
   --chip-foreground: var(--gray-600);
@@ -504,7 +504,7 @@
   --destructive-text: #b72a38;
   --info-text: var(--blue-700);
   /* Input fields, text areas, selects and the PIN boxes. */
-  --field: var(--white);
+  --field: #fdfcfc;
   --field-focus: var(--white);
   --field-border: var(--gray-200);
   --field-border-hover: color-mix(in srgb, var(--gray-900) 12%, var(--gray-200));
@@ -544,7 +544,7 @@
   --plan-art-business-loan-2: var(--smoke-500);
   --plan-art-sme-loan-1: var(--amber-300);
   --plan-art-sme-loan-2: var(--amber-500);
-  --muted: var(--gray-200);
+  --muted: #edeceb;
   --muted-foreground: var(--gray-500);
   --accent: var(--gray-100);
   --accent-foreground: var(--gray-875);
@@ -780,7 +780,7 @@
   --destructive-foreground: var(--white);
   --success: var(--green-500);
   --warning: var(--amber-500);
-  --border: var(--gray-800);
+  --border: #212121;
   --edge-glass-start: #262626;
   --edge-glass-mid: #212121;
   --edge-glass-end: #171717;
@@ -1055,16 +1055,16 @@ a,
    the card's lower edge melts into the sidebar and backdrop instead of ending on a near-miss colour. The floating
    top bar and the phone bottom bar use the top colour, so they always match the card. */
 :root {
-  --shell-top: color-mix(in srgb, var(--gray-50) 20%, var(--white));
-  --shell-bottom: color-mix(in srgb, var(--gray-50) 20%, var(--white));
+  --shell-top: #ffffff;
+  --shell-bottom: #fdfcfc;
   /* The backdrop behind the card: the sidebar and the margin around the card are one continuous gradient. */
-  --shell-surface-top: var(--surface);
-  --shell-surface-bottom: var(--surface);
+  --shell-surface-top: #faf9f8;
+  --shell-surface-bottom: #f8f7f6;
 }
 .dark {
   --shell-top: var(--gray-900);
   --shell-bottom: var(--surface);
-  --shell-surface-top: var(--gray-900);
+  --shell-surface-top: #141414;
   --shell-surface-bottom: var(--surface);
 }
 .shell-backdrop {

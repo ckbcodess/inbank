@@ -5,8 +5,8 @@
  * panel with every colour token the stylesheet defines, found automatically, grouped and searchable. Each has a swatch
  * and a hex field, and see-through ones get an opacity slider. Edits apply to the theme that is on screen, update the
  * whole app as you drag, and persist in this browser; switch theme to edit the other one. "Copy CSS" puts the changed
- * tokens on the clipboard in the shape of globals.css. A Hero preset row switches the hero between saved palettes
- * (Original and Amber). Hidden in capture mode; only mounted in dev.
+ * tokens on the clipboard in the shape of globals.css. A Preset row switches between saved palettes
+ * (Original is globals.css, Previous is the earlier grey surfaces, Amber is the hero). Hidden in capture mode; only mounted in dev.
  */
 
 import { useEffect, useMemo, useState } from "react";
@@ -134,8 +134,8 @@ function TunerPanel() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-[12px] text-muted-foreground">Hero preset</span>
-        <div className="flex gap-2">
+        <span className="text-[12px] text-muted-foreground">Preset</span>
+        <div className="flex flex-wrap gap-2">
           {TUNER_PRESETS.map((p) => {
             const on = activePreset === p.id;
             return (

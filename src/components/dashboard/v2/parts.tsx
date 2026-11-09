@@ -185,7 +185,7 @@ export function PanelEmpty({
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 py-5 text-center sm:py-6">
       {/* Bare and thin: nothing around it, so an empty panel stays quiet. */}
-      {illustration ? <StateIllustration id={illustration} fallback={bareIcon} height={104} /> : bareIcon}
+      {illustration ? <StateIllustration id={illustration} fallback={bareIcon} height={64} /> : bareIcon}
       <p className="text-[13px] text-muted-foreground">{text}</p>
       {action &&
         (action.href ? (
@@ -604,6 +604,7 @@ export function RefreshFailed({ onRetry }: { onRetry: () => void }) {
   );
 }
 
+
 /** The "couldn't refresh" notice, when the last fetch failed. Everything else that needs the customer is the banner above the greeting. */
 export function Notices({ status, onRefresh }: Pick<DashViewProps, "status" | "onRefresh">) {
   return status === "error" ? <RefreshFailed onRetry={onRefresh} /> : null;
@@ -708,12 +709,14 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
       ) : data.payAgain.length === 0 ? (
         <PanelEmpty
           icon={CediReceiptIcon}
+          illustration="empty-people"
           text={t("dashboard.payAgainEmpty", "Save the people and bills you pay often.")}
           action={{ label: t("dashboard.addSomeone", "Add someone"), href: "/beneficiaries?add=1" }}
         />
       ) : visible.length === 0 ? (
         <PanelEmpty
           icon={CediReceiptIcon}
+          illustration="empty-people"
           text={t("dashboard.payAgainAllHidden", "You've hidden everyone here.")}
           action={{ label: t("common.manage", "Manage"), onClick: () => setManageOpen(true) }}
         />
@@ -793,12 +796,13 @@ export function ActivityBody({
       return (
         <PanelEmpty
           icon={History}
+          illustration="empty-activity"
           text={t("dashboard.noActivityYet", "No activity on this account yet.")}
           action={{ label: t("dashboard.fundAccount", "Fund account"), onClick: onOpenFundModal }}
         />
       );
     }
-    return <PanelEmpty icon={History} text={t("dashboard.noActivityYet", "No activity on this account yet.")} />;
+    return <PanelEmpty icon={History} illustration="empty-activity" text={t("dashboard.noActivityYet", "No activity on this account yet.")} />;
   }
   // Skullet measures the real rows (filled with sample data while loading) and draws the bones over them.
   return (
@@ -855,7 +859,7 @@ export function CardsCard({
           <CardsMini cards={CARDS_SAMPLE} limit={2} />
         </Skeleton>
       ) : data.cards.length === 0 ? (
-        <PanelEmpty icon={CreditCard} text={t("dashboard.noCardsOnAccount", "No card on this account.")} action={{ label: t("dashboard.requestCard", "Request a card"), href: "/cards/request" }} />
+        <PanelEmpty icon={CreditCard} illustration="empty-cards" text={t("dashboard.noCardsOnAccount", "No card on this account.")} action={{ label: t("dashboard.requestCard", "Request a card"), href: "/cards/request" }} />
       ) : (
         <div className="flex flex-1 flex-col justify-between gap-2">
           <CardsMini cards={data.cards} />

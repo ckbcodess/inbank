@@ -186,9 +186,10 @@ export function resetTunerAll() {
   emit();
 }
 
-/* ── Hero presets ──────────────────────────────────────────────────────────────
-   A preset is a saved set of hero token values. "Original" is the palette in globals.css (it clears the hero tokens
-   any preset touches); the others set them. Applying one only replaces those tokens, so anything else tuned stays. */
+/* ── Presets ───────────────────────────────────────────────────────────────────
+   A preset is a saved set of token values. "Original" is the palette in globals.css (it clears the tokens any preset
+   touches); the others set them. "Previous" is the neutral surface palette from before the warm one became the default
+   (2026-11-09), as plain greys; "Amber" is the hero. Applying one only replaces those tokens, so anything else tuned stays. */
 
 export interface TunerPreset {
   id: string;
@@ -198,6 +199,31 @@ export interface TunerPreset {
 
 export const TUNER_PRESETS: TunerPreset[] = [
   { id: "original", label: "Original", overrides: { light: {}, dark: {} } },
+  {
+    id: "previous",
+    label: "Previous",
+    overrides: {
+      light: {
+        "shell-top": "#fefefe",
+        "shell-bottom": "#fefefe",
+        "shell-surface-top": "#fafafa",
+        "shell-surface-bottom": "#fafafa",
+        tile: "#f7f7f7",
+        "tile-hover": "#eeeeee",
+        "tile-modal-hover": "#eeeeee",
+        field: "#ffffff",
+        muted: "#ebebeb",
+        card: "#fafafa",
+        "action-chip": "#f5f5f5",
+        "action-chip-hover": "#ebebeb",
+        chip: "#f5f5f5",
+      },
+      dark: {
+        "shell-surface-top": "#121212",
+        border: "#262626",
+      },
+    },
+  },
   {
     id: "amber",
     label: "Amber",

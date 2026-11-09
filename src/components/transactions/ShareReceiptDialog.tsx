@@ -6,6 +6,7 @@
  * and Save as PDF. The caller builds the text and the PDF.
  */
 
+import { useState } from "react";
 import { EyeOff, FileDown, Share } from "@/components/ui/icons";
 import { ActionTile } from "@/components/ui/action-tile";
 import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -21,6 +22,11 @@ interface ShareReceiptDialogProps {
 }
 
 export function ShareReceiptDialog({ format, onClose, onShare }: ShareReceiptDialogProps) {
+  // The dialog fades out after `format` goes back to null; keep what it showed so the title doesn't flip to "Share Receipt" on the way out.
+  const [shown, setShown] = useState<ReceiptFormat>("text");
+  if (format && format !== shown) setShown(format);
+  const view = format ?? shown;
+
   const choose = (masked: boolean) => {
     if (!format) return;
     onClose();
@@ -30,10 +36,10 @@ export function ShareReceiptDialog({ format, onClose, onShare }: ShareReceiptDia
     <Dialog open={format !== null} onOpenChange={(open) => !open && onClose()}>
       <DialogContent size="sm">
         <DialogHeader>
-          <DialogTitle>{format === "pdf" ? "Save as PDF" : "Share Receipt"}</DialogTitle>
+          <DialogTitle>{view === "pdf" ? "Save as PDF" : "Share Receipt"}</DialogTitle>
         </DialogHeader>
         <DialogBody className="gap-2">
-          <ActionTile variant="modal" icon={format === "pdf" ? FileDown : Share} title="With Transaction Details" onClick={() => choose(false)} />
+          <ActionTile variant="modal" icon={view === "pdf" ? FileDown : Share} title="With Transaction Details" onClick={() => choose(false)} />
           <ActionTile variant="modal" icon={EyeOff} title="Hide Transaction Details" description="Amounts, fees and totals are left out" onClick={() => choose(true)} />
         </DialogBody>
       </DialogContent>
