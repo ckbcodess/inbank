@@ -80,6 +80,20 @@ const SEED_GROUPS: PaymentGroup[] = [
       { id: "w-12", name: "Bro. Kwesi", destination: "0559 223 344", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 250 },
     ],
   },
+  {
+    id: "grp-housemates",
+    name: "Housemates Bills",
+    description: "Rent, power and water, each paying their own share",
+    defaultPerMemberAmount: 500,
+    splitType: "custom",
+    createdAt: "2026-08-02",
+    members: [
+      { id: "h-1", name: "Nana Adjei", destination: "0244 301 872", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 900 },
+      { id: "h-2", name: "Efua Quansah", destination: "0201 665 430", type: "wallet", networkOrBank: "Telecel Cash", defaultAmount: 650 },
+      { id: "h-3", name: "Kwabena Sarpong", destination: "0231 7788 40215", type: "bank", networkOrBank: "GCB Bank", defaultAmount: 500 },
+      { id: "h-4", name: "Adwoa Frimpong", destination: "0271 220 915", type: "wallet", networkOrBank: "AT Money", defaultAmount: 350 },
+    ],
+  },
 ];
 
 interface GroupsState {
@@ -124,6 +138,16 @@ export const useGroupsStore = create<GroupsState>()(
     }),
     {
       name: "nibs-payment-groups",
+      // v1 added the Housemates Bills group (the custom-split example). Saved lists from before it get it appended once.
+      version: 1,
+      migrate: (persisted, version) => {
+        const state = persisted as { groups?: PaymentGroup[] } | undefined;
+        if (version < 1 && state?.groups && !state.groups.some((g) => g.id === "grp-housemates")) {
+          const seed = SEED_GROUPS.find((g) => g.id === "grp-housemates");
+          if (seed) state.groups = [...state.groups, seed];
+        }
+        return state as unknown as GroupsState;
+      },
     }
   )
 );

@@ -26,6 +26,7 @@ import AppLoader from "@/components/ui/loader";
 import { MultiChoice } from "@/components/ui/multi-choice";
 import { OptionTile } from "@/components/ui/option-tile";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { ProductBanner } from "@/components/ui/product-banner";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RangePills } from "@/components/ui/range-pills";
 import { ReviewSummary } from "@/components/ui/review-summary";
@@ -40,6 +41,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ToggleTile } from "@/components/ui/toggle-tile";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import { AmountInput } from "@/components/payments/flows/shared";
+import type { AlertItem, ProductAlert } from "@/lib/product-alerts";
 
 /** A titled group of specimens. Whitespace separates them; nothing is boxed. */
 function Specimen({ title, note, children }: { title: string; note?: string; children: ReactNode }) {
@@ -595,6 +597,71 @@ export function FeedbackTab() {
               Apply for a loan
             </Button>
           </div>
+        </Specimen>
+      </div>
+    </div>
+  );
+}
+
+/* ── Banners ─────────────────────────────────────────────────────────────── */
+
+const bannerToast = (label: string) => () => toast.message(label);
+const bannerItem = (key: string, label: string, alert: ProductAlert): AlertItem => ({ key, label, alert });
+
+const BANNER_ITEMS: Record<string, AlertItem[]> = {
+  mixed: [
+    bannerItem("a", "Cash Advance", { tone: "act", headline: "Overdue since 25 Oct 2026", action: { label: "Repay now", href: "/sandbox/components" } }),
+    bannerItem("b", "Visa Debit · ∗∗∗∗ 4012", { tone: "act", headline: "Card blocked", action: { label: "View card", onClick: bannerToast("View card") } }),
+    bannerItem("c", "Savings", { tone: "wait", headline: "Account dormant", action: { label: "View account", onClick: bannerToast("View account") } }),
+  ],
+  calm: [
+    bannerItem("a", "Visa Platinum · Osu branch", { tone: "wait", headline: "Card ready for pickup", action: { label: "View card", onClick: bannerToast("View card") } }),
+    bannerItem("b", "Savings", { tone: "wait", headline: "Account dormant", action: { label: "View account", onClick: bannerToast("View account") } }),
+  ],
+  many: [
+    bannerItem("a", "ECG Prepaid Electricity · GHS 150.00", { tone: "act", headline: "Payment didn't go through", action: { label: "Retry", onClick: bannerToast("Retry") } }),
+    bannerItem("b", "Visa Debit · ∗∗∗∗ 4012", { tone: "act", headline: "Card blocked", action: { label: "View card", onClick: bannerToast("View card") } }),
+    bannerItem("c", "Mastercard Virtual · expires next month", { tone: "act", headline: "Card expiring soon", action: { label: "View card", onClick: bannerToast("View card") } }),
+    bannerItem("d", "Visa Platinum · Osu branch", { tone: "wait", headline: "Card ready for pickup", action: { label: "View card", onClick: bannerToast("View card") } }),
+  ],
+};
+
+export function BannersTab() {
+  return (
+    <div className="grid gap-10 md:grid-cols-2">
+      <div className="flex flex-col gap-8">
+        <Specimen title="Needs you" note="Amber with the exclamation mark: something is due or has gone wrong, and the customer can fix it. At most six words and one underlined action.">
+          <ProductBanner alert={{ tone: "act", headline: "Overdue since 25 Oct 2026", action: { label: "Repay now", href: "/sandbox/components" } }} />
+          <ProductBanner alert={{ tone: "act", headline: "Fund your virtual wallet to start transacting", action: { label: "Fund wallet", onClick: bannerToast("Fund wallet") } }} />
+        </Specimen>
+        <Specimen title="Waiting" note="Neutral with a clock: a date is coming, or we are working, and nothing is required.">
+          <ProductBanner alert={{ tone: "wait", headline: "Due 25 Oct 2026", action: { label: "Repay now", href: "/sandbox/components" } }} />
+          <ProductBanner alert={{ tone: "wait", headline: "Matures in 6 days", action: { label: "Change what happens", onClick: bannerToast("Change what happens") } }} />
+        </Specimen>
+        <Specimen title="No action" note="When there is nothing to do, there is no link.">
+          <ProductBanner alert={{ tone: "wait", headline: "Cash-in requested" }} />
+          <ProductBanner alert={{ tone: "wait", headline: "Waiting for a medical assessment" }} />
+        </Specimen>
+        <Specimen title="Good news" note="Success colour with a tick: ready, not a to-do.">
+          <ProductBanner alert={{ tone: "wait", success: true, headline: "Your securities account is ready", action: { label: "Open it", onClick: bannerToast("Open it") } }} />
+        </Specimen>
+      </div>
+      <div className="flex flex-col gap-8">
+        <Specimen title="With a detail line" note="One quiet line under the headline, when the headline leaves a question.">
+          <ProductBanner alert={{ tone: "act", headline: "Card blocked", detail: "Visa Debit · ∗∗∗∗ 4012", action: { label: "View card", onClick: bannerToast("View card") } }} />
+          <ProductBanner alert={{ tone: "wait", headline: "Card ready for pickup", detail: "Visa Platinum · Osu branch" }} />
+        </Specimen>
+        <Specimen title="Several, one needs you" note="They stay one banner: it counts the ones that need the customer, and opens in place into a row each.">
+          <ProductBanner items={BANNER_ITEMS.mixed} noun="items" />
+        </Specimen>
+        <Specimen title="Several, all calm" note="Nothing needs the customer, so it stays neutral.">
+          <ProductBanner items={BANNER_ITEMS.calm} noun="items" />
+        </Specimen>
+        <Specimen title="Dashboard headline" note="The dashboard mixes kinds, so it words the count itself. Past three rows it shows Show all.">
+          <ProductBanner
+            items={BANNER_ITEMS.many}
+            summary={(total, acting) => (acting === 1 ? "1 thing needs you" : acting > 1 ? `${acting} things need you` : `${total} things to look at`)}
+          />
         </Specimen>
       </div>
     </div>

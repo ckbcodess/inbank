@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { TweakPanel } from "@/components/dev/sandbox/TweakPanel";
 import {
+  BannersTab,
   ButtonsTab,
   ChartsTab,
   DataTab,
@@ -39,6 +40,7 @@ const TABS = [
   { value: "data", label: "Data", Body: DataTab },
   { value: "charts", label: "Charts", Body: ChartsTab },
   { value: "feedback", label: "Feedback", Body: FeedbackTab },
+  { value: "banners", label: "Banners", Body: BannersTab },
   { value: "type", label: "Type", Body: TypeTab },
   { value: "surfaces", label: "Surfaces", Body: SurfacesTab },
 ] as const;

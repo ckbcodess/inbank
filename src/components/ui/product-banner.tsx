@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { Check, ChevronDown, Clock } from "@/components/ui/icons";
 import type { AlertItem, ProductAlert } from "@/lib/product-alerts";
@@ -23,22 +23,32 @@ export function AlertMark({ tone, success = false, className }: { tone: ProductA
   );
 }
 
-const ACTION_CLASS = "shrink-0 text-[13px] text-foreground underline underline-offset-4";
+/** The underlined words that say what a tap does. They are the visible part of the action; the whole row is the target. */
+function ActionLabel({ label }: { label: string }) {
+  return <span className="shrink-0 text-[13px] text-foreground underline underline-offset-4">{label}</span>;
+}
 
-/** The underlined text action at the end of a banner row: a link when it goes to a page, a button when it opens something in place. */
-function AlertAction({ action }: { action: NonNullable<ProductAlert["action"]> }) {
-  if (action.href) {
+/**
+ * A row of a banner. With an action the whole row is the tap target (a link when it goes to a page, a button when it
+ * opens something in place), so a thumb doesn't have to find the underlined words; without one it is plain.
+ */
+function AlertRow({ action, className, children }: { action?: ProductAlert["action"]; className?: string; children: ReactNode }) {
+  const row = cn("flex w-full items-center gap-3 text-left", className);
+  if (action?.href) {
     return (
-      <Link href={action.href} onClick={action.onClick} className={ACTION_CLASS}>
-        {action.label}
+      <Link href={action.href} onClick={action.onClick} className={row}>
+        {children}
       </Link>
     );
   }
-  return (
-    <button type="button" onClick={action.onClick} className={cn(ACTION_CLASS, "cursor-pointer")}>
-      {action.label}
-    </button>
-  );
+  if (action) {
+    return (
+      <button type="button" onClick={action.onClick} className={cn(row, "cursor-pointer")}>
+        {children}
+      </button>
+    );
+  }
+  return <div className={row}>{children}</div>;
 }
 
 const SHOWN = 3;
@@ -50,7 +60,7 @@ function singular(word: string): string {
 
 /**
  * The one line under a product's title that says what needs the customer, or what we are doing. One alert is a
- * headline of up to six words and at most one underlined action. Two or more stay one banner: it counts them, and
+ * headline of up to six words and at most one underlined action; with an action the whole banner is tappable. Two or more stay one banner: it counts them, and
  * opens in place into a line per record, each with its own action. Never a stack of banners.
  */
 export function ProductBanner({
@@ -77,18 +87,20 @@ export function ProductBanner({
   if (list.length === 0) return null;
 
   const frame = (tone: ProductAlert["tone"], success = false) =>
-    cn("rounded-2xl border", success ? "border-success/40 bg-success/15" : tone === "act" ? "border-warning/40 bg-warning/15" : "border-transparent bg-muted/50", className);
+    cn("rounded-2xl", success ? "bg-success/15" : tone === "act" ? "bg-warning/15" : "bg-muted/50", className);
 
   if (list.length === 1) {
     const one = list[0].alert;
     return (
-      <div role="status" className={cn("flex items-center gap-3 px-4 py-3", frame(one.tone, one.success))}>
-        <AlertMark tone={one.tone} success={one.success} />
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="text-[14px] font-medium text-foreground">{one.headline}</span>
-          {one.detail && <span className="text-[12px] text-muted-foreground">{one.detail}</span>}
-        </span>
-        {one.action && <AlertAction action={one.action} />}
+      <div role="status" className={frame(one.tone, one.success)}>
+        <AlertRow action={one.action} className="rounded-2xl px-4 py-3">
+          <AlertMark tone={one.tone} success={one.success} />
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="text-[14px] font-medium text-foreground">{one.headline}</span>
+            {one.detail && <span className="text-[12px] text-muted-foreground">{one.detail}</span>}
+          </span>
+          {one.action && <ActionLabel label={one.action.label} />}
+        </AlertRow>
       </div>
     );
   }
@@ -114,13 +126,15 @@ export function ProductBanner({
       {open && (
         <ul className="flex flex-col gap-0.5 px-2 pb-2">
           {rows.map((i) => (
-            <li key={i.key} className="flex items-center gap-3 rounded-xl px-2 py-2">
-              <AlertMark tone={i.alert.tone} />
-              <span className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-[14px] text-foreground">{i.alert.headline}</span>
-                <span className="truncate text-[12px] text-muted-foreground">{i.label}</span>
-              </span>
-              {i.alert.action && <AlertAction action={i.alert.action} />}
+            <li key={i.key}>
+              <AlertRow action={i.alert.action} className="rounded-xl px-2 py-2">
+                <AlertMark tone={i.alert.tone} />
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-[14px] text-foreground">{i.alert.headline}</span>
+                  <span className="truncate text-[12px] text-muted-foreground">{i.label}</span>
+                </span>
+                {i.alert.action && <ActionLabel label={i.alert.action.label} />}
+              </AlertRow>
             </li>
           ))}
           {list.length > SHOWN && !all && (

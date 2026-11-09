@@ -526,7 +526,7 @@ export function RecentTransactions({
               <button
                 type="button"
                 onClick={() => openReceipt(t)}
-                className="group flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left transition-colors hover:bg-item-hover -mx-2 cursor-pointer"
+                className="group -mx-2 flex w-[calc(100%+16px)] cursor-pointer items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors duration-hover hover:bg-item-hover"
               >
                 <TransactionMark transaction={t} />
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
