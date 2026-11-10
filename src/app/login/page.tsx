@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, ShieldCheck, User } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
+import { KeyboardDock } from "@/components/ui/keyboard-dock";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
@@ -203,15 +204,17 @@ function LoginForm() {
 
         {/* Action Buttons Group */}
         <div className="mt-5 flex flex-col gap-2">
-          <Button
-            type="submit"
-            variant="default"
-            size="md"
-            loading={state === "submitting"}
-            className="sm:h-10 w-full"
-          >
-            Log in
-          </Button>
+          <KeyboardDock>
+            <Button
+              type="submit"
+              variant="default"
+              size="md"
+              loading={state === "submitting"}
+              className="sm:h-10 w-full"
+            >
+              Log in
+            </Button>
+          </KeyboardDock>
 
           <Button
             nativeButton={false}
@@ -368,9 +371,11 @@ function ReturningSignIn({
               Forgot password?
             </Link>
 </Field>
-          <Button type="submit" variant="default" size="md" loading={submitting} className="sm:h-10 w-full">
-            Log in
-          </Button>
+          <KeyboardDock>
+            <Button type="submit" variant="default" size="md" loading={submitting} className="sm:h-10 w-full">
+              Log in
+            </Button>
+          </KeyboardDock>
         </form>
 
         <p className="text-center text-[13px] text-muted-foreground">

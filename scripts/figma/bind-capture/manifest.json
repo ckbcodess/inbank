@@ -1,0 +1,14 @@
+{
+  "name": "NIBS · Bind capture",
+  "id": "nibs-bind-capture-local",
+  "api": "1.0.0",
+  "main": "code.js",
+  "menu": [
+    { "name": "Bind selection", "command": "bind" },
+    { "name": "Watch pastes", "command": "watch" }
+  ],
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "permissions": ["teamlibrary"],
+  "networkAccess": { "allowedDomains": ["none"] }
+}

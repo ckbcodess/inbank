@@ -106,15 +106,22 @@ function PickOne({ value, onChange, options, placeholder, label }: { value: stri
 }
 
 /** One heading and the rows under it, on the confirmation. */
-function Section({ title, rows }: { title: string; rows: Array<[string, string]> }) {
+function Section({ title, rows, onEdit }: { title: string; rows: Array<[string, string, Step?]>; onEdit: (step: Step) => void }) {
   return (
     <section className="flex flex-col gap-3">
       <h2 className="px-1 text-[16px] font-medium text-foreground">{title}</h2>
       <ListCard as="div">
-        {rows.map(([label, value]) => (
+        {rows.map(([label, value, editStep]) => (
           <div key={label} className="flex items-baseline justify-between gap-4 px-3 py-2">
             <span className="shrink-0 text-[13.5px] text-muted-foreground">{label}</span>
-            <span className="min-w-0 text-right text-[13.5px] text-foreground">{value}</span>
+            <span className="flex min-w-0 items-baseline justify-end gap-3">
+              <span className="min-w-0 text-right text-[13.5px] text-foreground">{value}</span>
+              {editStep && (
+                <button type="button" onClick={() => onEdit(editStep)} aria-label={`Edit ${label}`} className="shrink-0 cursor-pointer text-[13px] text-foreground underline underline-offset-4">
+                  Edit
+                </button>
+              )}
+            </span>
           </div>
         ))}
       </ListCard>
@@ -131,6 +138,8 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
 
   const [step, setStep] = useState<Step>("about");
   const [authOpen, setAuthOpen] = useState(false);
+  // Set when a row on the confirmation sent the customer back to change an answer: Next then returns to the confirmation.
+  const [fromConfirm, setFromConfirm] = useState(false);
 
   // About you
   const [title, setTitle] = useState("");
@@ -175,7 +184,7 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
           description="You can explore and buy insurance plans now."
           action={
             <Button nativeButton={false} render={<Link href={intent?.href ?? INSURE_HOME} />}>
-              {intent ? `Continue to ${intent.label}` : "Back to Insure"}
+              {intent ? "Continue to Plan" : "Back to Insure"}
             </Button>
           }
         />
@@ -189,7 +198,7 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
         title="Profile created"
         message={intent ? `You can now carry on with the ${intent.label}.` : "You can now explore and purchase insurance plans."}
         onPrimaryAction={() => router.push(intent?.href ?? INSURE_HOME)}
-        primaryActionLabel={intent ? `Continue to ${intent.label}` : "View Plans"}
+        primaryActionLabel={intent ? "Continue to Plan" : "View Plans"}
         onSecondaryAction={() => router.push(INSURE_HOME)}
         secondaryActionLabel="Back to Insure"
         showSaveBeneficiary={false}
@@ -213,7 +222,20 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
   const surgeryDone = surgery === "no" || (isYes(surgery) && surgeryDetail.trim().length >= 2);
   const medicalDone = goodHealth !== "" && conditionDone && medicationDone && surgeryDone;
 
+  const edit = (target: Step) => {
+    setFromConfirm(true);
+    setStep(target);
+  };
+  const proceed = (next: Step) => {
+    setFromConfirm(false);
+    setStep(fromConfirm ? "confirm" : next);
+  };
   const goBack = () => {
+    if (fromConfirm && step !== "confirm") {
+      setFromConfirm(false);
+      setStep("confirm");
+      return;
+    }
     const i = STEPS_SHOWN.indexOf(step);
     if (i <= 0) router.push(INSURE_HOME);
     else setStep(STEPS_SHOWN[i - 1]);
@@ -256,33 +278,33 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
   const drinkLine = joinChoices(alcoholTypes, alcoholOther);
   const smokeLine = joinChoices(smokeTypes, smokeOther);
 
-  const personalRows: Array<[string, string]> = [
-    ["Title", title],
+  const personalRows: Array<[string, string, Step?]> = [
+    ["Title", title, "about"],
     ["Name", actor?.name ?? ""],
     ...(record ? ([["Date of Birth", longDate(record.dateOfBirth)], ["Gender", record.gender]] as Array<[string, string]>) : []),
     ["Mobile Number", actor?.phone ?? ""],
-    ["Marital Status", marital],
+    ["Marital Status", marital, "about"],
     ["Email", actor?.email ?? ""],
-    ["Occupation", occupation.trim()],
+    ["Occupation", occupation.trim(), "about"],
     ...(record ? ([["ID Type", record.idType], ["ID Number", record.idNumber]] as Array<[string, string]>) : []),
-    ["Politically Exposed Person", yn(pep)],
-    ["Residential Address", residential.trim()],
-    ["Postal Address", postal.trim()],
-    ["Signature", signature?.name ?? ""],
+    ["Politically Exposed Person", yn(pep), "about"],
+    ["Residential Address", residential.trim(), "about"],
+    ["Postal Address", postal.trim(), "about"],
+    ["Signature", signature?.name ?? "", "about"],
   ];
-  const lifestyleRows: Array<[string, string]> = [
-    ["Do you take alcoholic drink?", yn(drinks)],
+  const lifestyleRows: Array<[string, string, Step?]> = [
+    ["Do you take alcoholic drink?", yn(drinks), "lifestyle"],
     ...(isYes(drinks)
-      ? ([["Type of alcohol", drinkLine], ["Weekly Consumption", weeklyAlcohol]] as Array<[string, string]>)
+      ? ([["Type of alcohol", drinkLine, "lifestyle"], ["Weekly Consumption", weeklyAlcohol, "lifestyle"]] as Array<[string, string, Step?]>)
       : []),
-    ["Do you smoke?", yn(smokes)],
-    ...(isYes(smokes) ? ([["Type of smoke", smokeLine], ["Quantity", smokeQuantity]] as Array<[string, string]>) : []),
+    ["Do you smoke?", yn(smokes), "lifestyle"],
+    ...(isYes(smokes) ? ([["Type of smoke", smokeLine, "lifestyle"], ["Quantity", smokeQuantity, "lifestyle"]] as Array<[string, string, Step?]>) : []),
   ];
-  const medicalRows: Array<[string, string]> = [
-    ["Are you in good health?", yn(goodHealth)],
-    ["Any medical condition?", isYes(condition) ? conditionDetail.trim() : "No"],
-    ["Are you on any medication?", isYes(medication) ? medicationDetail.trim() : "No"],
-    ["Undergone surgical operation?", isYes(surgery) ? surgeryDetail.trim() : "No"],
+  const medicalRows: Array<[string, string, Step?]> = [
+    ["Are you in good health?", yn(goodHealth), "medical"],
+    ["Any medical condition?", isYes(condition) ? conditionDetail.trim() : "No", "medical"],
+    ["Are you on any medication?", isYes(medication) ? medicationDetail.trim() : "No", "medical"],
+    ["Undergone surgical operation?", isYes(surgery) ? surgeryDetail.trim() : "No", "medical"],
   ];
 
   return (
@@ -319,7 +341,7 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
               </div>
             )}
 
-            <ProceedButton disabled={!aboutDone} onClick={() => setStep("lifestyle")} label="Next" />
+            <ProceedButton disabled={!aboutDone} onClick={() => proceed("lifestyle")} label={fromConfirm ? "Save" : "Next"} />
           </>
         )}
 
@@ -355,7 +377,7 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
               </div>
             )}
 
-            <ProceedButton disabled={!lifestyleDone} onClick={() => setStep("medical")} label="Next" />
+            <ProceedButton disabled={!lifestyleDone} onClick={() => proceed("medical")} label={fromConfirm ? "Save" : "Next"} />
           </>
         )}
 
@@ -396,15 +418,15 @@ export function CreateInsuranceProfileFlow({ intent }: { intent?: { href: string
               </div>
             )}
 
-            <ProceedButton disabled={!medicalDone} onClick={() => setStep("confirm")} label="Next" />
+            <ProceedButton disabled={!medicalDone} onClick={() => proceed("confirm")} label={fromConfirm ? "Save" : "Next"} />
           </>
         )}
 
         {step === "confirm" && (
           <>
-            <Section title="Personal Details" rows={personalRows} />
-            <Section title="Lifestyle Details" rows={lifestyleRows} />
-            <Section title="Medical Details" rows={medicalRows} />
+            <Section title="Personal Details" rows={personalRows} onEdit={edit} />
+            <Section title="Lifestyle Details" rows={lifestyleRows} onEdit={edit} />
+            <Section title="Medical Details" rows={medicalRows} onEdit={edit} />
             <ProceedButton disabled={false} onClick={() => setAuthOpen(true)} label="Confirm" />
           </>
         )}

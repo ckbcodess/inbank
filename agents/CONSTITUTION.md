@@ -155,7 +155,9 @@ here. Never fall back to dense, boxed layouts.
   section titles, form labels and buttons. **Semibold and bold are banned.** `globals.css` resets
   text elements to `font-weight: inherit`; `font-medium` overrides that on purpose.
 - **The root font size is 14px; spacing and radius are in px.** `--spacing: 4px` (globals.css), so a step is
-  4px. Rem-based values outside those scales (`text-xs`, `max-w-md`) still follow the 14px root.
+  4px. Rem-based values outside those scales (`text-base`, `max-w-md`) still follow the 14px root. `text-sm` and
+  `text-xs` are the exception: globals.css redefines them as the scale's 14px and 12px (designer, 2026-11-10), and
+  they're the names Figma's Body and Meta sizes carry as code syntax.
 - **All numbers carry `.tabular`:** money, dates, account numbers, references, percentages and rates.
 - **Casing:**
   - Never all caps or letter-spaced labels. Older `uppercase` uses get converted when a file is touched.
@@ -169,9 +171,8 @@ here. Never fall back to dense, boxed layouts.
 | Balance figure (a balance only, never a fact like a sum assured) | `text-[32px]` on a detail page, `text-[40px]`–`[76px]` on home and account screens, `tracking-[var(--ls-heading)]` (`--ls-display` for the biggest), regular, `.tabular` |
 | Key-fact value (first row, page with no balance figure) | `text-[20px]` regular, `.tabular` |
 | Section / panel heading | `text-[16px] font-medium` (14px under `sm` where space is tight) |
-| Row primary text | `text-[14px] text-foreground` |
-| Body, table cells | `text-[13px] text-foreground` |
-| Form input values and placeholders (`Input`, `Textarea`, select triggers) | `text-[14px] text-foreground`. The placeholder is the same size as the value; never size it separately. |
+| Body: paragraphs, row primary text, table cells (designer, 2026-11-10; was 13px) | `text-[14px] text-foreground` |
+| Form input values and placeholders (`Input`, `Textarea`, select triggers) | `text-[14px] text-foreground`, the same as body. The placeholder is the same size as the value; never size it separately. |
 | Form labels | `text-[13px] font-medium text-foreground` (never muted) |
 | Meta, captions, micro-labels | `text-[12px] text-muted-foreground`, sentence case |
 | Long-form paragraphs | add `leading-relaxed` |

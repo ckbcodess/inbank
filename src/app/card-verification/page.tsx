@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, CreditCard, Lock, X } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
+import { KeyboardDock } from "@/components/ui/keyboard-dock";
 import { AppLoader } from "@/components/ui/loader";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { InlineError } from "@/components/ui/inline-error";
@@ -117,10 +118,10 @@ export default function CardVerificationPage() {
                 <CheckCircle2 size={28} aria-hidden="true" />
               </div>
               <h1 className="text-[20px] font-medium tracking-tight">{isPayment ? "Payment approved" : "Card verified"}</h1>
-              <p className="flex items-center gap-2 text-[13px] text-muted-foreground mt-1">
+              <div className="flex items-center gap-2 text-[13px] text-muted-foreground mt-1">
                 <AppLoader size={14} />
                 Taking you back to GCB…
-              </p>
+              </div>
             </div>
           ) : (
             <div className="w-full flex flex-col items-center">
@@ -190,15 +191,17 @@ export default function CardVerificationPage() {
                 )}
 
                 <div className="pt-1">
-                  <Button
-                    size="md"
-                    type="submit"
-                    disabled={digits.join("").length < OTP_LENGTH}
-                    loading={step === "verifying"}
-                    className="w-full"
-                  >
-                    Approve payment
-                  </Button>
+                  <KeyboardDock>
+                    <Button
+                      size="md"
+                      type="submit"
+                      disabled={digits.join("").length < OTP_LENGTH}
+                      loading={step === "verifying"}
+                      className="w-full"
+                    >
+                      Approve payment
+                    </Button>
+                  </KeyboardDock>
                 </div>
               </form>
             </div>

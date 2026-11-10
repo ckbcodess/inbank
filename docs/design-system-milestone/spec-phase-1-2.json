@@ -1,0 +1,62 @@
+{
+  "title": "GCB design system: phases 1 and 2",
+  "author": "Digital Transformation Team (User Experience)",
+  "theme": {},
+  "pages": [
+    {
+      "layout": "table",
+      "kicker": "Phase 1 of 4",
+      "title": "Phase 1: Foundations",
+      "left": [
+        ["lead", "1. TOKENS now holds only what every GCB product needs."],
+        ["h", "The four phases"],
+        ["li", "**1. Foundations.** Done."],
+        ["li", "**2. Components.** Done."],
+        ["li", "**3. Shared package.** One token source for all projects."],
+        ["li", "**4. Storybook.** Linked to the package and Figma."]
+      ],
+      "table": {
+        "widths": [200, 90, 300, 172],
+        "right_cols": [1],
+        "pad": 7,
+        "rows": [
+          ["Collection", "Published", "Holds", "Modes"],
+          ["Theme", "56", "Surface, text, icon, action, status", "Light, Dark"],
+          ["Brand Colors", "10", "Primary, alt, hover, on-primary", "Amber, Smoke"],
+          ["Primitives", "17", "Spacing sizes; colours hidden", "One"],
+          ["Spacing, Typography", "54", "Gaps, sizes, weights", "Desktop, Mobile"],
+          ["Radius, Control, Border", "24", "Corners, padding, strokes", "One"]
+        ]
+      },
+      "after": ["Published variables: 442 to 161. Theme: 177 to 56. Values now match the code."]
+    },
+    {
+      "layout": "table",
+      "kicker": "Phase 2 of 4",
+      "title": "Phase 2: Components",
+      "left": [
+        ["lead", "2. CORE COMPONENTS now uses only Phase 1 variables."],
+        ["h", "Four button types"],
+        ["li", "Primary: the brand colour."],
+        ["li", "Brand alt: the other brand."],
+        ["li", "Neutral: black, white in dark."],
+        ["li", "Neutral inverse: the reverse."],
+        ["pb", "Amber and Smoke tested in light and dark."]
+      ],
+      "table": {
+        "widths": [170, 380, 212],
+        "pad": 7,
+        "rows": [
+          ["Group", "Components (variants)", "Key variables"],
+          ["Buttons", "Button (99), Danger (36), Icon Button (27)", "action/*"],
+          ["Forms", "Input, Select, Calendar, Switch, OTP", "input/*"],
+          ["Data", "Badge (168), Badge Group (40), Table", "status/*"],
+          ["Overlays", "Sheet, Dialog, Drawer, Popover", "surface/scrim"],
+          ["Feedback", "Alert, Toast, Spinner, Skeleton", "status/*"],
+          ["Navigation, charts", "Tabs, Sidebar, Chart (20)", "data/cat-*"]
+        ]
+      },
+      "after": ["Open: Lucide or Material Symbols icons, 6 held colour merges, DM Sans in Mobile mode."]
+    }
+  ]
+}

@@ -63,7 +63,7 @@ const PRESET_ANSWERS: Record<string, string> = {
 };
 
 /** Where the assistant shows (designer, 2026-11-03): personal home, and the screens a new customer passes through. */
-const ASSISTANT_PAGES = ["/overview", "/get-started", "/signup", "/activate", "/migrate", "/card-verification", "/forgot-password"];
+const ASSISTANT_PAGES = ["/overview", "/login", "/get-started", "/signup", "/activate", "/migrate", "/card-verification", "/forgot-password"];
 
 const INTRO_KEY = "sidi-intro-seen";
 const INTRO_DELAY = 1500;

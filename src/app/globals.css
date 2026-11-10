@@ -19,6 +19,12 @@
   --radius-xs: var(--radius-sm);
   --radius-md: var(--radius-lg);
   --radius-4xl: var(--radius-3xl);
+  /* text-sm and text-xs are names for the scale's 14px (Body) and 12px (Meta), not Tailwind's rem sizes, which the
+     14px root would turn into 12.25px and 10.5px. Same 150% line height as the Figma styles (CONSTITUTION §5). */
+  --text-sm: 14px;
+  --text-sm--line-height: 1.5;
+  --text-xs: 12px;
+  --text-xs--line-height: 1.5;
   --ease-settle: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-standard: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);

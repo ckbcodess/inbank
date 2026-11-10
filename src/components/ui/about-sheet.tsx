@@ -14,8 +14,8 @@ export function AboutSheet({ title, children }: { title: string; children: React
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <Button type="button" variant="tile" onClick={() => setOpen(true)}>
-        <Info size={14} aria-hidden="true" />
+      <Button type="button" variant="outline" size="md" className="gap-2 px-2 sm:px-3" onClick={() => setOpen(true)}>
+        <Info size={14} aria-hidden="true" className="shrink-0 text-muted-foreground" />
         About
       </Button>
       <Sheet open={open} onOpenChange={setOpen}>

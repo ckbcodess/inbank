@@ -28,6 +28,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle2, Landmark, ScanFace } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
+import { KeyboardDock } from "@/components/ui/keyboard-dock";
 import { PhoneInput } from "@/components/ui/phone-input";
 import AuthLayout from "@/components/auth/AuthLayout";
 import SelfieCapture from "@/components/auth/SelfieCapture";
@@ -215,15 +216,17 @@ function ForgotPasswordFlow() {
             />
 </Field>
 
-          <Button
-            type="submit"
-            variant="default"
-            size="md"
-            disabled={!mobileValid} loading={busy}
-            className="mt-2 w-full"
-          >
-            Proceed
-          </Button>
+          <KeyboardDock>
+            <Button
+              type="submit"
+              variant="default"
+              size="md"
+              disabled={!mobileValid} loading={busy}
+              className="mt-2 w-full"
+            >
+              Proceed
+            </Button>
+          </KeyboardDock>
         </form>
       )}
 
@@ -316,15 +319,17 @@ function ForgotPasswordFlow() {
             confirmLabel="Confirm New Password"
           />
 
-          <Button
-            type="submit"
-            variant="default"
-            size="md"
-            disabled={!canReset} loading={busy}
-            className="mt-2 w-full"
-          >
-            Reset password
-          </Button>
+          <KeyboardDock>
+            <Button
+              type="submit"
+              variant="default"
+              size="md"
+              disabled={!canReset} loading={busy}
+              className="mt-2 w-full"
+            >
+              Reset password
+            </Button>
+          </KeyboardDock>
         </form>
       )}
 

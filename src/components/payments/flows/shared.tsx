@@ -8,6 +8,7 @@ import { BankMark } from "@/components/ui/bank-mark";
 import { SearchPicker, type PickerItem } from "@/components/ui/search-picker";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
+import { KeyboardDock } from "@/components/ui/keyboard-dock";
 import {
   Select,
   SelectContent,
@@ -1211,6 +1212,7 @@ export function ProceedButton({
   loading?: boolean;
 }) {
   return (
+    <KeyboardDock>
     <Button
       size="xl"
       type="button"
@@ -1222,6 +1224,7 @@ export function ProceedButton({
     >
       {label}
     </Button>
+    </KeyboardDock>
   );
 }
 

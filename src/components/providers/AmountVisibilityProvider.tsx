@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { RollingText } from "@kitlangton/rolling-number/react";
 import "@kitlangton/rolling-number/styles.css";
+import { useCaptureMode } from "@/lib/capture-mode";
 
 const BALANCE_STORAGE_KEY = "nibs-show-balance";
 
@@ -148,6 +149,12 @@ export function RevealingAmount({
   showAmounts?: boolean;
 }) {
   const { prefix, numericText } = splitCurrencyAndAmount(amount, currency, value, showAmounts);
+  const capture = useCaptureMode();
+
+  // Capture mode (Figma captures): the amount as one plain text, so it comes in as a single text layer.
+  if (capture) {
+    return <span className={`select-none ${className}`}>{`${prefix.trim()}${prefix ? " " : ""}${numericText}`}</span>;
+  }
 
   return (
     <span className={`inline-flex items-center select-none ${className}`}>

@@ -1,0 +1,222 @@
+{
+  "title": "GCB design system: token cleanup milestone",
+  "author": "Digital Transformation Team (User Experience)",
+  "theme": {},
+  "cover": {
+    "title_lines": ["Design System", "Token Cleanup", "Milestone One"],
+    "subtitle_lines": ["What changed in the Figma libraries, how Figma now matches the code,", "and what comes next. November 2026"],
+    "prepared_by": "Prepared by Digital Transformation Team (User Experience)"
+  },
+  "pages": [
+    {
+      "layout": "text",
+      "kicker": "Summary",
+      "title": "Milestone summary",
+      "cols": [
+        [["lead", "The design system now holds only what every GCB product needs. Published variables fell from 442 to 161, and Figma matches the code's values."]],
+        [["h", "What we did"], ["p", "Split the tokens into design system and project layers, removed what only Internet Banking uses, and synced Figma to the code."],
+         ["h", "Why it matters"], ["p", "A small core is easier to learn and to keep in step with code. New GCB products can start from it without inheriting one project's history."]],
+        [["h", "Results"], ["li", "Published variables: 442 to 161."], ["li", "Core colour tokens: 177 to 56."], ["li", "Figma and code agree on colour, radius and motion."], ["li", "Amber and Smoke brands switch with one mode."], ["li", "Four standard buttons restored."]],
+        [["h", "Where it stands"], ["p", "Figma work is complete for this milestone. The code split and the shared token package are next."],
+         ["h", "Decisions needed"], ["p", "A GCB GitHub organisation for the package, and four design questions listed at the end."]]
+      ]
+    },
+    {
+      "layout": "text",
+      "kicker": "Context",
+      "title": "Why we cleaned up",
+      "cols": [
+        [["lead", "The first version of the Figma library was copied from the Internet Banking code, so it carried one project's details into the design system."]],
+        [["h", "Too much in the core"], ["p", "442 variables, all published. 79 were illustration colours and 47 were Internet Banking components such as the hero and tiles."],
+         ["h", "Drift"], ["p", "Eight core colours, the radius scale and the motion values no longer matched the code."]],
+        [["h", "Lost decisions"], ["p", "An earlier cleanup removed the smoke and black button colours because the code did not use them, so the Smoke button had turned amber."],
+         ["h", "No room to grow"], ["p", "There was no clean way to add a second brand or a second product without copying everything again."]],
+        [["h", "What good looks like"], ["li", "A core that every GCB product shares."], ["li", "Project tokens kept with the project."], ["li", "Brand as a switch, not a copy."], ["li", "Figma and code reading the same values."]]
+      ]
+    },
+    {
+      "layout": "table",
+      "kicker": "Model",
+      "title": "How the tokens are organised",
+      "left": [["lead", "Four layers, each with one job. The first three are the design system; the fourth belongs to a project."],
+        ["p", "Primitives are hidden, so designers only pick tokens that describe a purpose."]],
+      "table": {
+        "widths": [130, 260, 210, 162],
+        "pad": 7,
+        "rows": [
+          ["Layer", "Holds", "Example", "Who sees it"],
+          ["Primitives", "Raw colour ramps and number scales", "amber/400, gray/950", "Nobody; hidden"],
+          ["Brand", "The few values a brand changes, as modes", "brand/primary: Amber or Smoke", "Set once per project"],
+          ["Semantic", "What a colour or size is for", "surface/card, status/error, icon/primary", "Every designer"],
+          ["Project", "What only one product needs", "hero/surface, tile, avatar colours", "That project's file only"]
+        ]
+      },
+      "after": ["Internet Banking keeps its 44 project tokens as a local NIBS collection in its own Figma file."]
+    },
+    {
+      "layout": "table",
+      "kicker": "Results",
+      "title": "Before and after",
+      "left": [["lead", "The library other files receive is about a third of its old size."],
+        ["p", "Hidden variables still exist in the TOKENS file, so they can be restored, but they no longer reach other files."]],
+      "table": {
+        "widths": [300, 150, 150, 162],
+        "right_cols": [1, 2],
+        "pad": 7,
+        "rows": [
+          ["Measure", "Before", "After", "Change"],
+          ["Published variables", "442", "161", "Down 64%"],
+          ["Core colour tokens (Theme)", "177", "56", "Down 68%"],
+          ["Variables in the TOKENS file", "442", "330", "Down 25%"],
+          ["Colour primitives designers can see", "118", "0", "All hidden"],
+          ["Illustration variables in the core", "79", "0", "Removed"],
+          ["Core colours that differed from code", "8", "0", "Synced"],
+          ["Standard button types", "3", "4", "Smoke and white restored"]
+        ]
+      },
+      "after": ["Counts from the TOKENS file on 7 November 2026. [[confirm:the final publish of TOKENS and CORE COMPONENTS is done]]"]
+    },
+    {
+      "layout": "table",
+      "kicker": "Alignment",
+      "title": "Figma and code aligned",
+      "left": [["lead", "The code is the source of truth for values. Figma was synced to it."],
+        ["p", "The written rules were updated to match too, so all three now agree."]],
+      "table": {
+        "widths": [170, 210, 210, 172],
+        "pad": 7,
+        "rows": [
+          ["Area", "Was in Figma", "Now in Figma and code", "Rules"],
+          ["Error red", "#dc2626", "#ea3446", "Unchanged"],
+          ["Focus ring (light)", "Pale grey", "Dark brown, as in code", "Unchanged"],
+          ["Input borders and fills", "Five values off", "Match code", "Unchanged"],
+          ["Radius xl, 2xl, 3xl", "12, 16, 20", "10, 10, 10", "Updated to code"],
+          ["Motion timings", "Not in Figma", "Code values kept", "Updated to code"],
+          ["Primary button label and hover", "Raw colours", "Brand tokens", "Unchanged"]
+        ]
+      },
+      "after": ["The code itself has not been restructured yet. The token package that will generate both Figma and code values is the next phase."]
+    },
+    {
+      "layout": "text",
+      "kicker": "Brand",
+      "title": "Brands and buttons",
+      "cols": [
+        [["lead", "Brand is now a switch. Personal banking uses Amber and business banking uses Smoke, from the same components."]],
+        [["h", "Brand modes"], ["p", "Primary, hover and the text on primary follow the Brand mode. A frame set to Smoke turns every primary button ash, with no copies."],
+         ["h", "Selected states"], ["p", "Calendar days, selected menu rows and Tertiary buttons now follow the brand too."]],
+        [["h", "Four standard buttons"], ["li", "Primary: the brand colour."], ["li", "Brand alt: the other brand colour."], ["li", "Neutral: black, white in dark mode."], ["li", "Neutral inverse: white, black in dark mode."],
+         ["pb", "Tested on real buttons in Amber and Smoke, light and dark."]],
+        [["h", "Icon colours"], ["p", "Icons have their own three tokens, primary, secondary and on primary, so designers can pick an icon colour from the picker."],
+         ["h", "Not in code yet"], ["p", "Brand alt and the neutral buttons exist in Figma. They reach the code with the token package."]]
+      ]
+    },
+    {
+      "layout": "table",
+      "kicker": "Progress",
+      "title": "Work completed",
+      "left": [["lead", "Seven phases of Figma work are done. Each was checked before and after with a scan of every affected page."]],
+      "table": {
+        "widths": [60, 260, 340, 102],
+        "pad": 5.2,
+        "rows": [
+          ["Phase", "Work", "Result", "Status"],
+          ["1", "Sync Figma values to the code", "9 colours and 3 radius values corrected", "Done"],
+          ["2", "Clear stray bindings in components", "61 bindings repointed; old kit notes removed", "Done"],
+          ["3", "Merge duplicate tokens", "8 duplicates merged; 6 held for a decision", "Partly done"],
+          ["4", "Hide colour primitives", "118 hidden; aliases tested through a publish", "Done"],
+          ["5", "Brand layer", "Amber and Smoke modes; button set rebuilt", "Done"],
+          ["6", "Move project tokens out", "125 removed from the core; 44 kept in Internet Banking", "Done"],
+          ["7", "Trim dimensions", "40 hidden; 1,325 bindings merged with no visual change", "Done"],
+          ["8 to 10", "Code split, token package, component registry", "Not started", "Next"]
+        ]
+      }
+    },
+    {
+      "layout": "table",
+      "kicker": "Quality",
+      "title": "Issues found and fixed",
+      "left": [["lead", "Every change was checked against what designers see. These are the problems the checks caught."],
+        ["p", "All were fixed. They are listed so the same mistakes are not repeated."]],
+      "table": {
+        "widths": [210, 290, 262],
+        "pad": 5.6,
+        "rows": [
+          ["Issue", "Effect", "Fix"],
+          ["Internet Banking used the library too", "Merged icon and text tokens left about 4,830 bindings orphaned", "6,032 bindings repaired across 12 pages"],
+          ["Binding a colour reset its opacity", "Backdrops turned solid black", "Opacity restored and now checked on every write"],
+          ["Local tokens have their own mode", "Dark screens showed light values", "831 frames given matching modes"],
+          ["Old dark value for glass shade", "Icons on amber buttons turned red", "Moved to the icon on-primary token"],
+          ["A taller menu row", "The last menu item was clipped", "Menus set to grow with their content"]
+        ]
+      },
+      "after": ["Older and trash pages in Internet Banking were left as they were, by choice, so some of their bindings show as missing."]
+    },
+    {
+      "layout": "text",
+      "kicker": "Guidance",
+      "title": "Adding colours in new projects",
+      "cols": [
+        [["lead", "New products start from the core and add only what they need. Ask these in order and stop at the first yes."]],
+        [["h", "1. Does a token already mean this?"], ["p", "Use it. Most new colours end here."],
+         ["h", "2. Is it the project's brand?"], ["p", "Add a Brand mode, plus a colour ramp if the hue is new."]],
+        [["h", "3. Is it only this product's?"], ["p", "Make a local token in the project's own file. The design system does not change."],
+         ["h", "4. Is it art?"], ["p", "Keep it in the illustration, not in tokens."]],
+        [["h", "Rules that keep it small"], ["li", "A token moves into the core only when a second product needs it."], ["li", "Core names never include a brand, hue or product."], ["li", "A dark frame must set both Theme and NIBS to Dark."]]
+      ]
+    },
+    {
+      "layout": "table",
+      "kicker": "Next",
+      "title": "What comes next",
+      "left": [["lead", "The Figma side is in good shape. The next milestone moves the same structure into code."]],
+      "table": {
+        "widths": [220, 360, 182],
+        "pad": 6,
+        "rows": [
+          ["Step", "What it involves", "Owner and date"],
+          ["Split the stylesheet", "Separate core and project tokens in globals.css, with no visual change", "[[add:owner and date]]"],
+          ["Token package", "Publish @gcb/tokens so every project imports the same values", "[[add:owner and date]]"],
+          ["Figma sync", "Generate Figma values from the package instead of by hand", "[[add:owner and date]]"],
+          ["New buttons in code", "Add Brand alt, Neutral and Neutral inverse to the Button", "[[add:owner and date]]"],
+          ["Component registry", "Share components the same way, once a second product starts", "When needed"]
+        ]
+      }
+    },
+    {
+      "layout": "text",
+      "kicker": "Decisions",
+      "title": "Decisions needed",
+      "cols": [
+        [["lead", "One setup decision unblocks the next milestone. Four design questions are open."]],
+        [["h", "GitHub organisation"], ["p", "The package needs a GCB organisation on GitHub to be published as @gcb/tokens. The code currently sits under a personal account."],
+         ["h", "Six held merges"], ["p", "Menu surfaces and four badge text colours differ slightly from the core. Merge them, or keep them."]],
+        [["h", "Mobile typeface"], ["p", "Text in Mobile mode switches to DM Sans, but the house rule is Open Sans everywhere. Which is right?"],
+         ["h", "Icon set"], ["p", "Figma components use Lucide icons; the house rule says Material Symbols."]],
+        [["h", "Glass shade in dark mode"], ["p", "The code makes this colour red in dark mode, which looks like a mistake."],
+         ["h", "Owner"], ["p", "Each decision needs an owner. [[add:owners]]"]]
+      ]
+    },
+    {
+      "layout": "table",
+      "kicker": "Appendix",
+      "title": "Supporting work",
+      "left": [["lead", "Everything behind this milestone, in one place."],
+        ["p", "The plan is the working document. The log records each decision and gap as it happened."]],
+      "table": {
+        "widths": [170, 300, 292],
+        "pad": 5,
+        "rows": [
+          ["Work", "What it contains", "File or link"],
+          ["Token plan", "The model, the core list, phases and decisions", "docs/design-system-token-plan.md"],
+          ["Working log", "Decisions, discoveries and open gaps", "agents/WORKING_LOG.md"],
+          ["Undo record", "Every rebind and deletion, for reversal", "scripts/figma/rebind-log-2026-11-07.json"],
+          ["House rules", "Radius and motion now match the code", "agents/CONSTITUTION.md"],
+          ["TOKENS library", "The design system variables", "[[link:1. TOKENS in Figma|https://www.figma.com/design/Jt6NULjnrNV65dMSSrddas]]"],
+          ["CORE COMPONENTS", "Components built on the tokens", "[[link:2. CORE COMPONENTS in Figma|https://www.figma.com/design/lgNxPD7Kn0ZaFZ7Ev1rVwu]]"],
+          ["Internet Banking", "Project file with local NIBS tokens", "[[link:Internet Banking in Figma|https://www.figma.com/design/JcCeoeiauwHBrJmtaDSqzl]]"]
+        ]
+      }
+    }
+  ]
+}

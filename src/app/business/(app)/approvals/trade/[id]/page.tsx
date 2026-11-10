@@ -172,10 +172,10 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                 ? "This request is closed. A new request is required to proceed."
                 : "The request moves to bank operations for processing."}
             </p>
-            <p className="mt-2 flex items-center gap-2 text-[13px] text-muted-foreground">
+            <div className="mt-2 flex items-center gap-2 text-[13px] text-muted-foreground">
               <AppLoader size={13} />
               Returning you to the queue…
-            </p>
+            </div>
           </div>
         </div>
       )}

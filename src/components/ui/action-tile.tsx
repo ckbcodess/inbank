@@ -112,7 +112,7 @@ export function ActionTile({
         <span className="flex min-w-0 flex-col gap-0.5">
           <span className={cn("truncate text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground", compactOnMobile && "max-sm:line-clamp-2 max-sm:whitespace-normal max-sm:text-[14px] max-sm:leading-[1.25]")}>{title}</span>
           {description && (
-            <span className={cn("text-[13px] leading-snug", descriptionTone === "attention" ? "text-warning-text" : "text-muted-foreground")}>{description}</span>
+            <span className={cn("text-[14px]", descriptionTone === "attention" ? "text-warning-text" : "text-muted-foreground")}>{description}</span>
           )}
         </span>
       </div>

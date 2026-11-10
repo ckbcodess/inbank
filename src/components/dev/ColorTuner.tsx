@@ -66,7 +66,7 @@ function ColorTunerInner() {
   if (captureMode || devToolsHidden) return null;
 
   return (
-    <div data-color-tuner className="fixed bottom-4 right-[4.75rem] z-50 flex flex-col items-end gap-2">
+    <div data-color-tuner className="fixed bottom-4 right-[4.75rem] z-[60] flex flex-col items-end gap-2">
       {open && <TunerPanel />}
       <button
         type="button"

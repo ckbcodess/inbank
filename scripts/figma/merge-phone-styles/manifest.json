@@ -1,0 +1,10 @@
+{
+  "name": "NIBS · Merge phone styles",
+  "id": "nibs-merge-phone-styles-local",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "permissions": ["teamlibrary"],
+  "networkAccess": { "allowedDomains": ["none"] }
+}

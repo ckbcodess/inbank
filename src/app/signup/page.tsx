@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
+import { KeyboardDock } from "@/components/ui/keyboard-dock";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -337,16 +338,18 @@ function SignupContent() {
           <AlertToast when={errorMsg} message={errorMsg} />
 
           <div className="mt-3 flex flex-col gap-3">
-            <Button
-              type="submit"
-              variant="default"
-              size="md"
-              data-tour="signup-card"
-              loading={busy}
-              className="w-full"
-            >
-              Continue
-            </Button>
+            <KeyboardDock>
+              <Button
+                type="submit"
+                variant="default"
+                size="md"
+                data-tour="signup-card"
+                loading={busy}
+                className="w-full"
+              >
+                Continue
+              </Button>
+            </KeyboardDock>
             <p className="text-center text-[12px] leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
               <a href="#" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Terms</a>{" "}
@@ -536,16 +539,18 @@ function SignupContent() {
 
           <AlertToast when={errorMsg} message={errorMsg} />
 
-          <Button
-            type="submit"
-            variant="default"
-            size="md"
-            data-tour="signup-password"
-            disabled={!newPasswordReady(password, confirmPassword)} loading={busy}
-            className="mt-2 w-full"
-          >
-            Proceed
-          </Button>
+          <KeyboardDock>
+            <Button
+              type="submit"
+              variant="default"
+              size="md"
+              data-tour="signup-password"
+              disabled={!newPasswordReady(password, confirmPassword)} loading={busy}
+              className="mt-2 w-full"
+            >
+              Proceed
+            </Button>
+          </KeyboardDock>
         </form>
       )}
 

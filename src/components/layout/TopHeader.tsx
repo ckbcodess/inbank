@@ -269,7 +269,7 @@ export default function TopHeader({
             aria-label="Account menu"
             data-product-tour="profile"
           >
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-[12px] font-medium text-primary-foreground">
               {initials}
             </span>
             {/* Customers get the avatar alone (the name is in the menu and the greeting, and a full name
@@ -277,7 +277,7 @@ export default function TopHeader({
             {actor.shell === "admin" && (
               <span className="hidden text-left leading-tight sm:block whitespace-nowrap">
                 <span className="block text-[13px] font-medium text-foreground whitespace-nowrap">{actor.name}</span>
-                <span className="block text-[11px] text-muted-foreground whitespace-nowrap">{ROLE_LABEL[actor.role]}</span>
+                <span className="block text-[12px] text-muted-foreground whitespace-nowrap">{ROLE_LABEL[actor.role]}</span>
               </span>
             )}
           </DropdownMenuTrigger>

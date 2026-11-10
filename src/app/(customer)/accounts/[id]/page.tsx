@@ -406,7 +406,7 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
 
       {isDefault && <Badge variant="brand" className="absolute right-3 top-3 z-10">Default</Badge>}
 
-      <div className="relative flex flex-col gap-2 text-[14px] leading-5 tracking-[-0.005em] text-muted-foreground">
+      <div className="relative flex flex-col gap-2 text-[14px] tracking-[var(--ls-tight)] text-muted-foreground">
         <span className="flex items-center gap-1">
           <Landmark size={15} aria-hidden="true" />
           {account.type}
@@ -464,9 +464,9 @@ function ActivityRow({
             {formatMoney(t.amount, t.currency, true)}
           </span>
           {isFailed ? (
-            <span className="text-[11px] text-destructive">Failed</span>
+            <span className="text-[12px] text-destructive">Failed</span>
           ) : isPending ? (
-            <span className="text-[11px] text-warning">Pending</span>
+            <span className="text-[12px] text-warning">Pending</span>
           ) : null}
         </span>
       </button>

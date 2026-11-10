@@ -20,6 +20,7 @@ import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
+import { KeyboardDock } from "@/components/ui/keyboard-dock";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSession } from "@/lib/session-store";
 import { setFirstRun } from "@/lib/device-trust";
@@ -222,9 +223,11 @@ function MigrateContent() {
             onConfirmChange={setConfirm}
             autoFocus
           />
-          <Button type="submit" size="md" disabled={!newPasswordReady(password, confirm)} loading={busy} className="mt-1 w-full">
-            Proceed
-          </Button>
+          <KeyboardDock>
+            <Button type="submit" size="md" disabled={!newPasswordReady(password, confirm)} loading={busy} className="mt-1 w-full">
+              Proceed
+            </Button>
+          </KeyboardDock>
         </form>
       )}
 

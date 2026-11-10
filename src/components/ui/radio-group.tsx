@@ -41,7 +41,9 @@ export function RadioGroup<T extends string>({ options, value, onChange, classNa
             onClick={() => onChange(o.value)}
             className={cn(
               "flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-2xl border p-3 text-left text-foreground transition duration-hover outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-              active ? "border-[var(--active-border)] bg-[var(--active-bg)]" : "border-border bg-card hover:bg-muted/50"
+              active
+                ? "border-[var(--active-border)] bg-[var(--active-bg)]"
+                : "border-field-border bg-transparent hover:border-field-border-hover"
             )}
           >
             <span

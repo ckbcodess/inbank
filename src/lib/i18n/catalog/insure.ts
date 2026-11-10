@@ -129,6 +129,7 @@ const insure: Entry[] = [
   ["Widowed", "Veuf/veuve", "Viudo/a", "丧偶"],
   ["Separated", "Séparé(e)", "Separado/a", "分居"],
   ["Continue to {0}", "Continuer vers {0}", "Continuar a {0}", "继续前往{0}"],
+  ["Continue to Plan", "Continuer vers le plan", "Continuar al plan", "继续前往方案"],
   ["You can now carry on with the {0}.", "Vous pouvez maintenant continuer avec le {0}.", "Ya puedes continuar con el {0}.", "您现在可以继续办理{0}。"],
   ["your plan", "votre plan", "tu plan", "您的计划"],
   ["Insurance Profile", "Profil d’assurance", "Perfil de seguros", "保险档案"],
