@@ -184,6 +184,10 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ### 2026-11-10
 
+- Decision: Settings › Profile shows Full Name, Mobile Number, Email, Proxy Pay ID and Last Sign-in, each as label over value (designer). The mobile number (the sign-in ID) can't be changed in-app, and address is gone from Profile and `SettingsData`. Only email changes here, behind a code.
+- Decision: Linked devices lives in Settings › Security as a row that opens a list. For now it's simulated: a fixed demo list (`DEMO_DEVICES` in `SettingsPanes.tsx`) with no sign-out. Payment approval and Two-step sign-in rows were removed from Security (designer).
+- Decision: the profile photo is set in Settings › Profile and shown in the header avatar and account menu. It's kept per actor in `lib/profile-photo.ts`, on this browser only (prototype). Business has no Settings yet, so business users can't set one.
+- Question: where does a customer change their mobile number now, at a branch? Profile doesn't say, so a customer who wants to change it has no way forward yet.
 - Discovery: since variables got code syntax, the capture binds colours by CSS variable name and picks either twin (`--foreground` → icon/primary or text/primary), even on the screen background. The bind plugin now rechecks those bindings when they're deprecated, used in the wrong role, or on the screen background (which becomes surface/background).
 - Discovery: screens captured with the app in dark theme carry dark values. The bind plugin now detects each screen's theme and matches tokens, shell gradients, tile stops and Shadow/* layers in that mode. Dark Shadow/* matching is untested.
 - Discovery: the official Figma capture extension binds most values to the "1. TOKENS" library on paste (colours, radii, borders, much of the spacing and type). Values it leaves raw are mostly ones the library lacks, so fix the library before writing more tooling.

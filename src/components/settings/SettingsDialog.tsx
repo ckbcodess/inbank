@@ -46,7 +46,6 @@ export default function SettingsDialog() {
   const data: SettingsData = {
     mobile: actor.phone,
     email: actor.email,
-    address: "Plot 14, Senchi Street, Airport Residential Area, Accra",
     smsAlerts: true,
     emailReceipts: true,
     eStatements: true,

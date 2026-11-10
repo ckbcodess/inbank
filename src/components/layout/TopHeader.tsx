@@ -54,6 +54,7 @@ import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { switchTheme } from "@/lib/theme-transition";
 import { openSettings } from "@/lib/settings-modal";
 import { useProductTour } from "@/lib/product-tour";
+import { useProfilePhoto } from "@/lib/profile-photo";
 
 interface TopHeaderProps {
   actor: Actor;
@@ -148,6 +149,7 @@ export default function TopHeader({
     if (pathname !== "/overview") router.push("/overview");
   };
 
+  const photo = useProfilePhoto(actor.id);
   const initials = actor.name
     .split(" ")
     .map((n) => n[0])
@@ -269,8 +271,9 @@ export default function TopHeader({
             aria-label="Account menu"
             data-product-tour="profile"
           >
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-[12px] font-medium text-primary-foreground">
-              {initials}
+            <span className="flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-[12px] font-medium text-primary-foreground">
+              {/* eslint-disable-next-line @next/next/no-img-element -- a small data URL from the profile photo store */}
+              {photo ? <img src={photo} alt="" className="size-full object-cover" /> : initials}
             </span>
             {/* Customers get the avatar alone (the name is in the menu and the greeting, and a full name
                 pinned to every page leaks on shared screens). Staff need to see who and in what role. */}
@@ -284,8 +287,9 @@ export default function TopHeader({
           <DropdownMenuContent align="end" sideOffset={6} className="w-[280px] p-2 rounded-2xl bg-menu/97! dark:bg-menu/92! backdrop-blur-3xl">
             {/* Header: Avatar beside Name & Email */}
             <div className="flex items-center gap-2 px-2 pt-2 pb-2">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] shadow-2xs">
-                {initials}
+              <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] shadow-2xs">
+                {/* eslint-disable-next-line @next/next/no-img-element -- a small data URL from the profile photo store */}
+                {photo ? <img src={photo} alt="" className="size-full object-cover" /> : initials}
               </div>
               <div className="flex min-w-0 flex-col">
                 <span className="truncate text-[14px] font-medium text-foreground tracking-[var(--ls-tight)]">{actor.name}</span>

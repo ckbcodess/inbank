@@ -2,19 +2,20 @@
 
 import { useId, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Monitor, Moon, Sun } from "@/components/ui/icons";
+import { ChevronLeft, Laptop, Monitor, Moon, Smartphone, Sun } from "@/components/ui/icons";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { PhoneInput } from "@/components/ui/phone-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
-import { PASSWORD_RULES, maskEmail, maskMobile, passwordMeetsRules } from "@/lib/auth-shared";
+import { PASSWORD_RULES, maskEmail, passwordMeetsRules } from "@/lib/auth-shared";
 import { forgetThisDevice, useTrustedDevice } from "@/lib/device-trust";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { useSession } from "@/lib/session-store";
+import { shrinkPhoto, useProfilePhoto, useProfilePhotos } from "@/lib/profile-photo";
 import { switchTheme } from "@/lib/theme-transition";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +23,6 @@ export interface SettingsData {
   /** Local form, "0241234567". It is the sign-in ID. */
   mobile: string;
   email: string;
-  address: string;
   smsAlerts: boolean;
   emailReceipts: boolean;
   eStatements: boolean;
@@ -107,7 +107,6 @@ function Row({
   );
 }
 
-const ROW_BUTTON = "h-10 px-4 text-[13px] font-medium";
 
 function formatMobile(local: string) {
   const d = local.replace(/\D/g, "");
@@ -116,55 +115,127 @@ function formatMobile(local: string) {
 
 /* ── Profile ───────────────────────────────────────────────────────────────── */
 
-type EditKind = "mobile" | "email" | "address";
+/** A fact about the customer: the label small and muted, the value under it at body size, an action on the right. */
+function FactRow({ label, action, children }: { label: string; action?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-4">
+      <div className="flex min-w-0 flex-col gap-1">
+        <span className="text-[12px] text-muted-foreground">{label}</span>
+        <span className="min-w-0 truncate text-[14px] text-foreground">{children}</span>
+      </div>
+      {action ? <div className="shrink-0">{action}</div> : null}
+    </div>
+  );
+}
 
+/**
+ * The picture shown in the header and the account menu: the photo when there is one, otherwise the initials. Picking a
+ * file swaps it straight away (it's easy to change back), and Remove returns to the initials.
+ */
+function ProfilePhotoRow({ name }: { name: string }) {
+  const actorId = useSession((s) => s.actor?.id);
+  const photo = useProfilePhoto(actorId);
+  const setPhoto = useProfilePhotos((s) => s.setPhoto);
+  const removePhoto = useProfilePhotos((s) => s.removePhoto);
+  const inputId = useId();
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("");
+
+  async function pick(file: File | undefined) {
+    if (!file || !actorId) return;
+    try {
+      setPhoto(actorId, await shrinkPhoto(file));
+      toast.success("Profile photo updated");
+    } catch {
+      toast.error("That file isn’t a photo we can use. Try a JPG or PNG.");
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-4 pb-4 pt-2">
+      <span className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-[28px] font-medium text-primary-foreground">
+        {/* eslint-disable-next-line @next/next/no-img-element -- a small data URL from the profile photo store */}
+        {photo ? <img src={photo} alt="" className="size-full object-cover" /> : initials}
+      </span>
+      <div className="flex flex-wrap items-center gap-2">
+        <input
+          id={inputId}
+          type="file"
+          accept="image/*"
+          className="sr-only"
+          onChange={(e) => {
+            void pick(e.target.files?.[0]);
+            e.target.value = "";
+          }}
+        />
+        <Button variant="outline" size="sm" nativeButton={false} render={<label htmlFor={inputId} />}>
+          {photo ? "Change Photo" : "Upload Photo"}
+        </Button>
+        {photo && actorId && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              removePhoto(actorId);
+              toast.success("Profile photo removed");
+            }}
+          >
+            Remove
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** "10 November 2026 at 9:42 am". */
+function formatSignIn(ms: number) {
+  const d = new Date(ms);
+  const date = d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const time = d.toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit", hour12: true });
+  return `${date} at ${time}`;
+}
+
+/**
+ * Who the bank knows you as. The name comes from the Ghana Card and the mobile number is the sign-in ID, so neither is
+ * changed here. Email is the one contact detail the customer changes themselves, behind a code. The last sign-in is a
+ * quiet security check: if it isn't you, you'll see it here.
+ */
 export function ProfilePane({ name, data, update, onBackToMenu }: PaneProps & { name: string }) {
-  const [edit, setEdit] = useState<EditKind | null>(null);
+  const [editing, setEditing] = useState(false);
+  const previousSignIn = useSession((s) => s.previousSignIn);
   const proxyId = `GH-${name.split(" ")[0].toUpperCase()}-01`;
 
-  if (edit) return <ChangeDetail kind={edit} data={data} update={update} onDone={() => setEdit(null)} />;
+  if (editing) return <ChangeEmail data={data} update={update} onDone={() => setEditing(false)} />;
 
   return (
     <PaneShell>
       <PaneHeader title="Profile" onBack={onBackToMenu} />
+      <ProfilePhotoRow name={name} />
       <Rows>
-        <Row title={name}>From your Ghana Card.</Row>
-        <Row
-          title="Mobile number"
-          action={
-            <Button variant="outline" className={ROW_BUTTON} onClick={() => setEdit("mobile")}>
-              Change
-            </Button>
-          }
-        >
+        <FactRow label="Full Name">{name}</FactRow>
+        <FactRow label="Mobile Number">
           <span className="tabular">{formatMobile(data.mobile)}</span>
-        </Row>
-        <Row
-          title="Email"
+        </FactRow>
+        <FactRow
+          label="Email"
           action={
-            <Button variant="outline" className={ROW_BUTTON} onClick={() => setEdit("email")}>
+            <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
               Change
             </Button>
           }
         >
-          <span>{data.email}</span>
-        </Row>
-        <Row
-          title="Address"
-          action={
-            <Button variant="outline" className={ROW_BUTTON} onClick={() => setEdit("address")}>
-              Change
-            </Button>
-          }
-        >
-          <span>{data.address}</span>
-        </Row>
-        <Row
-          title="Proxy Pay ID"
+          {data.email}
+        </FactRow>
+        <FactRow
+          label="Proxy Pay ID"
           action={
             <Button
               variant="outline"
-              className={ROW_BUTTON}
+              size="sm"
               onClick={() => {
                 void navigator.clipboard?.writeText(proxyId);
                 toast.success("Proxy ID copied");
@@ -175,69 +246,34 @@ export function ProfilePane({ name, data, update, onBackToMenu }: PaneProps & { 
           }
         >
           <span className="tabular">{proxyId}</span>
-        </Row>
+        </FactRow>
+        <FactRow label="Last Sign-in">
+          <span className="tabular" suppressHydrationWarning>
+            {previousSignIn ? formatSignIn(previousSignIn) : "This is your first sign-in"}
+          </span>
+        </FactRow>
       </Rows>
     </PaneShell>
   );
 }
 
-const CHANGE_TITLE = {
-  mobile: "Change mobile number",
-  email: "Change email",
-  address: "Change address",
-} as const;
-
-/**
- * Changing a way we reach you asks for a code sent to the current one; the address is not a credential, so it saves
- * straight away. The step stays inside the pane (no second modal on top of the first).
- */
-function ChangeDetail({
-  kind,
-  data,
-  update,
-  onDone,
-}: {
-  kind: EditKind;
-  data: SettingsData;
-  update: (patch: Partial<SettingsData>) => void;
-  onDone: () => void;
-}) {
-  const [value, setValue] = useState(kind === "address" ? data.address : "");
+/** Changing the email asks for a code sent to the current one. The step stays inside the pane (no second modal on top of the first). */
+function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (patch: Partial<SettingsData>) => void; onDone: () => void }) {
+  const [value, setValue] = useState("");
   const [step, setStep] = useState<"enter" | "code">("enter");
   const [code, setCode] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [wrongCode, setWrongCode] = useState(false);
 
-  const valid =
-    kind === "mobile" ? /^0\d{9}$/.test(value) : kind === "email" ? /^\S+@\S+\.\S+$/.test(value) : value.trim().length > 4;
-  const currentMasked = kind === "mobile" ? maskMobile(data.mobile) : maskEmail(data.email);
-  const nextMasked = kind === "mobile" ? maskMobile(value) : maskEmail(value);
-
-  function apply() {
-    if (kind === "mobile") {
-      update({ mobile: value });
-      toast.success("Mobile number changed");
-    } else if (kind === "email") {
-      update({ email: value });
-      toast.success("Email changed");
-    }
-    onDone();
-  }
-
-  function submitEnter() {
-    if (!valid) return;
-    if (kind === "address") {
-      update({ address: value.trim() });
-      toast.success("Address updated");
-      onDone();
-      return;
-    }
-    setStep("code");
-  }
+  const valid = /^\S+@\S+\.\S+$/.test(value);
+  const currentMasked = maskEmail(data.email);
 
   function checkCode(entered: string) {
     // Prototype: the demo code, as on the other verification screens.
-    if (entered === "000000") apply();
-    else {
+    if (entered === "000000") {
+      update({ email: value });
+      toast.success("Email changed");
+      onDone();
+    } else {
       setWrongCode(true);
       setCode(Array(OTP_LENGTH).fill(""));
     }
@@ -254,7 +290,7 @@ function ChangeDetail({
           </div>
           <div className="flex flex-wrap items-center gap-x-1 text-[13px]">
             <span className="text-muted-foreground">Changing to</span>
-            <span className="tabular text-foreground">{nextMasked}</span>
+            <span className="tabular text-foreground">{maskEmail(value)}</span>
           </div>
           <OtpInput
             value={code}
@@ -277,36 +313,24 @@ function ChangeDetail({
 
   return (
     <PaneShell>
-      <StepHeader back="Profile" title={CHANGE_TITLE[kind]} onBack={onDone} />
+      <StepHeader back="Profile" title="Change email" onBack={onDone} />
       <form
         className="flex max-w-[440px] flex-col gap-5 pt-2"
         onSubmit={(e) => {
           e.preventDefault();
-          submitEnter();
+          if (valid) setStep("code");
         }}
       >
-        {kind !== "address" ? (
-          <div className="flex flex-wrap items-center gap-x-1 text-[13px]">
-            <span className="text-muted-foreground">Code goes to</span>
-            <span className="tabular text-foreground">{currentMasked}</span>
-          </div>
-        ) : null}
-        {kind === "mobile" ? (
-          <Field label="New Mobile Number" htmlFor="new-mobile">
-            <PhoneInput id="new-mobile" value={value} onValueChange={setValue} />
-          </Field>
-        ) : kind === "email" ? (
-          <Field label="New Email" htmlFor="new-email">
-            <Input id="new-email" type="email" autoComplete="email" value={value} onChange={(e) => setValue(e.target.value)} />
-          </Field>
-        ) : (
-          <Field label="Address" htmlFor="new-address">
-            <Input id="new-address" autoComplete="street-address" value={value} onChange={(e) => setValue(e.target.value)} />
-          </Field>
-        )}
+        <div className="flex flex-wrap items-center gap-x-1 text-[13px]">
+          <span className="text-muted-foreground">Code goes to</span>
+          <span className="tabular text-foreground">{currentMasked}</span>
+        </div>
+        <Field label="New Email" htmlFor="new-email">
+          <Input id="new-email" type="email" autoComplete="email" value={value} onChange={(e) => setValue(e.target.value)} />
+        </Field>
         <div className="flex items-center gap-3">
           <Button type="submit" disabled={!valid} className="h-11 px-6 text-[14px]">
-            {kind === "address" ? "Save address" : "Send code"}
+            Send code
           </Button>
           <Button type="button" variant="ghost" className="h-11 px-3 text-[14px] text-muted-foreground" onClick={onDone}>
             Cancel
@@ -325,11 +349,51 @@ const TIMEOUT_OPTIONS = [
   { value: "30", label: "30 minutes" },
 ];
 
+/**
+ * Linked devices, simulated. A fixed demo list so the place and the shape are there; signing a device out comes later
+ * with the real session data. This device is always first.
+ */
+const DEMO_DEVICES = [
+  { id: "this", kind: "laptop", name: "Chrome on Windows", place: "Accra", active: "Active now", current: true },
+  { id: "phone", kind: "phone", name: "GCB Mobile on iPhone", place: "Accra", active: "2 hours ago", current: false },
+  { id: "mac", kind: "desktop", name: "Safari on Mac", place: "Kumasi", active: "3 days ago", current: false },
+] as const;
+
+const DEVICE_ICONS = { laptop: Laptop, phone: Smartphone, desktop: Monitor } as const;
+
+function DevicesStep({ onDone }: { onDone: () => void }) {
+  return (
+    <PaneShell>
+      <StepHeader back="Security" title="Linked devices" onBack={onDone} />
+      <Rows>
+        {DEMO_DEVICES.map((d) => {
+          const Icon = DEVICE_ICONS[d.kind];
+          return (
+            <div key={d.id} className="flex items-center gap-4 py-4">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                <Icon size={18} aria-hidden="true" />
+              </span>
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <span className="truncate text-[14px] text-foreground">{d.name}</span>
+                <span className="truncate text-[12px] text-muted-foreground">
+                  {d.current ? `${d.place} · This device` : `${d.place} · ${d.active}`}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </Rows>
+    </PaneShell>
+  );
+}
+
 export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
   const trustedDevice = useTrustedDevice();
   const [changingPassword, setChangingPassword] = useState(false);
+  const [viewingDevices, setViewingDevices] = useState(false);
 
   if (changingPassword) return <PasswordStep onDone={() => setChangingPassword(false)} />;
+  if (viewingDevices) return <DevicesStep onDone={() => setViewingDevices(false)} />;
 
   const until = trustedDevice
     ? new Date(trustedDevice.until).toLocaleDateString("en-GB", { day: "numeric", month: "long" })
@@ -342,7 +406,7 @@ export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
         <Row
           title="Password"
           action={
-            <Button variant="outline" className={ROW_BUTTON} onClick={() => setChangingPassword(true)}>
+            <Button variant="outline" size="sm" onClick={() => setChangingPassword(true)}>
               Change
             </Button>
           }
@@ -351,20 +415,18 @@ export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
         <Row
           title="Sign-in PIN"
           action={
-            <Button variant="outline" className={ROW_BUTTON} nativeButton={false} render={<Link href="/forgot-pin" />}>
+            <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/forgot-pin" />}>
               Reset
             </Button>
           }
         />
-        <Row title="Payment approval">A one-time code for every payment.</Row>
-        <Row title="Two-step sign-in">On for every customer.</Row>
         <Row
           title="This device"
           action={
             trustedDevice ? (
               <Button
                 variant="outline"
-                className={ROW_BUTTON}
+                size="sm"
                 onClick={() => {
                   forgetThisDevice();
                   toast.success("This device will ask for a code next time");
@@ -384,6 +446,16 @@ export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
           )}
         </Row>
         <Row
+          title="Linked devices"
+          action={
+            <Button variant="outline" size="sm" onClick={() => setViewingDevices(true)}>
+              View
+            </Button>
+          }
+        >
+          <span className="tabular">{`${DEMO_DEVICES.length} devices signed in`}</span>
+        </Row>
+        <Row
           title="Auto-logout"
           action={
             <Select
@@ -394,7 +466,7 @@ export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
                 toast.success("Auto-logout updated");
               }}
             >
-              <SelectTrigger aria-label="Auto-logout" className="h-10 w-36 text-[14px]">
+              <SelectTrigger size="sm" aria-label="Auto-logout" className="w-36">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -521,7 +593,7 @@ export function PreferencesPane({ onBackToMenu }: PaneProps) {
                 if (next) setLanguage(next as typeof language);
               }}
             >
-              <SelectTrigger aria-label="Language" className="h-10 w-40 text-[14px]">
+              <SelectTrigger size="sm" aria-label="Language" className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
