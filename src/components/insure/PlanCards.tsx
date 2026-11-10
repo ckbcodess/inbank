@@ -82,7 +82,7 @@ export function ProductCard({
   // Name, descriptor and price at the top left, clear of the icon; the status alone at the bottom left.
   const head = (
     <span className="relative z-10 flex max-w-[66%] flex-col gap-1">
-      <span className="text-[16px] font-medium tracking-[var(--ls-tight)] sm:text-[18px]">{name}</span>
+      <span className="text-[16px] font-medium">{name}</span>
       {line && <span className="text-[13px] leading-snug text-muted-foreground">{line}</span>}
       {showPrice && price && (
         <span className="tabular mt-1 text-[14px]">
@@ -112,7 +112,7 @@ export function ProductCard({
       <>
         <PlanImage planId={id} src={image} className={single ? "h-28" : "h-40"} />
         <span className="flex flex-col gap-1 p-5 sm:p-6">
-          <span className="text-[16px] font-medium tracking-[var(--ls-tight)] sm:text-[18px]">{name}</span>
+          <span className="text-[16px] font-medium">{name}</span>
           {line && <span className="text-[13px] leading-snug text-muted-foreground">{line}</span>}
           {showPrice && price && (
             <span className="tabular mt-1 text-[14px]">

@@ -23,6 +23,7 @@ import { OPERATORS, OPERATOR_IDS, operatorFromName, telcoName, type Operator } f
 import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
 
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Field } from "@/components/ui/field";
 export const BANKS = [
   "Absa Bank Ghana Limited",
@@ -463,8 +464,8 @@ const TELECEL_ACTIVE_PACKAGE_IDS: Record<string, string> = {
   TEL12345678: "bb-tel-family-m",
 };
 
-/** When the active Telecel package is next due, as an ISO date. [MOCK] Two to twenty-six days from today, by account number. */
-export function activeTelecelDueDate(userId: string): string {
+/** When the active package is next due, as an ISO date. [MOCK] Two to twenty-six days from today, by account number. */
+export function activeBroadbandDueDate(userId: string): string {
   let hash = 0;
   for (let i = 0; i < userId.length; i++) {
     hash = (hash * 31 + userId.charCodeAt(i)) % 25;
@@ -484,6 +485,16 @@ export function activeTelecelPackage(userId: string): BroadbandPackage | undefin
   return TELECEL_BROADBAND[Math.abs(hash)];
 }
 
+/** The TurboNet package each paired mobile number is on right now. [MOCK] Any number resolves to one of the TurboNet plans by hash. */
+export function activeTurboNetPackage(userId: string): BroadbandPackage | undefined {
+  const pool = MTN_BROADBAND.filter((p) => p.group === "TurboNet");
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = (hash * 31 + userId.charCodeAt(i)) % pool.length;
+  }
+  return pool[Math.abs(hash)];
+}
+
 export const BROADBAND_PROVIDERS: readonly BroadbandProvider[] = [
   {
     name: "MTN TurboNet",
@@ -495,6 +506,8 @@ export const BROADBAND_PROVIDERS: readonly BroadbandProvider[] = [
     inputMode: "numeric",
     sanitize: (raw) => raw.replace(/\D/g, ""),
     isValid: (clean) => /^0\d{9}$/.test(clean),
+    activePackageFor: activeTurboNetPackage,
+    activeDueDate: activeBroadbandDueDate,
   },
   {
     name: "MTN Fibre",
@@ -517,7 +530,7 @@ export const BROADBAND_PROVIDERS: readonly BroadbandProvider[] = [
     sanitize: (raw) => raw.replace(/[^a-zA-Z0-9]/g, "").toUpperCase(),
     isValid: (clean) => /^[A-Z0-9]{8,20}$/.test(clean),
     activePackageFor: activeTelecelPackage,
-    activeDueDate: activeTelecelDueDate,
+    activeDueDate: activeBroadbandDueDate,
   },
 ];
 
@@ -1660,7 +1673,10 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
  * Any value that is looked up before it can be used (an account or phone number, a bill reference): the field, with
  * the lookup as a quiet "Search" inside its right edge. It slides in once the value is complete, then turns into
  * "Verifying..." and then the resolved name, in the same slot. Every lookup uses this, so they all
- * look and behave the same. The caller owns the lookup itself.
+ * look and behave the same. The caller owns the lookup itself. A lookup that runs on its own as the value completes
+ * passes `auto`: there's no Search to press, only "Verifying..." and then the name (or nothing, when there's no match).
+ * `phone` swaps the plain input for the phone field (fixed +233, or a country picker with `onCountryChange`), and
+ * `onChange` then gets the local number.
  */
 export function LookupInput({
   value,
@@ -1672,43 +1688,69 @@ export function LookupInput({
   resolving,
   verifiedName,
   onVerify,
+  auto = false,
+  phone,
+  inputProps,
 }: {
   value: string;
   onChange: (raw: string) => void;
-  placeholder: string;
-  inputMode?: "numeric" | "tel";
+  placeholder?: string;
+  inputMode?: "numeric" | "tel" | "text";
   /** The number is complete enough to look up. */
   canVerify: boolean;
   verified: boolean;
   resolving: boolean;
   verifiedName?: string | null;
-  onVerify: () => void;
+  onVerify?: () => void;
+  /** The lookup runs by itself (no Search label or button). */
+  auto?: boolean;
+  phone?: { country?: string; onCountryChange?: (code: string) => void };
+  /** Passed through to the input. */
+  inputProps?: Pick<React.ComponentProps<"input">, "id" | "maxLength" | "onBlur" | "aria-invalid" | "aria-label" | "autoComplete" | "disabled">;
 }) {
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !auto && onVerify && canVerify && !verified && !resolving) {
+      e.preventDefault();
+      onVerify();
+    }
+  };
+  // Verified: leave room on the right for the name, which replaces the Search label.
+  const room = verified && verifiedName ? "pr-[55%]" : "pr-24";
   return (
     <>
       <div className="relative flex items-center">
-        <Input
-          type="text"
-          inputMode={inputMode}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && canVerify && !verified && !resolving) {
-              e.preventDefault();
-              onVerify();
-            }
-          }}
-          placeholder={placeholder}
-          // Verified: leave room on the right for the name, which replaces the Search label.
-          className={cn("numorainput tabular", verified && verifiedName ? "pr-[55%]" : "pr-24")}
-        />
+        {phone ? (
+          <PhoneInput
+            value={value}
+            onValueChange={onChange}
+            country={phone.country}
+            onCountryChange={phone.onCountryChange}
+            placeholder={placeholder}
+            onKeyDown={onKeyDown}
+            className={room}
+            {...inputProps}
+          />
+        ) : (
+          <Input
+            type="text"
+            inputMode={inputMode}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder={placeholder}
+            className={cn("numorainput tabular", room)}
+            {...inputProps}
+          />
+        )}
         <button
           type="button"
           onClick={onVerify}
-          disabled={!canVerify || resolving}
+          disabled={auto || !canVerify || resolving}
           className={cn(
             "absolute inset-y-0 right-3 flex min-w-0 max-w-[55%] select-none items-center gap-1.5 text-[13px] transition-colors",
-            canVerify
+            auto
+              ? "pointer-events-none"
+              : canVerify
               ? "cursor-pointer text-muted-foreground hover:text-foreground"
               : "pointer-events-none cursor-not-allowed text-muted-foreground/35"
           )}
@@ -1729,7 +1771,7 @@ export function LookupInput({
                 {verifiedName || "Verified"}
               </span>
             </span>
-          ) : canVerify ? (
+          ) : canVerify && !auto ? (
             // Only once the value is complete: it slides in, and is gone while the number is still being typed.
             <span key="search" className="animate-lookup-state text-foreground">
               Search

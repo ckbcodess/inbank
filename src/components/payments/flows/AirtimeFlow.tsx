@@ -12,7 +12,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
-  AccountVerificationStatus,
+  LookupInput,
   CollapsedDetailsBadge,
   TELCO_NETWORKS,
   SchedulePaymentSection,
@@ -25,7 +25,6 @@ import {
   NetworkSelect,
 } from "./shared";
 import { OwnWalletPicker, digitsOf, useOwnDestination } from "./OwnWalletPicker";
-import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
 import { Field } from "@/components/ui/field";
@@ -105,7 +104,6 @@ export function AirtimeFlow({
   const overBalance = numAmount > (fromAccount?.available ?? 0);
   const isValid = Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
 
-
   // "My own number": every line that's yours — registered plus linked wallets' numbers.
   const own = useOwnDestination({
     isSelf,
@@ -156,9 +154,10 @@ export function AirtimeFlow({
               options={TELCO_NETWORKS}
             />
 
-            <PhoneInput
+            <LookupInput
+              phone={{}}
               value={state.aPhone}
-              onValueChange={(val) => {
+              onChange={(val) => {
                 onChange("aPhone", val);
                 const detected = detectTelcoNetwork(val);
                 if (detected && !state.wNetwork) {
@@ -169,15 +168,14 @@ export function AirtimeFlow({
                   onChange("benName", resolved);
                 }
               }}
-              aria-label="Phone number"
+              canVerify={!isSelf && isPhoneValid && isNetworkValid}
+              verified={isVerified && !isSelf}
+              resolving={!isSelf && isPhoneValid && isNetworkValid && resolving}
+              verifiedName={isVerified && !isSelf ? verifiedName : null}
+              auto
+              inputProps={{ "aria-label": "Phone number" }}
             />
 
-            {/* Verification Status */}
-            <AccountVerificationStatus
-              resolving={!isSelf && isPhoneValid && isNetworkValid && resolving}
-              name={isVerified && !isSelf ? verifiedName : null}
-              resolvingMessage="Verifying..."
-            />
           </div>
         )}
 </Field>

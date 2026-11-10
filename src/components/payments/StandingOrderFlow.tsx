@@ -65,7 +65,7 @@ import {
   NarrationInput,
   InsufficientFundsAlert,
   ProceedButton,
-  AccountVerificationStatus,
+  LookupInput,
   CollapsedDetailsBadge,
   BankSelect,
   NetworkSelect,
@@ -156,7 +156,6 @@ function detectNetworkFromPhone(phone: string): { airtimeNet: string; walletNet:
 }
 
 import { useContextualBack } from "@/lib/contextual-back";
-import { PhoneInput } from "@/components/ui/phone-input";
 import { useOwnWallets } from "./flows/OwnWalletPicker";
 import { formatGhPhone } from "./flows/shared";
 
@@ -221,6 +220,14 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const [resolvedName, setResolvedName] = useState<string>("");
 
   const currentDest = rail === "proxy" ? f.proxyId : f.destination;
+  // Every destination input shares this lookup, shown inside the field. It runs by itself as the value grows.
+  const lookup = {
+    canVerify: rail !== "group" && currentDest.replace(/[\s-]/g, "").length >= 5,
+    verified: !resolving && Boolean(resolvedName),
+    resolving,
+    verifiedName: resolvedName || null,
+    auto: true,
+  };
 
   useEffect(() => {
     if (!rail || rail === "group") {
@@ -835,13 +842,11 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     <PaymentMethodSelect value={f.paymentMethod || "gip"} onChange={(val) => set("paymentMethod", val)} />
                   )}
 
-                  <Input
-                    type="text"
-                    inputMode="numeric"
+                  <LookupInput
                     value={f.destination}
-                    onChange={(e) => set("destination", e.target.value.replace(/[^0-9]/g, ""))}
+                    onChange={(raw) => set("destination", raw.replace(/[^0-9]/g, ""))}
                     placeholder="Enter account number"
-                    className="numorainput tabular"
+                    {...lookup}
                   />
                 </>
               )}
@@ -851,31 +856,28 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 <>
                   <NetworkSelect value={f.walletNetwork} onChange={(val) => set("walletNetwork", val)} options={WALLET_NETWORKS} />
 
-                  <PhoneInput
+                  <LookupInput
+                    phone={{}}
                     value={f.destination}
-                    onValueChange={handlePhoneChange}
-                    aria-label="Mobile or wallet number"
+                    onChange={handlePhoneChange}
+                    {...lookup}
+                    inputProps={{ "aria-label": "Mobile or wallet number" }}
                   />
                 </>
               )}
 
-              {/* TO PROXY */}
+              {/* TO PROXY: the @ is part of the ID, so it's typed into the field rather than drawn beside it. */}
               {rail === "proxy" && (
-                <div className="relative flex items-center">
-                  <span className="absolute left-3.5 text-[16px] font-semibold text-muted-foreground select-none pointer-events-none">
-                    @
-                  </span>
-                  <Input
-                    type="text"
-                    value={f.proxyId.replace(/^@/, "")}
-                    onChange={(e) => {
-                      const cleaned = e.target.value.replace(/^@/, "").trim();
-                      set("proxyId", cleaned ? `@${cleaned}` : "");
-                    }}
-                    placeholder="kwame.b"
-                    className="pl-8 pr-3 tabular"
-                  />
-                </div>
+                <LookupInput
+                  value={f.proxyId}
+                  inputMode="text"
+                  onChange={(raw) => {
+                    const cleaned = raw.replace(/^@/, "").trim();
+                    set("proxyId", cleaned ? `@${cleaned}` : "");
+                  }}
+                  placeholder="@kwame.b"
+                  {...lookup}
+                />
               )}
 
               {/* TO GROUP */}
@@ -940,10 +942,12 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     }}
                   />
 
-                  <PhoneInput
+                  <LookupInput
+                    phone={{}}
                     value={f.destination}
-                    onValueChange={handlePhoneChange}
-                    aria-label="Phone number"
+                    onChange={handlePhoneChange}
+                    {...lookup}
+                    inputProps={{ "aria-label": "Phone number" }}
                   />
 
                   <Select
@@ -978,21 +982,14 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 <>
                   <NetworkSelect value={f.network} onChange={(val) => set("network", val)} options={AIRTIME_NETWORKS} />
 
-                  <PhoneInput
+                  <LookupInput
+                    phone={{}}
                     value={f.destination}
-                    onValueChange={handlePhoneChange}
-                    aria-label="Phone number"
+                    onChange={handlePhoneChange}
+                    {...lookup}
+                    inputProps={{ "aria-label": "Phone number" }}
                   />
                 </>
-              )}
-
-              {/* Live Resolving State / Verification Badge */}
-              {rail !== "group" && (
-                <AccountVerificationStatus
-                  resolving={resolving}
-                  name={resolvedName}
-                  resolvingMessage="Verifying..."
-                />
               )}
             </div>
           )}

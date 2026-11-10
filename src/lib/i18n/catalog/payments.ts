@@ -333,6 +333,8 @@ const payments: Entry[] = [
   // ── Proxy ──
   ["Proxy Payments", "Paiements proxy", "Pagos por alias", "代理 ID 付款"],
   ["Your proxy ID", "Votre identifiant proxy", "Tu alias", "您的代理 ID"],
+  ["Copy proxy ID", "Copier l’identifiant proxy", "Copiar alias", "复制代理 ID"],
+  ["Proxy ID copied", "Identifiant proxy copié", "Alias copiado", "代理 ID 已复制"],
   ["You don't have a proxy ID yet. Create one so others can pay you with your number.", "Vous n’avez pas encore d’identifiant proxy. Créez-en un pour qu’on puisse vous payer avec votre numéro.", "Aún no tienes un alias. Crea uno para que otros puedan pagarte con tu número.", "您还没有代理 ID。创建后，他人可以通过您的号码向您付款。"],
   ["Transfer to a Proxy ID", "Virement vers un identifiant proxy", "Transferir a un alias", "转账至代理 ID"],
   ["Update Proxy ID", "Modifier l’identifiant proxy", "Actualizar alias", "更新代理 ID"],

@@ -398,9 +398,11 @@ When business needs a screen personal banking has (cards, beneficiaries, setting
 - **Product page: two pages, never both** (`PlanPage`, `AdvanceProductPage`, `TermDepositProducts`, `SecurityProducts`). A
   customer is in one of two situations, so the page is one of two:
   - **Nothing held under this product (the pitch):** `ProductPitchBody` (`components/insure/ProductPitch.tsx`): a picture
-    (`image` when supplied, else the flat scene from `PlanImage`, shown whole), three benefits one under another (an
-    icon in a disc of the product's colour, a title, a muted line), and the price set into a dashed divider ("From **GHS
-    8.00** a month", "Up to **GHS 20,000.00**", "Rates from **12.5%** a year"). Then the action: one button that names the
+    (`image` when supplied, else the flat scene from `PlanImage`, shown whole), the product's description, the benefits
+    one under another (an icon in a disc of the product's colour, then one muted line, or a title over a muted line where
+    a `value` is given), and the price set into a dashed divider ("From **GHS 8.00** a month", "Up to **GHS
+    20,000.00**", "Rates from **12.5%** a year"). The text sits on one left edge, never centred (designer, 2026-11-10).
+    Then the action: one button that names the
     product (Apply for ...) or, for the gate, Create a Profile. Invest is the variant: its products are three kinds (Term Deposits,
     Treasury Bills, Bonds) and the instruments sit inside them, so a new investor sees the list of instruments straight
     away. About is the header chip (below). No details card; the facts are on the About page and in the buy flow's quote.

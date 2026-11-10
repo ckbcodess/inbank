@@ -17,7 +17,7 @@
 // `return await bindCapture([await figma.getNodeByIdAsync('<id>')]);`. Fonts installed only on your computer
 // (Open Sans Medium) aren't available there, so the plugin, run locally, is the one that applies the Medium styles.
 
-async function bindCapture(roots) {
+async function bindCapture(roots, forceMode) {
   const lib = await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
   const V = {};
   await Promise.all(lib.filter(c => ['Theme', 'Spacing', 'Dimensions: Radius'].includes(c.name)).map(async c => {
@@ -41,27 +41,64 @@ async function bindCapture(roots) {
   const AVOID = /^project:(shell|hero|illustration|icon-accent)\//;
 
   const h2 = c => [c.r, c.g, c.b].map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('');
-  async function light(v, d = 0) {
+  // A variable's value in a mode (Light or Dark), following aliases. Collections without that mode use their default.
+  async function valueIn(v, mode, d = 0) {
     if (!v) return null;
     const col = await figma.variables.getVariableCollectionByIdAsync(v.variableCollectionId);
-    const m = (col.modes.find(x => x.name === 'Light') || col.modes[0]).modeId;
+    const m = (col.modes.find(x => x.name === mode) || col.modes[0]).modeId;
     let val = v.valuesByMode[m]; if (val === undefined) val = Object.values(v.valuesByMode)[0];
-    if (val && val.type === 'VARIABLE_ALIAS' && d < 6) return light(await figma.variables.getVariableByIdAsync(val.id), d + 1);
+    if (val && val.type === 'VARIABLE_ALIAS' && d < 6) return valueIn(await figma.variables.getVariableByIdAsync(val.id), mode, d + 1);
     // A colour alias with its own opacity, e.g. surface/scrim = black at 30%: { color: alias, opacity: 0–100 }.
     if (val && val.color && val.color.type === 'VARIABLE_ALIAS' && d < 6) {
-      const c = await light(await figma.variables.getVariableByIdAsync(val.color.id), d + 1);
+      const c = await valueIn(await figma.variables.getVariableByIdAsync(val.color.id), mode, d + 1);
       return c && c.r !== undefined ? { ...c, a: (c.a ?? 1) * (val.opacity ?? 100) / 100 } : null;
     }
     return val;
   }
   const ctxOf = n => { n = n.replace('project:', ''); if (/^(text|icon)\//.test(n) || /-text$/.test(n) || /foreground/.test(n) || /^component\/badge-text/.test(n)) return 'text'; if (/^border\//.test(n) || /^input\/border/.test(n)) return 'stroke'; return 'fill'; };
-  const IDX = { text: {}, stroke: {}, fill: {} };
-  for (const [name, v] of Object.entries(V)) {
-    if (v.resolvedType !== 'COLOR' || AVOID.test(name)) continue;
-    const c = await light(v); if (!c || typeof c !== 'object' || c.r === undefined) continue;
-    const a = c.a === undefined ? 1 : +c.a.toFixed(2);
-    (IDX[ctxOf(name)][h2(c)] = IDX[ctxOf(name)][h2(c)] || []).push({ name, v, a });
+  // Colour index per mode. A screen captured with the app in dark theme carries dark values, so it's matched against
+  // the Dark values of the same tokens. COL[mode][name] keeps every colour token's value, deprecated ones included.
+  const IDXM = {}, COL = {};
+  for (const mode of ['Light', 'Dark']) {
+    const idx = { text: {}, stroke: {}, fill: {} }, col = {};
+    for (const [name, v] of Object.entries(V)) {
+      if (v.resolvedType !== 'COLOR') continue;
+      const c = await valueIn(v, mode); if (!c || typeof c !== 'object' || c.r === undefined) continue;
+      const a = c.a === undefined ? 1 : +c.a.toFixed(2);
+      col[name] = { hex: h2(c), a };
+      if (AVOID.test(name) || name.startsWith('_deprecated/')) continue;
+      (idx[ctxOf(name)][h2(c)] = idx[ctxOf(name)][h2(c)] || []).push({ name, v, a });
+    }
+    IDXM[mode] = idx; COL[mode] = col;
   }
+  const nameById = {}; for (const [name, v] of Object.entries(V)) nameById[v.id] = name;
+
+  // Which theme each screen was captured in: the mode whose token values cover more of its raw colours.
+  const screenMode = {};
+  for (const s of walk()) {
+    const hexes = [];
+    for (const n of [s, ...('findAll' in s ? s.findAll(() => true) : [])]) for (const prop of ['fills', 'strokes']) {
+      if (!(prop in n) || !Array.isArray(n[prop])) continue;
+      for (const f of n[prop]) {
+        if (f.visible === false) continue;
+        if (f.type === 'SOLID' && !(f.boundVariables && f.boundVariables.color)) hexes.push(h2(f.color));
+        if (f.type.startsWith('GRADIENT')) for (const g of f.gradientStops) hexes.push(h2(g.color));
+      }
+    }
+    const score = m => hexes.filter(x => ['text', 'stroke', 'fill'].some(c => IDXM[m][c][x])).length;
+    screenMode[s.id] = score('Dark') > score('Light') ? 'Dark' : 'Light';
+  }
+  const modes = [...new Set(Object.values(screenMode))];
+  if (!forceMode && modes.length > 1) {
+    // Mixed: bind each theme's screens on their own and add the reports together.
+    const parts = [];
+    for (const m of modes) parts.push(await bindCapture(walk().filter(s => screenMode[s.id] === m), m));
+    const sum = (a, b) => { const o = { ...a }; for (const [k, v] of Object.entries(b)) o[k] = typeof v === 'number' ? (o[k] || 0) + v : v; return o; };
+    const raw = {}; for (const p of parts) for (const [k, n] of p.stillRaw) raw[k] = (raw[k] || 0) + n;
+    return { bound: parts.reduce((a, p) => sum(a, p.bound), {}), picks: Object.assign({}, ...parts.map(p => p.picks)), stillRaw: Object.entries(raw).sort((a, b) => b[1] - a[1]), mutatedCount: parts.reduce((a, p) => a + p.mutatedCount, 0), captured: modes.join(' + ') };
+  }
+  const MODE = forceMode || modes[0] || 'Light';
+  const IDX = IDXM[MODE];
   const rank = x => { const i = PREFER.indexOf(x.name); return i < 0 ? 99 + (x.name.startsWith('project:') ? 1 : 0) : i; };
   function find(ctxs, hex, paintA) {
     for (const ctx of ctxs) {
@@ -99,6 +136,7 @@ async function bindCapture(roots) {
   // 1. Spacing, radius and solid colours. A see-through fill bound to an action colour (an earlier run matched a
   // backdrop to action/neutral) is matched again.
   const actionIds = new Set(Object.entries(V).filter(([k]) => k.startsWith('action/')).map(([, v]) => v.id));
+  const rootIds = new Set(walk().map(s => s.id));
   const rematch = f => f.boundVariables && f.boundVariables.color && actionIds.has(f.boundVariables.color.id) && (f.opacity ?? 1) < 1;
   const stack = walk();
   while (stack.length) {
@@ -117,12 +155,29 @@ async function bindCapture(roots) {
       if (!(prop in n) || !Array.isArray(n[prop])) continue;
       let changed = false;
       const paints = n[prop].map(f => {
-        if (f.type !== 'SOLID' || f.visible === false || (f.boundVariables && f.boundVariables.color && !rematch(f))) return f;
-        const a = f.opacity === undefined ? 1 : +f.opacity.toFixed(2); if (a === 0) return f;
-        const hex = h2(f.color);
+        if (f.type !== 'SOLID' || f.visible === false) return f;
         const isIcon = n.type === 'VECTOR' || n.type === 'BOOLEAN_OPERATION';
-        if (isIcon && hex === 'd3d3d3') return f; // illustration dot pattern
         const ctxs = n.type === 'TEXT' ? ['text'] : prop === 'strokes' ? ['stroke', 'fill'] : isIcon ? ['text', 'fill'] : ['fill'];
+        let a = f.opacity === undefined ? 1 : +f.opacity.toFixed(2); if (a === 0) return f;
+        let hex = h2(f.color);
+        const pre = f.boundVariables && f.boundVariables.color;
+        if (pre) {
+          // The capture binds some colours itself, by the CSS variable's code syntax, and picks either twin of a pair
+          // (--foreground is both text/primary and icon/primary). Keep its choice unless it's deprecated, in the wrong
+          // role for this layer (an icon token on a background), or on the screen's own background (body:
+          // bg-background). Those are matched again from the token's value in the screen's theme.
+          const name = nameById[pre.id];
+          if (!name) return f; // a variable from somewhere else: leave it
+          const isRootBg = rootIds.has(n.id) && prop === 'fills';
+          const wrong = name.startsWith('_deprecated/') || !ctxs.includes(ctxOf(name)) || (isRootBg && name !== 'surface/background');
+          if (!wrong && !rematch(f)) return f;
+          if (isRootBg && V['surface/background']) {
+            picks['screen background'] = 'surface/background'; changed = true; done.color++;
+            return { ...figma.variables.setBoundVariableForPaint(f, 'color', V['surface/background']), opacity: 1 };
+          }
+          if (!rematch(f)) { const c = COL[MODE][name]; if (!c) return f; hex = c.hex; a = +(c.a * a).toFixed(2); }
+        }
+        if (isIcon && hex === 'd3d3d3') return f; // illustration dot pattern
         const r = find(ctxs, hex, a);
         const k = ctxs[0] + ' #' + hex + (a < 1 ? '@' + a : '');
         if (!r) { miss(k); return f; }
@@ -138,15 +193,108 @@ async function bindCapture(roots) {
     if ('children' in n) stack.push(...n.children);
   }
 
+  // 1b. Edges drawn as a box shadow. Fields (and anything else using field-surface) draw their border as a spread
+  // shadow: 0 0 0 1px var(--field-border), 2px for the focus ring. The capture brings that in as a raw drop shadow
+  // and a transparent stroke. Rebuild it as a real stroke outside the edge, bound to the matching border token, and
+  // keep any soft shadow (the field drop) as it is.
+  done.edge = 0;
+  const estack = walk();
+  while (estack.length) {
+    const n = estack.pop();
+    if ('effects' in n && Array.isArray(n.effects) && 'strokes' in n && !n.effectStyleId) {
+      // Read the list once: every read of n.effects returns new objects, so the ring has to be removed by position.
+      const effs = n.effects;
+      const ringAt = effs.findIndex(e => e.type === 'DROP_SHADOW' && e.visible !== false && e.radius === 0 && e.spread > 0 && e.offset.x === 0 && e.offset.y === 0);
+      const ring = ringAt >= 0 ? effs[ringAt] : null;
+      if (ring) {
+        const a = +((ring.color.a ?? 1)).toFixed(2);
+        // Field edges take the input tokens (input/border, input/border-focus) over border/default, which shares the hex.
+        const inputTok = (IDX.stroke[h2(ring.color)] || []).find(x => x.name.startsWith('input/') && (x.a === 1 || Math.abs(x.a - a) < 0.011));
+        const r = a > 0 && inputTok ? { hit: inputTok, opacity: inputTok.a === 1 ? a : 1 } : null;
+        if (r) {
+          const paint = { ...figma.variables.setBoundVariableForPaint({ type: 'SOLID', color: { r: ring.color.r, g: ring.color.g, b: ring.color.b } }, 'color', r.hit.v), opacity: r.opacity };
+          n.effects = effs.filter((_, i) => i !== ringAt);
+          n.strokes = [paint];
+          for (const k of ['strokeWeight', 'strokeTopWeight', 'strokeRightWeight', 'strokeBottomWeight', 'strokeLeftWeight']) if (n.boundVariables && n.boundVariables[k]) n.setBoundVariable(k, null);
+          n.strokeWeight = ring.spread;
+          n.strokeAlign = 'OUTSIDE';
+          done.edge++; mutated.add(n.id);
+        }
+      }
+    }
+    if ('children' in n) estack.push(...n.children);
+  }
+
+  // 1c. Shadow stacks → effect styles from 1. TOKENS, matched on their light-mode layers [y, blur, spread, alpha] of
+  // black (zero-alpha layers ignored). Shadow/* are the code's named shadows and switch with the Theme mode;
+  // Box Shadow/* are Tailwind's stock shadow-2xs … shadow-2xl, which the code also uses.
+  const SHADOW_STYLES = [
+    ['Shadow/field', 'c914a26c9b022759f8d55d5ac6ce9b712e74a620', [[2, 2, -1, 0.04]]],
+    ['Shadow/control', '2e4a339d9b7c055046895047fbb463bfbefaacc7', [[1, 1, 0, 0.04]]],
+    ['Shadow/button', '8677020c7ce9ea9394f11b3386d463139e2b9ef5', [[0, 0, 1, 0.05], [4, 6, 0, 0.05]]],
+    ['Shadow/card', '0179ce2e9a3407b0ee1b8b876ffb5808d988024e', [[1, 2, 0, 0.02], [2, 8, -2, 0.04]]],
+    ['Shadow/menu', '6c770baaa926423e798124731bac828f8ce5dada', [[0, 0, 1, 0.02], [1, 2, 0, 0.09], [4, 16, -4, 0.29]]],
+    ['Shadow/modal', '1bc415534b866a5256cdc6ee89b249d303f42ccf', [[0, 0, 1, 0.04], [1, 2, 0, 0.06], [6, 16, -4, 0.08]]],
+    ['Box Shadow/shadow-2xs', 'd8e6a11b124bdaa9e3edf462999db54ed3239019', [[1, 0, 0, 0.05]]],
+    ['Box Shadow/shadow-xs', 'a8bf734682c66281d14e8751d6907425d604221b', [[1, 2, 0, 0.05]]],
+    ['Box Shadow/shadow-sm', '12513827675ede2e7ac4696f60929350df6d9db4', [[1, 3, 0, 0.1], [1, 2, -1, 0.1]]],
+    ['Box Shadow/shadow-md', '431435320bd5ddd9020315f864cca10962765922', [[4, 6, -1, 0.1], [2, 4, -2, 0.1]]],
+    ['Box Shadow/shadow-lg', '6ab28967d4f5bdc5bb0c8eeffa5653b9b486a616', [[10, 15, -3, 0.1], [4, 6, -4, 0.1]]],
+    ['Box Shadow/shadow-xl', '4155df18885a5e44373d2fc8e3954e7f33190d85', [[20, 25, -5, 0.1], [8, 10, -6, 0.1]]],
+    ['Box Shadow/shadow-2xl', '29f82bfe2ebdc515573a86328c752ac67df21bb7', [[25, 50, -12, 0.25]]],
+  ];
+  // The Shadow/* styles change in dark (lighter shadows plus a white ring). For a dark screen, read their layers from
+  // the shadow/<style>/<layer>/{color,y,blur,spread} variables in the Dark mode. Layers carry their colour as well.
+  for (const l of SHADOW_STYLES) l[2] = l[2].map(x => (x.length === 4 ? [...x, '000000'] : x));
+  if (MODE !== 'Light') {
+    const groups = {};
+    for (const [name, v] of Object.entries(V)) {
+      const m = /^shadow\/([^/]+)\/([^/]+)\/(color|y|blur|spread)$/.exec(name); if (!m) continue;
+      ((groups[m[1]] = groups[m[1]] || {})[m[2]] = groups[m[1]][m[2]] || {})[m[3]] = await valueIn(v, MODE);
+    }
+    for (const [style, layers] of Object.entries(groups)) {
+      const entry = SHADOW_STYLES.find(s => s[0] === 'Shadow/' + style); if (!entry) continue;
+      const ls = Object.values(layers).filter(l => l.color && (l.color.a ?? 1) > 0.005)
+        .map(l => [l.y || 0, l.blur || 0, l.spread || 0, +(l.color.a ?? 1).toFixed(3), h2(l.color)]);
+      if (ls.length) entry[2] = ls;
+    }
+  }
+  const bySize = (p, q) => p[0] - q[0] || p[1] - q[1] || p[2] - q[2];
+  const shadowStyle = {};
+  done.shadow = 0;
+  const sstack = walk();
+  while (sstack.length) {
+    const n = sstack.pop();
+    if ('effects' in n && Array.isArray(n.effects) && n.effects.length && !n.effectStyleId) {
+      const vis = n.effects.filter(e => e.visible !== false);
+      const drops = vis.filter(e => e.type === 'DROP_SHADOW' && (e.color.a ?? 1) > 0.005);
+      const onlyDrops = vis.every(e => e.type === 'DROP_SHADOW') && drops.length && drops.every(e => e.offset.x === 0);
+      if (onlyDrops) {
+        const sig = drops.map(e => [e.offset.y, e.radius, e.spread, +(e.color.a ?? 1).toFixed(3), h2(e.color)]).sort(bySize);
+        const hit = SHADOW_STYLES.find(([, , layers]) => layers.length === sig.length && [...layers].sort(bySize).every((l, i) => Math.abs(l[0] - sig[i][0]) < 0.6 && Math.abs(l[1] - sig[i][1]) < 0.6 && Math.abs(l[2] - sig[i][2]) < 0.6 && Math.abs(l[3] - sig[i][3]) < 0.012 && l[4] === sig[i][4]));
+        if (hit) {
+          if (!(hit[0] in shadowStyle)) { try { shadowStyle[hit[0]] = await figma.importStyleByKeyAsync(hit[1]); } catch { shadowStyle[hit[0]] = null; miss(`style ${hit[0]} not in the library yet: publish 1. TOKENS`); } }
+          const st = shadowStyle[hit[0]];
+          if (st) { await n.setEffectStyleIdAsync(st.id); done.shadow++; mutated.add(n.id); }
+        } else miss('shadow ' + sig.map(l => `${l[0]}/${l[1]}/${l[2]}@${l[3]}`).join(' + '));
+      }
+    }
+    if ('children' in n) sstack.push(...n.children);
+  }
+
   // 2. Gradients. The shell takes the file's paint styles (sidebar and body: shell/backdrop; main container: shell/card).
   // Other surfaces the capture writes as gradients get their stops bound to the matching token.
   const paintStyles = await figma.getLocalPaintStylesAsync();
-  const SHELL = { 'faf9f8>f8f7f6': paintStyles.find(s => s.name === 'shell/backdrop'), 'ffffff>fdfcfc': paintStyles.find(s => s.name === 'shell/card') };
-  const STOPS = {
-    'f5f5f5>f5f5f5>f5f5f5': ['project:surface/edge-glass-start', 'project:surface/edge-glass-mid', 'project:surface/edge-glass-end'],
-    'faf9f8>faf9f8': ['surface/card', 'surface/card'],
-    'f7f6f5>f7f6f5': ['project:surface/tile', 'project:surface/tile'],
-  };
+  // globals.css --shell-surface-top/bottom (backdrop) and --shell-top/bottom (card), light then dark.
+  const backdrop = paintStyles.find(s => s.name === 'shell/backdrop'), shellCard = paintStyles.find(s => s.name === 'shell/card');
+  const SHELL = { 'faf9f8>f8f7f6': backdrop, 'ffffff>fdfcfc': shellCard, '141414>050505': backdrop, '161616>080808': shellCard };
+  // Gradient stops by their colours in the screen's theme.
+  const STOPS = {};
+  for (const names of [
+    ['project:surface/edge-glass-start', 'project:surface/edge-glass-mid', 'project:surface/edge-glass-end'],
+    ['surface/card', 'surface/card'],
+    ['project:surface/tile', 'project:surface/tile'],
+  ]) if (names.every(x => COL[MODE][x])) STOPS[names.map(x => COL[MODE][x].hex).join('>')] = names;
   // Tiles fake a gradient border in CSS: a flat fill clipped to the padding box over the edge-glass gradient clipped to
   // the border box, with a transparent 0.5px border. The capture brings both in as full-size gradient fills, which
   // hides the edge. Rebuild it the way Figma draws it: one solid fill (the tile token) and a 0.5px inside gradient
@@ -236,7 +384,7 @@ async function bindCapture(roots) {
     done.textStyle++; mutated.add(t.id);
   }
 
-  return { bound: done, picks, stillRaw: Object.entries(left).sort((a, b) => b[1] - a[1]), mutatedCount: mutated.size };
+  return { bound: done, picks, stillRaw: Object.entries(left).sort((a, b) => b[1] - a[1]), mutatedCount: mutated.size, captured: MODE };
 }
 
 // Watch mode: stays open. Paste screens onto the page, then name the section they belong to: confirming creates the
@@ -438,7 +586,7 @@ else if (typeof __MCP__ === 'undefined') {
         <tr><td>Spacing</td><td>${b.spacing}</td></tr><tr><td>Radius</td><td>${b.radius}</td></tr>
         <tr><td>Colours</td><td>${b.color}</td></tr><tr><td>Gradients</td><td>${b.gradient}</td></tr>
         <tr><td>Shell styles</td><td>${b.shellStyle}</td></tr><tr><td>Text styles</td><td>${b.textStyle}</td></tr>
-        <tr><td>Modes cleared</td><td>${b.modesCleared}</td></tr><tr><td>Tiles rebuilt</td><td>${b.tile}</td></tr>
+        <tr><td>Captured in</td><td>${result.captured}</td></tr><tr><td>Modes cleared</td><td>${b.modesCleared}</td></tr><tr><td>Tiles rebuilt</td><td>${b.tile}</td></tr><tr><td>Field edges</td><td>${b.edge}</td></tr><tr><td>Shadows</td><td>${b.shadow}</td></tr>
       </table>
       <h2>Still raw</h2>
       <table>${rows}</table>

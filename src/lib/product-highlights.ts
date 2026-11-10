@@ -19,10 +19,11 @@ export type HighlightIcon =
   | "market"
   | "government";
 
+/** With a `value`, a title over a muted line (Invest, Loans). Without one, the label is the whole benefit on one line (Insure). */
 export interface PlanHighlight {
   icon: HighlightIcon;
   label: string;
-  value: string;
+  value?: string;
 }
 
 /** What a Treasury Bills customer gets, from what the app already does (no figures: those come from the offers). */

@@ -10,14 +10,13 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
-  AccountVerificationStatus,
+  LookupInput,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
   ScheduleFrequency,
   resolveAccountName,
 } from "./shared";
 
-import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 export interface OtherGcbFormState {
   fromId: string;
@@ -115,34 +114,24 @@ export function OtherGcbFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-2">
-            <div className="relative flex items-center">
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  value={state.benAcct}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 13);
-                    onChange("benAcct", val);
-                    if (val.length === 13) {
-                      const resolved = resolveAccountName(val, "");
-                      if (resolved) {
-                        onChange("benName", resolved);
-                      }
-                    }
-                  }}
-                  placeholder="Enter account number"
-                  className="numorainput tabular"
-                />
-            </div>
-
-            {/* Verification Status */}
-            <AccountVerificationStatus
-              resolving={isAcctValid && resolving}
-              name={isVerified ? verifiedName : null}
-              resolvingMessage="Verifying GCB account..."
-            />
-          </div>
+          // The name resolves inside the field, as every lookup does. A 13-digit number looks itself up.
+          <LookupInput
+            value={state.benAcct}
+            onChange={(raw) => {
+              const val = raw.replace(/[^0-9]/g, "").slice(0, 13);
+              onChange("benAcct", val);
+              if (val.length === 13) {
+                const resolved = resolveAccountName(val, "");
+                if (resolved) onChange("benName", resolved);
+              }
+            }}
+            placeholder="Enter account number"
+            canVerify={isAcctValid}
+            verified={isVerified}
+            resolving={isAcctValid && resolving}
+            verifiedName={verifiedName}
+            auto
+          />
         )}
       </Field>
 

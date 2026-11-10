@@ -15,7 +15,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
-  AccountVerificationStatus,
+  LookupInput,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
   ScheduleFrequency,
@@ -25,7 +25,6 @@ import {
   BankSelect,
 } from "./shared";
 
-import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 const PAPSS_COUNTRIES = [
   { name: "Nigeria", currency: "NGN" },
@@ -164,26 +163,35 @@ export function PapssPaymentFlow({
   const totalGhs = ghsEquivalent + fee;
   const overBalance = totalGhs > (fromAccount?.available ?? 0);
 
-  const [resolving, setResolving] = useState(false);
+  // As with other banks: the Search appears once the details are complete, and the name resolves when it's pressed.
   const isDetailsValid = state.wIban.trim().length >= 6 && Boolean(state.wBank);
+  const currentKey = `${state.wBank}|${state.wIban}`;
+  const [resolving, setResolving] = useState(false);
+  const [verifiedKey, setVerifiedKey] = useState<string | null>(() =>
+    state.wBenName && isDetailsValid ? currentKey : null
+  );
 
+  // A saved recipient picked from outside arrives with its name already resolved
   useEffect(() => {
-    if (isDetailsValid) {
-      setResolving(true);
-      const timer = setTimeout(() => {
-        setResolving(false);
-      }, 250);
-      return () => clearTimeout(timer);
-    } else {
+    if (state.wBenName && isDetailsValid && verifiedKey !== currentKey) setVerifiedKey(currentKey);
+  }, [state.wBenName, isDetailsValid, verifiedKey, currentKey]);
+
+  const handleVerify = () => {
+    if (!isDetailsValid || resolving) return;
+    setResolving(true);
+    setTimeout(() => {
+      const resolved = resolveAccountName(state.wIban, "");
+      if (resolved) onChange("wBenName", resolved);
+      setVerifiedKey(currentKey);
       setResolving(false);
-    }
-  }, [state.wIban, state.wBank, isDetailsValid]);
+    }, 250);
+  };
 
   const verifiedName = useMemo(() => {
     return resolveAccountName(state.wIban, state.wBenName);
   }, [state.wIban, state.wBenName]);
 
-  const isVerified = isDetailsValid && !resolving && Boolean(verifiedName);
+  const isVerified = isDetailsValid && !resolving && verifiedKey === currentKey && Boolean(verifiedName);
 
   const isDestinationValid = isVerified;
 
@@ -221,6 +229,7 @@ export function PapssPaymentFlow({
                     onChange("wCurrency", found.currency);
                     const newBanks = PAPSS_BANKS_BY_COUNTRY[found.name] || [];
                     onChange("wBank", newBanks[0] || "");
+                    onChange("wBenName", "");
                   }
                 }}
               >
@@ -238,32 +247,29 @@ export function PapssPaymentFlow({
 
               <BankSelect
                 value={state.wBank}
-                onChange={(val) => onChange("wBank", val)}
+                onChange={(val) => {
+                  onChange("wBank", val);
+                  if (state.wBenName) onChange("wBenName", "");
+                }}
                 options={availableBanks}
                 placeholder="Select receiving bank"
               />
             </div>
 
-<Input
-              type="text"
+            {/* The name resolves inside the field, as every lookup does. Editing the number clears the old name. */}
+            <LookupInput
               value={state.wIban}
-              onChange={(e) => {
-                const val = e.target.value;
+              inputMode="text"
+              onChange={(val) => {
                 onChange("wIban", val);
-                const resolved = resolveAccountName(val, "");
-                if (resolved) {
-                  onChange("wBenName", resolved);
-                }
+                if (state.wBenName) onChange("wBenName", "");
               }}
               placeholder="Enter account number"
-              className="tabular"
-            />
-
-            {/* Verification Status */}
-            <AccountVerificationStatus
-              resolving={isDetailsValid && resolving}
-              name={isVerified ? verifiedName : null}
-              resolvingMessage="Verifying..."
+              canVerify={isDetailsValid}
+              verified={isVerified}
+              resolving={resolving}
+              verifiedName={verifiedName}
+              onVerify={handleVerify}
             />
           </div>
         )}

@@ -9,7 +9,7 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   CollapsedDetailsBadge,
-  AccountVerificationStatus,
+  LookupInput,
   NETWORKS,
   NetworkSelect,
   detectTelcoNetwork,
@@ -18,7 +18,6 @@ import {
   formatGhPhone,
 } from "./shared";
 import { OwnWalletPicker, REGISTERED_WALLET, useOwnDestination, type OwnWallet } from "./OwnWalletPicker";
-import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 import { Field } from "@/components/ui/field";
 import { SavedRecipientLink } from "./SavedRecipients";
@@ -157,21 +156,22 @@ export function CardlessWithdrawalFlow({
                 onChange={(val) => onChange("wNetwork", val)}
                 options={NETWORKS}
               />
-              <PhoneInput
+              <LookupInput
+                phone={{}}
                 value={state.recipientPhone}
-                onValueChange={(val) => {
+                onChange={(val) => {
                   onChange("recipientPhone", val);
                   const detected = detectTelcoNetwork(val);
                   if (detected && !state.wNetwork) onChange("wNetwork", detected.walletName);
                   const resolved = resolveAccountName(val, "");
                   if (resolved) onChange("recipientName", resolved);
                 }}
-                aria-label="Recipient mobile number"
-              />
-              <AccountVerificationStatus
+                canVerify={isDetailsEntered}
+                verified={isVerified}
                 resolving={isDetailsEntered && resolving}
-                name={isVerified ? verifiedName : null}
-                resolvingMessage="Verifying..."
+                verifiedName={isVerified ? verifiedName : null}
+                auto
+                inputProps={{ "aria-label": "Recipient mobile number" }}
               />
             </div>
           )}

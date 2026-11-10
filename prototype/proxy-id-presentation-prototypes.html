@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your proxy ID: 5 variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0&display=block">
+<style>
+  /* Values copied from src/app/globals.css */
+  :root {
+    --background: #ffffff; --foreground: #0a0a0a; --card: #fafafa; --modal: #ffffff;
+    --tile: #f5f5f5; --tile-hover: #ebebeb; --muted: #ebebeb; --muted-foreground: #737373;
+    --border: #ebebeb; --field-border: #d9d9d9;
+    --primary: #ffc423; --primary-hover: #fcd34d; --primary-foreground: #451a03;
+    --success: #16a34a; --destructive: #ea3446;
+    --r: 10px; --r-control: 8px;
+    --ls-heading: -0.04em; --ls-tight: -0.02em;
+    --ease-settle: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --hover: 150ms; --reveal: 250ms;
+    --page: #f5f5f5;
+  }
+  :root[data-theme="dark"] {
+    --background: #0a0a0a; --foreground: #fafafa; --card: #181818; --modal: #121212;
+    --tile: #141414; --tile-hover: #1c1c1c; --muted: #262626; --muted-foreground: #a1a1a1;
+    --border: #262626; --field-border: #404040;
+    --page: #050505;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--page); color: var(--foreground);
+    font-family: "Open Sans", system-ui, sans-serif; font-size: 14px; font-weight: 400;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+  h1, h2, h3, p { margin: 0; font-weight: inherit; font-size: inherit; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  .ms {
+    font-family: "Material Symbols Rounded"; font-weight: 400; font-style: normal; line-height: 1;
+    font-size: 20px; width: 1em; height: 1em; overflow: hidden; display: inline-block; flex: none;
+    font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; white-space: nowrap;
+  }
+  :focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
+
+  /* Top bar */
+  .bar {
+    position: sticky; top: 0; z-index: 30; background: var(--background);
+    border-bottom: 1px solid var(--border); padding: 12px 24px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
+  }
+  .bar h1 { font-size: 14px; font-weight: 500; }
+  .pills { display: flex; gap: 4px; }
+  .pill { width: 32px; height: 32px; border-radius: var(--r-control); text-align: center; font-size: 13px; color: var(--muted-foreground); }
+  .pill:hover { background: var(--tile); color: var(--foreground); }
+  .pill.on { background: var(--primary); color: var(--primary-foreground); font-weight: 500; }
+  .ctrls { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+  .seg { display: inline-flex; background: var(--tile); border-radius: var(--r); padding: 2px; }
+  .seg button { height: 32px; padding: 0 12px; border-radius: var(--r-control); font-size: 13px; color: var(--muted-foreground); white-space: nowrap; }
+  .seg button[aria-pressed="true"] { background: var(--background); color: var(--foreground); font-weight: 500; }
+
+  /* Stage: five screens side by side */
+  .stage { display: grid; gap: 40px 24px; padding: 32px 24px 64px; justify-content: center; grid-template-columns: repeat(auto-fill, 375px); }
+  .slot { scroll-margin-top: 80px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+  .slot-head h2 { font-size: 14px; font-weight: 500; }
+  .frame { background: var(--background); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; min-height: 420px; display: flex; flex-direction: column; }
+  .note { font-size: 13px; line-height: 1.55; color: var(--muted-foreground); }
+
+  /* The screen, matching the Proxy Payments page */
+  .screen { flex: 1; display: flex; flex-direction: column; padding: 20px 12px 24px; }
+  .head { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; }
+  .head .bk { width: 32px; height: 32px; display: grid; place-items: center; color: var(--muted-foreground); border-radius: var(--r-control); }
+  .head h3 { font-size: 20px; font-weight: 500; letter-spacing: var(--ls-heading); }
+  .lbl { font-size: 12px; color: var(--muted-foreground); }
+  .val { font-size: 14px; color: var(--foreground); }
+  .lk { font-size: 13px; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; color: var(--foreground); min-height: 24px; }
+  .lk:hover { color: var(--muted-foreground); }
+
+  /* V1: plain row with a chevron */
+  .v1 { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 16px; background: var(--tile); border-radius: var(--r); transition: background var(--hover) var(--ease-settle); }
+  .v1:hover { background: var(--tile-hover); }
+  .v1 .stack { display: flex; flex-direction: column; gap: 4px; }
+  .v1 .chev { color: var(--muted-foreground); font-size: 18px; }
+
+  /* V2: the ID as the figure on the page */
+  .v2 { display: flex; flex-direction: column; gap: 8px; padding: 4px 4px 0; }
+  .v2 .big { font-size: 28px; letter-spacing: var(--ls-heading); }
+  .v2 .links { display: flex; gap: 16px; margin-top: 8px; }
+
+  /* V3: a sentence that says what the ID is for */
+  .v3 { display: flex; flex-direction: column; gap: 6px; padding: 16px; background: var(--tile); border-radius: var(--r); }
+  .v3 .said { font-size: 16px; line-height: 1.5; color: var(--foreground); }
+  .v3 .lk { align-self: flex-start; margin-top: 8px; }
+
+  /* V4: the ID with a copy button beside it */
+  .v4 { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 8px 8px 8px 16px; background: var(--tile); border-radius: var(--r); }
+  .v4 .stack { display: flex; flex-direction: column; gap: 4px; }
+  .v4 .copy { width: 40px; height: 40px; border-radius: var(--r-control); display: grid; place-items: center; color: var(--muted-foreground); flex: none; }
+  .v4 .copy:hover { background: var(--tile-hover); color: var(--foreground); }
+
+  /* V5: the ID, with the account it pays into underneath */
+  .v5 { display: flex; flex-direction: column; gap: 4px; padding: 16px; background: var(--tile); border-radius: var(--r); }
+  .v5 .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .v5 .lk { min-height: 0; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); opacity: 0;
+    background: var(--foreground); color: var(--background); font-size: 13px; padding: 8px 14px; border-radius: var(--r);
+    transition: opacity var(--reveal) var(--ease-settle), transform var(--reveal) var(--ease-settle); pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <h1>Your proxy ID: 5 variations</h1>
+  <nav class="pills" aria-label="Variations">
+    <button class="pill on" data-go="v1" aria-pressed="true">1</button>
+    <button class="pill" data-go="v2">2</button>
+    <button class="pill" data-go="v3">3</button>
+    <button class="pill" data-go="v4">4</button>
+    <button class="pill" data-go="v5">5</button>
+  </nav>
+  <div class="ctrls">
+    <div class="seg" role="group" aria-label="Theme">
+      <button type="button" data-theme-set="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-set="dark" aria-pressed="true">Dark</button>
+    </div>
+  </div>
+</header>
+
+<main class="stage">
+
+  <!-- 1 · Plain row -->
+  <section class="slot" id="v1">
+    <div class="slot-head"><h2>1 · Plain row</h2></div>
+    <div class="frame"><div class="screen">
+      <div class="head"><span class="bk ms">arrow_back</span><h3>Proxy Payments</h3></div>
+      <button class="v1" type="button">
+        <span class="stack">
+          <span class="lbl">Your proxy ID</span>
+          <span class="val tabular">0244 123 821</span>
+        </span>
+        <span class="ms chev">chevron_right</span>
+      </button>
+    </div></div>
+    <p class="note">The ID is one row, like the other settings rows. Tapping it opens management. Nothing else competes with it.</p>
+  </section>
+
+  <!-- 2 · The ID as the figure -->
+  <section class="slot" id="v2">
+    <div class="slot-head"><h2>2 · The ID as the figure</h2></div>
+    <div class="frame"><div class="screen">
+      <div class="head"><span class="bk ms">arrow_back</span><h3>Proxy Payments</h3></div>
+      <div class="v2">
+        <span class="lbl">Your proxy ID</span>
+        <span class="big tabular">0244 123 821</span>
+        <div class="links">
+          <button class="lk" type="button">Update</button>
+          <button class="lk" type="button">Deregister</button>
+        </div>
+      </div>
+    </div></div>
+    <p class="note">The ID gets the page's one large figure, as a key fact. The two actions sit under it as plain text links.</p>
+  </section>
+
+  <!-- 3 · Said as a sentence -->
+  <section class="slot" id="v3">
+    <div class="slot-head"><h2>3 · Said as a sentence</h2></div>
+    <div class="frame"><div class="screen">
+      <div class="head"><span class="bk ms">arrow_back</span><h3>Proxy Payments</h3></div>
+      <div class="v3">
+        <p class="lbl">Anyone can pay you with</p>
+        <p class="said tabular">0244 123 821</p>
+        <button class="lk" type="button">Update</button>
+      </div>
+    </div></div>
+    <p class="note">The label becomes the purpose: what people do with this number. The ID reads as the thing to give out, not as a field.</p>
+  </section>
+
+  <!-- 4 · Copy beside the ID -->
+  <section class="slot" id="v4">
+    <div class="slot-head"><h2>4 · Copy beside the ID</h2></div>
+    <div class="frame"><div class="screen">
+      <div class="head"><span class="bk ms">arrow_back</span><h3>Proxy Payments</h3></div>
+      <div class="v4">
+        <span class="stack">
+          <span class="lbl">Your proxy ID</span>
+          <span class="val tabular">0244 123 821</span>
+        </span>
+        <button class="copy" type="button" data-copy="0244 123 821" aria-label="Copy proxy ID"><span class="ms">content_copy</span></button>
+      </div>
+    </div></div>
+    <p class="note">Sharing is the most common reason to open this. The copy action is one tap away, and the row still opens management.</p>
+  </section>
+
+  <!-- 5 · The account it pays into -->
+  <section class="slot" id="v5">
+    <div class="slot-head"><h2>5 · The account it pays into</h2></div>
+    <div class="frame"><div class="screen">
+      <div class="head"><span class="bk ms">arrow_back</span><h3>Proxy Payments</h3></div>
+      <div class="v5">
+        <div class="row">
+          <span class="lbl">Your proxy ID</span>
+          <button class="lk" type="button">Update</button>
+        </div>
+        <span class="val tabular">0244 123 821</span>
+        <span class="lbl tabular">Pays into Current Account ···2231</span>
+      </div>
+    </div></div>
+    <p class="note">Adds the one fact that matters after the ID: which account the money lands in. It is the linked account, so it is real data, not decoration.</p>
+  </section>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+
+<script>
+  // Jump to a variation from the pills, and keep the pill in step with the screen in view
+  const pills = [...document.querySelectorAll('.pill')];
+  function setPill(id) {
+    pills.forEach((p) => {
+      const on = p.dataset.go === id;
+      p.classList.toggle('on', on);
+      p.setAttribute('aria-pressed', String(on));
+    });
+  }
+  pills.forEach((p) => p.addEventListener('click', () => {
+    document.getElementById(p.dataset.go).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setPill(p.dataset.go);
+  }));
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) setPill(e.target.id); });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  document.querySelectorAll('.slot').forEach((s) => observer.observe(s));
+
+  // Light and dark, the same tokens as the app
+  const themeBtns = [...document.querySelectorAll('[data-theme-set]')];
+  function setTheme(mode) {
+    document.documentElement.setAttribute('data-theme', mode);
+    themeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeSet === mode)));
+  }
+  themeBtns.forEach((b) => b.addEventListener('click', () => setTheme(b.dataset.themeSet)));
+
+  // Copy, with a short confirmation
+  const toast = document.getElementById('toast');
+  let toastTimer;
+  document.querySelectorAll('[data-copy]').forEach((btn) => btn.addEventListener('click', () => {
+    const text = btn.dataset.copy;
+    if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
+    toast.textContent = 'Copied';
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1500);
+  }));
+</script>
+</body>
+</html>

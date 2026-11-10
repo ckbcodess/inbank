@@ -50,12 +50,14 @@ export interface InsurancePlan {
   available: boolean;
   /** One line for the plans list. */
   line?: string;
-  /** The plan page's opening paragraph. */
+  /** The plan page's opening paragraph, under the picture. */
   description?: string;
+  /** Show "Powered by StarLife Assurance" (`PROVIDER`) as a caption on the picture. */
+  poweredBy?: boolean;
   benefits?: readonly string[];
   /** A picture of the plan for the top of its page, as a path under `public/` (for example `/plans/homecall.webp`). Until one is supplied the page draws a flat scene. */
   image?: string;
-  /** The benefits again as icon, label and short value. Shown on the picture; `benefits` is the full wording. */
+  /** The benefits again, each an icon and one short line. Shown under the description; `benefits` is the full wording. */
   highlights?: readonly PlanHighlight[];
   kind?: PlanKind;
   /** Policy term, in whole years. Funeral cover has no term: it runs while premiums are paid. */
@@ -73,11 +75,12 @@ export const INSURANCE_PLANS: readonly InsurancePlan[] = [
     line: "Save for school fees with life protection.",
     image: "/plans/child-education.webp",
     description:
-      "Save towards your child’s education, with cover that keeps the plan going if something happens to you.",
+      "Financial support to help you protect your child’s future and cover unexpected expenses during difficult times.",
+    poweredBy: true,
     benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "School fees are paid even if you can’t"],
     highlights: [
-      { icon: "payout", label: "Fast payout", value: "Within 48 to 72 hours of an approved claim" },
-      { icon: "school", label: "School fees stay covered", value: "Paid even if you’re no longer able to" },
+      { icon: "payout", label: "Claims paid within 48 to 72 hours of approval" },
+      { icon: "school", label: "Your child’s school fees paid if you can’t" },
     ],
     kind: "savings",
     term: { min: 10, max: 25 },
@@ -90,12 +93,13 @@ export const INSURANCE_PLANS: readonly InsurancePlan[] = [
     available: true,
     line: "Financial support for funeral expenses.",
     image: "/plans/homecall.webp",
-    description: "Help your family cover funeral expenses in a difficult time. Cover yourself, and add the people close to you.",
+    description: "Financial support to help your family cover funeral expenses in difficult times.",
+    poweredBy: true,
     benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "Cover your spouse, children and parents too", "Accidental deaths are covered from day one"],
     highlights: [
-      { icon: "payout", label: "Fast payout", value: "Within 48 to 72 hours of an approved claim" },
-      { icon: "family", label: "Your family", value: "Cover your spouse, children and parents too" },
-      { icon: "accident", label: "Accidental death", value: "Covered from day one" },
+      { icon: "payout", label: "Claims paid within 48 to 72 hours of approval" },
+      { icon: "family", label: "Cover your spouse, children and parents too" },
+      { icon: "accident", label: "Accidental death covered from day one" },
     ],
     kind: "funeral",
     claimTypes: ["death", "accident", "hospital-cash", "cashback", "refund"],
@@ -112,11 +116,12 @@ export const INSURANCE_PLANS: readonly InsurancePlan[] = [
     available: true,
     line: "Save regularly with insurance cover.",
     image: "/plans/wealthmaster.webp",
-    description: "Save regularly and grow a lump sum, with life cover for the people who depend on you.",
+    description: "Protect your savings and secure your future with a plan that combines savings with financial protection.",
+    poweredBy: true,
     benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "Your loved ones are paid if something happens to you"],
     highlights: [
-      { icon: "payout", label: "Fast payout", value: "Within 48 to 72 hours of an approved claim" },
-      { icon: "family", label: "Your loved ones", value: "Paid if something happens to you" },
+      { icon: "payout", label: "Claims paid within 48 to 72 hours of approval" },
+      { icon: "family", label: "Your loved ones are paid if something happens to you" },
     ],
     kind: "savings",
     term: { min: 4, max: 10 },
@@ -129,12 +134,12 @@ export const INSURANCE_PLANS: readonly InsurancePlan[] = [
     available: true,
     line: "Total protection for you and your loved ones.",
     image: "/plans/ultimate-protection.webp",
-    description: "Keep an income if illness or disability stops you working, and leave your family a lump sum.",
+    description: "Protect your earnings and stay financially secure when unexpected events prevent you from working.",
     benefits: ["Lump sum paid within 48 to 72 hours of an approved claim", "Covers total and permanent disability", "Covers critical illness"],
     highlights: [
-      { icon: "payout", label: "Fast payout", value: "Within 48 to 72 hours of an approved claim" },
-      { icon: "disability", label: "Disability cover", value: "If you can no longer work, for good" },
-      { icon: "illness", label: "Critical illness cover", value: "If you’re diagnosed with a serious illness" },
+      { icon: "payout", label: "Claims paid within 48 to 72 hours of approval" },
+      { icon: "disability", label: "An income if you can never work again" },
+      { icon: "illness", label: "Cover if you’re diagnosed with a serious illness" },
     ],
     kind: "protection",
     term: { min: 8, max: 20 },

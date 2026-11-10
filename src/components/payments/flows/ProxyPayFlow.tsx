@@ -10,14 +10,13 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
-  AccountVerificationStatus,
+  LookupInput,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
   ScheduleFrequency,
   resolveAccountName,
 } from "./shared";
 
-import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 export interface ProxyPayFormState {
   fromId: string;
@@ -64,26 +63,32 @@ export function ProxyPayFlow({
     [accounts, state.fromId]
   );
 
-  const [resolving, setResolving] = useState(false);
+  // As with other banks: the Search appears once the ID is complete, and the name resolves when it's pressed.
   const isPxValid = state.pxId.trim().length >= 4;
+  const [resolving, setResolving] = useState(false);
+  const [verifiedKey, setVerifiedKey] = useState<string | null>(() =>
+    state.benName && isPxValid ? state.pxId : null
+  );
 
+  // A saved recipient picked from outside arrives with its name already resolved
   useEffect(() => {
-    if (isPxValid) {
-      setResolving(true);
-      const timer = setTimeout(() => {
-        setResolving(false);
-      }, 250);
-      return () => clearTimeout(timer);
-    } else {
+    if (state.benName && isPxValid && verifiedKey !== state.pxId) setVerifiedKey(state.pxId);
+  }, [state.benName, state.pxId, isPxValid, verifiedKey]);
+
+  const handleVerify = () => {
+    if (!isPxValid || resolving) return;
+    setResolving(true);
+    setTimeout(() => {
+      const resolved = resolveAccountName(state.pxId, "");
+      if (resolved) onChange("benName", resolved);
+      setVerifiedKey(state.pxId);
       setResolving(false);
-    }
-  }, [state.pxId, isPxValid]);
+    }, 250);
+  };
 
-  const verifiedName = useMemo(() => {
-    return resolveAccountName(state.pxId, state.benName || (state.pxId.startsWith("@") ? `${state.pxId.replace("@", "").toUpperCase()} Alias` : ""));
-  }, [state.pxId, state.benName]);
+  const verifiedName = useMemo(() => resolveAccountName(state.pxId, state.benName), [state.pxId, state.benName]);
 
-  const isVerified = isPxValid && !resolving && Boolean(verifiedName);
+  const isVerified = isPxValid && !resolving && verifiedKey === state.pxId && Boolean(verifiedName);
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
@@ -108,30 +113,21 @@ export function ProxyPayFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-2">
-            <div className="relative flex items-center">
-<Input
-                type="text"
-                value={state.pxId}
-                onChange={(e) => {
-                  const val = e.target.value.trim();
-                  onChange("pxId", val);
-                  const resolved = resolveAccountName(val, "");
-                  if (resolved) {
-                    onChange("benName", resolved);
-                  }
-                }}
-                placeholder="Enter Proxy ID"
-                
-              />
-            </div>
-            {/* Verification Status */}
-            <AccountVerificationStatus
-              resolving={isPxValid && resolving}
-              name={isVerified ? verifiedName : null}
-              resolvingMessage="Verifying proxy identifier..."
-            />
-          </div>
+          // The name resolves inside the field, as every lookup does. Editing the ID clears the old name.
+          <LookupInput
+            value={state.pxId}
+            inputMode="text"
+            onChange={(raw) => {
+              onChange("pxId", raw.trim());
+              if (state.benName) onChange("benName", "");
+            }}
+            placeholder="Enter Proxy ID"
+            canVerify={isPxValid}
+            verified={isVerified}
+            resolving={resolving}
+            verifiedName={verifiedName}
+            onVerify={handleVerify}
+          />
         )}
       </Field>
 

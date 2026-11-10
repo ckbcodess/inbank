@@ -27,7 +27,7 @@ export function OperatorLogo({
     return (
       <span
         style={box}
-        className={cn("flex shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground", className)}
+        className={cn("flex shrink-0 items-center justify-center rounded-full text-muted-foreground", className)}
       >
         <Smartphone size={Math.round(size * 0.47)} aria-hidden="true" />
       </span>

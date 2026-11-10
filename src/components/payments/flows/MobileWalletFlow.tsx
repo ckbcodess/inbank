@@ -12,7 +12,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
-  AccountVerificationStatus,
+  LookupInput,
   CollapsedDetailsBadge,
   NETWORKS,
   SchedulePaymentSection,
@@ -24,7 +24,6 @@ import {
   NetworkSelect,
 } from "./shared";
 import { OwnWalletPicker, REGISTERED_WALLET, useOwnDestination, WalletTag, type OwnWallet } from "./OwnWalletPicker";
-import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
 import { Field } from "@/components/ui/field";
@@ -174,11 +173,11 @@ export function MobileWalletFlow({
                   options={NETWORKS}
                 />
 
-                <PhoneInput
+                <LookupInput
+                  phone={{}}
                   value={state.wPhone}
                   placeholder={state.wNetwork ? "Enter mobile number" : "Choose a network first"}
-                  disabled={!state.wNetwork}
-                  onValueChange={(val) => {
+                  onChange={(val) => {
                     onChange("wPhone", val);
                     const detected = detectTelcoNetwork(val);
                     if (detected && !state.wNetwork) {
@@ -189,17 +188,16 @@ export function MobileWalletFlow({
                       onChange("wName", resolved);
                     }
                   }}
-                  aria-label="Mobile number"
+                  canVerify={!isSelf && isDetailsEntered}
+                  verified={isVerified && !isSelf}
+                  resolving={!isSelf && isDetailsEntered && resolving}
+                  verifiedName={isVerified && !isSelf ? verifiedName : null}
+                  auto
+                  inputProps={{ "aria-label": "Mobile number", disabled: !state.wNetwork }}
                 />
               </>
             )}
 
-            {/* Verification Status */}
-            <AccountVerificationStatus
-              resolving={!isSelf && isDetailsEntered && resolving}
-              name={isVerified && !isSelf ? verifiedName : null}
-              resolvingMessage="Verifying..."
-            />
           </div>
         )}
 </Field>

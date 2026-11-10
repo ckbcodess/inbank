@@ -22,7 +22,7 @@ const buttonVariants = cva(
         default:
           "primary-sheen rounded-[var(--primary-radius)] border-[length:var(--primary-border-width)] text-primary-foreground hover:brightness-105",
         outline:
-          "border-border bg-background shadow-[0_1px_1px_0_color-mix(in_srgb,var(--black)_4%,transparent)] hover:bg-muted/50 hover:text-foreground aria-expanded:bg-muted/50 aria-expanded:text-foreground dark:bg-border/30 dark:hover:bg-border/45 dark:aria-expanded:bg-border/45",
+          "border-border bg-background shadow-[var(--shadow-control)] hover:bg-muted/50 hover:text-foreground aria-expanded:bg-muted/50 aria-expanded:text-foreground dark:bg-border/30 dark:hover:bg-border/45 dark:aria-expanded:bg-border/45",
         secondary:
           "bg-muted text-accent-foreground hover:[background-color:color-mix(in_oklch,var(--muted)_var(--hover-fill),var(--hover-mix-color))] aria-expanded:bg-muted aria-expanded:text-accent-foreground",
         ghost:

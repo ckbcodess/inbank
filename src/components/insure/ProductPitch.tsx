@@ -2,8 +2,8 @@
 
 /**
  * The pitch every product page shares (Insure plan, Loans advance, Invest product), for a customer who holds nothing under
- * it: a picture, three benefits one under another (an icon in a disc of the product's colour, a title, a muted line), and
- * the price set into a dashed divider (direction 14 of `prototype/plan-page-simple-prototypes.html`). The page adds its one
+ * it: a picture, what the product is for, the benefits one under another (an icon in a disc of the product's colour), and the
+ * price set into a dashed divider. Text sits on one left edge (layout B of `prototype/plan-pitch-layout-prototypes.html`). The page adds its one
  * button, or on Invest its list of what to open. `ProductAboutBody` is the same benefits over one list card of facts, for
  * the About page a customer who already holds something opens.
  */
@@ -53,28 +53,55 @@ export interface PitchPrice {
   suffix?: string;
 }
 
-/** The product's picture: its own image when one is supplied, otherwise a flat scene in its colour, always shown whole. */
-function ProductPhoto({ productId, image }: { productId: ProductKey; image?: string }) {
+/** Who provides the product, with their logo. Only StarLife Assurance has a logo here so far. */
+const PROVIDER_LOGOS: Record<string, string> = { "StarLife Assurance": "/brands/starlife.webp" };
+
+/**
+ * The product's picture: its own image when one is supplied, otherwise a flat scene in its colour, always shown whole.
+ * The provider, when given, is a small frosted caption in the bottom-right corner, like a photo credit
+ * (`prototype/plan-provider-caption-prototypes.html`). It is white on the picture's own colour in both themes.
+ */
+function ProductPhoto({ productId, image, provider }: { productId: ProductKey; image?: string; provider?: string }) {
   const src = image ?? (productId in PRODUCT_IMAGES ? PRODUCT_IMAGES[productId as keyof typeof PRODUCT_IMAGES] : undefined);
-  return <PlanImage planId={productId} src={src} className={cn("w-full rounded-3xl", PRODUCT_PHOTO_HEIGHT)} />;
+  const logo = provider ? PROVIDER_LOGOS[provider] : undefined;
+  return (
+    <div className="relative">
+      <PlanImage planId={productId} src={src} className={cn("w-full rounded-3xl", PRODUCT_PHOTO_HEIGHT)} />
+      {provider && (
+        <span className={cn("absolute bottom-3 right-3 flex items-center gap-2 rounded-full bg-[color-mix(in_srgb,var(--black)_28%,transparent)] py-1 pr-3 text-[12px] text-[var(--white)] backdrop-blur-md", logo ? "pl-1" : "pl-3")}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- a 16px logo, already a small WebP */}
+          {logo && <img src={logo} alt="" width={16} height={16} className="size-4 shrink-0 rounded-full" />}
+          {`Powered by ${provider}`}
+        </span>
+      )}
+    </div>
+  );
 }
 
-/** The benefits, one under another. */
+/**
+ * The benefits, one under another. A benefit with a value is a title over a muted line; one without is a single muted
+ * line beside a smaller disc.
+ */
 function ProductBenefits({ productId, highlights }: { productId: ProductKey; highlights: readonly PlanHighlight[] }) {
   if (highlights.length === 0) return null;
+  const oneLine = highlights.every((h) => !h.value);
   return (
-    <ul style={planToneStyle(productId)} className="flex flex-col gap-5">
+    <ul style={planToneStyle(productId)} className={cn("flex flex-col", oneLine ? "gap-4" : "gap-5")}>
       {highlights.map((h) => {
         const Icon = HIGHLIGHT_ICONS[h.icon];
         return (
-          <li key={h.label} className="flex items-center gap-4">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--plan)] [--tint:var(--plan)] on-tint">
-              <Icon size={18} strokeWidth={1.7} aria-hidden="true" />
+          <li key={h.label} className={cn("flex items-center", oneLine ? "gap-3" : "gap-4")}>
+            <span className={cn("flex shrink-0 items-center justify-center rounded-full bg-[var(--plan)] [--tint:var(--plan)] on-tint", oneLine ? "size-8" : "size-10")}>
+              <Icon size={oneLine ? 16 : 18} strokeWidth={1.7} aria-hidden="true" />
             </span>
-            <span className="flex min-w-0 flex-col gap-0.5">
-              <span className="text-[17px] leading-snug tracking-[var(--ls-tight)] text-foreground">{h.label}</span>
-              <span className="text-[14px] leading-snug text-muted-foreground">{h.value}</span>
-            </span>
+            {h.value ? (
+              <span className="flex min-w-0 flex-col gap-0.5">
+                <span className="text-[16px] font-medium text-foreground">{h.label}</span>
+                <span className="text-[14px] leading-snug text-muted-foreground">{h.value}</span>
+              </span>
+            ) : (
+              <span className="min-w-0 text-[14px] text-muted-foreground">{h.label}</span>
+            )}
           </li>
         );
       })}
@@ -97,21 +124,28 @@ function PriceDivider({ price }: { price?: PitchPrice }) {
   );
 }
 
-/** The pitch: the picture, the benefits, and the price on the divider. */
+/** The pitch, on one left edge: the picture, what the product is for, the benefits, then the price on the dashed divider. */
 export function ProductPitchBody({
   productId,
   image,
+  description,
+  provider,
   highlights,
   price,
 }: {
   productId: ProductKey;
   image?: string;
+  /** What the product is for, centred under the picture. */
+  description?: string;
+  /** Who provides it ("StarLife Assurance"), shown as a caption on the picture. */
+  provider?: string;
   highlights: readonly PlanHighlight[];
   price?: PitchPrice;
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <ProductPhoto productId={productId} image={image} />
+      <ProductPhoto productId={productId} image={image} provider={provider} />
+      {description && <p className="text-[14px] leading-relaxed text-foreground">{description}</p>}
       <ProductBenefits productId={productId} highlights={highlights} />
       <div className="mt-10">
         <PriceDivider price={price} />

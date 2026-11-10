@@ -211,7 +211,6 @@ export function InternationalWireFlow({
   onUsePapss,
 }: InternationalWireFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
-  const [showOptional, setShowOptional] = useState(false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
 
   const setCollapsed = (val: boolean) => {
@@ -242,7 +241,6 @@ export function InternationalWireFlow({
 
   // Each block appears once the one before it is done.
   const accountOk = state.wIban.trim().length >= 6;
-  const optionalOpen = showOptional || Boolean(state.wBenEmail || state.wBenPhone);
   const emailOk = !state.wBenEmail.trim() || /^\S+@\S+\.\S+$/.test(state.wBenEmail.trim());
   const codeOk = Boolean(codeType?.valid(state.wSwift));
   const bankDetailsOk =
@@ -404,35 +402,25 @@ export function InternationalWireFlow({
                     />
                   </Field>
 
-                  {optionalOpen ? (
-                    <div className="grid gap-4 animate-in fade-in duration-150 ease-out sm:grid-cols-2">
-                      <Field label="Email Address" optional>
-                        <Input
-                          type="email"
-                          value={state.wBenEmail}
-                          onChange={(e) => onChange("wBenEmail", e.target.value)}
-                          placeholder="Enter email address"
-                        />
-                      </Field>
-                      <Field label="Contact Number" optional>
-                        <Input
-                          type="tel"
-                          value={state.wBenPhone}
-                          onChange={(e) => onChange("wBenPhone", e.target.value.replace(/[^0-9+\s]/g, ""))}
-                          placeholder="Enter contact number"
-                          className="tabular"
-                        />
-                      </Field>
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setShowOptional(true)}
-                      className="cursor-pointer self-start text-[13px] text-muted-foreground hover:text-foreground hover:underline underline-offset-4"
-                    >
-                      Add email or contact number
-                    </button>
-                  )}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label="Email Address" optional>
+                      <Input
+                        type="email"
+                        value={state.wBenEmail}
+                        onChange={(e) => onChange("wBenEmail", e.target.value)}
+                        placeholder="Enter email address"
+                      />
+                    </Field>
+                    <Field label="Contact Number" optional>
+                      <Input
+                        type="tel"
+                        value={state.wBenPhone}
+                        onChange={(e) => onChange("wBenPhone", e.target.value.replace(/[^0-9+\s]/g, ""))}
+                        placeholder="Enter contact number"
+                        className="tabular"
+                      />
+                    </Field>
+                  </div>
                   {!emailOk && (
                     <p className="text-[12px] text-warning">That email address doesn&apos;t look right.</p>
                   )}

@@ -374,7 +374,6 @@ const recent: Entry[] = [
   ["Name confirmed{0}", "Nom confirmé{0}", "Nombre confirmado{0}", "姓名已确认{0}"],
   ["Name confirmed", "Nom confirmé", "Nombre confirmado", "姓名已确认"],
   ["Name not confirmed — check the details before you send", "Nom non confirmé — vérifiez les informations avant d’envoyer", "Nombre no confirmado: revisa los datos antes de enviar", "姓名未确认 — 发送前请核对信息"],
-  ["Add email or contact number", "Ajouter un e-mail ou un numéro de contact", "Añadir correo o número de contacto", "添加邮箱或联系电话"],
   ["Virtual Wallet", "Portefeuille virtuel", "Billetera virtual", "虚拟钱包"],
   ["the proxy directory", "l’annuaire des alias", "el directorio de alias", "代理号码目录"],
 

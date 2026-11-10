@@ -20,7 +20,7 @@ import {
   AmountInput,
   InsufficientFundsAlert,
   ProceedButton,
-  AccountVerificationStatus,
+  LookupInput,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
   ScheduleFrequency,
@@ -32,7 +32,6 @@ import {
   getBroadbandPackages,
 } from "./shared";
 
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SavedRecipientLink } from "./SavedRecipients";
 import { Field } from "@/components/ui/field";
@@ -93,7 +92,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
   const verifiedName = useMemo(() => resolveAccountName(state.aPhone, state.benName), [state.aPhone, state.benName]);
   const isVerified = Boolean(provider) && isAcctValid && !resolving && Boolean(verifiedName);
 
-  // Some products show only the package this account is on now (Telecel); the rest show their whole catalogue.
+  // Some products show only the package this account is on now (Telecel, TurboNet); the rest show their whole catalogue.
   const activeOnly = Boolean(provider?.activePackageFor);
   const packages = useMemo(() => {
     if (!provider) return [];
@@ -132,6 +131,32 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
   useEffect(() => {
     setEditingAmount(false);
   }, [selectedId]);
+  // The amount toggle: in the label row when the package is the active one, under the packages otherwise.
+  const amountToggle = selected ? (
+    editingAmount ? (
+      <button
+        type="button"
+        onClick={() => {
+          onChange("amount", "");
+          setEditingAmount(false);
+        }}
+        className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
+      >
+        Use the package price
+      </button>
+    ) : (
+      <button
+        type="button"
+        onClick={() => {
+          onChange("amount", String(price));
+          setEditingAmount(true);
+        }}
+        className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
+      >
+        Edit amount
+      </button>
+    )
+  ) : null;
 
   return (
     <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
@@ -170,29 +195,30 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
           {provider && (
             <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
               <Label htmlFor="broadband-account">{provider.accountLabel}</Label>
-              <Input
-                id="broadband-account"
-                type="text"
-                inputMode={provider.inputMode}
-                autoComplete="off"
-                maxLength={provider.maxLength}
+              {/* The name resolves inside the field, as every lookup does. Only an error sits under it. */}
+              <LookupInput
                 value={state.aPhone}
-                onChange={(e) => {
-                  const val = provider.sanitize(e.target.value);
+                inputMode={provider.inputMode}
+                onChange={(raw) => {
+                  const val = provider.sanitize(raw);
                   onChange("aPhone", val);
                   onChange("benName", resolveAccountName(val, ""));
                 }}
-                onBlur={() => setAcctTouched(true)}
-                aria-invalid={showAcctError || undefined}
                 placeholder={provider.accountPlaceholder}
-                className="tabular"
+                canVerify={isAcctValid}
+                verified={isVerified}
+                resolving={isAcctValid && resolving}
+                verifiedName={isVerified ? verifiedName : null}
+                auto
+                inputProps={{
+                  id: "broadband-account",
+                  autoComplete: "off",
+                  maxLength: provider.maxLength,
+                  onBlur: () => setAcctTouched(true),
+                  "aria-invalid": showAcctError || undefined,
+                }}
               />
               <InlineError message={showAcctError && provider.accountError} className="text-left" />
-              <AccountVerificationStatus
-                resolving={isAcctValid && resolving}
-                name={isVerified ? verifiedName : null}
-                resolvingMessage="Verifying..."
-              />
             </div>
           )}
         </>
@@ -202,8 +228,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
       {isVerified && (
         <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {activeOnly ? (
-            <div className="flex flex-col gap-2">
-              <Label id="broadband-package-label">Your Active Package</Label>
+            <Field label="Your Active Package" action={amountToggle}>
               {selected ? (
                 <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
                   <OperatorLogo name={provider?.name} size={36} />
@@ -216,7 +241,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
               ) : (
                 <p className="text-[13px] text-muted-foreground">There’s no active package on this account right now.</p>
               )}
-            </div>
+            </Field>
           ) : (
           <div className="flex flex-col gap-2">
             <Label id="broadband-package-label">Bundle Package</Label>
@@ -255,36 +280,18 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
           {selected && (
             <>
               {/* The package has a price; what is paid is the customer's to change */}
-              {editingAmount ? (
+              {(editingAmount || !activeOnly) && (
                 <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
-                  <AmountInput
-                    value={state.amount ?? ""}
-                    onChange={(val) => onChange("amount", val)}
-                    label="Amount"
-                    error={overBalance ? <InsufficientFundsAlert /> : undefined}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onChange("amount", "");
-                      setEditingAmount(false);
-                    }}
-                    className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
-                  >
-                    Use the package price
-                  </button>
+                  {editingAmount && (
+                    <AmountInput
+                      value={state.amount ?? ""}
+                      onChange={(val) => onChange("amount", val)}
+                      label="Amount"
+                      error={overBalance ? <InsufficientFundsAlert /> : undefined}
+                    />
+                  )}
+                  {!activeOnly && amountToggle}
                 </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    onChange("amount", String(price));
-                    setEditingAmount(true);
-                  }}
-                  className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
-                >
-                  Edit amount
-                </button>
               )}
 
               <SchedulePaymentSection

@@ -16,7 +16,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
-  AccountVerificationStatus,
+  LookupInput,
   CollapsedDetailsBadge,
   TELCO_NETWORKS,
   getBundlesForNetwork,
@@ -30,7 +30,6 @@ import {
   NetworkSelect,
 } from "./shared";
 import { OwnWalletPicker, digitsOf, useOwnDestination } from "./OwnWalletPicker";
-import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
 import { Field } from "@/components/ui/field";
@@ -119,7 +118,6 @@ export function DataBundleFlow({
   const overBalance = numAmount > (fromAccount?.available ?? 0);
   const isValid = Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
 
-
   // "My own number": every line that's yours — registered plus linked wallets' numbers.
   const own = useOwnDestination({
     isSelf,
@@ -173,9 +171,10 @@ export function DataBundleFlow({
               options={TELCO_NETWORKS}
             />
 
-            <PhoneInput
+            <LookupInput
+              phone={{}}
               value={state.aPhone}
-              onValueChange={(val) => {
+              onChange={(val) => {
                 onChange("aPhone", val);
                 const detected = detectTelcoNetwork(val);
                 if (detected && !state.wNetwork) {
@@ -187,15 +186,14 @@ export function DataBundleFlow({
                   onChange("benName", resolved);
                 }
               }}
-              aria-label="Phone number"
+              canVerify={!isSelf && isPhoneValid && isNetworkValid}
+              verified={isVerified && !isSelf}
+              resolving={!isSelf && isPhoneValid && isNetworkValid && resolving}
+              verifiedName={isVerified && !isSelf ? verifiedName : null}
+              auto
+              inputProps={{ "aria-label": "Phone number" }}
             />
 
-            {/* Verification Status */}
-            <AccountVerificationStatus
-              resolving={!isSelf && isPhoneValid && isNetworkValid && resolving}
-              name={isVerified && !isSelf ? verifiedName : null}
-              resolvingMessage="Verifying..."
-            />
           </div>
         )}
 </Field>
@@ -213,26 +211,19 @@ export function DataBundleFlow({
                 }
               }}
             >
-              <SelectTrigger
-                className={cn(
-                  "h-11 min-h-[52px] w-full rounded-2xl border bg-card px-3 text-left shadow-none transition-colors",
-                  overBalance
-                    ? "border-destructive/70 focus:border-destructive focus:ring-1 focus:ring-destructive/30"
-                    : "border-border/80"
-                )}
-              >
+              <SelectTrigger>
                 {!selectedBundle ? (
-                  <span className="text-[15px] text-muted-foreground font-normal">
+                  <span className="text-[14px] text-muted-foreground">
                     Select internet bundle
                   </span>
                 ) : (
                   <div className="flex items-center justify-between w-full min-w-0 pr-2">
-                    <span className="text-[15px] font-normal text-foreground truncate">
+                    <span className="text-[14px] text-foreground truncate">
                       {selectedBundle.name}
                     </span>
                     <span
                       className={cn(
-                        "text-[15px] font-normal tabular shrink-0 ml-2",
+                        "text-[14px] tabular shrink-0 ml-2",
                         overBalance ? "text-destructive" : "text-foreground"
                       )}
                     >

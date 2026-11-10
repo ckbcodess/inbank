@@ -37,6 +37,8 @@ export function PlanPitchBody({ plan, showAmounts }: { plan: InsurancePlan; show
     <ProductPitchBody
       productId={plan.id}
       image={plan.image}
+      description={plan.description}
+      provider={plan.poweredBy ? PROVIDER : undefined}
       highlights={plan.highlights ?? []}
       price={from === null ? undefined : { prefix: "From", figure: formatMoney(from, "GHS", showAmounts), suffix: "a month" }}
     />

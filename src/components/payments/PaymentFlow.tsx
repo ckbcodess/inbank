@@ -20,6 +20,7 @@ import {
   ArrowLeftRight,
   CheckCircle2,
   ChevronLeft,
+  Copy,
   CreditCard,
   Globe,
   Landmark,
@@ -27,7 +28,6 @@ import {
   Plus,
   Smartphone,
   Trash2,
-  User,
   Users,
   Wifi,
   Ticket,
@@ -49,7 +49,7 @@ import { useGroupsStore } from "@/lib/groups-store";
 import { findGovService } from "@/lib/government-services";
 import { useGovInvoices } from "@/lib/gov-invoices-store";
 import { GCB_PAY_CATEGORIES } from "@/lib/payment-options";
-import { useProxyStore, PROXY_TYPE_LABEL } from "@/lib/proxy-store";
+import { useProxyStore } from "@/lib/proxy-store";
 import CreateGroupFlow from "@/components/payments/CreateGroupFlow";
 import ProxyIdModal from "@/components/payments/ProxyIdModal";
 import {
@@ -2782,19 +2782,25 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
         {/* Your own proxy ID status */}
         {myProxy ? (
-          <div className="flex items-center justify-between rounded-2xl border border-border bg-muted/30 px-3 py-2">
-            <div className="flex items-center gap-2">
-              <span className="flex size-8 items-center justify-center rounded-full bg-warning/10 text-warning-text dark:bg-primary/20">
-                <User size={17} />
-              </span>
-              <div className="flex flex-col">
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-muted/30 py-2 pl-4 pr-2">
+            <div className="flex min-w-0 items-center gap-3">
+              <GCBLogo className="h-6 w-auto shrink-0" />
+              <div className="flex min-w-0 flex-col gap-0.5">
                 <span className="text-[12px] text-muted-foreground">Your proxy ID</span>
-                <span className="text-[14px] text-foreground tabular">
-                  {myProxy.value}{" "}
-                  <span className="text-[12px] text-muted-foreground">· {PROXY_TYPE_LABEL[myProxy.type]}</span>
-                </span>
+                <span className="text-[14px] text-foreground tabular">{myProxy.value}</span>
               </div>
             </div>
+            <button
+              type="button"
+              aria-label="Copy proxy ID"
+              onClick={() => {
+                navigator.clipboard?.writeText(myProxy.value.replace(/\s/g, "")).catch(() => {});
+                toast("Proxy ID copied");
+              }}
+              className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Copy size={17} />
+            </button>
           </div>
         ) : (
           <p className="rounded-2xl border border-dashed border-border bg-muted/20 px-3 py-2 text-[12px] text-muted-foreground">

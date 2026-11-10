@@ -4,7 +4,6 @@ import { SavedRecipientLink } from "./SavedRecipients";
 import { BillerPicker } from "./BillerPicker";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { TotalRow } from "@/components/ui/total-row";
-import { AppLoader } from "@/components/ui/loader";
 import { Account, BILLERS, formatMoney } from "@/lib/mock-data";
 import { billerRule } from "@/lib/biller-rules";
 import { BillerMark } from "@/components/ui/biller-mark";
@@ -17,9 +16,9 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   CollapsedDetailsBadge,
-  VerifiedAccountBadge,
   SchedulePaymentSection,
   ScheduleFrequency,
+  LookupInput,
   resolveAccountName,
 } from "./shared";
 
@@ -301,35 +300,30 @@ export function BillsPaymentFlow({
     setVerifiedName("");
   };
 
-  const refInput = (value: string, key: "ecgMeter" | "govRef" | "billRef", placeholder: string) => (
-    <div className="relative">
-      <Input
-        type="text"
-        value={value}
-        onChange={(e) => {
-          const val = e.target.value;
-          onChange(key, val);
-          stopSearch();
-          if (verifiedRef && verifiedRef !== val.trim()) resetVerification();
-        }}
-        placeholder={placeholder}
-        className={needsCheck ? "tabular pr-20" : "tabular"}
-      />
-      {needsCheck &&
-        (isVerified ? (
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[12px] text-success-text">Verified</span>
-        ) : (
-          <button
-            type="button"
-            disabled={!canVerify || searching}
-            onClick={startVerify}
-            className="absolute right-3 top-1/2 flex -translate-y-1/2 select-none items-center text-[13px] text-muted-foreground transition-colors enabled:cursor-pointer enabled:hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {searching ? <AppLoader size={12} className="text-muted-foreground" /> : "Search"}
-          </button>
-        ))}
-    </div>
-  );
+  const refInput = (value: string, key: "ecgMeter" | "govRef" | "billRef", placeholder: string) => {
+    const onRefChange = (val: string) => {
+      onChange(key, val);
+      stopSearch();
+      if (verifiedRef && verifiedRef !== val.trim()) resetVerification();
+    };
+    // A name-checked reference uses the same lookup as every other payee: Search appears, then the name sits in the field.
+    if (needsCheck) {
+      return (
+        <LookupInput
+          value={value}
+          inputMode="text"
+          onChange={onRefChange}
+          placeholder={placeholder}
+          canVerify={canVerify}
+          verified={isVerified}
+          resolving={searching}
+          verifiedName={isVerified ? verifiedName : null}
+          onVerify={startVerify}
+        />
+      );
+    }
+    return <Input type="text" value={value} onChange={(e) => onRefChange(e.target.value)} placeholder={placeholder} className="tabular" />;
+  };
 
   // The service chosen under an agency, for both an agency that is its own biller and generating under Ghana.gov
   const servicePicker = govAgency ? (
@@ -591,30 +585,21 @@ export function BillsPaymentFlow({
                       </div>
                     ) : (
                       <>
-                        <div className="relative">
-                          <Input
-                            type="text"
-                            value={state.billRef}
-                            onChange={(e) => {
-                              onChange("billRef", e.target.value);
-                              stopSearch();
-                              if (searchedRef !== null && searchedRef !== e.target.value.trim()) setSearchedRef(null);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" && ref.length >= minRef && searchedRef !== ref && !searching) startSearch();
-                            }}
-                            placeholder="Enter invoice number"
-                            className="tabular pr-20"
-                          />
-                          <button
-                            type="button"
-                            disabled={ref.length < minRef || searchedRef === ref || searching}
-                            onClick={startSearch}
-                            className="absolute right-3 top-1/2 flex -translate-y-1/2 select-none items-center text-[13px] text-muted-foreground transition-colors enabled:cursor-pointer enabled:hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
-                          >
-                            {searching ? <AppLoader size={12} className="text-muted-foreground" /> : "Search"}
-                          </button>
-                        </div>
+                        <LookupInput
+                          value={state.billRef}
+                          inputMode="text"
+                          onChange={(val) => {
+                            onChange("billRef", val);
+                            stopSearch();
+                            if (searchedRef !== null && searchedRef !== val.trim()) setSearchedRef(null);
+                          }}
+                          placeholder="Enter invoice number"
+                          canVerify={ref.length >= minRef}
+                          verified={isVerified}
+                          resolving={searching}
+                          verifiedName={isVerified ? state.benName || defaultUserName : null}
+                          onVerify={startSearch}
+                        />
                         {govInvoices.length > 0 && (
                           <div className="flex flex-col gap-1 pt-1">
                             <Label>Your Invoices</Label>
@@ -684,9 +669,6 @@ export function BillsPaymentFlow({
               </>
             )}
 
-            {needsCheck && isVerified && (
-              <VerifiedAccountBadge name={verifiedName || (state.subType === "ecg" ? "Samuel Quartey" : state.benName || defaultUserName)} />
-            )}
           </div>
         )}
       </Field>
