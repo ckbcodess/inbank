@@ -52,14 +52,14 @@ function termFacts() {
   const offers = termOffers();
   const days = offers.map((o) => o.tenureDays ?? 0);
   const highlights: PlanHighlight[] = [
-    { icon: "rate", label: "Your rate is fixed", value: "It will not change once you start" },
-    { icon: "time", label: "You choose how long", value: `${days.slice(0, -1).join(", ")} or ${days[days.length - 1]} days` },
-    { icon: "choice", label: "You decide at the end", value: "Take it out or roll it over" },
+    { icon: "rate", label: "Your rate is fixed from the day you start" },
+    { icon: "time", label: `Choose ${days.slice(0, -1).join(", ")} or ${days[days.length - 1]} days` },
+    { icon: "choice", label: "Take it out or roll it over at the end" },
   ];
   const rows: Array<[React.ReactNode, React.ReactNode]> = [
-    ["Rates from", <span key="rate" className="text-[20px]">{`${formatRate(Math.min(...offers.map((o) => o.rate)))} a year`}</span>],
     ["Terms", `${Math.min(...days)} to ${Math.max(...days)} days`],
     ["Early exit", "Allowed. The cost is shown first"],
+    ["Rates from", <span key="rate" className="text-[20px]">{`${formatRate(Math.min(...offers.map((o) => o.rate)))} a year`}</span>],
   ];
   return { offers, highlights, rows };
 }
@@ -74,7 +74,7 @@ export function TermDepositProducts() {
       <PageHeader
         title="Term Deposits"
         backTo={back}
-        actions={
+        badge={
           <AboutSheet title="About Term Deposits">
             <TermDepositAboutContent />
           </AboutSheet>
@@ -119,13 +119,13 @@ function treasuryFacts(marketOpen: boolean) {
   const secondary = marketOpen ? securityOffers("secondary") : [];
   const allOffers = [...primary, ...secondary];
   const rows: Array<[React.ReactNode, React.ReactNode]> = [
-    ...(allOffers.length > 0
-      ? ([["Rates from", <span key="rate" className="text-[20px]">{`${formatRate(Math.min(...allOffers.map((o) => o.rate)))} a year`}</span>]] as Array<[React.ReactNode, React.ReactNode]>)
-      : []),
     ["Terms", "91 days to 15 years"],
     ["Markets", "Primary at auction, secondary from other investors"],
     ["Held in", "Your own securities account at the CSD"],
     ["Early exit", "Sell back through a rediscount"],
+    ...(allOffers.length > 0
+      ? ([["Rates from", <span key="rate" className="text-[20px]">{`${formatRate(Math.min(...allOffers.map((o) => o.rate)))} a year`}</span>]] as Array<[React.ReactNode, React.ReactNode]>)
+      : []),
   ];
   return { highlights: TREASURY_HIGHLIGHTS, rows };
 }
@@ -181,7 +181,7 @@ export function TreasuryProducts() {
       <PageHeader
         title="Treasury Bills & Bonds"
         backTo={back}
-        actions={
+        badge={
           <AboutSheet title="About Treasury Bills & Bonds">
             <TreasuryAboutContent />
           </AboutSheet>

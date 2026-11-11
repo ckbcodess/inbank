@@ -81,30 +81,19 @@ function ProductPhoto({ productId, image, provider }: { productId: ProductKey; i
   );
 }
 
-/**
- * The benefits, one under another, each beside a neutral disc. A benefit with a value is a title over a muted line; one
- * without is a single muted line beside a smaller disc.
- */
+/** The benefits, one under another: a neutral disc and one muted line each. */
 function ProductBenefits({ highlights }: { highlights: readonly PlanHighlight[] }) {
   if (highlights.length === 0) return null;
-  const oneLine = highlights.every((h) => !h.value);
   return (
-    <ul className={cn("flex flex-col", oneLine ? "gap-4" : "gap-5")}>
+    <ul className="flex flex-col gap-4">
       {highlights.map((h) => {
         const Icon = HIGHLIGHT_ICONS[h.icon];
         return (
-          <li key={h.label} className={cn("flex items-center", oneLine ? "gap-3" : "gap-4")}>
-            <span className={cn("flex shrink-0 items-center justify-center rounded-full bg-muted text-foreground", oneLine ? "size-7" : "size-10")}>
-              <Icon size={oneLine ? 15 : 18} strokeWidth={1.7} aria-hidden="true" />
+          <li key={h.label} className="flex items-center gap-3">
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+              <Icon size={15} strokeWidth={1.7} aria-hidden="true" />
             </span>
-            {h.value ? (
-              <span className="flex min-w-0 flex-col gap-0.5">
-                <span className="text-[16px] font-medium text-foreground">{h.label}</span>
-                <span className="text-[14px] leading-snug text-muted-foreground">{h.value}</span>
-              </span>
-            ) : (
-              <span className="min-w-0 text-[14px] text-muted-foreground">{h.label}</span>
-            )}
+            <span className="min-w-0 text-[14px] text-muted-foreground">{h.label}</span>
           </li>
         );
       })}
@@ -157,7 +146,7 @@ export function ProductPitchBody({
   );
 }
 
-/** About: the benefits, then one list card with the price first and larger, then the facts. */
+/** About: the benefits, then one list card of facts, ending on the price, set larger. */
 export function ProductAboutBody({
   highlights,
   rows,

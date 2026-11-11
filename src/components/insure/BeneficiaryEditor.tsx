@@ -250,6 +250,8 @@ export function BeneficiaryEditor({
   const [adding, setAdding] = useState(false);
   const [addingTrustee, setAddingTrustee] = useState(false);
   const [dragging, setDragging] = useState(false);
+  /** The beneficiary waiting on the remove confirmation. */
+  const [removing, setRemoving] = useState<BeneficiaryShare | null>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ index: number; startX: number; before: BeneficiaryShare[] } | null>(null);
 
@@ -276,6 +278,7 @@ export function BeneficiaryEditor({
   }
 
   function remove(personId: string) {
+    setRemoving(null);
     const before = value;
     const name = personOf(personId)?.fullName ?? "Beneficiary";
     onChange(value.filter((b) => b.personId !== personId));
@@ -305,6 +308,28 @@ export function BeneficiaryEditor({
 
   return (
     <div className="flex flex-col gap-12">
+      <Modal
+        open={removing !== null}
+        onOpenChange={(o) => !o && setRemoving(null)}
+        title="Remove Beneficiary"
+        size="sm"
+        footer={
+          <>
+            <Button type="button" variant="ghost" size="md" onClick={() => setRemoving(null)}>
+              Cancel
+            </Button>
+            <Button type="button" variant="destructive" size="md" onClick={() => removing && remove(removing.personId)}>
+              Remove
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[14px] leading-relaxed text-muted-foreground">
+          {removing &&
+            `${personOf(removing.personId)?.fullName ?? "This beneficiary"} will no longer receive a share of this policy. Their ${removing.share}% is then free to give to someone else.`}
+        </p>
+      </Modal>
+
       <section className="flex flex-col gap-6">
         <SectionHeading
           title="Beneficiaries"
@@ -323,7 +348,8 @@ export function BeneficiaryEditor({
         {value.length > 0 && (
           <>
             <div className="flex flex-col gap-2 px-1">
-              <div ref={barRef} className="relative flex h-7 items-center">
+              {/* Hovering the bar grows its handles, by scale so nothing around them moves. */}
+              <div ref={barRef} className="group/bar relative flex h-7 items-center">
                 <div className="flex h-7 w-full gap-0.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
                   {value.map((b, i) => (
                     <span
@@ -376,7 +402,12 @@ export function BeneficiaryEditor({
                         e.preventDefault();
                       }}
                     >
-                      <span className="h-5 w-1.5 rounded-full border border-background bg-foreground transition-opacity duration-hover group-hover:opacity-80 group-focus-visible:ring-2 group-focus-visible:ring-ring" />
+                      <span
+                        className={cn(
+                          "h-5 w-1.5 rounded-full border border-background bg-foreground transition-[transform,opacity] duration-reveal ease-settle will-change-transform group-hover/bar:scale-125 group-hover:opacity-80 group-focus-visible:ring-2 group-focus-visible:ring-ring",
+                          dragging && drag.current?.index === i && "scale-125",
+                        )}
+                      />
                     </div>
                   );
                 })}
@@ -413,7 +444,7 @@ export function BeneficiaryEditor({
                     </label>
                     <button
                       type="button"
-                      onClick={() => remove(b.personId)}
+                      onClick={() => setRemoving(b)}
                       aria-label={`Remove ${p.fullName}`}
                       className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >

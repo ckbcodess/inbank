@@ -45,14 +45,14 @@ export function PlanPitchBody({ plan, showAmounts }: { plan: InsurancePlan; show
   );
 }
 
-/** About: the benefits, then the card with the price first and larger, then the facts. */
+/** About: the benefits, then the card of facts, ending on the price, set larger. */
 export function PlanAboutBody({ plan, showAmounts }: { plan: InsurancePlan; showAmounts: boolean }) {
   const from = planFromMonthly(plan);
   const rows: Array<[React.ReactNode, React.ReactNode]> = [
+    ...planFactRows(plan, showAmounts),
     ...(from !== null
       ? ([["Premiums from", <span key="from" className="text-[20px]">{`${formatMoney(from, "GHS", showAmounts)} a month`}</span>]] as Array<[React.ReactNode, React.ReactNode]>)
       : []),
-    ...planFactRows(plan, showAmounts),
   ];
   return <ProductAboutBody highlights={plan.highlights ?? []} rows={rows} />;
 }

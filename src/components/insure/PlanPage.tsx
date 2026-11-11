@@ -9,7 +9,7 @@
  *    profile. The facts (term, cover, provider) are on the About page and in the buy flow's quote. Looking never needs a profile; it is asked for at the button, where the customer has just chosen a plan,
  *    and the plan is kept.
  *  - One or more policies: only the policies. A heading with a small Apply for Another, the policies (the one that needs
- *    the customer first), and an About chip beside the title that opens the explanation in a sheet. However many policies
+ *    the customer first), and an About icon beside the title that opens the explanation in a sheet. However many policies
  *    there are, nothing else moves.
  */
 
@@ -52,7 +52,7 @@ export function PlanPage({ planId }: { planId: PlanId }) {
       <PageHeader
         title={plan.name}
         backTo={{ href: INSURE_HOME, label: "Insure" }}
-        actions={
+        badge={
           mine.length > 0 ? (
             <AboutSheet title={`About ${plan.name}`}>
               <PlanAboutContent planId={planId} />

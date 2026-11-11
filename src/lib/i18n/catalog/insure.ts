@@ -510,6 +510,9 @@ const insure: Entry[] = [
   ["Paid from {0}","Payée depuis {0}","Se paga desde {0}","从 {0} 扣款"],
   ["Paid so far","Payé à ce jour","Pagado hasta ahora","已缴"],
   ["A {0}-year policy","Une police de {0} ans","Una póliza de {0} años","{0} 年期保单"],
+  ["Select sum assured", "Choisissez le capital assuré", "Elige la suma asegurada", "选择保额"],
+  ["{0} will no longer receive a share of this policy. Their {1}% is then free to give to someone else.", "{0} ne recevra plus de part de cette police. Ses {1} % pourront alors être attribués à quelqu’un d’autre.", "{0} dejará de recibir una parte de esta póliza. Su {1} % quedará libre para asignarlo a otra persona.", "{0} 将不再获得此保单的份额。其 {1}% 可分配给其他人。"],
+  ["This beneficiary", "Ce bénéficiaire", "Este beneficiario", "该受益人"],
 ];
 
 export default insure;

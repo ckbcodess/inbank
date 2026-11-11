@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * What the advance is: the explanation a customer who already has advances opens from the About chip on the product
+ * What the advance is: the explanation a customer who already has advances opens from the About icon on the product
  * page (`AboutSheet`). The benefits, then the list card with the limit first and larger, then the costs.
  */
 

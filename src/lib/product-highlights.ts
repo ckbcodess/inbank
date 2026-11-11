@@ -1,6 +1,6 @@
 /**
- * A benefit in three words, for the top of a product page (Insure plan, Loans advance, Invest product): an icon, a label
- * and a short value. Server-safe: the icons live in the component (`ProductPitch.tsx`), this file only names them.
+ * A benefit in one short sentence, for a product page (Insure plan, Loans advance, Invest product): an icon and the
+ * sentence. Server-safe: the icons live in the component (`ProductPitch.tsx`), this file only names them.
  */
 
 export type HighlightIcon =
@@ -19,29 +19,28 @@ export type HighlightIcon =
   | "market"
   | "government";
 
-/** With a `value`, a title over a muted line (Invest, Loans). Without one, the label is the whole benefit on one line (Insure). */
+/** The label is the whole benefit, one line (designer, 2026-11-11). */
 export interface PlanHighlight {
   icon: HighlightIcon;
   label: string;
-  value?: string;
 }
 
 /** What a Treasury Bills customer gets, from what the app already does (no figures: those come from the offers). */
 export const TREASURY_HIGHLIGHTS: readonly PlanHighlight[] = [
-  { icon: "government", label: "Lend to the government", value: "Government of Ghana Treasury Bills & Bonds" },
-  { icon: "market", label: "Primary and secondary markets", value: "New issues at auction, or secondary from other investors" },
-  { icon: "exit", label: "Sell before it matures", value: "Through a rediscount, with the price shown first" },
+  { icon: "government", label: "Lend to the Government of Ghana" },
+  { icon: "market", label: "Buy new issues at auction or from other investors" },
+  { icon: "exit", label: "Sell early through a rediscount, with the price shown first" },
 ];
 
 export const BILLS_HIGHLIGHTS: readonly PlanHighlight[] = [
-  { icon: "government", label: "Lend to the government", value: "Government of Ghana Treasury Bills" },
-  { icon: "market", label: "Buy at auction or from others", value: "New issues, or from other investors" },
-  { icon: "exit", label: "Sell before it matures", value: "Through a rediscount, with the price shown first" },
+  { icon: "government", label: "Lend to the Government of Ghana" },
+  { icon: "market", label: "Buy new issues at auction or from other investors" },
+  { icon: "exit", label: "Sell early through a rediscount, with the price shown first" },
 ];
 
 /** What a Bonds customer gets. */
 export const BONDS_HIGHLIGHTS: readonly PlanHighlight[] = [
-  { icon: "government", label: "Lend to the government", value: "Government of Ghana Bonds" },
-  { icon: "rate", label: "Interest every 6 months", value: "Paid as a coupon until it matures" },
-  { icon: "exit", label: "Sell before it matures", value: "Through a rediscount, with the price shown first" },
+  { icon: "government", label: "Lend to the Government of Ghana" },
+  { icon: "rate", label: "Interest paid every 6 months until it matures" },
+  { icon: "exit", label: "Sell early through a rediscount, with the price shown first" },
 ];

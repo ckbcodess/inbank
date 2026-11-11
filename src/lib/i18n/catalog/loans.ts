@@ -157,6 +157,9 @@ const loans: Entry[] = [
   ["For everyday business needs and growth", "Pour les besoins courants et la croissance de l’entreprise", "Para las necesidades diarias y el crecimiento del negocio", "用于日常经营需求和发展"],
   ["You will be redirected to our Loan Origination Solution (LOS) to continue your loan application.", "Vous serez redirigé vers notre solution d’octroi de prêts (LOS) pour poursuivre votre demande de prêt.", "Serás redirigido a nuestra solución de originación de préstamos (LOS) para continuar tu solicitud.", "您将被转到我们的贷款申请系统（LOS）以继续办理贷款申请。"],
   ["Opening the Loan Origination Solution", "Ouverture de la solution d’octroi de prêts", "Abriendo la solución de originación de préstamos", "正在打开贷款申请系统"],
+  ["Up to {0} of your pay, sent to your account", "Jusqu’à {0} de votre salaire, versé sur votre compte", "Hasta el {0} de tu salario, enviado a tu cuenta", "最高可达工资的 {0}，直接存入您的账户"],
+  ["Repaid automatically on payday", "Remboursé automatiquement le jour de paie", "Se paga automáticamente el día de pago", "发薪日自动还款"],
+  ["Interest only for the days you borrow", "Des intérêts uniquement pour les jours empruntés", "Intereses solo por los días que tomas prestado", "只为借款天数付利息"],
 ];
 
 export default loans;

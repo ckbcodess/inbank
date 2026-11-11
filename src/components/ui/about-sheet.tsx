@@ -6,17 +6,25 @@ import { Info } from "@/components/ui/icons";
 import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 /**
- * The About entry on every product page (Insure plan, Loans advance, Invest products): a small chip beside the title
- * that opens the explanation in a centred sheet, so there is no extra route and no Back. The page body stays only
- * what the customer holds. Pass it as the `actions` of `PageHeader`.
+ * The About entry on every product page (Insure plan, Loans advance, Invest products): a small info icon right after the
+ * title that opens the explanation in a centred sheet, so there is no extra route and no Back. The page body stays only
+ * what the customer holds. Pass it as the `badge` of `PageHeader`.
  */
 export function AboutSheet({ title, children }: { title: string; children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <Button type="button" variant="outline" size="md" className="gap-2 px-2 sm:px-3" onClick={() => setOpen(true)}>
-        <Info size={14} aria-hidden="true" className="shrink-0 text-muted-foreground" />
-        About
+      {/* 32px, with the hit area stretched to 40px, like the back arrow on the other side of the title. */}
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label={title}
+        title={title}
+        className="relative text-muted-foreground hover:text-foreground after:absolute after:-inset-1 after:content-['']"
+        onClick={() => setOpen(true)}
+      >
+        <Info size={18} aria-hidden="true" />
       </Button>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="center" className="flex flex-col">

@@ -64,14 +64,13 @@ function ListPanel({ children, className }: { children: ReactNode; className?: s
 }
 
 /** Back arrow and a title: the PageHeader of a detail page, a flow or any page that has a parent. */
-function BackHeaderBones({ title = "w-45", action = false }: { title?: string; action?: boolean }) {
+/** `about` adds the About icon right after the title (`AboutSheet`). */
+function BackHeaderBones({ title = "w-45", about = false }: { title?: string; about?: boolean }) {
   return (
-    <div data-page-header className="flex min-h-9 w-full items-center justify-between gap-2">
-      <div className="flex items-center gap-2">
-        <Bone className="size-7 shrink-0 rounded-lg sm:size-8" />
-        <Bone className={cn("h-6 rounded-lg", title)} />
-      </div>
-      {action && <Bone className="h-9 w-20 shrink-0 rounded-lg" />}
+    <div data-page-header className="flex min-h-9 w-full items-center gap-2">
+      <Bone className="size-7 shrink-0 rounded-lg sm:size-8" />
+      <Bone className={cn("h-6 rounded-lg", title)} />
+      {about && <Bone className="size-5 shrink-0 rounded-full" />}
     </div>
   );
 }
@@ -81,14 +80,11 @@ function PitchBones() {
   return (
     <div className="flex flex-col gap-6">
       <Bone className={cn("w-full rounded-3xl", PRODUCT_PHOTO_HEIGHT)} />
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-4">
-            <Bone className="size-10 shrink-0 rounded-full" />
-            <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <Bone className="h-4 w-3/5" />
-              <Bone className="h-3 w-4/5" />
-            </div>
+          <div key={i} className="flex items-center gap-3">
+            <Bone className="size-7 shrink-0 rounded-full" />
+            <Bone className="h-3.5 w-3/4" />
           </div>
         ))}
       </div>
@@ -293,12 +289,12 @@ function FactsPageSkeletonBody({ figure = false, facts = 6, actions = 2 }: { fig
 /**
  * A product's or plan's own page (Insure plan, Loans advance). Most customers hold nothing yet and see the pitch, so
  * that is the default: back and title, the picture, the benefits, the one big button. A customer who holds something
- * sees an About chip and their list instead, so a caller that knows it passes `holding`.
+ * sees the About icon and their list instead, so a caller that knows it passes `holding`.
  */
 function ProductPageSkeletonBody({ holding = false, rows = 2 }: { holding?: boolean; rows?: number }) {
   return (
     <Frame className={NARROW_COLUMN}>
-      <BackHeaderBones title="w-42" action={holding} />
+      <BackHeaderBones title="w-42" about={holding} />
       {holding ? (
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-3">
@@ -599,13 +595,13 @@ function InvestHomeSkeletonBody() {
 }
 
 /**
- * Invest products page (Term Deposits, Treasury Bills & Bonds): the 560px column, an About chip on the product's own
+ * Invest products page (Term Deposits, Treasury Bills & Bonds): the 560px column, the About icon on the product's own
  * page (`action`), and the offers under one heading each when there is more than one group.
  */
 function InvestProductsSkeletonBody({ groups = 1, rows = 3, action = false }: { groups?: number; rows?: number; action?: boolean }) {
   return (
     <Frame className={NARROW_COLUMN}>
-      <BackHeaderBones title="w-42" action={action} />
+      <BackHeaderBones title="w-42" about={action} />
       <div className="flex flex-col gap-8">
         {Array.from({ length: groups }).map((_, g) => (
           <div key={g} className="flex flex-col gap-3">

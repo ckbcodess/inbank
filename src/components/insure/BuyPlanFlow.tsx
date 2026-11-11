@@ -29,7 +29,6 @@ import { Field } from "@/components/ui/field";
 import { InlineError } from "@/components/ui/inline-error";
 import { Input } from "@/components/ui/input";
 import { ListCard } from "@/components/ui/list-card";
-import { OptionTile } from "@/components/ui/option-tile";
 import { ReviewSummary } from "@/components/ui/review-summary";
 import { StepBar } from "@/components/ui/step-bar";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -559,16 +558,25 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
         {kind === "savings" && (
           <>
             <Field label="Calculate By">
-              <SegmentedControl
-                aria-label="Calculate by"
-                options={BASES}
+              <Select
                 value={basis}
-                onChange={(v) => {
-                  setBasis(v);
+                onValueChange={(v) => {
+                  if (!v) return;
+                  setBasis(v as Basis);
                   setAmount("");
                 }}
-                fullWidth
-              />
+              >
+                <SelectTrigger aria-label="Calculate by">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {BASES.map((b) => (
+                    <SelectItem key={b.value} value={b.value} label={b.label}>
+                      {b.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
             <Field label="Policy Term">
               <Select value={term ? String(term) : ""} onValueChange={(v) => v && setTerm(Number(v))}>
@@ -629,17 +637,21 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
             {term && (
               <div className={reveal}>
                 <Field label="Sum Assured">
-                  <div role="radiogroup" aria-label="Sum assured" className="flex flex-col gap-2">
-                    {PROTECTION_SUMS.map((s) => (
-                      <OptionTile
-                        key={s}
-                        title={money(s)}
-                        value={`${money(perPayment(protectionAnnual(s, age, term), "monthly"))} a month`}
-                        selected={protectionSum === s}
-                        onSelect={() => setProtectionSum(s)}
-                      />
-                    ))}
-                  </div>
+                  <Select value={protectionSum !== null ? String(protectionSum) : ""} onValueChange={(v) => v && setProtectionSum(Number(v))}>
+                    <SelectTrigger aria-label="Sum assured">
+                      <SelectValue placeholder="Select sum assured" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PROTECTION_SUMS.map((s) => (
+                        <SelectItem key={s} value={String(s)} label={money(s)}>
+                          <span className="flex w-full items-baseline justify-between gap-4">
+                            <span className="tabular">{money(s)}</span>
+                            <span className="tabular text-muted-foreground">{`${money(perPayment(protectionAnnual(s, age, term), "monthly"))} a month`}</span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </Field>
                 <Field label="Payment Frequency">
                   <RadioGroup aria-label="Payment frequency" options={FREQUENCIES} value={frequency} onChange={setFrequency} />

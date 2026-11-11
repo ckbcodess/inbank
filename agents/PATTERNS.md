@@ -399,16 +399,15 @@ When business needs a screen personal banking has (cards, beneficiaries, setting
   customer is in one of two situations, so the page is one of two:
   - **Nothing held under this product (the pitch):** `ProductPitchBody` (`components/insure/ProductPitch.tsx`): a picture
     (`image` when supplied, else the flat scene from `PlanImage`, shown whole), the product's description, the benefits
-    one under another (an icon in a disc of the product's colour, then one muted line, or a title over a muted line where
-    a `value` is given), and the price set into a dashed divider ("From **GHS 8.00** a month", "Up to **GHS
+    one under another (an icon in a neutral disc, then one muted sentence; no title-over-value form, designer 2026-11-11), and the price set into a dashed divider ("From **GHS 8.00** a month", "Up to **GHS
     20,000.00**", "Rates from **12.5%** a year"). The text sits on one left edge, never centred (designer, 2026-11-10).
     Then the action: one button that names the
     product (Apply for ...) or, for the gate, Create a Profile. Invest is the variant: its products are three kinds (Term Deposits,
     Treasury Bills, Bonds) and the instruments sit inside them, so a new investor sees the list of instruments straight
-    away. About is the header chip (below). No details card; the facts are on the About page and in the buy flow's quote.
+    away. About is a small info icon right after the title (`AboutSheet`, as `PageHeader`'s `badge`), opening a sheet. No details card; the facts are on the About page and in the buy flow's quote.
   - **One or more held (manage):** only the holdings (what needs the customer first, its problem in amber on the row),
     with a small action beside the heading (Apply for Another, Open Another, Buy Another), and an About row at the bottom
-    that opens `ProductAboutBody`: the benefits over one list card of facts, price first and larger. Where the action
+    that opens `ProductAboutBody`: the benefits over one list card of facts, ending on the price, set larger (designer, 2026-11-11). Where the action
     leads to a list (Invest), that list is its own page (`.../open`). However many are held, nothing else moves.
   The picture's height follows the viewport (22%, 120 to 315px) so the action stays above the fold. Highlights live in
   `lib/insurance-plans.ts` (plans), `components/loans/AdvanceInfo.tsx` and `lib/product-highlights.ts` (bills, bonds); Term

@@ -387,6 +387,12 @@ const invest: Entry[] = [
   ["Enter at least {0} to invest.", "Saisissez au moins {0} pour investir.", "Introduce al menos {0} para invertir.", "请输入至少 {0} 进行投资。"],
   ["Face Value to Cash In, Up to {0}", "Valeur nominale à encaisser, jusqu’à {0}", "Valor nominal a cobrar, hasta {0}", "兑现面值，最高 {0}"],
   ["Amount to Redeem, Less Than {0}", "Montant à retirer, moins de {0}", "Importe a retirar, menos de {0}", "赎回金额，少于 {0}"],
+  ["Your rate is fixed from the day you start", "Votre taux est fixe dès le premier jour", "Tu tasa es fija desde el primer día", "利率自起始日起固定不变"],
+  ["Choose {0} or {1} days", "Choisissez {0} ou {1} jours", "Elige {0} o {1} días", "可选 {0} 或 {1} 天"],
+  ["Take it out or roll it over at the end", "À l’échéance, retirez-le ou reconduisez-le", "Al final, retíralo o renuévalo", "到期时可取出或续存"],
+  ["Buy new issues at auction or from other investors", "Achetez de nouvelles émissions aux enchères ou auprès d’autres investisseurs", "Compra nuevas emisiones en subasta o a otros inversores", "通过拍卖购买新发行产品，或向其他投资者购买"],
+  ["Sell early through a rediscount, with the price shown first", "Vendez avant l’échéance par réescompte, avec le prix affiché d’abord", "Vende antes del vencimiento mediante redescuento, con el precio a la vista primero", "可通过再贴现提前卖出，价格会先显示"],
+  ["Interest paid every 6 months until it matures", "Intérêts versés tous les 6 mois jusqu’à l’échéance", "Intereses pagados cada 6 meses hasta el vencimiento", "到期前每 6 个月支付一次利息"],
 ];
 
 export default invest;

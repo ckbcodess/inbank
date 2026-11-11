@@ -107,7 +107,7 @@ export function AdvanceProductPage() {
       <PageHeader
         title={shown.name}
         backTo={{ href: LOANS_HOME, label: "Loans" }}
-        actions={
+        badge={
           advances.length > 0 ? (
             <AboutSheet title={`About ${shown.name}`}>
               <AdvanceAboutContent />

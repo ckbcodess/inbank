@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * What a plan is: the explanation a customer who holds policies under it opens from the About chip on the plan page
+ * What a plan is: the explanation a customer who holds policies under it opens from the About icon on the plan page
  * (`AboutSheet`). The description, the benefits, and the list card with the price and the facts.
  */
 
