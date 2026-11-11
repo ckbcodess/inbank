@@ -1059,20 +1059,20 @@ a,
 }
 
 /* App shell card surface: the page's content card, a top-to-bottom gradient between two tokens. Light mode is a flat
-   white (both ends the same). Dark mode fades from the card's top colour down to the page backdrop (--surface), so
+   white (both ends the same). Dark mode fades from the card's top colour down to the backdrop's top colour, so
    the card's lower edge melts into the sidebar and backdrop instead of ending on a near-miss colour. The floating
    top bar and the phone bottom bar use the top colour, so they always match the card. */
 :root {
   --shell-top: #ffffff;
   --shell-bottom: #fdfcfc;
   /* The backdrop behind the card: the sidebar and the margin around the card are one continuous gradient. */
-  --shell-surface-top: #faf9f8;
+  --shell-surface-top: #f8f7f6;
   --shell-surface-bottom: #f8f7f6;
 }
 .dark {
-  --shell-top: #161616;
-  --shell-bottom: var(--surface);
-  --shell-surface-top: #141414;
+  --shell-top: #121212;
+  --shell-bottom: #030303;
+  --shell-surface-top: #030303;
   --shell-surface-bottom: #050505;
 }
 .shell-backdrop {

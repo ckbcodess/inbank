@@ -287,7 +287,7 @@ async function bindCapture(roots, forceMode) {
   const paintStyles = await figma.getLocalPaintStylesAsync();
   // globals.css --shell-surface-top/bottom (backdrop) and --shell-top/bottom (card), light then dark.
   const backdrop = paintStyles.find(s => s.name === 'shell/backdrop'), shellCard = paintStyles.find(s => s.name === 'shell/card');
-  const SHELL = { 'faf9f8>f8f7f6': backdrop, 'ffffff>fdfcfc': shellCard, '141414>050505': backdrop, '161616>080808': shellCard };
+  const SHELL = { 'faf9f8>f8f7f6': backdrop, 'ffffff>fdfcfc': shellCard, '141414>050505': backdrop, '161616>080808': shellCard, 'f8f7f6>f8f7f6': backdrop, '030303>050505': backdrop, '121212>030303': shellCard };
   // Gradient stops by their colours in the screen's theme.
   const STOPS = {};
   for (const names of [
