@@ -19,7 +19,7 @@ export function AdvanceAboutContent() {
   return (
     <>
       <p className="px-1 text-[14px] leading-relaxed text-muted-foreground">{shown.line}</p>
-      <ProductAboutBody productId="advance" highlights={advanceHighlights()} rows={advanceRows(shown.limitNote, income ? limit : null, showAmounts)} />
+      <ProductAboutBody highlights={advanceHighlights()} rows={advanceRows(shown.limitNote, income ? limit : null, showAmounts)} />
     </>
   );
 }

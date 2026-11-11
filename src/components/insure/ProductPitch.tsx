@@ -11,7 +11,6 @@
 import {
   CalendarClock,
   GraduationCap,
-  HandCoins,
   Heart,
   Landmark,
   PiggyBank,
@@ -22,15 +21,19 @@ import {
   Users,
   Wallet,
 } from "@/components/ui/icons";
+import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import { FactsPanel } from "@/components/invest/parts";
-import { PlanImage, planToneStyle, type ProductKey } from "@/components/insure/parts";
+import { PlanImage, type ProductKey } from "@/components/insure/parts";
 import type { HighlightIcon, PlanHighlight } from "@/lib/product-highlights";
 import { PRODUCT_PHOTO_HEIGHT } from "@/lib/page-layout";
 import { PRODUCT_IMAGES } from "@/lib/product-images";
 import { cn } from "@/lib/utils";
 
-export const HIGHLIGHT_ICONS: Record<HighlightIcon, typeof HandCoins> = {
-  payout: HandCoins,
+type HighlightIconComponent = React.ComponentType<{ size?: number; strokeWidth?: number; "aria-hidden"?: boolean | "true" | "false" }>;
+
+/** Money paid out uses the cedi receipt, the same mark as Bills on the dashboard. */
+export const HIGHLIGHT_ICONS: Record<HighlightIcon, HighlightIconComponent> = {
+  payout: CediReceiptIcon,
   family: Users,
   accident: ShieldCheck,
   school: GraduationCap,
@@ -79,20 +82,20 @@ function ProductPhoto({ productId, image, provider }: { productId: ProductKey; i
 }
 
 /**
- * The benefits, one under another. A benefit with a value is a title over a muted line; one without is a single muted
- * line beside a smaller disc.
+ * The benefits, one under another, each beside a neutral disc. A benefit with a value is a title over a muted line; one
+ * without is a single muted line beside a smaller disc.
  */
-function ProductBenefits({ productId, highlights }: { productId: ProductKey; highlights: readonly PlanHighlight[] }) {
+function ProductBenefits({ highlights }: { highlights: readonly PlanHighlight[] }) {
   if (highlights.length === 0) return null;
   const oneLine = highlights.every((h) => !h.value);
   return (
-    <ul style={planToneStyle(productId)} className={cn("flex flex-col", oneLine ? "gap-4" : "gap-5")}>
+    <ul className={cn("flex flex-col", oneLine ? "gap-4" : "gap-5")}>
       {highlights.map((h) => {
         const Icon = HIGHLIGHT_ICONS[h.icon];
         return (
           <li key={h.label} className={cn("flex items-center", oneLine ? "gap-3" : "gap-4")}>
-            <span className={cn("flex shrink-0 items-center justify-center rounded-full bg-[var(--plan)] [--tint:var(--plan)] on-tint", oneLine ? "size-8" : "size-10")}>
-              <Icon size={oneLine ? 16 : 18} strokeWidth={1.7} aria-hidden="true" />
+            <span className={cn("flex shrink-0 items-center justify-center rounded-full bg-muted text-foreground", oneLine ? "size-7" : "size-10")}>
+              <Icon size={oneLine ? 15 : 18} strokeWidth={1.7} aria-hidden="true" />
             </span>
             {h.value ? (
               <span className="flex min-w-0 flex-col gap-0.5">
@@ -146,7 +149,7 @@ export function ProductPitchBody({
     <div className="flex flex-col gap-6">
       <ProductPhoto productId={productId} image={image} provider={provider} />
       {description && <p className="text-[14px] leading-relaxed text-foreground">{description}</p>}
-      <ProductBenefits productId={productId} highlights={highlights} />
+      <ProductBenefits highlights={highlights} />
       <div className="mt-10">
         <PriceDivider price={price} />
       </div>
@@ -156,17 +159,15 @@ export function ProductPitchBody({
 
 /** About: the benefits, then one list card with the price first and larger, then the facts. */
 export function ProductAboutBody({
-  productId,
   highlights,
   rows,
 }: {
-  productId: ProductKey;
   highlights: readonly PlanHighlight[];
   rows: Array<[React.ReactNode, React.ReactNode]>;
 }) {
   return (
     <div className="flex flex-col gap-8">
-      <ProductBenefits productId={productId} highlights={highlights} />
+      <ProductBenefits highlights={highlights} />
       <FactsPanel rows={rows} />
     </div>
   );

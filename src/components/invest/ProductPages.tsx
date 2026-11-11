@@ -109,7 +109,7 @@ export function TermDepositOpen() {
 
 function TermDepositAboutContent() {
   const { highlights, rows } = termFacts();
-  return <ProductAboutBody productId="term-deposits" highlights={highlights} rows={rows} />;
+  return <ProductAboutBody highlights={highlights} rows={rows} />;
 }
 
 /* ── Treasury Bills & Bonds ─────────────────────────────────────────────── */
@@ -222,7 +222,7 @@ export function TreasuryOpen() {
 function TreasuryAboutContent() {
   const { marketOpen } = useMyTreasury();
   const { highlights, rows } = treasuryFacts(marketOpen);
-  return <ProductAboutBody productId="treasury" highlights={highlights} rows={rows} />;
+  return <ProductAboutBody highlights={highlights} rows={rows} />;
 }
 
 /** Backward-compatible aliases for any prior links/components. */

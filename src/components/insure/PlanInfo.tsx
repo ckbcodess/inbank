@@ -54,5 +54,5 @@ export function PlanAboutBody({ plan, showAmounts }: { plan: InsurancePlan; show
       : []),
     ...planFactRows(plan, showAmounts),
   ];
-  return <ProductAboutBody productId={plan.id} highlights={plan.highlights ?? []} rows={rows} />;
+  return <ProductAboutBody highlights={plan.highlights ?? []} rows={rows} />;
 }
