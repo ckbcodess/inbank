@@ -209,7 +209,7 @@ export interface Account {
   id: string;
   name: string;
   number: string;
-  type: "Current" | "Savings" | "Foreign Currency" | "Wallet";
+  type: "Current" | "Savings" | "Foreign Currency" | "Wallet" | "Virtual";
   currency: string;
   balance: number;
   available: number;
@@ -242,57 +242,7 @@ export const ACCOUNTS: Account[] = [
     profileKind: "RETAIL",
     isJoint: false,
   },
-  {
-    id: "acc-joint",
-    name: "Joint Savings Account",
-    number: "3300 8844 9922",
-    type: "Savings",
-    currency: "GHS",
-    balance: 245_800.0,
-    available: 245_800.0,
-    status: "Active",
-    profileKind: "RETAIL",
-    isJoint: true,
-    jointHolders: ["Samuel Quartey", "Esther Appiah"],
-    mandate: "Both to sign",
-  },
-  {
-    id: "acc-joint-either",
-    name: "Joint Savings Account",
-    number: "3300 7711 2233",
-    type: "Savings",
-    currency: "GHS",
-    balance: 150_000.0,
-    available: 150_000.0,
-    status: "Active",
-    profileKind: "RETAIL",
-    isJoint: true,
-    jointHolders: ["Elias Ayettey", "Akosua Appiah"],
-    mandate: "Either to sign",
-  },
   ...CORPORATE_ACCOUNTS,
-  {
-    id: "acc-clean-001",
-    name: "Current Account",
-    number: "4001 0000 0001",
-    type: "Current",
-    currency: "GHS",
-    balance: 0.0,
-    available: 0.0,
-    status: "Active",
-    profileKind: "RETAIL",
-  },
-  {
-    id: "acc-single-001",
-    name: "Current Account",
-    number: "4001 5512 0313",
-    type: "Current",
-    currency: "GHS",
-    balance: 4_250.0,
-    available: 4_250.0,
-    status: "Active",
-    profileKind: "RETAIL",
-  },
   {
     id: "acc-ret-001",
     name: "Savings Account",
@@ -305,81 +255,17 @@ export const ACCOUNTS: Account[] = [
     profileKind: "RETAIL",
   },
   {
-    id: "acc-ret-002",
-    name: "Current Account",
-    number: "4001 9922 4561",
-    type: "Current",
-    currency: "GHS",
-    balance: 3_820.5,
-    available: 3_820.5,
-    status: "Active",
-    profileKind: "RETAIL",
-  },
-  {
     id: "acc-wallet",
     name: "GCB Virtual Account",
     number: "024 123 4567",
-    type: "Wallet",
+    type: "Virtual",
     currency: "GHS",
     balance: 340.0,
     available: 340.0,
     status: "Active",
     profileKind: "RETAIL",
-    scenarioOnly: true,
   },
-  {
-    id: "acc-ret-dormant",
-    name: "Savings Account",
-    number: "4001 9922 7730",
-    type: "Savings",
-    currency: "GHS",
-    balance: 1_180.0,
-    available: 1_180.0,
-    status: "Dormant",
-    profileKind: "RETAIL",
-    scenarioOnly: true,
-  },
-  {
-    id: "acc-ret-new",
-    name: "Savings Account",
-    number: "4001 9931 0214",
-    type: "Savings",
-    currency: "GHS",
-    balance: 340.0,
-    available: 340.0,
-    status: "Active",
-    profileKind: "RETAIL",
-    scenarioOnly: true,
-  },  // Held under the customer's Ghana Card but not yet on internet banking —
   // what "Add Account" on /accounts finds after the selfie check.
-  {
-    id: "acc-ret-home",
-    name: "Joint Savings Account",
-    number: "4001 9945 1187",
-    type: "Savings",
-    currency: "GHS",
-    balance: 12_600.0,
-    available: 12_600.0,
-    status: "Active",
-    profileKind: "RETAIL",
-    isJoint: true,
-    mandate: "Either to sign",
-    scenarioOnly: true,
-  },
-  {
-    id: "acc-ret-salary",
-    name: "Joint Current Account",
-    number: "4001 9952 3309",
-    type: "Current",
-    currency: "GHS",
-    balance: 2_145.75,
-    available: 2_145.75,
-    status: "Active",
-    profileKind: "RETAIL",
-    isJoint: true,
-    mandate: "Either to sign",
-    scenarioOnly: true,
-  },
 ];
 
 /**
@@ -387,7 +273,7 @@ export const ACCOUNTS: Account[] = [
  * Account" lists these after a selfie match; ones already on the profile show
  * as added. Prototype: one fixed customer.
  */
-export const GHANA_CARD_ACCOUNT_IDS = ["acc-ret-001", "acc-ret-002", "acc-ret-home", "acc-ret-salary"] as const;
+export const GHANA_CARD_ACCOUNT_IDS = ["acc-personal", "acc-ret-001"] as const;
 
 /**
  * Inspects browser storage to resolve active retail simulation profile:
@@ -432,7 +318,7 @@ export function accountsForProfile(kind: ProfileKind = DEFAULT_PROFILE_KIND): Ac
 
   const sim = getSimulatedRetailUser();
   if (sim === "clean") {
-    return ACCOUNTS.filter((a) => a.id === "acc-clean-001");
+    return ACCOUNTS.filter((a) => a.id === "acc-personal" || a.id === "acc-wallet");
   }
   if (sim === "single") {
     return ACCOUNTS.filter((a) => a.id === "acc-single-001");

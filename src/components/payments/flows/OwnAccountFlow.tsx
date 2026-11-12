@@ -116,7 +116,7 @@ export function OwnAccountFlow({
             title={toAccount.name}
             subtitle={`${toAccount.type} · ${toAccount.number}`}
             icon={
-              toAccount.type === "Wallet" ? (
+              toAccount.type === "Wallet" || toAccount.type === "Virtual" ? (
                 <Wallet size={18} className="shrink-0" />
               ) : (
                 <Landmark size={18} className="shrink-0" />

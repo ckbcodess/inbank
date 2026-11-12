@@ -12,7 +12,7 @@
  */
 
 import { useMemo } from "react";
-import { accountsForProfile, findAccount, type Account } from "@/lib/mock-data";
+import { accountsForProfile, findAccount, getSimulatedRetailUser, type Account } from "@/lib/mock-data";
 import { resolveDefaultAccountId, useAccountPrefs } from "@/lib/accounts-store";
 import { findScenario, useAccountsScenario } from "@/lib/accounts-scenarios";
 import { sumMoney } from "@/lib/money";
@@ -27,10 +27,10 @@ export function useCustomerAccounts() {
   const walletMigration = scenario.customer === "wallet" ? storedMigration : null;
 
   const accounts = useMemo<Account[]>(() => {
-    const retailAccounts = accountsForProfile("RETAIL");
-    const firstAcc = retailAccounts[0];
-    if (firstAcc?.id === "acc-clean-001" || firstAcc?.id === "acc-single-001") {
-      return retailAccounts;
+    // Zero-setup and single-account Dev Mode personas list only their own accounts, not a scenario's.
+    const sim = getSimulatedRetailUser();
+    if (sim === "clean" || sim === "single") {
+      return accountsForProfile("RETAIL");
     }
     const base = walletMigration ? [] : scenario.accountIds;
     const ids = [...new Set([...base, ...addedAccountIds])].filter((id) => !removedAccountIds.includes(id));

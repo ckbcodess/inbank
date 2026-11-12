@@ -182,6 +182,13 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-12
+
+- `Override` (designer, Ransford Gyasi): every GCB account holder now has the GCB Virtual Account (`acc-wallet`) by default in their accounts. This reverses the 2026-09-23 "Wallets as Plumbing" decision, where a GCB holder's wallet is hidden (PRODUCT §5 "GCB Wallet", §8, and the header of `lib/accounts-scenarios.ts`). `acc-wallet` is no longer `scenarioOnly` and is in every GCB scenario's `accountIds`. PRODUCT.md still states the old rule. Update it once the designer confirms.
+- `Decision`: the virtual account is type `Virtual` (a bank account, counted in treasury), and it keeps the wallet icon in lists and the transfer picker. Wallet customers' account (`acc-wallet`) is the same record, so it also reads `Virtual` for them.
+- `Gap`: the virtual account's number `024 123 4567` reads like a MoMo number. Decide whether it should get a GCB-style account number.
+- `Gap`: flows that list accounts (Send & Pay pickers, dashboard default switcher, Add Account, first-run copy) have not been checked for the new account.
+
 ### 2026-11-10
 
 - Decision: Settings › Profile shows Full Name, Mobile Number, Email, Proxy Pay ID and Last Sign-in, each as label over value (designer). The mobile number (the sign-in ID) can't be changed in-app, and address is gone from Profile and `SettingsData`. Only email changes here, behind a code.

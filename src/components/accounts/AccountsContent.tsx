@@ -135,7 +135,8 @@ function AccountRow({
   showDefault: boolean;
   pending?: { amount: number; from: string };
 }) {
-  const isWallet = account.type === "Wallet";
+  // The virtual account keeps the wallet icon; it is still a bank account, so it is typed "Virtual".
+  const isWallet = account.type === "Wallet" || account.type === "Virtual";
   const dormant = account.status === "Dormant";
   const otherHolder = account.jointHolders?.find((h) => h !== account.jointHolders?.[0]) ?? account.jointHolders?.[0];
 
