@@ -44,11 +44,13 @@ import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { AppLoader } from "@/components/ui/loader";
 import { displayGhanaMobile, displayLocalMobile, isCompleteGhanaMobile } from "@/lib/phone";
 import { ActionTile } from "@/components/ui/action-tile";
-import { cardNetwork, useCardLink } from "@/lib/card-link";
+import { cardNetwork } from "@/lib/card-link";
+import { CARD_PROVIDER_CONFIRM_URL } from "@/lib/card-provider-links";
+import { CARD_SCHEMES } from "@/lib/card-schemes";
+import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import { useCardPayment } from "@/lib/card-payment";
 import { OPERATORS } from "@/lib/operators";
 import { SourceMark } from "@/components/ui/source-mark";
-import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 import { VerifiedAccountBadge } from "@/components/payments/flows/shared";
 interface LinkSourceAccountModalProps {
@@ -105,7 +107,6 @@ export default function LinkSourceAccountModal({
 }: LinkSourceAccountModalProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const startCardLink = useCardLink((s) => s.start);
   const startCardPayment = useCardPayment((s) => s.start);
   const modalId = useId();
   const actor = useSession((s) => s.actor);
@@ -185,14 +186,6 @@ export default function LinkSourceAccountModal({
       confirmNewMomo();
     }, 700);
   }
-
-  // New Card form
-  const [newCardNumber, setNewCardNumber] = useState("");
-  const [newCardExpiry, setNewCardExpiry] = useState("");
-  const [newCardCvv, setNewCardCvv] = useState("");
-  const cardDigits = newCardNumber.replace(/\D/g, "");
-  const cardComplete =
-    cardDigits.length >= 15 && /^(0[1-9]|1[0-2])\/\d{2}$/.test(newCardExpiry) && newCardCvv.length >= 3;
 
   // Reopening after the bank's card page lands on the requested screen with the
   // new card selected, instead of wherever the modal was left.
@@ -322,9 +315,6 @@ export default function LinkSourceAccountModal({
     addSource(newSource);
     if (mode === "link") {
       setNewMomoNumber("");
-      setNewCardNumber("");
-      setNewCardExpiry("");
-      setNewCardCvv("");
       onLinked?.(newSource);
       handleClose();
       return;
@@ -333,21 +323,10 @@ export default function LinkSourceAccountModal({
     setScreen("linked_source_select");
   }
 
-  // Cards are verified by the customer's own bank on its page (3-D Secure),
-  // which sends them back here. Only the last four digits make the trip.
-  function handleAddNewCard(e: React.FormEvent) {
-    e.preventDefault();
-    if (!cardComplete) return;
-    setBusy(true);
-    startCardLink({
-      last4: cardDigits.slice(-4),
-      expiry: newCardExpiry,
-      network: cardNetwork(cardDigits),
-      returnTo: pathname,
-      resumeAddMoney: mode === "fund",
-      onboarding,
-    });
-    setTimeout(() => router.push("/card-verification"), 700);
+  // Cards are never typed into GCB. The customer picks their card provider and confirms the card on that
+  // provider's own site, so nothing about the card reaches this app.
+  function handleProviderConfirm(url: string) {
+    window.open(url, "_blank", "noopener,noreferrer");
   }
 
   if (!isOpen) return null;
@@ -789,67 +768,23 @@ export default function LinkSourceAccountModal({
                 SCREEN 9: LINK NEW CARD
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_card" && (
-              <form id={`${modalId}-card-form`} onSubmit={handleAddNewCard} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4">
                 <p className="flex items-start gap-2 text-[12px] leading-relaxed text-muted-foreground">
                   <ShieldCheck size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
-                  Your bank will ask you to confirm it&apos;s you, then bring you back here.
+                  This links a card from another bank. GCB cards aren&apos;t included. You&apos;ll enter the card and confirm it&apos;s you on the provider&apos;s site.
                 </p>
-                <Field label="Card Number" htmlFor={`${modalId}-cardNum`}>
-                  <Input
-                    id={`${modalId}-cardNum`}
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="cc-number"
-                    value={newCardNumber}
-                    onChange={(e) =>
-                      setNewCardNumber(
-                        e.target.value.replace(/\D/g, "").slice(0, 19).replace(/(\d{4})(?=\d)/g, "$1 ")
-                      )
-                    }
-                    placeholder="4000 1234 5678 9010"
-                    className="tabular"
-                    required
-                  />
-</Field>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <Field label="Expiry Date" htmlFor={`${modalId}-cardExp`}>
-                    <Input
-                      id={`${modalId}-cardExp`}
-                      type="text"
-                      inputMode="numeric"
-                      autoComplete="cc-exp"
-                      value={newCardExpiry}
-                      onChange={(e) => {
-                        const d = e.target.value.replace(/\D/g, "").slice(0, 4);
-                        setNewCardExpiry(d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d);
-                      }}
-                      placeholder="MM/YY"
-                      className="tabular"
-                      required
+                <div className="flex flex-col gap-3">
+                  {CARD_SCHEMES.map((scheme) => (
+                    <ActionTile
+                      variant="modal"
+                      key={scheme}
+                      leading={<NetworkLogo scheme={scheme} className="w-8 text-foreground" />}
+                      title={scheme}
+                      onClick={() => handleProviderConfirm(CARD_PROVIDER_CONFIRM_URL[scheme])}
                     />
-</Field>
-                  <Field label="CVV" htmlFor={`${modalId}-cardCvv`}>
-                    <Input
-                      id={`${modalId}-cardCvv`}
-                      type="password"
-                      inputMode="numeric"
-                      autoComplete="cc-csc"
-                      maxLength={4}
-                      value={newCardCvv}
-                      onChange={(e) => setNewCardCvv(e.target.value.replace(/\D/g, ""))}
-                      placeholder="∗∗∗"
-                      className="tabular"
-                      required
-                    />
-</Field>
+                  ))}
                 </div>
-
-                <p className="flex items-start gap-2 text-[12px] leading-relaxed text-muted-foreground">
-                  <ShieldCheck size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
-                  Your bank will ask you to confirm it&apos;s you, then bring you back here.
-                </p>
-              </form>
+              </div>
             )}
           </DialogBody>
 
@@ -936,9 +871,6 @@ export default function LinkSourceAccountModal({
             <DialogFooter>
               <Button type="button" variant="ghost" onClick={() => setScreen(linkBackScreen)}>
                 Cancel
-              </Button>
-              <Button type="submit" form={`${modalId}-card-form`} disabled={!cardComplete} loading={busy}>
-                {mode === "link" ? "Link card" : "Save & use card"}
               </Button>
             </DialogFooter>
           )}

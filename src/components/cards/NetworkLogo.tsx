@@ -36,7 +36,7 @@ function Mastercard({ className }: { className?: string }) {
 
 /** The GH-Link (GhIPSS) network logo from `/ghlink.svg`, cropped to the wordmark so it fills its box. */
 function GhLink({ className }: { className?: string }) {
-  return <Image src="/ghlink.svg" alt="GH-Link" width={524} height={201} unoptimized className={cn("aspect-[524/201] shrink-0 object-contain", className)} />;
+  return <Image src="/ghlink.svg" alt="GH-Link" width={397} height={147} unoptimized className={cn("aspect-[397/147] shrink-0 object-contain", className)} />;
 }
 
 /** The UnionPay mark, from `public/images/unionpay.svg`. Its own colours, like Mastercard's. */

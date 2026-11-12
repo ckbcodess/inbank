@@ -803,15 +803,8 @@ export function RequestCardFlow() {
                 alt=""
                 className="absolute inset-0 size-full object-cover pointer-events-none select-none"
               />
-              <div className="relative z-10 flex items-center justify-between">
+              <div className="relative z-10 flex items-center justify-start">
                 <GcbCardLogo themeId={selectedTheme.id} className="h-2.5 w-auto aspect-[37.1621/32] shrink-0" />
-                <span className="text-[6px] font-medium uppercase opacity-80 shrink-0">{cardType}</span>
-              </div>
-              <div className="relative z-10 flex items-end justify-between">
-                <span className="text-[7px] font-medium truncate max-w-[40px]">
-                  {cardType}
-                </span>
-                <span className="text-[6px] opacity-80">∗∗∗∗</span>
               </div>
             </div>
             <div className="flex flex-col min-w-0">
@@ -919,21 +912,12 @@ export function RequestCardFlow() {
           </div>
 
           {/* Authorize CTA Button */}
-          <div className="w-full flex flex-col gap-2 pt-2">
-            <Button
-              size="md"
-              type="button"
-              onClick={() => setAuthModalOpen(true)}
-              className="w-full"
-            >
-              Authorize
-            </Button>
-            <Button variant="ghost"
-              type="button"
-              onClick={() => setStep("customize")}
-              className="w-full text-muted-foreground hover:text-foreground"
-            >
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" type="button" onClick={() => setStep("customize")} className="h-11 flex-1 text-[15px]">
               Back
+            </Button>
+            <Button size="xl" type="button" onClick={() => setAuthModalOpen(true)} className="flex-1">
+              Authorize
             </Button>
           </div>
         </motion.div>

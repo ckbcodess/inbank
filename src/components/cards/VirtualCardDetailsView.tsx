@@ -6,7 +6,6 @@ import { securityCodeLabel } from "@/lib/card-schemes";
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
-  AlertTriangle,
   Building2,
   ChevronLeft,
   ChevronRight,
@@ -1748,14 +1747,11 @@ export function VirtualCardDetailsView({
           </DialogHeader>
 
           <DialogBody>
-            <div className="p-3 rounded-xl bg-warning/10 dark:bg-warning/40 border border-warning/30 text-warning-text text-[12px] flex items-start gap-2">
-              <AlertTriangle size={18} className="shrink-0 text-warning-text mt-0.5" />
-              <span>
-                Once you submit the replacement, this card (∗∗∗∗ {maskedLast4}) is blocked
-                {isFundable ? " and its balance moves to the new card" : ""}. Next, check the
-                details we&rsquo;ve filled in from this card.
-              </span>
-            </div>
+            <p className="text-[14px] leading-relaxed text-foreground">
+              Once you submit the replacement, this card (∗∗∗∗ {maskedLast4}) is blocked
+              {isFundable ? " and its balance moves to the new card" : ""}. Next, check the
+              details we&rsquo;ve filled in from this card.
+            </p>
           </DialogBody>
 
           <DialogFooter>
