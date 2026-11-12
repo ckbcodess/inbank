@@ -34,9 +34,9 @@ function Mastercard({ className }: { className?: string }) {
   );
 }
 
-/** The GH-Link (GhIPSS) network logo from `/ghlink.svg`. */
+/** The GH-Link (GhIPSS) network logo from `/ghlink.svg`, cropped to the wordmark so it fills its box. */
 function GhLink({ className }: { className?: string }) {
-  return <Image src="/ghlink.svg" alt="GH-Link" width={56} height={34} unoptimized className={cn("aspect-[56/34] shrink-0 object-contain", className)} />;
+  return <Image src="/ghlink.svg" alt="GH-Link" width={524} height={201} unoptimized className={cn("aspect-[524/201] shrink-0 object-contain", className)} />;
 }
 
 /** The UnionPay mark, from `public/images/unionpay.svg`. Its own colours, like Mastercard's. */
@@ -58,11 +58,11 @@ export function NetworkLogo({ scheme, className }: { scheme: CardScheme | string
   }
 }
 
-/** Per-network heights that fit the marks into the same 48 by 24 box, so a list of them lines up. */
+/** Per-network heights that fit the marks into the same box, so a list of them lines up. */
 const CHIP_HEIGHT: Record<string, string> = {
-  Visa: "h-2.5",
+  Visa: "h-3",
   Mastercard: "h-4",
-  "GH-Link": "h-2.5",
+  "GH-Link": "h-3",
   UnionPay: "h-4",
 };
 
@@ -80,11 +80,22 @@ export function NetworkChip({
   size?: "sm" | "lg";
   className?: string;
 }) {
+  if (size === "sm") {
+    // Every mark gets the same width (its height follows its own artwork), so the four read as one size.
+    // SelectItem forces any inline svg with no `size-` class to 12px square, which squashed Visa and Mastercard.
+    // `size-auto` opts the svg out of that rule, and `w-8` comes after it in Tailwind's output, so it sets the width.
+    return (
+      <span className={cn("flex w-12 shrink-0 items-center justify-center", className)}>
+        <NetworkLogo scheme={scheme} className="size-auto w-8 text-foreground" />
+      </span>
+    );
+  }
+
   return (
     <span
       className={cn(
         "flex w-10 shrink-0 items-center justify-center",
-        size === "lg" ? "h-8 rounded-lg border border-black/5 bg-muted/60 dark:border-white/10" : "h-5 rounded-lg bg-muted/40",
+        "h-8 rounded-lg border border-black/5 bg-muted/60 dark:border-white/10",
         className,
       )}
     >

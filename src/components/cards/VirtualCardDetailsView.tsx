@@ -1116,7 +1116,7 @@ export function VirtualCardDetailsView({
                       <div className="shrink-0 flex items-end justify-end pl-2">
                         <NetworkLogo
                           scheme={effectiveCard.scheme}
-                          className={effectiveCard.scheme === "Visa" ? "h-3.5 sm:h-4 drop-shadow-xs" : "h-5 sm:h-6 drop-shadow-xs"}
+                          className={effectiveCard.scheme === "Visa" || effectiveCard.scheme === "GH-Link" ? "h-3.5 sm:h-4 drop-shadow-xs" : "h-5 sm:h-6 drop-shadow-xs"}
                         />
                       </div>
                     </div>

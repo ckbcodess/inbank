@@ -563,7 +563,7 @@ export function RequestCardFlow() {
                     )}
 
                     {/* Mode of Delivery */}
-                    <div className="flex flex-col gap-3 pt-2 border-t border-border/80">
+                    <div className="flex flex-col gap-3">
                       <DeliveryModeFields
                         value={{
                           method: deliveryMethod,
@@ -703,7 +703,7 @@ export function RequestCardFlow() {
                   <div className="shrink-0 flex items-end justify-end pl-2">
                     <NetworkLogo
                       scheme={cardScheme}
-                      className={cardScheme === "Visa" ? "h-4 sm:h-5 drop-shadow-xs" : "h-6 sm:h-7 drop-shadow-xs"}
+                      className={cardScheme === "Visa" || cardScheme === "GH-Link" ? "h-4 sm:h-5 drop-shadow-xs" : "h-6 sm:h-7 drop-shadow-xs"}
                     />
                   </div>
                 </div>
