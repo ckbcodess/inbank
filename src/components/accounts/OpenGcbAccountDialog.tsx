@@ -28,7 +28,7 @@ export default function OpenGcbAccountDialog({
   function executeCoosRedirect() {
     setIsRedirecting(true);
     setTimeout(() => {
-      window.open("https://accountopening.gcb.com.gh", "_blank");
+      window.open("https://accountopeningportal.gcbltd.com/", "_blank");
       setIsRedirecting(false);
       onOpenChange(false);
     }, 1000);
@@ -45,7 +45,7 @@ export default function OpenGcbAccountDialog({
           <p className="text-[13px] leading-relaxed text-muted-foreground">
             You will be redirected to{" "}
             <span className="font-medium text-foreground">
-              accountopening.gcb.com.gh
+              accountopeningportal.gcbltd.com
             </span>{" "}
             to complete your account application.
           </p>
