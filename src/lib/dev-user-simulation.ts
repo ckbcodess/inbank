@@ -5,7 +5,7 @@
  *
  * Provides 3 distinct, realistic customer simulation profiles:
  * 1. "clean": A truly clean user with ZERO setup (0 cards, 0 beneficiaries, 0 transactions, 0 scheduled payments, 1 fresh unfunded account)
- * 2. "single": A user with exactly 1 account (Current Account GHS 4,250.00, 1 Debit Card, 2 focused beneficiaries, 5 transactions, 1 scheduled payment)
+ * 2. "single": A GCB customer with a Current Account (GHS 4,250.00) and the Virtual Account, 1 Debit Card, 2 focused beneficiaries, 5 transactions, 1 scheduled payment
  * 3. "everyday": An active everyday user with multiple accounts (Current, Savings, USD), 3 cards, 25 beneficiaries, full ledger
  */
 
@@ -61,10 +61,10 @@ export const DEMO_USER_CONFIGS: Record<DemoUserType, DemoUserConfig> = {
     actorName: "Ishmael Gyan",
     phone: "0551200313",
     profile: SINGLE_PROFILE,
-    accountIds: ["acc-single-001"],
+    accountIds: ["acc-single-001", "acc-wallet"],
     defaultAccountId: "acc-single-001",
     cardIds: ["card-single-001"],
-    summary: "Ishmael Gyan · 1 Current Account · 1 Visa Debit · 2 Beneficiaries",
+    summary: "Ishmael Gyan · Current and Virtual Account · 1 Visa Debit · 2 Beneficiaries",
   },
   everyday: {
     id: "everyday",

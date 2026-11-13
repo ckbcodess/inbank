@@ -13,13 +13,13 @@
  *   Returning customers: the trusted-device power user, a first-timer on a
  *   new device, and someone moving from the old internet banking (/migrate).
  *
- * Steps open with `?step=<id>` (see `src/lib/onboarding-steps.ts`). Shown on
- * the entry/onboarding screens only, hidden during a guided tour.
+ * Steps open with `?step=<id>` (see `src/lib/onboarding-steps.ts`). Opened from the
+ * "Jump to a step" row in the Dev Mode panel, on the entry and onboarding screens only
+ * (`lib/demo-hub`), and hidden during a guided tour.
  */
 
 import { Suspense, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChevronDown } from "@/components/ui/icons";
 import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
@@ -33,6 +33,7 @@ import { ACTIVATION_STEPS, SIGNUP_STEPS, parseOnboardingStep } from "@/lib/onboa
 import { forgetThisDevice, setFirstRun, setPendingFundPrompt, setPendingReferral, trustThisDevice } from "@/lib/device-trust";
 import { LEGACY_DEMO_MOBILE, MIGRATION_STEPS, parseMigrationStep } from "@/lib/migration";
 import { setDevToolsHidden, useDevToolsHidden } from "@/lib/dev-tools-visibility";
+import { isDemoHubPath, useDemoHub } from "@/lib/demo-hub";
 import { EyeOff } from "@/components/ui/icons";
 
 const PERSONAS = [
@@ -53,8 +54,6 @@ const BUSINESS_USERS = [
 ] as const;
 type BusinessUserId = (typeof BUSINESS_USERS)[number]["id"];
 
-const ONBOARDING_PATHS = ["/", "/signup", "/business/signup", "/business/activate", "/activate", "/get-started", "/select-banking", "/login", "/mfa", "/forgot-password", "/migrate", "/overview", "/business/overview"];
-
 function PersonaFlowSwitcherContent() {
   const router = useRouter();
   const pathname = usePathname();
@@ -62,10 +61,18 @@ function PersonaFlowSwitcherContent() {
   const { signIn, selectProfile, verifyMfa, signOut } = useSession();
   const activeTourId = useTour((s) => s.activeTourId);
   const devToolsHidden = useDevToolsHidden();
-  const [open, setOpen] = useState(false);
+  // Opened from the Dev Mode panel (see `lib/demo-hub`), so the hub's open state lives in the store.
+  const open = useDemoHub((s) => s.open);
+  const setOpen = useDemoHub((s) => s.setOpen);
   const activeKind = useSession((s) => s.activeProfile?.kind);
   const [businessUser, setBusinessUser] = useState<BusinessUserId>("u-dual");
   const [view, setView] = useState<"personal" | "business" | "login">("personal");
+
+  // Each time the hub opens, start on the view that matches the app the person is in.
+  useEffect(() => {
+    if (!open) return;
+    setView(activeKind === "CORPORATE" || pathname?.startsWith("/business") || searchParams.get("type") === "business" ? "business" : "personal");
+  }, [open, activeKind, pathname, searchParams]);
 
   const urlPersona = searchParams.get("persona");
   const [persona, setPersona] = useState<PersonaId>(
@@ -79,8 +86,7 @@ function PersonaFlowSwitcherContent() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  const onOnboarding = ONBOARDING_PATHS.some((p) => (p === "/" ? pathname === "/" : pathname?.startsWith(p)));
-  if (!mounted || !onOnboarding || activeTourId || devToolsHidden) return null;
+  if (!mounted || !isDemoHubPath(pathname) || activeTourId || devToolsHidden) return null;
 
   const currentStep = parseOnboardingStep(searchParams.get("step"));
 
@@ -216,18 +222,6 @@ function PersonaFlowSwitcherContent() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => {
-          setView(activeKind === "CORPORATE" || pathname?.startsWith("/business") || searchParams.get("type") === "business" ? "business" : "personal");
-          setOpen(true);
-        }}
-        className="fixed bottom-4 left-1/2 z-40 flex h-8 -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-3 text-[13px] text-foreground shadow-lg transition-colors hover:bg-muted"
-      >
-        Demo
-        <ChevronDown size={14} className="text-muted-foreground" aria-hidden="true" />
-      </button>
-
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent size="xl" className="sm:max-w-[920px]">
           <DialogHeader className="flex flex-row items-center justify-between">

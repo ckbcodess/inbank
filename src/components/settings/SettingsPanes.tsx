@@ -648,7 +648,7 @@ function SwitchRow({
 export function AlertsPane({ data, update, onBackToMenu }: PaneProps) {
   return (
     <PaneShell>
-      <PaneHeader title="Alerts" onBack={onBackToMenu} />
+      <PaneHeader title="Notifications" onBack={onBackToMenu} />
       <Rows>
         <SwitchRow title="SMS alerts" checked={data.smsAlerts} onChange={(next) => update({ smsAlerts: next })}>
           Every debit and credit.
@@ -661,7 +661,7 @@ export function AlertsPane({ data, update, onBackToMenu }: PaneProps) {
         </SwitchRow>
       </Rows>
       <p className={cn("pt-3 text-[12px] leading-relaxed text-muted-foreground")}>
-        Sign-in and new-device alerts are always on.
+        Every notification also shows in the app, under Notifications. Sign-in and new-device alerts are always on.
       </p>
     </PaneShell>
   );

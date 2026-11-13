@@ -5,7 +5,6 @@ import { useSession } from "@/lib/session-store";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Bell,
   ChevronDown,
   CircleHelp,
   Eye,
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/icons";
 import { useTheme } from "next-themes";
 import { useEffect, useState, Suspense } from "react";
+import { useDevModePanel } from "@/lib/dev-mode-panel";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,11 +34,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useDevState } from "@/components/providers/DevStateProvider";
-import { DevStateMenuItems } from "@/components/states/DevStateMenuItems";
-import { businessDevBadge } from "@/components/corporate/dev/BusinessDevMenuItems";
+import { businessDevBadge } from "@/components/corporate/dev/business-dev";
 import { useCaptureMode } from "@/lib/capture-mode";
 import { toggleDevToolsHidden, useDevToolsHidden } from "@/lib/dev-tools-visibility";
-import { NOTIFICATIONS } from "@/lib/mock-data";
+import { NotificationsMenu } from "@/components/notifications/NotificationsMenu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -142,6 +141,8 @@ export default function TopHeader({
   const simBadge = business ? businessDevBadge(actor.id) : DEMO_USER_CONFIGS[simUserType]?.badgeLabel || "Dev";
   const { t } = useTranslation();
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const devPanelOpen = useDevModePanel((s) => s.open);
+  const toggleDevPanel = useDevModePanel((s) => s.toggle);
   const pathname = usePathname();
   // The tour points at the dashboard, so playing it from another page goes there first.
   const playTour = () => {
@@ -156,7 +157,6 @@ export default function TopHeader({
     .slice(0, 2)
     .join("");
 
-  const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
   // Business banking has no notifications or settings screens yet, so it shows neither (a control that
   // leads to the other app is worse than none).
 
@@ -170,25 +170,26 @@ export default function TopHeader({
       </div>
 
       <div className="flex shrink-0 items-center gap-2 sm:gap-2">
-        {/* Dev Mode Dropdown Menu — hidden in capture mode so it stays out of Figma captures */}
+        {/* Dev Mode button: opens the side panel. Hidden in capture mode so it stays out of Figma captures */}
         {!captureMode && !devToolsHidden && (
-          <DropdownMenu>
-            <DropdownMenuTrigger className="h-7 gap-2 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2 text-warning-text hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0">
-              <Layers size={13} className="shrink-0" />
-              <span className="hidden sm:inline whitespace-nowrap">Dev Mode</span>
-              <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 font-medium">
-                {simBadge}
+          <button
+            type="button"
+            onClick={toggleDevPanel}
+            aria-expanded={devPanelOpen}
+            aria-controls="dev-mode-panel"
+            className="h-7 gap-2 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2 text-warning-text hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <Layers size={13} className="shrink-0" />
+            <span className="hidden sm:inline whitespace-nowrap">Dev Mode</span>
+            <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 font-medium">
+              {simBadge}
+            </span>
+            {devState?.section && (
+              <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 hidden md:inline">
+                {devState.section}
               </span>
-              {devState?.section && (
-                <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 hidden md:inline">
-                  {devState.section}
-                </span>
-              )}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-63 max-h-[85vh] overflow-y-auto">
-              <DevStateMenuItems devState={devState} />
-            </DropdownMenuContent>
-          </DropdownMenu>
+            )}
+          </button>
         )}
 
         {/* Global FX Header Ticker */}
@@ -238,32 +239,8 @@ export default function TopHeader({
           </DropdownMenu>
         )}
 
-        {/* FR-22 — notifications */}
-        {actor.shell === "customer" && !business && (
-          <SimpleTooltip
-            content={unreadCount > 0 ? `${unreadCount} unread notification${unreadCount > 1 ? "s" : ""}` : "Notifications"}
-            side="bottom"
-          >
-            <Button
-              nativeButton={false}
-              render={<Link href="/notifications" />}
-              variant="ghost"
-              size="icon-sm"
-              className="relative shrink-0"
-              aria-label={
-                unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"
-              }
-            >
-              <Bell size={16} />
-              {unreadCount > 0 && (
-                <span
-                  className="absolute right-1 top-1 size-1.5 rounded-full bg-destructive ring-2 ring-card"
-                  aria-hidden
-                />
-              )}
-            </Button>
-          </SimpleTooltip>
-        )}
+        {/* FR-22 — notifications open in a panel under the bell, not a page */}
+        {actor.shell === "customer" && !business && <NotificationsMenu />}
 
         <DropdownMenu>
           <DropdownMenuTrigger

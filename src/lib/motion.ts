@@ -38,6 +38,8 @@ export const DURATION = {
   toast: 0.15,
   /** A highlight passing once across a control, e.g. the Sidi launcher's amber sweep. */
   sweep: 1.6,
+  /** One lap of the route-loading streak across the top edge. JS only, so it has no CSS twin. */
+  streak: 2,
 } as const;
 
 /** Cubic-bezier curves, for Framer Motion's `transition.ease`. */

@@ -23,7 +23,7 @@ const GROUPS: { label: string; items: { id: SettingsSection; label: string; icon
     label: "Safety",
     items: [
       { id: "security", label: "Security", icon: Lock },
-      { id: "alerts", label: "Alerts", icon: Bell },
+      { id: "alerts", label: "Notifications", icon: Bell },
     ],
   },
 ];

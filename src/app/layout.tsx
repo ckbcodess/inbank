@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 import { DevStateProvider } from "@/components/providers/DevStateProvider";
 import PersonaFlowSwitcher from "@/components/dev/PersonaFlowSwitcher";
+import { DevModeFrame } from "@/components/dev/DevModeFrame";
 import { ColorTuner } from "@/components/dev/ColorTuner";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import { MobileFields } from "@/components/providers/MobileFields";
@@ -68,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <AndroidRippleProvider>
                   <DevStateProvider>
                     <Toaster position="top-right" style={{ zIndex: 999999 }} />
-                    {children}
+                    <DevModeFrame>{children}</DevModeFrame>
                     {SHOW_DEMO_HUB && (
                       <Suspense fallback={null}>
                         <PersonaFlowSwitcher />

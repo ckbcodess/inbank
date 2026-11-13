@@ -131,7 +131,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
   useEffect(() => {
     setEditingAmount(false);
   }, [selectedId]);
-  // The amount toggle: in the label row when the package is the active one, under the packages otherwise.
+  // The amount toggle sits on the label row of the package list: "Your Active Package" or "Bundle Package".
   const amountToggle = selected ? (
     editingAmount ? (
       <button
@@ -244,7 +244,10 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
             </Field>
           ) : (
           <div className="flex flex-col gap-2">
-            <Label id="broadband-package-label">Bundle Package</Label>
+            <div className="flex items-center justify-between gap-2">
+              <Label id="broadband-package-label">Bundle Package</Label>
+              {amountToggle}
+            </div>
             {groups.length > 1 && (
               <SegmentedControl
                 aria-label="Plan type"
@@ -280,7 +283,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
           {selected && (
             <>
               {/* The package has a price; what is paid is the customer's to change */}
-              {(editingAmount || !activeOnly) && (
+              {editingAmount && (
                 <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
                   {editingAmount && (
                     <AmountInput
@@ -290,7 +293,6 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
                       error={overBalance ? <InsufficientFundsAlert /> : undefined}
                     />
                   )}
-                  {!activeOnly && amountToggle}
                 </div>
               )}
 

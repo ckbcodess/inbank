@@ -679,7 +679,34 @@ export function BillsPaymentFlow({
           {charge && (rule?.current || govCharge) ? (
             // What the account is on or owes now, like a broadband package. The amount is the customer's to change.
             <div className="flex flex-col gap-2">
-              <Label id="bill-current-label">{rule?.current?.heading ?? "Amount Due"}</Label>
+              {/* The edit control sits on the label row, as on Broadband and Group payment. Government charges have no edit. */}
+              <div className="flex items-center justify-between gap-2">
+                <Label id="bill-current-label">{rule?.current?.heading ?? "Amount Due"}</Label>
+                {!govCharge &&
+                  (editingAmount ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onChange("amount", String(charge.amount));
+                        setEditingAmount(false);
+                      }}
+                      className="cursor-pointer text-[13px] text-foreground underline underline-offset-4"
+                    >
+                      {rule?.current?.resetLabel}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingAmount(true);
+                        setCollapsed(true);
+                      }}
+                      className="cursor-pointer text-[13px] text-foreground underline underline-offset-4"
+                    >
+                      Edit amount
+                    </button>
+                  ))}
+              </div>
               <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
                 <BillerMark name={selectedBiller?.name} category={selectedBiller?.category} size={36} />
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -691,38 +718,16 @@ export function BillsPaymentFlow({
               {govCharge ? (
                 overBalance && <InsufficientFundsAlert />
               ) : editingAmount ? (
-                <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
+                <div className="animate-in fade-in slide-in-from-top-1 duration-150">
                   <AmountInput
                     value={state.amount}
                     onChange={(val) => onChange("amount", val)}
                     label="Amount"
                     error={overBalance ? <InsufficientFundsAlert /> : undefined}
                   />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onChange("amount", String(charge.amount));
-                      setEditingAmount(false);
-                    }}
-                    className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
-                  >
-                    {rule?.current?.resetLabel}
-                  </button>
                 </div>
               ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingAmount(true);
-                      setCollapsed(true);
-                    }}
-                    className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
-                  >
-                    Edit amount
-                  </button>
-                  {overBalance && <InsufficientFundsAlert />}
-                </>
+                overBalance && <InsufficientFundsAlert />
               )}
             </div>
           ) : (

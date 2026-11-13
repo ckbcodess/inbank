@@ -182,12 +182,40 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-13
+
+- `Decision` (designer): the route-change loader (`components/providers/RouteLoadingProvider.tsx`) is a looping streak, not a progress fill. A 45%-wide segment in the theme primary fades at both ends and sweeps the top edge, one lap per `DURATION.streak` (2s). It matches Patreon's feel. The loader has no real progress, so don't turn it back into a percentage bar.
+- `Decision`: Dev Mode lists the notification states as a "Notifications" section (`dev/DevModePanel.tsx`, presets in `lib/notifications-store.ts`). Screen states can't be used because the bell sits on every page.
+
 ### 2026-11-12
 
 - `Override` (designer, Ransford Gyasi): every GCB account holder now has the GCB Virtual Account (`acc-wallet`) by default in their accounts. This reverses the 2026-09-23 "Wallets as Plumbing" decision, where a GCB holder's wallet is hidden (PRODUCT §5 "GCB Wallet", §8, and the header of `lib/accounts-scenarios.ts`). `acc-wallet` is no longer `scenarioOnly` and is in every GCB scenario's `accountIds`. PRODUCT.md still states the old rule. Update it once the designer confirms.
 - `Decision`: the virtual account is type `Virtual` (a bank account, counted in treasury), and it keeps the wallet icon in lists and the transfer picker. Wallet customers' account (`acc-wallet`) is the same record, so it also reads `Virtual` for them.
 - `Gap`: the virtual account's number `024 123 4567` reads like a MoMo number. Decide whether it should get a GCB-style account number.
 - `Gap`: flows that list accounts (Send & Pay pickers, dashboard default switcher, Add Account, first-run copy) have not been checked for the new account.
+- `Decision`: Dev Mode opens a right-side panel from the header button (`components/dev/DevModePanel.tsx`), in place of the header dropdown. It has three groups: demo user (or business users and role flows for a business), then the screen's states and groups. Rows are plain text on a hairline rail. Dev-only, English.
+- `Decision`: the Demo hub opens from a "Demo" group in the Dev Mode panel (on `DEMO_HUB_PATHS`, `lib/demo-hub.ts`). The floating "Demo" pill is gone. Screens with no app header get a "Dev Mode" pill at bottom centre (`isPreAuthPath`).
+- `Decision`: the panel docks beside the page in `DevModeFrame` (root layout), so the page shifts left. Below `sm` it is full screen.
+- `Gap`: `DevModeFrame` wraps every page in a `flex min-h-dvh` row. Check pre-auth scrolling, the shells' `h-dvh` and any `fixed` element under a transformed ancestor in a browser. Not browser-verified.
+- `Gap`: the Pixel Point "Components >" drill-in is not built.
+- `Decision`: on bill payments, "Edit amount" (and its reset link while editing) sits on the "Amount Due" label row, not under the card (`BillsPaymentFlow`). Broadband's active-package case and Group payment already did this.
+- `Decision`: notifications open in a panel under the header bell (`components/notifications/NotificationsMenu.tsx`), not a page. The route `/notifications` is removed. Unread sits under "Important", the rest under "More notifications", and the list loads 5 at a time on scroll (IntersectionObserver, 600ms). Each row's ⋮ archives or deletes it, and Archived opens inside the panel. Archive is undoable from its toast; delete asks first and is permanent. The gear opens Settings › Alerts. Read, archived and deleted state lives in `lib/notifications-store.ts` (per browser, `nibs-notifications`), so the header's unread count and the panel agree.
+- `Decision`: on phones (below `sm`) the notifications panel is full screen and slides in from the right, the same as the Dev Mode panel. It has a close X, and Escape closes it. Wide screens keep the popover under the bell. Not a bottom sheet, since the list scrolls and pages.
+- `Discovery`: the phone notifications panel rendered inside `TopHeader`, which is a stacking context (`z-20`, `backdrop-blur`), so its `fixed inset-0 z-50` sat under the layout. It is now portalled to `document.body`. Any full-screen overlay mounted in the header or a shell row needs the same treatment.
+- `Decision`: notification states are a "Notifications" section in Dev Mode (demo users only), not screen states. The header bell shows on every page, so it can't register states per screen. Each preset rewrites every notification's state in `lib/notifications-store.ts` (Default feed, Empty, All read, All unread, All archived). The bell, panel and unread count all follow it.
+- `Gap`: the presets can't show a "loading more" state, and "Default feed" clears the customer's own read and archive changes.
+- `Decision`: product alerts (`lib/product-alerts`) stay out of the feed. They are "needs you" items on product pages and in the sidebar, and the feed only records what happened. Notification channels stay in Settings › Alerts. The old "Delivery preferences" block on the page is removed, since it duplicated those switches.
+- `Gap`: the notification feed is one list for every persona. The clean and single personas see the everyday customer's items. Filter by persona.
+- `Gap`: the notifications panel is not translated (FR/ES/ZH), and its copy was written as English-only.
+- `Gap`: notification delete is per item only. There's no bulk "clear archived".
+- `Decision`: the signature field (`ui/signature-upload.tsx`, shared by the securities account and insurance profile) offers "Draw signature" beside "Upload a file". The drawn pad exports a PNG on white, and it is kept like an upload (name "Drawn signature.png", with preview and remove).
+- `Gap`: the drawn signature is not browser-tested. Check touch drawing on a phone, and that the pad scrolls the page when touched outside the box.
+- `Decision`: the "ECG — Electricity" biller (`bil-001c`) is removed from the list and its rule. The "DSTV / MultiChoice" biller is split into "DStv" (`bil-006`, keeps its package rule) and "MultiChoice" (`bil-006b`, no rule), with their own brand entries in `lib/brands.ts`.
+- `Gap`: `public/brands/dstv.png` still holds the MultiChoice artwork. The correct DStv logo file has not been supplied. `public/brands/multichoice.png` is a copy of the current art.
+- `Gap`: saved payees still carry the old bank labels ("ECG — Electricity" on Lester Adjei, "DSTV / MultiChoice" on the DSTV Family payees in `PaymentFlow.tsx` and `beneficiaries-store.ts`). Not changed.
+- `Decision`: Broadband's bundle case puts "Edit amount" on the "Bundle Package" label row, the same as the active-package case. The amount input still opens under the tiles when editing (`BroadbandFlow`).
+- `Decision`: the Dev Mode panel animates in and out with the `move` token (`DURATION.move`, `EASE.settle`). Docked, its width grows and the page shifts over. Below `sm` it slides in from the right as an overlay. The inner column is fixed-width so text doesn't reflow.
+- `Decision` (assumed, confirm): Ishmael Gyan (Single persona) had an empty accounts list because `acc-single-001` was removed in the account trim. It is restored as his Current Account (GHS 4,250, same history), and he gets the Virtual Account by default like every GCB holder. The persona was "exactly 1 account" before; that is now Current plus Virtual.
 
 ### 2026-11-10
 

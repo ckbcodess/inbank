@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import { DURATION } from "@/lib/motion";
 
 export function startRouteLoading() {
   if (typeof window !== "undefined") {
@@ -33,29 +35,23 @@ function RouteWatcher({ onComplete }: { onComplete: () => void }) {
 
 export function RouteLoadingProvider({ children }: { children?: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
-  const trickleTimerRef = useRef<NodeJS.Timeout | null>(null);
   const safetyTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const fadeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const clearTimers = useCallback(() => {
-    if (trickleTimerRef.current) clearInterval(trickleTimerRef.current);
     if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
-    trickleTimerRef.current = null;
+    if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
     safetyTimerRef.current = null;
+    fadeTimerRef.current = null;
   }, []);
 
+  // The streak has no progress to report, so finishing just stops the loop and fades it out.
   const finish = useCallback(() => {
     clearTimers();
-    setProgress(100);
     setLoading(false);
-
-    // Gracefully fade out after reaching 100%
-    setTimeout(() => {
+    fadeTimerRef.current = setTimeout(() => {
       setVisible(false);
-      setTimeout(() => {
-        setProgress(0);
-      }, 200);
     }, 240);
   }, [clearTimers]);
 
@@ -63,21 +59,9 @@ export function RouteLoadingProvider({ children }: { children?: React.ReactNode 
     clearTimers();
     setVisible(true);
     setLoading(true);
-    setProgress(18);
-
-    // Trickle progress forward
-    trickleTimerRef.current = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 88) return prev;
-        const diff = (90 - prev) * 0.12;
-        return Math.min(prev + diff, 88);
-      });
-    }, 180);
 
     // Safety timeout in case navigation is cancelled or identical route
-    safetyTimerRef.current = setTimeout(() => {
-      finish();
-    }, 6000);
+    safetyTimerRef.current = setTimeout(finish, 6000);
   }, [clearTimers, finish]);
 
   useEffect(() => {
@@ -147,23 +131,25 @@ export function RouteLoadingProvider({ children }: { children?: React.ReactNode 
         <RouteWatcher onComplete={finish} />
       </Suspense>
 
-      {/* Top Route Progress Bar */}
+      {/* Top route loading streak: a short segment that loops across the top edge until the page is ready. */}
       {visible && (
         <div
           role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(progress)}
           aria-label="Page loading"
-          className="fixed top-0 left-0 right-0 z-[999999] h-[2.5px] pointer-events-none transition-opacity duration-hover"
+          className="pointer-events-none fixed top-0 left-0 right-0 z-[999999] h-[2.5px] overflow-hidden transition-opacity duration-hover"
           style={{ opacity: loading ? 1 : 0 }}
         >
-          <div
-            className="h-full bg-primary shadow-[0_0_8px_rgba(253,195,7,0.7)] transition-[width] ease-out"
+          <motion.div
+            aria-hidden="true"
+            className="absolute inset-y-0 w-[45%] rounded-full"
             style={{
-              width: `${progress}%`,
-              transitionDuration: progress === 100 ? "180ms" : "280ms",
+              background:
+                "linear-gradient(90deg, transparent, var(--primary) 50%, transparent)",
+              boxShadow: "0 0 8px color-mix(in srgb, var(--primary) 70%, transparent)",
             }}
+            initial={{ left: "-45%" }}
+            animate={{ left: "100%" }}
+            transition={{ duration: DURATION.streak, ease: "linear", repeat: Infinity }}
           />
         </div>
       )}

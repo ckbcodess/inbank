@@ -254,6 +254,18 @@ export const ACCOUNTS: Account[] = [
     status: "Active",
     profileKind: "RETAIL",
   },
+  // Ishmael Gyan's only GCB account (the single-account persona). The rest of its history stays on this id.
+  {
+    id: "acc-single-001",
+    name: "Current Account",
+    number: "4001 5512 0313",
+    type: "Current",
+    currency: "GHS",
+    balance: 4_250.0,
+    available: 4_250.0,
+    status: "Active",
+    profileKind: "RETAIL",
+  },
   {
     id: "acc-wallet",
     name: "GCB Virtual Account",
@@ -321,7 +333,7 @@ export function accountsForProfile(kind: ProfileKind = DEFAULT_PROFILE_KIND): Ac
     return ACCOUNTS.filter((a) => a.id === "acc-personal" || a.id === "acc-wallet");
   }
   if (sim === "single") {
-    return ACCOUNTS.filter((a) => a.id === "acc-single-001");
+    return ACCOUNTS.filter((a) => a.id === "acc-single-001" || a.id === "acc-wallet");
   }
 
   return ACCOUNTS.filter(
@@ -1643,7 +1655,6 @@ export const BILLERS: Biller[] = [
   // Bills & Utilities
   { id: "bil-001", name: "ECG Prepaid", category: "Bills & Utilities", reference: "Meter number" },
   { id: "bil-001b", name: "ECG Postpaid", category: "Bills & Utilities", reference: "Account number" },
-  { id: "bil-001c", name: "ECG — Electricity", category: "Bills & Utilities", reference: "Meter number" },
   { id: "bil-002", name: "Ghana Water (GWCL)", category: "Bills & Utilities", reference: "Account number" },
   { id: "bil-002b", name: "NEDCo Power Ghana", category: "Bills & Utilities", reference: "Meter number" },
 
@@ -1689,7 +1700,8 @@ export const BILLERS: Biller[] = [
   { id: "bil-005c", name: "Ghana Post / Courier EMS", category: "Others", reference: "Tracking / Account ID" },
 
   // Subscriptions
-  { id: "bil-006", name: "DSTV / MultiChoice", category: "Subscriptions", reference: "Smartcard number" },
+  { id: "bil-006", name: "DStv", category: "Subscriptions", reference: "Smartcard number" },
+  { id: "bil-006b", name: "MultiChoice", category: "Subscriptions", reference: "Smartcard number" },
   { id: "bil-007", name: "StarTimes Ghana", category: "Subscriptions", reference: "Smartcard number" },
   { id: "bil-007b", name: "GOtv Ghana", category: "Subscriptions", reference: "IUC number" },
   { id: "bil-007c", name: "Showmax Ghana", category: "Subscriptions", reference: "Mobile number" },
@@ -1870,6 +1882,8 @@ export interface AppNotification {
   body: string;
   date: string;
   read: boolean;
+  /** Filed away by the customer. The feed's starting state; what the customer does later is kept in `lib/notifications-store`. */
+  archived?: boolean;
   /** Where the notification resolves to, when it refers to an object. */
   href?: string;
 }
@@ -1901,6 +1915,105 @@ export const NOTIFICATIONS: AppNotification[] = [
     date: "2026-08-09T14:41:00Z",
     read: true,
     href: "/transactions?open=txn-ret-002",
+  },
+  {
+    id: "ntf-ret-004",
+    kind: "status",
+    title: "Bill paid",
+    body: "GHS 150.00 to DStv Family was paid from your account.",
+    date: "2026-08-07T10:12:00Z",
+    read: true,
+  },
+  {
+    id: "ntf-ret-005",
+    kind: "status",
+    title: "Statement ready",
+    body: "Your July statement for your Savings Account is ready to download.",
+    date: "2026-08-05T08:05:00Z",
+    read: true,
+    archived: true,
+    href: "/reports",
+  },
+  {
+    id: "ntf-ret-006",
+    kind: "status",
+    title: "New device sign-in",
+    body: "Your account was signed in on a new Android phone. If this wasn't you, contact us straight away.",
+    date: "2026-08-03T19:52:00Z",
+    read: true,
+    archived: true,
+  },
+  {
+    id: "ntf-ret-007",
+    kind: "status",
+    title: "Interest credited",
+    body: "GHS 18.40 interest was added to your Savings Account.",
+    date: "2026-11-11T06:00:00Z",
+    read: false,
+  },
+  {
+    id: "ntf-ret-008",
+    kind: "status",
+    title: "Card payment",
+    body: "GHS 84.50 at Shoprite Accra Mall on your Visa Debit ending 4410.",
+    date: "2026-11-11T17:42:00Z",
+    read: false,
+  },
+  {
+    id: "ntf-ret-009",
+    kind: "status",
+    title: "Standing order paid",
+    body: "GHS 1,200.00 to Kojo Asante was paid from your Current Account.",
+    date: "2026-11-10T08:00:00Z",
+    read: true,
+  },
+  {
+    id: "ntf-ret-010",
+    kind: "status",
+    title: "Money received",
+    body: "GHS 250.00 from Abena Mensah reached your account.",
+    date: "2026-11-10T13:20:00Z",
+    read: true,
+  },
+  {
+    id: "ntf-ret-011",
+    kind: "status",
+    title: "Savings goal reached",
+    body: "Your Holiday fund goal of GHS 2,000.00 is complete.",
+    date: "2026-11-09T09:30:00Z",
+    read: true,
+  },
+  {
+    id: "ntf-ret-012",
+    kind: "status",
+    title: "Electricity bill paid",
+    body: "GHS 150.00 to ECG Prepaid. Your token is in your SMS.",
+    date: "2026-11-08T18:05:00Z",
+    read: true,
+  },
+  {
+    id: "ntf-ret-013",
+    kind: "status",
+    title: "Wallet top-up",
+    body: "GHS 100.00 from MTN Mobile Money was added to your GCB Virtual Account.",
+    date: "2026-11-06T14:00:00Z",
+    read: true,
+  },
+  {
+    id: "ntf-ret-014",
+    kind: "status",
+    title: "Password changed",
+    body: "Your sign-in password was changed. If this wasn't you, contact us straight away.",
+    date: "2026-11-05T11:15:00Z",
+    read: true,
+  },
+  {
+    id: "ntf-ret-015",
+    kind: "status",
+    title: "New sign-in",
+    body: "Your account was signed in on a Chrome browser in Accra.",
+    date: "2026-11-04T07:40:00Z",
+    read: true,
   },
 ];
 

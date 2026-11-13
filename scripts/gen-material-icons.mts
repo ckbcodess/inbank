@@ -81,6 +81,7 @@ const MAP: Record<string, string> = {
   History: "history",
   Home: "home",
   Inbox: "inbox",
+  Archive: "archive",
   Info: "info",
   Key: "key",
   KeyRound: "vpn_key",

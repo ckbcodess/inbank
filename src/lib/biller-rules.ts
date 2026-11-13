@@ -61,7 +61,6 @@ const RULES: Record<string, BillerRule> = {
   // Electricity: the meter or account names its owner
   "bil-001": { verify: true },
   "bil-001b": { verify: true, current: { ...BALANCE, lookup: balanceLookup("Outstanding balance", 85, 320) } },
-  "bil-001c": { verify: true },
   "bil-002": { verify: true, current: { ...BALANCE, lookup: balanceLookup("Outstanding balance", 40, 160) } },
   "bil-002b": { verify: true },
   // Tax
