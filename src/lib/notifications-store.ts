@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * What the customer has done to each notification: read it, archive it, or delete it. The feed itself is
- * `NOTIFICATIONS` in mock-data, and this store only holds the changes on top of it. The Notifications screen and the
- * header's unread count both read from here, so they always agree.
+ * What the customer has done with notifications: archived them, deleted them, and when they last closed the panel.
+ * The feed itself is `NOTIFICATIONS` in mock-data. There is no read state. A notification is "new" if it arrived
+ * after the panel was last closed, and the bell's dot shows while the inbox has anything new.
  */
 
 import { useMemo } from "react";
@@ -12,20 +12,18 @@ import { persist } from "zustand/middleware";
 import { NOTIFICATIONS, type AppNotification } from "@/lib/mock-data";
 
 interface Change {
-  read?: boolean;
   archived?: boolean;
   deleted?: boolean;
 }
 
 /**
- * Dev Mode presets: each one rewrites every notification's state at once, so the bell, the panel and the unread
- * count all show the same thing. "default" clears the customer's changes and goes back to the mock feed.
+ * Dev Mode presets. Each one rewrites the customer's changes and the last-opened time, so the bell, the tabs and the
+ * list all agree.
  */
 export const NOTIFICATION_PRESETS = [
-  { id: "default", label: "Default feed" },
+  { id: "new", label: "Something new" },
+  { id: "caught-up", label: "Nothing new" },
   { id: "empty", label: "Empty" },
-  { id: "all-read", label: "All read" },
-  { id: "all-unread", label: "All unread" },
   { id: "all-archived", label: "All archived" },
 ] as const;
 
@@ -35,20 +33,25 @@ function presetChanges(preset: NotificationPreset): Record<string, Change> {
   const out: Record<string, Change> = {};
   for (const n of NOTIFICATIONS) {
     if (preset === "empty") out[n.id] = { deleted: true };
-    else if (preset === "all-read") out[n.id] = { read: true, archived: false };
-    else if (preset === "all-unread") out[n.id] = { read: false, archived: false };
-    else if (preset === "all-archived") out[n.id] = { read: true, archived: true };
+    else if (preset === "all-archived") out[n.id] = { archived: true };
   }
   return out;
 }
 
+/** "Something new" and "Empty" clear the last-opened time, so everything counts as new. The rest count as seen. */
+function presetLastOpened(preset: NotificationPreset): string | null {
+  return preset === "new" || preset === "empty" ? null : new Date().toISOString();
+}
+
 interface NotificationsState {
   changes: Record<string, Change>;
-  /** The Dev Mode preset last applied. Persisted with the changes, so it survives a reload. */
+  /** When the panel was last closed. null means it never has been, so everything counts as new. */
+  lastOpenedAt: string | null;
+  /** The Dev Mode preset last applied. Persisted, so it survives a reload. */
   preset: NotificationPreset;
-  markRead: (ids: string[]) => void;
   setArchived: (id: string, archived: boolean) => void;
   remove: (id: string) => void;
+  markPanelOpened: () => void;
   applyPreset: (preset: NotificationPreset) => void;
 }
 
@@ -56,16 +59,14 @@ export const useNotificationsStore = create<NotificationsState>()(
   persist(
     (set) => ({
       changes: {},
-      preset: "default",
-      markRead: (ids) =>
-        set((s) => ({
-          changes: ids.reduce((acc, id) => ({ ...acc, [id]: { ...acc[id], read: true } }), s.changes),
-        })),
+      lastOpenedAt: null,
+      preset: "new",
       setArchived: (id, archived) =>
         set((s) => ({ changes: { ...s.changes, [id]: { ...s.changes[id], archived } } })),
-      remove: (id) =>
-        set((s) => ({ changes: { ...s.changes, [id]: { ...s.changes[id], deleted: true } } })),
-      applyPreset: (preset) => set({ preset, changes: presetChanges(preset) }),
+      remove: (id) => set((s) => ({ changes: { ...s.changes, [id]: { ...s.changes[id], deleted: true } } })),
+      markPanelOpened: () => set({ lastOpenedAt: new Date().toISOString() }),
+      applyPreset: (preset) =>
+        set({ preset, changes: presetChanges(preset), lastOpenedAt: presetLastOpened(preset) }),
     }),
     { name: "nibs-notifications" },
   ),
@@ -73,32 +74,36 @@ export const useNotificationsStore = create<NotificationsState>()(
 
 /** A notification with the customer's changes applied. */
 export interface NotificationStatus extends AppNotification {
-  read: boolean;
   archived: boolean;
+  /** Arrived after the panel was last closed. */
+  isNew: boolean;
 }
 
-/** Every notification the customer still has, with its read and archived state. Deleted ones are left out. */
+/** Every notification the customer still has, with its archived and new state. Deleted ones are left out. */
 export function resolveNotifications(
   feed: readonly AppNotification[],
   changes: Record<string, Change>,
+  lastOpenedAt: string | null,
 ): NotificationStatus[] {
+  const opened = lastOpenedAt === null ? null : new Date(lastOpenedAt).getTime();
   return feed
     .filter((n) => !changes[n.id]?.deleted)
     .map((n) => ({
       ...n,
-      read: changes[n.id]?.read ?? n.read,
       archived: changes[n.id]?.archived ?? Boolean(n.archived),
+      isNew: opened === null || new Date(n.date).getTime() > opened,
     }));
 }
 
 /** The notifications the customer has, after their changes. */
 export function useNotificationFeed(): NotificationStatus[] {
   const changes = useNotificationsStore((s) => s.changes);
-  return useMemo(() => resolveNotifications(NOTIFICATIONS, changes), [changes]);
+  const lastOpenedAt = useNotificationsStore((s) => s.lastOpenedAt);
+  return useMemo(() => resolveNotifications(NOTIFICATIONS, changes, lastOpenedAt), [changes, lastOpenedAt]);
 }
 
-/** Unread notifications in Recent. Archived ones don't count. */
-export function useUnreadNotificationCount(): number {
+/** Whether the bell's dot shows: something in the inbox has arrived since the panel was last closed. */
+export function useHasNewNotifications(): boolean {
   const feed = useNotificationFeed();
-  return useMemo(() => feed.filter((n) => !n.archived && !n.read).length, [feed]);
+  return useMemo(() => feed.some((n) => !n.archived && n.isNew), [feed]);
 }

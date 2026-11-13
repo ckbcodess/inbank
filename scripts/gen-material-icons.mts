@@ -39,6 +39,7 @@ const MAP: Record<string, string> = {
   Check: "check",
   CheckCheck: "done_all",
   CheckCircle2: "check_circle",
+  CheckCheck: "done_all",
   ChevronDown: "keyboard_arrow_down",
   ChevronLeft: "chevron_left",
   ChevronRight: "chevron_right",

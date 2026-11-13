@@ -12,7 +12,7 @@
 import { useSearchParams } from "next/navigation";
 
 export const SETTINGS_PARAM = "settings";
-export const SETTINGS_SECTIONS = ["profile", "preferences", "security", "alerts"] as const;
+export const SETTINGS_SECTIONS = ["profile", "preferences", "security", "devices", "alerts"] as const;
 export type SettingsSection = (typeof SETTINGS_SECTIONS)[number];
 
 function setParam(value: string | null) {

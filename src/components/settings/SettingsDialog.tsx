@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, ChevronRight, Lock, SlidersHorizontal, User, X } from "@/components/ui/icons";
+import { Bell, ChevronRight, Lock, Smartphone, SlidersHorizontal, User, X } from "@/components/ui/icons";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { maskMobile } from "@/lib/auth-shared";
 import { useSession } from "@/lib/session-store";
 import { closeSettings, showSettingsSection, useSettingsModal, type SettingsSection } from "@/lib/settings-modal";
 import { cn } from "@/lib/utils";
-import { AlertsPane, PreferencesPane, ProfilePane, SecurityPane, type SettingsData } from "./SettingsPanes";
+import { AlertsPane, DevicesPane, PreferencesPane, ProfilePane, SecurityPane, type SettingsData } from "./SettingsPanes";
 
 /** Settings in one place: a modal beside a section list on desktop, a bottom sheet that drills in on phone. */
 
@@ -23,6 +23,7 @@ const GROUPS: { label: string; items: { id: SettingsSection; label: string; icon
     label: "Safety",
     items: [
       { id: "security", label: "Security", icon: Lock },
+      { id: "devices", label: "Linked devices", icon: Smartphone },
       { id: "alerts", label: "Notifications", icon: Bell },
     ],
   },
@@ -31,6 +32,7 @@ const GROUPS: { label: string; items: { id: SettingsSection; label: string; icon
 const SUMMARY: Record<Exclude<SettingsSection, "profile">, string> = {
   preferences: "Theme and language",
   security: "Password and sign-in",
+  devices: "Where you're signed in",
   alerts: "SMS, email, statements",
 };
 
@@ -133,6 +135,7 @@ export default function SettingsDialog() {
             {active === "profile" && <ProfilePane key="profile" name={actor.name} {...paneProps} />}
             {active === "preferences" && <PreferencesPane key="preferences" {...paneProps} />}
             {active === "security" && <SecurityPane key="security" {...paneProps} />}
+            {active === "devices" && <DevicesPane key="devices" {...paneProps} />}
             {active === "alerts" && <AlertsPane key="alerts" {...paneProps} />}
           </div>
         </div>

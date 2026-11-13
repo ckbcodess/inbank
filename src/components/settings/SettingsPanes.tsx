@@ -12,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { PASSWORD_RULES, maskEmail, passwordMeetsRules } from "@/lib/auth-shared";
-import { forgetThisDevice, useTrustedDevice } from "@/lib/device-trust";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { useSession } from "@/lib/session-store";
 import { shrinkPhoto, useProfilePhoto, useProfilePhotos } from "@/lib/profile-photo";
@@ -361,10 +360,11 @@ const DEMO_DEVICES = [
 
 const DEVICE_ICONS = { laptop: Laptop, phone: Smartphone, desktop: Monitor } as const;
 
-function DevicesStep({ onDone }: { onDone: () => void }) {
+/** Its own section in the Safety group. Shows the signed-in devices; signing one out comes later. */
+export function DevicesPane({ onBackToMenu }: PaneProps) {
   return (
     <PaneShell>
-      <StepHeader back="Security" title="Linked devices" onBack={onDone} />
+      <PaneHeader title="Linked devices" onBack={onBackToMenu} />
       <Rows>
         {DEMO_DEVICES.map((d) => {
           const Icon = DEVICE_ICONS[d.kind];
@@ -388,16 +388,9 @@ function DevicesStep({ onDone }: { onDone: () => void }) {
 }
 
 export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
-  const trustedDevice = useTrustedDevice();
   const [changingPassword, setChangingPassword] = useState(false);
-  const [viewingDevices, setViewingDevices] = useState(false);
 
   if (changingPassword) return <PasswordStep onDone={() => setChangingPassword(false)} />;
-  if (viewingDevices) return <DevicesStep onDone={() => setViewingDevices(false)} />;
-
-  const until = trustedDevice
-    ? new Date(trustedDevice.until).toLocaleDateString("en-GB", { day: "numeric", month: "long" })
-    : null;
 
   return (
     <PaneShell>
@@ -420,41 +413,6 @@ export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
             </Button>
           }
         />
-        <Row
-          title="This device"
-          action={
-            trustedDevice ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  forgetThisDevice();
-                  toast.success("This device will ask for a code next time");
-                }}
-              >
-                Forget this device
-              </Button>
-            ) : null
-          }
-        >
-          {until ? (
-            <>
-              <span>Remembered until</span> <span className="tabular">{until}</span>
-            </>
-          ) : (
-            <span>Not remembered</span>
-          )}
-        </Row>
-        <Row
-          title="Linked devices"
-          action={
-            <Button variant="outline" size="sm" onClick={() => setViewingDevices(true)}>
-              View
-            </Button>
-          }
-        >
-          <span className="tabular">{`${DEMO_DEVICES.length} devices signed in`}</span>
-        </Row>
         <Row
           title="Auto-logout"
           action={
