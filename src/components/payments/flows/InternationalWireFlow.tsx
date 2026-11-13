@@ -441,11 +441,10 @@ export function InternationalWireFlow({
             </DialogDescription>
           </div>
           <DialogFooter className="flex-row gap-2 px-4 pb-4 sm:px-5">
-            <Button size="md" type="button" variant="outline" onClick={() => setPapssFor(null)} className="flex-1 text-[15px]">
+            <Button type="button" variant="outline" onClick={() => setPapssFor(null)} className="flex-1">
               Not now
             </Button>
             <Button
-              size="md"
               type="button"
               onClick={() => {
                 const name = papssFor ? PAPSS_COUNTRY_NAMES[papssFor.code] : undefined;

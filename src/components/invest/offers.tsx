@@ -151,11 +151,11 @@ export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: bo
             </DialogBody>
             <DialogFooter>
               {gate.action ? (
-                <Button size="md" nativeButton={false} className="w-full" render={<Link href={gate.action.href} />}>
+                <Button nativeButton={false} className="w-full" render={<Link href={gate.action.href} />}>
                   {gate.action.label}
                 </Button>
               ) : (
-                <Button size="md" type="button" className="w-full" onClick={() => setGateOpen(false)}>
+                <Button type="button" className="w-full" onClick={() => setGateOpen(false)}>
                   Close
                 </Button>
               )}

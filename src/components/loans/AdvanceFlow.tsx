@@ -216,7 +216,7 @@ export function AdvanceFlow() {
           />
           <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject={`the ${title}`} terms={advanceTerms(needsSwitch)} also={needsSwitch ? "and to switching my account to a Salary Account" : undefined} />
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="h-11 flex-1 text-[15px]" onClick={() => setScreen("form")}>
+            <Button type="button" variant="outline" size="xl" className="flex-1" onClick={() => setScreen("form")}>
               Back to Edit
             </Button>
             <Button size="xl" type="button" className="flex-1" disabled={!accepted} onClick={() => setAuthOpen(true)}>

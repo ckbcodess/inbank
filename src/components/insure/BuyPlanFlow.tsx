@@ -167,11 +167,10 @@ function MemberModal({ open, onOpenChange, onAdd }: { open: boolean; onOpenChang
       size="md"
       footer={
         <>
-          <Button size="md" type="button" variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button
-            size="md"
             type="button"
             className="flex-1"
             disabled={!ready}
@@ -507,7 +506,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
           </p>
           <TermsAgreement checked={accepted} onCheckedChange={setAccepted} subject={`the ${plan.name}, provided by ${PROVIDER}`} terms={insuranceTerms(PROVIDER)} />
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="h-11 flex-1 text-[15px]" onClick={() => setScreen("quote")}>
+            <Button type="button" variant="outline" size="xl" className="flex-1" onClick={() => setScreen("quote")}>
               Back to Edit
             </Button>
             <Button size="xl" type="button" className="flex-1" disabled={!accepted} onClick={() => setAuthOpen(true)}>
@@ -754,7 +753,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
               ))}
             </ListCard>
           )}
-          <Button type="button" variant="outline" className="h-11 w-full" onClick={() => setAddingMember(true)}>
+          <Button type="button" variant="outline" size="xl" className="w-full" onClick={() => setAddingMember(true)}>
             <Plus size={16} aria-hidden="true" />
             {members.length === 0 ? "Add Someone to This Cover" : "Add Another Person"}
           </Button>

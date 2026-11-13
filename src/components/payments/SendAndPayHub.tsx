@@ -258,7 +258,7 @@ export function SendAndPayHub({ loading = false }: { loading?: boolean }) {
       <PageHeader
         title="Send & Pay"
         actions={
-          <Button nativeButton={false} render={<Link href="/payments/standing" />} variant="outline" size="md" className="gap-2 px-2 sm:px-3">
+          <Button nativeButton={false} render={<Link href="/payments/standing" />} variant="outline" className="gap-2 px-2 sm:px-3">
             <Repeat size={14} aria-hidden="true" className="shrink-0 text-muted-foreground" />
             <span className="hidden sm:inline">View Scheduled Payments</span>
             <span className="sm:hidden">Scheduled</span>

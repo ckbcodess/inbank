@@ -262,15 +262,15 @@ export default function TopHeader({
             )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={6} className="w-[280px] p-2 rounded-2xl bg-menu/97! dark:bg-menu/92! backdrop-blur-3xl">
-            {/* Header: Avatar beside Name & Email */}
-            <div className="flex items-center gap-2 px-2 pt-2 pb-2">
-              <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] shadow-2xs">
+            {/* Header: a centred avatar, with the name and email under it */}
+            <div className="flex flex-col items-center gap-3 px-4 pt-4 pb-3 text-center">
+              <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted border border-border/80 text-foreground font-medium text-[20px] shadow-2xs">
                 {/* eslint-disable-next-line @next/next/no-img-element -- a small data URL from the profile photo store */}
                 {photo ? <img src={photo} alt="" className="size-full object-cover" /> : initials}
               </div>
-              <div className="flex min-w-0 flex-col">
-                <span className="truncate text-[14px] font-medium text-foreground tracking-[var(--ls-tight)]">{actor.name}</span>
-                <span className="truncate text-[12px] text-muted-foreground">{actor.email}</span>
+              <div className="flex w-full min-w-0 flex-col items-center gap-0.5">
+                <span className="w-full truncate text-[16px] font-medium text-foreground tracking-[var(--ls-tight)]">{actor.name}</span>
+                <span className="w-full truncate text-[13px] text-muted-foreground">{actor.email}</span>
               </div>
             </div>
 

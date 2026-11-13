@@ -83,7 +83,7 @@ export default function StandingOrdersPage() {
         actions={
           <Button nativeButton={false} render={<Link href="/payments/standing/new" />}>
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-            New scheduled payment
+            Add new
           </Button>
         }
       />

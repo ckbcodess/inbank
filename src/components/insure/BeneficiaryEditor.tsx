@@ -173,10 +173,10 @@ function PersonModal({
       size="md"
       footer={
         <>
-          <Button size="md" type="button" variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button size="md" type="button" className="flex-1" disabled={!ready} onClick={save}>
+          <Button type="button" className="flex-1" disabled={!ready} onClick={save}>
             {trustee ? "Add Trustee" : "Add Beneficiary"}
           </Button>
         </>
@@ -315,10 +315,10 @@ export function BeneficiaryEditor({
         size="sm"
         footer={
           <>
-            <Button type="button" variant="ghost" size="md" onClick={() => setRemoving(null)}>
+            <Button type="button" variant="ghost" onClick={() => setRemoving(null)}>
               Cancel
             </Button>
-            <Button type="button" variant="destructive" size="md" onClick={() => removing && remove(removing.personId)}>
+            <Button type="button" variant="destructive" onClick={() => removing && remove(removing.personId)}>
               Remove
             </Button>
           </>
@@ -337,7 +337,7 @@ export function BeneficiaryEditor({
             <div className="flex items-center gap-4">
               {left > 0 && <span className="tabular text-[13px] text-muted-foreground">{`${left}% left to share`}</span>}
               {value.length > 1 && (
-                <Button type="button" variant="outline" onClick={splitEqually}>
+                <Button type="button" variant="outline" size="sm" onClick={splitEqually}>
                   Split Equally
                 </Button>
               )}
@@ -457,7 +457,7 @@ export function BeneficiaryEditor({
           </>
         )}
 
-        <Button type="button" variant="outline" className="-mt-2 h-11 w-full" onClick={() => setAdding(true)}>
+        <Button type="button" variant="outline" size="xl" className="-mt-2 w-full" onClick={() => setAdding(true)}>
           <Plus size={16} aria-hidden="true" />
           {value.length === 0 ? "Add Beneficiary" : "Add Another Beneficiary"}
         </Button>
@@ -532,7 +532,7 @@ export function BeneficiaryEditor({
               ))}
             </div>
           )}
-          <Button type="button" variant="outline" className="h-11 w-full" onClick={() => setAddingTrustee(true)}>
+          <Button type="button" variant="outline" size="xl" className="w-full" onClick={() => setAddingTrustee(true)}>
             <UserRound size={16} aria-hidden="true" />
             {trusteeChoices.length > 0 ? "Someone Else" : "Add Trustee"}
           </Button>

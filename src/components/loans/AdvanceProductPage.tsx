@@ -163,7 +163,7 @@ export function AdvanceProductPage() {
             price={income ? { prefix: "Up to", figure: money(limit) } : undefined}
           />
           {income && product ? (
-            <Button nativeButton={false} render={<Link href={ADVANCE_HREF} />} className="h-12 w-full text-[16px]">
+            <Button nativeButton={false} size="xl" render={<Link href={ADVANCE_HREF} />} className="w-full">
               {`Apply for ${shown.name}`}
             </Button>
           ) : (

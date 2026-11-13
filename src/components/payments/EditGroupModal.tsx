@@ -429,10 +429,10 @@ export default function EditGroupModal({
               </div>
 
               <div className="flex items-center gap-2">
-                <Button type="button" size="md" variant="outline" onClick={() => setPickerOpen(true)} className="flex-1">
+                <Button type="button" variant="outline" onClick={() => setPickerOpen(true)} className="flex-1">
                   <Plus size={14} /> Add from beneficiaries
                 </Button>
-                <Button type="button" size="md" variant="outline" onClick={() => setShowNewContact(true)} className="flex-1">
+                <Button type="button" variant="outline" onClick={() => setShowNewContact(true)} className="flex-1">
                   <Plus size={14} /> New contact
                 </Button>
               </div>

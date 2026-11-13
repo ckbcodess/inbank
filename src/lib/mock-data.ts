@@ -1875,9 +1875,28 @@ export function saveStandingInstruction(input: Omit<StandingInstruction, "id"> &
 
 export type NotificationKind = "submission" | "approval" | "rejection" | "status";
 
+/** The icon a notification shows, by name. The notifications panel maps each name to its glyph. */
+export type NotificationIcon =
+  | "ArrowDownLeft"
+  | "ArrowUpRight"
+  | "Phone"
+  | "Tv"
+  | "FileText"
+  | "Smartphone"
+  | "TrendingUp"
+  | "CreditCard"
+  | "Repeat"
+  | "PiggyBank"
+  | "Zap"
+  | "Wallet"
+  | "KeyRound"
+  | "Laptop";
+
 export interface AppNotification {
   id: string;
   kind: NotificationKind;
+  /** What the notification is about. Without one the panel shows a bell. */
+  icon?: NotificationIcon;
   title: string;
   body: string;
   date: string;
@@ -1892,6 +1911,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-001",
     kind: "status",
+    icon: "ArrowDownLeft",
     title: "Money received",
     body: "GHS 452.00 from My MTN Mobile Money reached your account.",
     date: "2026-08-11T09:14:00Z",
@@ -1901,6 +1921,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-002",
     kind: "status",
+    icon: "ArrowUpRight",
     title: "Payment sent",
     body: "GHS 500.00 to Melcom Stores was paid from your account.",
     date: "2026-08-10T16:20:00Z",
@@ -1910,6 +1931,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-003",
     kind: "status",
+    icon: "Phone",
     title: "Airtime topped up",
     body: "GHS 100.00 of MTN airtime was added.",
     date: "2026-08-09T14:41:00Z",
@@ -1919,6 +1941,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-004",
     kind: "status",
+    icon: "Tv",
     title: "Bill paid",
     body: "GHS 150.00 to DStv Family was paid from your account.",
     date: "2026-08-07T10:12:00Z",
@@ -1927,6 +1950,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-005",
     kind: "status",
+    icon: "FileText",
     title: "Statement ready",
     body: "Your July statement for your Savings Account is ready to download.",
     date: "2026-08-05T08:05:00Z",
@@ -1937,6 +1961,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-006",
     kind: "status",
+    icon: "Smartphone",
     title: "New device sign-in",
     body: "Your account was signed in on a new Android phone. If this wasn't you, contact us straight away.",
     date: "2026-08-03T19:52:00Z",
@@ -1946,6 +1971,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-007",
     kind: "status",
+    icon: "TrendingUp",
     title: "Interest credited",
     body: "GHS 18.40 interest was added to your Savings Account.",
     date: "2026-11-11T06:00:00Z",
@@ -1954,6 +1980,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-008",
     kind: "status",
+    icon: "CreditCard",
     title: "Card payment",
     body: "GHS 84.50 at Shoprite Accra Mall on your Visa Debit ending 4410.",
     date: "2026-11-11T17:42:00Z",
@@ -1962,6 +1989,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-009",
     kind: "status",
+    icon: "Repeat",
     title: "Standing order paid",
     body: "GHS 1,200.00 to Kojo Asante was paid from your Current Account.",
     date: "2026-11-10T08:00:00Z",
@@ -1970,6 +1998,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-010",
     kind: "status",
+    icon: "ArrowDownLeft",
     title: "Money received",
     body: "GHS 250.00 from Abena Mensah reached your account.",
     date: "2026-11-10T13:20:00Z",
@@ -1978,6 +2007,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-011",
     kind: "status",
+    icon: "PiggyBank",
     title: "Savings goal reached",
     body: "Your Holiday fund goal of GHS 2,000.00 is complete.",
     date: "2026-11-09T09:30:00Z",
@@ -1986,6 +2016,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-012",
     kind: "status",
+    icon: "Zap",
     title: "Electricity bill paid",
     body: "GHS 150.00 to ECG Prepaid. Your token is in your SMS.",
     date: "2026-11-08T18:05:00Z",
@@ -1994,6 +2025,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-013",
     kind: "status",
+    icon: "Wallet",
     title: "Wallet top-up",
     body: "GHS 100.00 from MTN Mobile Money was added to your GCB Virtual Account.",
     date: "2026-11-06T14:00:00Z",
@@ -2002,6 +2034,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-014",
     kind: "status",
+    icon: "KeyRound",
     title: "Password changed",
     body: "Your sign-in password was changed. If this wasn't you, contact us straight away.",
     date: "2026-11-05T11:15:00Z",
@@ -2010,6 +2043,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   {
     id: "ntf-ret-015",
     kind: "status",
+    icon: "Laptop",
     title: "New sign-in",
     body: "Your account was signed in on a Chrome browser in Accra.",
     date: "2026-11-04T07:40:00Z",

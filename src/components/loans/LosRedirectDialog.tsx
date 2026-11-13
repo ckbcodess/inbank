@@ -22,12 +22,11 @@ export function LosRedirectDialog({ loan, onClose }: { loan: string | null; onCl
       size="sm"
       footer={
         <>
-          <Button type="button" variant="outline" size="md" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button
             type="button"
-            size="md"
             onClick={() => {
               onClose();
               toast.success("Opening the Loan Origination Solution", { id: "los-redirect" });

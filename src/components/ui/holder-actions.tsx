@@ -16,16 +16,16 @@ export function HolderActions({
   return (
     <div className="flex flex-col gap-3">
       {primary.disabled ? (
-        <Button className="h-11 w-full text-[14px]" disabled>
+        <Button size="xl" className="w-full" disabled>
           {primary.label}
         </Button>
       ) : (
-        <Button className="h-11 w-full text-[14px]" nativeButton={false} render={<Link href={primary.href} />}>
+        <Button size="xl" className="w-full" nativeButton={false} render={<Link href={primary.href} />}>
           {primary.label}
         </Button>
       )}
       {secondary && (
-        <Button variant="outline" className="h-11 w-full text-[14px]" nativeButton={false} render={<Link href={secondary.href} />}>
+        <Button variant="outline" size="xl" className="w-full" nativeButton={false} render={<Link href={secondary.href} />}>
           {secondary.label}
         </Button>
       )}

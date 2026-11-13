@@ -372,7 +372,7 @@ function ReturningSignIn({
             </Link>
 </Field>
           <KeyboardDock>
-            <Button type="submit" variant="default" size="md" loading={submitting} className="sm:h-10 w-full">
+            <Button type="submit" variant="default" size="md" loading={submitting} className="w-full">
               Log in
             </Button>
           </KeyboardDock>

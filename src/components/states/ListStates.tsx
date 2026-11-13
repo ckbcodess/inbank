@@ -82,7 +82,7 @@ export function FilteredEmptyState({
       </div>
       <p className="text-[14px] font-medium text-foreground">No results found</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
-      <Button variant="outline" size="sm" className="mt-3 h-7 px-2 text-[13px]" onClick={onReset}>
+      <Button variant="outline" size="sm" className="mt-3" onClick={onReset}>
         <RefreshCw size={13} />
         Reset filters
       </Button>
@@ -106,7 +106,7 @@ export function ListErrorState({
       </div>
       <p className="text-[14px] font-medium text-foreground">Couldn&apos;t load records</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
-      <Button variant="outline" size="sm" className="mt-3 h-7 px-2 text-[13px]" onClick={onRetry}>
+      <Button variant="outline" size="sm" className="mt-3" onClick={onRetry}>
         <RefreshCw size={13} />
         Retry
       </Button>

@@ -69,7 +69,7 @@ export function ProductWelcome({
                 ))}
               </div>
             </div>
-            <Button type="button" onClick={onClose} className="h-9 w-full cursor-pointer text-[14px] font-medium">
+            <Button type="button" onClick={onClose} className="w-full cursor-pointer font-medium">
               Get Started
             </Button>
           </div>

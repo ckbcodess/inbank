@@ -708,7 +708,8 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             <Button
               type="button"
               variant="outline"
-              className="flex-1 h-11 text-[15px]"
+              size="xl"
+              className="flex-1"
               onClick={() => setScreen("form")}
             >
               Back to Edit

@@ -267,10 +267,10 @@ export function VirtualCardView({
               placeholder="12000.00"
               className="tabular bg-white dark:bg-slate-900"
             />
-            <Button variant="ghost" size="sm" onClick={() => setAdjustingLimit(false)} className="h-8 px-2 text-[12px]">
+            <Button variant="ghost" size="sm" onClick={() => setAdjustingLimit(false)}>
               Cancel
             </Button>
-            <Button size="sm" onClick={handleSaveLimit} className="h-8 px-2 text-[12px]">
+            <Button size="sm" onClick={handleSaveLimit}>
               Save
             </Button>
           </div>

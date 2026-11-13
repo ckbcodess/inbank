@@ -137,10 +137,10 @@ export function PaymentFailedScreen({
         transition={{ duration: 0.4, delay: 0.4, ease: EASE }}
         className="flex w-full max-w-[460px] items-stretch gap-3 pt-2"
       >
-        <Button size="md" type="button" variant="outline" className="flex-1" onClick={onLeave}>
+        <Button size="xl" type="button" variant="outline" className="flex-1" onClick={onLeave}>
           {leaveLabel}
         </Button>
-        <Button size="md" type="button" className="flex-1" onClick={onRetry}>
+        <Button size="xl" type="button" className="flex-1" onClick={onRetry}>
           {retryLabel}
         </Button>
       </motion.div>

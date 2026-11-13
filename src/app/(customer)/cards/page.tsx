@@ -425,7 +425,7 @@ function CardsPageContent() {
           title="No cards yet"
           description="Get a virtual card instantly or request a physical one."
           action={
-            <Button nativeButton={false} render={<Link href="/cards/request" />} className="h-8 px-3 text-[13px]">
+            <Button nativeButton={false} render={<Link href="/cards/request" />}>
               Request a card
             </Button>
           }

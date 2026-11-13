@@ -328,10 +328,10 @@ function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (pa
           <Input id="new-email" type="email" autoComplete="email" value={value} onChange={(e) => setValue(e.target.value)} />
         </Field>
         <div className="flex items-center gap-3">
-          <Button type="submit" disabled={!valid} className="h-11 px-6 text-[14px]">
+          <Button type="submit" size="xl" disabled={!valid} className="px-6">
             Send code
           </Button>
-          <Button type="button" variant="ghost" className="h-11 px-3 text-[14px] text-muted-foreground" onClick={onDone}>
+          <Button type="button" variant="ghost" size="xl" className="px-3 text-muted-foreground" onClick={onDone}>
             Cancel
           </Button>
         </div>
@@ -483,10 +483,10 @@ function PasswordStep({ onDone }: { onDone: () => void }) {
           />
         </Field>
         <div className="flex items-center gap-3">
-          <Button type="submit" disabled={!ready} className="h-11 px-6 text-[14px]">
+          <Button type="submit" size="xl" disabled={!ready} className="px-6">
             Update password
           </Button>
-          <Button type="button" variant="ghost" className="h-11 px-3 text-[14px] text-muted-foreground" onClick={onDone}>
+          <Button type="button" variant="ghost" size="xl" className="px-3 text-muted-foreground" onClick={onDone}>
             Cancel
           </Button>
         </div>

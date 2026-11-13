@@ -567,11 +567,11 @@ export function PaymentSuccessScreen({
         className="flex items-stretch gap-3 w-full max-w-[460px] pt-2"
       >
         {onSecondaryAction && (
-          <Button size="md" type="button" variant="outline" onClick={onSecondaryAction} className="flex-1">
+          <Button size="xl" type="button" variant="outline" onClick={onSecondaryAction} className="flex-1">
             {secondaryActionLabel}
           </Button>
         )}
-        <Button size="md" type="button" onClick={onPrimaryAction} className="flex-1">
+        <Button size="xl" type="button" onClick={onPrimaryAction} className="flex-1">
           {/* Single light sweep as the button arrives — then it stays still */}
           <motion.div
             initial={{ x: "-100%" }}
@@ -649,7 +649,7 @@ export function PaymentSuccessScreen({
           {feedbackRating && (
             <DialogFooter>
               <Button
-                size="md"
+                size="xl"
                 type="button"
                 onClick={() => {
                   setShowFeedbackModal(false);

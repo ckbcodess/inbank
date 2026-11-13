@@ -25,21 +25,30 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Archive,
+  ArrowDownLeft,
+  ArrowUpRight,
   Bell,
-  CheckCircle2,
+  CreditCard,
+  FileText,
+  KeyRound,
+  Laptop,
+  Phone,
+  PiggyBank,
+  Repeat,
   RotateCcw,
-  Send,
   Settings,
+  Smartphone,
   Trash2,
-  TriangleAlert,
+  Tv,
+  TrendingUp,
+  Wallet,
   X,
-  XCircle,
+  Zap,
 } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ListSkeleton } from "@/components/states/ListStates";
-import { formatRelative, type NotificationKind } from "@/lib/mock-data";
+import { formatRelative, type NotificationIcon, type NotificationKind } from "@/lib/mock-data";
 import { openSettings } from "@/lib/settings-modal";
 import { DURATION, EASE } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -71,11 +80,30 @@ function useDesktop() {
   );
 }
 
-const KIND_ICON: Record<NotificationKind, { icon: React.ElementType; className: string }> = {
-  submission: { icon: Send, className: "text-muted-foreground" },
-  approval: { icon: CheckCircle2, className: "text-success-text" },
-  rejection: { icon: TriangleAlert, className: "text-warning-text" },
-  status: { icon: XCircle, className: "text-muted-foreground" },
+/** The glyph for each icon name a notification can carry. The feed picks the name; this is the only place a glyph is chosen. */
+const ICON_GLYPH: Record<NotificationIcon, React.ElementType> = {
+  ArrowDownLeft,
+  ArrowUpRight,
+  Phone,
+  Tv,
+  FileText,
+  Smartphone,
+  TrendingUp,
+  CreditCard,
+  Repeat,
+  PiggyBank,
+  Zap,
+  Wallet,
+  KeyRound,
+  Laptop,
+};
+
+/** Colour only. The icon comes from the notification, and the kind decides how it's tinted. */
+const KIND_TINT: Record<NotificationKind, string> = {
+  submission: "text-muted-foreground",
+  approval: "text-success-text",
+  rejection: "text-warning-text",
+  status: "text-muted-foreground",
 };
 
 /** Newest first. ISO dates sort as strings. */
@@ -119,7 +147,8 @@ function NotificationRow({
   onRestore: () => void;
   onDelete: () => void;
 }) {
-  const { icon: Icon, className } = KIND_ICON[n.kind];
+  const Icon = n.icon ? ICON_GLYPH[n.icon] : Bell;
+  const className = KIND_TINT[n.kind];
   const content = (
     <>
       <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
@@ -168,6 +197,25 @@ function NotificationRow({
         </div>
       </div>
     </li>
+  );
+}
+
+/**
+ * A placeholder with a real row's geometry: the same inset, tile, gap, divider and date column. The shimmer-free
+ * list ListSkeleton uses is inset differently, so the text slid sideways when the rows came in.
+ */
+function RowSkeleton() {
+  return (
+    <div aria-hidden="true" className="flex items-center gap-3 border-b border-border/60 px-4 py-3">
+      <span className="size-10 shrink-0 rounded-full bg-muted" />
+      <span className="flex min-w-0 flex-1 flex-col gap-2">
+        <span className="h-3.5 w-2/5 rounded-full bg-muted" />
+        <span className="h-3 w-4/5 rounded-full bg-muted" />
+      </span>
+      <span className="flex h-10 w-[88px] shrink-0 items-center justify-end">
+        <span className="h-3 w-12 rounded-full bg-muted" />
+      </span>
+    </div>
   );
 }
 
@@ -299,7 +347,8 @@ export function NotificationsMenu() {
 
   // The same panel in both shapes. On a phone it fills the screen, so it takes the full height.
   const body = (
-    <div className={cn("flex flex-col", desktop ? "max-h-[min(72vh,600px)]" : "h-full")}>
+    // `contain: paint` clips anything the list draws, so a skeleton or row can't add a scrollbar to the page behind.
+    <div className={cn("flex flex-col [contain:paint]", desktop ? "h-[min(72vh,600px)]" : "h-full")}>
       <div className="flex h-12 shrink-0 items-center gap-1 pl-4 pr-2">
         {!desktop && <IconButton label="Close notifications" icon={X} onClick={close} />}
         <h2 className="min-w-0 flex-1 truncate text-[16px] font-medium text-foreground">Notifications</h2>
@@ -323,14 +372,20 @@ export function NotificationsMenu() {
         </TabButton>
       </div>
 
-      <div ref={scrollRef} className="custom-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain">
+      <div ref={scrollRef} className="custom-scrollbar min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
         {list.length === 0 ? (
           <p className="px-4 py-10 text-center text-[13px] text-muted-foreground">{emptyCopy}</p>
         ) : (
           <>
             <ul>{visible.map(rowFor)}</ul>
             <div ref={sentinelRef} aria-hidden="true" />
-            {loadingMore && <ListSkeleton rows={2} />}
+            {loadingMore && (
+              <div role="status">
+                <span className="sr-only">Loading more notifications</span>
+                <RowSkeleton />
+                <RowSkeleton />
+              </div>
+            )}
             {!hasMore && (
               <p className="px-4 py-4 text-center text-[12px] text-muted-foreground">You&apos;re all caught up.</p>
             )}

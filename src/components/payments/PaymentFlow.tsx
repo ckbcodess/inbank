@@ -3845,7 +3845,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {/* Action Buttons */}
             <div className="flex gap-3 items-center w-full pt-1">
               <Button
-                size="md"
+                size="xl"
                 type="button"
                 variant="outline"
                 onClick={() => setStage(1)}
@@ -3855,7 +3855,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 Back
               </Button>
               <Button
-                size="md"
+                size="xl"
                 type="button"
                 loading={phase === "submitting"}
                 onClick={() => {

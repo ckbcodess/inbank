@@ -239,7 +239,7 @@ export function ScanAndPayFlow({
               {/* Two Action Buttons: Outline on left, Primary on right */}
               <div className="flex w-full items-center gap-3">
                 <Button
-                  size="md"
+                  size="xl"
                   type="button"
                   variant="outline"
                   className="flex-1"
@@ -248,7 +248,7 @@ export function ScanAndPayFlow({
                   Share QR Code
                 </Button>
                 <Button
-                  size="md"
+                  size="xl"
                   type="button"
                   className="flex-1"
                   onClick={handleDownloadMyQr}
@@ -330,7 +330,7 @@ export function ScanAndPayFlow({
               {/* Two Action Buttons: Outline on left, Primary on right */}
               <div className="flex w-full items-center gap-3">
                 <Button
-                  size="md"
+                  size="xl"
                   type="button"
                   variant="outline"
                   className="flex-1"
@@ -339,7 +339,7 @@ export function ScanAndPayFlow({
                   Select from Gallery
                 </Button>
                 <Button
-                  size="md"
+                  size="xl"
                   type="button"
                   className="flex-1"
                   onClick={() => {
