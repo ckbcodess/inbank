@@ -94,6 +94,12 @@ export function PlanDisc({ planId, size = 48, onColour = false, className }: { p
   );
 }
 
+/** The plan's icon drawn bare, with no disc behind it, for a row in the Send & Pay hub's style. */
+export function PlanGlyph({ planId, size = 24, className }: { planId: ProductKey; size?: number; className?: string }) {
+  const Icon = PLAN_ICONS[planId];
+  return <Icon size={size} strokeWidth={1.6} aria-hidden="true" className={cn("text-foreground", className)} />;
+}
+
 /**
  * The product's icon, large and faint, to crop into a card's corner (the card places it with `className`). It is the
  * product's own mark and sits behind the text, never under it: the card keeps its text clear of it.

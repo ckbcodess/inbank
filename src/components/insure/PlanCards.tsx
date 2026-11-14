@@ -12,7 +12,8 @@
  * In every look the status sits alone at the bottom left. A card carries one quiet line about what the customer holds (`status`), amber when it needs them. Its descriptor
  * (`line`) always shows, whatever the status. A price shows only when `alwaysPrice` is set (the salary advance: how much
  * you can take is the point). A card either calls `onOpen` or links to `href`. All three looks are the same size, so
- * shelves line up from page to page.
+ * shelves line up from page to page. The two list layouts are one column of Send & Pay style rows, with the plan's icon or
+ * its picture; the look is not used there.
  */
 
 import { useMemo } from "react";
@@ -21,8 +22,9 @@ import type { InsurancePlan } from "@/lib/insurance-plans";
 import { useInsureCards, type GatePromptStyle, type PlanCardLayout, type PlanCardLook } from "@/lib/insure-cards-store";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
-import { PlanDisc, PlanImage, PlanMark, planToneStyle, type ProductKey } from "@/components/insure/parts";
+import { PlanDisc, PlanGlyph, PlanImage, PlanMark, planToneStyle, type ProductKey } from "@/components/insure/parts";
 import { Badge } from "@/components/ui/badge";
+import { ChevronRight } from "@/components/ui/icons";
 import { GLASS_TILE_CLASS, GLASS_TILE_HOVER_CLASS } from "@/components/ui/list-card";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +44,77 @@ export interface ProductStatus {
 
 /** Status chips are labels, so Title Case ("2 Policies · 1 Needs Attention"). */
 const titleCase = (t: string) => t.replace(/(^|\s)([a-z])/g, (_, sp: string, c: string) => sp + c.toUpperCase());
+
+/**
+ * The list layouts: one row per product in the Send & Pay hub's tile style (a fill, a bare icon, the name, the chevron).
+ * `withImage` swaps the icon for the product's picture. The status sits under the descriptor, amber when it needs them.
+ */
+function ProductRow({
+  id,
+  name,
+  line,
+  price,
+  status,
+  image,
+  alwaysPrice,
+  withImage,
+  onOpen,
+  href,
+  disabled,
+}: Pick<Parameters<typeof ProductCard>[0], "id" | "name" | "line" | "price" | "status" | "image" | "alwaysPrice" | "onOpen" | "href" | "disabled"> & {
+  withImage: boolean;
+}) {
+  const showPrice = Boolean(price) && alwaysPrice;
+  const lead = withImage ? (
+    <PlanImage planId={id} src={image} className="size-14 shrink-0 rounded-xl" />
+  ) : (
+    <span className="flex size-10 shrink-0 items-center justify-center">
+      <PlanGlyph planId={id} size={24} />
+    </span>
+  );
+  const body = (
+    <>
+      <span className="flex min-w-0 items-center gap-3">
+        {lead}
+        <span className="flex min-w-0 flex-col gap-0.5">
+          <span className="truncate text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{name}</span>
+          {line && <span className="text-[14px] text-muted-foreground">{line}</span>}
+          {showPrice && price && (
+            <span className="tabular text-[14px]">
+              <span className="text-muted-foreground">{`${price.label} `}</span>
+              {price.amount}
+              {price.unit && <span className="text-muted-foreground">{` ${price.unit}`}</span>}
+            </span>
+          )}
+          {status && (
+            <span className={cn("tabular text-[12px]", status.attention ? "text-warning-text" : "text-muted-foreground")}>{titleCase(status.text)}</span>
+          )}
+        </span>
+      </span>
+      <ChevronRight size={20} aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform duration-hover group-hover:text-foreground" />
+    </>
+  );
+  const classes = cn(
+    "group flex w-full items-center justify-between gap-3 rounded-2xl bg-[var(--tile)] p-3 text-left transition duration-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+    disabled ? "opacity-60" : "hover:bg-[var(--tile-hover)]",
+  );
+
+  if (disabled) {
+    return <div className={classes}>{body}</div>;
+  }
+  if (href) {
+    return (
+      <Link href={href} className={classes}>
+        {body}
+      </Link>
+    );
+  }
+  return (
+    <button type="button" onClick={onOpen} className={cn(classes, "cursor-pointer")}>
+      {body}
+    </button>
+  );
+}
 
 export function ProductCard({
   id,
@@ -72,6 +145,24 @@ export function ProductCard({
   /** Shown quiet and not openable. */
   disabled?: boolean;
 }) {
+  if (layout === "list-icons" || layout === "list-image") {
+    return (
+      <ProductRow
+        id={id}
+        name={name}
+        line={line}
+        price={price}
+        status={status}
+        image={image}
+        alwaysPrice={alwaysPrice}
+        withImage={layout === "list-image"}
+        onOpen={onOpen}
+        href={href}
+        disabled={disabled}
+      />
+    );
+  }
+
   const single = layout === "single";
   const showPrice = Boolean(price) && alwaysPrice;
 
@@ -197,6 +288,8 @@ const CARD_LOOKS = [
 const CARD_LAYOUTS = [
   { id: "grid", label: "Two columns" },
   { id: "single", label: "One column" },
+  { id: "list-icons", label: "List with icons" },
+  { id: "list-image", label: "List with card images" },
 ];
 const GATE_STYLES = [
   { id: "row", label: "Slim row" },

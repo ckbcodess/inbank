@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { Bell, ChevronRight, Lock, Smartphone, SlidersHorizontal, User, X } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { maskMobile } from "@/lib/auth-shared";
 import { useSession } from "@/lib/session-store";
 import { closeSettings, showSettingsSection, useSettingsModal, type SettingsSection } from "@/lib/settings-modal";
 import { cn } from "@/lib/utils";
-import { AlertsPane, DevicesPane, PreferencesPane, ProfilePane, SecurityPane, type SettingsData } from "./SettingsPanes";
+import { AlertsPane, DevicesPane, PreferencesPane, ProfilePane, SecurityPane, SignOutAllDialog, type SettingsData } from "./SettingsPanes";
 
 /** Settings in one place: a modal beside a section list on desktop, a bottom sheet that drills in on phone. */
 
@@ -42,6 +43,8 @@ export default function SettingsDialog() {
   // What the customer has changed this session, over what the account already says. Held here so it survives
   // closing and reopening the modal.
   const [changes, setChanges] = useState<Partial<SettingsData>>({});
+  // The sign-out-all confirmation lives beside this dialog, not inside it (see `SignOutAllDialog`).
+  const [confirmSignOutAll, setConfirmSignOutAll] = useState(false);
 
   if (!actor) return null;
 
@@ -58,9 +61,10 @@ export default function SettingsDialog() {
 
   // Desktop always has a section open; on a phone no section means the list.
   const active: SettingsSection = section ?? "profile";
-  const paneProps = { data, update, onBackToMenu: () => showSettingsSection("menu") };
+  const paneProps = { data, update, onBackToMenu: () => showSettingsSection("menu"), onSignOutAll: () => setConfirmSignOutAll(true) };
 
   return (
+    <>
     <Dialog
       open={open}
       onOpenChange={(next) => {
@@ -78,13 +82,10 @@ export default function SettingsDialog() {
               section !== null && "max-sm:hidden",
             )}
           >
-            <div className="flex h-12 items-center justify-between pl-3 sm:hidden">
+            <div className="flex h-12 items-center justify-between pl-3 pr-2 sm:hidden">
               <h2 className="text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground">Settings</h2>
-              <DialogClose
-                aria-label="Close settings"
-                className="flex size-11 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors duration-hover hover:text-foreground"
-              >
-                <X size={18} />
+              <DialogClose render={<Button variant="ghost" size="md" aria-label="Close settings" />}>
+                <X size={20} />
               </DialogClose>
             </div>
 
@@ -124,13 +125,13 @@ export default function SettingsDialog() {
 
           </nav>
 
-          <div className={cn("relative flex min-h-0 min-w-0 flex-1 flex-col", section === null && "max-sm:hidden")}>
-            <DialogClose
-              aria-label="Close settings"
-              className="absolute right-4 top-4 z-10 flex size-10 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors duration-hover hover:text-foreground max-sm:hidden"
-            >
-              <X size={18} />
-            </DialogClose>
+          <div className={cn("flex min-h-0 min-w-0 flex-1 flex-col", section === null && "max-sm:hidden")}>
+            {/* The header row holds the close button alone, on its own line above the page title. Desktop only: the phone sheet has its own. */}
+            <div className="flex shrink-0 justify-end px-3 pt-3 max-sm:hidden">
+              <DialogClose render={<Button variant="ghost" size="md" aria-label="Close settings" />}>
+                <X size={20} />
+              </DialogClose>
+            </div>
 
             {active === "profile" && <ProfilePane key="profile" name={actor.name} {...paneProps} />}
             {active === "preferences" && <PreferencesPane key="preferences" {...paneProps} />}
@@ -141,5 +142,7 @@ export default function SettingsDialog() {
         </div>
       </DialogContent>
     </Dialog>
+    <SignOutAllDialog open={confirmSignOutAll} onOpenChange={setConfirmSignOutAll} actorId={actor.id} />
+    </>
   );
 }

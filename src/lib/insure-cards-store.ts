@@ -12,7 +12,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export type PlanCardLook = "corner" | "watermark" | "rising" | "image";
-export type PlanCardLayout = "grid" | "single";
+/** Two columns, one column of tall cards, or one column of Send & Pay style rows: with the plan's icon, or with its picture. */
+export type PlanCardLayout = "grid" | "single" | "list-icons" | "list-image";
 /** What a customer who can't use the area yet sees: one slim row, a setup card with its steps, or a progress track. */
 export type GatePromptStyle = "row" | "card" | "track";
 

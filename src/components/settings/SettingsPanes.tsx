@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, Laptop, Monitor, Moon, Smartphone, Sun } from "@/components/ui/icons";
 import { useTheme } from "next-themes";
@@ -8,12 +8,15 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Modal } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { PASSWORD_RULES, maskEmail, passwordMeetsRules } from "@/lib/auth-shared";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
-import { useSession } from "@/lib/session-store";
+import { useSession, useSessionHydrated } from "@/lib/session-store";
+import { useTrustedDevice } from "@/lib/device-trust";
+import { otherDevicesFor, useLinkedDevices, type LinkedDevice } from "@/lib/linked-devices";
 import { shrinkPhoto, useProfilePhoto, useProfilePhotos } from "@/lib/profile-photo";
 import { switchTheme } from "@/lib/theme-transition";
 import { cn } from "@/lib/utils";
@@ -34,18 +37,20 @@ export interface PaneProps {
   update: (patch: Partial<SettingsData>) => void;
   /** Phone only: back to the section list. */
   onBackToMenu: () => void;
+  /** Opens the sign-out-all confirmation, which is rendered beside the Settings dialog (see `SignOutAllDialog`). */
+  onSignOutAll?: () => void;
 }
 
 /* ── Shared pieces ─────────────────────────────────────────────────────────── */
 
 function PaneShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="custom-scrollbar scroll-fade flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 pb-6 sm:px-10 sm:pb-8 sm:pt-8">{children}</div>
+    <div className="custom-scrollbar scroll-fade flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 pb-6 sm:px-6 sm:pb-4 sm:pt-2">{children}</div>
   );
 }
 
 /** The pane's title. On a phone it carries the back arrow to the section list. */
-function PaneHeader({ title, onBack }: { title: string; onBack: () => void }) {
+function PaneHeader({ title, onBack, action }: { title: string; onBack: () => void; action?: React.ReactNode }) {
   return (
     <div className="flex h-12 shrink-0 items-center gap-1 sm:mb-2 sm:h-10">
       <button
@@ -57,6 +62,7 @@ function PaneHeader({ title, onBack }: { title: string; onBack: () => void }) {
         <ChevronLeft size={18} />
       </button>
       <h2 className="text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground sm:text-[16px]">{title}</h2>
+      {action ? <div className="ml-auto shrink-0">{action}</div> : null}
     </div>
   );
 }
@@ -94,7 +100,7 @@ function Row({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-4">
+    <div className="flex items-center justify-between gap-4 py-4 sm:py-3">
       <div className="flex min-w-0 flex-col gap-0.5">
         <span id={titleId} className="text-[14px] text-foreground">
           {title}
@@ -117,7 +123,7 @@ function formatMobile(local: string) {
 /** A fact about the customer: the label small and muted, the value under it at body size, an action on the right. */
 function FactRow({ label, action, children }: { label: string; action?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-4">
+    <div className="flex items-center justify-between gap-4 py-4 sm:py-3">
       <div className="flex min-w-0 flex-col gap-1">
         <span className="text-[12px] text-muted-foreground">{label}</span>
         <span className="min-w-0 truncate text-[14px] text-foreground">{children}</span>
@@ -154,8 +160,8 @@ function ProfilePhotoRow({ name }: { name: string }) {
   }
 
   return (
-    <div className="flex items-center gap-4 pb-4 pt-2">
-      <span className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-[28px] font-medium text-primary-foreground">
+    <div className="flex items-center gap-4 pb-4 pt-2 sm:pb-2 sm:pt-0">
+      <span className="flex size-24 shrink-0 sm:size-20 items-center justify-center overflow-hidden rounded-full bg-primary text-[28px] font-medium text-primary-foreground">
         {/* eslint-disable-next-line @next/next/no-img-element -- a small data URL from the profile photo store */}
         {photo ? <img src={photo} alt="" className="size-full object-cover" /> : initials}
       </span>
@@ -256,6 +262,48 @@ export function ProfilePane({ name, data, update, onBackToMenu }: PaneProps & { 
   );
 }
 
+/**
+ * Confirms signing out every other device. Rendered beside the Settings dialog, not inside it: a dialog nested in
+ * Settings' popup is clipped by that popup and its scrim doesn't cover the page.
+ */
+export function SignOutAllDialog({ open, onOpenChange, actorId }: { open: boolean; onOpenChange: (open: boolean) => void; actorId: string }) {
+  const signedOut = useLinkedDevices((s) => s.signedOut[actorId]);
+  const signOutOthers = useLinkedDevices((s) => s.signOutOthers);
+  const count = otherDevicesFor(actorId, signedOut ?? []).length;
+
+  return (
+    <Modal
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Sign out of all other devices?"
+      size="sm"
+      footer={
+        <>
+          <Button variant="ghost" size="md" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            size="md"
+            onClick={() => {
+              signOutOthers(actorId);
+              onOpenChange(false);
+              toast("Signed out of all other devices");
+            }}
+          >
+            Sign out
+          </Button>
+        </>
+      }
+    >
+      <p className="text-[14px] leading-relaxed text-foreground">
+        {count === 1
+          ? "1 device will be signed out. It’ll need a one-time code the next time it signs in. This device stays signed in."
+          : `${count} devices will be signed out. They’ll need a one-time code the next time they sign in. This device stays signed in.`}
+      </p>
+    </Modal>
+  );
+}
+
 /** Changing the email asks for a code sent to the current one. The step stays inside the pane (no second modal on top of the first). */
 function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (patch: Partial<SettingsData>) => void; onDone: () => void }) {
   const [value, setValue] = useState("");
@@ -348,41 +396,115 @@ const TIMEOUT_OPTIONS = [
   { value: "30", label: "30 minutes" },
 ];
 
-/**
- * Linked devices, simulated. A fixed demo list so the place and the shape are there; signing a device out comes later
- * with the real session data. This device is always first.
- */
-const DEMO_DEVICES = [
-  { id: "this", kind: "laptop", name: "Chrome on Windows", place: "Accra", active: "Active now", current: true },
-  { id: "phone", kind: "phone", name: "GCB Mobile on iPhone", place: "Accra", active: "2 hours ago", current: false },
-  { id: "mac", kind: "desktop", name: "Safari on Mac", place: "Kumasi", active: "3 days ago", current: false },
-] as const;
-
 const DEVICE_ICONS = { laptop: Laptop, phone: Smartphone, desktop: Monitor } as const;
 
-/** Its own section in the Safety group. Shows the signed-in devices; signing one out comes later. */
-export function DevicesPane({ onBackToMenu }: PaneProps) {
+function formatWhen(ms: number) {
+  const d = new Date(ms);
+  const date = d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  const time = d.toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit", hour12: true }).toUpperCase();
+  return `${date}, ${time}`;
+}
+
+/** What this browser is, read from the browser itself. The place is a demo value; a real bank resolves it from the IP. */
+function thisDeviceName() {
+  if (typeof navigator === "undefined") return "This browser";
+  const ua = navigator.userAgent;
+  const browser = /Edg\//.test(ua) ? "Edge" : /Firefox\//.test(ua) ? "Firefox" : /Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "Browser";
+  const os = /Windows/.test(ua) ? "Windows" : /Mac OS X/.test(ua) ? "Mac" : /Android/.test(ua) ? "Android" : /iPhone|iPad/.test(ua) ? "iPhone" : /Linux/.test(ua) ? "Linux" : "this computer";
+  return `${browser} on ${os}`;
+}
+
+/**
+ * Its own section in the Safety group. One list of every device that can get into the account: signed in now,
+ * signed in before, and the ones that skip the one-time code. Signing a device out also ends its trust. State lives in
+ * `lib/linked-devices.ts`; this device is built from the live session, never from the seed.
+ */
+export function DevicesPane({ onBackToMenu, onSignOutAll }: PaneProps) {
+  const actor = useSession((s) => s.actor);
+  const signedInAt = useSession((s) => (actor ? s.signIns[actor.id] : undefined));
+  const trustedHere = useTrustedDevice();
+  const signedOut = useLinkedDevices((s) => (actor ? s.signedOut[actor.id] : undefined));
+  const signOutDevice = useLinkedDevices((s) => s.signOutDevice);
+  const hydrated = useSessionHydrated();
+
+  const devices = useMemo<LinkedDevice[]>(() => {
+    if (!actor) return [];
+    const now = Date.now();
+    const here: LinkedDevice = {
+      id: "this",
+      kind: "laptop",
+      name: thisDeviceName(),
+      place: "Accra, Greater Accra",
+      signedIn: signedInAt ?? now,
+      lastActive: now,
+      trusted: !!trustedHere,
+    };
+    return [here, ...otherDevicesFor(actor.id, signedOut ?? [])];
+  }, [actor, signedInAt, trustedHere, signedOut]);
+
+  if (!hydrated || !actor) return null;
+  const others = devices.filter((d) => d.id !== "this");
+
   return (
     <PaneShell>
       <PaneHeader title="Linked devices" onBack={onBackToMenu} />
+      <div className="hidden grid-cols-[minmax(14rem,2fr)_minmax(0,1fr)_minmax(0,1fr)_96px] items-center gap-4 pb-2 text-[12px] text-muted-foreground sm:grid">
+        <span>Device</span>
+        <span>Signed in</span>
+        <span>Last active</span>
+        <span />
+      </div>
       <Rows>
-        {DEMO_DEVICES.map((d) => {
+        {devices.map((d) => {
           const Icon = DEVICE_ICONS[d.kind];
+          const current = d.id === "this";
           return (
-            <div key={d.id} className="flex items-center gap-4 py-4">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                <Icon size={18} aria-hidden="true" />
-              </span>
-              <div className="flex min-w-0 flex-col gap-0.5">
-                <span className="truncate text-[14px] text-foreground">{d.name}</span>
-                <span className="truncate text-[12px] text-muted-foreground">
-                  {d.current ? `${d.place} · This device` : `${d.place} · ${d.active}`}
+            <div key={d.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 py-4 sm:grid-cols-[minmax(14rem,2fr)_minmax(0,1fr)_minmax(0,1fr)_96px]">
+              <div className="flex min-w-0 items-center gap-4">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <Icon size={15} aria-hidden="true" />
                 </span>
+                <div className="flex min-w-0 flex-col gap-0.5">
+                  <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-foreground">
+                    <span className="min-w-0">{d.name}</span>
+                  </span>
+                  <span className="break-words text-[12px] text-muted-foreground">
+                    <span>{d.place}</span>
+                  </span>
+                </div>
               </div>
+              <span className="tabular hidden text-[12px] text-muted-foreground sm:block">{formatWhen(d.signedIn)}</span>
+              <span className="tabular hidden text-[12px] text-muted-foreground sm:block">{current ? "Active now" : formatWhen(d.lastActive)}</span>
+              <div className="flex justify-end">
+                {current ? (
+                  <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[12px] text-muted-foreground">This device</span>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      signOutDevice(actor.id, d.id);
+                      toast(`Signed out of ${d.name}`);
+                    }}
+                  >
+                    Sign out
+                  </Button>
+                )}
+              </div>
+              <span className="tabular col-span-2 pl-14 text-[12px] text-muted-foreground sm:hidden">
+                {current ? "Active now" : `Last active ${formatWhen(d.lastActive)}`}
+              </span>
             </div>
           );
         })}
       </Rows>
+      {others.length > 0 ? (
+        <div className="mt-16 flex justify-center">
+          <Button variant="destructive" size="md" onClick={() => onSignOutAll?.()}>
+            Sign out of all other devices
+          </Button>
+        </div>
+      ) : null}
     </PaneShell>
   );
 }

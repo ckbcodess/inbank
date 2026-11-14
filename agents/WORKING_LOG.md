@@ -182,6 +182,14 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-14
+- Decision: Linked devices is one list, not separate "trusted" and "signed in" lists. Columns: Device, Signed in, Last active. Trust shows as "Skips the code" under the place. Sign out is one tap per row and ends that device's trust; "Sign out of all other devices" confirms with its consequence. This device can't be removed here. Store: `lib/linked-devices.ts` (seeded per persona; this device comes from the live session and device-trust).
+- Gap: Business Settings has no linked devices pane (Reuse). The Demo hub "Welcome back" entry doesn't seed this list yet. Place and the current device's location are demo values.
+- Decision: Linked devices names and places wrap instead of truncating. "Sign out" fades in on row hover or focus (always shown on touch, `pointer-coarse`). `SettingsPanes.tsx` `DevicesPane`.
+- Decision: Insure "Card layout" Dev Mode switch gains "List with icons" and "List with card images": one column of Send & Pay style rows (bare plan icon, or the product picture). Look is ignored in list layouts. Pick one and delete the others plus the Dev Mode switch when chosen (`components/insure/PlanCards.tsx`, `lib/insure-cards-store.ts`). Shared by Insure, Invest and Loans, not yet viewed in a browser.
+- Question (for the bank): how does the GCB Virtual Account relate to G-Money, GCB's existing e-money wallet (*422#, any network, links to GCB accounts)? Is it a deposit account or an e-money wallet under BoG KYC tier limits, and does it earn interest? Until answered, a visible second "wallet" for GCB holders risks duplicating G-Money.
+- Discovery: research on the virtual account's value (2026-11-14). For GCB holders, a second general-purpose balance adds a choice, not a capability. The value people adopt elsewhere is purpose-named sub-balances (Nubank Caixinhas, Monzo Pots) and shared collection links (monobank Banka). Direction proposed: jars on any account, plus shared jars as the new-to-GCB entry point. Not decided.
+
 ### 2026-11-13
 
 - `Decision`: page-header actions and dialog buttons on the main pages use the default size, so header buttons sit at the same size side by side (Cards, My Accounts, Beneficiaries, Scheduled payments, Send & Pay). `md` read as too big there. Overrides of height or text size are removed. Flow and form actions are `xl` (Advance, Schedule, Deposit, Buy, Claim, Insure, holder actions) and Settings' save and cancel are `xl`. The flows in payments, invest, insure and loans are swept: full-width flow actions are `xl`, dialog footers are default, and overrides are gone. Remaining `md` on those screens are dialog and picker props, not buttons.

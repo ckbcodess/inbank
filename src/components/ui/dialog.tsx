@@ -102,6 +102,8 @@ export interface DialogContentProps extends DialogPrimitive.Popup.Props {
   size?: DialogSize
   showCloseButton?: boolean
   showDragHandle?: boolean
+  /** Classes for this dialog's own scrim. A dialog opened from inside another can raise it above the outer one. */
+  overlayClassName?: string
 }
 
 function DialogContent({
@@ -110,12 +112,13 @@ function DialogContent({
   size = "md",
   showCloseButton = false,
   showDragHandle = true,
+  overlayClassName,
   ...props
 }: DialogContentProps) {
   const popupRef = React.useContext(DialogPopupContext)
   return (
     <DialogPortal>
-      <DialogOverlay />
+      <DialogOverlay className={overlayClassName} />
       <DialogPrimitive.Popup
         ref={popupRef}
         data-slot="dialog-content"
@@ -283,6 +286,8 @@ export interface ModalProps {
   children: React.ReactNode
   footer?: React.ReactNode
   className?: string
+  /** Classes for the scrim, when this modal opens from inside another dialog and must sit above it. */
+  overlayClassName?: string
   bodyClassName?: string
   showCloseButton?: boolean
 }
@@ -295,12 +300,13 @@ export function Modal({
   children,
   footer,
   className,
+  overlayClassName,
   bodyClassName,
   showCloseButton = true,
 }: ModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent size={size} className={className} showCloseButton={false}>
+      <DialogContent size={size} className={className} overlayClassName={overlayClassName} showCloseButton={false}>
         {title && (
           <DialogHeader showCloseButton={showCloseButton}>
             <DialogTitle>{title}</DialogTitle>
