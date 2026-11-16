@@ -134,7 +134,7 @@ export interface DiscoveredAccount {
 }
 
 export interface ActivationPersonaConfig {
-  id: "single" | "multi" | "joint" | "mobile_sync";
+  id: "single" | "multi" | "joint" | "mobile_sync" | "diaspora";
   name: string;
   tag: string;
   description: string;
@@ -291,6 +291,40 @@ export const ACTIVATION_PERSONAS: Record<
     ],
   },
 };
+
+/**
+ * A customer whose account was opened with a passport (Link2Home and similar, usually living abroad). They have
+ * no Ghana Card, so they activate through the identity partner (`lib/identity-partner.ts`), which reads the passport
+ * and sends its number back. `ghanaCard` is empty on purpose.
+ */
+export const PASSPORT_PERSONA: ActivationPersonaConfig & { passport: string } = {
+  id: "diaspora",
+  name: "Ishmael Gyan",
+  tag: "Passport Account",
+  description: "Account opened abroad with a passport; no Ghana Card",
+  ghanaCard: "",
+  passport: "G4821567",
+  holderName: "Ishmael Gyan",
+  phone: "+44 7700 900123",
+  email: "ishmael.gyan@example.com",
+  actorId: "u-single",
+  accounts: [
+    {
+      id: "acc-diaspora-1",
+      name: "Savings Account",
+      number: "3300 7712 8812",
+      type: "Savings",
+      currency: "GHS",
+      balance: 36800.0,
+      isPrimaryDefault: true,
+    },
+  ],
+};
+
+/** The account opened with this passport, if any. Only the demo persona's passport matches. */
+export function getPersonaByPassport(passport: string): ActivationPersonaConfig | null {
+  return passport.trim().toUpperCase() === PASSPORT_PERSONA.passport ? PASSPORT_PERSONA : null;
+}
 
 export function getPersonaByGhanaCard(card: string): ActivationPersonaConfig {
   const norm = card.trim().toUpperCase();

@@ -77,6 +77,13 @@ export const TOURS: Tour[] = [
     startRoute: "/activate?persona=multi",
     steps: [
       {
+        target: "activate-with-ghana-card",
+        route: "/activate",
+        title: "Choose the ID",
+        body: "Activation starts by asking which ID the account was opened with. Passport is the other path.",
+        action: "Click “With Ghana Card”",
+      },
+      {
         target: "activate-card",
         route: "/activate",
         title: "Enter the Ghana Card",
@@ -139,6 +146,13 @@ export const TOURS: Tour[] = [
         title: "“Yes — I have a GCB account”",
         body: "This routes an existing customer to activation, not account opening.",
         action: "Click the first option",
+      },
+      {
+        target: "activate-with-ghana-card",
+        route: "/activate",
+        title: "Choose the ID",
+        body: "Activation starts by asking which ID the account was opened with. Passport is the other path.",
+        action: "Click “With Ghana Card”",
       },
       {
         target: "activate-card",

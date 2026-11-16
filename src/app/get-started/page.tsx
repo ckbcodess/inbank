@@ -3,14 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  ChevronRight,
-  ExternalLink,
-  Landmark,
-  Plus,
-  UserCheck,
-} from "@/components/ui/icons";
+import { ExternalLink, Landmark, Plus, UserCheck } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
+import ChoiceRow from "@/components/auth/ChoiceRow";
 import OpenGcbAccountDialog from "@/components/accounts/OpenGcbAccountDialog";
 
 export default function GetStartedPage() {
@@ -21,21 +16,17 @@ export default function GetStartedPage() {
   const [screen, setScreen] = useState<1 | 2>(1);
   const [showCoosModal, setShowCoosModal] = useState(false);
 
-  function handleChooseExisting() {
-    router.push("/activate");
-  }
-
-  function handleChooseNew() {
-    setScreen(2);
-  }
-
-  function handleChooseCoos() {
-    setShowCoosModal(true);
-  }
-
-  function handleChooseWalletCard() {
-    router.push("/signup?flow=wallet_card");
-  }
+  const loginLine = (
+    <p className="text-center text-[13px] text-muted-foreground">
+      Already registered?{" "}
+      <Link
+        href="/login"
+        className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
+      >
+        Login
+      </Link>
+    </p>
+  );
 
   return (
     <>
@@ -58,137 +49,48 @@ export default function GetStartedPage() {
         {screen === 1 ? (
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-            {/* Option 1: GCB Account Holder -> Immediate route to /activate */}
-            <button
-              type="button"
-              data-tour="gs-existing"
-              onClick={handleChooseExisting}
-              className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-hover hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <UserCheck size={18} />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[15px] sm:text-[16px] font-medium text-foreground tracking-[var(--ls-tight)]">
-                    GCB Account Holder
-                  </span>
-                  <span className="text-[13px] sm:text-[13px] text-muted-foreground leading-snug mt-0.5">
-                    I already have a GCB account.
-                  </span>
-                </div>
-              </div>
-
-              <ChevronRight
-                size={20}
-                className="shrink-0 text-foreground/70 transition duration-hover group-hover:text-foreground"
+              {/* GCB account holder: /activate asks which ID the account was opened with */}
+              <ChoiceRow
+                dataTour="gs-existing"
+                icon={<UserCheck size={18} />}
+                title="GCB Account Holder"
+                description="I already have a GCB account."
+                onClick={() => router.push("/activate")}
               />
-            </button>
-
-            {/* Option 2: New to GCB -> Immediate transition to Step 2 */}
-            <button
-              type="button"
-              data-tour="gs-new"
-              onClick={handleChooseNew}
-              className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-hover hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Plus size={19} />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[15px] sm:text-[16px] font-medium text-foreground tracking-[var(--ls-tight)]">
-                    New to GCB
-                  </span>
-                  <span className="text-[13px] sm:text-[13px] text-muted-foreground leading-snug mt-0.5">
-                    I do not have a GCB account.
-                  </span>
-                </div>
-              </div>
-
-              <ChevronRight
-                size={20}
-                className="shrink-0 text-foreground/70 transition duration-hover group-hover:text-foreground"
+              <ChoiceRow
+                dataTour="gs-new"
+                icon={<Plus size={18} />}
+                title="New to GCB"
+                description="I do not have a GCB account."
+                onClick={() => setScreen(2)}
               />
-            </button>
-          </div>
-
-            <p className="text-center text-[13px] text-muted-foreground">
-              Already registered?{" "}
-              <Link
-                href="/login"
-                className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
-              >
-                Login
-              </Link>
-            </p>
+            </div>
+            {loginLine}
           </div>
         ) : (
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-            {/* Step 2 Option 1: Open a GCB Account -> Immediate COOS modal */}
-            <button
-              type="button"
-              data-tour="gs-cos"
-              onClick={handleChooseCoos}
-              className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-hover hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Landmark size={18} />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[15px] sm:text-[16px] font-medium text-foreground tracking-[var(--ls-tight)]">
-                    Open a GCB Account
-                  </span>
-                  <span className="text-[13px] sm:text-[13px] text-muted-foreground leading-snug mt-0.5">
-                    Open an account and access Internet Banking.
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition duration-hover group-hover:text-foreground">
-                <ExternalLink size={18} />
-              </div>
-            </button>
-
-            {/* Step 2 Option 2: Use a Wallet or Card -> Immediate route to /signup */}
-            <button
-              type="button"
-              data-tour="gs-walletcard"
-              onClick={handleChooseWalletCard}
-              className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-hover hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Plus size={18} />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[15px] sm:text-[16px] font-medium text-foreground tracking-[var(--ls-tight)]">
-                    Use a Wallet or Card
-                  </span>
-                  <span className="text-[13px] sm:text-[13px] text-muted-foreground leading-snug mt-0.5">
-                    Use mobile money or a bank card.
-                  </span>
-                </div>
-              </div>
-
-              <ChevronRight
-                size={20}
-                className="shrink-0 text-foreground/70 transition duration-hover group-hover:text-foreground"
+              <ChoiceRow
+                dataTour="gs-cos"
+                icon={<Landmark size={18} />}
+                title="Open a GCB Account"
+                description="Open an account and access Internet Banking."
+                onClick={() => setShowCoosModal(true)}
+                end={
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition duration-hover group-hover:text-foreground">
+                    <ExternalLink size={18} />
+                  </div>
+                }
               />
-            </button>
-          </div>
-
-            <p className="text-center text-[13px] text-muted-foreground">
-              Already registered?{" "}
-              <Link
-                href="/login"
-                className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
-              >
-                Login
-              </Link>
-            </p>
+              <ChoiceRow
+                dataTour="gs-walletcard"
+                icon={<Plus size={18} />}
+                title="Use a Wallet or Card"
+                description="Use mobile money or a bank card."
+                onClick={() => router.push("/signup?flow=wallet_card")}
+              />
+            </div>
+            {loginLine}
           </div>
         )}
       </AuthLayout>

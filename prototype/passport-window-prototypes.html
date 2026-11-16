@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Passport Window: 3 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--bg:#fafaf9;--band:#efeee9;--surf:#fff;--modal:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amh:#ffd966;--ok:#047857;--err:#b42318;--scrim:rgba(0,0,0,.4);--shadow:0 24px 60px -24px rgba(0,0,0,.3);--wshadow:0 30px 80px -10px rgba(0,0,0,.45),0 0 0 1px rgba(0,0,0,.08);--chrome:#eef0f3;--ty:#3b5bdb;--tybg:#ffffff}
+  [data-theme=dark]{--page:#050505;--bg:#0b0b0b;--band:#151515;--surf:#141414;--modal:#181818;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--ok:#34d399;--err:#f97066;--scrim:rgba(0,0,0,.65);--shadow:0 24px 60px -24px rgba(0,0,0,.9);--wshadow:0 30px 80px -10px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.08);--chrome:#202227;--tybg:#16181c}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,h4,p{margin:0;padding:0;font-weight:inherit}
+  .tab{font-variant-numeric:tabular-nums}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px} .med{font-weight:500}
+  .bar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:10px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .ctl{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu)}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1100px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:24px 16px 64px;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .legend{max-width:720px;font-size:12px;color:var(--mu);line-height:1.6;text-align:center}
+
+  /* the browser viewport the app lives in */
+  .vp{position:relative;overflow:hidden;background:var(--bg);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--shadow);max-width:100%}
+  .vp.desk{width:1080px;height:720px}
+  .vp.phone{width:390px;height:780px;border-radius:28px}
+  .vp .band{position:absolute;inset:0 0 auto 0;height:260px;background:var(--band)}
+  .vp .appbar{position:relative;height:56px;display:flex;align-items:center;padding:0 24px;gap:8px;font-weight:500;font-size:14px}
+  .logo{width:24px;height:24px;border-radius:6px;background:var(--am);color:#111;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+  .card{position:relative;margin:24px auto 0;width:440px;background:var(--surf);border:1px solid var(--bd);border-radius:10px;padding:32px;box-shadow:var(--shadow)}
+  .vp.phone .card{width:auto;margin:0;border:0;border-radius:0;box-shadow:none;padding:20px 12px;background:transparent}
+  .vp.phone .appbar{padding:0 12px}
+  .back{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--mu);margin-bottom:20px}
+  .back:hover{color:var(--tx)}
+  .steps{display:flex;gap:4px;margin-bottom:24px}
+  .steps i{flex:1;height:4px;border-radius:999px;background:var(--tile)}
+  .steps i.on{background:var(--am)}
+  .t{font-size:22px;font-weight:500;letter-spacing:-.02em}
+  .d{font-size:14px;color:var(--mu);line-height:1.5;margin-top:8px}
+  .body{display:flex;flex-direction:column;gap:16px;margin-top:32px}
+  .lbl{font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;min-height:20px}
+  .link{font-size:13px;font-weight:400;color:var(--tx);text-decoration:underline;text-decoration-color:var(--bd);text-underline-offset:4px}
+  .link:hover{text-decoration-color:var(--tx)}
+  input.inp{outline:none;background:var(--tile);border:1px solid var(--bd);border-radius:8px;height:44px;width:100%;padding:0 12px;font-size:14px;font-variant-numeric:tabular-nums}
+  input.inp:focus{border-color:var(--am)}
+  input.inp[aria-invalid=true]{border-color:var(--err)}
+  .err{font-size:12px;color:var(--err);margin-top:8px;line-height:1.5}
+  .btn{height:44px;padding:0 16px;border-radius:8px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%}
+  .btn.md{height:40px}
+  .btn.am{background:var(--am);color:#111} .btn.am:hover{background:var(--amh)}
+  .btn.out{border:1px solid var(--bd);background:var(--surf)} .btn.out:hover{background:var(--tile)}
+  .btn.dis{opacity:.4;pointer-events:none}
+  .legal{text-align:center;font-size:12px;color:var(--mu);line-height:1.6}
+  .actions{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+  .ring{width:16px;height:16px;border-radius:50%;border:2px dashed currentColor;animation:spin .9s linear infinite;flex:none;opacity:.7;display:inline-block}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  @keyframes pop{from{opacity:0;transform:translate(-50%,-48%) scale(.98)}to{opacity:1;transform:translate(-50%,-50%)}}
+  @keyframes sheet{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+  @keyframes flash{0%,100%{box-shadow:var(--wshadow)}50%{box-shadow:0 0 0 4px var(--am),var(--wshadow)}}
+  .in{animation:in .25s ease}
+  .tymark{width:18px;height:18px;border-radius:5px;background:var(--ty);color:#fff;font-size:9px;display:inline-flex;align-items:center;justify-content:center;font-weight:500;flex:none}
+  .tybig{width:40px;height:40px;border-radius:10px;font-size:14px}
+  .wait{display:flex;align-items:center;gap:12px;padding:16px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+  .rows{display:flex;flex-direction:column}
+  .r{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd)}
+  .r:last-child{border-bottom:0}
+  .r .k{color:var(--mu);font-size:13px}
+  .r .v{text-align:right;display:flex;flex-direction:column;gap:2px}
+  .okline{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--ok);justify-content:flex-end}
+  .placeholder{border:1px dashed var(--bd);border-radius:10px;padding:24px;text-align:center;color:var(--mu);font-size:13px;line-height:1.6}
+
+  /* our modal */
+  .scrim{position:absolute;inset:0;background:var(--scrim);z-index:20;animation:in .15s ease}
+  .modal{position:absolute;z-index:21;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;background:var(--modal);border:1px solid var(--bd);border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:var(--shadow);animation:pop .15s ease}
+  .vp.phone .modal{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:10px 10px 0 0;padding:20px 12px 24px;animation:sheet .2s ease}
+  .modal h3{font-size:18px;font-weight:500;letter-spacing:-.01em}
+  .mrow{display:flex;gap:12px;align-items:flex-start}
+  .mrow .ico{width:36px;height:36px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none}
+  .mrow p{line-height:1.5}
+  .x{width:40px;height:40px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu);margin:-8px -8px 0 0}
+  .x:hover{background:var(--tile);color:var(--tx)}
+
+  /* the Truly You window */
+  .win{position:absolute;z-index:40;width:440px;height:580px;background:var(--tybg);border-radius:10px;box-shadow:var(--wshadow);display:flex;flex-direction:column;overflow:hidden}
+  .win.center{left:50%;top:50%;transform:translate(-50%,-50%);animation:pop .18s ease}
+  .win.flash{animation:flash .5s ease 2}
+  .vp.phone .win{inset:0;width:auto;height:auto;transform:none;border-radius:0;animation:sheet .22s ease}
+  .wtitle{height:36px;background:var(--chrome);display:flex;align-items:center;gap:8px;padding:0 4px 0 12px;font-size:12px;cursor:grab;user-select:none;flex:none}
+  .wtitle:active{cursor:grabbing}
+  .wtitle .grow{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wbtn{width:36px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:var(--mu)}
+  .wbtn:hover{background:var(--tileh);color:var(--tx)}
+  .wbtn.close:hover{background:#e5484d;color:#fff}
+  .url{height:36px;background:var(--chrome);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 8px 8px;flex:none}
+  .url span{flex:1;height:28px;border-radius:999px;background:var(--tybg);display:flex;align-items:center;gap:8px;padding:0 12px;font-size:12px;color:var(--mu)}
+  .url b{color:var(--tx);font-weight:400}
+  .mobbar{height:52px;display:flex;align-items:center;gap:8px;padding:0 8px;border-bottom:1px solid var(--bd);flex:none;background:var(--chrome)}
+  .mobbar .mid{flex:1;text-align:center;font-size:12px;line-height:1.3}
+  .tyb{flex:1;padding:28px 28px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;overflow:auto}
+  .tyb h4{font-size:18px;font-weight:500;letter-spacing:-.01em}
+  .tyb .k{font-size:12px;color:var(--mu)}
+  .tyb p{font-size:13px;color:var(--mu);line-height:1.6;max-width:320px}
+  .tybtn{height:44px;padding:0 24px;border-radius:999px;background:var(--ty);color:#fff;font-size:14px;font-weight:500;min-width:200px;text-align:center}
+  .pp{width:240px;height:160px;border:2px dashed var(--bd);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mu)}
+  .face{width:160px;height:160px;border:2px dashed var(--bd);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--mu)}
+  .sk{background:var(--tileh);border-radius:6px;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.5}}
+  .pair{display:flex;align-items:center;gap:12px;color:var(--mu)}
+  .share{width:100%;text-align:left;border:1px solid var(--bd);border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.7}
+  .tyfoot{font-size:11px;color:var(--mu);padding:12px;text-align:center;border-top:1px solid var(--bd);flex:none}
+
+  /* "Verify with Truly You" provider button, like "Continue with Google" */
+  .provider{height:44px;border:1px solid var(--bd);background:var(--surf);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:500;width:100%}
+  .provider:hover{background:var(--tile)}
+  .provider.dis{opacity:.4;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Activate: the passport modal and the Truly You window</h1>
+    <div class="row" style="gap:12px">
+      <div class="pills" id="pills"></div>
+      <div class="ctl"><div class="seg" id="dev"><button data-dev="desk" class="on">Desktop</button><button data-dev="phone">Phone</button></div></div>
+      <div class="ctl">Result <div class="seg" id="outcome"><button data-o="ok" class="on">Passes</button><button data-o="fail">Fails</button><button data-o="nomatch">No account</button></div></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+    </div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage">
+  <div class="vp desk" id="vp"></div>
+  <p class="legend">Start on the Ghana Card screen and tap <b>Use passport</b>. The Truly You window opens over the page, like a “Continue with Google” window. On desktop you can drag it by its title bar; on a phone it fills the screen, the way a browser opens a sign-in window there. Close it with × to see what the page says when it’s closed early. “Result” sets what Truly You and our account match return.</p>
+</div>
+
+<script>
+const I={
+  back:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+  lock:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+  pass:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M9 16h6"/></svg>',
+  shield:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4 3 7.5 7 9 4-1.5 7-5 7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>',
+  win:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>',
+  check:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+  cam:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  min:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>',
+  max:'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="14" height="14" rx="1"/></svg>',
+  swap:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg>'
+};
+const NOTES=[
+ ['The modal asks for the passport','“Use passport” opens a modal that says who it’s for, what happens next, and asks for the passport number. We check the number against an account there and then, so a wrong number is caught before Truly You opens. The window floats over the page with no dimming, like a real “Continue with Google” window. Fewest screens; the modal does three jobs.'],
+ ['Explain, then a “Verify with Truly You” button','The modal only explains, with Continue or Use Ghana Card. The card then turns into the passport step: the number, and a provider button styled like “Continue with Google”. The window opens centred over a dimmed page. One more screen, but each one does one thing, and the provider button tells people a partner window is coming.'],
+ ['Truly You reads the passport','The modal explains, and Continue opens the window straight away. Nobody types a passport number: Truly You reads it from the photo page and sends it back, then we look for the account. Lightest for the customer and no typing errors. The cost: a wrong-account case is only found after the scan and selfie, and it needs Truly You to return the number.']
+];
+let V=1, DEV='desk', OUT='ok';
+const fresh=()=>({screen:'id', card:'', pass:'', err:'', busy:false, modal:false, win:null, wx:null, wy:null, flash:false, found:''});
+let S=fresh();
+const $=s=>document.querySelector(s);
+
+/* helpers */
+function fmtCard(v){const d=v.replace(/\D/g,'').slice(0,10); if(!d) return ''; return 'GHA-'+d.slice(0,9)+(d.length>9?'-'+d.slice(9):'');}
+const cardOk=()=>S.card.replace(/\D/g,'').length===10;
+const passOk=()=>/^[A-Z0-9]{6,9}$/.test(S.pass);
+const passNo=()=>S.found||S.pass;
+const last4=()=>passNo().slice(-4);
+const stepIx=()=>({id:1,passport:1,waiting:2,closed:2,fail:2,matching:2,nomatch:2,selfie:2,review:3,done:4}[S.screen]||1);
+const stepsBar=()=>`<div class="steps">${Array.from({length:7},(_,i)=>`<i class="${i<stepIx()?'on':''}"></i>`).join('')}</div>`;
+const head=(t,d)=>`<button class="back" data-act="back">${I.back}<span>Back</span></button>${stepsBar()}<h2 class="t">${t}</h2>${d?`<p class="d">${d}</p>`:''}`;
+const NOMATCH='We couldn’t find a GCB account opened with this passport. Check it’s the one you gave the bank when you opened your account.';
+
+function passField(right=''){
+  return `<div><label class="lbl" for="pass"><span>Passport Number</span>${right}</label>
+  <input id="pass" class="inp" autocomplete="off" autocapitalize="characters" placeholder="For example, G1234567" value="${S.pass}" ${S.err?'aria-invalid="true"':''} />
+  ${S.err?`<p class="err in">${S.err}</p>`:''}</div>`;
+}
+
+/* card screens */
+function idScreen(){
+  return head('Verify Your Identity','Use your Ghana Card, or the passport your account was opened with.')+
+  `<div class="body"><div><label class="lbl" for="card"><span>Ghana Card Number</span><button type="button" class="link" data-act="usepass">Use passport</button></label>
+   <input id="card" class="inp" inputmode="numeric" autocomplete="off" placeholder="GHA-000000000-0" value="${S.card}" /></div>
+   <div class="actions"><button class="btn am ${cardOk()&&!S.busy?'':'dis'}" data-act="cardgo" id="go">${S.busy?'<span class="ring"></span>':''}Continue</button>
+   <p class="legal">By continuing, you agree to our <a class="link" style="font-size:12px" href="#">Terms</a> and <a class="link" style="font-size:12px" href="#">Privacy Policy</a>.</p></div></div>`;
+}
+function passportScreen(){ // V2 only
+  return head('Verify Your Passport','Enter the passport your account was opened with. Truly You then checks it in a secure window.')+
+  `<div class="body">${passField('<button type="button" class="link" data-act="usecard">Use Ghana Card</button>')}
+   <div class="actions"><button class="provider ${passOk()&&!S.busy?'':'dis'}" data-act="v2go" id="go">${S.busy?'<span class="ring"></span>':'<span class="tymark">TY</span>'}Verify with Truly You</button></div></div>`;
+}
+function waitingScreen(){
+  return head('Finish in the Truly You Window','Your check is open in a separate window. This page moves on by itself when it’s done.')+
+  `<div class="body"><div class="wait"><span class="ring" style="color:var(--mu)"></span><span class="grow" style="flex:1">Waiting for Truly You${S.pass&&V!==3?`<span class="s12 mu tab" style="display:block">Passport ···${last4()}</span>`:''}</span></div>
+   <div class="actions" style="align-items:center"><button class="link" data-act="refocus">Can’t see the window? Show it again</button><button class="link" data-act="cancel">Cancel</button></div></div>`;
+}
+function closedScreen(){
+  return head('Verification Not Finished','The Truly You window was closed before the check was done, so nothing was shared with us.')+
+  `<div class="body"><div class="actions"><button class="btn am" data-act="open">Open Truly You Again</button><button class="link" style="align-self:center" data-act="usecard">Use Ghana Card instead</button></div></div>`;
+}
+function failScreen(){
+  return head('We Couldn’t Verify Your Passport','Truly You couldn’t match your selfie to the photo page. This is usually glare, a blurred photo or low light.')+
+  `<div class="body"><div class="actions"><button class="btn am" data-act="open">Try Again</button><button class="link" style="align-self:center" data-act="help">Still stuck? Talk to us</button></div></div>`;
+}
+function matchingScreen(){
+  return head('Finding Your Account',`Truly You confirmed passport ···${last4()}. We’re looking for the account it was used to open.`)+
+  `<div class="body"><div class="wait"><span class="ring" style="color:var(--mu)"></span><span>Looking for your account</span></div></div>`;
+}
+function nomatchScreen(){
+  return head('No Account Found With This Passport',`Your passport ···${last4()} was verified, but no GCB account was opened with it. If you opened your account with a Ghana Card, use that instead.`)+
+  `<div class="body"><div class="actions"><button class="btn am" data-act="usecard">Use Ghana Card</button><button class="link" style="align-self:center" data-act="help">Talk to us</button></div></div>`;
+}
+function reviewScreen(){
+  return head('Review Your Details','Confirm your details match your account records.')+
+  `<div class="body"><div class="rows">
+    <div class="r"><span class="k">Name</span><span class="v">Akosua Mensah</span></div>
+    <div class="r"><span class="k">Identity</span><span class="v"><span class="tab">Passport ···${last4()}</span><span class="okline">${I.check} Verified by Truly You</span></span></div>
+    <div class="r"><span class="k">Account</span><span class="v tab">Link2Home Savings ···8812</span></div>
+    <div class="r"><span class="k">Mobile</span><span class="v tab">+44 •••• ••0123</span></div>
+  </div><div class="actions"><button class="btn am" data-act="next">Continue</button></div></div>`;
+}
+const selfieScreen=()=>head('Selfie Match','Center your face in the frame.')+`<div class="body"><div class="placeholder">Ghana Card path, unchanged.</div><button class="btn out" data-act="restart">Start again</button></div>`;
+const doneScreen=()=>head('Confirm Your Code','A 6-digit code has been sent to +44 •••• ••0123.')+`<div class="body"><div class="placeholder">Unchanged from here: code, password, PIN, dashboard.</div><button class="btn out" data-act="restart">Start again</button></div>`;
+
+/* our modal */
+function modal(){
+  if(!S.modal) return '';
+  const rows=`<div class="mrow"><span class="ico">${I.pass}</span><p>Only for GCB accounts opened with a passport, such as Link2Home accounts for Ghanaians living abroad. If you opened yours with a Ghana Card, use your Ghana Card.</p></div>
+    <div class="mrow"><span class="ico">${I.win}</span><p>Truly You, our verification partner, opens in a secure window to check your passport and take a selfie. It takes about two minutes, then you finish here.</p></div>`;
+  const ctaLabel = V===1?'Continue to Truly You':'Continue';
+  const ready = V===1 ? passOk()&&!S.busy : !S.busy;
+  return `<div class="scrim" data-act="closemodal"></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+    <div class="row" style="align-items:flex-start;flex-wrap:nowrap"><h3 id="mt">Verify With Your Passport</h3><button class="x" data-act="closemodal" aria-label="Close">${I.x}</button></div>
+    ${rows}
+    ${V===1?passField():''}
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn am md ${ready?'':'dis'}" data-act="modalgo" id="mgo">${S.busy?'<span class="ring"></span>':''}${ctaLabel}</button>
+      <button class="btn out md" data-act="usecard">Use Ghana Card</button>
+    </div>
+  </div>`;
+}
+
+/* the Truly You window */
+function tyBody(){
+  const w=S.win;
+  if(w===0) return `<div class="sk" style="width:40px;height:40px;border-radius:10px;margin-top:24px"></div><div class="sk" style="width:70%;height:16px"></div><div class="sk" style="width:85%;height:60px"></div><div class="sk" style="width:200px;height:44px;border-radius:999px;margin-top:auto"></div>`;
+  if(w===1) return `<div class="pair"><span class="logo" style="width:40px;height:40px;font-size:14px;border-radius:10px">G</span>${I.swap}<span class="tymark tybig">TY</span></div>
+    <h4>GCB Bank wants to confirm it’s you</h4>
+    <p>You’ll photograph your passport and take a selfie. Truly You then shares this with GCB Bank:</p>
+    <div class="share"><div>Your name and date of birth</div><div>Your passport number${V===3?'':' (to check it matches)'}</div><div>Whether the check passed</div></div>
+    <button class="tybtn" style="margin-top:auto" data-act="ty">Continue</button><a class="link s12" href="#">Truly You privacy notice</a>`;
+  if(w===2) return `<span class="k">Step 1 of 2</span><h4>Photograph your passport photo page</h4><div class="pp">${I.cam}</div><p>Lay it flat in good light, with no glare on the photo.</p><button class="tybtn" style="margin-top:auto" data-act="ty">Take photo</button>`;
+  if(w===3) return `<span class="k">Step 2 of 2</span><h4>Take a selfie</h4><div class="face">${I.cam}</div><p>We compare it with your passport photo.</p><button class="tybtn" style="margin-top:auto" data-act="ty">Take selfie</button>`;
+  return `<span class="ring" style="width:32px;height:32px;margin-top:120px;color:var(--ty);opacity:1"></span><h4>Checking your passport</h4><p>This window closes by itself and takes you back to GCB.</p>`;
+}
+function tyWindow(){
+  if(S.win===null) return '';
+  const urlTxt=`<b>verify.trulyyou.com</b>/gcb/session`;
+  if(DEV==='phone') return `<div class="win" role="dialog" aria-label="Truly You verification window">
+    <div class="mobbar"><button class="wbtn close" style="width:40px;height:40px" data-act="winclose" aria-label="Close window">${I.x}</button><div class="mid"><div class="med" style="font-size:13px">Truly You</div><div class="mu" style="display:inline-flex;gap:4px;align-items:center">${I.lock} verify.trulyyou.com</div></div><span style="width:40px"></span></div>
+    <div class="tyb">${tyBody()}</div></div>`;
+  const pos = S.wx===null ? 'center' : '';
+  const style = S.wx===null ? (V===1?'style="left:calc(50% + 120px)"':'') : `style="left:${S.wx}px;top:${S.wy}px"`;
+  return `<div class="win ${pos} ${S.flash?'flash':''}" id="win" ${style} role="dialog" aria-label="Truly You verification window">
+    <div class="wtitle" id="wtitle"><span class="tymark">TY</span><span class="grow">Truly You · Verify your identity</span><button class="wbtn" aria-label="Minimise">${I.min}</button><button class="wbtn" aria-label="Maximise">${I.max}</button><button class="wbtn close" data-act="winclose" aria-label="Close window">${I.x}</button></div>
+    <div class="url"><span>${I.lock}${urlTxt}</span></div>
+    <div class="tyb">${tyBody()}</div>
+    <div class="tyfoot">Truly You verifies identity for GCB Bank PLC</div></div>`;
+}
+
+/* render */
+function pills(){ $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1}</button>`).join(''); $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]}`; }
+function render(focusId){
+  const m={id:idScreen,passport:passportScreen,waiting:waitingScreen,closed:closedScreen,fail:failScreen,matching:matchingScreen,nomatch:nomatchScreen,review:reviewScreen,selfie:selfieScreen,done:doneScreen}[S.screen];
+  const dim = S.win!==null && V!==1 && DEV==='desk' ? '<div class="scrim" style="z-index:30"></div>' : '';
+  const vp=$('#vp'); vp.className='vp '+DEV;
+  vp.innerHTML=`<div class="band"></div><div class="appbar"><span class="logo">G</span>GCB Internet Banking</div><div class="card in">${m()}</div>${modal()}${dim}${tyWindow()}`;
+  if(focusId){const el=document.getElementById(focusId); if(el){el.focus(); el.setSelectionRange(el.value.length,el.value.length);}}
+}
+
+/* flow */
+function openWin(){
+  S.modal=false; S.screen='waiting'; S.win=0; S.wx=null; S.wy=null; render();
+  setTimeout(()=>{ if(S.win===0){S.win=1; render();} },800);
+}
+function finishWin(){
+  S.win=null;
+  if(OUT==='fail'){ S.screen='fail'; render(); return; }
+  if(V===3){
+    S.found='G4821567'; S.screen='matching'; render();
+    setTimeout(()=>{ if(S.screen!=='matching') return; S.screen = OUT==='nomatch'?'nomatch':'review'; render(); },900);
+    return;
+  }
+  S.screen='review'; render();
+}
+function matchThenOpen(focusId){ // V1 (in modal) and V2 (on card)
+  if(!passOk()||S.busy) return;
+  S.busy=true; S.err=''; render();
+  setTimeout(()=>{ S.busy=false;
+    if(OUT==='nomatch'){ S.err=NOMATCH; render(focusId); return; }
+    openWin();
+  },700);
+}
+function back(){
+  if(S.win!==null){ S.win=null; }
+  const s=S.screen;
+  if(s==='review'||s==='done'){ S.screen = s==='done'?'review':(V===2?'passport':'id'); if(V!==2&&s==='review'){S.modal=true;} render(); return; }
+  if(s==='passport'){ S.screen='id'; render(); return; }
+  if(s!=='id'){ S.screen = V===2?'passport':'id'; S.modal = V!==2; render(); return; }
+}
+
+document.addEventListener('click',e=>{
+  const p=e.target.closest('[data-v]'); if(p){V=+p.dataset.v; S=fresh(); pills(); render(); return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t; document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t)); return;}
+  const o=e.target.closest('[data-o]'); if(o){OUT=o.dataset.o; document.querySelectorAll('#outcome button').forEach(b=>b.classList.toggle('on',b===o)); return;}
+  const d=e.target.closest('[data-dev]'); if(d){DEV=d.dataset.dev; S.wx=null; S.wy=null; document.querySelectorAll('#dev button').forEach(b=>b.classList.toggle('on',b===d)); render(); return;}
+  const a=e.target.closest('[data-act]'); if(!a) return;
+  switch(a.dataset.act){
+    case 'usepass': S.modal=true; S.err=''; render(V===1?'pass':null); break;
+    case 'closemodal': S.modal=false; S.err=''; render('card'); break;
+    case 'usecard': S.modal=false; S.win=null; S.err=''; S.screen='id'; render('card'); break;
+    case 'modalgo': if(V===1) matchThenOpen('pass'); else if(V===2){ S.modal=false; S.screen='passport'; render('pass'); } else openWin(); break;
+    case 'v2go': matchThenOpen('pass'); break;
+    case 'cardgo': if(!cardOk()) break; S.busy=true; render(); setTimeout(()=>{S.busy=false; S.screen='selfie'; render();},600); break;
+    case 'ty': S.win++; render(); if(S.win===4) setTimeout(()=>{ if(S.win===4) finishWin(); },1500); break;
+    case 'winclose': S.win=null; S.screen='closed'; render(); break;
+    case 'open': openWin(); break;
+    case 'refocus': if(S.win!==null){ S.flash=true; render(); setTimeout(()=>{S.flash=false; const w=$('#win'); if(w) w.classList.remove('flash');},1000);} break;
+    case 'cancel': S.win=null; S.screen = V===2?'passport':'id'; S.modal = V!==2; render(); break;
+    case 'back': back(); break;
+    case 'help': alert('Prototype: opens the existing help and contact sheet.'); break;
+    case 'next': S.screen='done'; render(); break;
+    case 'restart': S=fresh(); render(); break;
+  }
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='card'){ S.card=fmtCard(e.target.value); e.target.value=S.card; const g=$('#go'); if(g) g.classList.toggle('dis',!cardOk()); }
+  if(e.target.id==='pass'){ S.pass=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,9); e.target.value=S.pass;
+    if(S.err){ S.err=''; render('pass'); return; }
+    const g=$('#go'); if(g&&S.screen==='passport') g.classList.toggle('dis',!passOk());
+    const m=$('#mgo'); if(m&&V===1) m.classList.toggle('dis',!passOk()); }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&S.modal){ S.modal=false; render('card'); }
+  if(e.key!=='Enter') return;
+  if(e.target.id==='card'){ e.preventDefault(); $('#go')?.click(); }
+  if(e.target.id==='pass'){ e.preventDefault(); matchThenOpen('pass'); }
+});
+/* drag the window by its title bar (desktop) */
+let drag=null;
+document.addEventListener('pointerdown',e=>{
+  const tb=e.target.closest('#wtitle'); if(!tb||e.target.closest('button')) return;
+  const w=$('#win'), vp=$('#vp').getBoundingClientRect(), r=w.getBoundingClientRect();
+  drag={dx:e.clientX-r.left, dy:e.clientY-r.top, vp};
+  w.classList.remove('center'); w.style.transform='none'; w.style.animation='none';
+  w.style.left=(r.left-vp.left)+'px'; w.style.top=(r.top-vp.top)+'px';
+});
+document.addEventListener('pointermove',e=>{
+  if(!drag) return; const w=$('#win'); if(!w) return;
+  S.wx=Math.max(-200,Math.min(drag.vp.width-120,e.clientX-drag.vp.left-drag.dx));
+  S.wy=Math.max(0,Math.min(drag.vp.height-40,e.clientY-drag.vp.top-drag.dy));
+  w.style.left=S.wx+'px'; w.style.top=S.wy+'px';
+});
+document.addEventListener('pointerup',()=>{drag=null;});
+pills(); render();
+</script>
+</body>
+</html>

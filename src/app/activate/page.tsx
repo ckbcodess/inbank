@@ -3,13 +3,15 @@
 import { AlertToast } from "@/components/ui/alert-toast";
 import Image from "next/image";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { parseOnboardingStep, type OnboardingStep } from "@/lib/onboarding-steps";
 import {
 
 
   Check,
+  IdCard,
+  Passport,
   User,
   Users,
 } from "@/components/ui/icons";
@@ -36,16 +38,37 @@ import { setFirstRun, setPendingReferral } from "@/lib/device-trust";
 import { ACTORS } from "@/lib/mock-data";
 import {
   ACTIVATION_PERSONAS,
+  PASSPORT_PERSONA,
   getPersonaByGhanaCard,
+  getPersonaByPassport,
   type ActivationPersonaConfig,
 } from "@/lib/activation";
 
 import { Field } from "@/components/ui/field";
 import { GhanaCardInput } from "@/components/ui/ghana-card-input";
 import { isCompleteGhanaCard } from "@/lib/ghana-card";
+import PassportVerifyModal from "@/components/auth/PassportVerifyModal";
+import ChoiceRow from "@/components/auth/ChoiceRow";
+import IdentityPartnerWindow from "@/components/auth/IdentityPartnerWindow";
+import {
+  maskPassport,
+  type PartnerProgress,
+  type PartnerResult,
+} from "@/lib/identity-partner";
 type Step = OnboardingStep;
 
 const RESEND_SECONDS = 30;
+/** Where a customer abroad gets help. The bank's own site until a diaspora contact channel is agreed (WORKING_LOG). */
+const GCB_HELP_URL = "https://www.gcbbank.com.gh";
+
+/**
+ * The passport path's second step, in place of our selfie: the identity partner's window is open, was closed early,
+ * came back, or we're matching its passport to an account.
+ */
+type PassportState = "waiting" | "closed" | "failed" | "expired" | "matching" | "no_account";
+
+const linkClass =
+  "inline-flex min-h-8 cursor-pointer items-center text-[13px] text-foreground underline decoration-border underline-offset-4 transition-colors duration-hover hover:decoration-foreground";
 
 function ActivateContent() {
   const router = useRouter();
@@ -66,7 +89,25 @@ function ActivateContent() {
     "single" | "multi" | "joint" | "mobile_sync"
   >(personaParam && ACTIVATION_PERSONAS[personaParam] ? personaParam : "multi");
 
-  const activePersona: ActivationPersonaConfig = ACTIVATION_PERSONAS[activePersonaKey];
+  // Passport path: the customer has no Ghana Card. The identity partner reads the passport; we match the account.
+  const [idMethod, setIdMethod] = useState<"ghana_card" | "passport">("ghana_card");
+  const [passportModalOpen, setPassportModalOpen] = useState(false);
+  const [partnerOpen, setPartnerOpen] = useState(false);
+  const [partnerSession, setPartnerSession] = useState(0);
+  const [partnerFlash, setPartnerFlash] = useState(0);
+  const [partnerProgress, setPartnerProgress] = useState<PartnerProgress>("opening");
+  const [passportState, setPassportState] = useState<PassportState>("waiting");
+  const [passportNumber, setPassportNumber] = useState("");
+  const [passportExpiry, setPassportExpiry] = useState("");
+  const [passportPersona, setPassportPersona] = useState<ActivationPersonaConfig | null>(null);
+  // Which window session an account match belongs to, so a late match can't land after the person has moved on.
+  const matchSession = useRef(0);
+  useEffect(() => {
+    matchSession.current = partnerSession;
+  }, [partnerSession]);
+  const isPassport = idMethod === "passport";
+
+  const activePersona: ActivationPersonaConfig = passportPersona ?? ACTIVATION_PERSONAS[activePersonaKey];
   const isJoint = activePersona.isJoint ?? false;
   const isMobileSync = activePersona.mobileAppLinked ?? false;
   const isMultiAccount = activePersona.accounts.length > 1;
@@ -75,9 +116,12 @@ function ActivateContent() {
 
   // `?step=` opens the flow on that step (the Demo hub jumps with it).
   const stepParam = parseOnboardingStep(searchParams.get("step"));
+  // The flow opens on a choice: which ID the account was opened with. A `?step=` jump skips it.
+  const [choosingId, setChoosingId] = useState(!stepParam);
   const [step, setStep] = useState<Step>(stepParam ?? "ghana_card");
   useEffect(() => {
     if (!stepParam) return;
+    setChoosingId(false);
     setStep(stepParam);
     setErrorMsg("");
     setBusy(false);
@@ -180,7 +224,7 @@ function ActivateContent() {
 
     // Auto-detect persona if card matches known demo pattern
     const detected = getPersonaByGhanaCard(ghanaCard);
-    if (detected.id !== activePersonaKey) {
+    if (detected.id !== "diaspora" && detected.id !== activePersonaKey) {
       setActivePersonaKey(detected.id);
       setSelectedPrimaryAccountId(detected.accounts.length > 1 ? "" : detected.accounts[0]?.id ?? "");
     }
@@ -191,6 +235,66 @@ function ActivateContent() {
       setBusy(false);
       setStep("selfie");
     }, 600);
+  }
+
+  /** Opens (or reopens) the identity partner's window. Each opening is a fresh session. */
+  function openPartner() {
+    setChoosingId(false);
+    setPassportModalOpen(false);
+    setIdMethod("passport");
+    setPassportState("waiting");
+    setPartnerProgress("opening");
+    setPartnerSession((s) => s + 1);
+    setPartnerFlash(0);
+    setPartnerOpen(true);
+    setErrorMsg("");
+    setStep("selfie");
+  }
+
+  function handlePartnerClosed() {
+    setPartnerOpen(false);
+    setPassportState("closed");
+  }
+
+  function handlePartnerResult(result: PartnerResult) {
+    setPartnerOpen(false);
+    if (result.status === "failed") {
+      setPassportExpiry(result.expiry ?? "");
+      setPassportState(result.reason === "expired" ? "expired" : "failed");
+      return;
+    }
+    setPassportNumber(result.passportNumber);
+    setPassportState("matching");
+    const session = partnerSession;
+    window.setTimeout(() => {
+      // The person may have left the passport path (Back, Use Ghana Card) or reopened the window meanwhile.
+      if (matchSession.current !== session) return;
+      const match = getPersonaByPassport(result.passportNumber);
+      if (!match) {
+        setPassportState("no_account");
+        return;
+      }
+      setPassportPersona(match);
+      setSelectedPrimaryAccountId(match.accounts.length > 1 ? "" : match.accounts[0]?.id ?? "");
+      setStep("review_details");
+    }, 900);
+  }
+
+  /** Leaves the passport path for the Ghana Card field, forgetting what the partner returned. */
+  function switchToGhanaCard() {
+    matchSession.current = -1;
+    setChoosingId(false);
+    setPassportModalOpen(false);
+    setPartnerOpen(false);
+    setIdMethod("ghana_card");
+    setPassportPersona(null);
+    setPassportNumber("");
+    setPassportExpiry("");
+    setSelectedPrimaryAccountId(
+      ACTIVATION_PERSONAS[activePersonaKey].accounts.length > 1 ? "" : ACTIVATION_PERSONAS[activePersonaKey].accounts[0]?.id ?? ""
+    );
+    setErrorMsg("");
+    setStep("ghana_card");
   }
 
   function handleCaptureSelfie(imageDataUrl: string) {
@@ -305,6 +409,16 @@ function ActivateContent() {
   function handleBackStep() {
     setErrorMsg("");
     setBusy(false);
+    if (choosingId) {
+      router.push("/get-started");
+      return;
+    }
+    // On the passport path, the partner's check stands in for steps 1 and 2, so Back from either returns to the choice.
+    if (isPassport && (step === "selfie" || step === "review_details")) {
+      switchToGhanaCard();
+      setChoosingId(true);
+      return;
+    }
     if (step === "confirm_pin") {
       setConfirmPinDigits(["", "", "", ""]);
       setStep("pin");
@@ -326,7 +440,7 @@ function ActivateContent() {
     } else if (step === "selfie") {
       setStep("ghana_card");
     } else {
-      router.push("/get-started");
+      setChoosingId(true);
     }
   }
 
@@ -334,23 +448,52 @@ function ActivateContent() {
     activePersona.accounts.find((a) => a.id === selectedPrimaryAccountId) ??
     (isMultiAccount ? undefined : activePersona.accounts[0]);
 
+  const passportLastFour = maskPassport(passportNumber);
+  const passportExpiryText = passportExpiry
+    ? new Date(passportExpiry).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+    : "";
+  const passportCopy: Record<PassportState, { title: string; description: string }> = {
+    waiting: {
+      title: "Finish in the Verification Window",
+      description: "Your check is open in a separate window. This page moves on by itself when it’s done.",
+    },
+    closed: {
+      title: "Verification Not Finished",
+      description: "The verification window was closed before the check was done, so nothing was shared with GCB.",
+    },
+    failed: {
+      title: "We Couldn’t Verify Your Passport",
+      description: "We couldn’t match your selfie to the photo page. This is usually glare, a blurred photo or low light.",
+    },
+    expired: {
+      title: "This Passport Has Expired",
+      description: passportExpiryText
+        ? `The passport you used expired on ${passportExpiryText}. Activate with a valid passport. If you’ve renewed it, the bank needs the new one on your account first.`
+        : "Activate with a valid passport. If you’ve renewed it, the bank needs the new one on your account first.",
+    },
+    matching: {
+      title: "Finding Your Account",
+      description: `Passport ${passportLastFour} is verified. We’re looking for the account it was used to open.`,
+    },
+    no_account: {
+      title: "No Account Found With This Passport",
+      description: `Passport ${passportLastFour} was verified, but no GCB account was opened with it.`,
+    },
+  };
+  const passportRead = ["selfie", "checking", "done"].includes(partnerProgress);
+  const selfieTaken = ["checking", "done"].includes(partnerProgress);
+
   return (
     <AuthLayout
       title={
-
-
-
-
-
-
-
-
-
-
-        step === "ghana_card"
+        choosingId
+          ? "How Was Your Account Opened?"
+          : step === "ghana_card"
           ? "Verify Your Identity"
           : step === "selfie"
-          ? "Selfie Match"
+          ? isPassport
+            ? passportCopy[passportState].title
+            : "Selfie Match"
           : step === "review_details"
           ? isMultiAccount
             ? "Select Your Default Account"
@@ -366,20 +509,14 @@ function ActivateContent() {
           : "Confirm Your PIN"
       }
       description={
-
-
-
-
-
-
-
-
-
-
-        step === "ghana_card"
+        choosingId
+          ? "Choose the ID you gave the bank when you opened your GCB account."
+          : step === "ghana_card"
           ? "We will securely verify your identity using your Ghana Card."
           : step === "selfie"
-          ? "Center your face in the frame."
+          ? isPassport
+            ? passportCopy[passportState].description
+            : "Center your face in the frame."
           : step === "review_details"
           ? isMultiAccount
             ? "Select your default account for everyday banking."
@@ -400,55 +537,38 @@ function ActivateContent() {
       }
       onBack={handleBackStep}
       backLabel="Back to previous step"
-      align="left"
-      stepProgress={{
-        current: stepNumberMap[step],
-        total: 7,
-
-
-
-
-
-
-
-
-
-      }}
+      align={choosingId ? "center" : "left"}
+      stepProgress={choosingId ? undefined : { current: stepNumberMap[step], total: 7 }}
       width="compact"
       animateHeight={true}
     >
 
+      {/* Before step 1: which ID the account was opened with. Passport explains itself in a modal first. */}
+      {choosingId && (
+        <div className="flex flex-col gap-2">
+          <ChoiceRow
+            dataTour="activate-with-ghana-card"
+            icon={<IdCard size={18} />}
+            title="With Ghana Card"
+            description="I opened my account with my Ghana Card."
+            onClick={() => {
+              setChoosingId(false);
+              setStep("ghana_card");
+            }}
+          />
+          <ChoiceRow
+            dataTour="activate-with-passport"
+            icon={<Passport size={18} />}
+            title="With Passport"
+            description="I opened my account with a passport."
+            onClick={() => setPassportModalOpen(true)}
+          />
+        </div>
+      )}
+
       {/* STEP 1: Enter Ghana Card */}
-      {step === "ghana_card" && (
+      {!choosingId && step === "ghana_card" && (
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
-          {/* Demo persona picker — dev only, never in the live build */}
-          {process.env.NODE_ENV !== "production" && (
-          <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
-            <span className="font-medium text-foreground">Interactive Demo Mode</span>
-            <div className="flex items-center gap-2">
-              {(["single", "multi", "joint", "mobile_sync"] as const).map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => applyPersona(key)}
-                  className={`rounded-lg px-2 py-0.5 text-[11px] font-medium transition-colors cursor-pointer ${
-                    activePersonaKey === key
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-background text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {key === "single"
-                    ? "Single"
-                    : key === "multi"
-                    ? "Multi"
-                    : key === "joint"
-                    ? "Joint"
-                    : "Mobile Sync"}
-                </button>
-              ))}
-            </div>
-          </div>
-          )}
 
           {/* Card Input Field */}
           <Field label="Ghana Card Number" htmlFor="ghana-card">
@@ -486,8 +606,125 @@ function ActivateContent() {
         </form>
       )}
 
+      {/* STEP 2 (passport): the identity partner's window stands in for our selfie */}
+      {step === "selfie" && isPassport && (
+        <div className="flex flex-col gap-4">
+          {(passportState === "waiting" || passportState === "matching") && (
+            <div className="flex items-start gap-3 border-y border-border py-4" role="status">
+              <AppLoader size={16} />
+              <div className="flex flex-1 flex-col gap-2">
+                <span className="text-[14px] text-foreground">
+                  {passportState === "matching" ? "Looking for your account" : "Waiting for verification"}
+                </span>
+                {passportState === "waiting" && (
+                  <ul className="flex flex-col gap-2">
+                    {[
+                      { done: passportRead, label: "Passport read" },
+                      { done: selfieTaken, label: "Selfie taken" },
+                    ].map((item) => (
+                      <li
+                        key={item.label}
+                        className={`flex items-center gap-2 text-[13px] ${item.done ? "text-foreground" : "text-muted-foreground"}`}
+                      >
+                        <span
+                          className={`flex size-4 items-center justify-center rounded-full border ${
+                            item.done ? "border-transparent bg-pill-success text-pill-success-text" : "border-border"
+                          }`}
+                        >
+                          {item.done && <Check size={12} />}
+                        </span>
+                        {item.label}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
+
+          {passportState === "waiting" && (
+            <div className="flex flex-col items-center gap-2">
+              <button type="button" onClick={() => setPartnerFlash((n) => n + 1)} className={linkClass}>
+                Can’t see the window? Show it again
+              </button>
+              <button type="button" onClick={switchToGhanaCard} className={linkClass}>
+                Cancel
+              </button>
+            </div>
+          )}
+
+          {passportState === "closed" && (
+            <div className="flex flex-col items-center gap-3">
+              <Button type="button" size="xl" className="w-full" onClick={openPartner}>
+                Resume Verification
+              </Button>
+              <button type="button" onClick={switchToGhanaCard} className={linkClass}>
+                Use Ghana Card instead
+              </button>
+            </div>
+          )}
+
+          {passportState === "failed" && (
+            <div className="flex flex-col items-center gap-3">
+              <Button type="button" size="xl" className="w-full" onClick={openPartner}>
+                Try Again
+              </Button>
+              <a href={GCB_HELP_URL} target="_blank" rel="noreferrer" className={linkClass}>
+                Still stuck? Talk to us
+              </a>
+            </div>
+          )}
+
+          {passportState === "expired" && (
+            <div className="flex flex-col items-center gap-3">
+              <Button
+                size="xl"
+                className="w-full"
+                nativeButton={false}
+                render={<a href={GCB_HELP_URL} target="_blank" rel="noreferrer" />}
+              >
+                Talk to Us
+              </Button>
+              <button type="button" onClick={switchToGhanaCard} className={linkClass}>
+                Use Ghana Card instead
+              </button>
+            </div>
+          )}
+
+          {passportState === "no_account" && (
+            <>
+              <div className="flex flex-col">
+                <div className="flex flex-col gap-1 border-b border-border py-3">
+                  <span className="text-[14px] font-medium text-foreground">Renewed your passport since opening the account?</span>
+                  <span className="text-[14px] leading-relaxed text-muted-foreground">
+                    The bank still has your old one on record. Talk to us and we’ll update it, then you can activate.
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1 py-3">
+                  <span className="text-[14px] font-medium text-foreground">Opened your account with a Ghana Card?</span>
+                  <span className="text-[14px] leading-relaxed text-muted-foreground">Activate with your Ghana Card instead.</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Button
+                  size="xl"
+                  className="w-full"
+                  nativeButton={false}
+                  render={<a href={GCB_HELP_URL} target="_blank" rel="noreferrer" />}
+                >
+                  Talk to Us
+                </Button>
+                <Button type="button" variant="outline" size="xl" className="w-full" onClick={switchToGhanaCard}>
+                  Use Ghana Card
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
       {/* STEP 2: Selfie / Photo Capture */}
-      {step === "selfie" && (
+      {step === "selfie" && !isPassport && (
         <SelfieCapture
           onCapture={handleCaptureSelfie}
           busy={busy}
@@ -518,8 +755,8 @@ function ActivateContent() {
                 <span className="text-[14px] font-medium text-foreground block truncate">
                   {activePersona.holderName}
                 </span>
-                <span className="text-[12px] text-muted-foreground">
-                  {activePersona.ghanaCard}
+                <span className="tabular text-[12px] text-muted-foreground">
+                  {isPassport ? `Passport ${passportLastFour}` : activePersona.ghanaCard}
                 </span>
               </div>
             </div>
@@ -653,10 +890,10 @@ function ActivateContent() {
 
           <button
             type="button"
-            onClick={() => setStep("ghana_card")}
+            onClick={isPassport ? switchToGhanaCard : () => setStep("ghana_card")}
             className="text-center text-[12px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
           >
-            Use a different Ghana Card
+            {isPassport ? "Use a Ghana Card instead" : "Use a different Ghana Card"}
           </button>
         </div>
       )}
@@ -860,6 +1097,22 @@ function ActivateContent() {
 
         </form>
       )}
+
+      <PassportVerifyModal
+        open={passportModalOpen}
+        onOpenChange={setPassportModalOpen}
+        onContinue={openPartner}
+        onUseGhanaCard={switchToGhanaCard}
+      />
+      <IdentityPartnerWindow
+        key={partnerSession}
+        open={partnerOpen}
+        knownPassport={PASSPORT_PERSONA.passport}
+        flashKey={partnerFlash}
+        onProgress={setPartnerProgress}
+        onResult={handlePartnerResult}
+        onClose={handlePartnerClosed}
+      />
     </AuthLayout>
   );
 }

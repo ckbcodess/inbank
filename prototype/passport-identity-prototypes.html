@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Passport Identity: 3 Directions</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amh:#ffd966;--actbg:#fff8e1;--actbd:#f5c542;--ok:#047857;--warn:#a15c07;--err:#b42318;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--embed:#f7f8fa;--embedbd:#d9dde3}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--actbg:#2a2410;--actbd:#8a6d1a;--ok:#34d399;--warn:#f5b955;--err:#f97066;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--embed:#101215;--embedbd:#2c3138}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p{margin:0;padding:0;font-weight:inherit}
+  .tab{font-variant-numeric:tabular-nums}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px} .med{font-weight:500}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:10px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center}
+  .frame{position:relative;width:460px;max-width:100%;min-height:640px;background:var(--surf);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+  .page{padding:32px;display:flex;flex-direction:column}
+  .back{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--mu);margin-bottom:20px;align-self:flex-start}
+  .back:hover{color:var(--tx)}
+  .steps{display:flex;gap:4px;margin-bottom:24px}
+  .steps i{flex:1;height:4px;border-radius:999px;background:var(--tile)}
+  .steps i.on{background:var(--am)}
+  .t{font-size:22px;font-weight:500;letter-spacing:-.02em}
+  .d{font-size:14px;color:var(--mu);line-height:1.5;margin-top:8px}
+  .body{display:flex;flex-direction:column;gap:16px;margin-top:32px}
+  .lbl{font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;min-height:20px}
+  .link{font-size:13px;font-weight:400;color:var(--tx);text-decoration:underline;text-decoration-color:var(--bd);text-underline-offset:4px}
+  .link:hover{text-decoration-color:var(--tx)}
+  input.inp{outline:none;background:var(--tile);border:1px solid var(--bd);border-radius:8px;height:44px;width:100%;padding:0 12px;font-size:14px;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+  input.inp:focus{border-color:var(--am)}
+  input.inp[aria-invalid=true]{border-color:var(--err)}
+  .err{font-size:12px;color:var(--err);margin-top:8px;line-height:1.5}
+  .btn{height:44px;padding:0 16px;border-radius:8px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%}
+  .btn.am{background:var(--am);color:#111} .btn.am:hover{background:var(--amh)}
+  .btn.out{border:1px solid var(--bd)} .btn.out:hover{background:var(--tile)}
+  .btn.dis{opacity:.4;pointer-events:none}
+  .legal{text-align:center;font-size:12px;color:var(--mu);line-height:1.6}
+  .segc{display:grid;grid-template-columns:1fr 1fr;background:var(--tile);border-radius:8px;padding:4px;height:40px}
+  .segc button{border-radius:6px;font-size:13px;color:var(--mu);text-align:center}
+  .segc button.on{background:var(--surf);color:var(--tx);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .opt{display:flex;align-items:center;gap:12px;border:1px solid var(--bd);background:var(--surf);border-radius:10px;padding:16px;width:100%}
+  .opt:hover{background:var(--tile)}
+  .opt.on{border-color:var(--actbd);background:var(--actbg)}
+  .ico{width:40px;height:40px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:var(--tx)}
+  .opt .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .ring{width:16px;height:16px;border-radius:50%;border:2px dashed currentColor;animation:spin .9s linear infinite;flex:none;opacity:.7}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .in{animation:in .25s ease}
+  /* the embedded partner page */
+  .embed{border:1px solid var(--embedbd);border-radius:10px;overflow:hidden;background:var(--embed)}
+  .embed .top{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--embedbd);font-size:12px;color:var(--mu)}
+  .embed .top .brand{display:flex;align-items:center;gap:8px;color:var(--tx);font-weight:500}
+  .tymark{width:18px;height:18px;border-radius:5px;background:#3b5bdb;color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:500}
+  .embed .in-page{padding:24px 20px;min-height:300px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+  .embed .k{font-size:12px;color:var(--mu)}
+  .embed h4{margin:0;font-size:16px;font-weight:500}
+  .pp{width:220px;height:150px;border:2px dashed var(--embedbd);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mu)}
+  .face{width:150px;height:150px;border:2px dashed var(--embedbd);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--mu)}
+  .tybtn{height:40px;padding:0 20px;border-radius:999px;background:#3b5bdb;color:#fff;font-size:13px;font-weight:500}
+  .sk{background:var(--tileh);border-radius:6px;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.5}}
+  .rows{display:flex;flex-direction:column}
+  .r{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd)}
+  .r:last-child{border-bottom:0}
+  .r .k{color:var(--mu);font-size:13px}
+  .r .v{text-align:right;display:flex;flex-direction:column;gap:2px}
+  .okline{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--ok);justify-content:flex-end}
+  .warnline{font-size:12px;color:var(--warn)}
+  .legend{max-width:460px;font-size:12px;color:var(--mu);line-height:1.6;margin-top:16px;text-align:center}
+  .demo{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu)}
+  .placeholder{border:1px dashed var(--bd);border-radius:10px;padding:24px;text-align:center;color:var(--mu);font-size:13px;line-height:1.6}
+  @media (max-width:520px){.page{padding:24px 16px}.stage{padding:16px 12px 64px}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Activate: letting passport account holders verify their identity</h1>
+    <div class="row" style="gap:12px">
+      <div class="pills" id="pills"></div>
+      <div class="demo">Truly You result <div class="seg" id="outcome"><button data-o="ok" class="on">Passes</button><button data-o="fail">Fails</button></div></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+    </div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div><div class="frame" id="frame"></div>
+<p class="legend">Only how the passport option is offered changes between directions. After that the path is the same: passport number → Truly You check, embedded on this page (it replaces our selfie step) → review details → code, password and PIN as today. Try passport <b class="tab">X0000000</b> to see the no-match case.</p></div></div>
+
+<script>
+const I={
+  back:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+  lock:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+  card:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2.2"/><path d="M14 10h4M14 14h3"/></svg>',
+  pass:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M9 16h6"/></svg>',
+  chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--mu)"><path d="m9 6 6 6-6 6"/></svg>',
+  check:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+  cam:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  x:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+};
+const NOTES=[
+ ['Two IDs, side by side','A switch above the field: Ghana Card or Passport. Someone abroad sees straight away that they can sign up. The cost is that every customer now sees a choice most of them don’t need, and the switch is the first thing on the screen.'],
+ ['Passport as a quiet option','The screen stays as it is today for Ghana Card holders. “Use passport” sits in the label row, the same place “Select beneficiary” sits in Send & Pay, and the description names both IDs so the option is findable. Lightest for most customers; the cost is that a person abroad has to notice a small link.'],
+ ['Ask which ID first','One question before any typing: which ID was your account opened with? It states the real rule (we match the ID on your account record), so people with both IDs pick the right one. The cost is a tap for everyone, and the field moves one screen later.']
+];
+let V=2, OUT='ok';
+const fresh=()=>({screen:V===3?'choose':'id', id:'card', card:'', pass:'', err:'', busy:false, ty:0});
+let S=fresh();
+const $=s=>document.querySelector(s);
+
+/* ---------- helpers ---------- */
+function fmtCard(v){const d=v.replace(/\D/g,'').slice(0,10); if(!d) return ''; return 'GHA-'+d.slice(0,9)+(d.length>9?'-'+d.slice(9):'');}
+const cardOk=()=>S.card.replace(/\D/g,'').length===10;
+const passOk=()=>/^[A-Z0-9]{6,9}$/.test(S.pass);
+const last4=()=>S.pass.slice(-4);
+function stepIndex(){return {choose:1,id:1,embed:2,fail:2,selfie:2,review:3,done:4}[S.screen]||1;}
+const stepsBar=()=>`<div class="steps">${Array.from({length:7},(_,i)=>`<i class="${i<stepIndex()?'on':''}"></i>`).join('')}</div>`;
+
+function head(title,desc){return `<button class="back" data-act="back">${I.back}<span>Back</span></button>${stepsBar()}<h2 class="t">${title}</h2>${desc?`<p class="d">${desc}</p>`:''}`;}
+
+const DESC_CARD='We will securely verify your identity using your Ghana Card.';
+const DESC_PASS='For accounts opened with a passport. Our partner Truly You checks it on the next step, without leaving this page.';
+
+function cardField(right=''){
+  return `<div><label class="lbl" for="card"><span>Ghana Card Number</span>${right}</label>
+  <input id="card" class="inp" inputmode="numeric" autocomplete="off" placeholder="GHA-000000000-0" value="${S.card}" /></div>`;
+}
+function passField(right=''){
+  return `<div><label class="lbl" for="pass"><span>Passport Number</span>${right}</label>
+  <input id="pass" class="inp" autocomplete="off" autocapitalize="characters" placeholder="For example, G1234567" value="${S.pass}" ${S.err?'aria-invalid="true"':''} />
+  ${S.err?`<p class="err in">${S.err}</p>`:''}</div>`;
+}
+const ready=()=>S.id==='card'?cardOk():passOk();
+const cont=()=>`<div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
+  <button class="btn am ${ready()&&!S.busy?'':'dis'}" data-act="submit" id="go">${S.busy?'<span class="ring"></span>':''}Continue</button>
+  <p class="legal">By continuing, you agree to our <a class="link" style="font-size:12px" href="#">Terms</a> and <a class="link" style="font-size:12px" href="#">Privacy Policy</a>.</p></div>`;
+
+/* ---------- direction-specific first screen ---------- */
+function idScreen(){
+  if(V===1){
+    const seg=`<div class="segc" role="tablist"><button role="tab" class="${S.id==='card'?'on':''}" data-id="card">Ghana Card</button><button role="tab" class="${S.id==='passport'?'on':''}" data-id="passport">Passport</button></div>`;
+    return head('Verify Your Identity', S.id==='card'?DESC_CARD:DESC_PASS)+`<div class="body">${seg}${S.id==='card'?cardField():passField()}${cont()}</div>`;
+  }
+  if(V===2){
+    const desc = S.id==='card' ? 'Use your Ghana Card, or the passport your account was opened with.' : DESC_PASS;
+    const f = S.id==='card' ? cardField(`<button type="button" class="link" data-id="passport">Use passport</button>`)
+                            : passField(`<button type="button" class="link" data-id="card">Use Ghana Card</button>`);
+    return head('Verify Your Identity',desc)+`<div class="body">${f}${cont()}</div>`;
+  }
+  // V3: the field, after the choice
+  const f = S.id==='card'?cardField():passField();
+  return head(S.id==='card'?'Enter Your Ghana Card':'Enter Your Passport', S.id==='card'?DESC_CARD:DESC_PASS)+`<div class="body">${f}${cont()}</div>`;
+}
+function chooseScreen(){
+  const o=(id,icon,title,sub)=>`<button class="opt ${S.id===id&&S.picked?'on':''}" data-pick="${id}"><span class="ico">${icon}</span><span class="grow"><span class="med">${title}</span><span class="s12 mu">${sub}</span></span>${I.chev}</button>`;
+  return head('Verify Your Identity','Which ID was your GCB account opened with? We match it to your account record.')+
+  `<div class="body" style="gap:8px">${o('card',I.card,'Ghana Card','Your national ID card')}${o('passport',I.pass,'Passport','Usually for accounts opened from abroad')}</div>`;
+}
+
+/* ---------- shared passport path ---------- */
+function embedScreen(){
+  let inner;
+  if(S.ty===0) inner=`<div class="sk" style="width:60%;height:14px;margin-top:8px"></div><div class="sk" style="width:220px;height:150px;border-radius:10px"></div><div class="sk" style="width:120px;height:40px;border-radius:999px"></div>`;
+  else if(S.ty===1) inner=`<span class="k">Step 1 of 2</span><h4>Photograph your passport photo page</h4><div class="pp">${I.cam}</div><p class="k" style="max-width:260px;line-height:1.5">Lay it flat in good light. Avoid glare on the photo.</p><button class="tybtn" data-act="ty">Take photo</button>`;
+  else if(S.ty===2) inner=`<span class="k">Step 2 of 2</span><h4>Take a selfie</h4><div class="face">${I.cam}</div><p class="k" style="max-width:260px;line-height:1.5">We compare it with your passport photo.</p><button class="tybtn" data-act="ty">Take selfie</button>`;
+  else inner=`<span class="ring" style="width:28px;height:28px;margin-top:64px;color:#3b5bdb"></span><h4>Checking your passport</h4><p class="k">This takes a few seconds.</p>`;
+  return head('Verify Your Passport',`Passport ···${last4()}. Truly You, our verification partner, runs this check for GCB. You stay in Internet Banking the whole time.`)+
+  `<div class="body" style="gap:12px"><div class="embed in" role="region" aria-label="Truly You identity check">
+     <div class="top"><span class="brand"><span class="tymark">TY</span>Truly You</span><span style="display:inline-flex;align-items:center;gap:4px">${I.lock} Secure check</span></div>
+     <div class="in-page">${inner}</div></div>
+   <button class="link" style="align-self:center" data-act="stop">Stop and go back</button></div>`;
+}
+function failScreen(){
+  return head('We Couldn’t Verify Your Passport','Truly You couldn’t match your selfie to the photo page. This is usually glare, a blurred photo or low light.')+
+  `<div class="body"><div class="rows"><div class="r"><span class="k">Passport</span><span class="v tab">···${last4()}</span></div></div>
+   <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px"><button class="btn am" data-act="retry">Try Again</button>
+   <button class="link" style="align-self:center" data-act="help">Still stuck? Talk to us</button></div></div>`;
+}
+function reviewScreen(){
+  return head('Review Your Details','Confirm your details match your account records.')+
+  `<div class="body"><div class="rows">
+    <div class="r"><span class="k">Name</span><span class="v">Akosua Mensah</span></div>
+    <div class="r"><span class="k">Identity</span><span class="v"><span class="tab">Passport ···${last4()}</span><span class="okline">${I.check} Verified by Truly You</span></span></div>
+    <div class="r"><span class="k">Account</span><span class="v"><span class="tab">Savings ···8812</span></span></div>
+    <div class="r"><span class="k">Mobile</span><span class="v"><span class="tab">+44 •••• ••0123</span></span></div>
+  </div><div style="margin-top:12px"><button class="btn am" data-act="next">Continue</button></div></div>`;
+}
+function selfieScreen(){
+  return head('Selfie Match','Center your face in the frame.')+`<div class="body"><div class="placeholder">Ghana Card path, unchanged from today: selfie → review → code → password → PIN.</div><button class="btn out" data-act="restart">Start again</button></div>`;
+}
+function doneScreen(){
+  return head('Confirm Your Code','A 6-digit code has been sent to +44 •••• ••0123.')+`<div class="body"><div class="placeholder">From here the flow is unchanged: code, password, PIN, then the dashboard.<br/>Open question: SMS to a non-Ghana number, and no shortcode abroad.</div><button class="btn out" data-act="restart">Start again</button></div>`;
+}
+
+/* ---------- render ---------- */
+function pills(){ $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1}</button>`).join(''); $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]}`; }
+function render(focusId){
+  const m={choose:chooseScreen,id:idScreen,embed:embedScreen,fail:failScreen,review:reviewScreen,selfie:selfieScreen,done:doneScreen}[S.screen];
+  $('#frame').innerHTML=`<div class="page in">${m()}</div>`;
+  if(focusId){const el=document.getElementById(focusId); if(el){el.focus(); el.setSelectionRange(el.value.length,el.value.length);}}
+}
+
+/* ---------- flow ---------- */
+function startEmbed(){
+  S.screen='embed'; S.ty=0; render();
+  setTimeout(()=>{ if(S.screen==='embed'&&S.ty===0){S.ty=1; render();} },700);
+}
+function submit(){
+  if(!ready()||S.busy) return;
+  S.busy=true; S.err=''; render();
+  setTimeout(()=>{
+    S.busy=false;
+    if(S.id==='card'){ S.screen='selfie'; render(); return; }
+    if(S.pass==='X0000000'){ S.err='We couldn’t find a GCB account opened with this passport. Check it’s the one you gave the bank when you opened your account.'; render('pass'); return; }
+    startEmbed();
+  },600);
+}
+function back(){
+  const s=S.screen;
+  if(s==='embed'||s==='fail'||s==='selfie'){ S.screen='id'; render(S.id==='card'?'card':'pass'); return; }
+  if(s==='review'){ S.screen='id'; render('pass'); return; }
+  if(s==='done'){ S.screen='review'; render(); return; }
+  if(s==='id'&&V===3){ S.screen='choose'; render(); return; }
+}
+
+document.addEventListener('click',e=>{
+  const p=e.target.closest('[data-v]'); if(p){V=+p.dataset.v; S=fresh(); pills(); render(); return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t; document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t)); return;}
+  const o=e.target.closest('[data-o]'); if(o){OUT=o.dataset.o; document.querySelectorAll('#outcome button').forEach(b=>b.classList.toggle('on',b===o)); return;}
+  const idb=e.target.closest('[data-id]'); if(idb){S.id=idb.dataset.id; S.err=''; render(S.id==='card'?'card':'pass'); return;}
+  const pk=e.target.closest('[data-pick]'); if(pk){S.id=pk.dataset.pick; S.picked=true; S.screen='id'; render(S.id==='card'?'card':'pass'); return;}
+  const a=e.target.closest('[data-act]'); if(!a) return;
+  const act=a.dataset.act;
+  if(act==='submit') submit();
+  if(act==='back') back();
+  if(act==='stop'){ S.screen='id'; render('pass'); }
+  if(act==='ty'){
+    S.ty++; render();
+    if(S.ty===3) setTimeout(()=>{ if(S.screen!=='embed') return; S.screen=OUT==='ok'?'review':'fail'; render(); },1400);
+  }
+  if(act==='retry') startEmbed();
+  if(act==='help') alert('Prototype: opens the existing help / contact sheet.');
+  if(act==='next'){ S.screen='done'; render(); }
+  if(act==='restart'){ S=fresh(); render(); }
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='card'){ S.card=fmtCard(e.target.value); e.target.value=S.card; }
+  else if(e.target.id==='pass'){ S.pass=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,9); e.target.value=S.pass; if(S.err){S.err=''; render('pass');} }
+  else return;
+  const g=$('#go'); if(g) g.classList.toggle('dis',!ready());
+});
+document.addEventListener('keydown',e=>{ if((e.target.id==='card'||e.target.id==='pass')&&e.key==='Enter'){e.preventDefault(); submit();} });
+pills(); render();
+</script>
+</body>
+</html>

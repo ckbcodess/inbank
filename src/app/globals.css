@@ -167,6 +167,7 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-chip: var(--chip);
   --color-chip-selected: var(--chip-selected);
@@ -557,6 +558,7 @@
   --destructive: #ea3446;
   --destructive-foreground: var(--white);
   --success: var(--green-600);
+  --success-foreground: var(--white);
   --warning: var(--amber-500);
   --border: var(--gray-200);
   /* The gradient stroke of the list box (ListCard): catches light at the top-left, fades, then picks up again at the corner. */
@@ -787,6 +789,7 @@
   --destructive: #ea3446;
   --destructive-foreground: var(--white);
   --success: var(--green-500);
+  --success-foreground: var(--white);
   --warning: var(--amber-500);
   --border: #212121;
   --edge-glass-start: #262626;

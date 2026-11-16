@@ -182,6 +182,18 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-16
+- Decision (designer, built): `/activate` has a passport path for accounts opened with a passport (Link2Home and similar). The flow opens on a choice, "How Was Your Account Opened?": With Ghana Card or With Passport (`ChoiceRow`, the same row `/get-started` uses; a `?step=` jump skips it). With Passport opens `PassportVerifyModal`; Continue opens the identity partner in its own window (`IdentityPartnerWindow`, like "Continue with Google"; full screen on a phone). The partner reads the passport and takes the selfie, then returns the passport number, and we match the account (`getPersonaByPassport`). It stands in for our selfie step, so there are still 7 steps. The customer types no passport details. Partner result types and demo results: `lib/identity-partner.ts`. Explorations: `prototype/passport-*.html`.
+- Override (designer): the passport modal's "For accounts created with a passport" line is an amber note (`bg-warning/10`), against CONSTITUTION §9 "never draw an inline banner". Kept to this modal; no shared note component yet.
+- Discovery: the partner window is drawn in the page for the prototype. In production it's a real `window.open` window reporting back by `postMessage`, and phones usually open it as a tab.
+- Decision (designer): customers never see the partner's name. Our screens say "our verification partner" and "the verification window"; the window is titled "Identity verification" and the review shows a plain "Verified". (Internally it's Truly You or Trulioo, still to confirm.)
+- Question: does the partner reject an expired passport, or return the expiry so we decide? Does it report progress (passport read, selfie taken) while its window is open? The waiting screen assumes it does. Is the issuing country needed to match the account?
+- Gap: a renewed passport won't match the account, because the bank still holds the old number. The no-account screen says so and points to "Talk to Us", which goes to the GCB website (`GCB_HELP_URL`) until there's a contact channel for customers abroad.
+- Gap: diaspora customers will often have a non-Ghana mobile. The activation code is by SMS, and the shortcode fallback doesn't work abroad. New-device sign-in and payment codes have the same problem.
+- Gap: `/forgot-password` and `/forgot-pin` match a selfie to the Ghana Card photo, so a passport customer who activates can't reset either. `/signup`, sole proprietor, Add Account and the Settings profile ("name from the Ghana Card") also assume a Ghana Card.
+- Gap: the Demo hub's persona switcher can't open the passport persona; open `/activate` and choose With Passport.
+- Gap: `/activate`'s older buttons are `md`; the constitution says flow actions are `xl`. The new passport buttons are `xl`.
+
 ### 2026-11-14
 - Decision: Linked devices is one list, not separate "trusted" and "signed in" lists. Columns: Device, Signed in, Last active. Trust shows as "Skips the code" under the place. Sign out is one tap per row and ends that device's trust; "Sign out of all other devices" confirms with its consequence. This device can't be removed here. Store: `lib/linked-devices.ts` (seeded per persona; this device comes from the live session and device-trust).
 - Gap: Business Settings has no linked devices pane (Reuse). The Demo hub "Welcome back" entry doesn't seed this list yet. Place and the current device's location are demo values.
@@ -1349,7 +1361,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Decision: Sole proprietor payments (`paysWithoutApproval`) go straight out after one-time SMS code without an approval leg; button reads "Pay Supplier" and lands on "Payment on its way". Maker/approver corporate accounts continue through 2-party maker-checker. (Ask bank to confirm against BRL-04).
 - Decision: Invited user confirms their Ghana Card number against the bank's record at `/business/activate` as a possession check; a third consecutive mismatch locks out to branch.
 - Discovery: Business screens (`/business/transactions`, `/business/payments/supplier`) were leaking other demo companies' accounts; now scoped to the signed-in business profile via `activeProfileName()`.
-- Gap: Passport onboarding is on hold for personal and sole proprietor; both currently require a Ghana Card (BRL-01, FR-RET-07).
+- Gap: Passport onboarding is on hold for sole proprietor (BRL-01, FR-RET-07). Personal activation now has a passport path (2026-11-16).
 - Gap: `/admin/enrolments` still reviews online applications; workstream 7 converts it to branch capture/submit (FR-ADM-05).
 - Gap: Inputter, Reviewer, and Authoriser role names appear only on invitation copy; workstream 1 renames Maker/Approver app-wide.
 - Question: In-branch checklist, exact Ghana Card linkage URL, and relationship manager contact for expired invitations.
