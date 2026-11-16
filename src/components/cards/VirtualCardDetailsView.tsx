@@ -36,6 +36,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { InlineError } from "@/components/ui/inline-error";
 
 import { Input } from "@/components/ui/input";
@@ -1558,7 +1559,7 @@ export function VirtualCardDetailsView({
           </DialogHeader>
 
           <DialogBody>
-            <label className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/40 cursor-pointer">
+            <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/40">
               <div className="flex items-center gap-2">
                 <Globe size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
@@ -1566,18 +1567,13 @@ export function VirtualCardDetailsView({
                   <span className="text-[11px] text-muted-foreground">E-commerce & web transactions</span>
                 </div>
               </div>
-              <input
-                type="checkbox"
-                checked={onlineEnabled}
-                onChange={(e) => {
-                  setOnlineEnabled(e.target.checked);
-                  triggerToast(`Online payments ${e.target.checked ? "enabled" : "disabled"}`);
-                }}
-                className="size-4 rounded-sm accent-primary"
-              />
-            </label>
+              <Switch checked={onlineEnabled} onCheckedChange={(v) => {
+                  setOnlineEnabled(v);
+                  triggerToast(`Online payments ${v ? "enabled" : "disabled"}`);
+                }} aria-label="Online Checkout" />
+            </div>
 
-            <label className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/40 cursor-pointer">
+            <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/40">
               <div className="flex items-center gap-2">
                 <Globe size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
@@ -1585,18 +1581,13 @@ export function VirtualCardDetailsView({
                   <span className="text-[11px] text-muted-foreground">Cross-border foreign exchange payments</span>
                 </div>
               </div>
-              <input
-                type="checkbox"
-                checked={intlEnabled}
-                onChange={(e) => {
-                  setIntlEnabled(e.target.checked);
-                  triggerToast(`International transactions ${e.target.checked ? "enabled" : "disabled"}`);
-                }}
-                className="size-4 rounded-sm accent-primary"
-              />
-            </label>
+              <Switch checked={intlEnabled} onCheckedChange={(v) => {
+                  setIntlEnabled(v);
+                  triggerToast(`International transactions ${v ? "enabled" : "disabled"}`);
+                }} aria-label="International Usage" />
+            </div>
 
-            <label className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/40 cursor-pointer">
+            <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/40">
               <div className="flex items-center gap-2">
                 <CreditCard size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
@@ -1604,16 +1595,11 @@ export function VirtualCardDetailsView({
                   <span className="text-[11px] text-muted-foreground">Physical terminal cash access</span>
                 </div>
               </div>
-              <input
-                type="checkbox"
-                checked={atmEnabled}
-                onChange={(e) => {
-                  setAtmEnabled(e.target.checked);
-                  triggerToast(`ATM withdrawals ${e.target.checked ? "enabled" : "disabled"}`);
-                }}
-                className="size-4 rounded-sm accent-primary"
-              />
-            </label>
+              <Switch checked={atmEnabled} onCheckedChange={(v) => {
+                  setAtmEnabled(v);
+                  triggerToast(`ATM withdrawals ${v ? "enabled" : "disabled"}`);
+                }} aria-label="ATM Cash Withdrawals" />
+            </div>
           </DialogBody>
 
           <DialogFooter>

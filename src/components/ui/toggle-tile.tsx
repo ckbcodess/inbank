@@ -11,7 +11,9 @@
  * looks tappable that isn't, and "on" never reads as greyed-out "off".
  */
 
+import { useId } from "react";
 import { Check } from "@/components/ui/icons";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { TileChip } from "@/components/ui/action-tile";
@@ -46,6 +48,7 @@ export function ToggleTile({
   lockedBadge,
   variant = "tile",
 }: ToggleTileProps) {
+  const titleId = useId();
   const frame = variant === "row" ? ROW : TILE;
   const body = (
     <span className="flex min-w-0 items-center gap-3">
@@ -54,7 +57,7 @@ export function ToggleTile({
           <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
         </TileChip>
       )}
-      <span className="truncate text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</span>
+      <span id={titleId} className="truncate text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</span>
     </span>
   );
 
@@ -70,11 +73,10 @@ export function ToggleTile({
     );
   }
 
+  // The whole row toggles; the switch inside is the shared `Switch`, so it looks the same as every other toggle.
+  // Its own click is stopped from bubbling so the row doesn't flip twice.
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
+    <div
       onClick={() => onCheckedChange(!checked)}
       className={cn(
         frame,
@@ -83,20 +85,9 @@ export function ToggleTile({
       )}
     >
       {body}
-      <span
-        aria-hidden="true"
-        className={cn(
-          "relative inline-flex h-5 w-10 shrink-0 rounded-full border-2 border-transparent transition-colors duration-300 ease-settle",
-          checked ? "bg-primary" : "bg-muted-foreground/25",
-        )}
-      >
-        <span
-          className={cn(
-            "pointer-events-none inline-block size-4 rounded-full bg-white shadow-sm transition-transform duration-hover",
-            checked ? "translate-x-4" : "translate-x-0",
-          )}
-        />
+      <span onClick={(e) => e.stopPropagation()} className="flex shrink-0">
+        <Switch checked={checked} onCheckedChange={onCheckedChange} aria-labelledby={titleId} />
       </span>
-    </button>
+    </div>
   );
 }

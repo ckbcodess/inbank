@@ -17,6 +17,8 @@ interface DatePickerProps {
   className?: string
   id?: string
   disabled?: boolean
+  /** Earliest day that can be picked, as yyyy-MM-dd. Earlier days are greyed out. */
+  min?: string
 }
 
 export function DatePicker({
@@ -26,6 +28,7 @@ export function DatePicker({
   className,
   id,
   disabled,
+  min,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -52,6 +55,7 @@ export function DatePicker({
           mode="single"
           selected={selected}
           defaultMonth={selected}
+          disabled={min ? { before: parse(min, "yyyy-MM-dd", new Date()) } : undefined}
           onSelect={(d) => {
             onChange?.(d ? format(d, "yyyy-MM-dd") : "")
             setOpen(false)

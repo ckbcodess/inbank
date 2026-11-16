@@ -1,6 +1,7 @@
 "use client";
 
 import { NetworkLogo } from "@/components/cards/NetworkLogo";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X, Lock, Unlock, ShieldAlert, RefreshCw } from "@/components/ui/icons";
@@ -286,18 +287,18 @@ export function VirtualCardView({
               <X size={14} />
             </button>
           </div>
-          <label className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between">
             <span>Online Checkout</span>
-            <input type="checkbox" checked={onlineEnabled} onChange={(e) => setOnlineEnabled(e.target.checked)} className="size-3.5 rounded-sm" />
-          </label>
-          <label className="flex items-center justify-between cursor-pointer">
+            <Switch checked={onlineEnabled} onCheckedChange={setOnlineEnabled} aria-label="Online Checkout" />
+          </div>
+          <div className="flex items-center justify-between">
             <span>ATM Cash Withdrawal</span>
-            <input type="checkbox" checked={atmEnabled} onChange={(e) => setAtmEnabled(e.target.checked)} className="size-3.5 rounded-sm" />
-          </label>
-          <label className="flex items-center justify-between cursor-pointer">
+            <Switch checked={atmEnabled} onCheckedChange={setAtmEnabled} aria-label="ATM Cash Withdrawal" />
+          </div>
+          <div className="flex items-center justify-between">
             <span>International Usage</span>
-            <input type="checkbox" checked={intlEnabled} onChange={(e) => setIntlEnabled(e.target.checked)} className="size-3.5 rounded-sm" />
-          </label>
+            <Switch checked={intlEnabled} onCheckedChange={setIntlEnabled} aria-label="International Usage" />
+          </div>
         </div>
       )}
 

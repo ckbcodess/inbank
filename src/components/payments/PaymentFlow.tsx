@@ -251,6 +251,11 @@ const AVATAR_TINTS = [
 ];
 
 /** Two entries are the same recipient when their letters and digits match (phone numbers on their last nine digits). */
+/** When the first payment goes, for the review and receipt: the date, and the time when it was set to later. */
+function scheduleWhen(f: { scheduleDate: string; scheduleTiming: "now" | "later"; scheduleTime: string }): string {
+  return f.scheduleTiming === "later" && f.scheduleTime ? `${f.scheduleDate} at ${f.scheduleTime}` : f.scheduleDate;
+}
+
 function recipientKey(rail: string, acct: string): string {
   const k = acct.replace(/[^a-z0-9]/gi, "").toLowerCase();
   return `${rail}:${/^\d+$/.test(k) ? k.slice(-9) : k}`;
@@ -1002,8 +1007,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     saveBeneficiary: false,
     beneficiaryNickname: "",
     isScheduled: false,
-    scheduleDate: "2026-09-08",
+    scheduleDate: new Date().toISOString().split("T")[0], // today: a first payment "now" needs no date pick
     scheduleFrequency: "once" as ScheduleFrequency,
+    scheduleTiming: "now" as "now" | "later",
+    scheduleTime: "",
     scheduleEndDate: "",
     wPhone: "",
     wName: "",
@@ -1979,8 +1986,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         successMsg = `Your transfer of ${formattedAmount} is authorized. We’ve notified Esther Appiah to review and approve.`;
       } else if (f.isScheduled) {
         successTitle = "Payment scheduled";
-        const freqText = f.scheduleFrequency === "once" ? "one-off" : f.scheduleFrequency.toLowerCase();
-        successMsg = `We’ll automatically send ${formattedAmount} to ${recipientDisplayName} on ${f.scheduleDate} (${freqText}).`;
+        const freqText = f.scheduleFrequency === "once" ? "once" : f.scheduleFrequency.toLowerCase();
+        successMsg = `We’ll automatically send ${formattedAmount} to ${recipientDisplayName} on ${scheduleWhen(f)} (${freqText}).`;
       } else if (isOwnTransfer) {
         successTitle = "Transfer complete!";
         successMsg = `You’ve moved ${formattedAmount} to your ${toOwnAccount?.name || "account"}. It’s ready to use.`;
@@ -2113,8 +2120,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               ] as [string, string][])
             : []),
           ["Payment Method", isOwnTransfer ? "OWN ACCOUNT TRANSFER" : ((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod ? getPaymentMethodName(f.paymentMethod) : rail.toUpperCase()],
-          ["Delivery Speed", isDualMandate ? "Upon Co-Signatory Approval" : (f.isScheduled ? `Scheduled for ${f.scheduleDate}` : deliverySpeed)],
-          ["Payment Timing", f.isScheduled ? `Scheduled · ${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${f.scheduleDate})` : "Immediate Transfer"],
+          ["Delivery Speed", isDualMandate ? "Upon Co-Signatory Approval" : (f.isScheduled ? `Scheduled for ${scheduleWhen(f)}` : deliverySpeed)],
+          ["Payment Timing", f.isScheduled ? `Scheduled · ${f.scheduleFrequency === "once" ? "Once" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${scheduleWhen(f)})` : "Immediate Transfer"],
           ["Fee", feeDetails.feeAmount === 0 ? "Free (GHS 0.00)" : formatMoney(feeDetails.feeAmount, "GHS", true)],
           // Who got what stays on the receipt, one line each, for the customer's own records.
           ...(rail === "group" && selectedGroupObj
@@ -3198,15 +3205,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           </h1>
         </div>
 
-        {rail === "bank" && bankCategory === "own" && (
-          <button
-            type="button"
-            aria-label="Help & Information"
-            className="flex size-6 items-center justify-center rounded-full bg-primary text-black font-semibold text-[13px] shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
-          >
-            ?
-          </button>
-        )}
       </div>
 
       <div className="flex flex-col gap-6">
@@ -3228,6 +3226,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
@@ -3261,6 +3263,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
@@ -3296,6 +3302,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
@@ -3332,6 +3342,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
@@ -3402,6 +3416,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
@@ -3436,6 +3454,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => set(key === "amount" ? "bundleAmount" : key, val)}
@@ -3466,6 +3488,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
@@ -3499,6 +3525,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
@@ -3543,6 +3573,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
@@ -3594,6 +3628,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => set(key, val)}
@@ -3633,6 +3671,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => set(key, val)}
@@ -3665,6 +3707,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
+
+                  scheduleTiming: f.scheduleTiming,
+
+                  scheduleTime: f.scheduleTime,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
@@ -3788,7 +3834,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 {
                   label: "Payment Timing",
                   value: f.isScheduled
-                    ? `Scheduled · ${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${f.scheduleDate})`
+                    ? `Scheduled · ${f.scheduleFrequency === "once" ? "Once" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${scheduleWhen(f)})`
                     : "Immediate Transfer",
                 },
                 ...(f.saveBeneficiary
@@ -3804,7 +3850,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                       },
                     ]
                   : []),
-                { label: "Arrives", value: f.isScheduled ? `Executes on ${f.scheduleDate}` : deliverySpeed },
+                { label: "Arrives", value: f.isScheduled ? `Executes on ${scheduleWhen(f)}` : deliverySpeed },
               ]}
               detailsExtra={
                 rail === "group" && selectedGroupObj ? (

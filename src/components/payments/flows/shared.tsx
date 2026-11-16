@@ -25,6 +25,10 @@ import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Field } from "@/components/ui/field";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Switch } from "@/components/ui/switch";
+import { DatePicker } from "@/components/ui/date-picker";
+import { format } from "date-fns";
 export const BANKS = [
   "Absa Bank Ghana Limited",
   "Access Bank Ltd",
@@ -1464,11 +1468,40 @@ export function SaveBeneficiaryCheckbox({
 /* -------------------------------------------------------------------------- */
 export type ScheduleFrequency = "once" | "daily" | "weekly" | "monthly";
 
+/** When the first payment goes: straight away, or on a date and time the person picks. */
+export type ScheduleTiming = "now" | "later";
+
 export interface ScheduleState {
   enabled: boolean;
-  startDate: string; // YYYY-MM-DD
+  startDate: string; // YYYY-MM-DD, today when timing is "now"
   frequency: ScheduleFrequency;
   endDate?: string;
+  timing?: ScheduleTiming; // defaults to "now"
+  startTime?: string; // HH:mm, only used when timing is "later"
+}
+
+const FREQUENCY_OPTIONS: { value: ScheduleFrequency; label: string }[] = [
+  { value: "once", label: "Once" },
+  { value: "daily", label: "Daily" },
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+];
+
+const TIMING_OPTIONS: { value: ScheduleTiming; label: string }[] = [
+  { value: "now", label: "Now" },
+  { value: "later", label: "Later" },
+];
+
+const DEFAULT_LATER_TIME = "09:00";
+
+/** Local calendar dates as yyyy-MM-dd, so a payment dated "today" is today for the person, not in UTC. */
+function todayIso() {
+  return format(new Date(), "yyyy-MM-dd");
+}
+function tomorrowIso() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return format(d, "yyyy-MM-dd");
 }
 
 export function SchedulePaymentSection({
@@ -1478,55 +1511,74 @@ export function SchedulePaymentSection({
   state: ScheduleState;
   onChange: (updates: Partial<ScheduleState>) => void;
 }) {
+  const timing: ScheduleTiming = state.timing ?? "now";
+
   return (
     <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-card p-3 transition">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <span className="text-[14px] font-medium text-foreground">Schedule Payment</span>
+          <span id="schedule-payment-label" className="text-[14px] font-medium text-foreground">Schedule Payment</span>
           <span className="text-[12px] text-muted-foreground">
             Set up a future date or recurring transfer
           </span>
         </div>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={state.enabled}
-            onChange={(e) => onChange({ enabled: e.target.checked })}
-            className="sr-only peer"
-          />
-          <div className="w-10 h-5 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-4 after:w-4 after:transition peer-checked:bg-primary"></div>
-        </label>
+        <Switch
+          checked={state.enabled}
+          onCheckedChange={(enabled) => onChange({ enabled })}
+          aria-labelledby="schedule-payment-label"
+        />
       </div>
 
       {state.enabled && (
-        <div className="flex flex-col gap-2 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Field label="Execution Date">
-              <Input
-                type="date"
-                value={state.startDate}
-                min={new Date().toISOString().split("T")[0]}
-                onChange={(e) => onChange({ startDate: e.target.value })}
-                className="tabular"
-              />
-</Field>
-            <Field label="Frequency">
-              <Select
-                value={state.frequency}
-                onValueChange={(val) => onChange({ frequency: (val || "once") as ScheduleFrequency })}
-              >
-                <SelectTrigger >
-                  <SelectValue placeholder="Select frequency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="once">One-off (Single Run)</SelectItem>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                </SelectContent>
-              </Select>
-</Field>
-          </div>
+        <div className="flex flex-col gap-3 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
+          <Field label="Frequency">
+            <SegmentedControl
+              fullWidth
+              aria-label="Frequency"
+              options={FREQUENCY_OPTIONS}
+              value={state.frequency}
+              onChange={(frequency) => onChange({ frequency })}
+            />
+          </Field>
+
+          <Field label="Starts">
+            <SegmentedControl
+              fullWidth
+              aria-label="When the first payment starts"
+              options={TIMING_OPTIONS}
+              value={timing}
+              onChange={(next) => {
+                if (next === "now") {
+                  onChange({ timing: "now", startDate: todayIso(), startTime: undefined });
+                } else {
+                  const pickable = state.startDate > todayIso() ? state.startDate : tomorrowIso();
+                  onChange({ timing: "later", startDate: pickable, startTime: state.startTime || DEFAULT_LATER_TIME });
+                }
+              }}
+            />
+          </Field>
+
+          {timing === "later" && (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="Date">
+                {/* Sized and surfaced like the Time input beside it, so the two fields match. */}
+                <DatePicker
+                  value={state.startDate}
+                  min={todayIso()}
+                  onChange={(startDate) => onChange({ startDate })}
+                  className="h-(--control-xl) rounded-xl bg-field px-3 text-[14px] text-foreground tabular"
+                />
+              </Field>
+              <Field label="Time">
+                <Input
+                  type="time"
+                  value={state.startTime || DEFAULT_LATER_TIME}
+                  onChange={(e) => onChange({ startTime: e.target.value })}
+                  className="tabular [&::-webkit-calendar-picker-indicator]:opacity-50"
+                />
+              </Field>
+            </div>
+          )}
         </div>
       )}
     </div>

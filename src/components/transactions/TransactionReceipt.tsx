@@ -288,8 +288,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
           <span className="text-[16px] font-medium text-foreground">{getTransactionType(txn)}</span>
           <span
             className={cn(
-              "tabular text-[34px] tracking-[var(--ls-heading)] sm:text-[42px]",
-              isCredit ? "text-success" : "text-foreground",
+              "tabular text-[34px] tracking-[var(--ls-heading)] text-foreground sm:text-[42px]",
             )}
           >
             {isCredit ? "+" : "-"}

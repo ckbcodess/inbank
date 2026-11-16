@@ -57,6 +57,10 @@ export interface InternationalWireFormState {
   isScheduled?: boolean;
   scheduleDate?: string;
   scheduleFrequency?: ScheduleFrequency;
+
+  scheduleTiming?: "now" | "later";
+
+  scheduleTime?: string;
   scheduleEndDate?: string;
 }
 
@@ -534,14 +538,22 @@ export function InternationalWireFlow({
           <SchedulePaymentSection
             state={{
               enabled: state.isScheduled ?? false,
-              startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+              startDate: state.scheduleDate || new Date().toISOString().split("T")[0],
               frequency: state.scheduleFrequency || "once",
+
+              timing: state.scheduleTiming || "now",
+
+              startTime: state.scheduleTime,
               endDate: state.scheduleEndDate || "",
             }}
             onChange={(updates) => {
               if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
               if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
               if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+
+              if (updates.timing !== undefined) onChange("scheduleTiming", updates.timing);
+
+              if (updates.startTime !== undefined) onChange("scheduleTime", updates.startTime);
               if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
             }}
           />
