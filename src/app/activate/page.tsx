@@ -2,6 +2,7 @@
 
 import { AlertToast } from "@/components/ui/alert-toast";
 import Image from "next/image";
+import Link from "next/link";
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -563,6 +564,12 @@ function ActivateContent() {
             description="I opened my account with a passport."
             onClick={() => setPassportModalOpen(true)}
           />
+          <p className="mt-3 text-center text-[13px] text-muted-foreground">
+            Already registered?{" "}
+            <Link href="/login" className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80">
+              Login
+            </Link>
+          </p>
         </div>
       )}
 
