@@ -1076,11 +1076,6 @@ function ActivateContent() {
             />
           </div>
 
-          <PinRequirements
-            pin={confirmPinDigits.join("")}
-            originalPin={pinDigits.join("")}
-            isConfirm
-          />
 
           {errorMsg && (
             <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">

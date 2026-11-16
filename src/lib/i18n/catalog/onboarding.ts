@@ -679,6 +679,10 @@ const onboarding: Entry[] = [
   ["Your Role", "Votre fonction", "Tu cargo", "您的职务"],
   ["Confirm Password", "Confirmez le mot de passe", "Confirmar contraseña", "确认密码"],
 
+  ["PIN requirements", "Exigences du code", "Requisitos del PIN", "密码要求"],
+  ["— not met", "— non respecté", "— no cumplido", "— 未满足"],
+  ["No runs, like 123 or 987", "Pas de suites, comme 123 ou 987", "Sin secuencias, como 123 o 987", "不能是连续数字，如 123 或 987"],
+  ["No repeats, like 111", "Pas de répétitions, comme 111", "Sin repeticiones, como 111", "不能是重复数字，如 111"],
   // ── Activation with a passport (identity partner window) ──
   ["For accounts created with a passport only", "Uniquement pour les comptes créés avec un passeport", "Solo para cuentas creadas con pasaporte", "仅适用于用护照开立的账户"],
   ["Such as Link2Home. If you registered with a Ghana Card, verify with that.", "Comme Link2Home. Si vous vous êtes inscrit avec une carte Ghana, vérifiez avec celle-ci.", "Como Link2Home. Si te registraste con una Ghana Card, verifica con ella.", "例如 Link2Home。如果您用加纳身份证登记，请用身份证验证。"],

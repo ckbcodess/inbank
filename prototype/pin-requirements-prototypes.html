@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PIN Requirements: 8 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--amtx:#8a5a00;--ok:#047857;--okbg:#ecfdf3;--okfill:#16a34a;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--amtx:#f5c542;--ok:#34d399;--okbg:#0f2a1f;--okfill:#22c55e;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+  h1,h2,p{margin:0;font-weight:inherit}
+  .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:10px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .legend{max-width:480px;font-size:12px;color:var(--mu);text-align:center;line-height:1.6}
+  .card{width:480px;max-width:100%;min-height:520px;background:var(--surf);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--shadow);padding:32px}
+  .back{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--mu);margin-bottom:20px}
+  .steps{display:flex;gap:4px;margin-bottom:24px}
+  .steps i{flex:1;height:4px;border-radius:999px;background:var(--tile)}
+  .steps i.on{background:color-mix(in srgb,var(--am) 60%,transparent)} .steps i.cur{background:var(--am)}
+  .t{font-size:22px;font-weight:500;letter-spacing:-.02em;text-align:center}
+  .d{font-size:14px;color:var(--mu);line-height:1.5;margin-top:8px;text-align:center}
+  .body{margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:20px}
+  .boxes{display:flex;gap:8px;position:relative}
+  .box{width:48px;height:48px;border:1px solid var(--bd);border-radius:8px;background:var(--surf);display:flex;align-items:center;justify-content:center;font-size:20px;transition:border-color .14s,background .14s}
+  .box.focus{border-color:var(--am);box-shadow:0 0 0 3px color-mix(in srgb,var(--am) 25%,transparent)}
+  .box.bad{border-color:var(--am);background:var(--amsoft)}
+  .box.good{border-color:var(--okfill)}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--tx)}
+  .box.bad .dot{background:var(--amtx)}
+  .hidden-input{position:absolute;inset:0;opacity:0;font-size:16px}
+  .s12{font-size:12px} .s13{font-size:13px} .mu{color:var(--mu)} .ok{color:var(--ok)} .am{color:var(--amtx)}
+  .tick{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;border:1.5px solid var(--bd);transition:all .14s}
+  .tick.on{background:var(--okfill);border-color:var(--okfill);color:#fff}
+  .tick.bad{background:var(--am);border-color:var(--am);color:#111}
+  .list{display:flex;flex-direction:column;gap:8px;align-self:stretch}
+  .li{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mu)}
+  .li.on{color:var(--tx)} .li.bad{color:var(--amtx)}
+  .line{font-size:13px;text-align:center;min-height:20px;line-height:1.5;max-width:340px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:999px;font-size:12px;background:var(--tile);color:var(--mu);transition:all .14s}
+  .chip.on{background:var(--okbg);color:var(--ok)} .chip.bad{background:var(--amsoft);color:var(--amtx)}
+  .ex{display:flex;gap:16px;align-self:stretch;justify-content:center}
+  .exa{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--mu)}
+  .exa b{font-weight:400;font-size:18px;letter-spacing:.2em;color:var(--tx);text-decoration:line-through;text-decoration-color:var(--mu)}
+  .exa.ok b{text-decoration:none}
+  .info{display:inline-flex;align-items:center;gap:4px;font-size:13px;text-decoration:underline;text-decoration-color:var(--bd);text-underline-offset:4px;position:relative}
+  .pop{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);width:260px;background:var(--surf);border:1px solid var(--bd);border-radius:10px;padding:12px;box-shadow:var(--shadow);text-align:left;font-size:13px;line-height:1.6;z-index:5}
+  .keypad{display:grid;grid-template-columns:repeat(3,72px);gap:8px}
+  .key{height:52px;border-radius:10px;background:var(--tile);font-size:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+  .key:hover{background:var(--tileh)}
+  .key.dim{opacity:.3;cursor:not-allowed}
+  .key small{font-size:9px;color:var(--mu);margin-top:2px}
+  .meter{display:flex;gap:4px;width:208px}
+  .meter i{flex:1;height:4px;border-radius:999px;background:var(--tile);transition:background .2s}
+  .btn{height:44px;width:100%;border-radius:8px;background:var(--am);color:#111;font-weight:500;font-size:14px}
+  .btn.dis{opacity:.4;pointer-events:none}
+  @keyframes shake{20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+  .shake{animation:shake .3s}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Set Your PIN: how the rules are shown</h1>
+    <div class="row" style="gap:12px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+    </div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage">
+  <div class="card" id="card"></div>
+  <p class="legend">Type a PIN (or tap the boxes). Try <b class="tab">1234</b>, <b class="tab">9876</b>, <b class="tab">1112</b> and a good one like <b class="tab">4819</b>. The rules are the real ones from <code>auth-shared.ts</code>: no three digits in a row going up or down, and no digit three times in a row.</p>
+</div>
+<script>
+const NOTES=[
+ ['One quiet line','The rules sit in one sentence under the boxes, in plain words with examples. When a rule breaks, the same line names what’s wrong; when the PIN is fine, it says so. Nothing else on the screen.'],
+ ['The rules move into the description','“Avoid runs like 123 or repeats like 111” joins the subtitle, so there is no block at all. A break is told in one amber line under the boxes. Smallest footprint; the rules are read once, up front.'],
+ ['Quiet checklist, no box','The same two checks as today, without the panel, the caps heading or the “e.g.” lines. Each tick turns green as soon as there are enough digits to judge it, or amber when it breaks.'],
+ ['The boxes show the problem','Nothing is shown until a rule breaks. Then the digits that break it turn amber in the boxes, and one line explains: “1, 2, 3 is a run”. Teaches by pointing at the exact digits.'],
+ ['Two chips','“No runs” and “No repeats” as small pills under the boxes. Grey while unknown, green when satisfied, amber when broken. Scannable at a glance.'],
+ ['Show, don’t tell','Three example PINs, two crossed out (1234, 1111) and one that works (4819). People copy the pattern from examples faster than they parse rules.'],
+ ['Rules on request','Only a “What makes a good PIN?” link under the boxes. The rules open in a small popover. A break still shows one amber line. Cleanest screen; the rules are a tap away for whoever wants them.'],
+ ['The keypad prevents it','An on-screen keypad dims any digit that would break a rule, with a tiny reason under it (“run”, “repeat”). A bad PIN can’t be entered at all, so there’s nothing to explain afterwards. Best on a phone; on desktop the keyboard still types, and the dimmed keys explain why a digit was refused.']
+];
+let V=1, pin='', shake=false, pop=false;
+const $=s=>document.querySelector(s);
+const ASC='0123456789012', DESC='0987654321098';
+function runAt(p){for(let i=0;i<=p.length-3;i++){const c=p.slice(i,i+3); if(ASC.includes(c)||DESC.includes(c)) return [i,i+1,i+2];} return null;}
+function repAt(p){const m=/(\d)\1{2}/.exec(p); return m?[m.index,m.index+1,m.index+2]:null;}
+const run=()=>runAt(pin), rep=()=>repAt(pin);
+const broken=()=>run()||rep();
+const judged=()=>pin.length>=3;
+const done=()=>pin.length===4&&!broken();
+function why(){
+  const r=run(), d=rep();
+  if(r){const ds=r.map(i=>pin[i]); return `${ds.join(', ')} is a run. Mix the order up.`;}
+  if(d) return `${pin[d[0]]} three times in a row is too easy to guess.`;
+  return '';
+}
+const ICON={check:'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+ bang:'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M12 6v8M12 18h.01"/></svg>',
+ info:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+ back:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+ del:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h11v14H9l-6-7z"/><path d="m12 9 5 6M17 9l-5 6"/></svg>'};
+
+function boxes(markBad){
+  const bad=markBad?(broken()||[]):[];
+  return `<div class="boxes ${shake?'shake':''}">${[0,1,2,3].map(i=>`<div class="box ${i===pin.length?'focus':''} ${bad.includes(i)?'bad':''} ${done()&&markBad!=='none'&&V===4?'good':''}">${pin[i]?'<span class="dot"></span>':''}</div>`).join('')}${V!==8?'<input class="hidden-input" id="pin" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="PIN" />':''}</div>`;
+}
+const state=(ok,bad)=>bad?'bad':ok?'on':'';
+const tick=st=>`<span class="tick ${st}">${st==='on'?ICON.check:st==='bad'?ICON.bang:''}</span>`;
+
+function extra(){
+  const r=!!run(), d=!!rep(), j=judged();
+  const runSt=state(j&&!r,r), repSt=state(j&&!d,d);
+  switch(V){
+  case 1: {
+    const txt = broken()? `<span class="am">${why()}</span>` : done()? `<span class="ok">Good PIN.</span>` : `<span class="mu">Avoid runs like 123 and repeats like 111.</span>`;
+    return `${boxes(false)}<p class="line">${txt}</p>`;
+  }
+  case 2: return `${boxes(false)}<p class="line am">${broken()?why():''}</p>`;
+  case 3: return `${boxes(false)}<div class="list" style="max-width:260px;align-self:center">
+      <div class="li ${runSt}">${tick(runSt)}No runs, like 123 or 987</div>
+      <div class="li ${repSt}">${tick(repSt)}No repeats, like 111</div></div>`;
+  case 4: return `${boxes(true)}<p class="line am">${broken()?why():''}</p>`;
+  case 5: return `${boxes(false)}<div class="chips"><span class="chip ${runSt}">${runSt==='on'?ICON.check:''}No runs like 123</span><span class="chip ${repSt}">${repSt==='on'?ICON.check:''}No repeats like 111</span></div>`;
+  case 6: return `${boxes(true)}<div class="ex"><div class="exa"><b class="tab">1234</b>run</div><div class="exa"><b class="tab">1111</b>repeat</div><div class="exa ok"><b class="tab">4819</b><span class="ok">works</span></div></div><p class="line am">${broken()?why():''}</p>`;
+  case 7: return `${boxes(false)}<p class="line am" style="min-height:${broken()?20:0}px">${broken()?why():''}</p>
+      <button class="info" data-act="pop">${ICON.info}What makes a good PIN?${pop?`<span class="pop" role="dialog">Avoid three digits in a row going up or down, like <b class="tab">123</b> or <b class="tab">987</b>, and the same digit three times, like <b class="tab">111</b>. Birthdays are easy to guess too.</span>`:''}</button>`;
+  case 8: {
+    const keys=['1','2','3','4','5','6','7','8','9','','0','del'];
+    return `${boxes(false)}<div class="keypad">${keys.map(k=>{
+      if(!k) return '<span></span>';
+      if(k==='del') return `<button class="key" data-key="del" aria-label="Delete">${ICON.del}</button>`;
+      const next=pin+k; const why2 = pin.length<4 ? (runAt(next)?'run':repAt(next)?'repeat':'') : '';
+      return `<button class="key ${why2?'dim':''}" data-key="${k}" ${why2?`aria-disabled="true" title="Would make a ${why2}"`:''}>${k}${why2?`<small>${why2}</small>`:'<small>&nbsp;</small>'}</button>`;
+    }).join('')}</div>`;
+  }}
+}
+
+function render(){
+  const desc = V===2 ? '4 digits. Avoid runs like 123 and repeats like 111.' : 'Set a 4-digit PIN for secure access.';
+  $('#card').innerHTML=`<button class="back">${ICON.back}Back</button>
+   <div class="steps">${[1,2,3,4,5,6,7].map(i=>`<i class="${i<6?'on':i===6?'cur':''}"></i>`).join('')}</div>
+   <h2 class="t">Set Your PIN</h2><p class="d">${desc}</p>
+   <div class="body">${extra()}<button class="btn ${done()?'':'dis'}" style="margin-top:8px">Continue</button></div>`;
+  const inp=$('#pin'); if(inp){inp.value=pin; inp.focus();}
+  shake=false;
+}
+function pills(){ $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1}</button>`).join(''); $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]}`; }
+function setPin(p){ const was=!!broken(); pin=p; if(!was&&broken()&&V!==8) shake=true; render(); }
+
+document.addEventListener('input',e=>{ if(e.target.id!=='pin') return; setPin(e.target.value.replace(/\D/g,'').slice(0,4)); });
+document.addEventListener('click',e=>{
+  const v=e.target.closest('[data-v]'); if(v){V=+v.dataset.v; pin=''; pop=false; pills(); render(); return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t; document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t)); render(); return;}
+  if(e.target.closest('[data-act=pop]')){pop=!pop; render(); return;}
+  const k=e.target.closest('[data-key]'); if(k){
+    if(k.dataset.key==='del'){setPin(pin.slice(0,-1)); return;}
+    if(k.classList.contains('dim')||pin.length>=4) return;
+    setPin(pin+k.dataset.key); return;
+  }
+  if(e.target.closest('.boxes')){const i=$('#pin'); if(i) i.focus();}
+});
+document.addEventListener('keydown',e=>{
+  if(V!==8) return;
+  if(/^\d$/.test(e.key)){const b=document.querySelector(`[data-key="${e.key}"]`); if(b&&!b.classList.contains('dim')&&pin.length<4) setPin(pin+e.key); else if(b){b.animate([{transform:'scale(1)'},{transform:'scale(.92)'},{transform:'scale(1)'}],{duration:200});}}
+  if(e.key==='Backspace') setPin(pin.slice(0,-1));
+});
+pills(); render();
+</script>
+</body>
+</html>

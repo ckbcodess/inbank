@@ -1,13 +1,14 @@
 "use client";
 
+import RuleChecklist from "@/components/auth/RuleChecklist";
 import { useState } from "react";
-import { Check, Eye, EyeOff } from "@/components/ui/icons";
+import { Eye, EyeOff } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { PASSWORD_RULES, passwordMeetsRules } from "@/lib/auth-shared";
 
 import { Field } from "@/components/ui/field";
 /**
- * Password + confirm, with the Bank's rules in one requirements card. Shared by
+ * Password + confirm, with the Bank's rules as a quiet checklist (RuleChecklist). Shared by
  * activation, sign-up, migration and password reset, so they look the same and
  * can't enforce different standards.
  */
@@ -67,31 +68,14 @@ export default function NewPasswordFields({
         {mismatch && <p className="text-[12px] text-destructive">These don&apos;t match yet.</p>}
       </div>
 
-      <div className="rounded-2xl border border-border/80 bg-muted/20 p-3">
-        <p className="mb-2 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
-          Password Requirements
-        </p>
-        <ul className="grid grid-cols-1 gap-2 text-[12px] sm:grid-cols-2" aria-label="Password requirements">
-          {PASSWORD_RULES.map((rule) => {
-            const met = rule.test(password);
-            return (
-              <li key={rule.id} className="flex items-center gap-2">
-                <span
-                  className={`flex size-3.5 items-center justify-center rounded-full text-[10px] transition-colors ${
-                    met ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  <Check size={11} aria-hidden="true" />
-                </span>
-                <span className={met ? "text-foreground font-medium" : "text-muted-foreground"}>
-                  {rule.label}
-                  <span className="sr-only">{met ? " \u2014 met" : " \u2014 not yet"}</span>
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      <RuleChecklist
+        label="Password requirements"
+        rules={PASSWORD_RULES.map((rule) => ({
+          id: rule.id,
+          label: rule.label,
+          state: rule.test(password) ? "met" : "pending",
+        }))}
+      />
     </div>
   );
 }

@@ -89,12 +89,6 @@ export function passwordMeetsRules(pw: string): boolean {
 
 /* ── PIN rules ─────────────────────────────────────────────────────────────── */
 
-export interface PinRule {
-  id: string;
-  label: string;
-  test: (pin: string) => boolean;
-}
-
 export function hasConsecutiveDigits(pin: string): boolean {
   if (pin.length < 3) return false;
   const asc = "0123456789012";
@@ -116,19 +110,6 @@ export function hasRepeatingDigits(pin: string): boolean {
 export function pinMeetsRules(pin: string): boolean {
   return pin.length === 4 && !hasConsecutiveDigits(pin) && !hasRepeatingDigits(pin);
 }
-
-export const PIN_RULES: readonly PinRule[] = [
-  {
-    id: "no-consecutive",
-    label: "No consecutive numbers (e.g. 1234)",
-    test: (pin) => pin.length > 0 && !hasConsecutiveDigits(pin),
-  },
-  {
-    id: "no-repeating",
-    label: "No repeating numbers (e.g. 1111)",
-    test: (pin) => pin.length > 0 && !hasRepeatingDigits(pin),
-  },
-];
 
 /* ── Payment approval method ───────────────────────────────────────────────── */
 
