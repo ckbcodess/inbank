@@ -109,12 +109,10 @@ export function AccountExpensesView({
       )}
 
       {(state === "populated" || state === "empty") && isEmpty && (
-        <div className="rounded-2xl border border-border bg-card">
-          <TrueEmptyState illustration="empty-spends"
-            title={`Nothing spent from this account in the last ${periodLabel}`}
-            description="Payments and card spend will show here."
-          />
-        </div>
+        <TrueEmptyState illustration="empty-spends"
+          title={`Nothing spent from this account in the last ${periodLabel}`}
+          description="Payments and card spend will show here."
+        />
       )}
 
       {state === "populated" && !isEmpty && (

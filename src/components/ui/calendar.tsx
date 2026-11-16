@@ -2,11 +2,35 @@
 
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "@/components/ui/icons"
-import { DayPicker } from "react-day-picker"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DayPicker, type DropdownProps } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
+
+/** A month or year picker for the calendar caption: the app's Select, so it matches every other dropdown. */
+function CalendarDropdown({ options, value, onChange, "aria-label": ariaLabel }: DropdownProps) {
+  return (
+    <Select
+      value={String(value)}
+      onValueChange={(next) => {
+        if (next && onChange) onChange({ target: { value: next } } as React.ChangeEvent<HTMLSelectElement>)
+      }}
+    >
+      <SelectTrigger size="sm" aria-label={ariaLabel} className="w-auto gap-1 px-2 text-[13px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent className="max-h-64">
+        {options?.map((o) => (
+          <SelectItem key={o.value} value={String(o.value)} disabled={o.disabled}>
+            {o.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
 
 function Calendar({
   className,
@@ -21,7 +45,8 @@ function Calendar({
       classNames={{
         months: "flex flex-col sm:flex-row gap-2",
         month: "flex flex-col gap-3",
-        month_caption: "flex justify-center pt-1 relative items-center w-full h-6",
+        month_caption: "flex justify-center pt-1 relative items-center w-full h-8",
+        dropdowns: "flex items-center justify-center gap-1.5 px-8",
         caption_label: "text-sm font-medium",
         nav: "flex items-center gap-1",
         button_previous: cn(
@@ -49,7 +74,9 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        Chevron: ({ orientation, className: cls, ...rest }) =>
+        // captionLayout="dropdown" draws its month and year pickers with the app's Select, not a native <select>.
+        Dropdown: CalendarDropdown,
+        Chevron:({ orientation, className: cls, ...rest }) =>
           orientation === "left" ? (
             <ChevronLeft className={cn("size-3.5", cls)} {...rest} />
           ) : (

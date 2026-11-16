@@ -1494,6 +1494,15 @@ const TIMING_OPTIONS: { value: ScheduleTiming; label: string }[] = [
 
 const DEFAULT_LATER_TIME = "09:00";
 
+/** Every half hour of the day, as HH:mm. Payments run on these slots only. */
+const TIME_SLOTS = Array.from({ length: 48 }, (_, i) => `${String(Math.floor(i / 2)).padStart(2, "0")}:${i % 2 ? "30" : "00"}`);
+
+/** "09:30" → "9:30 am", for the dropdown and its trigger. */
+function timeLabel(hhmm: string) {
+  const [h, m] = hhmm.split(":").map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${h < 12 ? "am" : "pm"}`;
+}
+
 /** Local calendar dates as yyyy-MM-dd, so a payment dated "today" is today for the person, not in UTC. */
 function todayIso() {
   return format(new Date(), "yyyy-MM-dd");
@@ -1570,12 +1579,21 @@ export function SchedulePaymentSection({
                 />
               </Field>
               <Field label="Time">
-                <Input
-                  type="time"
+                <Select
                   value={state.startTime || DEFAULT_LATER_TIME}
-                  onChange={(e) => onChange({ startTime: e.target.value })}
-                  className="tabular [&::-webkit-calendar-picker-indicator]:opacity-50"
-                />
+                  onValueChange={(startTime) => startTime && onChange({ startTime })}
+                >
+                  <SelectTrigger className="h-(--control-xl) w-full rounded-xl bg-field px-3 text-[14px] text-foreground tabular">
+                    <span>{timeLabel(state.startTime || DEFAULT_LATER_TIME)}</span>
+                  </SelectTrigger>
+                  <SelectContent className="max-h-72">
+                    {TIME_SLOTS.map((slot) => (
+                      <SelectItem key={slot} value={slot} className="tabular">
+                        {timeLabel(slot)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
             </div>
           )}

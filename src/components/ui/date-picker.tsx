@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { format, parse, isValid } from "date-fns"
+import { addYears, format, parse, isValid } from "date-fns"
 import { Calendar as CalendarIcon } from "@/components/ui/icons"
 
 import { cn } from "@/lib/utils"
@@ -56,6 +56,9 @@ export function DatePicker({
           selected={selected}
           defaultMonth={selected}
           disabled={min ? { before: parse(min, "yyyy-MM-dd", new Date()) } : undefined}
+          captionLayout="dropdown"
+          startMonth={min ? parse(min, "yyyy-MM-dd", new Date()) : undefined}
+          endMonth={addYears(new Date(), 2)}
           onSelect={(d) => {
             onChange?.(d ? format(d, "yyyy-MM-dd") : "")
             setOpen(false)

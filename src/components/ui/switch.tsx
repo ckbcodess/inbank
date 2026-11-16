@@ -46,7 +46,7 @@ function Switch({
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
         className={cn(
-          "block rounded-full bg-background shadow-xs transition-transform duration-hover data-checked:bg-primary-foreground",
+          "block rounded-full bg-white shadow-xs transition-transform duration-hover dark:data-checked:bg-primary-foreground",
           SWITCH_SIZE[size].thumb
         )}
       />
