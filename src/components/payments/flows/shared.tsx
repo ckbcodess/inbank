@@ -1229,7 +1229,7 @@ export function ProceedButton({
   loading?: boolean;
 }) {
   return (
-    <KeyboardDock>
+    <KeyboardDock className="mt-4">
     <Button
       size="xl"
       type="button"
@@ -1523,7 +1523,7 @@ export function SchedulePaymentSection({
   const timing: ScheduleTiming = state.timing ?? "now";
 
   return (
-    <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-card p-3 transition">
+    <div className="flex flex-col gap-4 transition">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <span id="schedule-payment-label" className="text-[14px] font-medium text-foreground">Schedule Payment</span>
@@ -1539,7 +1539,7 @@ export function SchedulePaymentSection({
       </div>
 
       {state.enabled && (
-        <div className="flex flex-col gap-3 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
+        <div className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card p-3 animate-in fade-in slide-in-from-top-1 duration-150">
           <Field label="Frequency">
             <SegmentedControl
               fullWidth
