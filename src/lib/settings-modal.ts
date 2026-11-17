@@ -22,9 +22,29 @@ function setParam(value: string | null) {
   window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
 }
 
-/** Open Settings, on a section or (with none) on the list. Safe to call from any client component. */
+/** The section last shown, so reopening Settings returns to it instead of Profile. Kept for the browser session. */
+const LAST_KEY = "nibs-settings-last";
+function lastSection(): SettingsSection | null {
+  try {
+    const v = sessionStorage.getItem(LAST_KEY);
+    return (SETTINGS_SECTIONS as readonly string[]).includes(v ?? "") ? (v as SettingsSection) : null;
+  } catch {
+    return null;
+  }
+}
+function rememberSection(section: SettingsSection) {
+  try {
+    sessionStorage.setItem(LAST_KEY, section);
+  } catch {}
+}
+
+/**
+ * Open Settings on a section, or (with none) where the person left it. On a phone, with no section remembered, it
+ * opens on the list. Safe to call from any client component.
+ */
 export function openSettings(section?: SettingsSection) {
-  setParam(section ?? "menu");
+  if (section) rememberSection(section);
+  setParam(section ?? lastSection() ?? "menu");
 }
 
 export function closeSettings() {
@@ -33,6 +53,7 @@ export function closeSettings() {
 
 /** Move to a section, or back to the list (`"menu"`), while Settings stays open. */
 export function showSettingsSection(section: SettingsSection | "menu") {
+  if (section !== "menu") rememberSection(section);
   setParam(section);
 }
 
