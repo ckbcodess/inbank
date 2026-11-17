@@ -5,7 +5,7 @@
  * is its neighbour, so opening the panel shifts the page left instead of covering it.
  * On a phone the panel takes the whole screen instead (see `DevModePanel`).
  *
- * Screens with no app header (sign-in, onboarding) have no Dev Mode button, so a
+ * Screens with no app header (login, onboarding) have no Dev Mode button, so a
  * small pill stands in for it there. Hidden in capture mode and when Dev Mode is
  * switched off, like the header button.
  */

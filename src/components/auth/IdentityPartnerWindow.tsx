@@ -25,7 +25,7 @@ const STEP_DELAY = { opening: 800, checking: 1500, done: 900 } as const;
  * In production this is a real browser window the partner serves (opened with `window.open`, like "Continue with
  * Google"), and these callbacks are its `postMessage` events. Here it sits over a dimmed page with its own title bar
  * and address bar, so it reads as somebody else's window. It can be dragged by the title bar on a computer and fills
- * the screen on a phone, which is how a browser shows a sign-in window there.
+ * the screen on a phone, which is how a browser shows a login window there.
  *
  * Closing it before the check finishes calls `onClose`; nothing is shared in that case.
  */

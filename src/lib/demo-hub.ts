@@ -1,11 +1,11 @@
 /**
- * The Demo hub ("Jump to a step"): the onboarding, sign-in and migration flows. It opens from the Dev Mode panel,
+ * The Demo hub ("Jump to a step"): the onboarding, login and migration flows. It opens from the Dev Mode panel,
  * and the panel offers it on the screens listed here.
  */
 
 import { create } from "zustand";
 
-/** Screens that belong to the onboarding and sign-in flows, plus the two dashboards that show the post-onboarding cards. */
+/** Screens that belong to the onboarding and login flows, plus the two dashboards that show the post-onboarding cards. */
 export const DEMO_HUB_PATHS = [
   "/",
   "/signup",
@@ -22,7 +22,7 @@ export const DEMO_HUB_PATHS = [
   "/business/overview",
 ];
 
-/** The two dashboards are the signed-in shell, which has its own Dev Mode button in the header. */
+/** The two dashboards are the logged-in shell, which has its own Dev Mode button in the header. */
 const SHELL_DASHBOARDS = ["/overview", "/business/overview"];
 
 function matches(pathname: string | null, paths: string[]) {

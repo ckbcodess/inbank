@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The signed-in customer's accounts and which one is the default — one source
+ * The logged-in customer's accounts and which one is the default — one source
  * for the Accounts list and Account Details, so "Default" never disagrees
  * between the two. Follows the Dev Mode customer configuration. Personal
  * banking's: business has its own (`lib/corporate/accounts`).

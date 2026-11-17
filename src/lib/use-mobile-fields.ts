@@ -24,7 +24,7 @@ function scroller(el: HTMLElement): HTMLElement | null {
     const oy = getComputedStyle(p).overflowY;
     if ((oy === "auto" || oy === "scroll") && p.scrollHeight > p.clientHeight) return p;
   }
-  // Pages that scroll the window itself (sign-in, onboarding) have no container of their own.
+  // Pages that scroll the window itself (login, onboarding) have no container of their own.
   const page = document.scrollingElement;
   return page instanceof HTMLElement && page.scrollHeight > page.clientHeight ? page : null;
 }

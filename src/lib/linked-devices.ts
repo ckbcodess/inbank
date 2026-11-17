@@ -2,11 +2,11 @@
 
 /**
  * Linked devices: every device that can get into a customer's account. One list, so a device that skips the
- * one-time code ("trusted") and a device that is signed in are the same row, not two lists to reconcile.
+ * one-time code ("trusted") and a device that is logged in are the same row, not two lists to reconcile.
  *
  * Prototype only: the other devices are a seeded list per customer, dated relative to when the app loads so
  * "Last active" is always a real timestamp, never a canned "2 hours ago". This device is not in the seed. It is
- * built from the live session (sign-in time) and the real device-trust state. A real bank reads all of this from
+ * built from the live session (login time) and the real device-trust state. A real bank reads all of this from
  * server-side sessions and device keys.
  */
 
@@ -24,7 +24,7 @@ export interface LinkedDevice {
   signedIn: number;
   /** ms epoch */
   lastActive: number;
-  /** Skips the one-time code at sign-in. */
+  /** Skips the one-time code at login. */
   trusted: boolean;
 }
 
@@ -48,14 +48,14 @@ const SEEDED: Record<string, LinkedDevice[]> = {
   "u-legacy": [],
 };
 
-/** The devices other than this one, minus any the customer has signed out. */
+/** The devices other than this one, minus any the customer has logged out. */
 export function otherDevicesFor(actorId: string, signedOut: string[]): LinkedDevice[] {
   const seed = SEEDED[actorId] ?? SEEDED.default;
   return seed.filter((d) => !signedOut.includes(d.id)).sort((a, b) => b.lastActive - a.lastActive);
 }
 
 interface LinkedDevicesState {
-  /** Device ids signed out, per customer. */
+  /** Device ids logged out, per customer. */
   signedOut: Record<string, string[]>;
   signOutDevice: (actorId: string, deviceId: string) => void;
   signOutOthers: (actorId: string) => void;

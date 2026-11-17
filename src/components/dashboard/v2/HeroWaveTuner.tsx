@@ -1,5 +1,10 @@
 "use client";
 
+import { createPortal } from "react-dom";
+import { useSyncExternalStore } from "react";
+
+const noopSubscribe = () => () => {};
+
 /**
  * Dev tool: tune the hero's motion and shape live: the wave of light (cycle, drift, size, lift, second wave), grain,
  * the size of the panel container's glow and the dotted eagle (its size, position and opacity). Its colours are tokens, so they live in the Colour
@@ -45,11 +50,15 @@ const SLIDERS: { key: NumericKey; label: string; min: number; max: number; step:
 export function HeroWaveTuner() {
   const open = useWaveTunerOpen();
   const captureMode = useCaptureMode();
+  // True only in the browser, so the portal never runs during server rendering.
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const devToolsHidden = useDevToolsHidden();
   if (captureMode || devToolsHidden) return null;
 
-  return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+  if (!mounted) return null;
+  // Portalled to <body>: a transformed ancestor on the dashboard would otherwise pin `fixed` to it, not the window.
+  return createPortal(
+    <div className="fixed bottom-4 left-4 z-[60] flex flex-col items-start gap-2">
       {open && <TunerPanel />}
       <button
         type="button"
@@ -66,7 +75,8 @@ export function HeroWaveTuner() {
       >
         <Waves size={18} />
       </button>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

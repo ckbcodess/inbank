@@ -4,7 +4,7 @@
  * Dev Mode side panel. `DevModeFrame` docks it to the right of the page, so the page
  * shrinks to make room, the way a modern app's side panel works. It is one grouped
  * list: the Demo hub on the entry and onboarding screens, who you are testing as
- * (personal demo customers, or a signed-in business's users and role flows), then the
+ * (personal demo customers, or a logged-in business's users and role flows), then the
  * states the current screen registers. Rows are plain text with a hairline rail, so
  * the list scans without boxes or icons.
  *
@@ -213,7 +213,7 @@ export function DevModePanel() {
               selected={false}
               onClick={openDemoHub}
               title="Jump to a step"
-              hint="Onboarding, sign-in and migration flows"
+              hint="Onboarding, login and migration flows"
             />
           </PanelSection>
         )}

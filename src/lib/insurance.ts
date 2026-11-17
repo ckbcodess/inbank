@@ -4,7 +4,7 @@
  * Insure (bancassurance): the customer's insurance profile, policies, the people named on them, and claims, with the
  * pricing math. The plans on offer are in `insurance-plans.ts`, which server pages can read.
  *
- * The profile is created once and kept (one per signed-in customer). Every plan reads it, so what the customer said
+ * The profile is created once and kept (one per logged-in customer). Every plan reads it, so what the customer said
  * about themselves, their lifestyle and their health is never asked twice. Beneficiaries and trustees are kept the same
  * way: someone named on one policy is offered as saved on the next.
  *
@@ -204,7 +204,7 @@ export interface Claim {
 }
 
 interface InsuranceState {
-  /** One profile per signed-in customer, by their id. */
+  /** One profile per logged-in customer, by their id. */
   profiles: Record<string, InsuranceProfile>;
   policies: Policy[];
   people: InsuredPerson[];
@@ -585,7 +585,7 @@ export function useInsuranceHydrated(): boolean {
   return hydrated;
 }
 
-/** The signed-in customer's insurance picture, from the one store. */
+/** The logged-in customer's insurance picture, from the one store. */
 export function useMyInsurance() {
   const ownerId = useSession((s) => s.actor?.id) ?? "guest";
   const profiles = useInsurance((s) => s.profiles);

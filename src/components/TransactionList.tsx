@@ -156,7 +156,7 @@ function exportTransactionsCSV(txns: Transaction[]) {
 
 interface TransactionListProps {
   transactions: Transaction[];
-  /** The accounts the account filter offers: the signed-in relationship's own. */
+  /** The accounts the account filter offers: the logged-in relationship's own. */
   accounts: Account[];
   /** Where "Start a transaction" goes when the list is empty. Left out, the empty list has no action. */
   startHref?: string;

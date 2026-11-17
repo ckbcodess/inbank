@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Refer a Friend: 8 Simpler Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--amtx:#8a5a00;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#262626;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--amtx:#f5c542;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+  h1,h2,h3,p{margin:0;font-weight:inherit}
+  .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:10px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center}
+  .modal{width:860px;max-width:100%;min-height:600px;background:var(--surf);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--shadow);display:flex;overflow:hidden}
+  .side{width:220px;background:color-mix(in srgb,var(--tile) 50%,var(--surf));border-right:1px solid var(--bd);padding:24px 12px;display:flex;flex-direction:column;gap:2px;flex:none}
+  .side .g{font-size:12px;color:var(--mu);padding:12px 8px 4px}
+  .side span.i{padding:6px 8px;border-radius:8px;font-size:13px;color:var(--mu);font-weight:500}
+  .side span.on{background:var(--am);color:#111}
+  .main{flex:1;padding:24px 32px;display:flex;flex-direction:column;gap:16px;min-width:0}
+  @media(max-width:700px){.side{display:none}.main{padding:20px 16px}}
+  .ph{font-size:16px;font-weight:500;padding-top:28px}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px} .lr{line-height:1.6}
+  .btn{height:44px;padding:0 20px;border-radius:8px;background:var(--am);color:#111;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.o{background:var(--surf);border:1px solid var(--bd);color:var(--tx)} .btn.o:hover{background:var(--tile)}
+  .btn.sm{height:28px;padding:0 10px;font-size:13px}
+  .btn.md{height:40px}
+  .w{width:100%}
+  .panel{border:1px solid var(--bd);border-radius:10px;padding:24px}
+  .link{text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--bd)}
+  .link:hover{text-decoration-color:var(--tx)}
+  .rowi{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px;margin:0 -12px;border-radius:10px}
+  .rowi.hov:hover{background:var(--tile);cursor:pointer}
+  .hr{height:1px;background:var(--bd);opacity:.6}
+  .ico{width:36px;height:36px;border-radius:50%;background:var(--am);color:#111;display:flex;align-items:center;justify-content:center;flex:none}
+  .ico.g{background:var(--tile);color:var(--tx)}
+  .chip{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:999px;background:var(--tile);font-size:13px}
+  .chip:hover{background:var(--tileh)}
+  .center{display:flex;flex-direction:column;align-items:center;text-align:center}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--surf);padding:10px 16px;border-radius:8px;font-size:13px;z-index:60}
+  .wa{width:16px;height:16px}
+  .faces{display:flex} .faces i{width:24px;height:24px;border-radius:50%;background:var(--tile);border:2px solid var(--surf);margin-left:-6px;font-style:normal;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:500}
+  .faces i:first-child{margin-left:0}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Refer a Friend: simpler, one clear intent</h1>
+    <div class="row" style="gap:12px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="data"><button data-d="some" class="on">3 joined</button><button data-d="none">None yet</button></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+    </div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="modal">
+  <nav class="side">
+    <span class="g">You</span><span class="i">Profile</span><span class="i">Preferences</span>
+    <span class="g">Safety</span><span class="i">Security</span><span class="i">Linked devices</span><span class="i">Limits</span><span class="i">Notifications</span>
+    <span class="g">More</span><span class="i on">Refer a Friend</span>
+  </nav>
+  <main class="main" id="main"></main>
+</div></div>
+
+<script>
+const S={v:1,data:"some",theme:"light"};
+const CODE="ISHM-8144", LINK="gcbbank.com.gh/join/ISHM-8144";
+const share='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>';
+const copy='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>';
+const person='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M19 8v6M16 11h6"/></svg>';
+const chev='<span class="mu">›</span>';
+const n=()=>S.data==="some"?3:0;
+const referrals=(style)=>{
+  if(!n()) return `<p class="s13 mu">No one has joined yet. You'll see them here when they do.</p>`;
+  if(style==="inline") return `<button class="link s13" data-a="list">${n()} friends joined</button>`;
+  return `<div class="rowi hov" data-a="list"><div><p class="s12 mu">Your referrals</p><p class="tab">${n()} signed up</p></div>${chev}</div>`;
+};
+const NOTES={
+  1:"<b>1 · One button.</b> A title, one sentence, one amber button. The code is a quiet link under it for when it's said aloud. No logo, no link box.",
+  2:"<b>2 · A row, not a panel.</b> Reads like the rest of Settings: one row with the action on the right. Nothing boxed.",
+  3:"<b>3 · Statement + button, left-aligned.</b> The page title does the work; the button sits under one line of copy. Referrals as an inline link.",
+  4:"<b>4 · Code as hero.</b> If people mostly say it aloud, the code is the big thing; Share sits beside it. The link travels inside the share.",
+  5:"<b>5 · Tap the link to copy.</b> The link itself is the control (a pill, tap to copy), with Share as an icon button. Two actions, one line.",
+  6:"<b>6 · Two plain choices.</b> WhatsApp (how most people here share) and Copy Link, side by side. No sheet to learn.",
+  7:"<b>7 · Social proof inline.</b> One button, and the friends who joined as small faces under it, instead of a separate block.",
+  8:"<b>8 · Action rows.</b> Each intent is a row with an icon: Share invite link, Copy code, See who joined. Like a menu; zero decoration.",
+};
+const V={
+1:()=>`<div class="center" style="gap:20px;padding:48px 0 24px">
+  <div class="ico" style="width:48px;height:48px">${person}</div>
+  <div style="display:flex;flex-direction:column;gap:8px"><h3 style="font-size:20px;font-weight:500">Invite a friend to GCB</h3><p class="mu lr">They get a link that opens sign-up with you as their referrer.</p></div>
+  <button class="btn" style="min-width:240px" data-a="share">${share}Share Invite Link</button>
+  <p class="s13 mu">Or tell them your code <button class="link tab" style="color:var(--tx)" data-a="copy">${CODE}</button></p>
+</div><div style="max-width:420px;width:100%;margin:0 auto">${referrals()}</div>`,
+2:()=>`<div style="display:flex;flex-direction:column">
+  <div class="rowi"><div><p>Invite a friend</p><p class="s12 mu">Send a link that signs them up with you</p></div><button class="btn md" data-a="share">${share}Share</button></div>
+  <div class="hr"></div>
+  <div class="rowi"><div><p class="s12 mu">Your code</p><p class="tab">${CODE}</p></div><button class="btn o sm" data-a="copy">Copy</button></div>
+  <div class="hr"></div>
+  ${n()?`<div class="rowi hov" data-a="list"><div><p class="s12 mu">Friends who joined</p><p class="tab">${n()}</p></div>${chev}</div>`:`<div class="rowi"><p class="s13 mu">No one has joined yet.</p></div>`}
+</div>`,
+3:()=>`<div style="display:flex;flex-direction:column;gap:16px;max-width:440px;padding-top:8px">
+  <p class="lr" style="font-size:16px">Send a friend your link. When they open it, they sign up with you as their referrer.</p>
+  <div class="row" style="justify-content:flex-start"><button class="btn" data-a="share">${share}Share Your Link</button></div>
+  <div class="row s13" style="justify-content:flex-start;gap:16px"><span class="mu">Code <button class="link tab" style="color:var(--tx)" data-a="copy">${CODE}</button></span>${n()?`<span class="mu">·</span>${referrals("inline")}`:""}</div>
+  ${n()?"":referrals()}
+</div>`,
+4:()=>`<div class="center" style="gap:24px;padding:40px 0 16px">
+  <p class="mu s13">Your referral code</p>
+  <p class="tab" style="font-size:40px;letter-spacing:-.02em">${CODE}</p>
+  <div class="row" style="justify-content:center;gap:8px"><button class="btn" data-a="share">${share}Share</button><button class="btn o" data-a="copy">${copy}Copy</button></div>
+  <p class="s13 mu" style="max-width:340px">Friends enter it at sign-up, or open the link you share.</p>
+</div><div style="max-width:420px;width:100%;margin:0 auto">${referrals()}</div>`,
+5:()=>`<div style="display:flex;flex-direction:column;gap:12px;max-width:460px;padding-top:8px">
+  <h3 style="font-size:16px;font-weight:500">Your invite link</h3>
+  <div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:nowrap">
+    <button class="chip tab" style="flex:1;min-width:0" data-a="copylink"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${LINK}</span>${copy}</button>
+    <button class="btn md" style="width:40px;padding:0" aria-label="Share" data-a="share">${share}</button>
+  </div>
+  <p class="s12 mu">Tap to copy. Friends who open it sign up with you as their referrer.</p>
+  <div style="padding-top:24px">${referrals()}</div>
+</div>`,
+6:()=>`<div style="display:flex;flex-direction:column;gap:16px;max-width:440px;padding-top:8px">
+  <div><h3 style="font-size:20px;font-weight:500">Invite a friend</h3><p class="mu lr" style="margin-top:4px">Your link signs them up with you as their referrer.</p></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn" data-a="wa">WhatsApp</button><button class="btn o" data-a="copylink">${copy}Copy Link</button></div>
+  <p class="s13 mu">Code <button class="link tab" style="color:var(--tx)" data-a="copy">${CODE}</button></p>
+  <div style="padding-top:16px">${referrals()}</div>
+</div>`,
+7:()=>`<div class="center" style="gap:20px;padding:56px 0 24px">
+  <h3 style="font-size:20px;font-weight:500">Bring a friend to GCB</h3>
+  <button class="btn" style="min-width:240px" data-a="share">${share}Share Invite Link</button>
+  ${n()?`<button class="row s13" style="gap:8px;justify-content:center" data-a="list"><span class="faces"><i>AM</i><i>KB</i><i>EO</i></span><span class="mu">${n()} friends joined</span>${chev}</button>`:`<p class="s13 mu">No one has joined yet.</p>`}
+  <p class="s12 mu">Code <button class="link tab" style="color:var(--tx)" data-a="copy">${CODE}</button></p>
+</div>`,
+8:()=>`<div style="display:flex;flex-direction:column;max-width:460px">
+  <div class="rowi hov" data-a="share"><div class="row" style="justify-content:flex-start;gap:12px"><div class="ico">${share}</div><div><p>Share invite link</p><p class="s12 mu">Signs them up with you as their referrer</p></div></div>${chev}</div>
+  <div class="rowi hov" data-a="copy"><div class="row" style="justify-content:flex-start;gap:12px"><div class="ico g">${copy}</div><div><p>Copy code</p><p class="s12 mu tab">${CODE}</p></div></div></div>
+  <div class="rowi ${n()?"hov":""}" ${n()?'data-a="list"':""}><div class="row" style="justify-content:flex-start;gap:12px"><div class="ico g">${person}</div><div><p>Friends who joined</p><p class="s12 mu">${n()?n()+" signed up":"None yet"}</p></div></div>${n()?chev:""}</div>
+</div>`,
+};
+function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),1500);}
+function render(){
+  document.documentElement.dataset.theme=S.theme;
+  document.getElementById("pills").innerHTML=[1,2,3,4,5,6,7,8].map(k=>`<button class="pill ${S.v===k?"on":""}" data-v="${k}">${k}</button>`).join("");
+  document.getElementById("note").innerHTML=NOTES[S.v];
+  document.getElementById("main").innerHTML=`<h2 class="ph">Refer a Friend</h2>`+V[S.v]();
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-d],[data-t],[data-a]"); if(!t) return;
+  if(t.dataset.v) S.v=+t.dataset.v;
+  if(t.dataset.d){S.data=t.dataset.d;seg("data",t);}
+  if(t.dataset.t){S.theme=t.dataset.t;seg("theme",t);}
+  const a=t.dataset.a;
+  if(a==="share")toast("Opens the share sheet (WhatsApp on a computer)");
+  if(a==="wa")toast("Opens WhatsApp with your link");
+  if(a==="copy")toast("Code copied"); if(a==="copylink")toast("Link copied");
+  if(a==="list")toast("Opens Your Referrals");
+  render();
+});
+function seg(id,b){document.querySelectorAll(`#${id} button`).forEach(x=>x.classList.toggle("on",x===b));}
+render();
+</script>
+</body>
+</html>

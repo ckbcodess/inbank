@@ -10,7 +10,7 @@
  * asks them to prove it twice, on the device worst suited to it. So activation
  * proves *possession*, not identity:
  *
- *   identify → verify (OTP to the registered channel) → set up sign-in → done
+ *   identify → verify (OTP to the registered channel) → set up login → done
  *
  * Everything the mobile flow collects that is not required to open a session —
  * default account, referral code, transaction PIN, card/wallet linking — moves

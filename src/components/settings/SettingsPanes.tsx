@@ -1,8 +1,10 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Laptop, Monitor, Moon, Smartphone, Sun } from "@/components/ui/icons";
+import { motion } from "framer-motion";
+import { DURATION, EASE } from "@/lib/motion";
+import { ChevronLeft, ChevronRight, Copy, Globe, Landmark, Laptop, Monitor, Moon, ShieldCheck, Smartphone, Sun, Zap } from "@/components/ui/icons";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -11,7 +13,10 @@ import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { SimpleTooltip } from "@/components/ui/tooltip";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
+import RuleChecklist from "@/components/auth/RuleChecklist";
+import { DASHBOARD_COLORS, useDashboardColor } from "@/lib/dashboard-color";
 import { PASSWORD_RULES, maskEmail, passwordMeetsRules } from "@/lib/auth-shared";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
@@ -20,14 +25,24 @@ import { otherDevicesFor, useLinkedDevices, type LinkedDevice } from "@/lib/link
 import { shrinkPhoto, useProfilePhoto, useProfilePhotos } from "@/lib/profile-photo";
 import { switchTheme } from "@/lib/theme-transition";
 import { cn } from "@/lib/utils";
+import { LIMITS, limitFor, useLimits, usedToday, type LimitDef, type LimitKind } from "@/lib/limits";
+import { accountsForProfile, formatMoney } from "@/lib/mock-data";
+import { roundMoney } from "@/lib/money";
+import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
+import { GcbEagleEmblem } from "@/components/brand/GcbEagleEmblem";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
+import { DEMO_REFERRED_FRIENDS, referralCodeFor, referralLinkFor, referredFriendsFor, type ReferralStatus } from "@/lib/referrals";
 
 export interface SettingsData {
-  /** Local form, "0241234567". It is the sign-in ID. */
+  /** Local form, "0241234567". It is the login ID. */
   mobile: string;
   email: string;
   smsAlerts: boolean;
   emailReceipts: boolean;
   eStatements: boolean;
+  /** Tell me when someone joins with my referral link or code. */
+  referralAlerts: boolean;
   /** Minutes of inactivity before auto-logout. */
   timeout: string;
 }
@@ -37,55 +52,102 @@ export interface PaneProps {
   update: (patch: Partial<SettingsData>) => void;
   /** Phone only: back to the section list. */
   onBackToMenu: () => void;
-  /** Opens the sign-out-all confirmation, which is rendered beside the Settings dialog (see `SignOutAllDialog`). */
+  /** Opens the logout-all confirmation, which is rendered beside the Settings dialog (see `SignOutAllDialog`). */
   onSignOutAll?: () => void;
 }
 
 /* ── Shared pieces ─────────────────────────────────────────────────────────── */
 
-function PaneShell({ children }: { children: React.ReactNode }) {
+/**
+ * Set by a step's back arrow (in the click handler), so the pane it returns to slides in from the left. Everything
+ * else that opens a step slides it in from the right, like pushing a page. Read once when a page mounts.
+ */
+const stepNav = { back: false };
+
+/** A pane's scroll area. `step` names an inner page (Change email, a limit); a new name slides in like a pushed page. */
+function PaneShell({ children, step }: { children: React.ReactNode; step?: string }) {
   return (
-    <div className="custom-scrollbar scroll-fade flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 pb-6 sm:px-6 sm:pb-4 sm:pt-2">{children}</div>
+    <SlidePage key={step ?? "root"} step={step}>
+      {children}
+    </SlidePage>
   );
 }
 
-/** The pane's title. On a phone it carries the back arrow to the section list. */
-function PaneHeader({ title, onBack, action }: { title: string; onBack: () => void; action?: React.ReactNode }) {
+function SlidePage({ children, step }: { children: React.ReactNode; step?: string }) {
+  const [offset] = useState(() => (stepNav.back ? -24 : step ? 24 : 0));
+  useEffect(() => {
+    stepNav.back = false;
+  }, []);
   return (
-    <div className="flex h-12 shrink-0 items-center gap-1 sm:mb-2 sm:h-10">
+    <motion.div
+      initial={offset ? { x: offset, opacity: 0 } : false}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: DURATION.move, ease: EASE.settle }}
+      className="custom-scrollbar scroll-fade flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 pb-6 sm:px-6 sm:pb-4 sm:pt-2"
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/**
+ * The pane's title, and an optional one-line subtitle under it. On a phone it carries the back arrow to the section
+ * list. Use the subtitle only when the page needs one; most panes are a title alone.
+ */
+function PaneHeader({
+  title,
+  description,
+  onBack,
+  action,
+}: {
+  title: string;
+  description?: string;
+  onBack: () => void;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="mb-4 flex shrink-0 items-start gap-1">
       <button
         type="button"
         onClick={onBack}
         aria-label="Back to settings"
-        className="-ml-3 flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors duration-hover hover:text-foreground sm:hidden"
+        className="-ml-3 mt-1 flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors duration-hover hover:text-foreground sm:hidden"
       >
         <ChevronLeft size={18} />
       </button>
-      <h2 className="text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground sm:text-[16px]">{title}</h2>
+      {/* The title row keeps one height on every pane, so titles start at the same place with or without a subtitle. */}
+      <div className="flex min-w-0 flex-col">
+        <h2 className="flex h-12 items-center text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground sm:h-10 sm:text-[16px]">{title}</h2>
+        {description ? <p className="-mt-1 text-[14px] leading-relaxed text-muted-foreground">{description}</p> : null}
+      </div>
       {action ? <div className="ml-auto shrink-0">{action}</div> : null}
     </div>
   );
 }
 
-/** A step inside a section (change a number, change the password): a back link, then the step's title. */
+/** An inner page's header: the back arrow and the page's title on one line, the same height as a pane title. */
 function StepHeader({ back, title, onBack }: { back: string; title: string; onBack: () => void }) {
   return (
-    <div className="flex shrink-0 flex-col gap-1 pt-2 sm:pt-0">
+    <div className="mb-4 flex h-12 shrink-0 items-center gap-1 sm:h-10">
       <button
         type="button"
-        onClick={onBack}
-        className="-ml-1 inline-flex h-10 w-fit cursor-pointer items-center gap-1 rounded-lg pr-2 text-[13px] text-muted-foreground transition-colors duration-hover hover:text-foreground"
+        onClick={() => {
+          stepNav.back = true;
+          onBack();
+        }}
+        aria-label={`Back to ${back}`}
+        className="-ml-3 flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors duration-hover hover:text-foreground"
       >
-        <ChevronLeft size={16} />
-        <span>{back}</span>
+        <ChevronLeft size={18} />
       </button>
-      <h2 className="text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground sm:text-[16px]">{title}</h2>
+      <h2 className="min-w-0 truncate text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground sm:text-[16px]">{title}</h2>
     </div>
   );
 }
 
-function Rows({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-col divide-y divide-border/60">{children}</div>;
+/** A pane's list. The first row has no top padding, so every pane's content starts the same distance below its title. */
+function Rows({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn("flex flex-col gap-2 [&>*:first-child]:pt-0", className)}>{children}</div>;
 }
 
 function Row({
@@ -205,8 +267,8 @@ function formatSignIn(ms: number) {
 }
 
 /**
- * Who the bank knows you as. The name comes from the Ghana Card and the mobile number is the sign-in ID, so neither is
- * changed here. Email is the one contact detail the customer changes themselves, behind a code. The last sign-in is a
+ * Who the bank knows you as. The name comes from the Ghana Card and the mobile number is the login ID, so neither is
+ * changed here. Email is the one contact detail the customer changes themselves, behind a code. The last login is a
  * quiet security check: if it isn't you, you'll see it here.
  */
 export function ProfilePane({ name, data, update, onBackToMenu }: PaneProps & { name: string }) {
@@ -252,9 +314,9 @@ export function ProfilePane({ name, data, update, onBackToMenu }: PaneProps & { 
         >
           <span className="tabular">{proxyId}</span>
         </FactRow>
-        <FactRow label="Last Sign-in">
+        <FactRow label="Last Login">
           <span className="tabular" suppressHydrationWarning>
-            {previousSignIn ? formatSignIn(previousSignIn) : "This is your first sign-in"}
+            {previousSignIn ? formatSignIn(previousSignIn) : "This is your first login"}
           </span>
         </FactRow>
       </Rows>
@@ -263,7 +325,7 @@ export function ProfilePane({ name, data, update, onBackToMenu }: PaneProps & { 
 }
 
 /**
- * Confirms signing out every other device. Rendered beside the Settings dialog, not inside it: a dialog nested in
+ * Confirms logging out every other device. Rendered beside the Settings dialog, not inside it: a dialog nested in
  * Settings' popup is clipped by that popup and its scrim doesn't cover the page.
  */
 export function SignOutAllDialog({ open, onOpenChange, actorId }: { open: boolean; onOpenChange: (open: boolean) => void; actorId: string }) {
@@ -275,7 +337,7 @@ export function SignOutAllDialog({ open, onOpenChange, actorId }: { open: boolea
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title="Sign out of all other devices?"
+      title="Log out of all other devices?"
       size="sm"
       footer={
         <>
@@ -287,18 +349,18 @@ export function SignOutAllDialog({ open, onOpenChange, actorId }: { open: boolea
             onClick={() => {
               signOutOthers(actorId);
               onOpenChange(false);
-              toast("Signed out of all other devices");
+              toast("Logged out of all other devices");
             }}
           >
-            Sign out
+            Log out
           </Button>
         </>
       }
     >
       <p className="text-[14px] leading-relaxed text-foreground">
         {count === 1
-          ? "1 device will be signed out. It’ll need a one-time code the next time it signs in. This device stays signed in."
-          : `${count} devices will be signed out. They’ll need a one-time code the next time they sign in. This device stays signed in.`}
+          ? "1 device will be logged out. It’ll need a one-time code the next time it signs in. This device stays logged in."
+          : `${count} devices will be logged out. They’ll need a one-time code the next time they log in. This device stays logged in.`}
       </p>
     </Modal>
   );
@@ -311,7 +373,8 @@ function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (pa
   const [code, setCode] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [wrongCode, setWrongCode] = useState(false);
 
-  const valid = /^\S+@\S+\.\S+$/.test(value);
+  const sameAsNow = value.trim().toLowerCase() === data.email.toLowerCase();
+  const valid = /^\S+@\S+\.\S+$/.test(value) && !sameAsNow;
   const currentMasked = maskEmail(data.email);
 
   function checkCode(entered: string) {
@@ -328,9 +391,9 @@ function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (pa
 
   if (step === "code") {
     return (
-      <PaneShell>
+      <PaneShell step="Enter your code">
         <StepHeader back="Back" title="Enter your code" onBack={() => { setStep("enter"); setWrongCode(false); setCode(Array(OTP_LENGTH).fill("")); }} />
-        <div className="flex max-w-[440px] flex-col gap-5 pt-2">
+        <div className="mx-auto flex w-full max-w-[440px] flex-col gap-5 pt-2">
           <div className="flex flex-wrap items-center gap-x-1 text-[13px]">
             <span className="text-muted-foreground">Code goes to</span>
             <span className="tabular text-foreground">{currentMasked}</span>
@@ -359,30 +422,32 @@ function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (pa
   }
 
   return (
-    <PaneShell>
+    <PaneShell step="Change email">
       <StepHeader back="Profile" title="Change email" onBack={onDone} />
       <form
-        className="flex max-w-[440px] flex-col gap-5 pt-2"
+        className="mx-auto flex w-full max-w-[440px] flex-col gap-5 pt-2"
         onSubmit={(e) => {
           e.preventDefault();
           if (valid) setStep("code");
         }}
       >
-        <div className="flex flex-wrap items-center gap-x-1 text-[13px]">
-          <span className="text-muted-foreground">Code goes to</span>
-          <span className="tabular text-foreground">{currentMasked}</span>
-        </div>
-        <Field label="New Email" htmlFor="new-email">
-          <Input id="new-email" type="email" autoComplete="email" value={value} onChange={(e) => setValue(e.target.value)} />
+        <p className="text-[14px] leading-relaxed text-muted-foreground">
+          We’ll send a code to <span className="text-foreground">{currentMasked}</span> to confirm it’s you.
+        </p>
+        <Field label="New Email" htmlFor="new-email" error={sameAsNow ? "That’s already your email." : undefined}>
+          <Input
+            id="new-email"
+            type="email"
+            autoComplete="email"
+            placeholder="name@example.com"
+            value={value}
+            aria-invalid={sameAsNow || undefined}
+            onChange={(e) => setValue(e.target.value)}
+          />
         </Field>
-        <div className="flex items-center gap-3">
-          <Button type="submit" size="xl" disabled={!valid} className="px-6">
-            Send code
-          </Button>
-          <Button type="button" variant="ghost" size="xl" className="px-3 text-muted-foreground" onClick={onDone}>
-            Cancel
-          </Button>
-        </div>
+        <Button type="submit" size="xl" disabled={!valid} className="w-full">
+          Send Code
+        </Button>
       </form>
     </PaneShell>
   );
@@ -397,6 +462,7 @@ const TIMEOUT_OPTIONS = [
 ];
 
 const DEVICE_ICONS = { laptop: Laptop, phone: Smartphone, desktop: Monitor } as const;
+const DEVICE_KIND_LABEL = { laptop: "Computer", phone: "Phone", desktop: "Computer" } as const;
 
 function formatWhen(ms: number) {
   const d = new Date(ms);
@@ -415,8 +481,8 @@ function thisDeviceName() {
 }
 
 /**
- * Its own section in the Safety group. One list of every device that can get into the account: signed in now,
- * signed in before, and the ones that skip the one-time code. Signing a device out also ends its trust. State lives in
+ * Its own section in the Safety group. One list of every device that can get into the account: logged in now,
+ * logged in before, and the ones that skip the one-time code. Signing a device out also ends its trust. State lives in
  * `lib/linked-devices.ts`; this device is built from the live session, never from the seed.
  */
 export function DevicesPane({ onBackToMenu, onSignOutAll }: PaneProps) {
@@ -448,60 +514,55 @@ export function DevicesPane({ onBackToMenu, onSignOutAll }: PaneProps) {
   return (
     <PaneShell>
       <PaneHeader title="Linked devices" onBack={onBackToMenu} />
-      <div className="hidden grid-cols-[minmax(14rem,2fr)_minmax(0,1fr)_minmax(0,1fr)_96px] items-center gap-4 pb-2 text-[12px] text-muted-foreground sm:grid">
-        <span>Device</span>
-        <span>Signed in</span>
-        <span>Last active</span>
-        <span />
-      </div>
       <Rows>
         {devices.map((d) => {
           const Icon = DEVICE_ICONS[d.kind];
           const current = d.id === "this";
           return (
-            <div key={d.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 py-4 sm:grid-cols-[minmax(14rem,2fr)_minmax(0,1fr)_minmax(0,1fr)_96px]">
-              <div className="flex min-w-0 items-center gap-4">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                  <Icon size={15} aria-hidden="true" />
+            <div key={d.id} className="flex items-center gap-4 py-4 sm:py-3">
+              <Icon size={18} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="truncate text-[14px] font-medium text-foreground">{d.name}</span>
+                <span className="tabular text-[12px] text-muted-foreground">
+                  {[DEVICE_KIND_LABEL[d.kind], current ? "Active now" : formatWhen(d.lastActive), d.place].join(" · ")}
                 </span>
-                <div className="flex min-w-0 flex-col gap-0.5">
-                  <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-foreground">
-                    <span className="min-w-0">{d.name}</span>
-                  </span>
-                  <span className="break-words text-[12px] text-muted-foreground">
-                    <span>{d.place}</span>
-                  </span>
-                </div>
               </div>
-              <span className="tabular hidden text-[12px] text-muted-foreground sm:block">{formatWhen(d.signedIn)}</span>
-              <span className="tabular hidden text-[12px] text-muted-foreground sm:block">{current ? "Active now" : formatWhen(d.lastActive)}</span>
-              <div className="flex justify-end">
+              <div className="flex shrink-0 items-center gap-3">
+                {d.trusted ? (
+                  <span className="hidden items-center gap-1 text-[12px] text-muted-foreground sm:inline-flex">
+                    <ShieldCheck size={15} aria-hidden="true" />
+                    Trusted
+                  </span>
+                ) : null}
                 {current ? (
-                  <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[12px] text-muted-foreground">This device</span>
+                  <span className="text-[12px] font-medium text-foreground">This device</span>
                 ) : (
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => {
                       signOutDevice(actor.id, d.id);
-                      toast(`Signed out of ${d.name}`);
+                      toast(`Logged out of ${d.name}`);
                     }}
                   >
-                    Sign out
+                    Log out
                   </Button>
                 )}
               </div>
-              <span className="tabular col-span-2 pl-14 text-[12px] text-muted-foreground sm:hidden">
-                {current ? "Active now" : `Last active ${formatWhen(d.lastActive)}`}
-              </span>
             </div>
           );
         })}
       </Rows>
       {others.length > 0 ? (
-        <div className="mt-16 flex justify-center">
-          <Button variant="destructive" size="md" onClick={() => onSignOutAll?.()}>
-            Sign out of all other devices
+        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[14px] font-medium text-foreground">Log out of all other devices</span>
+            <span className="text-[12px] leading-relaxed text-muted-foreground">
+              Everywhere except this device. You’ll need to log in again on each one.
+            </span>
+          </div>
+          <Button variant="destructive" size="md" className="shrink-0" onClick={() => onSignOutAll?.()}>
+            Log Out All
           </Button>
         </div>
       ) : null}
@@ -528,7 +589,7 @@ export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
         >
         </Row>
         <Row
-          title="Sign-in PIN"
+          title="Login PIN"
           action={
             <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/forgot-pin" />}>
               Reset
@@ -574,10 +635,10 @@ function PasswordStep({ onDone }: { onDone: () => void }) {
   const ready = current.length > 0 && strong && next === confirm;
 
   return (
-    <PaneShell>
+    <PaneShell step="Change password">
       <StepHeader back="Security" title="Change password" onBack={onDone} />
       <form
-        className="flex max-w-[440px] flex-col gap-5 pt-2"
+        className="mx-auto flex w-full max-w-[440px] flex-col gap-5 pt-2"
         onSubmit={(e) => {
           e.preventDefault();
           if (!ready) return;
@@ -588,12 +649,16 @@ function PasswordStep({ onDone }: { onDone: () => void }) {
         <Field label="Current Password" htmlFor="current-password">
           <Input id="current-password" type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} />
         </Field>
-        <Field
-          label="New Password"
-          htmlFor="new-password"
-        >
-          <Input id="new-password" type="password" autoComplete="new-password" placeholder={PASSWORD_RULES.map((r) => r.label).join(", ")} value={next} onChange={(e) => setNext(e.target.value)} />
-        </Field>
+        <div className="flex flex-col gap-3">
+          <Field label="New Password" htmlFor="new-password">
+            <Input id="new-password" type="password" autoComplete="new-password" value={next} onChange={(e) => setNext(e.target.value)} />
+          </Field>
+          {/* The live checklist: the one kind of line allowed under a field (CONSTITUTION §9). */}
+          <RuleChecklist
+            label="Password requirements"
+            rules={PASSWORD_RULES.map((rule) => ({ id: rule.id, label: rule.label, state: rule.test(next) ? "met" : "pending" }))}
+          />
+        </div>
         <Field label="Confirm New Password" htmlFor="confirm-password" error={mismatch ? "The passwords don’t match." : null}>
           <Input
             id="confirm-password"
@@ -604,16 +669,46 @@ function PasswordStep({ onDone }: { onDone: () => void }) {
             onChange={(e) => setConfirm(e.target.value)}
           />
         </Field>
-        <div className="flex items-center gap-3">
-          <Button type="submit" size="xl" disabled={!ready} className="px-6">
-            Update password
-          </Button>
-          <Button type="button" variant="ghost" size="xl" className="px-3 text-muted-foreground" onClick={onDone}>
-            Cancel
-          </Button>
-        </div>
+        <Button type="submit" size="xl" disabled={!ready} className="w-full">
+          Update Password
+        </Button>
       </form>
     </PaneShell>
+  );
+}
+
+/**
+ * A small sketch of the dashboard: the hero panel in the chosen backdrop (it reads the live `--hero-*` tokens, so it
+ * changes the moment a swatch is picked) over the sheet of panels. Decorative; hidden from assistive tech.
+ */
+function DashboardPreview() {
+  return (
+    <div
+      aria-hidden="true"
+      className="relative h-40 overflow-hidden rounded-2xl border border-border/80 bg-muted/40"
+      // The whole box fades out at the bottom and both sides, so it reads as a glimpse rather than a framed card.
+      style={{
+        maskImage: "linear-gradient(to bottom, black 55%, transparent 100%), linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
+        maskComposite: "intersect",
+        WebkitMaskImage: "linear-gradient(to bottom, black 55%, transparent 100%), linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
+        WebkitMaskComposite: "source-in",
+      }}
+    >
+      <div
+        className="absolute inset-x-[12%] top-6 h-24 rounded-t-xl border border-[var(--hero-border)] transition-colors duration-reveal"
+        style={{ background: "linear-gradient(180deg, var(--hero-surface) 0%, color-mix(in srgb, var(--hero-surface) 70%, var(--hero-wave-b)) 100%)" }}
+      >
+        <span className="absolute left-[6%] top-4 h-3 w-[14%] rounded-full bg-[var(--hero-foreground)] opacity-20" />
+        <span className="absolute bottom-6 left-[6%] h-3 w-[26%] rounded-full bg-[var(--hero-foreground)] opacity-20" />
+        <span className="absolute bottom-6 right-[24%] h-3 w-[18%] rounded-full bg-[var(--hero-primary)] opacity-80" />
+        <span className="absolute bottom-6 right-[4%] h-3 w-[18%] rounded-full bg-[var(--hero-foreground)] opacity-20" />
+      </div>
+      <div className="absolute inset-x-[11%] top-[7.5rem] flex h-12 gap-2 rounded-t-xl border border-border/80 bg-card p-2">
+        <span className="flex-1 rounded-lg bg-muted" />
+        <span className="flex-1 rounded-lg bg-muted" />
+        <span className="flex-1 rounded-lg bg-muted" />
+      </div>
+    </div>
   );
 }
 
@@ -630,6 +725,9 @@ export function PreferencesPane({ onBackToMenu }: PaneProps) {
   const { language, setLanguage, languages } = useTranslation();
   const current = theme ?? "system";
   const themeId = useId();
+  const colorId = useId();
+  const dashColor = useDashboardColor((s) => s.color);
+  const setDashColor = useDashboardColor((s) => s.setColor);
 
   function choose(value: (typeof THEME_CHOICES)[number]["value"]) {
     const target = value === "system" ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : value;
@@ -638,32 +736,61 @@ export function PreferencesPane({ onBackToMenu }: PaneProps) {
 
   return (
     <PaneShell>
-      <PaneHeader title="Preferences" onBack={onBackToMenu} />
-      <Rows>
-        <Row
-          title="Theme"
-          titleId={themeId}
-          action={
-            <div role="radiogroup" aria-labelledby={themeId} className="flex gap-1 rounded-xl bg-muted/60 p-1">
-              {THEME_CHOICES.map(({ value, label, Icon }) => (
+      <PaneHeader title="Appearance" onBack={onBackToMenu} />
+      <div className="flex flex-col gap-8">
+        {/* Theme as three tiles, icon over label, full width under its title. */}
+        <div className="flex flex-col gap-3">
+          <span id={themeId} className="text-[14px] text-foreground">
+            Theme
+          </span>
+          <div role="radiogroup" aria-labelledby={themeId} className="grid grid-cols-3 gap-2">
+            {THEME_CHOICES.map(({ value, label, Icon }) => (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={current === value}
+                onClick={() => choose(value)}
+                className={cn(
+                  "flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border text-[12px] transition-colors duration-hover",
+                  current === value
+                    ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
+                    : "border-border bg-card text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                )}
+              >
+                <Icon size={16} aria-hidden="true" />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <DashboardPreview />
+
+        {/* The dashboard hero's colour. Personal only; saved on this device (lib/dashboard-color.ts). */}
+        <div className="flex flex-col gap-3">
+          <span id={colorId} className="text-[14px] text-foreground">
+            Choose a backdrop
+          </span>
+          <div role="radiogroup" aria-labelledby={colorId} className="flex flex-wrap gap-3">
+            {DASHBOARD_COLORS.map(({ id, label }) => (
+              <SimpleTooltip key={id} content={label} side="bottom" delay={0}>
                 <button
-                  key={value}
                   type="button"
                   role="radio"
-                  aria-checked={current === value}
-                  onClick={() => choose(value)}
+                  aria-checked={dashColor === id}
+                  aria-label={label}
+                  onClick={() => setDashColor(id)}
                   className={cn(
-                    "flex h-8 cursor-pointer items-center gap-2 rounded-lg px-3 text-[13px] font-medium transition-colors duration-hover",
-                    current === value ? "bg-background text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground",
+                    "flex size-10 cursor-pointer items-center justify-center rounded-full border-2 transition-colors duration-hover",
+                    dashColor === id ? "border-foreground" : "border-transparent hover:border-border",
                   )}
                 >
-                  <Icon size={14} aria-hidden="true" />
-                  <span className="max-sm:sr-only">{label}</span>
+                  <span className="size-8 rounded-full" style={{ background: `var(--swatch-${id})` }} />
                 </button>
-              ))}
-            </div>
-          }
-        />
+              </SimpleTooltip>
+            ))}
+          </div>
+        </div>
         <Row
           title="Language"
           action={
@@ -686,7 +813,7 @@ export function PreferencesPane({ onBackToMenu }: PaneProps) {
             </Select>
           }
         />
-      </Rows>
+      </div>
     </PaneShell>
   );
 }
@@ -739,10 +866,394 @@ export function AlertsPane({ data, update, onBackToMenu }: PaneProps) {
         <SwitchRow title="E-statements" checked={data.eStatements} onChange={(next) => update({ eStatements: next })}>
           On the 1st of each month.
         </SwitchRow>
+        <SwitchRow title="Referrals" checked={data.referralAlerts} onChange={(next) => update({ referralAlerts: next })}>
+          When someone joins with your link or code.
+        </SwitchRow>
       </Rows>
       <p className={cn("pt-3 text-[12px] leading-relaxed text-muted-foreground")}>
-        Every notification also shows in the app, under Notifications. Sign-in and new-device alerts are always on.
+        Every notification also shows in the app, under Notifications. Login and new-device alerts are always on.
       </p>
+    </PaneShell>
+  );
+}
+
+/* ── Refer a Friend ────────────────────────────────────────────────────────── */
+
+const REFERRAL_DEV_STATES = ["as-is", "empty", "populated"] as const;
+type ReferralDevState = (typeof REFERRAL_DEV_STATES)[number];
+const REFERRAL_DEV_LABELS: Record<ReferralDevState, string> = { "as-is": "As is", empty: "Empty", populated: "Populated" };
+
+const REFERRAL_STATUS: Record<ReferralStatus, string> = {
+  signed_up: "Signed up",
+  opened: "Opened an account",
+};
+
+function formatReferralDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+/**
+ * The customer's own code, two ways to share it, and who has joined with it. There's no reward until the bank confirms
+ * one, so nothing here promises money (lib/referrals.ts).
+ */
+export function ReferralPane({ onBackToMenu }: PaneProps) {
+  const actor = useSession((s) => s.actor);
+  const [showFriends, setShowFriends] = useState(false);
+  // Dev Mode: show the empty or the populated state whatever the persona has. "As is" is the persona's real list.
+  const [devState, setDevState] = useState<ReferralDevState>("as-is");
+  if (!actor) return null;
+  const code = referralCodeFor(actor);
+  const link = referralLinkFor(code);
+  const own = referredFriendsFor(actor.id);
+  const shown = devState === "empty" ? [] : devState === "populated" && own.length === 0 ? DEMO_REFERRED_FRIENDS : own;
+  const friends = [...shown].sort((a, b) => b.date.localeCompare(a.date));
+  // On the screen itself, not in the Dev Mode menu, which sits behind the Settings modal.
+  const switcher = SHOW_DEMO_TOOLS ? (
+    <div className="mt-auto flex items-center gap-3 pt-10 opacity-60 transition-opacity duration-hover hover:opacity-100">
+      <span className="text-[12px] text-muted-foreground">Demo</span>
+      <SegmentedControl
+        aria-label="Referrals demo state"
+        options={REFERRAL_DEV_STATES.map((id) => ({ value: id, label: REFERRAL_DEV_LABELS[id] }))}
+        value={devState}
+        onChange={setDevState}
+      />
+    </div>
+  ) : null;
+  const message = `I bank with GCB. Join with my code ${code}: ${link}`;
+
+  const copy = async (text: string, done: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast(done);
+    } catch {
+      toast("Couldn’t copy. Select it and copy it instead.");
+    }
+  };
+
+  // The phone's share sheet where there is one; otherwise WhatsApp, which is how most people here share.
+  const share = () => {
+    if (typeof navigator.share === "function") {
+      navigator.share({ text: message }).catch(() => {});
+    } else {
+      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  if (showFriends && friends.length > 0) {
+    return (
+      <PaneShell step="Your Referrals">
+        <StepHeader back="Refer a Friend" title="Your Referrals" onBack={() => setShowFriends(false)} />
+        <Rows>
+          {friends.map((f) => (
+            <div key={f.id} className="flex items-center gap-4 py-4 sm:py-3">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-[12px] font-medium text-muted-foreground">
+                {f.name.split(" ").map((p) => p[0]).join("")}
+              </span>
+              <span className="min-w-0 flex-1 truncate text-[14px] text-foreground">{f.name}</span>
+              <span className="flex flex-col items-end gap-0.5 text-[12px]">
+                <span className={cn(f.status === "opened" ? "text-foreground" : "text-muted-foreground")}>{REFERRAL_STATUS[f.status]}</span>
+                <span className="tabular text-muted-foreground">{formatReferralDate(f.date)}</span>
+              </span>
+            </div>
+          ))}
+        </Rows>
+        {switcher}
+      </PaneShell>
+    );
+  }
+
+  return (
+    <PaneShell>
+      <PaneHeader title="Refer a Friend" onBack={onBackToMenu} />
+      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-4">
+        <section className="flex flex-col items-center gap-6 rounded-2xl border border-border/80 px-5 py-8 text-center sm:px-10 sm:py-10">
+          <GcbEagleEmblem className="h-12 w-auto" />
+          <div className="flex flex-col gap-2">
+            <h3 className="text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground">Invite others to GCB</h3>
+            <p className="text-[14px] leading-relaxed text-muted-foreground">Send your link. Friends who open it join with you already filled in.</p>
+          </div>
+          <div className="flex w-full max-w-[380px] flex-col gap-3">
+            <div className="flex h-[var(--control-xl)] items-center justify-between gap-2 rounded-lg border border-field-border bg-field pl-4 pr-1">
+              <span className="tabular min-w-0 select-all truncate text-[14px] text-foreground">{link.replace(/^https?:\/\//, "")}</span>
+              <Button variant="ghost" size="md" aria-label="Copy link" onClick={() => copy(link, "Link copied")}>
+                <Copy size={18} aria-hidden="true" />
+              </Button>
+            </div>
+            <Button size="xl" className="w-full" onClick={share}>
+              Share Your Link
+            </Button>
+            <p className="text-[13px] text-muted-foreground">
+              Or give them your code{" "}
+              <button
+                type="button"
+                onClick={() => copy(code, "Code copied")}
+                className="tabular cursor-pointer font-medium text-foreground underline decoration-border underline-offset-4 transition-colors duration-hover hover:decoration-foreground"
+              >
+                {code}
+              </button>
+            </p>
+          </div>
+        </section>
+
+        {friends.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => setShowFriends(true)}
+            className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-border/80 px-5 py-4 text-left transition duration-hover hover:bg-muted/50"
+          >
+            <span className="flex flex-col gap-1">
+              <span className="text-[12px] text-muted-foreground">Your referrals</span>
+              <span className="tabular text-[16px] text-foreground">{`${friends.length} signed up`}</span>
+            </span>
+            <ChevronRight size={20} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+          </button>
+        ) : (
+          <p className="px-1 text-center text-[13px] leading-relaxed text-muted-foreground">
+            No one has joined with your code yet. When they do, they’ll show here.
+          </p>
+        )}
+      </div>
+      {switcher}
+    </PaneShell>
+  );
+}
+
+/* ── Limits ────────────────────────────────────────────────────────────────── */
+
+/** Each kind of payment's daily limit. The whole row opens the change step, inside the pane (never a second modal). */
+export function LimitsPane({ onBackToMenu }: PaneProps) {
+  const actor = useSession((s) => s.actor);
+  const custom = useLimits((s) => (actor ? s.custom[actor.id] : undefined));
+  const { showAmounts } = useAmountVisibility();
+  const [editing, setEditing] = useState<LimitDef | null>(null);
+  // Demo only: the ledger has nothing dated today, so this fills the bars without posting payments.
+  const [devUse, setDevUse] = useState<LimitDevUse>("live");
+  if (!actor) return null;
+  const accountIds = accountsForProfile().map((a) => a.id);
+  const spent = (def: LimitDef, limit: number) =>
+    devUse === "live" ? usedToday(def.kind, accountIds) : roundMoney(limit * DEMO_LIMIT_USE[devUse][def.kind]);
+
+  if (editing) {
+    const current = limitFor(custom, editing);
+    return <ChangeLimit key={editing.kind} def={editing} actorId={actor.id} current={current} used={spent(editing, current)} onDone={() => setEditing(null)} />;
+  }
+
+  return (
+    <PaneShell>
+      <PaneHeader title="Limits" description="Control your spending by setting limits on payments." onBack={onBackToMenu} />
+      <div className="flex flex-col">
+        {LIMITS.map((def) => {
+          const value = limitFor(custom, def);
+          const used = spent(def, value);
+          return <LimitBar key={def.kind} def={def} limit={value} used={used} own={value !== def.standard} showAmounts={showAmounts} onOpen={() => setEditing(def)} />;
+        })}
+      </div>
+      {SHOW_DEMO_TOOLS ? (
+        <div className="mt-auto flex pt-10 items-center gap-3 opacity-60 transition-opacity duration-hover hover:opacity-100">
+          <span className="text-[12px] text-muted-foreground">Demo</span>
+          <SegmentedControl
+            aria-label="Limits demo usage"
+            options={LIMIT_DEV_USE.map((id) => ({ value: id, label: LIMIT_DEV_LABELS[id] }))}
+            value={devUse}
+            onChange={setDevUse}
+          />
+        </div>
+      ) : null}
+    </PaneShell>
+  );
+}
+
+const LIMIT_DEV_USE = ["live", "some", "near"] as const;
+type LimitDevUse = (typeof LIMIT_DEV_USE)[number];
+const LIMIT_DEV_LABELS: Record<LimitDevUse, string> = { live: "Live", some: "Some used", near: "Near a limit" };
+/** Share of each limit gone today, per demo state. */
+const DEMO_LIMIT_USE: Record<Exclude<LimitDevUse, "live">, Record<LimitKind, number>> = {
+  some: { transfers: 0.32, wallets: 0.4, bills: 0.05, international: 0 },
+  near: { transfers: 0.32, wallets: 0.86, bills: 0.05, international: 0 },
+};
+
+const LIMIT_ICONS: Record<LimitKind, typeof Landmark> = { transfers: Landmark, wallets: Smartphone, bills: Zap, international: Globe };
+
+/** One kind of payment: what's left today and a thin bar of what's gone (from the ledger). The whole row opens the change step. */
+function LimitBar({
+  def,
+  limit,
+  used,
+  own,
+  showAmounts,
+  onOpen,
+}: {
+  def: LimitDef;
+  limit: number;
+  used: number;
+  own: boolean;
+  showAmounts: boolean;
+  onOpen: () => void;
+}) {
+  const share = limit > 0 ? Math.min(used / limit, 1) : 0;
+  const near = share >= 0.75;
+  const Icon = LIMIT_ICONS[def.kind];
+  const num = (n: number) => (showAmounts ? n.toLocaleString("en-GB", { maximumFractionDigits: 0 }) : "∗∗∗");
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label={`${def.label}: ${formatMoney(used, "GHS", showAmounts)} sent of ${formatMoney(limit, "GHS", showAmounts)} today${own ? ", set by you" : ""}`}
+      className="-mx-3 flex cursor-pointer items-center gap-5 rounded-xl px-3 py-5 text-left transition duration-hover hover:bg-muted/50"
+    >
+      <span className="flex size-6 shrink-0 items-center justify-center text-muted-foreground">
+        <Icon size={18} aria-hidden="true" />
+      </span>
+      <span className="min-w-0 flex-1 truncate text-[14px] text-foreground">{def.label}</span>
+      <span className="h-1.5 w-16 shrink-0 overflow-hidden rounded-full bg-muted sm:w-36" aria-hidden="true">
+        <span
+          className={cn("block h-full rounded-full transition-[width] duration-move ease-settle", near ? "bg-warning" : "bg-foreground")}
+          style={{ width: `${share * 100}%` }}
+        />
+      </span>
+      <span className="tabular w-28 shrink-0 text-right text-[14px] sm:w-32" aria-hidden="true">
+        <span className={near ? "text-warning-text" : "text-foreground"}>{num(used)}</span>
+        <span className="text-muted-foreground">{` / ${num(limit)}`}</span>
+      </span>
+      <ChevronRight size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+    </button>
+  );
+}
+
+function ChangeLimit({
+  def,
+  actorId,
+  current,
+  used,
+  onDone,
+}: {
+  def: LimitDef;
+  actorId: string;
+  current: number;
+  /** Sent today on this kind of payment. */
+  used: number;
+  onDone: () => void;
+}) {
+  const setLimit = useLimits((s) => s.setLimit);
+  const actor = useSession((s) => s.actor);
+  const [value, setValue] = useState("");
+  const [step, setStep] = useState<"enter" | "code">("enter");
+  const [code, setCode] = useState<string[]>(Array(OTP_LENGTH).fill(""));
+  const [wrongCode, setWrongCode] = useState(false);
+
+  const amount = Number(value.replace(/[^\d.]/g, ""));
+  const tooHigh = amount > def.max;
+  const valid = value !== "" && amount > 0 && !tooHigh && amount !== current;
+  const raising = amount > current;
+  const money = (n: number) => formatMoney(n, "GHS");
+
+  function save() {
+    setLimit(actorId, def.kind, amount);
+    toast.success(`${def.label} limit is now ${money(amount)} a day`);
+    onDone();
+  }
+
+  function checkCode(entered: string) {
+    // Prototype: the demo code, as on the other verification screens.
+    if (entered === "000000") save();
+    else {
+      setWrongCode(true);
+      setCode(Array(OTP_LENGTH).fill(""));
+    }
+  }
+
+  if (step === "code") {
+    return (
+      <PaneShell step="Enter your code">
+        <StepHeader back="Back" title="Enter your code" onBack={() => { setStep("enter"); setWrongCode(false); setCode(Array(OTP_LENGTH).fill("")); }} />
+        <div className="mx-auto flex w-full max-w-[440px] flex-col gap-5 pt-2">
+          <div className="flex flex-col gap-1 text-[13px]">
+            <span className="text-muted-foreground">{`${def.label}, a day`}</span>
+            <span className="tabular text-foreground">
+              {money(current)} → {money(amount)}
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-1 text-[13px]">
+            <span className="text-muted-foreground">Code goes to</span>
+            <span className="tabular text-foreground">{actor ? formatMobile(actor.phone) : ""}</span>
+          </div>
+          <OtpInput
+            value={code}
+            onChange={(next) => {
+              setWrongCode(false);
+              setCode(next);
+            }}
+            invalid={wrongCode}
+          />
+          {wrongCode ? (
+            <p role="alert" className="-mt-2 text-[12px] text-destructive">
+              That code isn’t right. Try again.
+            </p>
+          ) : null}
+          <Button size="xl" className="w-full sm:w-fit sm:px-6" disabled={code.some((c) => !c)} onClick={() => checkCode(code.join(""))}>
+            Raise Limit
+          </Button>
+        </div>
+      </PaneShell>
+    );
+  }
+
+  return (
+    <PaneShell step={`${def.label} limit`}>
+      <StepHeader back="Limits" title={`${def.label} limit`} onBack={onDone} />
+      <form
+        className="mx-auto flex w-full max-w-[440px] flex-col gap-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!valid) return;
+          if (raising) setStep("code");
+          else save();
+        }}
+      >
+        {/* What's true today, before the change. */}
+        <dl className="flex flex-col gap-3 rounded-2xl border border-border/80 p-4 text-[14px]">
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-muted-foreground">Daily limit</dt>
+            <dd className="tabular text-foreground">{money(current)}</dd>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-muted-foreground">Sent today</dt>
+            <dd className="tabular text-foreground">{money(used)}</dd>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-muted-foreground">The most you can set</dt>
+            <dd className="tabular text-foreground">{money(def.max)}</dd>
+          </div>
+          {current !== def.standard ? (
+            <div className="flex items-center justify-between gap-4">
+              <dt className="text-muted-foreground">Standard</dt>
+              <dd>
+                <button
+                  type="button"
+                  onClick={() => setValue(def.standard.toLocaleString("en-GB"))}
+                  className="tabular cursor-pointer text-foreground underline decoration-border underline-offset-4 transition-colors duration-hover hover:decoration-foreground"
+                >
+                  {`Use ${money(def.standard)}`}
+                </button>
+              </dd>
+            </div>
+          ) : null}
+        </dl>
+        <Field label="New Daily Limit" htmlFor="new-limit" error={tooHigh ? `The most you can set is ${money(def.max)}.` : undefined}>
+          <Input
+            id="new-limit"
+            inputMode="decimal"
+            className="tabular"
+            placeholder={`Up to ${money(def.max)}`}
+            value={value}
+            aria-invalid={tooHigh || undefined}
+            onChange={(e) => setValue(e.target.value)}
+          />
+        </Field>
+        <Button type="submit" size="xl" className="w-full" disabled={!valid}>
+          {valid && raising ? "Continue" : "Save"}
+        </Button>
+      </form>
     </PaneShell>
   );
 }

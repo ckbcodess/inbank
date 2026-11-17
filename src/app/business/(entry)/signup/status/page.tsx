@@ -3,10 +3,10 @@
 /**
  * Where a company follows its internet banking application — /business/signup/status.
  *
- * Before anyone has sign-in details, the reference plus a code to the applicant's number on file is the key.
+ * Before anyone has login details, the reference plus a code to the applicant's number on file is the key.
  * The page answers one question, "where is it and what's next?", and puts the one thing the customer can do
  * right where they need it: upload the signed letter if it's still to come, send a corrected one if it was
- * returned, or resend a user's sign-in details once approved. Reads and writes `lib/enrolment-store.ts`.
+ * returned, or resend a user's login details once approved. Reads and writes `lib/enrolment-store.ts`.
  */
 
 import { Suspense, useEffect, useState } from "react";
@@ -45,7 +45,7 @@ function statusLine(app: EnrolmentApplication): string {
     case "rejected":
       return "This application was declined.";
     case "approved":
-      return "Approved. Sign-in details sent.";
+      return "Approved. Login details sent.";
     case "call_verification":
       return "Signatures checked. We'll call to confirm.";
     default:
@@ -137,7 +137,7 @@ function StatusContent() {
     const updated = resendUserInvite(application.reference, userId);
     if (updated) {
       setApplication(updated);
-      toast.success(`Sign-in details sent to ${name}`);
+      toast.success(`Login details sent to ${name}`);
     }
   }
 
@@ -328,7 +328,7 @@ function StatusContent() {
                     <div className="min-w-0">
                       <p className="truncate text-[14px] text-foreground">{u.name}</p>
                       <p className="truncate text-[12px] text-muted-foreground">
-                        {u.role} · {used ? "Signed in" : expired ? "Link expired" : "Details sent"}
+                        {u.role} · {used ? "Logged in" : expired ? "Link expired" : "Details sent"}
                       </p>
                     </div>
                     {!used && (

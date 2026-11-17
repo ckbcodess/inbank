@@ -19,7 +19,7 @@
  *   - card/wallet linking — becomes an in-app "add a funding source"
  *
  *   start → identity (Ghana Card + mobile) → confirm → selfie → verify (OTP)
- *         → set up sign-in → done
+ *         → set up login → done
  */
 
 import type { Actor, Profile } from "./roles";

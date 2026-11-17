@@ -3,7 +3,7 @@
 /**
  * Transaction Authorisation State Machine.
  * Payments are authorised with a 6-digit one-time code for every transaction, sent by SMS or read off the phone
- * with a shortcode. There is no transaction PIN. The PIN method stays only for sign-in (`/mfa`), which asks for it
+ * with a shortcode. There is no transaction PIN. The PIN method stays only for login (`/mfa`), which asks for it
  * with `useAuthorisation("pin")`.
  */
 

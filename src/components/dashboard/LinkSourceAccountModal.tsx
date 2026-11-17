@@ -58,7 +58,7 @@ interface LinkSourceAccountModalProps {
   onClose: () => void;
   targetAccount?: Account | null;
   initialScreen?: ModalScreen;
-  /** Accounts to transfer between; defaults to the signed-in profile's. */
+  /** Accounts to transfer between; defaults to the logged-in profile's. */
   accounts?: Account[];
   /**
    * `fund` (default) adds money to an account. `link` only links a new MoMo

@@ -90,7 +90,7 @@ export function SidiAssistantWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatLog]);
 
-  // Depend on whether someone is signed in, not on the actor object: the session store hands out a new object when
+  // Depend on whether someone is logged in, not on the actor object: the session store hands out a new object when
   // it hydrates or refreshes, and re-running this effect would cancel the timers that end the greeting, leaving it stuck.
   const pathname = usePathname();
   const onAssistantPage = ASSISTANT_PAGES.some((p) => pathname === p || pathname.startsWith(`${p}/`));

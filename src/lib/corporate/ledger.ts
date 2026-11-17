@@ -1,6 +1,6 @@
 /**
  * Business banking demo ledger: the company's accounts, transactions, cards, standing orders, card activity
- * and the people who sign in to it. Personal banking's rows stay in `lib/mock-data.ts`; that file assembles
+ * and the people who log in to it. Personal banking's rows stay in `lib/mock-data.ts`; that file assembles
  * both into the prototype's one ledger. In the production split this file belongs to the business app.
  *
  * Types come from `mock-data` (type-only imports, so there is no runtime cycle).

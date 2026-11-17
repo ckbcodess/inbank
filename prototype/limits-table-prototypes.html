@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Limits: Fraction and Table</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--amtx:#8a5a00;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1f1f1f;--tileh:#262626;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--amtx:#f5c542;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,p{margin:0;font-weight:inherit}
+  .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .wrap{flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:10px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px;text-align:center}
+  .pill{min-width:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center}
+  .modal{width:860px;max-width:100%;min-height:600px;background:var(--surf);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--shadow);display:flex;overflow:hidden}
+  .side{width:220px;background:color-mix(in srgb,var(--tile) 50%,var(--surf));border-right:1px solid var(--bd);padding:24px 12px;display:flex;flex-direction:column;gap:2px;flex:none}
+  .side .g{font-size:12px;color:var(--mu);padding:12px 8px 4px}
+  .side span.i{padding:6px 8px;border-radius:8px;font-size:13px;color:var(--mu);font-weight:500}
+  .side span.on{background:var(--am);color:#111}
+  .main{flex:1;padding:24px 32px;display:flex;flex-direction:column;gap:16px;min-width:0}
+  @media(max-width:700px){.side{display:none}.main{padding:20px 16px}}
+  .ph{font-size:16px;font-weight:500;padding-top:28px}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px} .am{color:var(--amtx)}
+  .list{display:flex;flex-direction:column}
+  .r{display:flex;align-items:center;gap:16px;padding:12px;margin:0 -12px;border-radius:10px;transition:background .14s;width:calc(100% + 24px)}
+  .r:hover{background:var(--tile)}
+  .grow{flex:1;min-width:0;display:flex;flex-direction:column}
+  .chev{color:var(--mu);flex:none}
+  .ico{width:36px;height:36px;border-radius:50%;background:var(--tile);color:var(--mu);display:flex;align-items:center;justify-content:center;flex:none}
+  .trk{height:4px;border-radius:999px;background:var(--tile);overflow:hidden;position:relative}
+  .trk.h2{height:2px} .trk.h8{height:8px}
+  .trk i{display:block;height:100%;border-radius:999px;background:var(--tx)}
+  .trk i.n{background:var(--am)}
+  .ticks{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+  .ticks i{height:6px;border-radius:2px;background:var(--tile)} .ticks i.on{background:var(--tx)} .ticks i.on.n{background:var(--am)}
+  .hr{height:1px;background:var(--bd);opacity:.7}
+  .panel{border:1px solid var(--bd);border-radius:10px;padding:0 16px}
+  .pie{width:20px;height:20px;border-radius:50%;flex:none}
+  .fillrow{position:relative;overflow:hidden}
+  .fillrow .bg{position:absolute;inset:0;right:auto;background:var(--tile);border-radius:10px}
+  .fillrow .bg.n{background:var(--amsoft)}
+  .fillrow>*:not(.bg){position:relative}
+  .big{font-size:20px;letter-spacing:-.01em}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--surf);padding:10px 16px;border-radius:8px;font-size:13px;z-index:60}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row wrap">
+    <h1>Limits: around 2 (fraction) and 10 (table)</h1>
+    <div class="row wrap" style="gap:12px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="use"><button data-u="none">Nothing sent</button><button data-u="some" class="on">Some used</button><button data-u="near">Near a limit</button></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+    </div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="modal">
+  <nav class="side">
+    <span class="g">You</span><span class="i">Profile</span><span class="i">Preferences</span>
+    <span class="g">Safety</span><span class="i">Security</span><span class="i">Linked devices</span><span class="i on">Limits</span><span class="i">Notifications</span>
+    <span class="g">More</span><span class="i">Refer a Friend</span>
+  </nav>
+  <main class="main" id="main"></main>
+</div></div>
+<script>
+const S={v:1,use:"some",theme:"light"};
+const IC={
+ bank:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8"/><path d="M3 20h18"/></svg>',
+ phone:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>',
+ bill:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
+ globe:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
+};
+const L=[{k:"Bank transfers",lim:20000,i:"bank",u:{some:.32,near:.32}},{k:"Mobile money",lim:5000,i:"phone",u:{some:.4,near:.86}},{k:"Bills",lim:10000,i:"bill",u:{some:.05,near:.05}},{k:"Outside Ghana",lim:10000,i:"globe",u:{some:0,near:0}}];
+const share=l=>S.use==="none"?0:l.u[S.use];
+const used=l=>Math.round(l.lim*share(l));
+const left=l=>l.lim-used(l);
+const near=l=>share(l)>=.75;
+const g=n=>"GHS "+n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+const g0=n=>n.toLocaleString("en-GB");
+const chev='<span class="chev">›</span>';
+const ico=l=>`<span class="ico">${IC[l.i]}</span>`;
+const trk=(l,c="")=>`<div class="trk ${c}"><i class="${near(l)?"n":""}" style="width:${share(l)*100}%"></i></div>`;
+const intro=t=>`<p class="mu">${t}</p>`;
+const hdr=(cols)=>`<div class="r s12 mu" style="padding-top:0;padding-bottom:4px;cursor:default;background:none">${cols}</div>`;
+const fr=l=>`<span class="tab"><span class="${near(l)?"am":""}">${g0(used(l))}</span><span class="mu"> / ${g0(l.lim)}</span></span>`;
+const NOTES={
+1:"<b>A · Table with a fraction.</b> Three columns: kind, a mini bar, sent / limit. A header names them once, so the rows need no words.",
+2:"<b>B · Fraction, no icons.</b> Variation 2 stripped back: name and sent / limit on one line, a hairline bar under it.",
+3:"<b>C · Pure table.</b> Kind · Sent today · Daily limit as columns, no bars at all. The sent figure turns amber near a limit.",
+4:"<b>D · One line, fraction at the end.</b> Icon, name, a flexible bar in the middle, sent / limit at the right.",
+5:"<b>E · Stacked fraction.</b> Table rows where the right column stacks the sent amount over \"of 20,000\". Reads like a statement.",
+6:"<b>F · Bar as the column.</b> A table whose middle column is the bar, with the sent amount printed at the bar's tip.",
+7:"<b>G · Two-line table.</b> Name on top; under it the fraction on the left and the bar on the right, aligned across rows.",
+8:"<b>H · Fraction with GHS once.</b> Table header says GHS, so rows show plain numbers 6,400 / 20,000, with a bar under each. The leanest numerals.",
+};
+const V={
+1:()=>hdr(`<span style="flex:1">Payment</span><span style="width:120px">Today</span><span style="width:150px;text-align:right">Sent / limit (GHS)</span><span style="width:10px"></span>`)+`<div class="list">${L.map(l=>`<button class="r"><span style="flex:1">${l.k}</span><div style="width:120px">${trk(l)}</div><span style="width:150px;text-align:right">${fr(l)}</span>${chev}</button>`).join("")}</div>`,
+2:()=>intro("Sent today against each daily limit.")+`<div class="list">${L.map(l=>`<button class="r"><div class="grow" style="gap:8px"><div class="row"><span>${l.k}</span>${fr(l)}</div>${trk(l,"h2")}</div>${chev}</button>`).join("")}</div>`,
+3:()=>hdr(`<span style="flex:1">Payment</span><span style="width:130px;text-align:right">Sent today</span><span style="width:130px;text-align:right">Daily limit</span><span style="width:10px"></span>`)+`<div class="list">${L.map(l=>`<button class="r"><span style="flex:1">${l.k}</span><span class="tab ${near(l)?"am":used(l)?"":"mu"}" style="width:130px;text-align:right">${g(used(l))}</span><span class="tab" style="width:130px;text-align:right">${g(l.lim)}</span>${chev}</button>`).join("")}</div>`,
+4:()=>intro("Sent today against each daily limit.")+`<div class="list">${L.map(l=>`<button class="r">${ico(l)}<span style="width:130px;flex:none">${l.k}</span><div style="flex:1">${trk(l)}</div><span style="width:130px;text-align:right">${fr(l)}</span>${chev}</button>`).join("")}</div>`,
+5:()=>hdr(`<span style="flex:1">Payment</span><span style="text-align:right;padding-right:22px">Sent today</span>`)+`<div class="list">${L.map(l=>`<button class="r">${ico(l)}<span style="flex:1">${l.k}</span><div style="text-align:right"><p class="tab ${near(l)?"am":""}">${g(used(l))}</p><p class="s12 mu tab">of ${g0(l.lim)}</p></div>${chev}</button>`).join("")}</div>`,
+6:()=>hdr(`<span style="width:150px">Payment</span><span style="flex:1">Sent today</span><span style="width:110px;text-align:right">Daily limit</span><span style="width:10px"></span>`)+`<div class="list">${L.map(l=>`<button class="r"><span style="width:150px;flex:none">${l.k}</span><div style="flex:1;display:flex;align-items:center;gap:8px"><div class="trk" style="flex:${Math.max(share(l),0.001)};height:6px"><i class="${near(l)?"n":""}" style="width:100%"></i></div><span class="s12 tab mu" style="white-space:nowrap">${used(l)?g0(used(l)):"–"}</span><div style="flex:${1-share(l)}"></div></div><span class="tab" style="width:110px;text-align:right">${g0(l.lim)}</span>${chev}</button>`).join("")}</div>`,
+7:()=>intro("Sent today against each daily limit.")+`<div class="list">${L.map(l=>`<button class="r">${ico(l)}<div class="grow" style="gap:6px"><span>${l.k}</span><div class="row"><span style="width:150px;flex:none">${fr(l)}</span><div style="flex:1">${trk(l)}</div></div></div>${chev}</button>`).join("")}</div>`,
+8:()=>hdr(`<span style="flex:1">Payment</span><span style="text-align:right;padding-right:22px">Sent / limit, GHS</span>`)+`<div class="list">${L.map(l=>`<button class="r"><div class="grow" style="gap:8px"><div class="row"><span>${l.k}</span>${fr(l)}</div>${trk(l)}</div>${chev}</button>`).join("")}</div>`,
+};
+function render(){
+  document.documentElement.dataset.theme=S.theme;
+  document.getElementById("pills").innerHTML=Array.from({length:8},(_,i)=>i+1).map(k=>`<button class="pill ${S.v===k?"on":""}" data-v="${k}">${"ABCDEFGH"[k-1]}</button>`).join("");
+  document.getElementById("note").innerHTML=NOTES[S.v];
+  document.getElementById("main").innerHTML=`<h2 class="ph">Limits</h2>`+V[S.v]();
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-u],[data-t],.r"); if(!t) return;
+  if(t.dataset.v) S.v=+t.dataset.v;
+  else if(t.dataset.u){S.use=t.dataset.u;seg("use",t);}
+  else if(t.dataset.t){S.theme=t.dataset.t;seg("theme",t);}
+  else {const el=document.createElement("div");el.className="toast";el.textContent="Opens the change step";document.body.appendChild(el);setTimeout(()=>el.remove(),1300);}
+  render();
+});
+function seg(id,b){document.querySelectorAll(`#${id} button`).forEach(x=>x.classList.toggle("on",x===b));}
+render();
+</script>
+</body>
+</html>

@@ -15,7 +15,7 @@ function activeProfileName(): string {
 }
 
 /**
- * The company's accounts that the signed-in person may see (UAR-05). Every business screen reads accounts, and
+ * The company's accounts that the logged-in person may see (UAR-05). Every business screen reads accounts, and
  * so balances, totals and transactions, through here, so a person never sees an account they weren't given.
  */
 export function businessAccounts(): Account[] {
@@ -31,7 +31,7 @@ export function findBusinessAccount(id: string): Account | undefined {
   return businessAccounts().find((a) => a.id === id);
 }
 
-/** Transactions for the signed-in business's accounts. */
+/** Transactions for the logged-in business's accounts. */
 export function businessTransactions(): Transaction[] {
   const accountIds = new Set(businessAccounts().map((a) => a.id));
   return transactionsForProfile("CORPORATE").filter((t) => t.accountId && accountIds.has(t.accountId));

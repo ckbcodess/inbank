@@ -18,7 +18,7 @@ import { useSession, useSessionHydrated } from "@/lib/session-store";
 
 /**
  * The step after the password. It runs on the same authorisation as Send & Pay (`useAuthorisation`): the
- * transaction PIN by default, a one-time code by SMS or shortcode as the way past a forgotten PIN. Sign-in is
+ * transaction PIN by default, a one-time code by SMS or shortcode as the way past a forgotten PIN. Login is
  * recoverable, so it verifies on the last digit (a payment never does). Kept quiet on purpose: one heading, the
  * boxes, one link.
  */
@@ -28,7 +28,7 @@ function PinContent() {
   const isNewDevice = searchParams.get("device") === "new";
 
   const { actor, verifyMfa } = useSession();
-  // A business sign-in stays in smoke ash through the code step.
+  // A business login stays in smoke ash through the code step.
   useBusinessTheme(isBusinessProfile(actor?.profiles[0]));
   const auth = useAuthorisation("pin");
   const [verifying, setVerifying] = useState(false);

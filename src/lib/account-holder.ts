@@ -5,7 +5,7 @@ import type { Actor, Profile } from "@/lib/roles";
 /**
  * The name an account is held in — what goes on shared account details and a
  * printed cheque. A retail profile's name is the relationship ("Personal
- * Banking"), not a person, so retail accounts use the signed-in customer's
+ * Banking"), not a person, so retail accounts use the logged-in customer's
  * name; business accounts use the business; joint accounts list every holder.
  */
 export function accountHolderName(

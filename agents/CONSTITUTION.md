@@ -158,6 +158,8 @@ here. Never fall back to dense, boxed layouts.
   4px. Rem-based values outside those scales (`text-base`, `max-w-md`) still follow the 14px root. `text-sm` and
   `text-xs` are the exception: globals.css redefines them as the scale's 14px and 12px (designer, 2026-11-10), and
   they're the names Figma's Body and Meta sizes carry as code syntax.
+- **Log in, never sign in** (designer, 2026-11-17). Log in / Log out / logged in / login (noun) everywhere: buttons,
+  copy, notifications, comments. "Sign in" and "sign out" never appear. Sign up stays as it is.
 - **All numbers carry `.tabular`:** money, dates, account numbers, references, percentages and rates.
 - **Casing:**
   - Never all caps or letter-spaced labels. Older `uppercase` uses get converted when a file is touched.

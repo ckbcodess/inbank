@@ -229,6 +229,7 @@
   --color-panel: var(--panel);
   --color-card-auth: var(--card-auth);
   --color-card-item: var(--card-item);
+  --color-card-item-hover: var(--card-item-hover);
   --color-modal: var(--modal);
   /* Sidebar transition */
 
@@ -367,6 +368,20 @@
   --smoke-950: #0f1419;
   --white: #ffffff;
   --black: #000000;
+  /* The Sea dashboard backdrop, tuned by the designer (2026-11-17). */
+  --sea-200: #89d4e4;
+  --sea-400: #52c5ff;
+  --sea-300: #6bdaff;
+  --sea-600: #009bc9;
+  --sea-700: #00779e;
+  /* The Forest backdrop, tuned by the designer (2026-11-17). */
+  --forest-600: #248121;
+  /* The Amber backdrop's edge (designer, 2026-11-17). */
+  --gcb-amber-edge: #ffbb00;
+  /* The dark inner line on the Amber backdrop's Send Money (designer, 2026-11-17). */
+  --gcb-amber-inset: #676874;
+  /* The Amber dashboard colour (designer, 2026-11-17). */
+  --gcb-amber: #f9c632;
 }
 
 :root {
@@ -384,6 +399,7 @@
   --card-auth: var(--white);
   /* Nested card items inside containers (such as onboarding option cards). */
   --card-item: var(--gray-50);
+  --card-item-hover: var(--gray-100);
   /* Every modal and dialog surface. Starts at the onboarding card colour; tune it on its own. */
   --modal: var(--white);
   /* Tile surface tokens. Hub tiles are filled with --tile, with no stroke, and --tile-hover on hover; the fill also
@@ -622,6 +638,11 @@
   --hero-primary: var(--primary);
   --hero-primary-hover: var(--primary-hover);
   --hero-primary-foreground: var(--primary-foreground);
+  /* Send Money's edge and its inner top and bottom lines. They start as the brand button's, and a backdrop can retune
+     them without touching primary buttons elsewhere (the hero maps them onto --primary-edge/-inset-* inside itself). */
+  --hero-primary-edge: var(--primary-edge);
+  --hero-primary-inset-top: var(--primary-inset-top);
+  --hero-primary-inset-bottom: var(--primary-inset-bottom);
   /* The hero's secondary buttons: a translucent top-to-bottom gradient (lighter at the top) over the panel, with its own hover pair, so it never follows the text colour. */
   --hero-glass-top: color-mix(in srgb, var(--smoke-900) 29%, transparent);
   --hero-glass-bottom: color-mix(in srgb, var(--smoke-400) 50.2%, transparent);
@@ -674,6 +695,7 @@
   --panel: var(--gray-875);
   --card-auth: #141414;
   --card-item: var(--gray-825);
+  --card-item-hover: var(--gray-800);
   --modal: var(--gray-900);
   --tile: color-mix(in srgb, var(--gray-875) 33%, var(--gray-900));
   /* The cash-out ticket is warm paper with black ink in both themes. */
@@ -951,6 +973,27 @@ html.i18n-pending body {
 .surface-interactive:active {
   background-color: var(--hover);
 }
+
+
+/* ── Dashboard colour (Settings → Preferences; lib/dashboard-color.ts) ──
+   Personal only: <html data-hero="…"> swaps the hero panel's surface, edge and waves. In dark the panel stays Slate's
+   near-black and only the waves, glow and rim take the colour, so the light does the work. Slate is the default (no attribute).
+   The swatches in Preferences read --swatch-*. */
+:root {
+  --swatch-slate: var(--smoke-700);
+  --swatch-forest: var(--forest-600);
+  --swatch-ocean: var(--sea-600);
+  --swatch-clay: var(--orange-800);
+  --swatch-amber: var(--gcb-amber);
+}
+:root[data-hero="forest"] { --sheet-rim: color-mix(in srgb, var(--green-700) 35%, transparent); --hero-glow: color-mix(in srgb, var(--green-300) 18%, transparent); --hero-surface: var(--forest-600); --hero-border: var(--green-700); --hero-wave-a: color-mix(in srgb, var(--green-400) 45%, transparent); --hero-wave-b: color-mix(in srgb, var(--teal-400) 40%, transparent); }
+:root[data-hero="ocean"] { --sheet-rim: color-mix(in srgb, var(--sea-600) 35%, transparent); --hero-glow: color-mix(in srgb, var(--sea-300) 18%, transparent); --hero-surface: var(--sea-600); --hero-border: var(--sea-700); --hero-wave-a: color-mix(in srgb, var(--sea-200) 45%, transparent); --hero-wave-b: color-mix(in srgb, var(--sea-200) 40%, transparent); }
+:root[data-hero="clay"] { --sheet-rim: color-mix(in srgb, var(--orange-700) 35%, transparent); --hero-glow: color-mix(in srgb, var(--orange-300) 18%, transparent); --hero-surface: var(--orange-800); --hero-border: var(--orange-700); --hero-wave-a: color-mix(in srgb, var(--orange-400) 45%, transparent); --hero-wave-b: color-mix(in srgb, var(--amber-400) 40%, transparent); }
+:root[data-hero="amber"] { --hero-surface: var(--gcb-amber); --hero-border: var(--gcb-amber-edge); --hero-wave-a: color-mix(in srgb, var(--white) 40%, transparent); --hero-wave-b: color-mix(in srgb, var(--amber-200) 50%, transparent); --hero-glow: color-mix(in srgb, var(--gcb-amber) 22%, transparent); --sheet-rim: color-mix(in srgb, var(--gcb-amber) 60%, transparent); /* Light amber needs dark type and a dark primary button. */ --hero-foreground: var(--gray-950); --hero-balance-foreground: var(--gray-950); --hero-button-foreground: var(--gray-950); --hero-primary: var(--gray-950); --hero-primary-hover: var(--gray-800); --hero-primary-foreground: var(--white); --hero-glass-top: color-mix(in srgb, var(--white) 45%, transparent); --hero-glass-bottom: color-mix(in srgb, var(--white) 25%, transparent); --hero-glass-hover: color-mix(in srgb, var(--white) 55%, transparent); --hero-primary-edge: var(--gray-950); --hero-primary-inset-top: var(--gcb-amber-inset); --hero-primary-inset-bottom: var(--black); }
+.dark[data-hero="forest"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--green-300) 50%, transparent); --hero-glow: color-mix(in srgb, var(--green-600) 28%, transparent); --hero-wave-a: color-mix(in srgb, var(--forest-600) 77%, transparent); --hero-wave-b: color-mix(in srgb, var(--teal-800) 70%, transparent); }
+.dark[data-hero="ocean"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--blue-300) 50%, transparent); --hero-glow: color-mix(in srgb, var(--sea-600) 28%, transparent); --hero-wave-a: color-mix(in srgb, var(--sea-600) 77%, transparent); --hero-wave-b: color-mix(in srgb, var(--sea-400) 70%, transparent); }
+.dark[data-hero="clay"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--orange-300) 50%, transparent); --hero-glow: color-mix(in srgb, var(--orange-600) 28%, transparent); --hero-wave-a: color-mix(in srgb, var(--orange-700) 77%, transparent); --hero-wave-b: color-mix(in srgb, var(--amber-800) 70%, transparent); }
+.dark[data-hero="amber"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--gcb-amber) 50%, transparent); --hero-glow: color-mix(in srgb, var(--gcb-amber) 22%, transparent); --hero-wave-a: color-mix(in srgb, var(--gcb-amber) 55%, transparent); --hero-wave-b: color-mix(in srgb, var(--amber-700) 60%, transparent); --hero-foreground: var(--white); --hero-balance-foreground: var(--white); --hero-button-foreground: var(--white); --hero-primary: var(--primary); --hero-primary-hover: var(--primary-hover); --hero-primary-foreground: var(--primary-foreground); --hero-glass-top: color-mix(in srgb, var(--smoke-900) 16.1%, transparent); --hero-glass-bottom: color-mix(in srgb, var(--smoke-400) 38%, transparent); --hero-glass-hover: color-mix(in srgb, var(--white) 7.8%, transparent); }
 
 /* ── Business banking theme: smoke ash ─────────────────────────────────────
    Business banking wears smoke ash where personal banking wears GCB amber (designer, 2026-10-22; an override of

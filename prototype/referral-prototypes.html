@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Refer a Friend: 3 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--amtx:#8a5a00;--ok:#047857;--okbg:#ecfdf3;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#262626;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--amtx:#f5c542;--ok:#34d399;--okbg:#0f2a1f;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button,input{font:inherit;color:inherit} button{background:none;border:0;padding:0;cursor:pointer}
+  h1,h2,h3,p{margin:0;font-weight:inherit}
+  .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:10px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center}
+  .app{width:820px;max-width:100%;min-height:640px;background:var(--surf);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--shadow);display:flex;overflow:hidden}
+  .side{width:200px;border-right:1px solid var(--bd);padding:20px 12px;display:flex;flex-direction:column;gap:2px;flex:none}
+  .side span{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu)}
+  .side span.on{background:var(--tile);color:var(--tx);font-weight:500}
+  .main{flex:1;padding:32px 40px;display:flex;flex-direction:column;gap:40px;min-width:0}
+  @media(max-width:700px){.side{display:none}.main{padding:20px 12px}}
+  .back{font-size:13px;color:var(--mu);margin-bottom:8px;display:inline-block}
+  .ptitle{font-size:22px;font-weight:500;letter-spacing:-.02em}
+  .sec{display:flex;flex-direction:column;gap:12px}
+  .sec h2{font-size:16px;font-weight:500}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px} .lr{line-height:1.6}
+  .kv{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:10px}
+  .kv:hover{background:var(--tile)}
+  .code{font-size:20px;letter-spacing:.04em}
+  .big{font-size:32px;letter-spacing:-.02em}
+  .link{text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--bd);font-size:13px}
+  .link:hover{text-decoration-color:var(--tx)}
+  .btns{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{height:40px;padding:0 16px;border-radius:8px;background:var(--am);color:#111;font-weight:500;display:inline-flex;align-items:center;gap:8px}
+  .btn.o{background:var(--surf);border:1px solid var(--bd);color:var(--tx)} .btn.o:hover{background:var(--tile)}
+  .btn.xl{height:44px;width:100%;justify-content:center}
+  .list{display:flex;flex-direction:column}
+  .fr{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px}
+  .fr:hover{background:var(--tile)}
+  .av{width:36px;height:36px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .fr .grow{flex:1;min-width:0}
+  .st{font-size:12px} .st.ok{color:var(--ok)}
+  .empty{padding:24px 12px;text-align:center;color:var(--mu);font-size:13px;line-height:1.6}
+  .steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media(max-width:700px){.steps3{grid-template-columns:1fr}}
+  .num{width:24px;height:24px;border-radius:50%;background:var(--amsoft);color:var(--amtx);font-size:12px;display:inline-flex;align-items:center;justify-content:center;font-weight:500}
+  .linkbox{display:flex;align-items:center;gap:8px;background:var(--tile);border-radius:8px;height:44px;padding:0 4px 0 12px}
+  .linkbox span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+  .bars{display:flex;gap:4px} .bars i{flex:1;height:6px;border-radius:999px;background:var(--tile)} .bars i.on{background:var(--am)}
+  .srow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:10px;cursor:pointer}
+  .srow:hover{background:var(--tile)}
+  .ico{width:36px;height:36px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none}
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+  .modal{width:440px;max-width:100%;background:var(--surf);border-radius:10px;box-shadow:var(--shadow);padding:24px;display:flex;flex-direction:column;gap:20px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--surf);padding:10px 16px;border-radius:8px;font-size:13px;z-index:60}
+  .terms{font-size:12px;color:var(--mu);line-height:1.6}
+  details summary{cursor:pointer;font-size:13px;list-style:none} details summary::-webkit-details-marker{display:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Refer a Friend (Settings → Value-Adds)</h1>
+    <div class="row" style="gap:12px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="reward"><button data-r="1" class="on">With reward</button><button data-r="0">No reward</button></div>
+      <div class="seg" id="data"><button data-d="some" class="on">3 friends</button><button data-d="none">None yet</button></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+    </div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="app">
+  <nav class="side"><span>Profile</span><span>Security</span><span>Notifications</span><span class="on">Refer a Friend</span><span>Limits</span><span>Help</span></nav>
+  <main class="main" id="main"></main>
+</div></div>
+<div id="layer"></div>
+
+<script>
+const S={v:"A",reward:true,data:"some",theme:"light",open:false};
+const CODE="ISHM-4821", LINK="gcbbank.com.gh/join/ISHM-4821", REWARD=20, CAP=10;
+const FRIENDS=[
+  {n:"Akosua M.",i:"AM",st:"Reward paid",d:"12 Nov",ok:true},
+  {n:"Kwame B.",i:"KB",st:"Opened an account",d:"9 Nov",hint:"Reward pays after their first GHS 50 deposit"},
+  {n:"Efua O.",i:"EO",st:"Signed up",d:"14 Nov",hint:"Waiting for them to open an account"},
+];
+const NOTES={
+  A:"<b>A · Calm page.</b> House default: title, then label-and-value rows. Your code is the first row. Earned is a fact row, not a balance figure. Friends listed with honest status. Terms one tap down.",
+  B:"<b>B · Share first.</b> The link and share buttons lead, then three short steps explain how it works. Progress to the cap shows as a quiet bar. Better if the bank wants this to grow.",
+  C:"<b>C · A row in Settings.</b> No page of its own. One row on the Settings hub opens a small modal to share. Friends live in a collapsed section. The lightest; good if there's no reward.",
+};
+const fr=()=>S.data==="some"?FRIENDS:[];
+const earned=()=>fr().filter(f=>f.ok).length*REWARD;
+const rewardLine=()=>S.reward?`You and your friend each get GHS ${REWARD} when they open an account and deposit GHS 50.`:`Share GCB with someone you trust. There's no reward; it just helps them get started.`;
+
+function friendsList(){
+  const f=fr();
+  if(!f.length) return `<p class="empty">No one has joined with your code yet.<br>When they do, you'll see them here.</p>`;
+  return `<div class="list">${f.map(x=>`<div class="fr"><div class="av">${x.i}</div><div class="grow"><p>${x.n}</p>${S.reward&&x.hint?`<p class="s12 mu">${x.hint}</p>`:""}</div><div style="text-align:right"><p class="st ${x.ok&&S.reward?"ok":""}">${S.reward?x.st:(x.ok?"Opened an account":x.st)}</p><p class="s12 mu tab">${x.d}</p></div></div>`).join("")}</div>`;
+}
+function terms(){return S.reward?`<details><summary class="link">How rewards work</summary><p class="terms" style="margin-top:8px">Your friend signs up with your code and deposits GHS 50 within 30 days. We pay GHS ${REWARD} into each of your accounts within 3 working days. Up to ${CAP} friends a year. Codes for your own other numbers don't count.</p></details>`:"";}
+const shareBtns=(full)=>`<div class="btns"><button class="btn${full?" xl":""}" data-act="share">Share Link</button><button class="btn o" data-act="wa">WhatsApp</button><button class="btn o" data-act="copy">Copy Code</button></div>`;
+
+function A(){return `
+  <div><h1 class="ptitle">Refer a Friend</h1><p class="mu lr" style="margin-top:8px;max-width:520px">${rewardLine()}</p></div>
+  <section class="sec">
+    <div class="kv"><span class="mu">Your code</span><span class="code tab">${CODE}</span></div>
+    ${S.reward?`<div class="kv"><span class="mu">Earned so far</span><span class="tab">GHS ${earned().toFixed(2)}</span></div>`:""}
+    <div style="padding:0 12px">${shareBtns()}</div>
+  </section>
+  <section class="sec"><h2>Friends Who Joined</h2>${friendsList()}</section>
+  <div style="padding:0 12px">${terms()}</div>`;}
+
+function B(){const n=fr().filter(f=>f.ok).length;return `
+  <div><h1 class="ptitle">Refer a Friend</h1></div>
+  <section class="sec">
+    <div class="linkbox"><span class="tab">${LINK}</span><button class="btn" style="height:36px" data-act="copy">Copy</button></div>
+    <div class="btns"><button class="btn o" data-act="wa">WhatsApp</button><button class="btn o" data-act="share">More Ways to Share</button></div>
+  </section>
+  <section class="sec"><h2>How It Works</h2><div class="steps3">
+    <div><span class="num">1</span><p style="margin-top:8px">Send your link</p><p class="s13 mu lr">They sign up with it, or type ${CODE}.</p></div>
+    <div><span class="num">2</span><p style="margin-top:8px">They open an account</p><p class="s13 mu lr">${S.reward?"And deposit GHS 50 within 30 days.":"With a Ghana Card, in about five minutes."}</p></div>
+    <div><span class="num">3</span><p style="margin-top:8px">${S.reward?`You both get GHS ${REWARD}`:"You'll see them here"}</p><p class="s13 mu lr">${S.reward?"Paid within 3 working days.":"No reward, just a head start."}</p></div>
+  </div></section>
+  ${S.reward?`<section class="sec"><div class="row"><h2>Your Rewards</h2><span class="s13 mu tab">${n} of ${CAP} this year · GHS ${earned().toFixed(2)}</span></div><div class="bars">${Array.from({length:CAP},(_, i)=>`<i class="${i<n?"on":""}"></i>`).join("")}</div></section>`:""}
+  <section class="sec"><h2>Friends Who Joined</h2>${friendsList()}</section>
+  ${terms()}`;}
+
+function C(){const f=fr();return `
+  <div><h1 class="ptitle">Settings</h1></div>
+  <section class="sec"><h2>Value-Adds</h2>
+    <div class="srow" data-act="open"><div class="row" style="justify-content:flex-start"><div class="ico">♡</div><div><p>Refer a Friend</p><p class="s12 mu">${S.reward?`GHS ${REWARD} each when they join`:"Share your code"}</p></div></div><span class="mu">›</span></div>
+    <div class="srow"><div class="row" style="justify-content:flex-start"><div class="ico">★</div><div><p>Rewards</p><p class="s12 mu">${S.reward?`GHS ${earned().toFixed(2)} earned`:"None yet"}</p></div></div><span class="mu">›</span></div>
+  </section>
+  <section class="sec"><h2>Account</h2>
+    <div class="srow"><p>Profile</p><span class="mu">›</span></div><div class="srow"><p>Security</p><span class="mu">›</span></div>
+  </section>`;}
+
+function modal(){return `<div class="scrim" data-act="close"><div class="modal" onclick="event.stopPropagation()">
+  <div class="row"><h3 style="font-size:16px;font-weight:500">Refer a Friend</h3><button class="mu" data-act="close">✕</button></div>
+  <p class="mu lr">${rewardLine()}</p>
+  <div class="linkbox"><span class="tab">${CODE}</span><button class="btn" style="height:36px" data-act="copy">Copy</button></div>
+  <button class="btn xl" data-act="wa">Share on WhatsApp</button>
+  <details><summary class="link">Friends who joined (${fr().length})</summary><div style="margin-top:8px">${friendsList()}</div></details>
+  ${terms()}
+</div></div>`;}
+
+function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),1600);}
+function render(){
+  document.documentElement.dataset.theme=S.theme;
+  document.getElementById("pills").innerHTML=["A","B","C"].map(k=>`<button class="pill ${S.v===k?"on":""}" data-v="${k}">${k}</button>`).join("");
+  document.getElementById("note").innerHTML=NOTES[S.v];
+  document.getElementById("main").innerHTML=({A,B,C})[S.v]();
+  document.getElementById("layer").innerHTML=S.open&&S.v==="C"?modal():"";
+  document.querySelectorAll(".side span").forEach(s=>s.classList.toggle("on",S.v==="C"?false:s.textContent==="Refer a Friend"));
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-r],[data-d],[data-t],[data-act]"); if(!t) return;
+  if(t.dataset.v){S.v=t.dataset.v;S.open=false;}
+  if(t.dataset.r){S.reward=t.dataset.r==="1";seg("reward",t);}
+  if(t.dataset.d){S.data=t.dataset.d;seg("data",t);}
+  if(t.dataset.t){S.theme=t.dataset.t;seg("theme",t);}
+  const a=t.dataset.act;
+  if(a==="open")S.open=true; if(a==="close")S.open=false;
+  if(a==="copy")toast("Code copied"); if(a==="wa")toast("Opens WhatsApp with your link"); if(a==="share")toast("Opens the share sheet");
+  render();
+});
+function seg(id,b){document.querySelectorAll(`#${id} button`).forEach(x=>x.classList.toggle("on",x===b));}
+render();
+</script>
+</body>
+</html>

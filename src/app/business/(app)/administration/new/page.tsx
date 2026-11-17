@@ -135,7 +135,7 @@ export default function AddUserPage() {
           <UserAccessFields draft={draft} onChange={setDraft} limitError={limitProblem} accountsError={accountsProblem} />
           <div className="flex flex-col gap-2">
             <p className="text-[13px] leading-relaxed text-muted-foreground">
-              {`An Authoriser or another administrator approves this before ${draft.name} can sign in. We'll tell ${draft.name} by SMS and email when it's approved.`}
+              {`An Authoriser or another administrator approves this before ${draft.name} can log in. We'll tell ${draft.name} by SMS and email when it's approved.`}
             </p>
             <Button onClick={submit} className="self-start">
               Send for Approval

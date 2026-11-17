@@ -175,7 +175,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       },
       {
         status: "approved",
-        label: "Approved, sign-in details sent",
+        label: "Approved, login details sent",
         description: "Each user gets their username by SMS and a link to set their password by email.",
         timestamp: "Pending",
         done: false,
@@ -288,7 +288,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       },
       {
         status: "approved",
-        label: "Approved, sign-in details sent",
+        label: "Approved, login details sent",
         description: "Each user gets their username by SMS and a link to set their password by email.",
         timestamp: "Pending",
         done: false,
@@ -535,7 +535,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       },
       {
         status: "approved",
-        label: "Approved, sign-in details sent",
+        label: "Approved, login details sent",
         description: "Each user gets their username by SMS and a link to set their password by email.",
         timestamp: "12 Oct 2026, 11:00 AM",
         done: true,
@@ -1056,7 +1056,7 @@ export function enrolmentTimeline(
     },
     {
       status: "approved",
-      label: "Approved, sign-in details sent",
+      label: "Approved, login details sent",
       description: "Each user gets their username by SMS and a link to set their password by email.",
       timestamp: "Next",
       done: false,

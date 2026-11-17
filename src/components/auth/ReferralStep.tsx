@@ -6,9 +6,10 @@
  *
  * Skipping is a first-class, equal-weight choice: the referral rewards someone
  * else, so it must never feel like a gate on the customer's own sign-up.
- * Referral codes are branch codes — branches hand them out — so the code
- * resolves to the branch's name as it's typed, and it can only be applied once
- * the referrer shows. Demo codes: see REFERRAL_BRANCHES (e.g. 183).
+ * A code is a branch's (three digits) or a friend's (KWAM-4821, from Settings →
+ * Refer a Friend). It resolves to the branch or the friend as it's typed, and can
+ * only be applied once the referrer shows. A shared link opens it filled in.
+ * Demo codes: REFERRAL_BRANCHES in lib/referrals (e.g. 183) or any persona's code.
  */
 
 import { AlertToast } from "@/components/ui/alert-toast";
@@ -19,18 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { VerifiedAccountBadge } from "@/components/payments/flows/shared";
-
-/** Prototype directory: branch referral code → branch name. */
-const REFERRAL_BRANCHES: Record<string, string> = {
-  "101": "Head Office (Accra)",
-  "112": "Airport City",
-  "124": "Ring Road Central",
-  "137": "Legon Campus",
-  "183": "Tema Community (Meridian)",
-  "201": "Kumasi Main",
-  "305": "Takoradi Harbour",
-  "410": "Tamale Main",
-};
+import { ACTORS } from "@/lib/mock-data";
+import { forgetReferralFromLink, normaliseReferralCode, referralFromLink, resolveReferral } from "@/lib/referrals";
 
 export default function ReferralStep({
   onDone,
@@ -42,24 +33,30 @@ export default function ReferralStep({
   dataTour?: string;
   skipLabel?: string;
 }) {
-  const [code, setCode] = useState("");
+  // A shared link (`/join/[code]`) brings the code with it, so the field opens filled in and its owner named.
+  const [linked] = useState(() => referralFromLink());
+  const [code, setCode] = useState(linked ?? "");
   const [busy, setBusy] = useState(false);
   const [skipping, setSkipping] = useState(false);
   // Starts as a plain choice; the code field only appears if they have one.
-  const [entering, setEntering] = useState(false);
+  const [entering, setEntering] = useState(!!linked);
 
   function skip() {
     setSkipping(true);
+    forgetReferralFromLink();
     window.setTimeout(() => onDone(null), 500);
   }
 
-  const referrer = REFERRAL_BRANCHES[code] ?? null;
-  const notFound = code.length >= 3 && !referrer;
+  const found = resolveReferral(code, ACTORS);
+  const referrer = found?.name ?? null;
+  // A branch code is three digits; a friend's is four letters and four digits.
+  const notFound = !referrer && (/^\d{3}$/.test(code) || code.length >= 9);
 
   function apply(e: React.FormEvent) {
     e.preventDefault();
     if (!referrer || busy) return;
     setBusy(true);
+    forgetReferralFromLink();
     window.setTimeout(() => onDone(code), 500);
   }
 
@@ -75,7 +72,7 @@ export default function ReferralStep({
           Were You Referred by Someone?
         </DialogTitle>
         <DialogDescription className="text-[13px] text-muted-foreground leading-normal">
-          Enter their referral code to help them receive their reward.
+          {linked ? "You came with a referral link. Apply it, or skip." : "Enter the code a friend or a GCB branch gave you."}
         </DialogDescription>
       </div>
 
@@ -86,27 +83,27 @@ export default function ReferralStep({
         </div>
 
         {entering && (
-          <div className="flex flex-col items-center gap-2 w-full max-w-[240px] animate-in fade-in-0 zoom-in-95 duration-200">
+          <div className="flex flex-col items-center gap-2 w-full max-w-[280px] animate-in fade-in-0 zoom-in-95 duration-200">
             <Label htmlFor="referral-code" className="sr-only">
-              Branch Code
+              Referral Code
             </Label>
             <Input
               id="referral-code"
               autoFocus
               value={code}
               onChange={(e) => {
-                setCode(e.target.value.replace(/\D/g, "").slice(0, 3));
+                setCode(normaliseReferralCode(e.target.value));
               }}
-              placeholder="000"
-              inputMode="numeric"
+              placeholder="KWAM-4821 or 183"
+              autoCapitalize="characters"
               autoComplete="off"
-              maxLength={3}
-              className="tabular text-center text-[22px] tracking-[0.3em] font-medium"
+              maxLength={9}
+              className="tabular text-center text-[18px] font-medium"
             />
 
             {referrer && (
               <div className="animate-in fade-in-0 slide-in-from-top-1 duration-150 ease-out">
-                <VerifiedAccountBadge name={referrer} />
+                <VerifiedAccountBadge name={found?.kind === "friend" ? `Referred by ${referrer}` : referrer} />
               </div>
             )}
 

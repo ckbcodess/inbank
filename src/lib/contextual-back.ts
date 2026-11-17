@@ -9,7 +9,7 @@ import { canGoBackInApp } from "@/lib/nav-history";
  * 1. Came from another NIBS page → `router.back()`. Returns to exactly where
  *    the user was (same filter, same tab, same scroll) and pops history, so
  *    Back can never ping-pong between two pages.
- * 2. Landed here directly (deep link, new tab, reload after sign-in) →
+ * 2. Landed here directly (deep link, new tab, reload after login) →
  *    `router.replace()` to `returnUrl` or the logical parent. Replace, not
  *    push: a pushed "back" leaves this page underneath it, and the parent's
  *    own Back would bounce straight back here — the loop.

@@ -217,7 +217,7 @@ export function useDepositsHydrated(): boolean {
 }
 
 /**
- * The signed-in customer's deposits. Deposits belong to the securities account, so they only show once it is active.
+ * The logged-in customer's deposits. Deposits belong to the securities account, so they only show once it is active.
  * Dev Mode decides how many exist (none, one or two), independently of treasury. `hydrated` waits for both the deposits
  * and the account to be read back.
  */

@@ -521,7 +521,7 @@ export function useTreasuryHydrated(): boolean {
   return hydrated;
 }
 
-/** The signed-in customer's treasury picture, from the one store. */
+/** The logged-in customer's treasury picture, from the one store. */
 export function useMyTreasury() {
   const ownerId = useSession((s) => s.actor?.id) ?? "guest";
   const csdAll = useTreasury((s) => s.csd);

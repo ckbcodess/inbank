@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * Device trust — what makes a returning customer's sign-in fast.
+ * Device trust — what makes a returning customer's login fast.
  *
  * When someone ticks "Remember this device" after proving it's them (a one-time
- * code at sign-in, or finishing activation / migration), this browser remembers
+ * code at login, or finishing activation / migration), this browser remembers
  * who they are for TRUST_DAYS. Next time the login screen greets them by name,
  * asks for their password only, and skips the one-time code. They can see and revoke
  * it in Settings, and "Not you?" on the login screen never signs anyone in.

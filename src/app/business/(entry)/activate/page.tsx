@@ -251,7 +251,7 @@ function BusinessActivateContent() {
     window.setTimeout(() => {
       setFirstRun("new");
       setPendingReferral(false);
-      // Activation is done. Nothing signs them in: they go to sign-in, which is closed for now.
+      // Activation is done. Nothing signs them in: they go to login, which is closed for now.
       router.push("/login?type=business");
     }, 600);
   }

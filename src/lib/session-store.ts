@@ -21,9 +21,9 @@ interface SessionState {
   activeProfile: Profile | null;
   /** Set once MFA (S02) has been cleared. */
   mfaVerified: boolean;
-  /** When this actor signed in before this session (ms epoch) — null on their first sign-in. */
+  /** When this actor logged in before this session (ms epoch) — null on their first login. */
   previousSignIn: number | null;
-  /** Each actor's most recent sign-in on this browser, so "Last login" is theirs. Survives sign-out. */
+  /** Each actor's most recent login on this browser, so "Last login" is theirs. Survives logout. */
   signIns: Record<string, number>;
 
   signIn: (actor: Actor) => void;
@@ -34,7 +34,7 @@ interface SessionState {
 
 /**
  * Demo customers arrive with a plausible history so "Last login" has something
- * true-to-them to show on a first visit. Justice's is their last sign-in to the old
+ * true-to-them to show on a first visit. Justice's is their last login to the old
  * internet banking; a newly activated customer has none (the line hides).
  */
 const SEEDED_SIGN_INS: Record<string, number> = {
@@ -55,7 +55,7 @@ export const useSession = create<SessionState>()(
       previousSignIn: null,
       signIns: SEEDED_SIGN_INS,
 
-      // While the actor's sign-in is closed (see lib/launch.ts) no session starts, whichever door the call came from.
+      // While the actor's login is closed (see lib/launch.ts) no session starts, whichever door the call came from.
       signIn: (actor) =>
         !signInOpenFor(actor) ? undefined : set((s) => ({
           actor,

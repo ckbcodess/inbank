@@ -1,5 +1,5 @@
 /**
- * Primitives shared by every pre-authentication flow — sign in, activation,
+ * Primitives shared by every pre-authentication flow — log in, activation,
  * and both signup paths. Pulled out of `activation.ts` once a second flow
  * needed the same masking and password rules, so a change to either can't
  * drift from the other by accident.

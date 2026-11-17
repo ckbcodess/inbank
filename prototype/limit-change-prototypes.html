@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Change a Limit: 12 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--amtx:#8a5a00;--err:#b42318;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1f1f1f;--tileh:#262626;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--amtx:#f5c542;--err:#f97066;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button,input{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer}
+  h1,p{margin:0;font-weight:inherit}
+  .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .wrap{flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:10px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px;min-width:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1000px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center}
+  .modal{width:860px;max-width:100%;min-height:600px;background:var(--surf);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--shadow);display:flex;overflow:hidden}
+  .side{width:220px;background:color-mix(in srgb,var(--tile) 50%,var(--surf));border-right:1px solid var(--bd);padding:24px 12px;display:flex;flex-direction:column;gap:2px;flex:none}
+  .side .g{font-size:12px;color:var(--mu);padding:12px 8px 4px}
+  .side span.i{padding:6px 8px;border-radius:8px;font-size:13px;color:var(--mu);font-weight:500}
+  .side span.on{background:var(--am);color:#111}
+  .main{flex:1;padding:24px 32px;display:flex;flex-direction:column;gap:16px;min-width:0}
+  @media(max-width:700px){.side{display:none}.main{padding:20px 16px}}
+  .mu{color:var(--mu)} .s12{font-size:12px} .s13{font-size:13px} .am{color:var(--amtx)}
+  .hd{display:flex;align-items:center;gap:12px;padding-top:28px;font-size:16px;font-weight:500}
+  .hd span{color:var(--mu);font-weight:400}
+  .col{display:flex;flex-direction:column}
+  .fld{height:44px;border:1px solid var(--bd);background:var(--surf);border-radius:8px;padding:0 12px;width:100%;outline:none}
+  .fld:focus{border-color:var(--tx)}
+  .btn{height:44px;border-radius:8px;background:var(--am);color:#111;font-weight:500;width:100%;text-align:center}
+  .btn.dis{opacity:.4;pointer-events:none}
+  .btn.o{background:var(--surf);border:1px solid var(--bd);color:var(--tx)}
+  .amt{letter-spacing:-.02em;border:0;background:none;outline:none;text-align:center;width:100%;font-size:40px}
+  .bare{border:0;outline:none;background:none}
+  .stp{width:44px;height:44px;border-radius:50%;border:1px solid var(--bd);font-size:20px;flex:none}
+  .stp:hover{background:var(--tile)}
+  input[type=range]{width:100%;accent-color:var(--am)}
+  .opt{display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--bd);border-radius:10px;cursor:pointer}
+  .opt.on{border-color:var(--am);background:var(--amsoft)}
+  .trk{height:6px;border-radius:999px;background:var(--tile);overflow:hidden}
+  .trk i{display:block;height:100%;border-radius:999px;background:var(--tx)}
+  .trk i.n{background:var(--am)}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--surf);padding:10px 16px;border-radius:8px;font-size:13px;z-index:60}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row wrap">
+    <h1>Change a limit: 12 variations</h1>
+    <div class="row wrap" style="gap:12px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+    </div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="modal">
+  <nav class="side">
+    <span class="g">You</span><span class="i">Profile</span><span class="i">Preferences</span>
+    <span class="g">Safety</span><span class="i">Security</span><span class="i">Linked devices</span><span class="i on">Limits</span><span class="i">Notifications</span>
+    <span class="g">More</span><span class="i">Refer a Friend</span>
+  </nav>
+  <main class="main" id="main"></main>
+</div></div>
+<script>
+const S={v:1,theme:"light",val:20000};
+const NOW=20000, MAX=100000, USED=6400, STEP=1000;
+const g=n=>"GHS "+n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+const g0=n=>n.toLocaleString("en-GB");
+const hd='<div class="hd"><span>&lsaquo;</span>Bank transfers limit</div>';
+const valid=()=>S.val>0&&S.val<=MAX&&S.val!==NOW;
+const raising=()=>S.val>NOW;
+const cta=()=>`<button class="btn ${valid()?"":"dis"}" data-a="go">${valid()&&raising()?"Continue":"Save"}</button>`;
+const hint=()=>{
+  if(S.val>MAX) return `<p class="s12" style="color:var(--err)">The most you can set is ${g(MAX)}.</p>`;
+  if(!valid()) return `<p class="s12">&nbsp;</p>`;
+  return `<p class="s12 mu">${raising()?"Raising it needs a code on the next step.":"Lowering takes effect straight away."}</p>`;
+};
+const num=(extra,style)=>`<input class="${extra} tab" style="${style||""}" inputmode="numeric" value="${S.val?g0(S.val):""}" data-in="num">`;
+const NOTES={
+1:"<b>1 &middot; Slider to the maximum.</b> Drag from 0 to 100,000 in 1,000 steps; the big figure follows. Now and the maximum are marked under it.",
+2:"<b>2 &middot; The number is the field.</b> One large, centred editable amount. Now and the maximum sit quietly under it.",
+3:"<b>3 &middot; Stepper.</b> Minus and plus move it by 1,000; tap the number to type. Good for small nudges.",
+4:"<b>4 &middot; Now &rarr; New.</b> Two boxes side by side, the new one editable. The change reads as before and after.",
+5:"<b>5 &middot; On the scale.</b> A track from 0 to the maximum shows today's use, your limit now, and the new limit as you type.",
+6:"<b>6 &middot; Sentence.</b> &ldquo;I want to send up to [20,000] GHS a day by bank transfer.&rdquo; The field sits inside the sentence.",
+7:"<b>7 &middot; Choose a level.</b> A short list of levels, 5,000 to 100,000, plus Other amount. Recognition over typing.",
+8:"<b>8 &middot; Slider and exact field.</b> A slider for feel, a small field beside it for the exact figure. Both stay in step.",
+9:"<b>9 &middot; Summary first.</b> A quiet panel says what's true today (limit, sent today, the most), then one field and the button.",
+10:"<b>10 &middot; Inline edit.</b> No new-page feel: the limit row itself becomes editable, with Save and Cancel on the row.",
+11:"<b>11 &middot; Big figure, underline.</b> A large figure with a single underline and &ldquo;Was 20,000&rdquo; under it.",
+12:"<b>12 &middot; Today alongside.</b> As you type, today's use is shown against the new limit (6,400 sent, what's left).",
+};
+const V={
+1:()=>`<div class="col" style="gap:24px;max-width:440px;padding-top:16px">
+  <div class="col" style="gap:4px;align-items:center"><p class="tab" style="font-size:32px">${g(S.val)}</p><p class="s13 mu">a day</p></div>
+  <input type="range" min="0" max="${MAX}" step="${STEP}" value="${S.val}" data-in="range">
+  <div class="row s12 mu tab"><span>0</span><span>Now ${g0(NOW)}</span><span>${g0(MAX)}</span></div>${hint()}${cta()}</div>`,
+2:()=>`<div class="col" style="gap:16px;max-width:440px;padding-top:32px;align-items:center">
+  <div class="row" style="justify-content:center;gap:8px"><span class="mu" style="font-size:20px">GHS</span>${num("amt bare","width:220px;text-align:left")}</div>
+  <p class="s13 mu tab">Now ${g(NOW)} a day &middot; up to ${g0(MAX)}</p>${hint()}<div style="width:100%">${cta()}</div></div>`,
+3:()=>`<div class="col" style="gap:24px;max-width:440px;padding-top:24px">
+  <div class="row" style="gap:16px"><button class="stp" data-a="dec">&minus;</button><div class="col" style="align-items:center;flex:1">${num("amt bare")}<span class="s13 mu">GHS a day</span></div><button class="stp" data-a="inc">+</button></div>
+  <p class="s13 mu tab" style="text-align:center">Now ${g0(NOW)} &middot; most ${g0(MAX)}</p>${hint()}${cta()}</div>`,
+4:()=>`<div class="col" style="gap:20px;max-width:440px;padding-top:16px">
+  <div class="row" style="align-items:stretch;gap:12px">
+    <div class="col" style="flex:1;gap:4px;padding:16px;border-radius:10px;background:var(--tile)"><span class="s12 mu">Now</span><span class="tab" style="font-size:20px">${g0(NOW)}</span></div>
+    <span class="mu" style="align-self:center">&rarr;</span>
+    <div class="col" style="flex:1;gap:4px;padding:16px;border-radius:10px;border:1px solid var(--bd)"><span class="s12 mu">New</span>${num("bare","font-size:20px;width:100%")}</div>
+  </div><p class="s12 mu tab">GHS a day &middot; up to ${g0(MAX)}</p>${hint()}${cta()}</div>`,
+5:()=>{const p=v=>Math.min(v/MAX*100,100);return `<div class="col" style="gap:20px;max-width:440px;padding-top:16px">${num("fld")}
+  <div style="position:relative;height:44px">
+    <div style="position:absolute;left:0;right:0;top:18px;height:8px;border-radius:999px;background:var(--tile)"></div>
+    <div style="position:absolute;left:0;top:18px;height:8px;border-radius:999px;background:var(--tx);width:${p(USED)}%"></div>
+    <div style="position:absolute;top:10px;left:${p(NOW)}%;width:2px;height:24px;background:var(--mu)"></div>
+    <div style="position:absolute;top:6px;left:${p(S.val)}%;width:4px;height:32px;border-radius:2px;background:var(--am);transform:translateX(-2px)"></div>
+  </div>
+  <div class="row s12 mu tab wrap" style="justify-content:flex-start;gap:16px"><span>Sent today ${g0(USED)}</span><span>Now ${g0(NOW)}</span><span class="am">New ${g0(S.val)}</span><span style="margin-left:auto">${g0(MAX)}</span></div>${hint()}${cta()}</div>`},
+6:()=>`<div class="col" style="gap:24px;max-width:480px;padding-top:24px">
+  <p style="font-size:20px;line-height:1.8">I want to send up to ${num("bare","width:140px;border-bottom:2px solid var(--am);text-align:center")} GHS a day by bank transfer.</p>
+  <p class="s13 mu tab">Now ${g0(NOW)} &middot; the most is ${g0(MAX)}</p>${hint()}${cta()}</div>`,
+7:()=>{const lv=[5000,10000,20000,50000,100000];return `<div class="col" style="gap:8px;max-width:440px;padding-top:16px">
+  ${lv.map(v=>`<div class="opt ${S.val===v?"on":""}" data-set="${v}"><span class="tab">${g(v)}</span><span class="s12 mu">${v===NOW?"Now":v===MAX?"The most":""}</span></div>`).join("")}
+  <div class="opt ${lv.includes(S.val)?"":"on"}"><span>Other amount</span><input class="bare tab" style="width:120px;text-align:right" inputmode="numeric" placeholder="GHS" value="${lv.includes(S.val)?"":g0(S.val)}" data-in="num"></div>
+  <div style="height:8px"></div>${hint()}${cta()}</div>`},
+8:()=>`<div class="col" style="gap:20px;max-width:440px;padding-top:16px">
+  <div class="row" style="gap:16px"><input type="range" style="flex:1" min="0" max="${MAX}" step="${STEP}" value="${S.val}" data-in="range">${num("fld","width:140px;text-align:right")}</div>
+  <div class="row s12 mu tab"><span>0</span><span>Now ${g0(NOW)}</span><span>${g0(MAX)}</span></div>${hint()}${cta()}</div>`,
+9:()=>`<div class="col" style="gap:20px;max-width:440px;padding-top:16px">
+  <div class="col" style="border:1px solid var(--bd);border-radius:10px;padding:16px;gap:12px">
+    <div class="row"><span class="mu">Daily limit</span><span class="tab">${g(NOW)}</span></div>
+    <div class="row"><span class="mu">Sent today</span><span class="tab">${g(USED)}</span></div>
+    <div class="row"><span class="mu">The most you can set</span><span class="tab">${g(MAX)}</span></div>
+  </div>
+  <p class="s13" style="font-weight:500">New Daily Limit</p>${num("fld")}${hint()}${cta()}</div>`,
+10:()=>`<div class="col" style="gap:8px;max-width:540px;padding-top:16px">
+  <div class="row" style="padding:12px;border-radius:10px;background:var(--tile)"><span>Bank transfers</span>
+    <div class="row" style="gap:8px"><span class="mu">GHS</span>${num("fld","width:130px;height:36px;text-align:right")}
+    <button class="btn ${valid()?"":"dis"}" style="width:auto;height:36px;padding:0 14px" data-a="go">Save</button><button class="btn o" style="width:auto;height:36px;padding:0 14px">Cancel</button></div></div>
+  ${hint()}<p class="s12 mu">Other limits stay as they are.</p></div>`,
+11:()=>`<div class="col" style="gap:20px;max-width:440px;padding-top:40px;align-items:center">
+  <span class="s13 mu">New daily limit</span>
+  <div class="row" style="gap:8px;border-bottom:2px solid var(--tx);padding-bottom:4px"><span class="mu" style="font-size:24px">GHS</span>${num("amt bare","width:200px;text-align:left;font-size:48px")}</div>
+  <p class="s13 mu tab">Was ${g0(NOW)}</p>${hint()}<div style="width:100%">${cta()}</div></div>`,
+12:()=>{const p=Math.min(USED/Math.max(S.val,1),1);return `<div class="col" style="gap:20px;max-width:440px;padding-top:16px">
+  <p class="s13" style="font-weight:500">New Daily Limit</p>${num("fld")}
+  <div class="col" style="gap:8px"><div class="trk"><i class="${p>=.75?"n":""}" style="width:${p*100}%"></i></div>
+  <div class="row s12 tab"><span class="${p>=.75?"am":"mu"}">${g0(USED)} sent today</span><span class="mu">${S.val>USED?g0(S.val-USED)+" left today":"Already past this"}</span></div></div>${hint()}${cta()}</div>`},
+};
+function render(focus){
+  document.documentElement.dataset.theme=S.theme;
+  document.getElementById("pills").innerHTML=Array.from({length:12},(_,i)=>i+1).map(k=>`<button class="pill ${S.v===k?"on":""}" data-v="${k}">${k}</button>`).join("");
+  document.getElementById("note").innerHTML=NOTES[S.v];
+  document.getElementById("main").innerHTML=hd+V[S.v]();
+  if(focus){const el=document.querySelector(`[data-in="${focus}"]`);if(el){el.focus();if(focus==="num"){const n=el.value.length;try{el.setSelectionRange(n,n)}catch(e){}}}}
+}
+document.addEventListener("input",e=>{const t=e.target;if(!t.dataset||!t.dataset.in)return;S.val=Number(String(t.value).replace(/[^0-9]/g,""))||0;render(t.dataset.in);});
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-v],[data-t],[data-a],[data-set]"); if(!t) return;
+  if(t.dataset.v){S.v=+t.dataset.v;S.val=NOW;}
+  else if(t.dataset.t){S.theme=t.dataset.t;document.querySelectorAll("#theme button").forEach(x=>x.classList.toggle("on",x===t));}
+  else if(t.dataset.set){S.val=+t.dataset.set;}
+  else if(t.dataset.a==="inc")S.val=Math.min(S.val+STEP,MAX);
+  else if(t.dataset.a==="dec")S.val=Math.max(S.val-STEP,STEP);
+  else if(t.dataset.a==="go"){const el=document.createElement("div");el.className="toast";el.textContent=raising()?"Goes to the code step":"Saved";document.body.appendChild(el);setTimeout(()=>el.remove(),1300);return;}
+  render();
+});
+render();
+</script>
+</body>
+</html>

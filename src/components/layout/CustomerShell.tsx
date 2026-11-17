@@ -1,5 +1,7 @@
 "use client";
 
+import DashboardColorSync from "@/components/dashboard/DashboardColorSync";
+
 /**
  * Customer application chrome — section 12.4. Both the personal layout (`(customer)`) and the business
  * layout (`/business`) render it; which navigation it shows follows the active relationship
@@ -86,7 +88,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
   // Route guard: an unauthenticated or half-authenticated visitor never sees
   // the shell. Internal staff are bounced to their own shell (section 12.1).
   // Switching to a relationship that lacks permission for the active route redirects to /overview.
-  // Each relationship signs in through its own door; remember which one this session used so signing out
+  // Each relationship signs in through its own door; remember which one this session used so logging out
   // (which clears the profile first) and an expired session both send the person back to it.
   const businessDoor = useRef(false);
   if (activeProfile) businessDoor.current = isBusinessProfile(activeProfile);
@@ -129,6 +131,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
 
   return (
     <>
+      <DashboardColorSync />
       <div className="shell-backdrop flex h-dvh overflow-hidden">
         <AnimatePresence>
           {sidebarOpen && (

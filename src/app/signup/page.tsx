@@ -78,7 +78,7 @@ function SignupContent() {
   // Password & PIN State
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  // Asked alongside the password, where sign-in is being set up. Opt-in.
+  // Asked alongside the password, where login is being set up. Opt-in.
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
   const [confirmPinDigits, setConfirmPinDigits] = useState<string[]>(["", "", "", ""]);
   const [errorMsg, setErrorMsg] = useState("");

@@ -3,7 +3,7 @@
  *
  * This follows how GCB onboards companies today (Esther, 2026-10-16): a request letter on company letterhead
  * plus the internet banking application form, signed per the mandate. The bank checks the signatures against
- * the specimens in Flexcube, the RM, branch or central team approves, and each user then gets their sign-in
+ * the specimens in Flexcube, the RM, branch or central team approves, and each user then gets their login
  * details. The online journey only changes how the paperwork starts: the customer fills the form here, we write
  * the letter for them, and they upload it signed (or email it, post it or bring it to a branch). Applications
  * captured by branch staff land in the same queue (FR-ADM-05), so there is one store and one status.

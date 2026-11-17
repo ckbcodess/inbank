@@ -7,7 +7,7 @@
  *   own log-in screen. The hub also shows on both homes, so the switch works from either side.
  *   Personal / Business: the onboarding flows of each app, spelled out step by step (the Business view is
  *   `BusinessFlowSections`).
- *   Log in: every sign-in and recovery screen for both apps (`LoginFlowSections`).
+ *   Log in: every login and recovery screen for both apps (`LoginFlowSections`).
  *   GCB account holder (/activate): pick the demo customer, then a step.
  *   New to GCB (/signup): a step, or straight to linking after sign-up.
  *   Returning customers: the trusted-device power user, a first-timer on a
@@ -163,14 +163,14 @@ function PersonaFlowSwitcherContent() {
     go(type === "business" ? "/login?type=business" : "/login");
   }
 
-  /** The step after the password: signed in as that app's demo user but not yet verified. */
+  /** The step after the password: logged in as that app's demo user but not yet verified. */
   function goEnterPin(type: LoginApp, newDevice: boolean) {
     signOut();
     signIn(loginActor(type));
     go(newDevice ? "/mfa?device=new" : "/mfa");
   }
 
-  /** First internet-banking sign-in, on a device we've never seen: activation, then the welcome. */
+  /** First internet-banking login, on a device we've never seen: activation, then the welcome. */
   function goFirstTimer() {
     signOut();
     forgetThisDevice();
@@ -252,7 +252,7 @@ function PersonaFlowSwitcherContent() {
                 <span className="text-[13px] text-foreground">Personal banking</span>
                 <span className="flex items-center gap-3 text-[12px] text-muted-foreground">
                   <button type="button" onClick={() => switchApp("u-retail")} className="cursor-pointer hover:text-foreground hover:underline">
-                    Signed in
+                    Logged in
                   </button>
                   <button type="button" onClick={() => goLogin("personal")} className="cursor-pointer hover:text-foreground hover:underline">
                     Log in screen
@@ -269,7 +269,7 @@ function PersonaFlowSwitcherContent() {
                   <span className="text-[13px] text-foreground">Business banking</span>
                   <span className="flex items-center gap-3 text-[12px] text-muted-foreground">
                     <button type="button" onClick={() => switchApp(businessUser)} className="cursor-pointer hover:text-foreground hover:underline">
-                      Signed in
+                      Logged in
                     </button>
                     <button type="button" onClick={() => goLogin("business")} className="cursor-pointer hover:text-foreground hover:underline">
                       Log in screen

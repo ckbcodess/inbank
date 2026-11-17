@@ -4,7 +4,7 @@
  * The first-load splash's gate.
  *
  * The splash shows once per page load — the first time the app shell mounts
- * after sign-in or a full refresh — never on in-app navigation (the top
+ * after login or a full refresh — never on in-app navigation (the top
  * progress bar covers those). While it's up, screens can hand it things worth
  * waiting for, so the dashboard is revealed whole instead of assembling itself:
  * the shell waits for fonts plus anything registered with `holdSplash`, but

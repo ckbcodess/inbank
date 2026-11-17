@@ -13,7 +13,7 @@
  *
  * `canGoBackInApp()` is then "is there an in-app entry below this one that belongs to the same app". Personal
  * banking, business banking and the admin portal are separate apps, so Back never crosses from one into another
- * (after switching app, or signing in from the log-in screen, the entry below is the other app's page). Each
+ * (after switching app, or logging in from the log-in screen, the entry below is the other app's page). Each
  * index remembers which surface it was on; an entry we have no record of (a reload) counts as unknown, and Back
  * falls to the page's own parent.
  * Installed once, at module load, from `NavHistoryTracker`.
@@ -24,7 +24,7 @@ const IDX_KEY = "__nibsIdx";
 let currentIdx = 0;
 let installed = false;
 
-/** Which app a path belongs to. Sign-in, onboarding and recovery pages are "public": Back never returns to them. */
+/** Which app a path belongs to. Login, onboarding and recovery pages are "public": Back never returns to them. */
 export function surfaceOf(pathname: string): "business" | "admin" | "retail" | "public" {
   if (pathname.startsWith("/business/signup")) return "public";
   if (pathname.startsWith("/business/activate")) return "public";

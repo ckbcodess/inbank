@@ -36,9 +36,9 @@ function LoginForm() {
   const trusted = useTrustedDevice();
   // "Not you?" switches to the full form for this visit; the device stays trusted.
   const [notYou, setNotYou] = useState(false);
-  // Set when sign-in is closed: the form is replaced by the work-in-progress screen.
+  // Set when login is closed: the form is replaced by the work-in-progress screen.
   const [closed, setClosed] = useState(false);
-  // Business sign-in is closed for now (lib/launch.ts). Retail sign-in is open.
+  // Business login is closed for now (lib/launch.ts). Retail login is open.
   const doorOpen = bankingType !== "business" || BUSINESS_SIGN_IN_OPEN;
 
   // The business door wears smoke ash like the rest of business banking.
@@ -66,7 +66,7 @@ function LoginForm() {
     setState("submitting");
 
     window.setTimeout(() => {
-      // Business sign-in is closed for now: the work-in-progress screen, whatever credentials were entered.
+      // Business login is closed for now: the work-in-progress screen, whatever credentials were entered.
       if (!doorOpen) {
         setClosed(true);
         return;
@@ -125,7 +125,7 @@ function LoginForm() {
       width="compact"
       footer={
         <div className="flex flex-col items-center gap-2 text-center">
-          {/* Personal is the front door. Only a business sign-in (reached by link) offers the way back. */}
+          {/* Personal is the front door. Only a business login (reached by link) offers the way back. */}
           {bankingType === "business" && (
             <button
               type="button"
@@ -237,14 +237,14 @@ function LoginForm() {
   );
 }
 
-/** Shown in place of the sign-in form while sign-in is closed. Nothing is signed in. */
+/** Shown in place of the login form while login is closed. Nothing is logged in. */
 function SignInClosed({ onBack }: { onBack: () => void }) {
   return (
-    <AuthLayout vAlign="center" title="Sign in" width="compact">
+    <AuthLayout vAlign="center" title="Log in" width="compact">
       <div className="flex flex-col gap-5">
-        <WorkInProgress title="Online banking sign-in" />
+        <WorkInProgress title="Online banking login" />
         <Button variant="outline" onClick={onBack}>
-          Back to sign in
+          Back to log in
         </Button>
       </div>
     </AuthLayout>

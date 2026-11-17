@@ -67,7 +67,7 @@ export default function CompanyUserPage({ params }: { params: Promise<{ id: stri
   function reactivate() {
     if (!actor || !user) return;
     proposeUserChange({ kind: "reactivate", userId: user.id, after: draftOf(user), proposedBy: actor.name });
-    toast.success(`Sent for approval. ${first} can sign in again once it's approved.`);
+    toast.success(`Sent for approval. ${first} can log in again once it's approved.`);
   }
 
   return (
@@ -169,8 +169,8 @@ export default function CompanyUserPage({ params }: { params: Promise<{ id: stri
               {pending
                 ? "A change is already waiting for approval. Once it's decided you can make another."
                 : suspended
-                  ? `${first} can't sign in. Reactivating gives access back, so it needs approval.`
-                  : "Suspending stops them signing in straight away."}
+                  ? `${first} can't log in. Reactivating gives access back, so it needs approval.`
+                  : "Suspending stops them logging in straight away."}
             </p>
           </section>
         </>

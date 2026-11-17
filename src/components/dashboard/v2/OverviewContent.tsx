@@ -8,6 +8,8 @@ import { useAmountVisibility } from "@/components/providers/AmountVisibilityProv
 import { toast } from "sonner";
 import { GcbDashboard, type DashStatus } from "@/components/dashboard/v2/GcbDashboard";
 import { HeroWaveTuner } from "@/components/dashboard/v2/HeroWaveTuner";
+import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
+import { BackdropTuner } from "@/components/dashboard/v2/BackdropTuner";
 import { OPEN_FUND_EVENT } from "@/lib/payment-options";
 import { useRefreshHandler } from "@/lib/pull-refresh";
 import { FirstRunWelcome } from "@/components/dashboard/v2/FirstRunWelcome";
@@ -188,6 +190,7 @@ export function OverviewContent({ accountId = null, loading: forced = false }: {
       />
       {/* The hero card has its own floating tuner. */}
       {isHero && !forced && <HeroWaveTuner />}
+      {isHero && !forced && SHOW_DEMO_TOOLS && <BackdropTuner />}
       {/* Once, right after onboarding or moving from the old internet banking. */}
       {!forced && <FirstRunWelcome firstName={data.firstName} onFunded={applyFunding} />}
       {/* A few tooltips pointing at the controls above, started once after the welcome. */}

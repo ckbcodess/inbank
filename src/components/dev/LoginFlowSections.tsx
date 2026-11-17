@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The Log in view of the Demo hub: every sign-in and recovery screen, for both apps. Personal and business
+ * The Log in view of the Demo hub: every login and recovery screen, for both apps. Personal and business
  * share the recovery flows (forgot password, forgot PIN), which open on any stage with `?stage=`.
  */
 
@@ -16,7 +16,7 @@ export interface LoginActions {
   login: (app: LoginApp, state?: "error") => void;
   /** A trusted device: greeted by name, password only. */
   welcomeBack: (app: LoginApp) => void;
-  /** The step after the password, for a signed-in-but-unverified demo user. */
+  /** The step after the password, for a logged-in-but-unverified demo user. */
   enterPin: (app: LoginApp, newDevice: boolean) => void;
 }
 

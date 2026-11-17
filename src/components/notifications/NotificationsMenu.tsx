@@ -41,6 +41,7 @@ import {
   Trash2,
   Tv,
   TrendingUp,
+  UserPlus,
   Wallet,
   X,
   Zap,
@@ -96,6 +97,7 @@ const ICON_GLYPH: Record<NotificationIcon, React.ElementType> = {
   Wallet,
   KeyRound,
   Laptop,
+  UserPlus,
 };
 
 /** Colour only. The icon comes from the notification, and the kind decides how it's tinted. */

@@ -140,7 +140,7 @@ export function HeroSurface({
     <section
       ref={ref}
       className={cn(
-        "relative isolate overflow-hidden border border-[var(--hero-border)] bg-[var(--hero-surface)] text-[var(--hero-foreground)]",
+        "relative isolate overflow-hidden border border-[var(--hero-border)] bg-[var(--hero-surface)] text-[var(--hero-foreground)] [--primary-edge:var(--hero-primary-edge)] [--primary-inset-top:var(--hero-primary-inset-top)] [--primary-inset-bottom:var(--hero-primary-inset-bottom)]",
         className,
       )}
       style={heroWaveVars(wave)}

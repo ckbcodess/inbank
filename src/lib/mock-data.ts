@@ -189,7 +189,7 @@ export const ACTORS: Actor[] = [
   },
 ];
 
-/** Sign-in is by registered mobile; any common way of typing it matches. */
+/** Login is by registered mobile; any common way of typing it matches. */
 export function findActorByPhone(phone: string): Actor | undefined {
   const local = toLocalMobile(phone);
   return local ? ACTORS.find((a) => a.phone === local) : undefined;
@@ -224,7 +224,7 @@ export interface Account {
   /**
    * Only reachable through a Dev Mode customer configuration on `/accounts`
    * (wallet customer, dormant account, just-migrated). Resolvable by id so
-   * account detail links work, but never listed for the signed-in profile.
+   * account detail links work, but never listed for the logged-in profile.
    */
   scenarioOnly?: boolean;
 }
@@ -281,7 +281,7 @@ export const ACCOUNTS: Account[] = [
 ];
 
 /**
- * Every retail account held under the signed-in customer's Ghana Card. "Add
+ * Every retail account held under the logged-in customer's Ghana Card. "Add
  * Account" lists these after a selfie match; ones already on the profile show
  * as added. Prototype: one fixed customer.
  */
@@ -1890,7 +1890,8 @@ export type NotificationIcon =
   | "Zap"
   | "Wallet"
   | "KeyRound"
-  | "Laptop";
+  | "Laptop"
+  | "UserPlus";
 
 export interface AppNotification {
   id: string;
@@ -1908,6 +1909,27 @@ export interface AppNotification {
 }
 
 export const NOTIFICATIONS: AppNotification[] = [
+  // Referrals: a friend who used your link or code. Only names and a status, never their money.
+  {
+    id: "ntf-ref-002",
+    kind: "status",
+    icon: "UserPlus",
+    title: "Efua O. joined with your link",
+    body: "They’ve signed up. You’ll hear again when they open an account.",
+    date: "2026-11-14T10:20:00Z",
+    read: false,
+    href: "/overview?settings=referral",
+  },
+  {
+    id: "ntf-ref-001",
+    kind: "status",
+    icon: "UserPlus",
+    title: "Akosua M. opened an account",
+    body: "They joined with your code.",
+    date: "2026-11-12T15:05:00Z",
+    read: false,
+    href: "/overview?settings=referral",
+  },
   {
     id: "ntf-ret-001",
     kind: "status",
@@ -1962,8 +1984,8 @@ export const NOTIFICATIONS: AppNotification[] = [
     id: "ntf-ret-006",
     kind: "status",
     icon: "Smartphone",
-    title: "New device sign-in",
-    body: "Your account was signed in on a new Android phone. If this wasn't you, contact us straight away.",
+    title: "New device login",
+    body: "Your account was logged in on a new Android phone. If this wasn't you, contact us straight away.",
     date: "2026-08-03T19:52:00Z",
     read: true,
     archived: true,
@@ -2036,7 +2058,7 @@ export const NOTIFICATIONS: AppNotification[] = [
     kind: "status",
     icon: "KeyRound",
     title: "Password changed",
-    body: "Your sign-in password was changed. If this wasn't you, contact us straight away.",
+    body: "Your login password was changed. If this wasn't you, contact us straight away.",
     date: "2026-11-05T11:15:00Z",
     read: true,
   },
@@ -2044,8 +2066,8 @@ export const NOTIFICATIONS: AppNotification[] = [
     id: "ntf-ret-015",
     kind: "status",
     icon: "Laptop",
-    title: "New sign-in",
-    body: "Your account was signed in on a Chrome browser in Accra.",
+    title: "New login",
+    body: "Your account was logged in on a Chrome browser in Accra.",
     date: "2026-11-04T07:40:00Z",
     read: true,
   },

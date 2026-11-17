@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Each signed-in person's profile picture, kept on this browser for the prototype (a real build stores it with the
+ * Each logged-in person's profile picture, kept on this browser for the prototype (a real build stores it with the
  * customer record). Keyed by actor id, so switching demo personas never shows someone else's face. Pictures are shrunk
  * to a small square before they're kept, so storage stays light.
  */

@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { TRUST_DAYS } from "@/lib/device-trust";
 
 /**
- * "Remember this device for 30 days" — one row, used by every place a sign-in is
+ * "Remember this device for 30 days" — one row, used by every place a login is
  * set up or verified (activation, sign-up, migration, MFA), so the offer reads
  * the same everywhere. `hint` is the only thing that varies with the moment.
  */

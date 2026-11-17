@@ -5,7 +5,7 @@
  *
  * Strength: speed to the task. The Send & Pay hub tiles move onto the
  * dashboard, each opening on the selected account, so the most common jobs are
- * one tap from sign-in. The header buttons step aside (the tiles replace them);
+ * one tap from login. The header buttons step aside (the tiles replace them);
  * what's scheduled and what just happened follow.
  */
 

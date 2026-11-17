@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, ChevronRight, Lock, Smartphone, SlidersHorizontal, User, X } from "@/components/ui/icons";
+import { Bell, Gauge, ChevronRight, Lock, Smartphone, Palette, User, UserPlus, X } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
+import { SearchField } from "@/components/ui/search-field";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { maskMobile } from "@/lib/auth-shared";
 import { useSession } from "@/lib/session-store";
 import { closeSettings, showSettingsSection, useSettingsModal, type SettingsSection } from "@/lib/settings-modal";
 import { cn } from "@/lib/utils";
-import { AlertsPane, DevicesPane, PreferencesPane, ProfilePane, SecurityPane, SignOutAllDialog, type SettingsData } from "./SettingsPanes";
+import { AlertsPane, DevicesPane, LimitsPane, PreferencesPane, ProfilePane, ReferralPane, SecurityPane, SignOutAllDialog, type SettingsData } from "./SettingsPanes";
 
 /** Settings in one place: a modal beside a section list on desktop, a bottom sheet that drills in on phone. */
 
@@ -17,7 +18,7 @@ const GROUPS: { label: string; items: { id: SettingsSection; label: string; icon
     label: "You",
     items: [
       { id: "profile", label: "Profile", icon: User },
-      { id: "preferences", label: "Preferences", icon: SlidersHorizontal },
+      { id: "preferences", label: "Appearance", icon: Palette },
     ],
   },
   {
@@ -25,16 +26,55 @@ const GROUPS: { label: string; items: { id: SettingsSection; label: string; icon
     items: [
       { id: "security", label: "Security", icon: Lock },
       { id: "devices", label: "Linked devices", icon: Smartphone },
+      { id: "limits", label: "Limits", icon: Gauge },
       { id: "alerts", label: "Notifications", icon: Bell },
     ],
   },
+  {
+    label: "More",
+    items: [{ id: "referral", label: "Refer a Friend", icon: UserPlus }],
+  },
 ];
 
+/**
+ * Every setting a person might look for, by the words they'd use. Search lists these one by one, each with the section
+ * it lives in, so "email" finds Email (Profile) and Email receipts (Notifications) rather than just a section.
+ */
+const SETTINGS_INDEX: { label: string; section: SettingsSection; words?: string }[] = [
+  { label: "Profile photo", section: "profile", words: "picture avatar image" },
+  { label: "Full name", section: "profile" },
+  { label: "Mobile number", section: "profile", words: "phone login" },
+  { label: "Email", section: "profile", words: "address" },
+  { label: "Theme", section: "preferences", words: "dark light mode appearance" },
+  { label: "Backdrop", section: "preferences", words: "dashboard colour color hero theme green blue orange amber yellow" },
+  { label: "Language", section: "preferences", words: "english french spanish chinese" },
+  { label: "Password", section: "security", words: "change reset" },
+  { label: "Auto log out", section: "security", words: "timeout session inactivity" },
+  { label: "Linked devices", section: "devices", words: "phone computer sessions" },
+  { label: "Trusted devices", section: "devices", words: "code" },
+  { label: "Log out of all other devices", section: "devices", words: "sessions" },
+  { label: "Bank transfers limit", section: "limits", words: "daily gcb other banks" },
+  { label: "Mobile money limit", section: "limits", words: "daily wallet airtime data" },
+  { label: "Bills limit", section: "limits", words: "daily utilities tv school fees" },
+  { label: "Outside Ghana limit", section: "limits", words: "daily papss swift international" },
+  { label: "SMS alerts", section: "alerts", words: "text debit credit" },
+  { label: "Email receipts", section: "alerts", words: "payment" },
+  { label: "E-statements", section: "alerts", words: "statement monthly email" },
+  { label: "Referral alerts", section: "alerts", words: "friend joined" },
+  { label: "Your referral link", section: "referral", words: "invite share whatsapp friend" },
+  { label: "Your referral code", section: "referral", words: "invite friend" },
+  { label: "Your referrals", section: "referral", words: "friends joined signed up" },
+];
+
+const SECTION_ITEMS = GROUPS.flatMap((g) => g.items);
+
 const SUMMARY: Record<Exclude<SettingsSection, "profile">, string> = {
-  preferences: "Theme and language",
-  security: "Password and sign-in",
-  devices: "Where you're signed in",
+  preferences: "Theme, colour and language",
+  security: "Password and login",
+  devices: "Where you're logged in",
   alerts: "SMS, email, statements",
+  limits: "How much you can send a day",
+  referral: "Share your code",
 };
 
 export default function SettingsDialog() {
@@ -43,10 +83,22 @@ export default function SettingsDialog() {
   // What the customer has changed this session, over what the account already says. Held here so it survives
   // closing and reopening the modal.
   const [changes, setChanges] = useState<Partial<SettingsData>>({});
-  // The sign-out-all confirmation lives beside this dialog, not inside it (see `SignOutAllDialog`).
+  // The logout-all confirmation lives beside this dialog, not inside it (see `SignOutAllDialog`).
   const [confirmSignOutAll, setConfirmSignOutAll] = useState(false);
+  const [query, setQuery] = useState("");
+  // The one search result picked, so only it shows as selected (several results can share a section).
+  const [picked, setPicked] = useState<string | null>(null);
 
   if (!actor) return null;
+
+  const q = query.trim().toLowerCase();
+  const results = q
+    ? [
+        // A section's own name first, then the settings inside every section.
+        ...SECTION_ITEMS.filter((i) => i.label.toLowerCase().includes(q)).map((i) => ({ label: i.label, section: i.id, isSection: true })),
+        ...SETTINGS_INDEX.filter((e) => `${e.label} ${e.words ?? ""}`.toLowerCase().includes(q)).map((e) => ({ ...e, isSection: false })),
+      ]
+    : [];
 
   const data: SettingsData = {
     mobile: actor.phone,
@@ -54,6 +106,7 @@ export default function SettingsDialog() {
     smsAlerts: true,
     emailReceipts: true,
     eStatements: true,
+    referralAlerts: true,
     timeout: "15",
     ...changes,
   };
@@ -89,7 +142,42 @@ export default function SettingsDialog() {
               </DialogClose>
             </div>
 
-            {GROUPS.map((group) => (
+            <SearchField value={query} onChange={(v) => { setQuery(v); setPicked(null); }} placeholder="Search settings" className="flex-none" />
+
+            {q ? (
+              results.length === 0 ? (
+                <p className="px-3 text-[13px] leading-relaxed text-muted-foreground">{`Nothing matches “${query.trim()}”.`}</p>
+              ) : (
+                <div className="flex flex-col gap-0.5">
+                  {results.map((r) => {
+                    const item = SECTION_ITEMS.find((i) => i.id === r.section)!;
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={`${r.section}-${r.label}`}
+                        type="button"
+                        onClick={() => {
+                          setPicked(`${r.section}-${r.label}`);
+                          showSettingsSection(r.section);
+                        }}
+                        className={cn(
+                          "flex w-full cursor-pointer items-start gap-3 rounded-lg px-3 py-2 text-left transition duration-hover hover:bg-muted/50",
+                          picked === `${r.section}-${r.label}` && "bg-muted/50",
+                        )}
+                      >
+                        <Icon size={16} className="mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                        <span className="flex min-w-0 flex-col gap-0.5">
+                          <span className="truncate text-[13px] text-foreground">{r.label}</span>
+                          {r.isSection ? null : <span className="text-[12px] text-muted-foreground">{item.label}</span>}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )
+            ) : null}
+
+            {q ? null : GROUPS.map((group) => (
               <div key={group.label} className="flex flex-col gap-0.5">
                 <span className="flex h-7 items-center px-3 text-[12px] text-muted-foreground">{group.label}</span>
                 {group.items.map(({ id, label, icon: Icon }) => (
@@ -138,6 +226,8 @@ export default function SettingsDialog() {
             {active === "security" && <SecurityPane key="security" {...paneProps} />}
             {active === "devices" && <DevicesPane key="devices" {...paneProps} />}
             {active === "alerts" && <AlertsPane key="alerts" {...paneProps} />}
+            {active === "limits" && <LimitsPane key="limits" {...paneProps} />}
+            {active === "referral" && <ReferralPane key="referral" {...paneProps} />}
           </div>
         </div>
       </DialogContent>

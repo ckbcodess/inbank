@@ -3,7 +3,7 @@ import { Bone } from "@/components/states/PageSkeletons";
 import { Skeleton } from "skullet/react";
 
 /**
- * A sign-up or sign-in step (business registration, activation). These routes have no app shell, so the skeleton sits
+ * A sign-up or login step (business registration, activation). These routes have no app shell, so the skeleton sits
  * inside the real `AuthLayout` (header, banner, column) and only the step's content is bones: a title, a line of
  * description, labelled fields and the primary button.
  */

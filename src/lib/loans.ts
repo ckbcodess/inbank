@@ -397,7 +397,7 @@ export function useLoansHydrated(): boolean {
 }
 
 /**
- * The signed-in customer's loans and what they can take. A customer the store has never seen gets the default: a
+ * The logged-in customer's loans and what they can take. A customer the store has never seen gets the default: a
  * salary paid into their first account, already a Salary Account, so the advance works out of the box.
  */
 export function useMyLoans() {

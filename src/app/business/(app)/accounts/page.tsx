@@ -30,7 +30,7 @@ function tail(number: string) {
 
 export default function BusinessAccountsPage() {
   const [state, setState] = useState<BaselineState>("populated");
-  // Per-user visibility (UAR-05): re-read when the signed-in person changes.
+  // Per-user visibility (UAR-05): re-read when the logged-in person changes.
   const actorId = useSession((s) => s.actor?.id);
   const accounts = useMemo(() => (actorId ? businessAccounts() : []), [actorId]);
 

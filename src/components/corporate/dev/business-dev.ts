@@ -1,6 +1,6 @@
 /**
  * Dev Mode data for business banking: the business users (by role) and the role flows. The Dev Mode side panel
- * (`components/dev/DevModePanel.tsx`) draws these whenever a business is signed in, in place of the personal demo
+ * (`components/dev/DevModePanel.tsx`) draws these whenever a business is logged in, in place of the personal demo
  * customers, so switching never drops you into the personal app. Each user's line reads the control table
  * (`lib/corporate/controls.ts`), so it shows the same role, limit and accounts the screens enforce. A flow signs in
  * as the role it needs first, then opens the screen.

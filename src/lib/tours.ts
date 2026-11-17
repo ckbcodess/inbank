@@ -40,7 +40,7 @@ export interface Tour {
   badge: string;
   summary: string;
   icon: TourIcon;
-  /** Signed-in actor to seed before the first step (new-device path needs one). */
+  /** Logged-in actor to seed before the first step (new-device path needs one). */
   startActorId?: string;
   /** Where the tour opens (may carry a query string). */
   startRoute: string;

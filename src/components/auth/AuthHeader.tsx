@@ -12,7 +12,7 @@ import { toggleTheme } from "@/lib/theme-transition";
 
 export default function AuthHeader() {
   // Through next-themes, like every other theme control, so the choice is stored
-  // and the app's idea of the theme matches what's on screen after sign-in.
+  // and the app's idea of the theme matches what's on screen after login.
   const { resolvedTheme, setTheme } = useTheme();
   const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);

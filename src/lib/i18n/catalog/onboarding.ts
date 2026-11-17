@@ -1,6 +1,6 @@
 import type { Entry } from "./types";
 
-/** Entry, sign-in, MFA, forgot password, activation, sign-up (personal + business), selfie, guided tours. */
+/** Entry, login, MFA, forgot password, activation, sign-up (personal + business), selfie, guided tours. */
 const onboarding: Entry[] = [
   // ── Activation / signup validation ──
   ["The code entered is incorrect or has expired. Please try again or request a new code.", "Le code saisi est incorrect ou a expiré. Réessayez ou demandez un nouveau code.", "El código introducido no es correcto o ha caducado. Inténtalo de nuevo o solicita uno nuevo.", "验证码错误或已过期。请重试或重新获取验证码。"],
@@ -364,13 +364,13 @@ const onboarding: Entry[] = [
   ["Waiting for your signed letter.", "En attente de votre lettre signée.", "Esperando su carta firmada.", "正在等待您签署的信函。"],
   ["Returned to you. One thing to fix.", "Renvoyée. Un point à corriger.", "Devuelta. Hay un punto que corregir.", "已退回，有一处需修改。"],
   ["This application was declined.", "Cette demande a été refusée.", "Esta solicitud fue rechazada.", "此申请未获批准。"],
-  ["Approved. Sign-in details sent.", "Approuvée. Identifiants envoyés.", "Aprobada. Datos de acceso enviados.", "已批准，登录信息已发送。"],
+  ["Approved. Login details sent.", "Approuvée. Identifiants envoyés.", "Aprobada. Datos de acceso enviados.", "已批准，登录信息已发送。"],
   ["Signatures checked. We'll call to confirm.", "Signatures vérifiées. Nous appellerons pour confirmer.", "Firmas comprobadas. Le llamaremos para confirmar.", "签名已核对，我们将致电确认。"],
   ["We're checking the signatures.", "Nous vérifions les signatures.", "Estamos comprobando las firmas.", "我们正在核对签名。"],
   ["We couldn't find that reference. It starts with ENR and is on your letter.", "Référence introuvable. Elle commence par ENR et figure sur votre lettre.", "No encontramos esa referencia. Empieza por ENR y aparece en su carta.", "未找到该参考号。参考号以 ENR 开头，印在您的信函上。"],
   ["Letter sent", "Lettre envoyée", "Carta enviada", "信函已发送"],
   ["We're checking the signatures again.", "Nous vérifions à nouveau les signatures.", "Estamos volviendo a comprobar las firmas.", "我们正在重新核对签名。"],
-  ["Sign-in details sent to {0}", "Identifiants envoyés à {0}", "Datos de acceso enviados a {0}", "登录信息已发送给 {0}"],
+  ["Login details sent to {0}", "Identifiants envoyés à {0}", "Datos de acceso enviados a {0}", "登录信息已发送给 {0}"],
   ["Enter the reference on your request letter.", "Saisissez la référence figurant sur votre lettre de demande.", "Introduzca la referencia que aparece en su carta de solicitud.", "请输入申请函上的参考号。"],
   ["Back to reference", "Retour à la référence", "Volver a la referencia", "返回参考号"],
   ["Upload Your Signed Letter", "Téléversez votre lettre signée", "Suba su carta firmada", "上传签署后的信函"],
@@ -382,7 +382,7 @@ const onboarding: Entry[] = [
   ["Why It Was Declined", "Motif du refus", "Motivo del rechazo", "未获批准的原因"],
   ["The bank couldn't approve this application.", "La banque n’a pas pu approuver cette demande.", "El banco no pudo aprobar esta solicitud.", "银行未能批准此申请。"],
   ["{0} can tell you what to do next.", "{0} peut vous indiquer la marche à suivre.", "{0} puede indicarle los siguientes pasos.", "{0} 可告诉您下一步该怎么做。"],
-  ["Signed in", "Connecté", "Ha iniciado sesión", "已登录"],
+  ["Logged in", "Connecté", "Ha iniciado sesión", "已登录"],
   ["Link expired", "Lien expiré", "Enlace caducado", "链接已过期"],
   ["Details sent", "Identifiants envoyés", "Datos enviados", "信息已发送"],
   ["Resend", "Renvoyer", "Reenviar", "重新发送"],
@@ -403,7 +403,7 @@ const onboarding: Entry[] = [
   ["{0} compares the letter with the specimen signatures in our records.", "{0} compare la lettre aux spécimens de signature de nos dossiers.", "{0} compara la carta con las firmas de muestra de nuestros registros.", "{0} 将信函与我们记录中的签名样本进行比对。"],
   ["Confirming by phone", "Confirmation par téléphone", "Confirmación por teléfono", "电话确认"],
   ["We'll call {0} to confirm. We will never ask for a code or password.", "Nous appellerons le {0} pour confirmer. Nous ne vous demanderons jamais de code ni de mot de passe.", "Llamaremos al {0} para confirmar. Nunca le pediremos un código ni una contraseña.", "我们将致电 {0} 确认。我们绝不会索要验证码或密码。"],
-  ["Approved, sign-in details sent", "Approuvée, identifiants envoyés", "Aprobada, datos de acceso enviados", "已批准，登录信息已发送"],
+  ["Approved, login details sent", "Approuvée, identifiants envoyés", "Aprobada, datos de acceso enviados", "已批准，登录信息已发送"],
   ["Each user gets their username by SMS and a link to set their password by email.", "Chaque utilisateur reçoit son identifiant par SMS et un lien par e-mail pour définir son mot de passe.", "Cada usuario recibe su nombre de usuario por SMS y un enlace por correo electrónico para definir su contraseña.", "每位用户将通过短信收到用户名，并通过邮件收到设置密码的链接。"],
 
   // ── Sole proprietor self-onboarding ──
