@@ -5,7 +5,6 @@ import { Bell, Gauge, ChevronRight, Lock, Smartphone, Palette, User, UserPlus, X
 import { Button } from "@/components/ui/button";
 import { SearchField } from "@/components/ui/search-field";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { maskMobile } from "@/lib/auth-shared";
 import { useSession } from "@/lib/session-store";
 import { closeSettings, showSettingsSection, useSettingsModal, type SettingsSection } from "@/lib/settings-modal";
 import { cn } from "@/lib/utils";
@@ -68,14 +67,6 @@ const SETTINGS_INDEX: { label: string; section: SettingsSection; words?: string 
 
 const SECTION_ITEMS = GROUPS.flatMap((g) => g.items);
 
-const SUMMARY: Record<Exclude<SettingsSection, "profile">, string> = {
-  preferences: "Theme, colour and language",
-  security: "Password and login",
-  devices: "Where you're logged in",
-  alerts: "SMS, email, statements",
-  limits: "How much you can send a day",
-  referral: "Share your code",
-};
 
 export default function SettingsDialog() {
   const { actor } = useSession();
@@ -193,7 +184,7 @@ export default function SettingsDialog() {
                     aria-current={active === id ? "page" : undefined}
                     // On desktop the list is a tab strip styled like the sidebar: the active section is a solid amber pill.
                     className={cn(
-                      "flex min-h-14 w-full cursor-pointer items-center gap-4 rounded-xl px-3 py-2 text-left transition duration-hover hover:bg-muted/50 sm:h-8 sm:min-h-0 sm:gap-2 sm:rounded-lg sm:px-2 sm:py-0",
+                      "flex min-h-12 w-full cursor-pointer items-center gap-4 rounded-xl px-3 py-2 text-left transition duration-hover hover:bg-muted/50 sm:h-8 sm:min-h-0 sm:gap-2 sm:rounded-lg sm:px-2 sm:py-0",
                       active === id
                         ? "sm:bg-primary sm:text-primary-foreground sm:hover:bg-primary"
                         : "sm:text-muted-foreground sm:hover:text-foreground",
@@ -202,13 +193,6 @@ export default function SettingsDialog() {
                     <Icon size={18} strokeWidth={1.8} className="shrink-0 text-muted-foreground sm:size-4 sm:text-current" aria-hidden="true" />
                     <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                       <span className="text-[14px] text-foreground sm:text-[13px] sm:font-medium sm:text-current">{label}</span>
-                      <span className="truncate text-[12px] text-muted-foreground sm:hidden">
-                        {id === "profile" ? (
-                          <span className="tabular">{`${actor.name} · ${maskMobile(data.mobile)}`}</span>
-                        ) : (
-                          SUMMARY[id]
-                        )}
-                      </span>
                     </span>
                     <ChevronRight size={16} className="shrink-0 text-muted-foreground sm:hidden" aria-hidden="true" />
                   </button>
