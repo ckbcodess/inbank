@@ -86,6 +86,9 @@ export default function SettingsDialog() {
   // The logout-all confirmation lives beside this dialog, not inside it (see `SignOutAllDialog`).
   const [confirmSignOutAll, setConfirmSignOutAll] = useState(false);
   const [query, setQuery] = useState("");
+  // The section on screen while Settings is open, held through the closing animation.
+  const [held, setHeld] = useState<SettingsSection | null>(section);
+  if (open && section !== held) setHeld(section);
   // The one search result picked, so only it shows as selected (several results can share a section).
   const [picked, setPicked] = useState<string | null>(null);
 
@@ -113,7 +116,9 @@ export default function SettingsDialog() {
   const update = (patch: Partial<SettingsData>) => setChanges((prev) => ({ ...prev, ...patch }));
 
   // Desktop always has a section open; on a phone no section means the list.
-  const active: SettingsSection = section ?? "profile";
+  // Closing clears the URL before the exit animation ends; keep showing what was open so it doesn't flash to Profile.
+  const shown = open ? section : held;
+  const active: SettingsSection = shown ?? "profile";
   const paneProps = { data, update, onBackToMenu: () => showSettingsSection("menu"), onSignOutAll: () => setConfirmSignOutAll(true) };
 
   return (
@@ -132,7 +137,7 @@ export default function SettingsDialog() {
             aria-label="Settings"
             className={cn(
               "custom-scrollbar flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-6 sm:w-60 sm:flex-none sm:gap-6 sm:border-r sm:border-border/60 sm:bg-muted/30 sm:pt-6",
-              section !== null && "max-sm:hidden",
+              shown !== null && "max-sm:hidden",
             )}
           >
             <div className="flex h-12 items-center justify-between pl-3 pr-2 sm:hidden">
@@ -213,7 +218,7 @@ export default function SettingsDialog() {
 
           </nav>
 
-          <div className={cn("flex min-h-0 min-w-0 flex-1 flex-col", section === null && "max-sm:hidden")}>
+          <div className={cn("flex min-h-0 min-w-0 flex-1 flex-col", shown === null && "max-sm:hidden")}>
             {/* The header row holds the close button alone, on its own line above the page title. Desktop only: the phone sheet has its own. */}
             <div className="flex shrink-0 justify-end px-3 pt-3 max-sm:hidden">
               <DialogClose render={<Button variant="ghost" size="md" aria-label="Close settings" />}>

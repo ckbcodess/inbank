@@ -378,6 +378,11 @@
   --forest-600: #248121;
   /* The Amber backdrop's edge (designer, 2026-11-17). */
   --gcb-amber-edge: #ffbb00;
+  /* The Amber backdrop's light Send Money in dark mode (designer, 2026-11-17). */
+  --gcb-amber-dark-inset-top: #ededed;
+  --gcb-amber-dark-inset-bottom: #dedede;
+  --gcb-amber-dark-hover: #d9d9d9;
+  --gcb-amber-dark-wave: #ffae00;
   /* The dark inner line on the Amber backdrop's Send Money (designer, 2026-11-17). */
   --gcb-amber-inset: #676874;
   /* The Amber dashboard colour (designer, 2026-11-17). */
@@ -993,7 +998,7 @@ html.i18n-pending body {
 .dark[data-hero="forest"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--green-300) 50%, transparent); --hero-glow: color-mix(in srgb, var(--green-600) 28%, transparent); --hero-wave-a: color-mix(in srgb, var(--forest-600) 77%, transparent); --hero-wave-b: color-mix(in srgb, var(--teal-800) 70%, transparent); }
 .dark[data-hero="ocean"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--blue-300) 50%, transparent); --hero-glow: color-mix(in srgb, var(--sea-600) 28%, transparent); --hero-wave-a: color-mix(in srgb, var(--sea-600) 77%, transparent); --hero-wave-b: color-mix(in srgb, var(--sea-400) 70%, transparent); }
 .dark[data-hero="clay"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--orange-300) 50%, transparent); --hero-glow: color-mix(in srgb, var(--orange-600) 28%, transparent); --hero-wave-a: color-mix(in srgb, var(--orange-700) 77%, transparent); --hero-wave-b: color-mix(in srgb, var(--amber-800) 70%, transparent); }
-.dark[data-hero="amber"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--gcb-amber) 50%, transparent); --hero-glow: color-mix(in srgb, var(--gcb-amber) 22%, transparent); --hero-wave-a: color-mix(in srgb, var(--gcb-amber) 55%, transparent); --hero-wave-b: color-mix(in srgb, var(--amber-700) 60%, transparent); --hero-foreground: var(--white); --hero-balance-foreground: var(--white); --hero-button-foreground: var(--white); --hero-primary: var(--primary); --hero-primary-hover: var(--primary-hover); --hero-primary-foreground: var(--primary-foreground); --hero-glass-top: color-mix(in srgb, var(--smoke-900) 16.1%, transparent); --hero-glass-bottom: color-mix(in srgb, var(--smoke-400) 38%, transparent); --hero-glass-hover: color-mix(in srgb, var(--white) 7.8%, transparent); }
+.dark[data-hero="amber"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--gcb-amber) 50%, transparent); --hero-glow: color-mix(in srgb, var(--gcb-amber) 22%, transparent); --hero-wave-a: color-mix(in srgb, var(--gcb-amber) 55%, transparent); --hero-wave-b: color-mix(in srgb, var(--gcb-amber-dark-wave) 60%, transparent); --hero-foreground: var(--white); --hero-balance-foreground: var(--white); --hero-button-foreground: var(--white); --hero-primary: var(--white); --hero-primary-hover: var(--gcb-amber-dark-hover); --hero-primary-foreground: var(--black); --hero-glass-top: color-mix(in srgb, var(--smoke-900) 16.1%, transparent); --hero-glass-bottom: color-mix(in srgb, var(--smoke-400) 38%, transparent); --hero-glass-hover: color-mix(in srgb, var(--white) 7.8%, transparent); --hero-primary-inset-top: var(--gcb-amber-dark-inset-top); --hero-primary-inset-bottom: var(--gcb-amber-dark-inset-bottom); }
 
 /* ── Business banking theme: smoke ash ─────────────────────────────────────
    Business banking wears smoke ash where personal banking wears GCB amber (designer, 2026-10-22; an override of
