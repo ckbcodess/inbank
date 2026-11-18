@@ -27,13 +27,13 @@ export function SummaryCard({
   return (
     <div className="rounded-xl border border-border bg-card px-4 py-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[12px] text-muted-foreground">{label}</span>
+        <span className="text-meta text-muted-foreground">{label}</span>
         {icon && <span className="text-muted-foreground" aria-hidden="true">{icon}</span>}
       </div>
-      <div className={`mt-2 text-[22px] leading-tight tracking-[var(--ls-tight)] tabular ${toneClass}`}>
+      <div className={`mt-2 type-headline leading-tight tracking-[var(--ls-tight)] tabular ${toneClass}`}>
         <RevealingAmount value={value} />
       </div>
-      {hint && <p className="mt-1 text-[12px] text-muted-foreground">{hint}</p>}
+      {hint && <p className="mt-1 text-meta text-muted-foreground">{hint}</p>}
     </div>
   );
 }

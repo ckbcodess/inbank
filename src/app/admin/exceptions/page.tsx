@@ -54,7 +54,7 @@ export default function ExceptionsPage() {
       <section className="rounded-2xl border border-border bg-card">
         <div className="flex items-center gap-2 border-b border-border px-4 py-3">
           <AlertTriangle size={16} aria-hidden="true" className="text-warning-text" />
-          <h2 className="text-[15px] text-foreground">{exceptions.length} open exceptions</h2>
+          <h2 className="text-heading text-foreground">{exceptions.length} open exceptions</h2>
         </div>
 
         <ul className="divide-y divide-border">
@@ -65,15 +65,15 @@ export default function ExceptionsPage() {
                 className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 transition-transform"
               >
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[13px] text-foreground">{t.description}</span>
-                  <span className="mt-0.5 truncate text-[12px] text-muted-foreground">
+                  <span className="truncate text-body text-foreground">{t.description}</span>
+                  <span className="mt-0.5 truncate text-meta text-muted-foreground">
                     {t.failureReason ?? "Flagged for operational review"}
                   </span>
-                  <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
+                  <span className="mt-0.5 truncate text-meta text-muted-foreground tabular">
                     {t.reference} · {formatDate(t.date)}
                   </span>
                 </span>
-                <span className="shrink-0 text-[13px] text-foreground tabular">
+                <span className="shrink-0 text-body text-foreground tabular">
                   {formatMoney(t.amount, t.currency)}
                 </span>
                 <TransactionStatusBadge state={t.state} />

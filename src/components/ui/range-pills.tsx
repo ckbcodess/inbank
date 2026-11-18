@@ -29,7 +29,7 @@ export function RangePills<T extends string>({ options, value, onChange, classNa
             aria-checked={active}
             onClick={() => onChange(option)}
             className={cn(
-              "flex-1 cursor-pointer select-none rounded-full py-1 text-center text-[12px] tabular outline-none transition-colors duration-hover focus-visible:ring-1 focus-visible:ring-ring",
+              "flex-1 cursor-pointer select-none rounded-full py-1 text-center text-meta tabular outline-none transition-colors duration-hover focus-visible:ring-1 focus-visible:ring-ring",
               active
                 ? "bg-primary text-primary-foreground"
                 : "border border-border/80 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"

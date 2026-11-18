@@ -141,7 +141,7 @@ function ManageRow({
       icon={icon}
       title={title}
       description={description}
-      trailing={value ? <span className="-mr-2 max-w-[10rem] truncate text-[13px] text-muted-foreground">{value}</span> : undefined}
+      trailing={value ? <span className="-mr-2 max-w-[10rem] truncate text-body text-muted-foreground">{value}</span> : undefined}
       disabled={disabled}
       onClick={onClick}
     />
@@ -153,8 +153,8 @@ function DetailLine({ label, value, onCopy }: { label: string; value: string; on
   return (
     <div className="flex items-center justify-between gap-2 py-2">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-[12px] text-muted-foreground">{label}</span>
-        <span className="tabular truncate text-[16px] tracking-[var(--ls-tight)] text-foreground">{value}</span>
+        <span className="text-meta text-muted-foreground">{label}</span>
+        <span className="tabular truncate text-heading tracking-[var(--ls-tight)] text-foreground">{value}</span>
       </div>
       {onCopy && (
         <button
@@ -714,7 +714,7 @@ export function VirtualCardDetailsView({
                         <Truck size={18} />
                       </div>
                     )}
-                    <span className="text-[15px] sm:text-[16px] font-normal text-foreground truncate">
+                    <span className="text-body sm:text-heading font-normal text-foreground truncate">
                       {effectiveCard.deliveryStatus === "out_for_delivery"
                         ? "Your card is being delivered to you!"
                         : effectiveCard.deliveryStatus === "in_transit"
@@ -724,7 +724,7 @@ export function VirtualCardDetailsView({
                   </div>
 
                   {/* Right side: Action link + Chevron */}
-                  <div className="flex items-center gap-2 text-foreground shrink-0 text-[14px] sm:text-[15px] font-normal">
+                  <div className="flex items-center gap-2 text-foreground shrink-0 text-body font-normal">
                     <span>Track Delivery</span>
                     <ChevronRight
                       size={16}
@@ -767,7 +767,7 @@ export function VirtualCardDetailsView({
                     />
                   </div>
                   {isFrozen && !isFundable && hasPin && (
-                    <p className="text-center text-[12px] text-muted-foreground">Unblock the card to view its PIN</p>
+                    <p className="text-center text-meta text-muted-foreground">Unblock the card to view its PIN</p>
                   )}
                   </div>
                   {deliveryBannerNode}
@@ -783,14 +783,14 @@ export function VirtualCardDetailsView({
                       <CreditCard size={18} className="text-foreground" />
                     </div>
                     <div>
-                      <h3 className="text-[15px] font-medium text-foreground">Card Activation Required</h3>
-                      <p className="text-[12px] text-muted-foreground">
+                      <h3 className="text-heading font-medium text-foreground">Card Activation Required</h3>
+                      <p className="text-meta text-muted-foreground">
                         Activate your physical {effectiveCard.type.toLowerCase()} card to unlock features and card controls.
                       </p>
                     </div>
                   </div>
 
-                  <div className="space-y-2 pt-1 text-[13px] text-muted-foreground">
+                  <div className="space-y-2 pt-1 text-body text-muted-foreground">
                     <div className="flex items-start gap-2">
                       <Check size={16} className="text-success-text shrink-0 mt-0.5" />
                       <span>Set your 4-digit PIN for ATM cash withdrawals and POS retail purchases</span>
@@ -821,14 +821,14 @@ export function VirtualCardDetailsView({
                   <div className="rounded-xl border border-border/70 bg-muted/30 px-3 py-3 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
                       <Truck size={17} className="text-muted-foreground shrink-0" />
-                      <span className="text-[13px] text-muted-foreground truncate">
+                      <span className="text-body text-muted-foreground truncate">
                         Delivery tracking: {effectiveCard.trackingNumber || "GCB-CRD-882104"}
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setActiveModal("tracking")}
-                      className="text-[13px] font-medium text-foreground hover:underline shrink-0 cursor-pointer"
+                      className="text-body font-medium text-foreground hover:underline shrink-0 cursor-pointer"
                     >
                       View status
                     </button>
@@ -858,7 +858,7 @@ export function VirtualCardDetailsView({
   // One quiet line under the card, the way Wise captions its card: what it is, then the figure. A card that holds
   // money says what is available; a debit card says which account it is linked to, and is the way to it.
   const availableNode = isInactive ? null : isFundable ? (
-    <div className="flex h-7 items-center justify-center gap-2 text-[14px]">
+    <div className="flex h-7 items-center justify-center gap-2 text-body">
       <span className="text-muted-foreground">Balance</span>
       <span className="tabular font-medium text-foreground">
         <RevealingAmount amount={funds} currency={fundsCurrency} />
@@ -867,7 +867,7 @@ export function VirtualCardDetailsView({
   ) : fundsAccount ? (
     <Link
       href={`/accounts/${fundsAccount.id}`}
-      className="group mx-auto flex h-7 max-w-full items-center justify-center gap-2 rounded-lg text-[14px] outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="group mx-auto flex h-7 max-w-full items-center justify-center gap-2 rounded-lg text-body outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <span className="text-muted-foreground">Linked to</span>
       <span className="truncate text-foreground group-hover:underline group-hover:underline-offset-4">
@@ -922,8 +922,8 @@ export function VirtualCardDetailsView({
               <div className="flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground mb-2">
                 <CreditCard className="size-4" />
               </div>
-              <p className="text-[14px] font-normal text-foreground">Card not activated</p>
-              <p className="text-[12px] text-muted-foreground max-w-xs mt-1">
+              <p className="text-body font-normal text-foreground">Card not activated</p>
+              <p className="text-meta text-muted-foreground max-w-xs mt-1">
                 Activate this card to begin making transactions, online purchases, and ATM withdrawals.
               </p>
             </div>
@@ -932,8 +932,8 @@ export function VirtualCardDetailsView({
               <div className="flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground mb-2">
                 <CreditCard className="size-4" />
               </div>
-              <p className="text-[14px] font-normal text-foreground">No card activity yet</p>
-              <p className="text-[12px] text-muted-foreground max-w-xs mt-1">
+              <p className="text-body font-normal text-foreground">No card activity yet</p>
+              <p className="text-meta text-muted-foreground max-w-xs mt-1">
                 Transactions, top-ups, and payments made with this card will appear here.
               </p>
             </div>
@@ -954,10 +954,10 @@ export function VirtualCardDetailsView({
 
                     {/* Counterparty & Metadata */}
                     <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                      <span className="font-normal text-foreground text-[14px] leading-tight truncate">
+                      <span className="font-normal text-foreground text-body leading-tight truncate">
                         {item.title}
                       </span>
-                      <div className="flex items-center gap-2 text-[12px] text-muted-foreground truncate">
+                      <div className="flex items-center gap-2 text-meta text-muted-foreground truncate">
                         <span>{item.date}</span>
                         <span>·</span>
                         <span className="truncate">{item.category}</span>
@@ -966,7 +966,7 @@ export function VirtualCardDetailsView({
 
                     {/* Amount & State / Card Ending */}
                     <div className="shrink-0 flex flex-col items-end gap-0.5">
-                      <span className="tabular text-[14px] font-normal text-foreground">
+                      <span className="tabular text-body font-normal text-foreground">
                         {isCredit ? "+ " : "− "}
                         {formatMoney(item.amount, currentCard.currency || "GHS", true)}
                       </span>
@@ -1078,7 +1078,7 @@ export function VirtualCardDetailsView({
                     {/* Top Row: GCB Logo (Left) & Card Type (Right) */}
                     <div className="relative z-10 flex items-center justify-between">
                       <GcbCardLogo themeId={activeTheme.id} className="h-6 sm:h-7 w-auto aspect-[37.1621/32] drop-shadow-xs shrink-0" />
-                      <span className="text-[13px] sm:text-[14px] font-normal tracking-wide opacity-90 capitalize shrink-0">
+                      <span className="text-body font-normal tracking-wide opacity-90 capitalize shrink-0">
                         {effectiveCard.type}
                       </span>
                     </div>
@@ -1096,19 +1096,19 @@ export function VirtualCardDetailsView({
                     {/* Bottom Row: CARD HOLDER, EXP, Visa/Mastercard Logo */}
                     <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-3">
                       <div className="flex flex-col gap-0.5 text-left">
-                        <span className="text-[10px] sm:text-[11px] font-medium opacity-60 leading-[14px] uppercase tracking-wider">
+                        <span className="text-meta font-medium opacity-60 leading-[14px]">
                           CARD HOLDER
                         </span>
-                        <span className="text-[14px] sm:text-[15px] font-medium leading-[20px] tracking-tight uppercase">
+                        <span className="text-body sm:text-heading font-medium leading-[20px] tracking-tight">
                           {effectiveCard.holder || actor?.name || "RANSFORD GYASI"}
                         </span>
                       </div>
 
                       <div className="flex flex-col gap-0.5 text-left">
-                        <span className="text-[10px] sm:text-[11px] font-medium opacity-60 leading-[14px] uppercase tracking-wider">
+                        <span className="text-meta font-medium opacity-60 leading-[14px]">
                           EXP
                         </span>
-                        <span className="text-[14px] sm:text-[15px] font-medium leading-[20px] tracking-tight">
+                        <span className="text-body sm:text-heading font-medium leading-[20px] tracking-tight">
                           {effectiveCard.expiry || "09/30"}
                         </span>
                       </div>
@@ -1127,7 +1127,7 @@ export function VirtualCardDetailsView({
 
             {/* Headline & Subtitle */}
             <div className="flex flex-col gap-2 items-center text-center">
-              <h2 className="text-[22px] sm:text-[26px] font-medium text-foreground tracking-[var(--ls-heading)]">
+              <h2 className="type-headline font-medium text-foreground tracking-[var(--ls-heading)]">
                 {effectiveCard.deliveryStatus === "ready_for_pickup"
                   ? "Your card is ready for pickup"
                   : effectiveCard.deliveryStatus === "delivered"
@@ -1138,7 +1138,7 @@ export function VirtualCardDetailsView({
                   ? "Your card is on the way"
                   : "Your card is being prepared"}
               </h2>
-              <p className="text-[14px] sm:text-[15px] text-muted-foreground">
+              <p className="text-body text-muted-foreground">
                 {effectiveCard.deliveryStatus === "ready_for_pickup"
                   ? "Available for collection at your selected branch."
                   : effectiveCard.deliveryStatus === "delivered"
@@ -1150,7 +1150,7 @@ export function VirtualCardDetailsView({
             </div>
 
             {/* Location Detail Row */}
-            <div className="flex items-center justify-center gap-2 text-[14px] text-foreground -mt-2 px-3 text-center">
+            <div className="flex items-center justify-center gap-2 text-body text-foreground -mt-2 px-3 text-center">
               {effectiveCard.deliveryMethod === "BRANCH_PICKUP" ? (
                 <Building2 size={16} className="text-muted-foreground shrink-0" />
               ) : (
@@ -1184,14 +1184,14 @@ export function VirtualCardDetailsView({
                   </div>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-[14px] font-medium text-foreground truncate">
+                      <span className="text-body font-medium text-foreground truncate">
                         {effectiveCard.courierRider.name}
                       </span>
-                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
+                      <span className="text-meta px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
                         Rider Assigned
                       </span>
                     </div>
-                    <span className="text-[12px] text-muted-foreground truncate">
+                    <span className="text-meta text-muted-foreground truncate">
                       {effectiveCard.courierRider.company || "GCB Express Courier"} • {effectiveCard.courierRider.vehiclePlate || "Motorbike"}
                     </span>
                   </div>
@@ -1321,7 +1321,7 @@ export function VirtualCardDetailsView({
             {activities.length > 0 && (
               <Link
                 href="/transactions"
-                className="self-center py-1 text-[14px] text-muted-foreground transition-colors hover:text-foreground hover:underline"
+                className="self-center py-1 text-body text-muted-foreground transition-colors hover:text-foreground hover:underline"
               >
                 View all transactions
               </Link>
@@ -1341,8 +1341,8 @@ export function VirtualCardDetailsView({
             <DialogBody>
               {/* Current Balance */}
               <div className="flex items-center justify-between p-2 rounded-xl bg-muted/50 border border-border">
-                <span className="text-[12px] text-muted-foreground">Current Card Balance</span>
-                <span className="text-[14px] font-medium text-foreground tabular">
+                <span className="text-meta text-muted-foreground">Current Card Balance</span>
+                <span className="text-body font-medium text-foreground tabular">
                   GHS {(currentCard.balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
@@ -1353,7 +1353,7 @@ export function VirtualCardDetailsView({
                 <select
                   value={topUpSourceAccountId}
                   onChange={(e) => setTopUpSourceAccountId(e.target.value)}
-                  className="w-full rounded-xl field-surface border border-transparent bg-field px-2 py-2 text-[14px] text-foreground transition-colors focus:outline-none focus:bg-field-focus"
+                  className="w-full rounded-xl field-surface border border-transparent bg-field px-2 py-2 text-body text-foreground transition-colors focus:outline-none focus:bg-field-focus"
                 >
                   {availableAccounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
@@ -1418,6 +1418,7 @@ export function VirtualCardDetailsView({
                 {["4", "8", "2", "1"].map((digit, idx) => (
                   <div
                     key={idx}
+                    // eslint-disable-next-line no-restricted-syntax -- PIN digit tiles
                     className="size-10 rounded-xl bg-muted border border-border flex items-center justify-center text-[22px] font-medium text-foreground shadow-inner"
                   >
                     {digit}
@@ -1425,7 +1426,7 @@ export function VirtualCardDetailsView({
                 ))}
               </div>
 
-              <p className="tabular text-[12px] text-muted-foreground">
+              <p className="tabular text-meta text-muted-foreground">
                 Closes automatically in {pinCountdown}s for your security
               </p>
             </div>
@@ -1508,7 +1509,7 @@ export function VirtualCardDetailsView({
                   placeholder="5000"
                   className="tabular"
                 />
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-meta text-muted-foreground">
                   Current spend today: GHS {dailySpent.toLocaleString()} · Maximum cap: GHS {maxDailyCap.toLocaleString()}
                 </span>
 </Field>
@@ -1564,7 +1565,7 @@ export function VirtualCardDetailsView({
                 <Globe size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
                   <span className="font-medium text-foreground">Online Checkout</span>
-                  <span className="text-[11px] text-muted-foreground">E-commerce & web transactions</span>
+                  <span className="text-meta text-muted-foreground">E-commerce & web transactions</span>
                 </div>
               </div>
               <Switch checked={onlineEnabled} onCheckedChange={(v) => {
@@ -1578,7 +1579,7 @@ export function VirtualCardDetailsView({
                 <Globe size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
                   <span className="font-medium text-foreground">International Usage</span>
-                  <span className="text-[11px] text-muted-foreground">Cross-border foreign exchange payments</span>
+                  <span className="text-meta text-muted-foreground">Cross-border foreign exchange payments</span>
                 </div>
               </div>
               <Switch checked={intlEnabled} onCheckedChange={(v) => {
@@ -1592,7 +1593,7 @@ export function VirtualCardDetailsView({
                 <CreditCard size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
                   <span className="font-medium text-foreground">ATM Cash Withdrawals</span>
-                  <span className="text-[11px] text-muted-foreground">Physical terminal cash access</span>
+                  <span className="text-meta text-muted-foreground">Physical terminal cash access</span>
                 </div>
               </div>
               <Switch checked={atmEnabled} onCheckedChange={(v) => {
@@ -1627,7 +1628,7 @@ export function VirtualCardDetailsView({
           </DialogHeader>
 
           <DialogBody className="flex flex-col gap-3">
-            <p className="text-[13px] text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               Set a new 4-digit PIN for ATM cash withdrawals and point-of-sale retail transactions.
             </p>
 
@@ -1640,7 +1641,7 @@ export function VirtualCardDetailsView({
                 value={resetNewPin}
                 onChange={(e) => setResetNewPin(e.target.value.replace(/\D/g, ""))}
                 placeholder="∗∗∗∗"
-                className="tracking-widest text-[16px] text-center font-mono"
+                className="tracking-widest text-heading text-center font-mono"
                 autoFocus
               />
             </Field>
@@ -1654,12 +1655,12 @@ export function VirtualCardDetailsView({
                 value={resetConfirmPin}
                 onChange={(e) => setResetConfirmPin(e.target.value.replace(/\D/g, ""))}
                 placeholder="∗∗∗∗"
-                className="tracking-widest text-[16px] text-center font-mono"
+                className="tracking-widest text-heading text-center font-mono"
               />
             </Field>
 
             {resetConfirmPin.length > 0 && resetNewPin !== resetConfirmPin && (
-              <p className="text-[12px] text-destructive font-medium">PINs do not match</p>
+              <p className="text-meta text-destructive font-medium">PINs do not match</p>
             )}
           </DialogBody>
 
@@ -1733,7 +1734,7 @@ export function VirtualCardDetailsView({
           </DialogHeader>
 
           <DialogBody>
-            <p className="text-[14px] leading-relaxed text-foreground">
+            <p className="text-body leading-relaxed text-foreground">
               Once you submit the replacement, this card (∗∗∗∗ {maskedLast4}) is blocked
               {isFundable ? " and its balance moves to the new card" : ""}. Next, check the
               details we&rsquo;ve filled in from this card.
@@ -1775,7 +1776,7 @@ export function VirtualCardDetailsView({
                   className="tracking-wider"
                   required
                 />
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-meta text-muted-foreground">
                   Found on the signature strip on the back of your physical card.
                 </span>
 </Field>

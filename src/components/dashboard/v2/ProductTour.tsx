@@ -227,7 +227,7 @@ function TourRun({ ctx }: { ctx: TourContext }) {
             <DialogTitle>{"You're all set"}</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <p className="text-[13px] leading-relaxed text-foreground">
+            <p className="text-body leading-relaxed text-foreground">
               That is the whole tour. You know your way around now, so you can start using your account. Help is always
               in the top bar if you need it.
             </p>
@@ -281,17 +281,17 @@ function TourRun({ ctx }: { ctx: TourContext }) {
             <button
               type="button"
               onClick={finish}
-              className="-my-2 cursor-pointer py-2 text-[12px] text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              className="-my-2 cursor-pointer py-2 text-meta text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
               Skip tour
             </button>
           </div>
 
           <div className="flex flex-col gap-1">
-            <PopoverTitle className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">
+            <PopoverTitle className="text-heading font-medium tracking-[var(--ls-tight)] text-foreground">
               {step.title}
             </PopoverTitle>
-            <PopoverDescription className="text-[13px] leading-relaxed text-foreground">
+            <PopoverDescription className="text-body leading-relaxed text-foreground">
               {step.body(ctx)}
             </PopoverDescription>
           </div>

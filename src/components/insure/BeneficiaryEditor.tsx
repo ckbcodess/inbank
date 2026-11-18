@@ -70,7 +70,7 @@ const segmentColor = (i: number) => (i < 5 ? `var(--cat-${i + 1})` : "var(--cat-
 
 function Avatar({ name, color }: { name: string; color?: string }) {
   return (
-    <span className="relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-[12px] text-foreground" translate="no">
+    <span className="relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-meta text-foreground" translate="no">
       {initials(name)}
       {color && <span aria-hidden="true" className="absolute -right-px -bottom-px size-2.5 rounded-full border-2 border-background" style={{ background: color }} />}
     </span>
@@ -324,7 +324,7 @@ export function BeneficiaryEditor({
           </>
         }
       >
-        <p className="text-[14px] leading-relaxed text-muted-foreground">
+        <p className="text-body leading-relaxed text-muted-foreground">
           {removing &&
             `${personOf(removing.personId)?.fullName ?? "This beneficiary"} will no longer receive a share of this policy. Their ${removing.share}% is then free to give to someone else.`}
         </p>
@@ -335,7 +335,7 @@ export function BeneficiaryEditor({
           title="Beneficiaries"
           action={
             <div className="flex items-center gap-4">
-              {left > 0 && <span className="tabular text-[13px] text-muted-foreground">{`${left}% left to share`}</span>}
+              {left > 0 && <span className="tabular text-body text-muted-foreground">{`${left}% left to share`}</span>}
               {value.length > 1 && (
                 <Button type="button" variant="outline" size="sm" onClick={splitEqually}>
                   Split Equally
@@ -423,10 +423,10 @@ export function BeneficiaryEditor({
                   <li key={b.personId} className="flex items-center gap-3 rounded-xl px-2 py-3 sm:px-3">
                     <Avatar name={p.fullName} color={segmentColor(i)} />
                     <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate text-[14px] text-foreground" translate="no">
+                      <span className="truncate text-body text-foreground" translate="no">
                         {p.fullName}
                       </span>
-                      <span className="truncate text-[12px] text-muted-foreground">
+                      <span className="truncate text-meta text-muted-foreground">
                         {isMinor(p) ? `${p.relationship} · Under 18` : p.relationship}
                       </span>
                     </span>
@@ -440,7 +440,7 @@ export function BeneficiaryEditor({
                         onBlur={() => settleShare(b.personId)}
                         className="tabular h-11 w-[72px] text-right"
                       />
-                      <span className="text-[14px] text-muted-foreground">%</span>
+                      <span className="text-body text-muted-foreground">%</span>
                     </label>
                     <button
                       type="button"
@@ -489,10 +489,10 @@ export function BeneficiaryEditor({
                         <span className="flex min-w-0 items-center gap-3">
                           <Avatar name={p.fullName} />
                           <span className="flex min-w-0 flex-col text-left">
-                            <span className="truncate text-[14px] text-foreground" translate="no">
+                            <span className="truncate text-body text-foreground" translate="no">
                               {p.fullName}
                             </span>
-                            <span className="truncate text-[12px] text-muted-foreground">{p.relationship}</span>
+                            <span className="truncate text-meta text-muted-foreground">{p.relationship}</span>
                           </span>
                         </span>
                       </SelectItem>
@@ -502,7 +502,7 @@ export function BeneficiaryEditor({
               </Field>
               <div className="flex items-center gap-3" role="separator" aria-label="Or add someone new">
                 <span aria-hidden="true" className="h-px flex-1 bg-border" />
-                <span className="text-[13px] text-muted-foreground">Or add someone new</span>
+                <span className="text-body text-muted-foreground">Or add someone new</span>
                 <span aria-hidden="true" className="h-px flex-1 bg-border" />
               </div>
               </>
@@ -514,7 +514,7 @@ export function BeneficiaryEditor({
       {minors.length > 0 && (
         <section className={cn("flex flex-col gap-3", reveal)}>
           <SectionHeading title="Trustee" />
-          <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
+          <p className="px-1 text-body leading-relaxed text-muted-foreground">
             {minors.length === 1
               ? `An adult receives the payout for ${minors[0].fullName.split(/\s+/)[0]} until ${minors[0].fullName.split(/\s+/)[0]} turns 18.`
               : "An adult receives the payout for your beneficiaries under 18, until each turns 18."}

@@ -269,7 +269,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
             total={claimAmount ? money(claimAmount) : "To be confirmed"}
             totalLabel={type === "surrender" ? "Estimated payout" : claimAmount ? "Claim amount" : "Amount"}
           />
-          <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
+          <p className="px-1 text-body leading-relaxed text-muted-foreground">
             {type === "surrender"
               ? `Surrendering ends your cover. ${PROVIDER} confirms the final amount before anything is paid.`
               : `${PROVIDER} confirms the amount after reviewing your documents.`}
@@ -302,10 +302,10 @@ function ClaimForm({ policy }: { policy: Policy }) {
       <PageHeader title="File a Claim" backTo={{ href: base, label: plan?.name ?? "Policy" }} actions={<StepBar current={1} total={2} compact />} />
       <div className="flex flex-col gap-5">
         <section className="flex flex-col gap-2 px-1">
-          <p className="text-[13px] text-foreground">{type === "death" ? "We’re sorry for your loss. To make this claim, have these ready:" : "To make a claim, have these ready:"}</p>
+          <p className="text-body text-foreground">{type === "death" ? "We’re sorry for your loss. To make this claim, have these ready:" : "To make a claim, have these ready:"}</p>
           <ul className="flex flex-col gap-2">
             {(type ? ["A valid ID", ...requiredDocs] : (plan?.claimChecklist ?? [])).map((item) => (
-              <li key={item} className="flex items-start gap-2 text-[13px] text-muted-foreground">
+              <li key={item} className="flex items-start gap-2 text-body text-muted-foreground">
                 <Check size={15} aria-hidden="true" className="mt-0.5 shrink-0" />
                 {item}
               </li>
@@ -323,7 +323,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
                 <SelectItem key={t} value={t} label={CLAIM_TYPES[t].label}>
                   <div className="flex flex-col py-0.5 text-left">
                     <span className="text-foreground">{CLAIM_TYPES[t].label}</span>
-                    <span className="max-w-[22rem] whitespace-normal text-[12px] font-normal text-muted-foreground">{CLAIM_TYPES[t].detail}</span>
+                    <span className="max-w-[22rem] whitespace-normal text-meta font-normal text-muted-foreground">{CLAIM_TYPES[t].detail}</span>
                   </div>
                 </SelectItem>
               ))}
@@ -361,7 +361,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
               <RadioGroup<YesNo> aria-label="Was the death accidental" options={YES_NO} value={accidental} onChange={setAccidental} />
             </Field>
             {withinWaiting && (
-              <p className="px-1 text-[13px] leading-relaxed text-warning-text">
+              <p className="px-1 text-body leading-relaxed text-warning-text">
                 {`This was within the first ${WAITING_PERIOD_DAYS} days of cover, when only accidental deaths are paid. You can still submit, and ${PROVIDER} will review it.`}
               </p>
             )}
@@ -477,7 +477,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
         {/* Documents */}
         {type && detailsDone && (
           <div className={reveal}>
-            <p className="px-1 text-[13px] text-muted-foreground">Each document must be clear and fully visible.</p>
+            <p className="px-1 text-body text-muted-foreground">Each document must be clear and fully visible.</p>
             <SignatureUpload label="Valid ID of Claimant" file={idDoc} onChange={setIdDoc} />
             {requiredDocs.map((d) => (
               <SignatureUpload key={d} label={d} file={docs[d] ?? null} onChange={(f) => setDocs({ ...docs, [d]: f })} />
@@ -489,7 +489,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
         {type && detailsDone && docsDone && (
           <div className={reveal}>
             <FromAccountSelector accounts={accounts} value={toId} onChange={setPickedTo} label="Pay Into" />
-            <label className="flex cursor-pointer items-start gap-2 px-1 py-2 text-[13px] leading-relaxed text-foreground">
+            <label className="flex cursor-pointer items-start gap-2 px-1 py-2 text-body leading-relaxed text-foreground">
               <Checkbox checked={truthful} onCheckedChange={(v) => setTruthful(Boolean(v))} aria-label="Confirm the information is true" className="mt-0.5" />
               <span>I confirm that all the information I’ve given is true and accurate.</span>
             </label>

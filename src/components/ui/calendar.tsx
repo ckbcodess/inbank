@@ -18,7 +18,7 @@ function CalendarDropdown({ options, value, onChange, "aria-label": ariaLabel }:
         if (next && onChange) onChange({ target: { value: next } } as React.ChangeEvent<HTMLSelectElement>)
       }}
     >
-      <SelectTrigger size="sm" aria-label={ariaLabel} className="w-auto gap-1 px-2 text-[13px]">
+      <SelectTrigger size="sm" aria-label={ariaLabel} className="w-auto gap-1 px-2 text-body">
         <SelectValue />
       </SelectTrigger>
       <SelectContent className="max-h-64">
@@ -47,7 +47,7 @@ function Calendar({
         month: "flex flex-col gap-3",
         month_caption: "flex justify-center pt-1 relative items-center w-full h-8",
         dropdowns: "flex items-center justify-center gap-1.5 px-8",
-        caption_label: "text-sm font-medium",
+        caption_label: "text-body font-medium",
         nav: "flex items-center gap-1",
         button_previous: cn(
           "absolute left-1 top-1 inline-flex items-center justify-center size-6 rounded-lg border border-border bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none z-10"
@@ -59,7 +59,7 @@ function Calendar({
         weekdays: "flex",
         weekday: "text-muted-foreground rounded-lg w-8 font-normal text-[0.8rem]",
         week: "flex w-full mt-2",
-        day: "relative size-8 p-0 text-center text-sm focus-within:relative focus-within:z-20",
+        day: "relative size-8 p-0 text-center text-body focus-within:relative focus-within:z-20",
         day_button: cn(
           "inline-flex items-center justify-center size-8 rounded-lg font-normal hover:bg-accent hover:text-accent-foreground transition-colors aria-selected:opacity-100"
         ),

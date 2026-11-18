@@ -157,7 +157,7 @@ function NotificationRow({
         <Icon size={16} aria-hidden="true" className={className} />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="flex items-center gap-2 text-[14px] leading-snug text-foreground">
+        <span className="flex items-center gap-2 text-body leading-snug text-foreground">
           {n.isNew && !n.archived && (
             <>
               <span className="size-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
@@ -166,9 +166,9 @@ function NotificationRow({
           )}
           {n.title}
         </span>
-        <span className="line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">{n.body}</span>
+        <span className="line-clamp-2 text-body leading-relaxed text-muted-foreground">{n.body}</span>
         {/* On phones there's no hover, so the date sits under the text. From `sm` it's at the right. */}
-        <span className="mt-0.5 text-[12px] text-muted-foreground tabular sm:hidden">{formatRelative(n.date)}</span>
+        <span className="mt-0.5 text-meta text-muted-foreground tabular sm:hidden">{formatRelative(n.date)}</span>
       </span>
     </>
   );
@@ -186,7 +186,7 @@ function NotificationRow({
       )}
 
       <div className="relative flex h-10 w-[88px] shrink-0 items-center justify-end">
-        <span className="text-[12px] text-muted-foreground tabular transition-opacity group-hover:opacity-0 group-focus-within:opacity-0 max-sm:hidden">
+        <span className="text-meta text-muted-foreground tabular transition-opacity group-hover:opacity-0 group-focus-within:opacity-0 max-sm:hidden">
           {formatRelative(n.date)}
         </span>
         <div className="absolute inset-0 flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 max-sm:opacity-100">
@@ -237,7 +237,7 @@ function TabButton({
       aria-selected={active}
       onClick={onClick}
       className={cn(
-        "-mb-px flex h-10 shrink-0 cursor-pointer items-center gap-1.5 border-b-2 text-[14px] transition-colors",
+        "-mb-px flex h-10 shrink-0 cursor-pointer items-center gap-1.5 border-b-2 text-body transition-colors",
         active ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground",
       )}
     >
@@ -353,7 +353,7 @@ export function NotificationsMenu() {
     <div className={cn("flex flex-col [contain:paint]", desktop ? "h-[min(72vh,600px)]" : "h-full")}>
       <div className="flex h-12 shrink-0 items-center gap-1 pl-4 pr-2">
         {!desktop && <IconButton label="Close notifications" icon={X} onClick={close} />}
-        <h2 className="min-w-0 flex-1 truncate text-[16px] font-medium text-foreground">Notifications</h2>
+        <h2 className="min-w-0 flex-1 truncate text-heading font-medium text-foreground">Notifications</h2>
         <IconButton
           label="Notification settings"
           icon={Settings}
@@ -370,13 +370,13 @@ export function NotificationsMenu() {
         </TabButton>
         <TabButton active={view === "archived"} onClick={() => switchView("archived")}>
           Archived
-          <span className="text-[12px] text-muted-foreground tabular">{archived.length}</span>
+          <span className="text-meta text-muted-foreground tabular">{archived.length}</span>
         </TabButton>
       </div>
 
       <div ref={scrollRef} className="custom-scrollbar min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
         {list.length === 0 ? (
-          <p className="px-4 py-10 text-center text-[13px] text-muted-foreground">{emptyCopy}</p>
+          <p className="px-4 py-10 text-center text-body text-muted-foreground">{emptyCopy}</p>
         ) : (
           <>
             <ul>{visible.map(rowFor)}</ul>
@@ -389,7 +389,7 @@ export function NotificationsMenu() {
               </div>
             )}
             {!hasMore && (
-              <p className="px-4 py-4 text-center text-[12px] text-muted-foreground">You&apos;re all caught up.</p>
+              <p className="px-4 py-4 text-center text-meta text-muted-foreground">You&apos;re all caught up.</p>
             )}
           </>
         )}
@@ -464,7 +464,7 @@ export function NotificationsMenu() {
             <DialogTitle>Delete this notification?</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <p className="text-[14px] leading-relaxed text-muted-foreground">
+            <p className="text-body leading-relaxed text-muted-foreground">
               It will be removed for good. It can&apos;t be restored.
             </p>
           </DialogBody>

@@ -183,7 +183,7 @@ export function BuyFlow() {
         <div className="flex flex-col gap-6">
           <ReviewSummary details={rows.map(([label, value]) => ({ label, value }))} total={money(cost)} totalLabel="You pay" />
           {sec.market === "primary" && (
-            <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
+            <p className="px-1 text-body leading-relaxed text-muted-foreground">
               The final rate is set at the auction, so your amounts can shift slightly.
             </p>
           )}
@@ -247,7 +247,7 @@ export function BuyFlow() {
 
             {valid && (
               <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200">
-                <dl className="flex flex-col gap-2 px-1 text-[14px]">
+                <dl className="flex flex-col gap-2 px-1 text-body">
                   {breakdown.map(([label, value]) => (
                     <div key={label} className="flex items-baseline justify-between gap-5">
                       <dt className="text-muted-foreground">{label}</dt>

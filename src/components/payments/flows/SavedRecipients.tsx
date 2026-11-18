@@ -95,7 +95,7 @@ export function SavedRecipientLink({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex min-h-8 cursor-pointer items-center text-[13px] text-foreground underline underline-offset-4 transition-colors duration-hover hover:text-muted-foreground"
+        className="inline-flex min-h-8 cursor-pointer items-center text-body text-foreground underline underline-offset-4 transition-colors duration-hover hover:text-muted-foreground"
       >
         {isSaved ? "Change" : "Select beneficiary"}
       </button>

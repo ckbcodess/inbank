@@ -40,19 +40,16 @@ import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswo
 
 import { Field } from "@/components/ui/field";
 import { GhanaCardInput } from "@/components/ui/ghana-card-input";
-import { isCompleteGhanaCard } from "@/lib/ghana-card";
+import {
+  NIA_SELFIE_OUTCOME_LABELS,
+  NIA_SELFIE_OUTCOMES,
+  isCompleteGhanaCard,
+  type NiaSelfieOutcome,
+} from "@/lib/ghana-card";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 type Step = OnboardingStep;
 
 const RESEND_SECONDS = 30;
-
-/** What NIA returns for the selfie. Dev Mode picks it under Screen states. */
-type NiaOutcome = "matched" | "no_match";
-const NIA_OUTCOMES: readonly NiaOutcome[] = ["matched", "no_match"];
-const NIA_OUTCOME_LABELS: Record<NiaOutcome, string> = {
-  matched: "Matches",
-  no_match: "Does not match",
-};
 
 function SignupContent() {
   const router = useRouter();
@@ -80,7 +77,7 @@ function SignupContent() {
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   // The selfie goes to NIA and the result comes back on the selfie screen. A photo that doesn't match asks to try again.
-  const [niaOutcome, setNiaOutcome] = useState<NiaOutcome>("matched");
+  const [niaOutcome, setNiaOutcome] = useState<NiaSelfieOutcome>("matched");
   const [selfieMismatch, setSelfieMismatch] = useState(false);
 
   // OTP State
@@ -368,7 +365,7 @@ function SignupContent() {
                 Continue
               </Button>
             </KeyboardDock>
-            <p className="text-center text-[12px] leading-5 text-muted-foreground">
+            <p className="text-center text-meta leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
               <a href="#" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Terms</a>{" "}
               and{" "}
@@ -382,8 +379,8 @@ function SignupContent() {
       {/* STEP 2: Selfie / Photo Capture */}
       {step === "selfie" && (
         <StateSwitcher
-          states={NIA_OUTCOMES}
-          labels={NIA_OUTCOME_LABELS}
+          states={NIA_SELFIE_OUTCOMES}
+          labels={NIA_SELFIE_OUTCOME_LABELS}
           value={niaOutcome}
           onChange={setNiaOutcome}
           section="NIA"
@@ -422,11 +419,11 @@ function SignupContent() {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <span className="block truncate text-[14px] font-medium text-foreground">Ransford Gyasi</span>
-                  <span className="tabular text-[12px] text-muted-foreground">{ghanaCard}</span>
+                  <span className="block truncate text-body font-medium text-foreground">Ransford Gyasi</span>
+                  <span className="tabular text-meta text-muted-foreground">{ghanaCard}</span>
                 </div>
               </div>
-              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-[11px] font-medium text-pill-success-text">
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-meta font-medium text-pill-success-text">
                 <Check size={12} />
                 Verified
               </span>
@@ -470,7 +467,7 @@ function SignupContent() {
                 onValueChange={setMobile}
                 placeholder="Enter mobile number"
               />
-              <p className="px-0.5 text-[12px] text-muted-foreground">We’ll send a verification code to this number.</p>
+              <p className="px-0.5 text-meta text-muted-foreground">We’ll send a verification code to this number.</p>
             </div>
           </div>
 
@@ -513,7 +510,7 @@ function SignupContent() {
           </div>
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
@@ -527,7 +524,7 @@ function SignupContent() {
                 setCountdown(RESEND_SECONDS);
                 setErrorMsg("");
               }}
-              className="text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
+              className="text-body text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
             >
               {countdown > 0 ? (
                 <>
@@ -538,13 +535,13 @@ function SignupContent() {
               )}
             </button>
 
-            <p className="text-center text-[13px] text-muted-foreground">
+            <p className="text-center text-body text-muted-foreground">
               Dial <a href="tel:*422*11%23" className="tabular font-medium text-foreground underline underline-offset-4 hover:text-foreground/80">*422*11#</a> to retrieve your code
             </p>
           </div>
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Verifying code...</span>
             </div>
@@ -617,16 +614,16 @@ function SignupContent() {
           <PinRequirements pin={pinDigits.join("")} />
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
           {!errorMsg && pinNote && (
-            <p className="-mt-2 text-center text-[13px] text-muted-foreground">{pinNote}</p>
+            <p className="-mt-2 text-center text-body text-muted-foreground">{pinNote}</p>
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Saving your PIN…</span>
             </div>
@@ -662,13 +659,13 @@ function SignupContent() {
 
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Setting up account...</span>
             </div>

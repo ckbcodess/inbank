@@ -74,11 +74,11 @@ export function SourceSummary({ source }: { source: PendingFundingSource }) {
       <div className="flex items-center gap-3 rounded-xl border border-border/80 bg-muted/30 p-3 text-left">
         <SourceMark type={source.type} operator={operatorFromName(source.operator)} title={title} />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[14px] tracking-[var(--ls-tight)] text-foreground">{title}</p>
-          <p className="tabular truncate text-[12px] text-muted-foreground">{subtitle}</p>
+          <p className="truncate text-body tracking-[var(--ls-tight)] text-foreground">{title}</p>
+          <p className="tabular truncate text-meta text-muted-foreground">{subtitle}</p>
         </div>
       </div>
-      <p className="text-[13px] leading-relaxed text-muted-foreground">
+      <p className="text-body leading-relaxed text-muted-foreground">
         Top up in one tap next time. Remove it anytime in Accounts.
       </p>
     </div>

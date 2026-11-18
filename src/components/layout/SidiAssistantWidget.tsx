@@ -227,7 +227,7 @@ export function SidiAssistantWidget() {
           />
           )}
           {!open && (
-            <span className="max-w-0 overflow-hidden whitespace-nowrap pr-0 text-[13px] font-medium text-foreground opacity-0 transition-[max-width,padding,opacity] duration-reveal ease-settle group-hover:max-w-[96px] group-hover:pr-4 group-hover:opacity-100 group-focus-visible:max-w-[96px] group-focus-visible:pr-4 group-focus-visible:opacity-100 group-data-[intro=true]:max-w-[176px] group-data-[intro=true]:pr-4 group-data-[intro=true]:opacity-100">
+            <span className="max-w-0 overflow-hidden whitespace-nowrap pr-0 text-body font-medium text-foreground opacity-0 transition-[max-width,padding,opacity] duration-reveal ease-settle group-hover:max-w-[96px] group-hover:pr-4 group-hover:opacity-100 group-focus-visible:max-w-[96px] group-focus-visible:pr-4 group-focus-visible:opacity-100 group-data-[intro=true]:max-w-[176px] group-data-[intro=true]:pr-4 group-data-[intro=true]:opacity-100">
               {introLabel ? "How can I help?" : "Ask Sidi"}
             </span>
           )}
@@ -253,12 +253,12 @@ export function SidiAssistantWidget() {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 pb-2 pt-3">
-              <span className="text-[14px] font-medium text-foreground">{hasChat ? "Chat with Sidi" : "New chat"}</span>
+              <span className="text-body font-medium text-foreground">{hasChat ? "Chat with Sidi" : "New chat"}</span>
               <div className="-mr-2 flex items-center gap-0.5">
                 {/* Ways to reach a person when the assistant isn't enough. */}
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    className="mr-1 flex h-7 cursor-pointer items-center gap-2 rounded-lg px-2 text-[13px] text-muted-foreground outline-none transition-colors duration-hover hover:bg-item-hover hover:text-foreground aria-expanded:bg-item-hover aria-expanded:text-foreground"
+                    className="mr-1 flex h-7 cursor-pointer items-center gap-2 rounded-lg px-2 text-body text-muted-foreground outline-none transition-colors duration-hover hover:bg-item-hover hover:text-foreground aria-expanded:bg-item-hover aria-expanded:text-foreground"
                     aria-label="Get help"
                   >
                     <CircleHelp size={15} />
@@ -268,15 +268,15 @@ export function SidiAssistantWidget() {
                     <DropdownMenuItem render={<a href="tel:+233302681531" />} className="gap-2 px-2 py-2">
                       <Phone size={16} className="text-muted-foreground" />
                       <span className="flex flex-col">
-                        <span className="text-[13px] text-foreground">Call customer care</span>
-                        <span className="text-[12px] text-muted-foreground tabular">+233 302 681 531, 24/7</span>
+                        <span className="text-body text-foreground">Call customer care</span>
+                        <span className="text-meta text-muted-foreground tabular">+233 302 681 531, 24/7</span>
                       </span>
                     </DropdownMenuItem>
                     <DropdownMenuItem render={<Link href="/locate-us" onClick={() => setOpen(false)} />} className="gap-2 px-2 py-2">
                       <MapPin size={16} className="text-muted-foreground" />
                       <span className="flex flex-col">
-                        <span className="text-[13px] text-foreground">Find a branch</span>
-                        <span className="text-[12px] text-muted-foreground">Visit us in person</span>
+                        <span className="text-body text-foreground">Find a branch</span>
+                        <span className="text-meta text-muted-foreground">Visit us in person</span>
                       </span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -308,8 +308,8 @@ export function SidiAssistantWidget() {
                   <div className="flex flex-col items-center gap-2">
                     <Image src="/sidi-avatar-clear.png" alt="" width={44} height={44} className="size-10 rounded-full bg-tile object-cover" />
                     <div className="flex flex-col gap-1">
-                      <h2 className="text-[16px] font-medium text-foreground">{firstName ? `Hi ${firstName}` : "Hi there"}</h2>
-                      <p className="text-[13px] text-muted-foreground">Ask anything or tell Sidi what you need</p>
+                      <h2 className="text-heading font-medium text-foreground">{firstName ? `Hi ${firstName}` : "Hi there"}</h2>
+                      <p className="text-body text-muted-foreground">Ask anything or tell Sidi what you need</p>
                     </div>
                   </div>
                   <div className="flex flex-wrap justify-center gap-2">
@@ -320,7 +320,7 @@ export function SidiAssistantWidget() {
                           key={item.id}
                           type="button"
                           onClick={() => handleSendQuery(item.query, item.id)}
-                          className="flex cursor-pointer items-center gap-2 rounded-full bg-tile px-3 py-2 text-[13px] text-foreground transition-colors duration-hover hover:bg-tile-hover"
+                          className="flex cursor-pointer items-center gap-2 rounded-full bg-tile px-3 py-2 text-body text-foreground transition-colors duration-hover hover:bg-tile-hover"
                         >
                           <Icon size={15} strokeWidth={1.7} className="text-muted-foreground" />
                           {item.title}
@@ -335,13 +335,13 @@ export function SidiAssistantWidget() {
                     <div key={chat.id} className={cn("flex flex-col gap-1", chat.sender === "user" ? "items-end" : "items-start")}>
                       <div
                         className={cn(
-                          "max-w-[85%] whitespace-pre-line rounded-2xl px-3 py-2 text-[13px] leading-relaxed",
+                          "max-w-[85%] whitespace-pre-line rounded-2xl px-3 py-2 text-body leading-relaxed",
                           chat.sender === "user" ? "bg-primary text-primary-foreground" : "bg-tile text-foreground",
                         )}
                       >
                         {chat.text}
                       </div>
-                      <span className="px-2 text-[11px] text-muted-foreground tabular">{chat.timestamp}</span>
+                      <span className="px-2 text-meta text-muted-foreground tabular">{chat.timestamp}</span>
                     </div>
                   ))}
                   <div ref={messagesEndRef} />
@@ -365,7 +365,7 @@ export function SidiAssistantWidget() {
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder="Ask Sidi anything"
                   aria-label="Message Sidi"
-                  className="h-8 flex-1 bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground"
+                  className="h-8 flex-1 bg-transparent text-body text-foreground outline-none placeholder:text-muted-foreground"
                 />
                 <button
                   type="submit"

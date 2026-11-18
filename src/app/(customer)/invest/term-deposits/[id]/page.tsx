@@ -73,8 +73,8 @@ export default function TermDepositDetailPage() {
       <div className="flex flex-col gap-6">
         {open && (
           <div className="flex flex-col gap-1 px-1">
-            <span className="text-[14px] text-muted-foreground">You deposited</span>
-            <span className="tabular text-[32px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(d.principal)}</span>
+            <span className="text-body text-muted-foreground">You deposited</span>
+            <span className="tabular type-balance leading-none tracking-[var(--ls-heading)] text-foreground">{money(d.principal)}</span>
           </div>
         )}
 

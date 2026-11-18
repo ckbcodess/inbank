@@ -320,7 +320,7 @@ export function InternationalWireFlow({
                       <SelectItem key={m.id} value={m.id} label={m.label}>
                         <span className="flex flex-col">
                           <span>{m.label}</span>
-                          <span className="text-[12px] text-muted-foreground">{m.note ?? m.hint}</span>
+                          <span className="text-meta text-muted-foreground">{m.note ?? m.hint}</span>
                         </span>
                       </SelectItem>
                     ))}
@@ -426,7 +426,7 @@ export function InternationalWireFlow({
                     </Field>
                   </div>
                   {!emailOk && (
-                    <p className="text-[12px] text-warning">That email address doesn&apos;t look right.</p>
+                    <p className="text-meta text-warning">That email address doesn&apos;t look right.</p>
                   )}
               </div>
             </div>
@@ -440,7 +440,7 @@ export function InternationalWireFlow({
             <DialogTitle>PAPSS Is Available for This Transfer</DialogTitle>
           </DialogHeader>
           <div className="px-4 py-4 sm:px-5">
-            <DialogDescription className="text-[14px] leading-relaxed text-muted-foreground">
+            <DialogDescription className="text-body leading-relaxed text-muted-foreground">
               Send money across Africa quickly and conveniently in local African currencies.
             </DialogDescription>
           </div>
@@ -456,7 +456,7 @@ export function InternationalWireFlow({
                 setPapssFor(null);
                 if (name) onUsePapss?.(name, currency);
               }}
-              className="flex-1 text-[15px]"
+              className="flex-1 text-body"
             >
               Use PAPSS
             </Button>
@@ -487,7 +487,7 @@ export function InternationalWireFlow({
             />
 
             {/* Exchange rate display underneath fields */}
-            <div className="flex items-center justify-end px-1 pt-0.5 text-[12px] text-muted-foreground font-medium">
+            <div className="flex items-center justify-end px-1 pt-0.5 text-meta text-muted-foreground font-medium">
               <span>Rate: 1 {state.wCurrency || "USD"} = GHS {rate}</span>
             </div>
 
@@ -512,7 +512,7 @@ export function InternationalWireFlow({
                   <SelectItem key={c.id} value={c.id} label={c.label}>
                     <span className="flex flex-col">
                       <span>{c.label}</span>
-                      <span className="text-[12px] text-muted-foreground">{c.note}</span>
+                      <span className="text-meta text-muted-foreground">{c.note}</span>
                     </span>
                   </SelectItem>
                 ))}

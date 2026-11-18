@@ -460,7 +460,7 @@ function SoleProprietorSignupContent() {
             >
               Continue
             </Button>
-            <p className="text-center text-[12px] leading-5 text-muted-foreground">
+            <p className="text-center text-meta leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
               <a
                 href="#"
@@ -512,13 +512,13 @@ function SoleProprietorSignupContent() {
                 )}
               </div>
               <div className="min-w-0">
-                <span className="block truncate text-[14px] font-medium text-foreground">
+                <span className="block truncate text-body font-medium text-foreground">
                   {SOLE_PROPRIETOR_DEMO.holderName}
                 </span>
-                <span className="tabular text-[12px] text-muted-foreground">{ghanaCard}</span>
+                <span className="tabular text-meta text-muted-foreground">{ghanaCard}</span>
               </div>
             </div>
-            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-[11px] font-medium text-pill-success-text">
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-meta font-medium text-pill-success-text">
               <Check size={12} />
               Verified
             </span>
@@ -526,14 +526,14 @@ function SoleProprietorSignupContent() {
 
           {/* Business and accounts */}
           <div className="flex flex-col gap-3">
-            <h2 className="text-[14px] font-medium text-foreground">
+            <h2 className="text-body font-medium text-foreground">
               {SOLE_PROPRIETOR_DEMO.businessName}
             </h2>
             <div className="flex flex-col gap-2">
               {accounts.map((acc) => (
                 <div key={acc.id} className="flex items-center justify-between py-1">
-                  <span className="text-[13px] text-foreground">{acc.name}</span>
-                  <span className="tabular text-[13px] text-muted-foreground">
+                  <span className="text-body text-foreground">{acc.name}</span>
+                  <span className="tabular text-body text-muted-foreground">
                     •••• {acc.number.replace(/\s/g, "").slice(-4)}
                   </span>
                 </div>
@@ -578,7 +578,7 @@ function SoleProprietorSignupContent() {
           </div>
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
@@ -591,7 +591,7 @@ function SoleProprietorSignupContent() {
                 setCountdown(RESEND_SECONDS);
                 setErrorMsg("");
               }}
-              className="cursor-pointer text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
+              className="cursor-pointer text-body text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
             >
               {countdown > 0 ? (
                 <>
@@ -602,7 +602,7 @@ function SoleProprietorSignupContent() {
               )}
             </button>
 
-            <p className="text-center text-[13px] text-muted-foreground">
+            <p className="text-center text-body text-muted-foreground">
               Dial{" "}
               <a
                 href="tel:*422*11%23"
@@ -615,7 +615,7 @@ function SoleProprietorSignupContent() {
           </div>
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Verifying code...</span>
             </div>
@@ -665,7 +665,7 @@ function SoleProprietorSignupContent() {
           className="flex flex-col gap-4"
         >
           {pinNote && (
-            <p className="text-center text-[13px] text-muted-foreground">{pinNote}</p>
+            <p className="text-center text-body text-muted-foreground">{pinNote}</p>
           )}
 
           <div className="flex justify-center">

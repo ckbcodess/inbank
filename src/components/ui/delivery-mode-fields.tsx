@@ -123,7 +123,7 @@ export function DeliveryModeFields({
                   value={value.phone}
                   onValueChange={(phone) => onChange({ phone })}
                   aria-label="Delivery phone number"
-                  className="h-11 rounded-2xl px-3 text-[14px]"
+                  className="h-11 rounded-2xl px-3 text-body"
                 />
               </div>
             </div>

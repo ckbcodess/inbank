@@ -59,7 +59,7 @@ const reveal = "flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 durat
 
 function Rows({ rows }: { rows: Array<[string, string]> }) {
   return (
-    <dl className="flex flex-col gap-2 px-1 text-[14px]">
+    <dl className="flex flex-col gap-2 px-1 text-body">
       {rows.map(([label, value], i) => (
         <div key={`${i}-${label}`} className="flex items-baseline justify-between gap-5">
           <dt className="text-muted-foreground">{label}</dt>
@@ -274,14 +274,14 @@ export function AdvanceFlow() {
 
             {needsSwitch && incomeAccount && (
               <section className="flex flex-col gap-2 px-1">
-                <h2 className="text-[15px] font-medium text-foreground">This switches your account to a Salary Account</h2>
-                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                <h2 className="text-heading font-medium text-foreground">This switches your account to a Salary Account</h2>
+                <p className="text-body leading-relaxed text-muted-foreground">
                   {product.switchSentence(incomeAccount.name, incomeAccount.number, money(SALARY_ACCOUNT_FEE))}
                 </p>
                 <button
                   type="button"
                   onClick={() => setShowFeatures((v) => !v)}
-                  className="w-fit cursor-pointer text-[13px] text-foreground underline underline-offset-2"
+                  className="w-fit cursor-pointer text-body text-foreground underline underline-offset-2"
                   aria-expanded={showFeatures}
                 >
                   {showFeatures ? "Hide what a Salary Account includes" : "What a Salary Account includes"}
@@ -289,7 +289,7 @@ export function AdvanceFlow() {
                 {showFeatures && (
                   <ul className="flex flex-col gap-2 pt-1 animate-in fade-in duration-200">
                     {SALARY_ACCOUNT_FEATURES.map((f) => (
-                      <li key={f} className="text-[13px] text-muted-foreground">
+                      <li key={f} className="text-body text-muted-foreground">
                         {f}
                       </li>
                     ))}

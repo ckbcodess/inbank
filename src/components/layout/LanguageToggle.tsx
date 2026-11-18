@@ -31,14 +31,14 @@ export default function LanguageToggle({
       <SimpleTooltip content={t("header.language", "Language")} side="bottom">
         <DropdownMenuTrigger
           className={cn(
-            "flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg px-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground outline-none cursor-pointer",
+            "flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg px-2 text-meta font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground outline-none cursor-pointer",
             className
           )}
           aria-label={t("header.language", "Change language")}
         >
           <Globe size={16} className="shrink-0" />
           {showLabel && (
-            <span className="text-[11px] tracking-wide text-foreground">
+            <span className="text-meta tracking-wide text-foreground">
               {current.shortLabel}
             </span>
           )}
@@ -46,7 +46,7 @@ export default function LanguageToggle({
       </SimpleTooltip>
 
       <DropdownMenuContent align="end" className="w-42">
-        <DropdownMenuLabel className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        <DropdownMenuLabel className="text-meta font-medium text-muted-foreground">
           {t("header.language", "Select Language")}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -56,10 +56,10 @@ export default function LanguageToggle({
             <DropdownMenuItem
               key={lang.code}
               onClick={() => setLanguage(lang.code)}
-              className="flex items-center justify-between py-2 text-[13px] cursor-pointer"
+              className="flex items-center justify-between py-2 text-body cursor-pointer"
             >
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-[15px] select-none shrink-0" aria-hidden="true">
+                <span className="text-body select-none shrink-0" aria-hidden="true">
                   {lang.flag}
                 </span>
                 <span

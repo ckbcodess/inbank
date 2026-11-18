@@ -406,12 +406,12 @@ export default function SelfieCapture({
           ) : cameraState === "requesting" ? (
             <div className="flex flex-col items-center gap-2 p-3 text-center text-muted-foreground">
               <AppLoader size={32} />
-              <span className="text-[12px] font-medium text-foreground">Starting camera...</span>
+              <span className="text-meta font-medium text-foreground">Starting camera...</span>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 p-4 text-center text-muted-foreground">
               <CameraOff size={32} className="text-muted-foreground/80" />
-              <span className="text-[12px] leading-tight">
+              <span className="text-meta leading-tight">
                 {errorMessage || "Camera unavailable"}
               </span>
             </div>
@@ -421,7 +421,7 @@ export default function SelfieCapture({
         {/* Real-time centering guidance banner */}
         {!capturedImage && cameraState === "ready" && (
           <div
-            className={`inline-flex items-center gap-2 rounded-full px-2 py-1 text-[12px] font-medium transition duration-150 animate-in fade-in ${
+            className={`inline-flex items-center gap-2 rounded-full px-2 py-1 text-meta font-medium transition duration-150 animate-in fade-in ${
               facePosition === "centered"
                 ? "bg-success/10 text-success-text"
                 : facePosition === "off_center" || facePosition === "too_close"
@@ -446,7 +446,7 @@ export default function SelfieCapture({
       </div>
 
       {notice && (
-        <p role="alert" className="text-center text-[14px] leading-relaxed text-destructive-text">
+        <p role="alert" className="text-center text-body leading-relaxed text-destructive-text">
           {notice}
         </p>
       )}
@@ -472,7 +472,7 @@ export default function SelfieCapture({
               <button
                 type="button"
                 onClick={handleRetakeClick}
-                className="inline-flex items-center justify-center gap-2 text-[12px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
+                className="inline-flex items-center justify-center gap-2 text-meta text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
               >
                 <RefreshCw size={13} />
                 Retake photo

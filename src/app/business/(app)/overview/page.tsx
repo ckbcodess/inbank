@@ -88,12 +88,12 @@ export default function BusinessOverviewPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-2">
           <h1
-            className="text-[18px] font-medium leading-[24px] tracking-[var(--ls-heading)] text-foreground sm:text-[20px] sm:leading-[28px] lg:text-[22px]"
+            className="type-page-title font-medium leading-[24px] tracking-[var(--ls-heading)] text-foreground sm:leading-[28px]"
             suppressHydrationWarning
           >
             {`${greeting(new Date().getHours())}, ${firstName}`}
           </h1>
-          <span className="text-[12px] text-muted-foreground">
+          <span className="text-meta text-muted-foreground">
             {role ? `${activeProfile?.name ?? "Business Banking"} · ${role}` : activeProfile?.name}
           </span>
         </div>
@@ -114,9 +114,9 @@ export default function BusinessOverviewPage() {
       <HeroStack
         hero={
           <HeroSurface className="flex flex-col items-center gap-3 rounded-t-3xl px-3 pb-12 pt-12 sm:pb-24 sm:pt-16">
-            <span className="text-[13px] text-[color-mix(in_oklch,var(--hero-foreground)_72%,transparent)]">{cashLine}</span>
+            <span className="text-body text-[color-mix(in_oklch,var(--hero-foreground)_72%,transparent)]">{cashLine}</span>
             <div className="flex items-center gap-2 text-[var(--hero-balance-foreground)]">
-              <span className="tabular whitespace-nowrap text-[28px] leading-[32px] tracking-[var(--ls-heading)] sm:text-[44px] sm:leading-[48px]">
+              <span className="tabular whitespace-nowrap type-balance tracking-[var(--ls-heading)]">
                 GHS <RevealingAmount amount={totalAvailable} currency="" showAmounts={showBalance} />
               </span>
               <button
@@ -129,7 +129,7 @@ export default function BusinessOverviewPage() {
               </button>
             </div>
             {hasForeign && (
-              <span className="text-[12px] text-[color-mix(in_oklch,var(--hero-foreground)_60%,transparent)]">
+              <span className="text-meta text-[color-mix(in_oklch,var(--hero-foreground)_60%,transparent)]">
                 Foreign currency counted in GHS at today&apos;s rate
               </span>
             )}

@@ -71,7 +71,7 @@ export function SearchPicker({
         data-invalid={invalid || undefined}
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}
-        className="flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 field-surface rounded-xl border border-transparent bg-field px-3 py-2 text-left text-[14px] text-foreground outline-none transition-all "
+        className="flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 field-surface rounded-xl border border-transparent bg-field px-3 py-2 text-left text-body text-foreground outline-none transition-all "
       >
         <span className="flex min-w-0 items-center gap-3">
           {chosen ? chosen.mark(28) : emptyMark}
@@ -89,7 +89,7 @@ export function SearchPicker({
             clearLabel="Clear search"
           />
           {rows.length === 0 ? (
-            <p className="py-8 text-center text-[13px] text-muted-foreground">{emptyText}</p>
+            <p className="py-8 text-center text-body text-muted-foreground">{emptyText}</p>
           ) : (
             <div
               role="listbox"
@@ -110,8 +110,8 @@ export function SearchPicker({
                 >
                   {item.mark(36)}
                   <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[14px] text-foreground">{item.label}</span>
-                    {item.sublabel && <span className="truncate text-[12px] text-muted-foreground">{item.sublabel}</span>}
+                    <span className="truncate text-body text-foreground">{item.label}</span>
+                    {item.sublabel && <span className="truncate text-meta text-muted-foreground">{item.sublabel}</span>}
                   </span>
                   {item.id === value && <Check size={14} className="shrink-0 text-foreground" aria-hidden="true" />}
                 </button>

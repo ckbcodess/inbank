@@ -123,8 +123,8 @@ export function TransactionReceipt({ id, list, success, repeatHref, extraStates 
   if (!txn) {
     return (
       <div className="mx-auto flex max-w-[480px] flex-col items-center justify-center gap-3 py-12 text-center">
-        <h1 className="text-[20px] text-foreground">Transaction not found</h1>
-        <p className="text-[14px] text-muted-foreground">
+        <h1 className="text-fact text-foreground">Transaction not found</h1>
+        <p className="text-body text-muted-foreground">
           The transaction record you requested could not be located.
         </p>
         <Button onClick={() => router.push(back.href)} variant="outline" className="mt-2">
@@ -285,20 +285,20 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
           <div className="mb-2 flex items-center justify-center">
             <GCBLogo className="h-7 w-auto text-foreground" />
           </div>
-          <span className="text-[16px] font-medium text-foreground">{getTransactionType(txn)}</span>
+          <span className="text-heading font-medium text-foreground">{getTransactionType(txn)}</span>
           <span
             className={cn(
-              "tabular text-[34px] tracking-[var(--ls-heading)] text-foreground sm:text-[42px]",
+              "tabular type-balance tracking-[var(--ls-heading)] text-foreground",
             )}
           >
             {isCredit ? "+" : "-"}
             {formatMoney(txn.amount, txn.currency, true)}
           </span>
-          <span className="tabular text-[13px] text-muted-foreground">
+          <span className="tabular text-body text-muted-foreground">
             {formatDate(txn.date)}, {formattedTime}
           </span>
           {isForeign && (
-            <p className="tabular text-[13px] text-muted-foreground">
+            <p className="tabular text-body text-muted-foreground">
               ≈ {formatMoney(txn.amount * exchangeRate, "GHS", true)} (1 {txn.currency} = {exchangeRate.toFixed(2)} GHS)
             </p>
           )}
@@ -363,8 +363,8 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
                     <TotalRow key={row.label} label={row.label} value={row.value} definition />
                   ) : (
                     <div key={row.label} className="flex items-baseline justify-between gap-5">
-                      <dt className="shrink-0 text-[13px] text-muted-foreground">{row.label}</dt>
-                      <dd className="tabular min-w-0 text-right text-[14px] text-foreground">{row.value}</dd>
+                      <dt className="shrink-0 text-body text-muted-foreground">{row.label}</dt>
+                      <dd className="tabular min-w-0 text-right text-body text-foreground">{row.value}</dd>
                     </div>
                   )
                 )}
@@ -498,11 +498,11 @@ export function Band({
   }[tone];
 
   return (
-    <section className={cn("rounded-2xl border p-3 text-[13px]", toneClasses)}>
+    <section className={cn("rounded-2xl border p-3 text-body", toneClasses)}>
       <div className="flex items-start gap-2">
         <span className="mt-0.5 shrink-0">{icon}</span>
         <div className="min-w-0 flex-1">
-          <p className="text-[14px]">{title}</p>
+          <p className="text-body">{title}</p>
           <div className="mt-1 text-foreground/90">{children}</div>
         </div>
       </div>

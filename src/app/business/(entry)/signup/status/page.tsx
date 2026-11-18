@@ -213,7 +213,7 @@ function StatusContent() {
             autoFocus
           />
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
@@ -221,7 +221,7 @@ function StatusContent() {
             type="button"
             disabled={countdown > 0}
             onClick={() => setCountdown(RESEND_SECONDS)}
-            className="cursor-pointer self-center text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
+            className="cursor-pointer self-center text-body text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
           >
             {countdown > 0 ? (
               <>
@@ -262,9 +262,9 @@ function StatusContent() {
           <section className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <AlertCircle size={16} className="shrink-0 text-warning-text" aria-hidden="true" />
-              <h2 className="text-[14px] font-medium text-foreground">{openReturn.reason}</h2>
+              <h2 className="text-body font-medium text-foreground">{openReturn.reason}</h2>
             </div>
-            <p className="text-[13px] leading-relaxed text-muted-foreground">{openReturn.details}</p>
+            <p className="text-body leading-relaxed text-muted-foreground">{openReturn.details}</p>
           </section>
         )}
 
@@ -272,7 +272,7 @@ function StatusContent() {
           <section className="flex flex-col gap-4">
             {app.status === "awaiting_letter" && (
               <div className="flex flex-col gap-3">
-                <h2 className="text-[14px] font-medium text-foreground">Upload Your Signed Letter</h2>
+                <h2 className="text-body font-medium text-foreground">Upload Your Signed Letter</h2>
                 {company && (
                   <Button
                     variant="outline"
@@ -297,7 +297,7 @@ function StatusContent() {
             <Button size="md" loading={busy} disabled={!letter} onClick={handleSendLetter} className="w-full">
               Send Letter
             </Button>
-            <p className="text-center text-[12px] text-muted-foreground">
+            <p className="text-center text-meta text-muted-foreground">
               {`Or email it to ${reviewer.email ?? "your relationship manager"}, post it, or bring it to any branch.`}
             </p>
           </section>
@@ -305,11 +305,11 @@ function StatusContent() {
 
         {app.status === "rejected" && (
           <section className="flex flex-col gap-2">
-            <h2 className="text-[14px] font-medium text-foreground">Why It Was Declined</h2>
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
+            <h2 className="text-body font-medium text-foreground">Why It Was Declined</h2>
+            <p className="text-body leading-relaxed text-muted-foreground">
               {app.rejectionReason ?? "The bank couldn't approve this application."}
             </p>
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
+            <p className="text-body leading-relaxed text-muted-foreground">
               {`${reviewer.name} can tell you what to do next.`}
               {reviewer.phone && <span className="tabular"> {reviewer.phone}</span>}
             </p>
@@ -318,7 +318,7 @@ function StatusContent() {
 
         {app.status === "approved" && (
           <section className="flex flex-col gap-3">
-            <h2 className="text-[14px] font-medium text-foreground">Users</h2>
+            <h2 className="text-body font-medium text-foreground">Users</h2>
             <ul className="flex flex-col gap-1">
               {app.users.map((u) => {
                 const used = u.inviteStatus === "used";
@@ -326,8 +326,8 @@ function StatusContent() {
                 return (
                   <li key={u.id} className="flex items-center justify-between gap-3 py-1">
                     <div className="min-w-0">
-                      <p className="truncate text-[14px] text-foreground">{u.name}</p>
-                      <p className="truncate text-[12px] text-muted-foreground">
+                      <p className="truncate text-body text-foreground">{u.name}</p>
+                      <p className="truncate text-meta text-muted-foreground">
                         {u.role} · {used ? "Logged in" : expired ? "Link expired" : "Details sent"}
                       </p>
                     </div>
@@ -352,7 +352,7 @@ function StatusContent() {
                 );
               })}
             </ul>
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Each person gets their username by SMS and a link to set their password by email.
             </p>
           </section>
@@ -360,7 +360,7 @@ function StatusContent() {
 
         {/* Where it is */}
         <section className="flex flex-col gap-3">
-          <h2 className="text-[14px] font-medium text-foreground">Progress</h2>
+          <h2 className="text-body font-medium text-foreground">Progress</h2>
           <ol className="flex flex-col">
             {app.timeline.map((item, i) => {
               const last = i === app.timeline.length - 1;
@@ -383,19 +383,19 @@ function StatusContent() {
                   </div>
                   <div className={`flex min-w-0 flex-1 flex-col gap-0.5 ${last ? "" : "pb-5"}`}>
                     <div className="flex items-baseline justify-between gap-3">
-                      <p className={`text-[14px] ${item.done || item.current ? "text-foreground" : "text-muted-foreground"}`}>
+                      <p className={`text-body ${item.done || item.current ? "text-foreground" : "text-muted-foreground"}`}>
                         {item.label}
                         <span className="sr-only">{item.done ? " (done)" : item.current ? " (now)" : " (to come)"}</span>
                       </p>
-                      <span className="tabular shrink-0 text-[12px] text-muted-foreground">{item.timestamp}</span>
+                      <span className="tabular shrink-0 text-meta text-muted-foreground">{item.timestamp}</span>
                     </div>
-                    <p className="text-[12px] leading-relaxed text-muted-foreground">{item.description}</p>
+                    <p className="text-meta leading-relaxed text-muted-foreground">{item.description}</p>
                   </div>
                 </li>
               );
             })}
           </ol>
-          <p className="text-[12px] text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             {reviewer.type === "rm" ? `${reviewer.name}, your relationship manager, is handling this.` : `Our ${reviewer.name} is handling this.`}
             {reviewer.email ? ` ${reviewer.email}` : ""}
           </p>

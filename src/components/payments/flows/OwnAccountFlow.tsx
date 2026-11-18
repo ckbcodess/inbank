@@ -106,11 +106,11 @@ export function OwnAccountFlow({
       {/* 2. To Account */}
       <Field label="To Account">
         {accounts.filter((a) => a.id !== state.fromId).length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-3 text-[13px] text-muted-foreground">
+          <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-3 text-body text-muted-foreground">
             <p>You have one active account. Link another account under your Ghana Card to transfer between them.</p>
             <Link
               href="/accounts"
-              className="mt-2 inline-flex items-center gap-2 text-primary hover:underline font-medium text-[12px]"
+              className="mt-2 inline-flex items-center gap-2 text-primary hover:underline font-medium text-meta"
             >
               Go to Accounts &amp; Cards to link an account &rarr;
             </Link>
@@ -151,7 +151,7 @@ export function OwnAccountFlow({
           </Select>
         )}
         {Boolean(state.toOwnAccountId && state.toOwnAccountId === state.fromId) && (
-          <div className="flex items-center gap-2 text-[12px] text-destructive animate-in fade-in duration-150">
+          <div className="flex items-center gap-2 text-meta text-destructive animate-in fade-in duration-150">
             <AlertCircle size={14} className="shrink-0" />
             <span>Destination account cannot be the same as source account.</span>
           </div>

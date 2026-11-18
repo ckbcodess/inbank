@@ -83,7 +83,7 @@ export function PlanPage({ planId }: { planId: PlanId }) {
               {profile ? `Apply for ${plan.name}` : "Create a Profile"}
             </Button>
             {!profile && (
-              <p className="flex items-center justify-center gap-2 text-[13px] text-muted-foreground">
+              <p className="flex items-center justify-center gap-2 text-body text-muted-foreground">
                 <Info size={16} aria-hidden="true" className="shrink-0" />
                 {`You only do it once. We keep ${plan.name} for you.`}
               </p>

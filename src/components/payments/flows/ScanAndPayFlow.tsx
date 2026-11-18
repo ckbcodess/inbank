@@ -228,8 +228,8 @@ export function ScanAndPayFlow({
                     }
                   />
                   <div className="mt-3 flex flex-col items-center text-center">
-                    <span className="text-[14px] font-semibold text-foreground tracking-tight">{userName}</span>
-                    <span className="text-[12px] text-muted-foreground font-mono mt-0.5">
+                    <span className="text-body font-medium text-foreground tracking-tight">{userName}</span>
+                    <span className="text-meta text-muted-foreground font-mono mt-0.5">
                       {receiveAccount?.name || "Operating Account"} ∗∗∗∗ {(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}
                     </span>
                   </div>
@@ -312,7 +312,7 @@ export function ScanAndPayFlow({
                 </div>
 
                 {/* Subtitle helper placed directly underneath the crosshairs */}
-                <p className="mt-3 text-center px-3 text-[13px] font-medium text-white/90 tracking-tight drop-shadow-sm">
+                <p className="mt-3 text-center px-3 text-body font-medium text-white/90 tracking-tight drop-shadow-sm">
                   Scan the QR code to pay
                 </p>
 
@@ -363,7 +363,7 @@ export function ScanAndPayFlow({
             <DialogContent size="sm" className="rounded-3xl p-0 overflow-hidden shadow-2xl border border-border/70 bg-card text-foreground">
               {/* Header: Title on left, close on right */}
               <div className="flex items-center justify-between px-5 py-3 border-b border-border/60">
-                <span className="text-[16px] font-medium text-foreground tracking-tight">
+                <span className="text-heading font-medium text-foreground tracking-tight">
                   Merchant ID
                 </span>
                 <button
@@ -384,7 +384,7 @@ export function ScanAndPayFlow({
                 </div>
 
                 {/* Headline */}
-                <h3 className="text-[20px] sm:text-[22px] font-semibold text-foreground tracking-tight text-center mb-4">
+                <h3 className="type-headline font-medium text-foreground tracking-tight text-center mb-4">
                   Enter the merchant ID
                 </h3>
 
@@ -395,7 +395,7 @@ export function ScanAndPayFlow({
                     value={terminalInput}
                     onChange={(e) => setTerminalInput(e.target.value.toUpperCase())}
                     placeholder="E.G. GCB-QR-88210"
-                    className="h-10 w-full rounded-2xl border border-border bg-background px-3 text-center font-mono uppercase text-[15px] tracking-wider placeholder:text-muted-foreground/60 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    className="h-10 w-full rounded-2xl border border-border bg-background px-3 text-center font-mono text-body placeholder:text-muted-foreground/60 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && terminalInput.trim()) {
@@ -412,7 +412,7 @@ export function ScanAndPayFlow({
                 <button
                   type="button"
                   onClick={() => setTerminalDialogOpen(false)}
-                  className="text-[14px] font-medium text-muted-foreground hover:text-foreground px-2 py-1 transition-colors cursor-pointer"
+                  className="text-body font-medium text-muted-foreground hover:text-foreground px-2 py-1 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -457,14 +457,14 @@ export function ScanAndPayFlow({
                   </div>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-[14px] font-medium text-foreground truncate">
+                      <span className="text-body font-medium text-foreground truncate">
                         {state.qrMerchant}
                       </span>
                       <span className="flex size-3 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground shadow-xs">
                         <Check size={9} className="shrink-0" />
                       </span>
                     </div>
-                    <span className="text-[11px] text-muted-foreground font-mono">
+                    <span className="text-meta text-muted-foreground font-mono">
                       Terminal: {state.qrCode || "Universal QR Verified"}
                     </span>
                   </div>
@@ -474,7 +474,7 @@ export function ScanAndPayFlow({
                   variant="ghost"
                   size="sm"
                   onClick={handleClearMerchant}
-                  className="text-xs text-muted-foreground hover:text-foreground h-7 px-2"
+                  className="text-meta text-muted-foreground hover:text-foreground h-7 px-2"
                   aria-label="Change merchant"
                 >
                   Change

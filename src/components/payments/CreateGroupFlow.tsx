@@ -402,7 +402,7 @@ export default function CreateGroupFlow({
           {/* Select Members Section */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-[14px] font-medium text-foreground">
+              <span className="text-body font-medium text-foreground">
                 Select Members{" "}
                 <span className="text-muted-foreground font-normal">
                   ({members.length})
@@ -418,8 +418,8 @@ export default function CreateGroupFlow({
                     <div className="flex min-w-0 items-center gap-3">
                       <PayeeAvatar name={m.name} initials={initials(m.name)} size="md" />
                       <span className="flex min-w-0 flex-col">
-                        <span className="truncate text-[14px] text-foreground">{m.name}</span>
-                        <span className="truncate text-[12px] text-muted-foreground">
+                        <span className="truncate text-body text-foreground">{m.name}</span>
+                        <span className="truncate text-meta text-muted-foreground">
                           {m.networkOrBank} <span className="tabular">· {m.destination}</span>
                         </span>
                       </span>
@@ -475,7 +475,7 @@ export default function CreateGroupFlow({
                   aria-label="Search recipients"
                 />
                 {filteredContacts.length === 0 ? (
-                  <p className="py-8 text-center text-[13px] text-muted-foreground">
+                  <p className="py-8 text-center text-body text-muted-foreground">
                     Nobody saved matches that. Clear the search to see everyone.
                   </p>
                 ) : (
@@ -495,8 +495,8 @@ export default function CreateGroupFlow({
                           <span className="flex min-w-0 items-center gap-3">
                             <PayeeAvatar name={contact.name} initials={initials(contact.name)} size="md" />
                             <span className="flex min-w-0 flex-col">
-                              <span className="truncate text-[14px] text-foreground">{contact.name}</span>
-                              <span className="truncate text-[12px] text-muted-foreground">
+                              <span className="truncate text-body text-foreground">{contact.name}</span>
+                              <span className="truncate text-meta text-muted-foreground">
                                 {contact.networkOrBank} <span className="tabular">· {contact.destination}</span>
                               </span>
                             </span>
@@ -673,7 +673,7 @@ export default function CreateGroupFlow({
                 <button
                   type="button"
                   onClick={resetMemberAmounts}
-                  className="cursor-pointer text-[12px] text-foreground underline underline-offset-4"
+                  className="cursor-pointer text-meta text-foreground underline underline-offset-4"
                 >
                   Reset amounts
                 </button>
@@ -688,12 +688,12 @@ export default function CreateGroupFlow({
                   <div className="flex min-w-0 items-center gap-3">
                     <PayeeAvatar name={member.name} initials={initials(member.name)} size="md" />
                     <span className="flex min-w-0 flex-col">
-                      <span className="truncate text-[14px] text-foreground">{member.name}</span>
-                      <span className="truncate text-[12px] text-muted-foreground tabular">{member.destination}</span>
+                      <span className="truncate text-body text-foreground">{member.name}</span>
+                      <span className="truncate text-meta text-muted-foreground tabular">{member.destination}</span>
                     </span>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <span className="select-none text-[13px] text-muted-foreground">GHS</span>
+                    <span className="select-none text-body text-muted-foreground">GHS</span>
                     <Input
                       type="text"
                       inputMode="decimal"
@@ -756,7 +756,7 @@ export default function CreateGroupFlow({
           <DialogHeader>
             <DialogTitle>Discard unsaved changes?</DialogTitle>
           </DialogHeader>
-          <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground leading-relaxed">
+          <div className="px-4 sm:px-5 py-4 text-body text-muted-foreground leading-relaxed">
             You have unsaved changes in this group. Leaving now will discard your entered data.
           </div>
           <DialogFooter>

@@ -67,14 +67,14 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
   if (!card) {
     return (
       <div className="flex flex-col gap-3 p-5">
-        <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+        <div className="flex items-center gap-2 text-body text-muted-foreground">
           <Link href="/cards" className="hover:underline">
             Cards
           </Link>
           <ChevronRight size={14} />
           <span className="text-foreground font-medium">Card not found</span>
         </div>
-        <p className="text-[14px] text-muted-foreground">The requested card details could not be found.</p>
+        <p className="text-body text-muted-foreground">The requested card details could not be found.</p>
       </div>
     );
   }

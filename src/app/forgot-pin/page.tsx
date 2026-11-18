@@ -321,16 +321,16 @@ function ForgotPinContent() {
           <PinRequirements pin={pinDigits.join("")} />
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
           {!errorMsg && pinNote && (
-            <p className="-mt-2 text-center text-[13px] text-muted-foreground">{pinNote}</p>
+            <p className="-mt-2 text-center text-body text-muted-foreground">{pinNote}</p>
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Saving your PIN…</span>
             </div>
@@ -364,13 +364,13 @@ function ForgotPinContent() {
 
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Updating PIN...</span>
             </div>
@@ -383,7 +383,7 @@ function ForgotPinContent() {
           <Button variant="default" size="md" onClick={retrySelfie} className="w-full">
             Try again
           </Button>
-          <p className="text-center text-[12px] text-muted-foreground tabular">
+          <p className="text-center text-meta text-muted-foreground tabular">
             {MAX_SELFIE_ATTEMPTS - failedAttempts === 1
               ? "1 try left before we ask you to visit a branch"
               : `${MAX_SELFIE_ATTEMPTS - failedAttempts} tries left before we ask you to visit a branch`}

@@ -15,8 +15,8 @@ export function WorkInProgress({ title }: { title: string }) {
           <AppLoader size={22} />
         </span>
         <div className="flex flex-col gap-2">
-          <h2 className="text-[18px] tracking-[var(--ls-tight)] text-foreground">Work in progress</h2>
-          <p className="max-w-[340px] text-[13px] leading-relaxed text-muted-foreground">
+          <h2 className="text-title tracking-[var(--ls-tight)] text-foreground">Work in progress</h2>
+          <p className="max-w-[340px] text-body leading-relaxed text-muted-foreground">
             {title} is on the way — we&rsquo;re still building it.
           </p>
         </div>

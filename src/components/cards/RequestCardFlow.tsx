@@ -459,8 +459,8 @@ export function RequestCardFlow() {
                   />
                 ) : (
                   <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-muted/30 px-3 py-3">
-                  <span className="text-[13px] text-muted-foreground">Balance moving to the new card</span>
-                  <span className="tabular text-[14px] text-foreground">{fmtGhs(carriedBalance ?? 0, currency)}</span>
+                  <span className="text-body text-muted-foreground">Balance moving to the new card</span>
+                  <span className="tabular text-body text-foreground">{fmtGhs(carriedBalance ?? 0, currency)}</span>
                 </div>
                 )}
 
@@ -490,7 +490,7 @@ export function RequestCardFlow() {
                     <SelectTrigger className="h-auto">
                       <div className="flex min-w-0 flex-1 items-center gap-2">
                         <NetworkChip scheme={cardScheme} />
-                        <span className="text-[14px] font-medium text-foreground truncate">{cardScheme}</span>
+                        <span className="text-body font-medium text-foreground truncate">{cardScheme}</span>
                       </div>
                     </SelectTrigger>
                     <SelectContent>
@@ -498,7 +498,7 @@ export function RequestCardFlow() {
                         <SelectItem key={scheme} value={scheme}>
                           <div className="flex items-center gap-2 py-0.5">
                             <NetworkChip scheme={scheme} />
-                            <span className="text-[14px] font-medium text-foreground">{scheme}</span>
+                            <span className="text-body font-medium text-foreground">{scheme}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -517,14 +517,14 @@ export function RequestCardFlow() {
                     <SelectTrigger className="h-auto">
                       <div className="flex flex-col min-w-0 text-left flex-1">
                         <span
-                          className={`text-[14px] font-medium truncate leading-tight ${
+                          className={`text-body font-medium truncate leading-tight ${
                             networkType ? "text-foreground" : "text-muted-foreground font-normal"
                           }`}
                         >
                           {networkType || "Select card tier"}
                         </span>
                         {networkType && (
-                          <span className="text-[12px] text-muted-foreground truncate leading-tight mt-0.5">
+                          <span className="text-meta text-muted-foreground truncate leading-tight mt-0.5">
                             {NETWORK_TIERS[cardScheme].find((t) => t.id === networkType)?.description ?? "Card tier"}
                           </span>
                         )}
@@ -534,8 +534,8 @@ export function RequestCardFlow() {
                       {NETWORK_TIERS[cardScheme].map((opt) => (
                         <SelectItem key={opt.id} value={opt.id}>
                           <div className="flex flex-col min-w-0 py-0.5 text-left">
-                            <span className="text-[14px] font-medium text-foreground">{opt.label}</span>
-                            <span className="text-[12px] text-muted-foreground">{opt.description}</span>
+                            <span className="text-body font-medium text-foreground">{opt.label}</span>
+                            <span className="text-meta text-muted-foreground">{opt.description}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -557,8 +557,8 @@ export function RequestCardFlow() {
                     )}
                     {cardType === "Prepaid" && !needsFunding && (
                       <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-muted/30 px-3 py-3">
-                  <span className="text-[13px] text-muted-foreground">Balance moving to the new card</span>
-                  <span className="tabular text-[14px] text-foreground">{fmtGhs(carriedBalance ?? 0, currency)}</span>
+                  <span className="text-body text-muted-foreground">Balance moving to the new card</span>
+                  <span className="tabular text-body text-foreground">{fmtGhs(carriedBalance ?? 0, currency)}</span>
                 </div>
                     )}
 
@@ -665,7 +665,7 @@ export function RequestCardFlow() {
                 {/* Top Row: GCB Logo (Left) & Unboxed Card Type (Right) */}
                 <div className="relative z-10 flex items-center justify-between transition-colors duration-300">
                   <GcbCardLogo themeId={selectedTheme.id} className="h-7 sm:h-8 w-auto aspect-[37.1621/32] drop-shadow-xs shrink-0 transition-colors duration-300" />
-                  <span className="text-[14px] sm:text-[15px] font-normal tracking-wide opacity-90 capitalize transition-colors duration-300 shrink-0">
+                  <span className="text-body font-normal tracking-wide opacity-90 capitalize transition-colors duration-300 shrink-0">
                     {cardType}
                   </span>
                 </div>
@@ -683,19 +683,19 @@ export function RequestCardFlow() {
                 {/* Bottom Row: CARD HOLDER (Left), EXP (Center), VISA/Mastercard (Right) */}
                 <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-3 transition-colors duration-300">
                   <div className="flex flex-col gap-0.5 text-left">
-                    <span className="text-[11px] sm:text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                    <span className="text-meta font-medium opacity-60 leading-[16px]">
                       CARD HOLDER
                     </span>
-                    <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight uppercase">
+                    <span className="text-heading sm:text-title font-medium leading-[22px] tracking-tight">
                       {actor?.name ?? "RANSFORD GYASI"}
                     </span>
                   </div>
 
                   <div className="flex flex-col gap-0.5 text-left">
-                    <span className="text-[11px] sm:text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                    <span className="text-meta font-medium opacity-60 leading-[16px]">
                       EXP
                     </span>
-                    <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight">
+                    <span className="text-heading sm:text-title font-medium leading-[22px] tracking-tight">
                       09/28
                     </span>
                   </div>
@@ -808,10 +808,10 @@ export function RequestCardFlow() {
               </div>
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-[15px] font-medium text-foreground tracking-[var(--ls-tight)] truncate">
+              <span className="text-heading font-medium text-foreground tracking-[var(--ls-tight)] truncate">
                 {cardName.trim() || `${cardType} Card`}
               </span>
-              <span className="text-[13px] text-muted-foreground mt-0.5">
+              <span className="text-body text-muted-foreground mt-0.5">
                 {cardType === "Virtual"
                   ? `Virtual Card • ${selectedTheme.name}`
                   : `${cardType} Card • ${cardScheme} (${networkType}) • ${selectedTheme.name}`}
@@ -822,35 +822,35 @@ export function RequestCardFlow() {
           {/* Detailed Summary Rows */}
           <div className="rounded-2xl border border-border/80 bg-card divide-y divide-border/80 overflow-hidden">
             <div className="p-3 flex items-center justify-between gap-3">
-              <span className="text-[13px] text-muted-foreground">Card Nickname</span>
-              <span className="text-[14px] font-medium text-foreground truncate">
+              <span className="text-body text-muted-foreground">Card Nickname</span>
+              <span className="text-body font-medium text-foreground truncate">
                 {cardName.trim() || `${cardType} Card`}
               </span>
             </div>
 
             <div className="p-3 flex items-center justify-between gap-3">
-              <span className="text-[13px] text-muted-foreground">Source account</span>
+              <span className="text-body text-muted-foreground">Source account</span>
               <div className="flex flex-col items-end text-right">
-                <span className="text-[14px] font-medium text-foreground">
+                <span className="text-body font-medium text-foreground">
                   {selectedAccount?.name ?? "Current Account"}
                 </span>
-                <span className="text-[12px] text-muted-foreground tabular-nums">
+                <span className="text-meta text-muted-foreground tabular-nums">
                   {selectedAccount?.number ?? "1414 4124 4214"}
                 </span>
               </div>
             </div>
 
             <div className="p-3 flex items-center justify-between gap-3">
-              <span className="text-[13px] text-muted-foreground">Cardholder</span>
-              <span className="text-[14px] font-medium text-foreground">
+              <span className="text-body text-muted-foreground">Cardholder</span>
+              <span className="text-body font-medium text-foreground">
                 {actor?.name ?? "Ransford Gyasi"}
               </span>
             </div>
 
             {cardType !== "Virtual" && (
               <div className="p-3 flex items-center justify-between gap-3">
-                <span className="text-[13px] text-muted-foreground">Card Network</span>
-                <span className="text-[14px] font-medium text-foreground">
+                <span className="text-body text-muted-foreground">Card Network</span>
+                <span className="text-body font-medium text-foreground">
                   {cardScheme} • {networkType}
                 </span>
               </div>
@@ -858,40 +858,40 @@ export function RequestCardFlow() {
 
             {isFundable && (
               <div className="p-3 flex items-center justify-between gap-3">
-                <span className="text-[13px] text-muted-foreground">
+                <span className="text-body text-muted-foreground">
                   {isReplacement ? "Balance carried over" : "Initial funding"}
                 </span>
-                <span className="text-[14px] font-medium text-foreground tabular">
+                <span className="text-body font-medium text-foreground tabular">
                   {fmtGhs(carriedBalance ?? (Number(fundAmount.replace(/,/g, "")) || 0), currency)}
                 </span>
               </div>
             )}
 
             <div className="p-3 flex items-start justify-between gap-3">
-              <span className="text-[13px] text-muted-foreground pt-0.5">Mode of delivery</span>
+              <span className="text-body text-muted-foreground pt-0.5">Mode of delivery</span>
               <div className="flex flex-col items-end text-right max-w-[280px]">
                 {isPhysical ? (
                   deliveryMethod === "BRANCH_PICKUP" ? (
                     <>
-                      <span className="text-[14px] font-medium text-foreground">
+                      <span className="text-body font-medium text-foreground">
                         Branch pickup
                       </span>
-                      <span className="text-[12px] text-muted-foreground mt-0.5">
+                      <span className="text-meta text-muted-foreground mt-0.5">
                         {selectedBranch?.name ?? "Branch pickup"}
                       </span>
                     </>
                   ) : (
                     <>
-                      <span className="text-[14px] font-medium text-foreground">
+                      <span className="text-body font-medium text-foreground">
                         Doorstep delivery
                       </span>
-                      <span className="text-[12px] text-muted-foreground mt-0.5">
+                      <span className="text-meta text-muted-foreground mt-0.5">
                         {deliveryAddress}, {deliveryCity}
                       </span>
                     </>
                   )
                 ) : (
-                  <span className="text-[14px] font-medium text-foreground">
+                  <span className="text-body font-medium text-foreground">
                     Instant digital issuance
                   </span>
                 )}
@@ -899,21 +899,21 @@ export function RequestCardFlow() {
             </div>
 
             <div className="p-3 flex items-center justify-between gap-3">
-              <span className="text-[13px] text-muted-foreground">
+              <span className="text-body text-muted-foreground">
                 {isReplacement ? "Replacement fee" : "Issuance fee"}
               </span>
               <div className="flex flex-col items-end text-right">
-                <span className="text-[14px] font-medium text-foreground tabular">
+                <span className="text-body font-medium text-foreground tabular">
                   {fmtGhs(issuanceFee, currency)}
                 </span>
-                <span className="text-[12px] text-muted-foreground">Charged to source account</span>
+                <span className="text-meta text-muted-foreground">Charged to source account</span>
               </div>
             </div>
           </div>
 
           {/* Authorize CTA Button */}
           <div className="flex gap-2 pt-2">
-            <Button variant="outline" type="button" onClick={() => setStep("customize")} className="h-11 flex-1 text-[15px]">
+            <Button variant="outline" type="button" onClick={() => setStep("customize")} className="h-11 flex-1 text-body">
               Back
             </Button>
             <Button size="xl" type="button" onClick={() => setAuthModalOpen(true)} className="flex-1">
@@ -1046,7 +1046,7 @@ export function RequestCardFlow() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.44, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-                className="text-[26px] sm:text-[28px] font-medium leading-[34px] tracking-[var(--ls-heading)] text-foreground text-center"
+                className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground text-center"
               >
                 {isReplacement ? "Replacement Request Confirmed" : "Card Request Confirmed"}
               </motion.h1>
@@ -1055,7 +1055,7 @@ export function RequestCardFlow() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-[14px] text-muted-foreground text-center"
+                  className="text-body text-muted-foreground text-center"
                 >
                   {isPhysical
                     ? `Your ${createdCard.type.toLowerCase()} card request has been submitted for production.`

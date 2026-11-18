@@ -2640,7 +2640,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         {/* Codes still waiting to be used. Whitespace, not boxes; a code stays hidden until asked for. */}
         {activeCodes.length > 0 && (
           <div className="flex flex-col gap-2 pt-2">
-            <h3 className="px-1 text-[14px] font-medium text-foreground">
+            <h3 className="px-1 text-body font-medium text-foreground">
               Active codes <span className="tabular text-muted-foreground">({activeCodes.length})</span>
             </h3>
             {/* The same tile as the accounts and hub rows: icon, title, a second line, chevron */}
@@ -2793,8 +2793,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             <div className="flex min-w-0 items-center gap-3">
               <GCBLogo className="h-6 w-auto shrink-0" />
               <div className="flex min-w-0 flex-col gap-0.5">
-                <span className="text-[12px] text-muted-foreground">Your proxy ID</span>
-                <span className="text-[14px] text-foreground tabular">{myProxy.value}</span>
+                <span className="text-meta text-muted-foreground">Your proxy ID</span>
+                <span className="text-body text-foreground tabular">{myProxy.value}</span>
               </div>
             </div>
             <button
@@ -2810,7 +2810,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             </button>
           </div>
         ) : (
-          <p className="rounded-2xl border border-dashed border-border bg-muted/20 px-3 py-2 text-[12px] text-muted-foreground">
+          <p className="rounded-2xl border border-dashed border-border bg-muted/20 px-3 py-2 text-meta text-muted-foreground">
             You don&apos;t have a proxy ID yet. Create one so others can pay you with your number.
           </p>
         )}
@@ -2882,7 +2882,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 Deregister your proxy ID?
               </DialogTitle>
             </DialogHeader>
-            <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground leading-relaxed">
+            <div className="px-4 sm:px-5 py-4 text-body text-muted-foreground leading-relaxed">
               People will no longer be able to pay you using{" "}
               <span className="text-foreground tabular">{myProxy?.value}</span>. You can register a new
               one at any time.
@@ -3009,16 +3009,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
               >
                 <span
-                  className="flex size-12 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
+                  className="flex size-12 items-center justify-center rounded-full text-fact text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
                   style={{ backgroundColor: groupAvatarTint(g.id) }}
                 >
                   {g.name.slice(0, 2).toUpperCase()}
                 </span>
                 <span className="flex flex-col">
-                  <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
+                  <span className="text-meta font-medium text-foreground truncate max-w-[80px]">
                     {g.name.split(" ")[0]}
                   </span>
-                  <span className="text-[11px] text-muted-foreground tabular">
+                  <span className="text-meta text-muted-foreground tabular">
                     {g.members.length} {g.members.length === 1 ? "member" : "members"}
                   </span>
                 </span>
@@ -3882,7 +3882,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             />
 
             {/* Disclaimer */}
-            <p className="text-[12px] text-muted-foreground text-center px-3 -mt-1">
+            <p className="text-meta text-muted-foreground text-center px-3 -mt-1">
               {f.isScheduled
                 ? "Clicking “Proceed & Schedule” authorizes GCB Bank PLC to schedule the payment order."
                 : "Clicking “Proceed to Pay” authorizes GCB Bank PLC to initiate the transaction."}

@@ -47,15 +47,15 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[15px] font-medium text-foreground">Your Accounts</h2>
+          <h2 className="text-heading font-medium text-foreground">Your Accounts</h2>
         </div>
-        <Link href="/accounts" className="text-[12px] text-foreground underline-offset-4 hover:underline">
+        <Link href="/accounts" className="text-meta text-foreground underline-offset-4 hover:underline">
           View all accounts →
         </Link>
       </div>
 
       {accounts.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-card p-6 text-center text-[13px] text-muted-foreground">
+        <div className="rounded-2xl border border-border bg-card p-6 text-center text-body text-muted-foreground">
           No accounts on this relationship yet.
         </div>
       ) : (
@@ -76,8 +76,8 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
                         <Building2 size={16} aria-hidden="true" />
                       </span>
                       <div className="min-w-0">
-                        <p className="truncate text-[13px] font-medium text-foreground">{acc.name}</p>
-                        <p className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                        <p className="truncate text-body font-medium text-foreground">{acc.name}</p>
+                        <p className="flex items-center gap-2 text-meta text-muted-foreground">
                           <span>{acc.name.toLowerCase().includes(acc.type.toLowerCase()) ? acc.number : `${acc.type} · ${acc.number}`}</span>
                           <CopyAccountNumberButton number={acc.number} />
                         </p>
@@ -86,20 +86,20 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
 
                     <div className="flex items-center gap-2 shrink-0">
                       {acc.status === "Dormant" && <Badge variant="warning">Dormant</Badge>}
-                      <Badge variant={idx === 0 ? "default" : "secondary"} className="text-[10px]">
+                      <Badge variant={idx === 0 ? "default" : "secondary"} className="text-meta">
                         {idx === 0 ? "Primary" : "Secondary"}
                       </Badge>
                     </div>
                   </div>
 
                   <div className="pt-1">
-                    <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground block">
+                    <span className="text-meta font-medium text-muted-foreground block">
                       Available Balance
                     </span>
-                    <div className="text-2xl font-medium tracking-tight text-foreground tabular mt-0.5">
+                    <div className="text-fact font-medium tracking-tight text-foreground tabular mt-0.5">
                       {formatMoney(acc.available, acc.currency, showAmounts)}
                     </div>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                    <p className="text-meta text-muted-foreground mt-0.5">
                       {localEquivalent !== null
                         ? `≈ ${formatMoney(localEquivalent, "GHS", showAmounts)}`
                         : held > 0.01
@@ -109,7 +109,7 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-border/60 pt-2 text-[12px]">
+                <div className="flex items-center justify-between border-t border-border/60 pt-2 text-meta">
                   <Link
                     href={`/accounts/${acc.id}/statement`}
                     className="flex items-center gap-1 font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -120,7 +120,7 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-6 text-xs gap-2"
+                    className="h-6 text-meta gap-2"
                     nativeButton={false}
                     render={<Link href={`/payments/send?source=${acc.id}`} />}
                   >

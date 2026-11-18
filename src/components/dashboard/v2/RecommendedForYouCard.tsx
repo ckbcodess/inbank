@@ -204,7 +204,7 @@ export function RecommendedForYouCard({
       <Shapes index={index} />
 
       <div className="relative z-10 flex items-center justify-between">
-        <span className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">
+        <span className="text-body font-medium leading-none text-foreground sm:text-heading">
           {t("dashboard.recommendedForYou", "Recommended for you")}
         </span>
         <Chevrons i={index} total={recommendations.length} onChange={setIndex} />
@@ -219,7 +219,7 @@ export function RecommendedForYouCard({
           className="relative z-10 flex flex-1 flex-col items-center justify-between text-center"
         >
           <div className="flex flex-1 flex-col items-center justify-center gap-2 px-2">
-            <p className="text-[19px] font-medium leading-[1.35] tracking-[var(--ls-tight)] text-foreground sm:text-[21px]">
+            <p className="text-fact font-medium leading-[1.35] tracking-[var(--ls-tight)] text-foreground">
               {words.map((w, n) => (
                 <Fragment key={n}>
                   <motion.span className="inline-block" {...reveal(n * WORD_STEP)}>
@@ -229,14 +229,14 @@ export function RecommendedForYouCard({
                 </Fragment>
               ))}
             </p>
-            <motion.p className="text-[12px] text-muted-foreground" {...reveal(reasonAt)}>
+            <motion.p className="text-meta text-muted-foreground" {...reveal(reasonAt)}>
               {r.reason}
             </motion.p>
           </div>
           <motion.div {...reveal(reasonAt + WORD_STEP * 2)}>
             <Link
               href={r.ctaHref}
-              className="group -my-2 inline-flex items-center gap-2 py-2 text-[13px] text-foreground transition-colors duration-hover hover:text-foreground/80"
+              className="group -my-2 inline-flex items-center gap-2 py-2 text-body text-foreground transition-colors duration-hover hover:text-foreground/80"
             >
               {r.ctaLabel}
               <ArrowRight size={14} className="transition-transform duration-hover group-hover:translate-x-0.5" />

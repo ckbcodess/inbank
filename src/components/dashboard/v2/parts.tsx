@@ -153,14 +153,14 @@ export function CardHeader({ title, href, cta, onCta }: { title: string; href?: 
   const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between">
-      <span className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">{title}</span>
+      <span className="text-body font-medium leading-none text-foreground sm:text-heading">{title}</span>
       {onCta ? (
-        <button type="button" onClick={onCta} className="-my-2 cursor-pointer py-2 text-[12px] text-muted-foreground transition-colors hover:text-foreground">
+        <button type="button" onClick={onCta} className="-my-2 cursor-pointer py-2 text-meta text-muted-foreground transition-colors hover:text-foreground">
           {cta ?? t("dashboard.viewAll", "View all")}
         </button>
       ) : href && (
         // Taller hit area for a thumb without moving the text.
-        <Link href={href} className="-my-2 py-2 text-[12px] text-muted-foreground transition-colors hover:text-foreground">
+        <Link href={href} className="-my-2 py-2 text-meta text-muted-foreground transition-colors hover:text-foreground">
           {cta ?? t("dashboard.viewAll", "View all")}
         </Link>
       )}
@@ -186,7 +186,7 @@ export function PanelEmpty({
     <div className="flex flex-1 flex-col items-center justify-center gap-2 py-5 text-center sm:py-6">
       {/* Bare and thin: nothing around it, so an empty panel stays quiet. */}
       {illustration ? <StateIllustration id={illustration} fallback={bareIcon} height={64} /> : bareIcon}
-      <p className="text-[13px] text-muted-foreground">{text}</p>
+      <p className="text-body text-muted-foreground">{text}</p>
       {action &&
         (action.href ? (
           <Button nativeButton={false} render={<Link href={action.href} />} variant="outline" size="sm" className="mt-2">
@@ -223,7 +223,7 @@ export function Greeting({ firstName, className }: { firstName: string; classNam
     <h1
       // Quieter on a phone so the balance, not the hello, is the loudest thing on screen.
       className={cn(
-        "text-[18px] font-medium leading-[24px] tracking-[var(--ls-heading)] text-foreground sm:text-[20px] sm:leading-[28px] lg:text-[22px]",
+        "type-page-title font-medium leading-[24px] tracking-[var(--ls-heading)] text-foreground sm:leading-[28px]",
         className,
       )}
       suppressHydrationWarning
@@ -311,7 +311,7 @@ export function MoneyActions({
                   ? HERO_GLASS
                   : "border border-[var(--border)] bg-[var(--tile)] text-foreground group-hover:bg-[var(--tile-hover)]"
             }
-            labelClassName={cn("text-[12px] font-semibold", hero && "text-[var(--hero-foreground)]")}
+            labelClassName={cn("text-meta font-medium", hero && "text-[var(--hero-foreground)]")}
           />
         ))}
         {picker}
@@ -320,7 +320,7 @@ export function MoneyActions({
   }
 
   const buttonClass = cn(
-    "h-auto gap-2 px-4 py-2 text-[14px] leading-none max-sm:flex-1 max-sm:min-w-0 max-sm:h-9 max-sm:gap-1 max-sm:px-2 max-sm:py-2 max-sm:text-[11px] max-sm:font-semibold max-sm:tracking-tight",
+    "h-auto gap-2 px-4 py-2 text-body leading-none max-sm:flex-1 max-sm:min-w-0 max-sm:h-9 max-sm:gap-1 max-sm:px-2 max-sm:py-2 max-sm:text-meta max-sm:font-medium max-sm:tracking-tight",
     // The hero's glass buttons keep the variant's own top highlight; a plain shadow here would replace it.
     hero ? "rounded-xl" : "shadow-xs",
   );
@@ -427,9 +427,9 @@ export function AccountSwitcher({
   const trigger = hero
     ? cn(
         buttonVariants({ variant: "glass" }),
-        "flex w-fit items-center gap-2 h-8 sm:h-9 px-3 rounded-xl text-[13px] sm:text-[15px] font-medium outline-none transition-[box-shadow,transform] cursor-pointer",
+        "flex w-fit items-center gap-2 h-8 sm:h-9 px-3 rounded-xl text-body sm:text-heading font-medium outline-none transition-[box-shadow,transform] cursor-pointer",
       )
-    : "-mx-2 flex w-fit items-center gap-2 rounded-lg px-2 py-2 text-[15px] leading-none text-foreground outline-none transition-colors hover:bg-muted";
+    : "-mx-2 flex w-fit items-center gap-2 rounded-lg px-2 py-2 text-body leading-none text-foreground outline-none transition-colors hover:bg-muted";
   const chevron = hero ? "text-[var(--hero-foreground)]" : "text-muted-foreground";
 
   if (data.accounts.length < 2) {
@@ -457,11 +457,11 @@ export function AccountSwitcher({
               key={a.id}
               value={a.id}
               closeOnClick
-              className="gap-2 rounded-lg py-2 pl-2 pr-8 text-[14px]"
+              className="gap-2 rounded-lg py-2 pl-2 pr-8 text-body"
             >
               <AccountLabel account={a} full />
               {a.id === data.defaultAccountId && (
-                <span className="ml-auto text-[12px] text-muted-foreground">{t("common.default", "Default")}</span>
+                <span className="ml-auto text-meta text-muted-foreground">{t("common.default", "Default")}</span>
               )}
             </DropdownMenuRadioItem>
           ))}
@@ -471,11 +471,11 @@ export function AccountSwitcher({
   );
 }
 
-// On a phone `xl` matches `lg` so a seven-figure balance (GHS 1,284,530.44) still fits one line.
+// There is one balance step (type-balance, 32px), so every size is the same and a seven-figure balance fits one line.
 const FIGURE_SIZE = {
-  md: "text-[28px]",
-  lg: "text-[34px]",
-  xl: "text-[34px] sm:text-[52px]",
+  md: "type-balance",
+  lg: "type-balance",
+  xl: "type-balance",
 } as const;
 
 /** The balance number + eye toggle. The eye hides this figure only. */
@@ -553,7 +553,7 @@ export function BalanceMeta({
   if (onHold <= 0 && !hasFlow && !timeLabel) return null;
 
   return (
-    <div className={cn("flex flex-col gap-2 text-[13px] text-muted-foreground", className)}>
+    <div className={cn("flex flex-col gap-2 text-body text-muted-foreground", className)}>
       {onHold > 0 && (
         <span className="tabular">
           {formatMoney(available, account.currency, showAmounts)} available ·{" "}
@@ -574,7 +574,7 @@ export function BalanceMeta({
         </span>
       )}
       {timeLabel && (
-        <span className="text-[12px] tabular text-muted-foreground/75" suppressHydrationWarning>
+        <span className="text-meta tabular text-muted-foreground/75" suppressHydrationWarning>
           {timeLabel}
         </span>
       )}
@@ -589,14 +589,14 @@ export function RefreshFailed({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card px-3 py-3 sm:px-5">
       <AlertCircle size={17} className="shrink-0 text-warning" />
-      <span className="min-w-0 flex-1 text-[13.5px] text-foreground">
+      <span className="min-w-0 flex-1 text-body text-foreground">
         Couldn&apos;t refresh your dashboard.{" "}
         <span className="text-muted-foreground">You&apos;re seeing your last update — your money hasn&apos;t moved.</span>
       </span>
       <button
         type="button"
         onClick={onRetry}
-        className="rounded-lg border border-border px-2 py-2 text-[13px] text-foreground transition-colors hover:bg-muted cursor-pointer"
+        className="rounded-lg border border-border px-2 py-2 text-body text-foreground transition-colors hover:bg-muted cursor-pointer"
       >
         Try again
       </button>
@@ -618,12 +618,12 @@ export function UpcomingList({ items, showAmounts }: { items: UpcomingPayment[];
       {items.map((p) => (
         <li key={p.id} className="flex items-center gap-3 py-2 sm:py-2 rounded-xl px-2 -mx-2 transition-colors hover:bg-item-hover">
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="truncate text-[13px] font-medium text-foreground">{p.payee}</span>
-            <span className="text-[12px] text-muted-foreground tabular">
+            <span className="truncate text-body font-medium text-foreground">{p.payee}</span>
+            <span className="text-meta text-muted-foreground tabular">
               {dayLabel(p.date)} · {p.frequencyLabel}
             </span>
           </span>
-          <span className="shrink-0 tabular text-[13px] font-medium text-foreground">
+          <span className="shrink-0 tabular text-body font-medium text-foreground">
             − {formatMoney(p.amount, p.currency, showAmounts)}
           </span>
         </li>
@@ -732,14 +732,14 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
             >
               <PayeeAvatar name={p.name} size="sm" />
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="truncate text-[13px] font-medium text-foreground">
+                <span className="truncate text-body font-medium text-foreground">
                   {p.name}
                 </span>
-                <span className="truncate text-[12px] text-muted-foreground">
+                <span className="truncate text-meta text-muted-foreground">
                   {p.detail}
                 </span>
               </span>
-              <span className="shrink-0 flex items-center gap-1 text-[12px] text-muted-foreground group-hover:text-foreground transition-colors">
+              <span className="shrink-0 flex items-center gap-1 text-meta text-muted-foreground group-hover:text-foreground transition-colors">
                 <span>Pay</span>
                 <ChevronRight size={14} className="text-muted-foreground/60 group-hover:translate-x-0.5 transition-transform" />
               </span>
@@ -759,8 +759,8 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
               >
                 <PayeeAvatar name={p.name} size="md" />
                 <span className="flex w-full min-w-0 flex-col gap-0.5">
-                  <span className="truncate text-[12px] leading-tight text-foreground font-medium">{p.name}</span>
-                  <span className="truncate text-[11px] leading-tight text-muted-foreground">{p.detail}</span>
+                  <span className="truncate text-meta leading-tight text-foreground font-medium">{p.name}</span>
+                  <span className="truncate text-meta leading-tight text-muted-foreground">{p.detail}</span>
                 </span>
               </Link>
             ))}
@@ -864,7 +864,7 @@ export function CardsCard({
         <div className="flex flex-1 flex-col justify-between gap-2">
           <CardsMini cards={data.cards} />
           {isUnfunded && onOpenFundModal && (
-            <div className="mt-auto flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
+            <div className="mt-auto flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-meta text-muted-foreground">
               <span>Card ready · active once funded</span>
               <button
                 type="button"
@@ -907,10 +907,10 @@ export function AnalyticsCard({
       >
         <span className="sr-only">Loading</span>
         <div className="flex items-center justify-between">
-          <h2 className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">
+          <h2 className="text-body font-medium leading-none text-foreground sm:text-heading">
             {t("dashboard.mySpends", "My Spends")}
           </h2>
-          <span className="text-[12px] text-muted-foreground">{t("dashboard.details", "Details")}</span>
+          <span className="text-meta text-muted-foreground">{t("dashboard.details", "Details")}</span>
         </div>
         <div className="relative my-auto flex flex-col items-center justify-center">
           <div className="relative aspect-[400/225] w-full max-w-[280px]">
@@ -962,11 +962,11 @@ export function FxBar({ defaultOpen = false, className }: { defaultOpen?: boolea
         className="flex w-full items-center justify-between gap-5 px-3 py-3 cursor-pointer sm:px-5"
         aria-expanded={open}
       >
-        <span className="shrink-0 text-[14px] font-medium leading-none text-foreground sm:text-[16px]">
+        <span className="shrink-0 text-body font-medium leading-none text-foreground sm:text-heading">
           {t("dashboard.exchangeRates", "Exchange rates")}
         </span>
         <span className="flex min-w-0 flex-1 items-center justify-end gap-3">
-          {!open && <span className="text-[13px] text-muted-foreground tabular">{fxPeek()}</span>}
+          {!open && <span className="text-body text-muted-foreground tabular">{fxPeek()}</span>}
           <ChevronDown
             size={16}
             className={cn("shrink-0 text-muted-foreground transition-transform duration-hover", open && "rotate-180")}

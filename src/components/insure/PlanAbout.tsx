@@ -17,7 +17,7 @@ export function PlanAboutContent({ planId }: { planId: PlanId }) {
 
   return (
     <>
-      {plan.description && <p className="px-1 text-[14px] leading-relaxed text-muted-foreground">{plan.description}</p>}
+      {plan.description && <p className="px-1 text-body leading-relaxed text-muted-foreground">{plan.description}</p>}
       <PlanAboutBody plan={plan} showAmounts={showAmounts} />
     </>
   );

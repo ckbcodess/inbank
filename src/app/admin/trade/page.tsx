@@ -54,7 +54,7 @@ export default function TradeMonitoringPage() {
       <StubNotice section="section 6 / sitemap 12.5" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="border-b border-border px-4 py-3 text-[15px] text-foreground">
+        <h2 className="border-b border-border px-4 py-3 text-heading text-foreground">
           Awaiting officer action
         </h2>
         <ul className="divide-y divide-border">
@@ -68,12 +68,12 @@ export default function TradeMonitoringPage() {
                   <Ship size={16} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[13px] text-foreground">{t.desc}</span>
-                  <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
+                  <span className="truncate text-body text-foreground">{t.desc}</span>
+                  <span className="mt-0.5 truncate text-meta text-muted-foreground tabular">
                     {t.ref} · {t.customer}
                   </span>
                 </span>
-                <span className="shrink-0 text-[13px] text-foreground tabular">
+                <span className="shrink-0 text-body text-foreground tabular">
                   {formatMoney(t.amount, "USD")}
                 </span>
                 <Badge variant={t.tone}>{t.flag}</Badge>

@@ -138,7 +138,7 @@ function DrawSignatureDialog({
           <DialogTitle>Draw your signature</DialogTitle>
         </DialogHeader>
         <DialogBody>
-          <p className="text-[13px] text-muted-foreground">Sign inside the box with your finger, a stylus or a mouse.</p>
+          <p className="text-body text-muted-foreground">Sign inside the box with your finger, a stylus or a mouse.</p>
           <canvas
             ref={attach}
             role="img"
@@ -149,7 +149,7 @@ function DrawSignatureDialog({
             onPointerCancel={end}
             className="h-48 w-full touch-none cursor-crosshair rounded-2xl border border-field-border bg-[var(--white)]"
           />
-          {!inked && <p className="text-[12px] text-muted-foreground">Draw your signature to continue.</p>}
+          {!inked && <p className="text-meta text-muted-foreground">Draw your signature to continue.</p>}
         </DialogBody>
         <DialogFooter>
           <Button variant="outline" size="md" onClick={clear} disabled={!inked}>
@@ -223,8 +223,8 @@ export function SignatureUpload({
               <FileText size={16} aria-hidden="true" />
             </span>
             <span className="flex min-w-0 flex-col">
-              <span className="truncate text-[14px] text-foreground">{file.name}</span>
-              <span className="tabular text-[12px] text-muted-foreground">{fileSize(file.size)}</span>
+              <span className="truncate text-body text-foreground">{file.name}</span>
+              <span className="tabular text-meta text-muted-foreground">{fileSize(file.size)}</span>
             </span>
           </div>
           <div className="flex shrink-0 items-center gap-1">
@@ -232,7 +232,7 @@ export function SignatureUpload({
               <button
                 type="button"
                 onClick={() => setPreviewOpen(true)}
-                className="cursor-pointer px-2 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                className="cursor-pointer px-2 text-body text-muted-foreground transition-colors hover:text-foreground"
               >
                 Preview
               </button>
@@ -256,8 +256,8 @@ export function SignatureUpload({
             className="flex min-h-[96px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-field-border bg-field px-3 py-4 text-center transition-colors hover:border-field-border-hover"
           >
             <Upload size={18} className="text-muted-foreground" aria-hidden="true" />
-            <span className="text-[14px] text-foreground">Upload a file</span>
-            <span className="text-[12px] text-muted-foreground">JPG, PNG or PDF, up to 5 MB</span>
+            <span className="text-body text-foreground">Upload a file</span>
+            <span className="text-meta text-muted-foreground">JPG, PNG or PDF, up to 5 MB</span>
           </button>
           <button
             type="button"
@@ -265,8 +265,8 @@ export function SignatureUpload({
             className="flex min-h-[96px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-field-border bg-field px-3 py-4 text-center transition-colors hover:border-field-border-hover"
           >
             <Pencil size={18} className="text-muted-foreground" aria-hidden="true" />
-            <span className="text-[14px] text-foreground">Draw signature</span>
-            <span className="text-[12px] text-muted-foreground">With your finger or a mouse</span>
+            <span className="text-body text-foreground">Draw signature</span>
+            <span className="text-meta text-muted-foreground">With your finger or a mouse</span>
           </button>
         </div>
       )}

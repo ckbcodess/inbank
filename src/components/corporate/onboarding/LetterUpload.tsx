@@ -40,8 +40,8 @@ export default function LetterUpload({
           <FileText size={17} aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <p className="text-[14px] font-medium text-foreground">{label}</p>
-          <p className="truncate text-[12px] text-muted-foreground">
+          <p className="text-body font-medium text-foreground">{label}</p>
+          <p className="truncate text-meta text-muted-foreground">
             {file ? (
               <>
                 {file.name} · <span className="tabular">{file.size}</span>
@@ -58,7 +58,7 @@ export default function LetterUpload({
           <button
             type="button"
             onClick={() => setPreviewOpen(true)}
-            className="cursor-pointer px-2 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+            className="cursor-pointer px-2 text-body text-muted-foreground transition-colors hover:text-foreground"
           >
             Preview
           </button>

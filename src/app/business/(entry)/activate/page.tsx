@@ -391,20 +391,20 @@ function BusinessActivateContent() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-1">
-              <span className="text-[12px] text-muted-foreground">Your Role</span>
-              <span className="text-[14px] font-medium text-foreground">
+              <span className="text-meta text-muted-foreground">Your Role</span>
+              <span className="text-body font-medium text-foreground">
                 {BUSINESS_INVITE_DEMO.role}
               </span>
-              <span className="text-[12px] text-muted-foreground">
+              <span className="text-meta text-muted-foreground">
                 {BUSINESS_ROLE_LINE[BUSINESS_INVITE_DEMO.role]}
               </span>
             </div>
 
             <div className="flex flex-col gap-2">
-              <span className="text-[12px] text-muted-foreground">Accounts You Can See</span>
+              <span className="text-meta text-muted-foreground">Accounts You Can See</span>
               <div className="flex flex-col gap-1.5">
                 {inviteAccounts.map((acc) => (
-                  <div key={acc.id} className="flex items-center justify-between text-[13px]">
+                  <div key={acc.id} className="flex items-center justify-between text-body">
                     <span className="text-foreground">{acc.name}</span>
                     <span className="tabular text-muted-foreground">
                       •••• {acc.number.replace(/\s/g, "").slice(-4)}
@@ -475,7 +475,7 @@ function BusinessActivateContent() {
           </div>
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
@@ -488,7 +488,7 @@ function BusinessActivateContent() {
                 setCountdown(RESEND_SECONDS);
                 setErrorMsg("");
               }}
-              className="cursor-pointer text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
+              className="cursor-pointer text-body text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
             >
               {countdown > 0 ? (
                 <>
@@ -499,7 +499,7 @@ function BusinessActivateContent() {
               )}
             </button>
 
-            <p className="text-center text-[13px] text-muted-foreground">
+            <p className="text-center text-body text-muted-foreground">
               Dial{" "}
               <a
                 href="tel:*422*11%23"
@@ -512,7 +512,7 @@ function BusinessActivateContent() {
           </div>
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Verifying code...</span>
             </div>
@@ -562,7 +562,7 @@ function BusinessActivateContent() {
           className="flex flex-col gap-4"
         >
           {pinNote && (
-            <p className="text-center text-[13px] text-muted-foreground">{pinNote}</p>
+            <p className="text-center text-body text-muted-foreground">{pinNote}</p>
           )}
 
           <div className="flex justify-center">

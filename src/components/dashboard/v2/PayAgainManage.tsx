@@ -42,11 +42,11 @@ function Row({ payee, action, onAction }: { payee: PayAgainPayee; action: string
     <li className="flex items-center gap-3 py-2">
       <PayeeAvatar name={payee.name} size="sm" />
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-[14px] text-foreground">{payee.name}</span>
-        <span className="tabular truncate text-[12px] text-muted-foreground">{second}</span>
+        <span className="truncate text-body text-foreground">{payee.name}</span>
+        <span className="tabular truncate text-meta text-muted-foreground">{second}</span>
       </span>
       {h && money !== null && (
-        <span className="tabular shrink-0 text-[13px] text-foreground">
+        <span className="tabular shrink-0 text-body text-foreground">
           {h.usualAmount ? money : t("dashboard.payAgainLast", { amount: money })}
         </span>
       )}
@@ -84,7 +84,7 @@ export function PayAgainManage({
           <DialogTitle>{t("dashboard.payAgain", "Pay again")}</DialogTitle>
         </DialogHeader>
         <DialogBody>
-          <p className="pb-2 text-[13px] text-muted-foreground">
+          <p className="pb-2 text-body text-muted-foreground">
             {t("dashboard.payAgainIntro", "From who you've paid before. Hide anyone you don't want here.")}
           </p>
           <ul className="flex flex-col">
@@ -94,7 +94,7 @@ export function PayAgainManage({
           </ul>
           {hidden.length > 0 && (
             <section className="flex flex-col gap-1 pt-6">
-              <h3 className="text-[14px] font-medium text-foreground">{t("dashboard.payAgainHidden", "Hidden")}</h3>
+              <h3 className="text-body font-medium text-foreground">{t("dashboard.payAgainHidden", "Hidden")}</h3>
               <ul className="flex flex-col">
                 {hidden.map((p) => (
                   <Row

@@ -93,7 +93,7 @@ function CountryDropdown({
               placeholder="Search country or code"
               aria-label="Search countries"
               autoComplete="off"
-              className="field-surface h-9 w-full rounded-lg border border-transparent bg-field pl-8 pr-2 text-[14px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:bg-field-focus"
+              className="field-surface h-9 w-full rounded-lg border border-transparent bg-field pl-8 pr-2 text-body text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:bg-field-focus"
             />
           </div>
           <ul className="scroll-fade max-h-[260px] overflow-y-auto" role="listbox" aria-label="Countries">
@@ -107,7 +107,7 @@ function CountryDropdown({
                     setQuery("");
                   }}
                   className={cn(
-                    "flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] transition-colors hover:bg-muted/70",
+                    "flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-left text-body transition-colors hover:bg-muted/70",
                     c.code === country && "bg-muted/70",
                   )}
                 >
@@ -117,7 +117,7 @@ function CountryDropdown({
                 </button>
               </li>
             ))}
-            {matches.length === 0 && <li className="px-2 py-2 text-[13px] text-muted-foreground">No country matches that.</li>}
+            {matches.length === 0 && <li className="px-2 py-2 text-body text-muted-foreground">No country matches that.</li>}
           </ul>
         </div>
       </PopoverContent>
@@ -147,7 +147,7 @@ export function PhoneInput({
     <div
       data-slot="phone-input"
       className={cn(
-        "flex h-(--control-xl) w-full items-center gap-2 field-surface rounded-xl border border-transparent bg-field px-3 text-[14px] transition-all outline-none",
+        "flex h-(--control-xl) w-full items-center gap-2 field-surface rounded-xl border border-transparent bg-field px-3 text-body transition-all outline-none",
         "focus-within:outline-none",
         "focus-within:bg-field-focus",
         disabled && "pointer-events-none opacity-50",

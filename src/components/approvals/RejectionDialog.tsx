@@ -53,7 +53,7 @@ export default function RejectionDialog({
         </DialogHeader>
 
         <DialogBody>
-          <p className="text-[13px] text-muted-foreground leading-relaxed">
+          <p className="text-body text-muted-foreground leading-relaxed">
             Rejecting is final — {reference} will not be sent, and the submitter will need to start a new request.
           </p>
 
@@ -66,7 +66,7 @@ export default function RejectionDialog({
               rows={4}
               placeholder="Why is this being rejected?"
             />
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               {reason.trim().length < 10
                 ? "A reason of at least 10 characters is required."
                 : `${reason.trim().length} characters`}

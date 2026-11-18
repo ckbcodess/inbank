@@ -114,7 +114,7 @@ function SelectTrigger({
       data-size={size}
       data-active={isActive ? "true" : undefined}
       className={cn(
-        "field-surface flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-transparent bg-field px-3 py-2 text-[14px] text-foreground transition-all outline-none select-none focus:outline-none focus-visible:outline-none dark:bg-field dark:text-foreground",
+        "field-surface flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-transparent bg-field px-3 py-2 text-body text-foreground transition-all outline-none select-none focus:outline-none focus-visible:outline-none dark:bg-field dark:text-foreground",
         "disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-muted-foreground data-[size=default]:min-h-(--control-xl) data-[size=md]:min-h-(--control-md) data-[size=sm]:min-h-(--control-sm) data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2",
         // A filter that is on: a stronger edge (the same ring, a darker colour) and a tinted fill.
         isActive &&
@@ -215,7 +215,7 @@ function SelectLabel({
   return (
     <SelectPrimitive.GroupLabel
       data-slot="select-label"
-      className={cn("px-2 py-2 text-xs font-semibold text-muted-foreground", className)}
+      className={cn("px-2 py-2 text-meta font-medium text-muted-foreground", className)}
       {...props}
     />
   )
@@ -230,7 +230,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg py-2 pr-6 pl-2 text-[13px] text-foreground outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground dark:text-foreground dark:hover:bg-menu-item-hover dark:focus:bg-menu-item-hover dark:data-highlighted:bg-menu-item-hover data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3",
+        "relative flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg py-2 pr-6 pl-2 text-body text-foreground outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground dark:text-foreground dark:hover:bg-menu-item-hover dark:focus:bg-menu-item-hover dark:data-highlighted:bg-menu-item-hover data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3",
         className
       )}
       {...props}

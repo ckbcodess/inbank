@@ -80,9 +80,9 @@ export default function CompanyUserPage({ params }: { params: Promise<{ id: stri
 
       {pending && (
         <section className="flex flex-col gap-3">
-          <h2 className="min-h-6 text-[16px] font-medium text-foreground">Change Waiting for Approval</h2>
+          <h2 className="min-h-6 text-heading font-medium text-foreground">Change Waiting for Approval</h2>
           <UserChangeSummary change={pending} />
-          <p className="tabular text-[12px] text-muted-foreground">{`Proposed by ${pending.proposedBy} · ${pending.proposedAt}`}</p>
+          <p className="tabular text-meta text-muted-foreground">{`Proposed by ${pending.proposedBy} · ${pending.proposedAt}`}</p>
         </section>
       )}
 
@@ -98,7 +98,7 @@ export default function CompanyUserPage({ params }: { params: Promise<{ id: stri
             accountsError={accountsProblem}
           />
           <div className="flex flex-col gap-2">
-            <p className="text-[13px] text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               {willWait
                 ? "This gives more access, so an Authoriser or another administrator approves it first."
                 : `This only reduces access, so it applies to ${first} as soon as you save.`}
@@ -115,10 +115,10 @@ export default function CompanyUserPage({ params }: { params: Promise<{ id: stri
         <>
           <section className="flex flex-col gap-3">
             <div className="flex min-h-6 items-center gap-2">
-              <h2 className="text-[16px] font-medium text-foreground">{user.role}</h2>
+              <h2 className="text-heading font-medium text-foreground">{user.role}</h2>
               {suspended && <Badge variant="warning">Suspended</Badge>}
             </div>
-            <p className="text-[14px] text-foreground">{ROLE_LINE[user.role]}</p>
+            <p className="text-body text-foreground">{ROLE_LINE[user.role]}</p>
             <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
               {roleHasLimit(user.role) && <Fact label={LIMIT_MEANING[user.role]} value={formatMoney(user.limit, "GHS", true)} mono />}
               <Fact label="On the Mandate" value={user.onMandate ? "Yes" : "No"} />
@@ -126,15 +126,15 @@ export default function CompanyUserPage({ params }: { params: Promise<{ id: stri
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="min-h-6 text-[16px] font-medium text-foreground">Accounts They Can See</h2>
+            <h2 className="min-h-6 text-heading font-medium text-foreground">Accounts They Can See</h2>
             <ul className="flex flex-col gap-2">
               {user.accountIds.map((accountId) => {
                 const a = findAccount(accountId);
                 if (!a) return null;
                 return (
                   <li key={a.id} className="flex items-center justify-between gap-3">
-                    <span className="truncate text-[14px] text-foreground">{a.name}</span>
-                    <span className="tabular shrink-0 text-[13px] text-muted-foreground">•••• {a.number.replace(/\s/g, "").slice(-4)}</span>
+                    <span className="truncate text-body text-foreground">{a.name}</span>
+                    <span className="tabular shrink-0 text-body text-muted-foreground">•••• {a.number.replace(/\s/g, "").slice(-4)}</span>
                   </li>
                 );
               })}
@@ -165,7 +165,7 @@ export default function CompanyUserPage({ params }: { params: Promise<{ id: stri
                 </Button>
               )}
             </div>
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               {pending
                 ? "A change is already waiting for approval. Once it's decided you can make another."
                 : suspended

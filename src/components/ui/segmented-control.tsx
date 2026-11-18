@@ -50,7 +50,7 @@ export function SegmentedControl<T extends string>({
             aria-checked={active}
             onClick={() => onChange(o.value)}
             className={cn(
-              "flex h-full cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg px-2 text-[12px] transition duration-hover sm:px-3 sm:text-[13px]",
+              "flex h-full cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg px-2 text-meta transition duration-hover sm:px-3 sm:text-body",
               fullWidth ? "flex-1" : "shrink-0",
               active
                 ? "bg-chip-selected font-medium text-chip-selected-foreground shadow-sm"
@@ -58,7 +58,7 @@ export function SegmentedControl<T extends string>({
             )}
           >
             {o.label}
-            {o.count !== undefined && <span className="text-[11px] font-normal text-muted-foreground tabular">{o.count}</span>}
+            {o.count !== undefined && <span className="text-meta font-normal text-muted-foreground tabular">{o.count}</span>}
           </button>
         );
       })}

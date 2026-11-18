@@ -42,7 +42,7 @@ export function CountryPicker({
         onClick={() => setOpen(true)}
         className={
           triggerClassName ??
-          "flex h-11 w-full cursor-pointer items-center gap-2 rounded-2xl field-surface border border-transparent bg-field px-3 text-left text-[14px] transition-colors "
+          "flex h-11 w-full cursor-pointer items-center gap-2 rounded-2xl field-surface border border-transparent bg-field px-3 text-left text-body transition-colors "
         }
       >
         {selected && <CountryFlag code={selected.code} size={24} />}
@@ -77,7 +77,7 @@ export function CountryPicker({
                 placeholder="Search"
                 aria-label="Search countries"
                 autoComplete="off"
-                className="h-10 w-full rounded-xl field-surface border border-transparent bg-field pl-10 pr-2 text-[14px] text-foreground outline-none transition focus:bg-field-focus"
+                className="h-10 w-full rounded-xl field-surface border border-transparent bg-field pl-10 pr-2 text-body text-foreground outline-none transition focus:bg-field-focus"
               />
             </div>
           </div>
@@ -90,13 +90,13 @@ export function CountryPicker({
                   className="flex w-full cursor-pointer items-center gap-3 py-2 text-left transition-colors hover:bg-muted/30"
                 >
                   <CountryFlag code={country.code} size={28} />
-                  <span className="flex-1 truncate text-[14.5px] text-foreground">{country.name}</span>
+                  <span className="flex-1 truncate text-body text-foreground">{country.name}</span>
                   <ChevronRight size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 </button>
               </li>
             ))}
             {matches.length === 0 && (
-              <li className="py-6 text-center text-[13px] text-muted-foreground">
+              <li className="py-6 text-center text-body text-muted-foreground">
                 No country matches &ldquo;{query.trim()}&rdquo;.
               </li>
             )}

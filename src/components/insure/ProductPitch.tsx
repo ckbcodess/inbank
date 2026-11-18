@@ -71,7 +71,7 @@ function ProductPhoto({ productId, image, provider }: { productId: ProductKey; i
     <div className="relative">
       <PlanImage planId={productId} src={src} className={cn("w-full rounded-3xl", PRODUCT_PHOTO_HEIGHT)} />
       {provider && (
-        <span className={cn("absolute bottom-3 right-3 flex items-center gap-2 rounded-full bg-[color-mix(in_srgb,var(--black)_28%,transparent)] py-1 pr-3 text-[12px] text-[var(--white)] backdrop-blur-md", logo ? "pl-1" : "pl-3")}>
+        <span className={cn("absolute bottom-3 right-3 flex items-center gap-2 rounded-full bg-[color-mix(in_srgb,var(--black)_28%,transparent)] py-1 pr-3 text-meta text-[var(--white)] backdrop-blur-md", logo ? "pl-1" : "pl-3")}>
           {/* eslint-disable-next-line @next/next/no-img-element -- a 16px logo, already a small WebP */}
           {logo && <img src={logo} alt="" width={16} height={16} className="size-4 shrink-0 rounded-full" />}
           {`Powered by ${provider}`}
@@ -93,7 +93,7 @@ function ProductBenefits({ highlights }: { highlights: readonly PlanHighlight[] 
             <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
               <Icon size={15} strokeWidth={1.7} aria-hidden="true" />
             </span>
-            <span className="min-w-0 text-[14px] text-muted-foreground">{h.label}</span>
+            <span className="min-w-0 text-body text-muted-foreground">{h.label}</span>
           </li>
         );
       })}
@@ -105,10 +105,10 @@ function ProductBenefits({ highlights }: { highlights: readonly PlanHighlight[] 
 function PriceDivider({ price }: { price?: PitchPrice }) {
   if (!price) return <div aria-hidden="true" className="h-px bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />;
   return (
-    <div className="flex items-center gap-4 text-[14px] text-muted-foreground">
+    <div className="flex items-center gap-4 text-body text-muted-foreground">
       <span aria-hidden="true" className="h-px flex-1 bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />
       <span className="tabular">
-        {price.prefix} <span className="text-[18px] text-foreground">{price.figure}</span>
+        {price.prefix} <span className="text-title text-foreground">{price.figure}</span>
         {price.suffix ? ` ${price.suffix}` : ""}
       </span>
       <span aria-hidden="true" className="h-px flex-1 bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />
@@ -137,7 +137,7 @@ export function ProductPitchBody({
   return (
     <div className="flex flex-col gap-6">
       <ProductPhoto productId={productId} image={image} provider={provider} />
-      {description && <p className="text-[14px] leading-relaxed text-foreground">{description}</p>}
+      {description && <p className="text-body leading-relaxed text-foreground">{description}</p>}
       <ProductBenefits highlights={highlights} />
       <div className="mt-10">
         <PriceDivider price={price} />

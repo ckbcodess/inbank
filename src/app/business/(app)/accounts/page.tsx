@@ -75,15 +75,15 @@ export default function BusinessAccountsPage() {
                   </TileChip>
                   <span className="flex min-w-0 flex-1 flex-col gap-1">
                     <span className="flex flex-wrap items-center gap-2">
-                      <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{account.name}</span>
+                      <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">{account.name}</span>
                       {account.status === "Dormant" && <Badge variant="warning">Dormant</Badge>}
                     </span>
-                    <span className="truncate text-[13px] text-muted-foreground tabular">
+                    <span className="truncate text-body text-muted-foreground tabular">
                       {account.type} · {tail(account.number)}
                       {account.mandate ? ` · ${account.mandate}` : ""}
                     </span>
                   </span>
-                  <span className="shrink-0 text-[14px] text-foreground tabular">
+                  <span className="shrink-0 text-body text-foreground tabular">
                     <RevealingAmount amount={account.available} currency={account.currency} />
                   </span>
                   <ChevronRight

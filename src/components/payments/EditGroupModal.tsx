@@ -377,7 +377,7 @@ export default function EditGroupModal({
             {/* Members Section Header + Add Button */}
             <div className="flex flex-col gap-3 pt-2">
               <div className="flex min-h-6 items-center justify-between">
-                <span className="text-[16px] font-medium text-foreground">Members ({members.length})</span>
+                <span className="text-heading font-medium text-foreground">Members ({members.length})</span>
 
               </div>
 
@@ -393,8 +393,8 @@ export default function EditGroupModal({
                     <div className="flex min-w-0 items-center gap-3">
                       <PayeeAvatar name={m.name} size="md" />
                       <span className="flex min-w-0 flex-col">
-                        <span className="truncate text-[14px] text-foreground">{m.name}</span>
-                        <span className="truncate text-[12px] text-muted-foreground">
+                        <span className="truncate text-body text-foreground">{m.name}</span>
+                        <span className="truncate text-meta text-muted-foreground">
                           {m.networkOrBank || "GCB Bank"} • {m.destination}
                         </span>
                       </span>
@@ -424,7 +424,7 @@ export default function EditGroupModal({
                 ))}
 
                 {filteredMembers.length === 0 && (
-                  <p className="p-2 text-[13px] text-muted-foreground">{`No members found matching “${searchMember.trim()}”.`}</p>
+                  <p className="p-2 text-body text-muted-foreground">{`No members found matching “${searchMember.trim()}”.`}</p>
                 )}
               </div>
 
@@ -438,16 +438,16 @@ export default function EditGroupModal({
               </div>
 
               {errors.members && (
-                <p className="text-[12px] text-destructive">{errors.members}</p>
+                <p className="text-meta text-destructive">{errors.members}</p>
               )}
             </div>
 
             {/* Total */}
             <div className="flex items-center justify-between">
-              <span className="text-[13px] text-muted-foreground">
+              <span className="text-body text-muted-foreground">
                 Total for {members.length} {members.length === 1 ? "member" : "members"}
               </span>
-              <span className="text-[18px] font-normal text-foreground tracking-[var(--ls-tight)] tabular-nums numorainput">
+              <span className="text-title font-normal text-foreground tracking-[var(--ls-tight)] tabular-nums numorainput">
                 GHS {totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
@@ -458,7 +458,7 @@ export default function EditGroupModal({
             <button
               type="button"
               onClick={() => setShowDeleteGroupConfirm(true)}
-              className="text-[13px] text-destructive-text underline underline-offset-4 decoration-transparent hover:decoration-current transition-colors cursor-pointer"
+              className="text-body text-destructive-text underline underline-offset-4 decoration-transparent hover:decoration-current transition-colors cursor-pointer"
             >
               Delete group
             </button>
@@ -466,7 +466,7 @@ export default function EditGroupModal({
               type="button"
               onClick={handleSaveChanges}
               disabled={!name.trim() || members.length === 0}
-              className="h-10 px-5 text-[13.5px]"
+              className="h-10 px-5 text-body"
             >
               Save changes
             </Button>
@@ -500,7 +500,7 @@ export default function EditGroupModal({
             aria-label="Search recipients"
           />
           {availableSavedBeneficiaries.length === 0 ? (
-            <p className="py-8 text-center text-[13px] text-muted-foreground">
+            <p className="py-8 text-center text-body text-muted-foreground">
               {savedSearch
                 ? "Nobody saved matches that. Clear the search to see everyone."
                 : "Everyone you have saved is already in this group."}
@@ -522,8 +522,8 @@ export default function EditGroupModal({
                     <span className="flex min-w-0 items-center gap-3">
                       <PayeeAvatar name={b.name} size="md" />
                       <span className="flex min-w-0 flex-col">
-                        <span className="truncate text-[14px] text-foreground">{b.name}</span>
-                        <span className="truncate text-[12px] text-muted-foreground">
+                        <span className="truncate text-body text-foreground">{b.name}</span>
+                        <span className="truncate text-meta text-muted-foreground">
                           {b.bankName || b.network} <span className="tabular">· {b.accountNumber || b.phoneNumber || b.proxyId}</span>
                         </span>
                       </span>
@@ -625,7 +625,7 @@ export default function EditGroupModal({
             <DialogTitle>Remove Member</DialogTitle>
           </DialogHeader>
 
-          <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground leading-relaxed">
+          <div className="px-4 sm:px-5 py-4 text-body text-muted-foreground leading-relaxed">
             Are you sure you want to remove <span className="text-foreground font-medium">{memberToDelete?.name}</span> from <span className="text-foreground font-medium">{name || group.name}</span>? They will no longer receive disbursements when you send to this group.
           </div>
 
@@ -653,7 +653,7 @@ export default function EditGroupModal({
             <DialogTitle>Delete Payment Group</DialogTitle>
           </DialogHeader>
 
-          <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground leading-relaxed">
+          <div className="px-4 sm:px-5 py-4 text-body text-muted-foreground leading-relaxed">
             Are you sure you want to delete <span className="text-foreground font-medium">{group.name}</span>? This action cannot be undone. All member contact details will remain safely saved in your individual beneficiaries directory.
           </div>
 

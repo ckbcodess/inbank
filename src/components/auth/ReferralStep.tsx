@@ -68,10 +68,10 @@ export default function ReferralStep({
     >
       {/* Top area */}
       <div className="flex flex-col gap-2">
-        <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">
+        <DialogTitle className="type-headline font-medium tracking-tight text-foreground">
           Were You Referred by Someone?
         </DialogTitle>
-        <DialogDescription className="text-[13px] text-muted-foreground leading-normal">
+        <DialogDescription className="text-body text-muted-foreground leading-normal">
           {linked ? "You came with a referral link. Apply it, or skip." : "Enter the code a friend or a GCB branch gave you."}
         </DialogDescription>
       </div>
@@ -98,7 +98,7 @@ export default function ReferralStep({
               autoCapitalize="characters"
               autoComplete="off"
               maxLength={9}
-              className="tabular text-center text-[18px] font-medium"
+              className="tabular text-center text-title font-medium"
             />
 
             {referrer && (
@@ -122,7 +122,7 @@ export default function ReferralStep({
             type="submit"
             disabled={!referrer}
             loading={busy}
-            className="h-9 w-full text-[14px]"
+            className="h-9 w-full text-body"
           >
             Apply Code
           </Button>
@@ -131,7 +131,7 @@ export default function ReferralStep({
             type="button"
             disabled={skipping}
             onClick={() => setEntering(true)}
-            className="h-9 w-full text-[14px]"
+            className="h-9 w-full text-body"
           >
             Enter Referral Code
           </Button>
@@ -141,7 +141,7 @@ export default function ReferralStep({
           variant="outline"
           disabled={busy || skipping}
           onClick={skip}
-          className="h-9 w-full text-[14px]"
+          className="h-9 w-full text-body"
         >
           {skipLabel}
         </Button>

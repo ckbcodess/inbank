@@ -13,7 +13,7 @@ export function AlertMark({ tone, success = false, className }: { tone: ProductA
     <span
       aria-hidden="true"
       className={cn(
-        "flex size-5 shrink-0 items-center justify-center rounded-full text-[12px] font-medium",
+        "flex size-5 shrink-0 items-center justify-center rounded-full text-meta font-medium",
         success ? "bg-[color-mix(in_srgb,var(--success)_82%,var(--black))] text-white" : act ? "bg-primary text-primary-foreground" : "border border-border bg-muted text-muted-foreground",
         className,
       )}
@@ -25,7 +25,7 @@ export function AlertMark({ tone, success = false, className }: { tone: ProductA
 
 /** The underlined words that say what a tap does. They are the visible part of the action; the whole row is the target. */
 function ActionLabel({ label }: { label: string }) {
-  return <span className="shrink-0 text-[13px] text-foreground underline underline-offset-4">{label}</span>;
+  return <span className="shrink-0 text-body text-foreground underline underline-offset-4">{label}</span>;
 }
 
 /**
@@ -96,8 +96,8 @@ export function ProductBanner({
         <AlertRow action={one.action} className="rounded-2xl px-4 py-3">
           <AlertMark tone={one.tone} success={one.success} />
           <span className="flex min-w-0 flex-1 flex-col">
-            <span className="text-[14px] font-medium text-foreground">{one.headline}</span>
-            {one.detail && <span className="text-[12px] text-muted-foreground">{one.detail}</span>}
+            <span className="text-body font-medium text-foreground">{one.headline}</span>
+            {one.detail && <span className="text-meta text-muted-foreground">{one.detail}</span>}
           </span>
           {one.action && <ActionLabel label={one.action.label} />}
         </AlertRow>
@@ -120,7 +120,7 @@ export function ProductBanner({
         className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left"
       >
         <AlertMark tone={tone} />
-        <span className="min-w-0 flex-1 text-[14px] font-medium text-foreground">{headline}</span>
+        <span className="min-w-0 flex-1 text-body font-medium text-foreground">{headline}</span>
         <ChevronDown size={16} aria-hidden="true" className={cn("shrink-0 text-muted-foreground transition-transform duration-reveal ease-settle", open && "rotate-180")} />
       </button>
       {open && (
@@ -130,8 +130,8 @@ export function ProductBanner({
               <AlertRow action={i.alert.action} className="rounded-xl px-2 py-2">
                 <AlertMark tone={i.alert.tone} />
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[14px] text-foreground">{i.alert.headline}</span>
-                  <span className="truncate text-[12px] text-muted-foreground">{i.label}</span>
+                  <span className="truncate text-body text-foreground">{i.alert.headline}</span>
+                  <span className="truncate text-meta text-muted-foreground">{i.label}</span>
                 </span>
                 {i.alert.action && <ActionLabel label={i.alert.action.label} />}
               </AlertRow>
@@ -139,7 +139,7 @@ export function ProductBanner({
           ))}
           {list.length > SHOWN && !all && (
             <li className="px-2 py-1">
-              <button type="button" onClick={() => setAll(true)} className="text-[13px] text-muted-foreground underline underline-offset-4 hover:text-foreground">
+              <button type="button" onClick={() => setAll(true)} className="text-body text-muted-foreground underline underline-offset-4 hover:text-foreground">
                 {`Show all ${list.length}`}
               </button>
             </li>

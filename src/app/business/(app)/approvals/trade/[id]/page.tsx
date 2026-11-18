@@ -122,22 +122,22 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             />
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-[14px] text-warning-text">
+                <p className="text-body text-warning-text">
                   Returned to submitter for clarification
                 </p>
                 <Badge variant="warning">Awaiting response</Badge>
               </div>
-              <p className="mt-2 text-[13px] leading-relaxed text-foreground/90">
+              <p className="mt-2 text-body leading-relaxed text-foreground/90">
                 This request is still live. {item.submittedBy} has been asked to respond and will
                 resubmit as v{TRADE_VERSIONS.length + 1}, which you&apos;ll be able to compare against
                 v{currentVersion.version}.
               </p>
               {clarificationNote && (
-                <blockquote className="mt-2 rounded-lg border-l-2 border-warning/50 bg-background/60 px-3 py-2 text-[13px] text-foreground">
+                <blockquote className="mt-2 rounded-lg border-l-2 border-warning/50 bg-background/60 px-3 py-2 text-body text-foreground">
                   {clarificationNote}
                 </blockquote>
               )}
-              <p className="mt-2 text-[12px] text-muted-foreground">
+              <p className="mt-2 text-meta text-muted-foreground">
                 This is not a rejection — nothing has been cancelled and no new request is needed.
               </p>
             </div>
@@ -164,15 +164,15 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             />
           )}
           <div>
-            <p className="text-[14px] text-foreground">
+            <p className="text-body text-foreground">
               {outcome === "rejected" ? "Trade request rejected" : "Trade request approved"}
             </p>
-            <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+            <p className="mt-1 text-body leading-relaxed text-muted-foreground">
               {outcome === "rejected"
                 ? "This request is closed. A new request is required to proceed."
                 : "The request moves to bank operations for processing."}
             </p>
-            <div className="mt-2 flex items-center gap-2 text-[13px] text-muted-foreground">
+            <div className="mt-2 flex items-center gap-2 text-body text-muted-foreground">
               <AppLoader size={13} />
               Returning you to the queue…
             </div>
@@ -189,10 +189,10 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             className="mt-px shrink-0 text-warning-text"
           />
           <div>
-            <p className="text-[14px] text-warning-text">
+            <p className="text-body text-warning-text">
               {missingDocs.length} required document{missingDocs.length === 1 ? "" : "s"} not attached
             </p>
-            <p className="mt-2 text-[13px] leading-relaxed text-foreground/90">
+            <p className="mt-2 text-body leading-relaxed text-foreground/90">
               You can&apos;t approve this request until{" "}
               {missingDocs.map((d) => d.name).join(", ")} {missingDocs.length === 1 ? "is" : "are"}{" "}
               provided. Return it for clarification to ask the submitter for the missing paperwork.
@@ -204,8 +204,8 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       {/* Trade summary */}
       <section className={cn(LIST_CARD_CLASS, "p-4")}>
         <div className="border-b border-border pb-4">
-          <span className="text-[12px] text-muted-foreground">Trade value</span>
-          <p className="mt-2 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
+          <span className="text-meta text-muted-foreground">Trade value</span>
+          <p className="mt-2 type-balance leading-none tracking-[var(--ls-heading)] text-foreground tabular">
             {formatMoney(item.amount, item.currency)}
           </p>
         </div>
@@ -225,7 +225,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
             <div className="flex items-center gap-2">
               <GitCompare size={16} aria-hidden="true" className="text-muted-foreground" />
-              <h2 className="text-[15px] text-foreground">
+              <h2 className="text-heading text-foreground">
                 Comparing v{previousVersion.version} → v{currentVersion.version}
               </h2>
             </div>
@@ -234,7 +234,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             </Button>
           </div>
 
-          <div className="grid grid-cols-[1fr_auto_1fr] gap-x-3 border-b border-border bg-muted/30 px-4 py-2 text-[11px] text-muted-foreground">
+          <div className="grid grid-cols-[1fr_auto_1fr] gap-x-3 border-b border-border bg-muted/30 px-4 py-2 text-meta text-muted-foreground">
             <span>v{previousVersion.version} — {previousVersion.submittedAt}</span>
             <span />
             <span>v{currentVersion.version} — {currentVersion.submittedAt}</span>
@@ -246,10 +246,10 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                 key={row.field}
                 className={`px-4 py-2 ${row.changed ? "bg-warning/5" : ""}`}
               >
-                <p className="mb-2 text-[12px] text-muted-foreground">{row.field}</p>
+                <p className="mb-2 text-meta text-muted-foreground">{row.field}</p>
                 <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
                   <span
-                    className={`text-[13px] tabular ${
+                    className={`text-body tabular ${
                       row.changed
                         ? "text-destructive line-through decoration-destructive/40"
                         : "text-muted-foreground"
@@ -263,7 +263,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                     className={row.changed ? "text-warning-text" : "text-muted-foreground/40"}
                   />
                   <span
-                    className={`text-[13px] tabular ${
+                    className={`text-body tabular ${
                       row.changed ? "text-success-text" : "text-muted-foreground"
                     }`}
                   >
@@ -274,7 +274,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             ))}
           </ul>
 
-          <p className="border-t border-border px-4 py-2 text-[12px] text-muted-foreground">
+          <p className="border-t border-border px-4 py-2 text-meta text-muted-foreground">
             {VERSION_DIFF.filter((r) => r.changed).length} of {VERSION_DIFF.length} fields changed
             between these versions.
           </p>
@@ -283,7 +283,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
         /* ── Document viewer — present in the default awaiting-decision state ── */
         <section className={cn(LIST_CARD_CLASS)}>
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
-            <h2 className="text-[15px] text-foreground">Documents</h2>
+            <h2 className="text-heading text-foreground">Documents</h2>
             <Button variant="outline" size="sm" onClick={() => setState("version-comparison")}>
               <GitCompare size={14} aria-hidden="true" />
               Compare v{previousVersion.version} → v{currentVersion.version}
@@ -312,8 +312,8 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                         className={isMissing ? "text-warning-text" : "text-muted-foreground"}
                       />
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[13px] text-foreground">{d.name}</span>
-                        <span className="block text-[11px] text-muted-foreground">
+                        <span className="block truncate text-body text-foreground">{d.name}</span>
+                        <span className="block text-meta text-muted-foreground">
                           {isMissing ? "Not provided" : `${d.pages} pages · ${d.type}`}
                         </span>
                       </span>
@@ -327,8 +327,8 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             <div className="flex min-h-[320px] flex-col">
               <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2">
                 <div className="min-w-0">
-                  <p className="truncate text-[13px] text-foreground">{doc.name}</p>
-                  <p className="text-[12px] text-muted-foreground tabular">
+                  <p className="truncate text-body text-foreground">{doc.name}</p>
+                  <p className="text-meta text-muted-foreground tabular">
                     {doc.pages} pages · uploaded {doc.uploadedAt}
                   </p>
                 </div>
@@ -381,7 +381,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
           </Button>
 
           {decisionBlocked && (
-            <p className="w-full text-[12px] text-muted-foreground">
+            <p className="w-full text-meta text-muted-foreground">
               Approval is unavailable while required documents are missing. Returning for
               clarification is still available.
             </p>

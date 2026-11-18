@@ -127,10 +127,10 @@ export function BeneficiaryDetailSheet({
               icon={isCompany ? (beneficiary.transactionType === "bill" ? Zap : Smartphone) : undefined}
             />
             <SheetTitle className="mt-3">{beneficiary.name}</SheetTitle>
-            <SheetDescription className="flex flex-wrap items-center justify-center gap-2 text-[13px] text-muted-foreground">
+            <SheetDescription className="flex flex-wrap items-center justify-center gap-2 text-body text-muted-foreground">
               {getBeneficiaryCategory(beneficiary.transactionType)}
               {!beneficiary.verified && (
-                <Badge variant="warning" className="text-[10px] py-0 px-2">
+                <Badge variant="warning" className="text-meta py-0 px-2">
                   Pending approval
                 </Badge>
               )}

@@ -52,7 +52,7 @@ function BalanceCard({ account }: { account: Account }) {
         height={343.429}
         className="pointer-events-none absolute -right-[207.7px] top-[8.68px] h-[343.429px] w-[430.279px] max-w-none select-none dark:opacity-40"
       />
-      <div className="relative flex flex-col gap-2 text-[14px] leading-5 tracking-[-0.005em] text-muted-foreground">
+      <div className="relative flex flex-col gap-2 text-body leading-5 tracking-[-0.005em] text-muted-foreground">
         <span className="flex items-center gap-1">
           <Landmark size={15} aria-hidden="true" />
           {account.type}
@@ -68,7 +68,7 @@ function BalanceCard({ account }: { account: Account }) {
       <RevealingAmount
         amount={account.available}
         currency={account.currency}
-        className="relative text-[30px] leading-[1.25] tracking-[-0.015em] text-foreground tabular sm:text-[36px]"
+        className="relative type-balance leading-[1.25] tracking-[var(--ls-heading)] text-foreground tabular"
       />
     </section>
   );
@@ -87,7 +87,7 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
     return (
       <div className="flex flex-col gap-2">
         <PageHeader title="Account Not Found" backTo={{ href: "/business/accounts", label: "Accounts" }} />
-        <p className="pl-10 text-[13px] text-muted-foreground">This account isn&apos;t one of this business&apos;s accounts.</p>
+        <p className="pl-10 text-body text-muted-foreground">This account isn&apos;t one of this business&apos;s accounts.</p>
       </div>
     );
   }
@@ -128,7 +128,7 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
             <div className="flex flex-col gap-5 lg:mx-auto lg:w-[78%]">
               <BalanceCard account={account} />
               {uncleared && (
-                <p className="text-[12px] text-muted-foreground tabular">
+                <p className="text-meta text-muted-foreground tabular">
                   {formatMoney(account.balance, account.currency)} in the ledger. The difference is funds not yet cleared or on hold.
                 </p>
               )}
@@ -165,15 +165,15 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
                   <SectionHeading title="Mandate" />
                   <ListCard as="div" className="gap-3 p-4">
                     <div className="flex flex-col gap-1">
-                      <span className="text-[14px] text-foreground">{account.mandate}</span>
-                      <span className="text-[12px] text-muted-foreground">{explainMandate(account.mandate)}</span>
+                      <span className="text-body text-foreground">{account.mandate}</span>
+                      <span className="text-meta text-muted-foreground">{explainMandate(account.mandate)}</span>
                     </div>
                     {account.signatories && account.signatories.length > 0 && (
                       <ul className="flex flex-col gap-2 border-t border-border pt-3">
                         {account.signatories.map((s) => (
                           <li key={s.email} className="flex flex-col">
-                            <span className="truncate text-[14px] text-foreground">{s.name}</span>
-                            <span className="truncate text-[12px] text-muted-foreground">{s.role}</span>
+                            <span className="truncate text-body text-foreground">{s.name}</span>
+                            <span className="truncate text-meta text-muted-foreground">{s.role}</span>
                           </li>
                         ))}
                       </ul>
@@ -187,12 +187,12 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
                 <ListCard as="div" className="gap-1 p-4">
                   {account.relationshipManager ? (
                     <>
-                      <span className="text-[14px] text-foreground">{account.relationshipManager.name}</span>
-                      <span className="text-[12px] text-muted-foreground">{`Relationship Manager · ${account.relationshipManager.email}`}</span>
-                      <span className="text-[12px] text-muted-foreground tabular">{account.relationshipManager.phone}</span>
+                      <span className="text-body text-foreground">{account.relationshipManager.name}</span>
+                      <span className="text-meta text-muted-foreground">{`Relationship Manager · ${account.relationshipManager.email}`}</span>
+                      <span className="text-meta text-muted-foreground tabular">{account.relationshipManager.phone}</span>
                     </>
                   ) : (
-                    <p className="text-[13px] text-muted-foreground">
+                    <p className="text-body text-muted-foreground">
                       This account is handled by the Corporate Banking team. Your branch can connect you with them.
                     </p>
                   )}
@@ -204,7 +204,7 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
           <section className="flex flex-col gap-3">
             <SectionHeading title="Recent Activity" />
             {recent.length === 0 ? (
-              <p className="text-[13px] text-muted-foreground">No activity on this account yet. Money in and out will show here.</p>
+              <p className="text-body text-muted-foreground">No activity on this account yet. Money in and out will show here.</p>
             ) : (
               <ListCard>
                 {recent.map((t) => {
@@ -217,12 +217,12 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
                       >
                         <TransactionMark transaction={t} />
                         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                          <span className="truncate text-[14px] text-foreground">{t.counterparty || t.description}</span>
-                          <span className="truncate text-[12px] text-muted-foreground">
+                          <span className="truncate text-body text-foreground">{t.counterparty || t.description}</span>
+                          <span className="truncate text-meta text-muted-foreground">
                             {getTransactionType(t)} · <span className="tabular">{formatDate(t.date)}</span>
                           </span>
                         </span>
-                        <span className="shrink-0 text-[14px] text-foreground tabular">
+                        <span className="shrink-0 text-body text-foreground tabular">
                           {credit ? "+ " : "− "}
                           {formatMoney(t.amount, t.currency, true)}
                         </span>

@@ -79,7 +79,7 @@ export function ActiveCodeDialog({
       >
         <div className="flex flex-col items-center gap-2 pb-2 pt-3 text-center">
           <CashoutTicket code={code.code} amount={amount} recipientPhone={code.phone ?? REGISTERED_WALLET.phone} expires={code.expires.replace(/^Expires\s+/i, "").replace(/^./, (c) => c.toUpperCase())} />
-          <p className="max-w-[300px] text-balance text-[13px] text-muted-foreground">
+          <p className="max-w-[300px] text-balance text-body text-muted-foreground">
             {code.expires}. Anyone with this code can take the cash.
           </p>
         </div>
@@ -113,11 +113,11 @@ export function ActiveCodeDialog({
         }
       >
         <div className="flex flex-col gap-2 py-2">
-          <p className="text-[14px] leading-relaxed text-foreground">
+          <p className="text-body leading-relaxed text-foreground">
             The code <span className="tabular">{code.code}</span> for <span className="tabular">GHS {amount}</span> will stop
             working. It can&apos;t be used at an ATM afterwards, and this can&apos;t be undone.
           </p>
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
+          <p className="text-body leading-relaxed text-muted-foreground">
             The money stays in your account. You can generate a new code any time.
           </p>
         </div>

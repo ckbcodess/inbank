@@ -134,7 +134,7 @@ export default function AddUserPage() {
         <div className="flex flex-col gap-6">
           <UserAccessFields draft={draft} onChange={setDraft} limitError={limitProblem} accountsError={accountsProblem} />
           <div className="flex flex-col gap-2">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
+            <p className="text-body leading-relaxed text-muted-foreground">
               {`An Authoriser or another administrator approves this before ${draft.name} can log in. We'll tell ${draft.name} by SMS and email when it's approved.`}
             </p>
             <Button onClick={submit} className="self-start">
@@ -168,8 +168,8 @@ function WhoOption({
         selected ? "border-[var(--active-border)] bg-[var(--active-bg)]" : "border-border bg-card hover:bg-muted/50"
       }`}
     >
-      <span className="truncate text-[14px] text-foreground">{primary}</span>
-      <span className="truncate text-[12px] text-muted-foreground">{secondary}</span>
+      <span className="truncate text-body text-foreground">{primary}</span>
+      <span className="truncate text-meta text-muted-foreground">{secondary}</span>
     </button>
   );
 }

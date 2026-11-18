@@ -43,7 +43,7 @@ const FEED_LIMIT = 10;
 
 function DayHeading({ children }: { children: React.ReactNode }) {
   return (
-    <li className="pb-1 pt-4 text-[12px] text-muted-foreground tabular first:pt-0">{children}</li>
+    <li className="pb-1 pt-4 text-meta text-muted-foreground tabular first:pt-0">{children}</li>
   );
 }
 
@@ -54,12 +54,12 @@ function ScheduledRow({ p, showAmounts }: { p: UpcomingPayment; showAmounts: boo
         <CalendarClock size={16} />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="truncate text-[14px] text-foreground">{p.payee}</span>
-        <span className="text-[12px] text-muted-foreground tabular">
+        <span className="truncate text-body text-foreground">{p.payee}</span>
+        <span className="text-meta text-muted-foreground tabular">
           {dayLabel(p.date)} · {p.frequencyLabel}
         </span>
       </span>
-      <span className="shrink-0 tabular text-[14px] text-muted-foreground">
+      <span className="shrink-0 tabular text-body text-muted-foreground">
         − {formatMoney(p.amount, p.currency, showAmounts)}
       </span>
     </li>
@@ -85,11 +85,11 @@ function TxnRow({
       >
         <TransactionMark transaction={txn} />
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="truncate text-[14px] text-foreground">{txn.counterparty || txn.description}</span>
-          <span className="text-[12px] text-muted-foreground">{txn.category || txn.channel}</span>
+          <span className="truncate text-body text-foreground">{txn.counterparty || txn.description}</span>
+          <span className="text-meta text-muted-foreground">{txn.category || txn.channel}</span>
         </span>
         <span className="flex shrink-0 flex-col items-end gap-1">
-          <span className={cn("tabular text-[14px]", colorClass)}>
+          <span className={cn("tabular text-body", colorClass)}>
             {prefix}
             {formatMoney(Math.abs(txn.amount), txn.currency, showAmounts)}
           </span>

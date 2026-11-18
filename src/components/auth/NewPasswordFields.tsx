@@ -65,7 +65,7 @@ export default function NewPasswordFields({
           onToggle={() => setShowConfirm((s) => !s)}
           invalid={mismatch}
         />
-        {mismatch && <p className="text-[12px] text-destructive">These don&apos;t match yet.</p>}
+        {mismatch && <p className="text-meta text-destructive">These don&apos;t match yet.</p>}
       </div>
 
       <RuleChecklist

@@ -652,7 +652,7 @@ export function AccountSelectTriggerContent({
         <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
           <Landmark size={20} className="shrink-0" />
         </span>
-        <span className="text-[14px] text-muted-foreground font-normal truncate">
+        <span className="text-body text-muted-foreground font-normal truncate">
           {placeholder}
         </span>
       </div>
@@ -667,10 +667,10 @@ export function AccountSelectTriggerContent({
           <Landmark size={20} className="shrink-0" />
         </span>
         <div className="flex flex-col min-w-0 text-left gap-0.5">
-          <span className="text-[14px] text-foreground font-medium tracking-[var(--ls-tight)] truncate leading-tight">
+          <span className="text-body text-foreground font-medium tracking-[var(--ls-tight)] truncate leading-tight">
             {account.name}
           </span>
-          <span className="text-[12px] text-muted-foreground font-normal truncate tabular leading-tight">
+          <span className="text-meta text-muted-foreground font-normal truncate tabular leading-tight">
             {account.number}
           </span>
         </div>
@@ -678,7 +678,7 @@ export function AccountSelectTriggerContent({
 
       {/* Right: Balance */}
       <div className="text-right shrink-0">
-        <span className="text-[14px] text-foreground font-medium tabular tracking-tight">
+        <span className="text-body text-foreground font-medium tabular tracking-tight">
           {formatMoney(account.available ?? 0, account.currency || "GHS", true)}
         </span>
       </div>
@@ -996,6 +996,8 @@ export function AmountInput({
   };
 
   // Compute dynamic font size based on character count for low-overhead auto-scaling
+  // The amount field is bespoke (CONSTITUTION §9): it shrinks in fine steps to fit, so it keeps its own sizes.
+  /* eslint-disable no-restricted-syntax */
   const numLength = (displayValue || "0").length;
   let fontSizeClass = "text-[26px]";
   let currencySizeClass = "text-[17px]";
@@ -1012,6 +1014,7 @@ export function AmountInput({
     fontSizeClass = "text-[23px]";
     currencySizeClass = "text-[16px]";
   }
+  /* eslint-enable no-restricted-syntax */
 
   return (
     <Field label={label} action={action}>
@@ -1102,7 +1105,7 @@ export function AmountInput({
           {error}
         </div>
       ) : (
-        helper && <p className="text-[13px] text-muted-foreground">{helper}</p>
+        helper && <p className="text-body text-muted-foreground">{helper}</p>
       )}
 </Field>
   );
@@ -1261,7 +1264,7 @@ export function AccountVerificationStatus({
 }) {
   if (resolving) {
     return (
-      <div className={cn("flex items-center gap-2 pt-2 pb-3 text-[13px] text-muted-foreground select-none animate-verify-in", className)}>
+      <div className={cn("flex items-center gap-2 pt-2 pb-3 text-body text-muted-foreground select-none animate-verify-in", className)}>
         <span className="flex items-center justify-center shrink-0 animate-in zoom-in-75 duration-200">
           <AppLoader size={14} className="text-muted-foreground" />
         </span>
@@ -1274,7 +1277,7 @@ export function AccountVerificationStatus({
 
   if (name) {
     return (
-      <div className={cn("flex items-center gap-2 pt-2 pb-3 text-[13px] text-foreground select-none animate-verify-in", className)}>
+      <div className={cn("flex items-center gap-2 pt-2 pb-3 text-body text-foreground select-none animate-verify-in", className)}>
         <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success text-white shadow-xs animate-badge-pop">
           <Check size={10} className="shrink-0" />
         </span>
@@ -1291,7 +1294,7 @@ export function AccountVerificationStatus({
 export function VerifiedAccountBadge({ name, className }: { name: string; className?: string }) {
   if (!name) return null;
   return (
-    <div className={cn("flex items-center gap-2 pt-2 text-[13px] text-foreground select-none animate-verify-in", className)}>
+    <div className={cn("flex items-center gap-2 pt-2 text-body text-foreground select-none animate-verify-in", className)}>
       <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success text-white shadow-xs animate-badge-pop">
         <Check size={10} className="shrink-0" />
       </span>
@@ -1310,7 +1313,7 @@ export function ResolvingAccountBadge({
   className?: string;
 }) {
   return (
-    <div className={cn("flex items-center gap-2 pt-2 text-[13px] text-muted-foreground select-none animate-verify-in", className)}>
+    <div className={cn("flex items-center gap-2 pt-2 text-body text-muted-foreground select-none animate-verify-in", className)}>
       <span className="flex items-center justify-center shrink-0 animate-in zoom-in-75 duration-200">
         <AppLoader size={14} className="text-muted-foreground" />
       </span>
@@ -1378,13 +1381,13 @@ export function CollapsedDetailsBadge({
         ) : provider ? (
           <BankMark name={provider} size={32} />
         ) : (
-          <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12px] text-muted-foreground font-medium">
+          <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-meta text-muted-foreground font-medium">
             {initials || <User size={16} aria-hidden="true" />}
           </span>
         )}
         <div className="flex min-w-0 flex-col gap-0.5 text-left">
           <span className="flex min-w-0 items-center gap-2">
-            <span className="truncate text-[14px] font-medium leading-tight tracking-[var(--ls-tight)] text-foreground">{title}</span>
+            <span className="truncate text-body font-medium leading-tight tracking-[var(--ls-tight)] text-foreground">{title}</span>
             {nameCheck?.confirmed && (
               <span
                 className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success text-white shadow-xs animate-badge-grow"
@@ -1396,11 +1399,11 @@ export function CollapsedDetailsBadge({
             )}
           </span>
           {subtitle && (
-            <span className="truncate text-[12px] leading-tight text-muted-foreground tabular">{subtitle}</span>
+            <span className="truncate text-meta leading-tight text-muted-foreground tabular">{subtitle}</span>
           )}
           {nameCheck &&
             !nameCheck.confirmed && (
-              <span className="flex items-center gap-1 text-[12px] leading-tight text-warning">
+              <span className="flex items-center gap-1 text-meta leading-tight text-warning">
                 <AlertCircle size={12} className="shrink-0" aria-hidden="true" />
                 <span className="truncate">Name not confirmed — check the details before you send</span>
               </span>
@@ -1410,7 +1413,7 @@ export function CollapsedDetailsBadge({
       <button
         type="button"
         onClick={onChange}
-        className="shrink-0 cursor-pointer text-[13px] font-medium text-foreground hover:underline"
+        className="shrink-0 cursor-pointer text-body font-medium text-foreground hover:underline"
       >
         Change
       </button>
@@ -1443,7 +1446,7 @@ export function SaveBeneficiaryCheckbox({
           onChange={(e) => onChange(e.target.checked)}
           className="size-4 rounded-sm border-border text-foreground focus:ring-ring accent-foreground cursor-pointer"
         />
-        <span className="text-[14px] font-medium text-foreground">
+        <span className="text-body font-medium text-foreground">
           {label}
         </span>
       </label>
@@ -1526,8 +1529,8 @@ export function SchedulePaymentSection({
     <div className="flex flex-col gap-4 transition">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <span id="schedule-payment-label" className="text-[14px] font-medium text-foreground">Schedule Payment</span>
-          <span className="text-[12px] text-muted-foreground">
+          <span id="schedule-payment-label" className="text-body font-medium text-foreground">Schedule Payment</span>
+          <span className="text-meta text-muted-foreground">
             Set up a future date or recurring transfer
           </span>
         </div>
@@ -1575,7 +1578,7 @@ export function SchedulePaymentSection({
                   value={state.startDate}
                   min={todayIso()}
                   onChange={(startDate) => onChange({ startDate })}
-                  className="h-(--control-xl) rounded-xl bg-field px-3 text-[14px] text-foreground tabular"
+                  className="h-(--control-xl) rounded-xl bg-field px-3 text-body text-foreground tabular"
                 />
               </Field>
               <Field label="Time">
@@ -1583,7 +1586,7 @@ export function SchedulePaymentSection({
                   value={state.startTime || DEFAULT_LATER_TIME}
                   onValueChange={(startTime) => startTime && onChange({ startTime })}
                 >
-                  <SelectTrigger className="h-(--control-xl) w-full rounded-xl bg-field px-3 text-[14px] text-foreground tabular">
+                  <SelectTrigger className="h-(--control-xl) w-full rounded-xl bg-field px-3 text-body text-foreground tabular">
                     <span>{timeLabel(state.startTime || DEFAULT_LATER_TIME)}</span>
                   </SelectTrigger>
                   <SelectContent className="max-h-72">
@@ -1625,7 +1628,7 @@ export function NetworkSelect({
       <SelectTrigger>
         <div className="flex items-center gap-2">
           <OperatorLogo name={value} size={28} />
-          <span className={cn("text-[14px] text-foreground", !value && "text-muted-foreground")}>
+          <span className={cn("text-body text-foreground", !value && "text-muted-foreground")}>
             {value || placeholder}
           </span>
         </div>
@@ -1715,7 +1718,7 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
       <SelectTrigger>
-        <span className={cn("truncate text-[14px]", selected ? "text-foreground" : "text-muted-foreground")}>
+        <span className={cn("truncate text-body", selected ? "text-foreground" : "text-muted-foreground")}>
           {selected ? selected.name : "Select payment method"}
         </span>
       </SelectTrigger>
@@ -1725,11 +1728,11 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
             <div className="flex w-full items-center justify-between gap-3 py-0.5">
               <div className="flex flex-col text-left">
                 <span className="font-medium text-foreground">{m.name}</span>
-                <span className="text-[12px] font-normal text-muted-foreground">{m.description}</span>
+                <span className="text-meta font-normal text-muted-foreground">{m.description}</span>
               </div>
               <div className="shrink-0 text-right">
-                <span className="tabular block text-[13px] font-medium text-foreground">{m.feeText}</span>
-                <span className="text-[11px] font-normal text-muted-foreground">{m.speed}</span>
+                <span className="tabular block text-body font-medium text-foreground">{m.feeText}</span>
+                <span className="text-meta font-normal text-muted-foreground">{m.speed}</span>
               </div>
             </div>
           </SelectItem>
@@ -1817,7 +1820,7 @@ export function LookupInput({
           onClick={onVerify}
           disabled={auto || !canVerify || resolving}
           className={cn(
-            "absolute inset-y-0 right-3 flex min-w-0 max-w-[55%] select-none items-center gap-1.5 text-[13px] transition-colors",
+            "absolute inset-y-0 right-3 flex min-w-0 max-w-[55%] select-none items-center gap-1.5 text-body transition-colors",
             auto
               ? "pointer-events-none"
               : canVerify
@@ -1829,11 +1832,11 @@ export function LookupInput({
           {resolving ? (
             <span key="verifying" className="animate-lookup-state flex items-center gap-1.5">
               <AppLoader size={12} className="text-muted-foreground" />
-              <span className="text-[12px] text-muted-foreground">Verifying...</span>
+              <span className="text-meta text-muted-foreground">Verifying...</span>
             </span>
           ) : verified ? (
             // The resolved name, in the slot the Search label uses. It's announced politely so it isn't missed.
-            <span key="verified" role="status" className="animate-lookup-state flex min-w-0 items-center gap-1.5 text-[13px] text-foreground">
+            <span key="verified" role="status" className="animate-lookup-state flex min-w-0 items-center gap-1.5 text-body text-foreground">
               <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success text-white shadow-xs animate-badge-grow">
                 <Check size={10} className="shrink-0" />
               </span>

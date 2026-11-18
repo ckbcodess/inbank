@@ -154,7 +154,7 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Open a Securities Account" backTo={back} />
       <div className="flex flex-col gap-5">
-        <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
+        <p className="px-1 text-body leading-relaxed text-muted-foreground">
           {intent
             ? `To invest in ${intent.label}, we first open your securities account, which records what you own.`
             : "To start investing, we first open your securities account, which records what you own."}

@@ -48,8 +48,8 @@ export default function BusinessStandingOrderDetailPage() {
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-start gap-3 px-1">
           <CheckCircle2 size={22} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
-            <span className="text-[18px] text-foreground">Cancelled</span>
-            <span className="text-[13px] text-muted-foreground">{cancelled} won&apos;t be paid again. You can set it up again anytime.</span>
+            <span className="text-title text-foreground">Cancelled</span>
+            <span className="text-body text-muted-foreground">{cancelled} won&apos;t be paid again. You can set it up again anytime.</span>
           </div>
           <Link href={back.href} className={buttonVariants({ variant: "outline", size: "sm" })}>
             Back to Standing Orders
@@ -64,8 +64,8 @@ export default function BusinessStandingOrderDetailPage() {
       <div className="flex flex-col gap-6">
         <PageHeader title="Standing Order" backTo={back} />
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-start gap-2 px-1">
-          <span className="text-[18px] text-foreground">We couldn&apos;t find this standing order</span>
-          <span className="text-[13px] text-muted-foreground">It may have been cancelled.</span>
+          <span className="text-title text-foreground">We couldn&apos;t find this standing order</span>
+          <span className="text-body text-muted-foreground">It may have been cancelled.</span>
           <Link href={back.href} className={buttonVariants({ variant: "outline", size: "sm" })}>
             Back to Standing Orders
           </Link>
@@ -113,17 +113,17 @@ export default function BusinessStandingOrderDetailPage() {
 
       <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
         <section className="flex flex-col gap-2 px-1">
-          <span className={cn("tabular text-[40px] leading-none tracking-[var(--ls-heading)]", paused ? "text-muted-foreground" : "text-foreground")}>
+          <span className={cn("tabular type-balance leading-none tracking-[var(--ls-heading)]", paused ? "text-muted-foreground" : "text-foreground")}>
             {formatMoney(si.amount, si.currency, showAmounts)}
           </span>
-          <span className="text-[14px] text-muted-foreground">
+          <span className="text-body text-muted-foreground">
             {paused ? "Paused. Nothing will be paid until you resume." : cadencePhrase(si)}
           </span>
         </section>
 
         <section className={LIST_CARD_CLASS}>
           {facts.map(([label, value]) => (
-            <div key={label} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3 text-[14px]">
+            <div key={label} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3 text-body">
               <span className="shrink-0 text-muted-foreground">{label}</span>
               <span className="tabular min-w-0 truncate text-right text-foreground">{value}</span>
             </div>
@@ -131,7 +131,7 @@ export default function BusinessStandingOrderDetailPage() {
         </section>
 
         <section className="flex flex-col gap-3">
-          <p className="text-center text-[13px] text-muted-foreground">This pays automatically, and you can pause or cancel it anytime.</p>
+          <p className="text-center text-body text-muted-foreground">This pays automatically, and you can pause or cancel it anytime.</p>
           <div className="flex items-center justify-end gap-2">
             <Button variant="outline" onClick={togglePause}>
               {paused ? (
@@ -157,10 +157,10 @@ export default function BusinessStandingOrderDetailPage() {
             <DialogTitle>Cancel this standing order?</DialogTitle>
           </DialogHeader>
           <DialogBody className="gap-3">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
+            <p className="text-body leading-relaxed text-muted-foreground">
               &quot;{si.beneficiary}&quot; will stop running. You can set it up again anytime.
             </p>
-            <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-2 text-[12px] text-muted-foreground">
+            <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-2 text-meta text-muted-foreground">
               <AlertTriangle size={15} className="mt-0.5 shrink-0 text-warning-text" aria-hidden="true" />
               <span>If you just want to pause it temporarily, use Pause instead.</span>
             </div>

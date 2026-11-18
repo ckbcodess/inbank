@@ -125,7 +125,7 @@ export default function AuthLayout({
                       <Link
                         href={backHref}
                         aria-label={backLabel}
-                        className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+                        className="group inline-flex items-center gap-2 text-body font-medium text-muted-foreground transition-colors hover:text-foreground"
                       >
                         <div className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground">
                           <ChevronLeft size={16} className="transition-transform" />
@@ -137,7 +137,7 @@ export default function AuthLayout({
                         type="button"
                         onClick={onBack}
                         aria-label={backLabel}
-                        className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                        className="group inline-flex items-center gap-2 text-body font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
                       >
                         <div className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground">
                           <ChevronLeft size={16} className="transition-transform" />
@@ -183,7 +183,7 @@ export default function AuthLayout({
                           {title && (
                             <h1
                               className={cn(
-                                "text-[21px] sm:text-[23px] font-medium tracking-[-0.015em] text-foreground leading-snug",
+                                "type-page-title font-medium tracking-[var(--ls-heading)] text-foreground leading-snug",
                                 titleClassName
                               )}
                             >
@@ -193,7 +193,7 @@ export default function AuthLayout({
                           {description && (
                             <div
                               className={cn(
-                                "mt-2 text-[13px] leading-relaxed text-balance text-muted-foreground",
+                                "mt-2 text-body leading-relaxed text-balance text-muted-foreground",
                                 descriptionClassName
                               )}
                             >
@@ -213,7 +213,7 @@ export default function AuthLayout({
                           <div className={cn(layer, !swap.show && hidden)} aria-hidden={!swap.show} inert={!swap.show}>
                             <h1
                               className={cn(
-                                "tabular text-[21px] sm:text-[23px] font-medium tracking-[-0.015em] text-foreground leading-snug",
+                                "tabular type-page-title font-medium tracking-[var(--ls-heading)] text-foreground leading-snug",
                                 titleClassName
                               )}
                             >
@@ -222,7 +222,7 @@ export default function AuthLayout({
                             {swap.description && (
                               <div
                                 className={cn(
-                                  "mt-2 text-[13px] leading-relaxed text-balance text-muted-foreground",
+                                  "mt-2 text-body leading-relaxed text-balance text-muted-foreground",
                                   descriptionClassName
                                 )}
                               >

@@ -56,21 +56,21 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
       <section className={cn(LIST_CARD_CLASS, "p-4")}>
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
           <div>
-            <span className="text-[12px] text-muted-foreground">Trade value</span>
-            <p className="mt-2 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
+            <span className="text-meta text-muted-foreground">Trade value</span>
+            <p className="mt-2 type-balance leading-none tracking-[var(--ls-heading)] text-foreground tabular">
               {formatMoney(128000, "USD")}
             </p>
           </div>
           <Badge variant="secondary">Under bank operations review</Badge>
         </div>
-        <p className="pt-3 text-[12px] text-muted-foreground">
+        <p className="pt-3 text-meta text-muted-foreground">
           Read-only for the customer — general status only, never internal operations notes (13.6).
         </p>
       </section>
 
       {/* Lifecycle — a section inside Trade Details, not its own screen */}
       <section className={cn(LIST_CARD_CLASS, "p-4")}>
-        <h2 className="text-[15px] text-foreground">Lifecycle</h2>
+        <h2 className="text-heading text-foreground">Lifecycle</h2>
         <ol className="mt-3 flex flex-col gap-0">
           {LIFECYCLE.map((step, i) => (
             <li key={step.label} className="flex gap-2">
@@ -90,7 +90,7 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
                   <span className={`w-px flex-1 ${step.done ? "bg-primary/40" : "bg-border"}`} />
                 )}
               </span>
-              <span className={`pb-4 text-[13px] ${step.done ? "text-foreground" : "text-muted-foreground"}`}>
+              <span className={`pb-4 text-body ${step.done ? "text-foreground" : "text-muted-foreground"}`}>
                 {step.label}
               </span>
             </li>
@@ -100,18 +100,18 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <section className={cn(LIST_CARD_CLASS)}>
-          <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
+          <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-heading text-foreground">
             <FileText size={16} aria-hidden="true" className="text-muted-foreground" />
             Documents
           </h2>
           <ul className="flex flex-col gap-0.5">
             {TRADE_DOCUMENTS.map((d) => (
               <li key={d.id} className="flex items-center gap-2 px-4 py-2">
-                <span className="min-w-0 flex-1 truncate text-[13px] text-foreground">{d.name}</span>
+                <span className="min-w-0 flex-1 truncate text-body text-foreground">{d.name}</span>
                 {d.status === "missing" ? (
                   <Badge variant="warning">Missing</Badge>
                 ) : (
-                  <span className="text-[12px] text-muted-foreground">{d.pages} pages</span>
+                  <span className="text-meta text-muted-foreground">{d.pages} pages</span>
                 )}
               </li>
             ))}
@@ -119,17 +119,17 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
         </section>
 
         <section className={cn(LIST_CARD_CLASS)}>
-          <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
+          <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-heading text-foreground">
             <History size={16} aria-hidden="true" className="text-muted-foreground" />
             Version history
           </h2>
           <ul className="flex flex-col gap-0.5">
             {TRADE_VERSIONS.map((v) => (
               <li key={v.version} className="flex items-start gap-2 px-4 py-2">
-                <span className="w-6 shrink-0 text-[12px] text-muted-foreground tabular">v{v.version}</span>
+                <span className="w-6 shrink-0 text-meta text-muted-foreground tabular">v{v.version}</span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[13px] text-foreground">{v.summary}</span>
-                  <span className="block text-[12px] text-muted-foreground tabular">{v.submittedAt}</span>
+                  <span className="block text-body text-foreground">{v.summary}</span>
+                  <span className="block text-meta text-muted-foreground tabular">{v.submittedAt}</span>
                 </span>
               </li>
             ))}

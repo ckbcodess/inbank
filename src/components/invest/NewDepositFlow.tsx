@@ -210,7 +210,7 @@ export function NewDepositFlow() {
                   <span className="flex w-full items-center justify-between gap-4">
                     <span className="flex flex-col">
                       <span>{`${t.days} days`}</span>
-                      <span className="text-[12px] text-muted-foreground">{`Matures ${formatDate(addDays(MOCK_TODAY, t.days))}`}</span>
+                      <span className="text-meta text-muted-foreground">{`Matures ${formatDate(addDays(MOCK_TODAY, t.days))}`}</span>
                     </span>
                     <span className="tabular text-foreground">{`${t.rate}%`}</span>
                   </span>
@@ -242,7 +242,7 @@ export function NewDepositFlow() {
         {tenure && valid && (
           <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200">
             <DepositInstructionField value={instruction} onChange={setInstruction} />
-            <dl className="flex flex-col gap-2 px-1 text-[14px]">
+            <dl className="flex flex-col gap-2 px-1 text-body">
               {(
                 [
                   ["Interest rate", `${rate}%`],

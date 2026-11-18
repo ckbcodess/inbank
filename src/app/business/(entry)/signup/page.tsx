@@ -56,7 +56,7 @@ function BusinessSignupContent() {
             >
               Track an Application
             </Button>
-            <p className="pt-2 text-center text-[13px] text-muted-foreground">
+            <p className="pt-2 text-center text-body text-muted-foreground">
               Prefer to apply in person?{" "}
               <button
                 type="button"
@@ -128,7 +128,7 @@ function BusinessSignupContent() {
           />
         </div>
 
-        <p className="text-center text-[13px] text-muted-foreground">
+        <p className="text-center text-body text-muted-foreground">
           Already registered?{" "}
           <Link
             href="/login?type=business"

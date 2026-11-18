@@ -235,8 +235,8 @@ export default function LocateUsPage() {
         description="Find GCB Bank branches, prestige lounges, 24/7 cash withdrawal ATMs, and instant deposit terminals nationwide."
       />
 
-      {/* ── Search & Filter Controls ── */}
-      <div className="flex flex-col gap-2">
+      {/* ── Search & Filter Controls (the applied-filter row brings its own gap) ── */}
+      <div className="flex flex-col">
         <div className="flex items-center gap-2">
           {/* Search Bar */}
           <div className="relative flex-1 max-w-md">
@@ -245,7 +245,7 @@ export default function LocateUsPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search branch, city or service"
-              className="pl-8 pr-6 h-9 text-[13px] bg-card border-border"
+              className="pl-8 pr-6 h-9 text-body bg-card border-border"
             />
             {query && (
               <button
@@ -300,15 +300,15 @@ export default function LocateUsPage() {
                   {/* Header Row: Title & Type Pill */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex flex-col">
-                      <span className="text-[15px] font-medium text-foreground tracking-tight">
+                      <span className="text-heading font-medium text-foreground tracking-tight">
                         {loc.name}
                       </span>
-                      <span className="text-[12px] text-muted-foreground mt-0.5">
+                      <span className="text-meta text-muted-foreground mt-0.5">
                         {loc.address}, {loc.city}
                       </span>
                     </div>
                     <span
-                      className={`text-[11px] font-medium px-2 py-0.5 rounded-lg shrink-0 uppercase tracking-wider ${
+                      className={`text-meta font-medium px-2 py-0.5 rounded-lg shrink-0 ${
                         loc.type === "branch"
                           ? "bg-warning/10 text-warning-text"
                           : loc.type === "atm"
@@ -321,7 +321,7 @@ export default function LocateUsPage() {
                   </div>
 
                   {/* Hours & Contact */}
-                  <div className="flex flex-col gap-2 text-[12px] text-muted-foreground pt-1 border-t border-border/50">
+                  <div className="flex flex-col gap-2 text-meta text-muted-foreground pt-1 border-t border-border/50">
                     <div className="flex items-center gap-2">
                       <Clock size={14} className="shrink-0 text-muted-foreground" />
                       <span>{loc.hours}</span>
@@ -341,7 +341,7 @@ export default function LocateUsPage() {
                     {loc.services.map((svc) => (
                       <span
                         key={svc}
-                        className="text-[11px] bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-lg"
+                        className="text-meta bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-lg"
                       >
                         {svc}
                       </span>
@@ -351,7 +351,7 @@ export default function LocateUsPage() {
 
                 {/* Actions Footer */}
                 <div className="flex items-center justify-between gap-2 pt-3 mt-2 border-t border-border/60">
-                  <div className="flex items-center gap-2 text-[11px] text-success-text">
+                  <div className="flex items-center gap-2 text-meta text-success-text">
                     <span className="size-1.5 rounded-full bg-success" />
                     <span>Open for Service</span>
                   </div>
@@ -360,7 +360,7 @@ export default function LocateUsPage() {
                     href={directionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-[12px] font-medium text-primary hover:underline"
+                    className="inline-flex items-center gap-2 text-meta font-medium text-primary hover:underline"
                   >
                     <Navigation size={13} />
                     <span>Get Directions</span>

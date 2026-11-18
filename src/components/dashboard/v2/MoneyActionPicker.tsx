@@ -73,7 +73,7 @@ export function MoneyActionPicker({
 
       {groups.map((group, i) => (
         <section key={group.label ?? i} className="flex flex-col gap-3">
-          {group.label && <h3 className="text-[12px] text-muted-foreground">{group.label}</h3>}
+          {group.label && <h3 className="text-meta text-muted-foreground">{group.label}</h3>}
           <ul className="flex flex-col gap-3">
             {group.options.map((o) => (
               <li key={o.id}>
@@ -93,7 +93,7 @@ export function MoneyActionPicker({
       <Link
         href={withFrom(MORE[kind].href, accountId)}
         onClick={() => onOpenChange(false)}
-        className="group -mb-1 flex items-center justify-center gap-1 rounded-xl py-2 text-[13px] text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+        className="group -mb-1 flex items-center justify-center gap-1 rounded-xl py-2 text-body text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
       >
         {MORE[kind].label}
         <ChevronRight size={14} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />

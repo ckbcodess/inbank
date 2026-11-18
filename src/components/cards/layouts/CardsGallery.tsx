@@ -15,7 +15,7 @@ export function CardsGallery({ cards }: CardsLayoutProps) {
             <CardFace card={card} />
           </div>
           <div className="flex items-center justify-between gap-2 px-1">
-            <span className="truncate text-[14px] font-medium text-foreground">{card.name}</span>
+            <span className="truncate text-body font-medium text-foreground">{card.name}</span>
             <StatusPill card={card} includeActive />
           </div>
         </Link>

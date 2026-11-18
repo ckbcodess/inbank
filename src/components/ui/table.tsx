@@ -15,7 +15,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
         // Default to natural (auto) column sizing. Tables that need stable
         // columns across search/filter/pagination opt into `table-fixed` and
         // set explicit column widths themselves (e.g. customers, stock, suppliers).
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full caption-bottom text-body", className)}
         {...props}
       />
     </div>
@@ -75,7 +75,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "h-9 px-3 text-left align-middle text-sm font-medium whitespace-nowrap text-muted-foreground [&:has([role=checkbox])]:pr-0",
+        "h-9 px-3 text-left align-middle text-body font-medium whitespace-nowrap text-muted-foreground [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}
@@ -103,7 +103,7 @@ function TableCaption({
   return (
     <caption
       data-slot="table-caption"
-      className={cn("mt-3 text-sm text-muted-foreground", className)}
+      className={cn("mt-3 text-body text-muted-foreground", className)}
       {...props}
     />
   )

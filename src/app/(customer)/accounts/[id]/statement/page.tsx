@@ -72,8 +72,8 @@ export default function StatementConfigurationPage({ params }: { params: Promise
       {pageState === "populated" && (
         <>
           <section className="rounded-2xl border border-border bg-card p-4">
-            <h2 className="text-[15px] text-foreground">Configure</h2>
-            <p className="mt-1 text-[13px] text-muted-foreground">
+            <h2 className="text-heading text-foreground">Configure</h2>
+            <p className="mt-1 text-body text-muted-foreground">
               Choose a date range, then narrow by counterparty or amount before previewing.
             </p>
 
@@ -130,8 +130,8 @@ export default function StatementConfigurationPage({ params }: { params: Promise
             <section className="flex flex-col gap-2">
               <div className="flex flex-wrap items-center justify-between gap-2 px-1">
                 <div>
-                  <h2 className="text-[15px] font-medium text-foreground">Preview</h2>
-                  <p className="mt-0.5 text-[12px] text-muted-foreground tabular">
+                  <h2 className="text-heading font-medium text-foreground">Preview</h2>
+                  <p className="mt-0.5 text-meta text-muted-foreground tabular">
                     {formatDate(from)} – {formatDate(to)} · {rows.length} transaction
                     {rows.length === 1 ? "" : "s"}
                   </p>
@@ -156,11 +156,11 @@ export default function StatementConfigurationPage({ params }: { params: Promise
                   <ul className="divide-y divide-border">
                     {rows.map((t) => (
                       <li key={t.id} className="flex items-center gap-3 px-4 py-2">
-                        <span className="w-21 shrink-0 text-[12px] text-muted-foreground tabular">
+                        <span className="w-21 shrink-0 text-meta text-muted-foreground tabular">
                           {formatDate(t.date)}
                         </span>
-                        <span className="min-w-0 flex-1 truncate text-[13px] text-foreground">{t.description}</span>
-                        <span className="shrink-0 text-[13px] text-foreground tabular">
+                        <span className="min-w-0 flex-1 truncate text-body text-foreground">{t.description}</span>
+                        <span className="shrink-0 text-body text-foreground tabular">
                           {t.direction === "debit" ? "−" : "+"}
                           {formatMoney(t.amount, t.currency)}
                         </span>

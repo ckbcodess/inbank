@@ -93,8 +93,8 @@ export default function StandingOrderForm() {
         <div className="flex flex-col items-start gap-3">
           <CheckCircle2 size={24} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
-            <h1 className="text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground">Standing order set up</h1>
-            <p className="text-[14px] leading-relaxed text-muted-foreground">
+            <h1 className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground">Standing order set up</h1>
+            <p className="text-body leading-relaxed text-muted-foreground">
               <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> will go to {supplierName}{" "}
               {cadencePhrase(preview).toLowerCase()}, starting {formatDate(startDate)}. You can pause or cancel it anytime.
             </p>
@@ -134,7 +134,7 @@ export default function StandingOrderForm() {
           total={formatMoney(numAmount, "GHS", true)}
           totalLabel="Each payment"
         />
-        <p className="text-[13px] leading-relaxed text-muted-foreground">
+        <p className="text-body leading-relaxed text-muted-foreground">
           Each payment goes out on its date without asking again, and you can pause or cancel the order from its page whenever you like.
         </p>
         <div className="flex flex-wrap items-center gap-3">
@@ -161,7 +161,7 @@ export default function StandingOrderForm() {
       <PageHeader title="New Standing Order" backTo={{ href: "/business/payments/standing", label: "Standing Orders" }} />
 
       {accounts.length === 0 ? (
-        <p className="text-[13px] text-muted-foreground">There is no active account to pay from. Contact your bank if this looks wrong.</p>
+        <p className="text-body text-muted-foreground">There is no active account to pay from. Contact your bank if this looks wrong.</p>
       ) : (
         <div className="flex flex-col gap-5">
           <FromAccountSelector accounts={accounts} value={fromId} onChange={setFromId} />
@@ -187,7 +187,7 @@ export default function StandingOrderForm() {
               <Field label="How Often">
                 <Select value={frequency} onValueChange={(v) => v && setFrequency(v as InstructionFrequency)}>
                   <SelectTrigger>
-                    <span className="truncate text-[14px] text-foreground">
+                    <span className="truncate text-body text-foreground">
                       {FREQUENCY_OPTIONS.find((f) => f.id === frequency)?.label}
                     </span>
                   </SelectTrigger>

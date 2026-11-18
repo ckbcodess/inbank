@@ -65,12 +65,12 @@ export function AdvanceRow({ advance, showAmounts }: { advance: Advance; showAmo
           <HandCoins size={16} aria-hidden="true" />
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className={cn("truncate text-[14px]", muted ? "text-muted-foreground" : "text-foreground")}>{ADVANCE_PRODUCTS[advance.kind].name}</span>
-          <span className={cn("tabular truncate text-[12px]", overdue ? "text-warning-text" : "text-muted-foreground")}>{statusLine(advance)}</span>
+          <span className={cn("truncate text-body", muted ? "text-muted-foreground" : "text-foreground")}>{ADVANCE_PRODUCTS[advance.kind].name}</span>
+          <span className={cn("tabular truncate text-meta", overdue ? "text-warning-text" : "text-muted-foreground")}>{statusLine(advance)}</span>
         </span>
         <span className="flex shrink-0 flex-col items-end">
-          <span className={cn("tabular text-[14px]", muted ? "text-muted-foreground" : "text-foreground")}>{formatMoney(figure, "GHS", showAmounts)}</span>
-          {advance.status === "active" && <span className="text-[12px] text-muted-foreground">Owed today</span>}
+          <span className={cn("tabular text-body", muted ? "text-muted-foreground" : "text-foreground")}>{formatMoney(figure, "GHS", showAmounts)}</span>
+          {advance.status === "active" && <span className="text-meta text-muted-foreground">Owed today</span>}
         </span>
         <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
       </Link>
@@ -138,8 +138,8 @@ export function AdvanceProductPage() {
                     className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
                   >
                     <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate text-[14px] text-foreground">Past Advances</span>
-                      <span className="tabular truncate text-[12px] text-muted-foreground">{`${repaid.length} repaid · ${money(borrowed)} borrowed`}</span>
+                      <span className="truncate text-body text-foreground">Past Advances</span>
+                      <span className="tabular truncate text-meta text-muted-foreground">{`${repaid.length} repaid · ${money(borrowed)} borrowed`}</span>
                     </span>
                     <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                   </Link>
@@ -147,7 +147,7 @@ export function AdvanceProductPage() {
               </ListCard>
             )}
             {open && (
-              <p className="px-1 text-[12px] text-muted-foreground">
+              <p className="px-1 text-meta text-muted-foreground">
                 Repay your current advance to take another.
               </p>
             )}

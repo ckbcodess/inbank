@@ -85,7 +85,7 @@ export default function FeeConcessionsPage() {
 
       {/* Search Header */}
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[14px] font-medium text-foreground">
+        <span className="text-body font-medium text-foreground">
           Concessions ({results.length})
         </span>
         <ExpandableSearch
@@ -138,7 +138,7 @@ export default function FeeConcessionsPage() {
       <Skeleton loading={effective === "loading"}>
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-[13px]">
+            <table className="w-full min-w-[720px] text-body">
               <thead>
                 <tr className="border-b border-border text-left text-muted-foreground">
                   <th className="px-3 py-2 font-normal">Customer</th>

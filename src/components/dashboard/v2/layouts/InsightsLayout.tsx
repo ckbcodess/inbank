@@ -47,11 +47,11 @@ function StatTile({
   // A row of the grouped stats panel on a phone; its own tile from sm up.
   return (
     <div className="flex items-center justify-between gap-2 px-3 py-3 sm:flex-col sm:items-start sm:justify-start sm:rounded-2xl sm:border sm:border-border sm:bg-card sm:p-4">
-      <span className="text-[13px] text-muted-foreground sm:text-[12px]">{label}</span>
+      <span className="text-body text-muted-foreground sm:text-meta">{label}</span>
       {loading ? (
         <Bone className="h-4 w-21 sm:h-5 sm:w-28" />
       ) : (
-        <span className={`tabular shrink-0 text-[15px] leading-none tracking-[var(--ls-tight)] sm:text-[22px] ${tone === "positive" ? "text-success" : "text-foreground"}`}>
+        <span className={`tabular shrink-0 text-heading leading-none tracking-[var(--ls-tight)] sm:text-fact ${tone === "positive" ? "text-success" : "text-foreground"}`}>
           {value}
         </span>
       )}
@@ -83,11 +83,11 @@ function TopCategories({ data, loading, showAmounts }: { data: DashData; loading
         <ul className="flex flex-col gap-3 sm:gap-3">
           {(loading ? slices.concat(SAMPLE_SLICES).slice(0, 4) : slices).map((s) => (
             <li key={s.label} className="flex flex-col gap-2">
-              <span className="flex items-baseline justify-between gap-2 text-[13px]">
+              <span className="flex items-baseline justify-between gap-2 text-body">
                 <span className="truncate text-foreground">{s.label}</span>
                 <span className="shrink-0 tabular text-muted-foreground">
                   {formatMoney(s.amount, "GHS", showAmounts)}
-                  <span className="ml-2 text-[12px]">{Math.round(s.share * 100)}%</span>
+                  <span className="ml-2 text-meta">{Math.round(s.share * 100)}%</span>
                 </span>
               </span>
               <span className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
@@ -98,7 +98,7 @@ function TopCategories({ data, loading, showAmounts }: { data: DashData; loading
               </span>
             </li>
           ))}
-          <li className="text-[12px] text-muted-foreground">Past month</li>
+          <li className="text-meta text-muted-foreground">Past month</li>
         </ul>
         </Skeleton>
       )}

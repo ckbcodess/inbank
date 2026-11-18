@@ -131,7 +131,7 @@ function LoginForm() {
               type="button"
               data-tour="entry-personal"
               onClick={() => handleTypeChange("personal")}
-              className="inline-flex items-center gap-2 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
+              className="inline-flex items-center gap-2 text-meta font-medium text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
             >
               <User size={13.5} className="shrink-0" />
               <span>Switch to Personal Banking</span>
@@ -193,7 +193,7 @@ function LoginForm() {
             </div>
             <Link
               href="/forgot-password"
-              className="mt-1 self-end text-[12px] text-foreground underline underline-offset-4 hover:text-foreground/70"
+              className="mt-1 self-end text-meta text-foreground underline underline-offset-4 hover:text-foreground/70"
             >
               Forgot password?
             </Link>
@@ -329,12 +329,12 @@ function ReturningSignIn({
     >
       <div className="flex flex-col gap-5">
         <div className="flex items-center gap-2 rounded-2xl border border-border bg-muted/20 px-3 py-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-[13px] text-primary-foreground">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-body text-primary-foreground">
             {initials}
           </span>
           <span className="flex min-w-0 flex-col">
-            <span className="truncate text-[14px] text-foreground">{trusted.name}</span>
-            <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+            <span className="truncate text-body text-foreground">{trusted.name}</span>
+            <span className="flex items-center gap-2 text-meta text-muted-foreground">
               <ShieldCheck size={13} aria-hidden="true" />
               <span className="tabular">Trusted device until {until}</span>
             </span>
@@ -366,7 +366,7 @@ function ReturningSignIn({
             </div>
             <Link
               href="/forgot-password"
-              className="mt-1 self-end text-[12px] text-foreground underline underline-offset-4 hover:text-foreground/70"
+              className="mt-1 self-end text-meta text-foreground underline underline-offset-4 hover:text-foreground/70"
             >
               Forgot password?
             </Link>
@@ -378,7 +378,7 @@ function ReturningSignIn({
           </KeyboardDock>
         </form>
 
-        <p className="text-center text-[13px] text-muted-foreground">
+        <p className="text-center text-body text-muted-foreground">
           Not {firstName}?{" "}
           <button
             type="button"

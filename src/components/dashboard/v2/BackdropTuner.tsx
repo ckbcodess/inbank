@@ -127,8 +127,8 @@ function Panel() {
       className="flex max-h-[calc(100dvh-6.5rem)] w-[320px] flex-col gap-4 overflow-y-auto rounded-2xl border border-border bg-card p-3 shadow-lg"
     >
       <div className="flex items-center justify-between">
-        <span className="text-[14px] text-foreground">Backdrop tuner</span>
-        <span className="rounded-full bg-muted px-2 py-0.5 text-[12px] text-muted-foreground">{theme === "dark" ? "Dark" : "Light"}</span>
+        <span className="text-body text-foreground">Backdrop tuner</span>
+        <span className="rounded-full bg-muted px-2 py-0.5 text-meta text-muted-foreground">{theme === "dark" ? "Dark" : "Light"}</span>
       </div>
 
       <div role="radiogroup" aria-label="Backdrop" className="flex flex-wrap gap-2">
@@ -150,11 +150,11 @@ function Panel() {
           </button>
         ))}
       </div>
-      <p className="-mt-2 text-[12px] text-muted-foreground">Switch the app theme to tune the other mode.</p>
+      <p className="-mt-2 text-meta text-muted-foreground">Switch the app theme to tune the other mode.</p>
 
       {BACKDROP_TOKENS.map((group) => (
         <div key={group.group} className="flex flex-col gap-2">
-          <span className="text-[12px] font-medium text-foreground">{group.group}</span>
+          <span className="text-meta font-medium text-foreground">{group.group}</span>
           {group.tokens.map(({ id, label }) => {
             const value: TunedColor = tuned[id] ?? readToken(id);
             const changed = !!tuned[id];
@@ -167,7 +167,7 @@ function Panel() {
                   onChange={(e) => setToken(backdrop, theme, id, { ...value, hex: e.target.value })}
                   className="size-7 shrink-0 cursor-pointer rounded-sm border border-border bg-transparent p-0"
                 />
-                <span className={cn("min-w-0 flex-1 truncate text-[12px]", changed ? "text-foreground" : "text-muted-foreground")}>{label}</span>
+                <span className={cn("min-w-0 flex-1 truncate text-meta", changed ? "text-foreground" : "text-muted-foreground")}>{label}</span>
                 <input
                   type="range"
                   min={0}
@@ -177,7 +177,7 @@ function Panel() {
                   onChange={(e) => setToken(backdrop, theme, id, { ...value, alpha: Number(e.target.value) })}
                   className="h-1.5 w-20 cursor-pointer accent-[var(--primary)]"
                 />
-                <span className="tabular w-8 text-right text-[12px] text-muted-foreground">{value.alpha}%</span>
+                <span className="tabular w-8 text-right text-meta text-muted-foreground">{value.alpha}%</span>
                 <button
                   type="button"
                   onClick={() => reset(backdrop, theme, id)}
@@ -197,14 +197,14 @@ function Panel() {
         <button
           type="button"
           onClick={() => reset(backdrop, theme)}
-          className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-border px-2 py-2 text-[13px] text-foreground transition-colors hover:bg-muted"
+          className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-border px-2 py-2 text-body text-foreground transition-colors hover:bg-muted"
         >
           <RotateCcw size={14} /> Reset this one
         </button>
         <button
           type="button"
           onClick={copy}
-          className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-2 py-2 text-[13px] text-primary-foreground transition-colors hover:bg-primary-hover"
+          className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-2 py-2 text-body text-primary-foreground transition-colors hover:bg-primary-hover"
         >
           <Copy size={14} /> Copy CSS
         </button>

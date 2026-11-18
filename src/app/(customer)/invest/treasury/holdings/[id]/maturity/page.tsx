@@ -70,7 +70,7 @@ export default function ChangeMaturityPage() {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="When It Matures" backTo={back} />
       <div className="flex flex-col gap-5">
-        <p className="px-1 text-[13px] text-muted-foreground">{`Matures ${formatDate(h.maturity)}. You can change this until then.`}</p>
+        <p className="px-1 text-body text-muted-foreground">{`Matures ${formatDate(h.maturity)}. You can change this until then.`}</p>
 
         <div role="radiogroup" aria-label="Maturity instruction" className="flex flex-col gap-2">
           {MATURITY_INSTRUCTIONS.map((m) => (
@@ -91,7 +91,7 @@ export default function ChangeMaturityPage() {
               Proceed
             </Button>
           </div>
-          {!changed && <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">Choose a different option to change it.</p>}
+          {!changed && <p className="px-1 pt-2 text-center text-meta text-muted-foreground">Choose a different option to change it.</p>}
         </div>
       </div>
 

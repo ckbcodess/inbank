@@ -155,17 +155,17 @@ function AccountRow({
         </TileChip>
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="flex flex-wrap items-center gap-2">
-            <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{account.name}</span>
+            <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">{account.name}</span>
             {showDefault && isDefault && <Badge variant="brand">Default</Badge>}
             {account.isJoint && <Badge variant="outline">Joint</Badge>}
             {dormant && <Badge variant="warning">Dormant</Badge>}
           </span>
-          <span className="truncate text-[13px] text-muted-foreground tabular">
+          <span className="truncate text-body text-muted-foreground tabular">
             {account.type} · {account.number}
             {account.isJoint && otherHolder ? ` · with ${otherHolder}` : ""}
           </span>
           {pending && (
-            <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+            <span className="flex items-center gap-2 text-meta text-muted-foreground">
               <Clock size={13} className="shrink-0 text-warning" aria-hidden="true" />
               <span className="tabular">
                 {formatMoney(pending.amount, "GHS", true)} from {pending.from} on its way · usually arrives within minutes
@@ -201,14 +201,14 @@ function SourceRow({ source, onOpen, onRemove }: { source: LinkedSource; onOpen:
         <SourceMark type={source.type} operator={source.operator} title={source.title} />
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="flex items-center gap-2">
-            <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{source.title}</span>
+            <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">{source.title}</span>
             <WalletTag tag={sourceTag(source)} />
           </span>
-          <span className="truncate text-[13px] text-muted-foreground tabular">{source.subtitle}</span>
+          <span className="truncate text-body text-muted-foreground tabular">{source.subtitle}</span>
         </span>
       </button>
       <RowMenu label={`More actions for ${source.title}`}>
-        <DropdownMenuItem onClick={onRemove} className="gap-2 text-[13px]">
+        <DropdownMenuItem onClick={onRemove} className="gap-2 text-body">
           <Trash2 size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
           Remove
         </DropdownMenuItem>
@@ -414,8 +414,8 @@ export function AccountsContent({ linkSource = false, loading: forced = false }:
         <div className="flex items-start gap-2 rounded-2xl border border-border bg-card p-3 sm:p-4" role="status">
           <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-success" aria-hidden="true" />
           <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <p className="text-[14px] text-foreground">Your GCB account is ready</p>
-            <p className="text-[13px] leading-relaxed text-muted-foreground tabular">
+            <p className="text-body text-foreground">Your GCB account is ready</p>
+            <p className="text-body leading-relaxed text-muted-foreground tabular">
               {formatMoney(migratedAmount, "GHS", true)} moved from your wallet to {defaultAccount.name}. Your linked
               wallets and cards now top up this account.
             </p>
@@ -549,8 +549,8 @@ export function AccountsContent({ linkSource = false, loading: forced = false }:
               <div className="flex size-21 items-center justify-center rounded-full bg-primary/15 text-foreground shadow-[0_0_60px_20px_color-mix(in_oklab,var(--primary)_18%,transparent)]">
                 <HandCoins size={40} aria-hidden="true" />
               </div>
-              <DialogTitle className="text-[22px] tracking-[var(--ls-heading)]">You&apos;re Almost There…</DialogTitle>
-              <p className="max-w-[320px] text-[14px] leading-relaxed text-muted-foreground">
+              <DialogTitle className="type-headline tracking-[var(--ls-heading)]">You&apos;re Almost There…</DialogTitle>
+              <p className="max-w-[320px] text-body leading-relaxed text-muted-foreground">
                 Deposit to unlock instant banking. Fund your account today for quick payments and everyday
                 convenience.
               </p>
@@ -604,11 +604,11 @@ export function AccountsContent({ linkSource = false, loading: forced = false }:
             <div className="flex flex-col items-center gap-6 pb-4 pt-5 text-center">
               {viewing && <SourceMark large type={viewing.type} operator={viewing.operator} title={viewing.title} />}
               <div className="flex flex-col items-center gap-2">
-                <DialogTitle className="text-[18px] tracking-[var(--ls-heading)]">{viewing?.title}</DialogTitle>
-                <p className="text-[14px] text-muted-foreground tabular">{viewing?.subtitle}</p>
+                <DialogTitle className="text-title tracking-[var(--ls-heading)]">{viewing?.title}</DialogTitle>
+                <p className="text-body text-muted-foreground tabular">{viewing?.subtitle}</p>
               </div>
               {viewing && (
-                <span className="flex items-center gap-2 text-[13px] text-foreground">
+                <span className="flex items-center gap-2 text-body text-foreground">
                   <WalletTag tag={sourceTag(viewing)} />
                   {sourceTag(viewing) === "Registered" ? "Verified Number" : viewing.type === "card" ? "Linked Card" : "Linked Wallet"}
                 </span>
@@ -642,7 +642,7 @@ export function AccountsContent({ linkSource = false, loading: forced = false }:
           <DialogBody>
             <div className="flex items-start gap-2">
               <AlertTriangle size={18} aria-hidden="true" className="mt-0.5 shrink-0 text-warning" />
-              <p className="text-[13.5px] leading-relaxed text-muted-foreground tabular">
+              <p className="text-body leading-relaxed text-muted-foreground tabular">
                 {removing?.type === "card"
                   ? `You will no longer be able to add money using card ending ${removing.subtitle.replace(/\D/g, "") || "1111"} until you link it again. Money already in your accounts will not be affected.`
                   : `You will no longer be able to add money from ${removing?.subtitle} until you link it again. Money already in your accounts will not be affected.`}

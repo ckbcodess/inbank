@@ -33,7 +33,7 @@ export function MultiChoice({ options, value, onChange, className, ...rest }: Mu
             aria-checked={chosen}
             onClick={() => toggle(option)}
             className={cn(
-              "inline-flex cursor-pointer select-none items-center gap-1 rounded-full border px-4 py-2 text-left text-[12px] outline-none transition-colors duration-hover focus-visible:ring-1 focus-visible:ring-ring",
+              "inline-flex cursor-pointer select-none items-center gap-1 rounded-full border px-4 py-2 text-left text-meta outline-none transition-colors duration-hover focus-visible:ring-1 focus-visible:ring-ring",
               chosen
                 ? "border-transparent bg-primary text-primary-foreground"
                 : "border-border/80 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground",

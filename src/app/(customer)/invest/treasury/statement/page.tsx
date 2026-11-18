@@ -89,7 +89,7 @@ export default function TreasuryStatementPage() {
 
         <div>
           <ProceedButton disabled={!valid} onClick={() => setAuthOpen(true)} />
-          <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">
+          <p className="px-1 pt-2 text-center text-meta text-muted-foreground">
             {!type
               ? "Select a statement type to continue."
               : count === 0

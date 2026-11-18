@@ -100,7 +100,7 @@ export function PaymentFailedScreen({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.44, delay: 0.15, ease: EASE }}
-            className="text-[26px] font-medium leading-[34px] tracking-[var(--ls-heading)] text-foreground sm:text-[30px] sm:leading-[38px]"
+            className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground"
           >
             {title}
           </motion.h1>
@@ -108,7 +108,7 @@ export function PaymentFailedScreen({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.25, ease: EASE }}
-            className="max-w-[440px] text-[15px] leading-[23px] text-muted-foreground sm:text-[16px] sm:leading-[25px]"
+            className="max-w-[440px] text-body leading-[23px] text-muted-foreground sm:text-heading sm:leading-[25px]"
           >
             {message}
           </motion.p>
@@ -127,7 +127,7 @@ export function PaymentFailedScreen({
           onClick={() => setReporting(true)}
           popup
           chipClassName="bg-action-chip text-foreground group-hover:bg-action-chip-hover"
-          labelClassName="text-[12px] leading-[17px]"
+          labelClassName="text-meta leading-[17px]"
         />
       </motion.div>
 

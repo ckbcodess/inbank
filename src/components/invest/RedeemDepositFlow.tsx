@@ -163,7 +163,7 @@ export function RedeemDepositFlow() {
 
         {valid && (
           <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200">
-            <dl className="flex flex-col gap-2 px-1 text-[14px]">
+            <dl className="flex flex-col gap-2 px-1 text-body">
               {(
                 [
                   ["You receive today", money(cost.receive)],
@@ -183,7 +183,7 @@ export function RedeemDepositFlow() {
 
         <div>
           <ProceedButton disabled={!valid} onClick={() => setAuthOpen(true)} />
-          {valid && <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">Once it’s paid out, this can’t be undone.</p>}
+          {valid && <p className="px-1 pt-2 text-center text-meta text-muted-foreground">Once it’s paid out, this can’t be undone.</p>}
         </div>
       </div>
 

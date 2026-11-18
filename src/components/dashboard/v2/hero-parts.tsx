@@ -71,7 +71,7 @@ export function LastLogin({ className }: { className?: string }) {
   const previous = useSession((s) => s.previousSignIn);
   if (!previous) return null;
   return (
-    <span className={cn("tabular text-[12px] tracking-[var(--ls-tight)] text-muted-foreground", className)} suppressHydrationWarning>
+    <span className={cn("tabular text-meta tracking-[var(--ls-tight)] text-muted-foreground", className)} suppressHydrationWarning>
       {t("dashboard.lastLogin", "Last login: {0}", { 0: formatLastLogin(previous) })}
     </span>
   );
@@ -260,12 +260,12 @@ export function HeroAccountOptionsMenu({
           {/* Inbound & Sharing */}
           <DropdownMenuItem onClick={handleCopyNumber} className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70">
             <Copy size={16} className="text-muted-foreground shrink-0" />
-            <span className="text-[13.5px]">Copy Account Number</span>
+            <span className="text-body">Copy Account Number</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setShareOpen(true)} className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70">
             <Share2 size={16} className="text-muted-foreground shrink-0" />
-            <span className="text-[13.5px]">Share Account Details</span>
+            <span className="text-body">Share Account Details</span>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
@@ -276,7 +276,7 @@ export function HeroAccountOptionsMenu({
             className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70"
           >
             <FileText size={16} className="text-muted-foreground shrink-0" />
-            <span className="text-[13.5px]">Download E-Statement</span>
+            <span className="text-body">Download E-Statement</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem
@@ -284,7 +284,7 @@ export function HeroAccountOptionsMenu({
             className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70"
           >
             <ArrowLeftRight size={16} className="text-muted-foreground shrink-0" />
-            <span className="text-[13.5px]">View Last 10 Transactions</span>
+            <span className="text-body">View Last 10 Transactions</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem
@@ -292,7 +292,7 @@ export function HeroAccountOptionsMenu({
             className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70"
           >
             <LayoutGrid size={16} className="text-muted-foreground shrink-0" />
-            <span className="text-[13.5px]">View All Accounts</span>
+            <span className="text-body">View All Accounts</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -347,7 +347,7 @@ export function HeroFxAction({ className }: { className?: string }) {
           <span className="max-sm:hidden"><CurrencyLogo currency="GHS" size={20} showBorder={false} /></span>
           <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-2 max-sm:ml-0" />
         </span>
-        <span className="tabular text-[14px] tracking-[var(--ls-tight)] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
+        <span className="tabular text-body tracking-[var(--ls-tight)]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
         <RateTrend size={15} strokeWidth={2} className={cn("size-[15px]", usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
       </Button>
 
@@ -410,7 +410,7 @@ export function ManageAccountsLink({
     <Link
       href="/accounts"
       className={cn(
-        "relative flex w-fit items-center gap-0.5 rounded-lg py-2 text-[13px] leading-none transition-opacity hover:opacity-80 sm:text-[16px]",
+        "relative flex w-fit items-center gap-0.5 rounded-lg py-2 text-body leading-none transition-opacity hover:opacity-80 sm:text-heading",
         className,
       )}
     >
@@ -423,9 +423,9 @@ export function ManageAccountsLink({
 /* ── Balance ─────────────────────────────────────────────────────────────── */
 
 const HERO_FIGURE = {
-  md: "text-[24px] leading-[28px] sm:text-[32px] sm:leading-[32px]",
-  lg: "text-[24px] leading-[28px] sm:text-[33px] sm:leading-[32px]",
-  xl: "text-[28px] leading-[32px] sm:text-[44px] sm:leading-[48px]",
+  md: "type-balance",
+  lg: "type-balance",
+  xl: "type-balance",
 } as const;
 
 /** The selected account's balance in hero type, with the eye toggle. The eye hides this figure only. */
@@ -470,7 +470,7 @@ export function HeroBalance({
 export function HeroUpdated({ updatedAt, className }: { updatedAt: number; className?: string }) {
   const label = useUpdatedLabel(updatedAt);
   return (
-    <span className={cn("relative text-[12.5px] leading-5 tracking-[-0.005em] sm:text-[14px]", className)} suppressHydrationWarning>
+    <span className={cn("relative text-meta leading-5 tracking-[-0.005em] sm:text-body", className)} suppressHydrationWarning>
       {label}
     </span>
   );

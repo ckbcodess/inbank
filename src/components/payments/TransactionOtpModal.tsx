@@ -110,15 +110,15 @@ export default function TransactionOtpModal({
             </div>
             <div className="flex flex-col gap-1">
               {formattedAmount && (
-                <span className="tabular-nums text-[22px] font-semibold tracking-tight text-foreground">
+                <span className="tabular-nums type-headline font-medium tracking-tight text-foreground">
                   GHS {formattedAmount}
                 </span>
               )}
-              <p className="text-[14px] text-muted-foreground">
+              <p className="text-body text-muted-foreground">
                 Enter your Mobile Money PIN on your phone to approve.
               </p>
             </div>
-            <div className="flex items-center gap-2 pt-2 text-[13px] text-muted-foreground">
+            <div className="flex items-center gap-2 pt-2 text-body text-muted-foreground">
               <AppLoader size={15} />
               <span>Waiting for approval…</span>
             </div>
@@ -155,8 +155,8 @@ export default function TransactionOtpModal({
                 <span className="tabular whitespace-nowrap font-medium text-foreground">{displayPhone}</span>
               </>
             }
-            titleClass="mt-4 text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground"
-            descClass="mt-2 max-w-xs text-[13px] text-muted-foreground"
+            titleClass="mt-4 type-headline font-medium tracking-[var(--ls-heading)] text-foreground"
+            descClass="mt-2 max-w-xs text-body text-muted-foreground"
           />
 
           <div className="mt-6 flex w-full justify-center">

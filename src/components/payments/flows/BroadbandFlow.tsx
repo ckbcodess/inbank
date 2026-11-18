@@ -142,7 +142,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
           onChange("amount", "");
           setEditingAmount(false);
         }}
-        className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
+        className="cursor-pointer self-start text-body text-foreground underline underline-offset-4"
       >
         Use the package price
       </button>
@@ -153,7 +153,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
           onChange("amount", String(price));
           setEditingAmount(true);
         }}
-        className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
+        className="cursor-pointer self-start text-body text-foreground underline underline-offset-4"
       >
         Edit amount
       </button>
@@ -235,13 +235,13 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
                 <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
                   <OperatorLogo name={provider?.name} size={36} />
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    <span className="text-[14px] text-foreground">{selected.label}</span>
-                    <span className="text-[12px] text-muted-foreground tabular">Due {formatDate(dueOn)}</span>
+                    <span className="text-body text-foreground">{selected.label}</span>
+                    <span className="text-meta text-muted-foreground tabular">Due {formatDate(dueOn)}</span>
                   </div>
-                  <span className="text-[16px] text-foreground tabular">{formatMoney(selected.price, "GHS", true)}</span>
+                  <span className="text-heading text-foreground tabular">{formatMoney(selected.price, "GHS", true)}</span>
                 </div>
               ) : (
-                <p className="text-[13px] text-muted-foreground">There’s no active package on this account right now.</p>
+                <p className="text-body text-muted-foreground">There’s no active package on this account right now.</p>
               )}
             </Field>
           ) : (

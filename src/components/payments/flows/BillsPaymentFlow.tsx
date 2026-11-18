@@ -403,7 +403,7 @@ export function BillsPaymentFlow({
           <div className="flex flex-col gap-2">
             {state.subType === "ecg" ? (
               <>
-                <div className="flex h-11 items-center gap-3 rounded-2xl border border-border/80 bg-muted/30 px-3 text-[15px] font-medium text-foreground">
+                <div className="flex h-11 items-center gap-3 rounded-2xl border border-border/80 bg-muted/30 px-3 text-heading font-medium text-foreground">
                   <BillerMark name="ECG" category="Bills & Utilities" size={28} />
                   Electricity Company of Ghana (ECG)
                 </div>
@@ -466,12 +466,12 @@ export function BillsPaymentFlow({
                         {madeInvoice ? (
                           <div className="flex flex-col gap-3">
                             <div className="flex items-center justify-between gap-3">
-                              <span className="text-[13px] text-muted-foreground">Invoice number</span>
-                              <span className="tabular text-[14px] text-foreground">{madeInvoice.number}</span>
+                              <span className="text-body text-muted-foreground">Invoice number</span>
+                              <span className="tabular text-body text-foreground">{madeInvoice.number}</span>
                             </div>
                             <TotalRow label="Amount due" value={formatMoney(madeInvoice.amount, "GHS", true)} />
                             {rememberedService ? (
-                              <span className="text-[13px] text-muted-foreground">Details saved to Beneficiaries</span>
+                              <span className="text-body text-muted-foreground">Details saved to Beneficiaries</span>
                             ) : (
                               <button
                                 type="button"
@@ -489,7 +489,7 @@ export function BillsPaymentFlow({
                                   });
                                   setRememberedService(true);
                                 }}
-                                className="cursor-pointer self-start text-[13px] text-foreground underline underline-offset-4"
+                                className="cursor-pointer self-start text-body text-foreground underline underline-offset-4"
                               >
                                 Remember these details
                               </button>
@@ -620,10 +620,10 @@ export function BillsPaymentFlow({
                                 className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl p-2 text-left transition-colors duration-hover hover:bg-muted/50"
                               >
                                 <span className="flex min-w-0 flex-col">
-                                  <span className="tabular truncate text-[14px] text-foreground">{inv.number}</span>
-                                  <span className="truncate text-[12px] text-muted-foreground">{inv.serviceName}</span>
+                                  <span className="tabular truncate text-body text-foreground">{inv.number}</span>
+                                  <span className="truncate text-meta text-muted-foreground">{inv.serviceName}</span>
                                 </span>
-                                <span className="tabular text-[14px] text-foreground">{formatMoney(inv.amount, "GHS", true)}</span>
+                                <span className="tabular text-body text-foreground">{formatMoney(inv.amount, "GHS", true)}</span>
                               </button>
                             ))}
                           </div>
@@ -692,7 +692,7 @@ export function BillsPaymentFlow({
                         onChange("amount", String(charge.amount));
                         setEditingAmount(false);
                       }}
-                      className="cursor-pointer text-[13px] text-foreground underline underline-offset-4"
+                      className="cursor-pointer text-body text-foreground underline underline-offset-4"
                     >
                       {rule?.current?.resetLabel}
                     </button>
@@ -703,7 +703,7 @@ export function BillsPaymentFlow({
                         setEditingAmount(true);
                         setCollapsed(true);
                       }}
-                      className="cursor-pointer text-[13px] text-foreground underline underline-offset-4"
+                      className="cursor-pointer text-body text-foreground underline underline-offset-4"
                     >
                       Edit amount
                     </button>
@@ -712,10 +712,10 @@ export function BillsPaymentFlow({
               <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
                 <BillerMark name={selectedBiller?.name} category={selectedBiller?.category} size={36} />
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <span className="truncate text-[14px] text-foreground">{charge.title}</span>
-                  <span className="text-[12px] text-muted-foreground tabular">{charge.detail}</span>
+                  <span className="truncate text-body text-foreground">{charge.title}</span>
+                  <span className="text-meta text-muted-foreground tabular">{charge.detail}</span>
                 </div>
-                <span className="text-[16px] text-foreground tabular">{formatMoney(charge.amount, "GHS", true)}</span>
+                <span className="text-heading text-foreground tabular">{formatMoney(charge.amount, "GHS", true)}</span>
               </div>
               {govCharge ? (
                 overBalance && <InsufficientFundsAlert />

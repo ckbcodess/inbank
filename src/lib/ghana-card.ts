@@ -23,3 +23,11 @@ export function formatGhanaCard(raw: string): string {
 export function isCompleteGhanaCard(raw: string): boolean {
   return cardDigits(raw).length === BODY_DIGITS + CHECK_DIGITS;
 }
+
+/** What NIA returns for the selfie against the Ghana Card. Dev Mode picks it under Screen states. */
+export type NiaSelfieOutcome = "matched" | "no_match";
+export const NIA_SELFIE_OUTCOMES: readonly NiaSelfieOutcome[] = ["matched", "no_match"];
+export const NIA_SELFIE_OUTCOME_LABELS: Record<NiaSelfieOutcome, string> = {
+  matched: "Matches",
+  no_match: "Does not match",
+};

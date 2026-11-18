@@ -354,11 +354,11 @@ export default function TransactionMonitoringPage() {
         <div className="flex flex-wrap items-center justify-between gap-2 p-3">
           <div className="flex flex-wrap items-center gap-2">
             <FilterPanel groups={filterGroups} onClear={clearFilterGroups} align="start" />
-            <AppliedFilters groups={filterGroups} />
+            <AppliedFilters groups={filterGroups} layout="inline" />
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="hidden text-[13px] text-muted-foreground whitespace-nowrap tabular sm:inline">
+            <span className="hidden text-body text-muted-foreground whitespace-nowrap tabular sm:inline">
               {filtered.length} {filtered.length === 1 ? "record" : "records"}
             </span>
             <ExpandableSearch
@@ -396,14 +396,14 @@ export default function TransactionMonitoringPage() {
                     className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 transition-transform"
                   >
                     <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate text-[13px] text-foreground">{t.description}</span>
-                      <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
+                      <span className="truncate text-body text-foreground">{t.description}</span>
+                      <span className="mt-0.5 truncate text-meta text-muted-foreground tabular">
                         {t.reference} · {formatDate(t.date)} · {t.channel}
                         {t.category && ` · ${t.category}`}
                         {methodLabel && ` · ${methodLabel}`}
                       </span>
                     </span>
-                    <span className="shrink-0 text-[13px] text-foreground tabular">
+                    <span className="shrink-0 text-body text-foreground tabular">
                       {formatMoney(t.amount, t.currency)}
                     </span>
                     <TransactionStatusBadge state={t.state} />

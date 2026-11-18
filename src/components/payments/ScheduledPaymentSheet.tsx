@@ -31,7 +31,7 @@ function Facts({ rows, divided }: { rows: Array<[string, string]>; divided?: boo
   return (
     <div className={cn("flex flex-col gap-3 py-5", divided && DASHED)}>
       {rows.map(([label, value]) => (
-        <div key={label} className="flex items-center justify-between gap-3 text-[13px]">
+        <div key={label} className="flex items-center justify-between gap-3 text-body">
           <span className="text-muted-foreground">{label}</span>
           <span className="tabular min-w-0 truncate text-right font-medium text-foreground">{value}</span>
         </div>
@@ -106,16 +106,16 @@ export function ScheduledPaymentSheet({
           <div className="custom-scrollbar scroll-fade relative z-10 flex flex-1 flex-col overflow-y-auto px-5 pb-5 pt-12 sm:px-8">
             <div className="my-auto">
               <div className="flex flex-col items-center pb-5 text-center">
-                <SheetTitle className="text-[13px] font-normal text-muted-foreground">{title}</SheetTitle>
+                <SheetTitle className="text-body font-normal text-muted-foreground">{title}</SheetTitle>
                 <span
                   className={cn(
-                    "tabular mt-4 text-[32px] font-normal leading-none tracking-[var(--ls-display)] sm:text-[40px]",
+                    "tabular mt-4 type-balance font-normal leading-none tracking-[var(--ls-display)]",
                     paused ? "text-muted-foreground" : "text-foreground",
                   )}
                 >
                   {formatMoney(si.amount, si.currency, showAmounts)}
                 </span>
-                <SheetDescription className="mt-4 text-[12px] text-muted-foreground/80">
+                <SheetDescription className="mt-4 text-meta text-muted-foreground/80">
                   {paused ? "Paused. Nothing will be paid until you resume." : cadencePhrase(si)}
                 </SheetDescription>
               </div>
@@ -136,7 +136,7 @@ export function ScheduledPaymentSheet({
                 <span className="flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xs transition-transform duration-fast group-hover:brightness-95">
                   {paused ? <Play size={20} aria-hidden="true" /> : <Pause size={20} aria-hidden="true" />}
                 </span>
-                <span className="text-[12px] text-foreground">{paused ? "Resume" : "Pause"}</span>
+                <span className="text-meta text-foreground">{paused ? "Resume" : "Pause"}</span>
               </button>
               <button
                 type="button"
@@ -146,10 +146,10 @@ export function ScheduledPaymentSheet({
                 <span className="flex size-11 items-center justify-center rounded-full bg-destructive text-white shadow-xs transition-transform duration-fast group-hover:brightness-95">
                   <Trash2 size={20} aria-hidden="true" />
                 </span>
-                <span className="text-[12px] text-foreground">Cancel</span>
+                <span className="text-meta text-foreground">Cancel</span>
               </button>
             </div>
-            <p className="text-center text-[12px] text-muted-foreground">This pays automatically, and you can pause or cancel it anytime.</p>
+            <p className="text-center text-meta text-muted-foreground">This pays automatically, and you can pause or cancel it anytime.</p>
           </div>
         </SheetContent>
       </Sheet>
@@ -160,10 +160,10 @@ export function ScheduledPaymentSheet({
             <DialogTitle>Cancel this scheduled payment?</DialogTitle>
           </DialogHeader>
           <DialogBody className="gap-3">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
+            <p className="text-body leading-relaxed text-muted-foreground">
               &quot;{si.beneficiary}&quot; will stop running. You can set it up again anytime.
             </p>
-            <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-2 text-[12.5px] text-muted-foreground">
+            <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-2 text-meta text-muted-foreground">
               <AlertTriangle size={15} className="mt-0.5 shrink-0 text-warning-text" aria-hidden="true" />
               <span>If you just want to pause it temporarily, use Pause instead.</span>
             </div>

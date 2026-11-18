@@ -44,14 +44,14 @@ function Forecast({ data, showAmounts }: { data: DashData; showAmounts: boolean 
   if (left >= 0) {
     return (
       // One text run so it translates as a single sentence.
-      <p className="text-[14px] text-muted-foreground tabular">
+      <p className="text-body text-muted-foreground tabular">
         {money(left)} left after scheduled payments in the next 30 days
       </p>
     );
   }
   // Framed as a heads-up with a way out, never a verdict.
   return (
-    <p className="text-[14px] text-muted-foreground tabular">
+    <p className="text-body text-muted-foreground tabular">
       Scheduled payments over the next 30 days come to {money(data.scheduledNext30)} — more than you have available.{" "}
       <Link href="/payments/standing" className="text-foreground underline-offset-4 hover:underline">
         Review them
@@ -80,7 +80,7 @@ export function FocusLayout(props: DashViewProps) {
   return (
     <div className="flex flex-col gap-6 sm:gap-10">
       <div className="flex items-center justify-between gap-3">
-        <Greeting firstName={data.firstName} className="sm:text-[20px] sm:leading-[26px]" />
+        <Greeting firstName={data.firstName} className="sm:text-fact sm:leading-[26px]" />
         <RefreshControl updatedAt={updatedAt} refreshing={loading} onRefresh={onRefresh} />
       </div>
 
@@ -125,7 +125,7 @@ export function FocusLayout(props: DashViewProps) {
             <Link
               key={l.href}
               href={l.href}
-              className="text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+              className="text-body text-muted-foreground transition-colors hover:text-foreground"
             >
               {l.label}
             </Link>

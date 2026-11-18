@@ -132,7 +132,7 @@ export default function SettingsDialog() {
             )}
           >
             <div className="flex h-12 items-center justify-between pl-3 pr-2 sm:hidden">
-              <h2 className="text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground">Settings</h2>
+              <h2 className="text-title font-medium tracking-[var(--ls-heading)] text-foreground">Settings</h2>
               <DialogClose render={<Button variant="ghost" size="md" aria-label="Close settings" />}>
                 <X size={20} />
               </DialogClose>
@@ -142,7 +142,7 @@ export default function SettingsDialog() {
 
             {q ? (
               results.length === 0 ? (
-                <p className="px-3 text-[13px] leading-relaxed text-muted-foreground">{`Nothing matches “${query.trim()}”.`}</p>
+                <p className="px-3 text-body leading-relaxed text-muted-foreground">{`Nothing matches “${query.trim()}”.`}</p>
               ) : (
                 <div className="flex flex-col gap-0.5">
                   {results.map((r) => {
@@ -163,8 +163,8 @@ export default function SettingsDialog() {
                       >
                         <Icon size={16} className="mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true" />
                         <span className="flex min-w-0 flex-col gap-0.5">
-                          <span className="truncate text-[13px] text-foreground">{r.label}</span>
-                          {r.isSection ? null : <span className="text-[12px] text-muted-foreground">{item.label}</span>}
+                          <span className="truncate text-body text-foreground">{r.label}</span>
+                          {r.isSection ? null : <span className="text-meta text-muted-foreground">{item.label}</span>}
                         </span>
                       </button>
                     );
@@ -175,7 +175,7 @@ export default function SettingsDialog() {
 
             {q ? null : GROUPS.map((group) => (
               <div key={group.label} className="flex flex-col gap-0.5">
-                <span className="flex h-7 items-center px-3 text-[12px] text-muted-foreground">{group.label}</span>
+                <span className="flex h-7 items-center px-3 text-meta text-muted-foreground">{group.label}</span>
                 {group.items.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
@@ -192,7 +192,7 @@ export default function SettingsDialog() {
                   >
                     <Icon size={18} strokeWidth={1.8} className="shrink-0 text-muted-foreground sm:size-4 sm:text-current" aria-hidden="true" />
                     <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                      <span className="text-[14px] text-foreground sm:text-[13px] sm:font-medium sm:text-current">{label}</span>
+                      <span className="text-body text-foreground sm:font-medium sm:text-current">{label}</span>
                     </span>
                     <ChevronRight size={16} className="shrink-0 text-muted-foreground sm:hidden" aria-hidden="true" />
                   </button>

@@ -256,7 +256,7 @@ function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-[17px] text-foreground tracking-[var(--ls-tight)] font-normal truncate", className)}
+      className={cn("text-title text-foreground tracking-[var(--ls-tight)] font-normal truncate", className)}
       {...props}
     />
   )
@@ -270,7 +270,7 @@ function DialogDescription({
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn(
-        "text-[13px] text-muted-foreground leading-normal",
+        "text-body text-muted-foreground leading-normal",
         className
       )}
       {...props}

@@ -96,9 +96,9 @@ export default function UserAccessFields({
                       })
                     }
                   />
-                  <span className="truncate text-[14px] text-foreground">{account.name}</span>
+                  <span className="truncate text-body text-foreground">{account.name}</span>
                 </span>
-                <span className="tabular shrink-0 text-[13px] text-muted-foreground">
+                <span className="tabular shrink-0 text-body text-muted-foreground">
                   •••• {account.number.replace(/\s/g, "").slice(-4)}
                 </span>
               </label>

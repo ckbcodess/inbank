@@ -215,17 +215,17 @@ export function DataBundleFlow({
             >
               <SelectTrigger>
                 {!selectedBundle ? (
-                  <span className="text-[14px] text-muted-foreground">
+                  <span className="text-body text-muted-foreground">
                     Select internet bundle
                   </span>
                 ) : (
                   <div className="flex items-center justify-between w-full min-w-0 pr-2">
-                    <span className="text-[14px] text-foreground truncate">
+                    <span className="text-body text-foreground truncate">
                       {selectedBundle.name}
                     </span>
                     <span
                       className={cn(
-                        "text-[14px] tabular shrink-0 ml-2",
+                        "text-body tabular shrink-0 ml-2",
                         overBalance ? "text-destructive" : "text-foreground"
                       )}
                     >

@@ -92,8 +92,8 @@ export default function PaymentApprovalPage({ params }: { params: Promise<{ id: 
       />
 
       <section className="flex flex-col gap-2" aria-label="Amount">
-        <span className="text-[13px] text-muted-foreground">To {item.counterparty}</span>
-        <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground sm:text-[48px]">
+        <span className="text-body text-muted-foreground">To {item.counterparty}</span>
+        <span className="tabular type-balance leading-none tracking-[var(--ls-heading)] text-foreground">
           <RevealingAmount amount={item.amount} currency={item.currency} />
         </span>
       </section>
@@ -106,12 +106,12 @@ export default function PaymentApprovalPage({ params }: { params: Promise<{ id: 
       </dl>
 
       <section className="flex flex-col gap-3">
-        <h2 className="min-h-6 text-[16px] font-medium text-foreground">Approval Path</h2>
+        <h2 className="min-h-6 text-heading font-medium text-foreground">Approval Path</h2>
         <ApprovalTrail item={item} />
         {item.batchId && (
           <Link
             href={`/business/payments/bulk/${item.batchId}`}
-            className="inline-flex items-center gap-1 self-start text-[13px] text-muted-foreground underline underline-offset-4 transition-colors duration-hover hover:text-foreground"
+            className="inline-flex items-center gap-1 self-start text-body text-muted-foreground underline underline-offset-4 transition-colors duration-hover hover:text-foreground"
           >
             See every payment in this batch
             <ArrowUpRight size={14} aria-hidden="true" />
@@ -120,7 +120,7 @@ export default function PaymentApprovalPage({ params }: { params: Promise<{ id: 
         {record && !item.batchId && (
           <Link
             href={`/business/transactions/${record.id}`}
-            className="inline-flex items-center gap-1 self-start text-[13px] text-muted-foreground underline underline-offset-4 transition-colors duration-hover hover:text-foreground"
+            className="inline-flex items-center gap-1 self-start text-body text-muted-foreground underline underline-offset-4 transition-colors duration-hover hover:text-foreground"
           >
             View the payment record
             <ArrowUpRight size={14} aria-hidden="true" />
@@ -158,11 +158,11 @@ export default function PaymentApprovalPage({ params }: { params: Promise<{ id: 
                 Send Back to {inputter}
               </Button>
             </div>
-            {blockedReason && <p className="text-[12px] text-muted-foreground">{blockedReason}</p>}
+            {blockedReason && <p className="text-meta text-muted-foreground">{blockedReason}</p>}
           </div>
         </section>
       ) : (
-        <p className="text-[13px] text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           {item.status === "authorised"
             ? "This payment has been authorised."
             : item.status === "returned"

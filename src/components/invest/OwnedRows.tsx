@@ -43,12 +43,12 @@ export function YourDeposits() {
                   <PiggyBank size={16} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[14px] text-foreground">{`${d.tenureDays}-day Term Deposit`}</span>
-                  <span className={cn("truncate text-[12px]", daysUntil(d.maturity) <= 7 ? "text-warning-text" : "text-muted-foreground")}>{`Matures ${formatDate(d.maturity)}`}</span>
+                  <span className="truncate text-body text-foreground">{`${d.tenureDays}-day Term Deposit`}</span>
+                  <span className={cn("truncate text-meta", daysUntil(d.maturity) <= 7 ? "text-warning-text" : "text-muted-foreground")}>{`Matures ${formatDate(d.maturity)}`}</span>
                 </span>
                 <span className="flex shrink-0 flex-col items-end">
-                  <span className="tabular text-[14px] text-foreground">{formatMoney(sumMoney([d.principal, termInterest(d)]), "GHS", showAmounts)}</span>
-                  <span className="tabular text-[12px] text-muted-foreground">{daysLeftLabel(d.maturity)}</span>
+                  <span className="tabular text-body text-foreground">{formatMoney(sumMoney([d.principal, termInterest(d)]), "GHS", showAmounts)}</span>
+                  <span className="tabular text-meta text-muted-foreground">{daysLeftLabel(d.maturity)}</span>
                 </span>
                 <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
               </Link>
@@ -77,12 +77,12 @@ export function YourTreasury({ kind = "all" }: { kind?: "bill" | "bond" | "all" 
               <Link href={`${TREASURY_HOME}/holdings/${h.id}`} className={ROW}>
                 <SecurityIcon kind={h.kind} />
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[14px] text-foreground">{h.title}</span>
-                  <span className={cn("truncate text-[12px]", daysUntil(h.maturity) <= 7 ? "text-warning-text" : "text-muted-foreground")}>{`${h.kind === "bill" ? "Bill" : "Bond"} · Matures ${formatDate(h.maturity)}`}</span>
+                  <span className="truncate text-body text-foreground">{h.title}</span>
+                  <span className={cn("truncate text-meta", daysUntil(h.maturity) <= 7 ? "text-warning-text" : "text-muted-foreground")}>{`${h.kind === "bill" ? "Bill" : "Bond"} · Matures ${formatDate(h.maturity)}`}</span>
                 </span>
                 <span className="flex shrink-0 flex-col items-end">
-                  <span className="tabular text-[14px] text-foreground">{formatMoney(h.face, "GHS", showAmounts)}</span>
-                  <span className="tabular text-[12px] text-muted-foreground">{h.status === "rediscount-pending" ? "Cash-in requested" : daysLeftLabel(h.maturity)}</span>
+                  <span className="tabular text-body text-foreground">{formatMoney(h.face, "GHS", showAmounts)}</span>
+                  <span className="tabular text-meta text-muted-foreground">{h.status === "rediscount-pending" ? "Cash-in requested" : daysLeftLabel(h.maturity)}</span>
                 </span>
                 <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
               </Link>
@@ -92,14 +92,14 @@ export function YourTreasury({ kind = "all" }: { kind?: "bill" | "bond" | "all" 
           <li key={o.id} className="flex w-full items-center gap-3 rounded-xl px-2 py-3 sm:px-3">
             <SecurityIcon kind={o.security.kind} muted />
             <span className="flex min-w-0 flex-1 flex-col">
-              <span className="truncate text-[14px] text-muted-foreground">{o.security.title}</span>
-              <span className="truncate text-[12px] text-muted-foreground">
+              <span className="truncate text-body text-muted-foreground">{o.security.title}</span>
+              <span className="truncate text-meta text-muted-foreground">
                 {o.security.settlement ? `Settles ${formatDate(o.security.settlement)}` : `Placed ${formatDate(o.placedOn)}`}
               </span>
             </span>
             <span className="flex shrink-0 flex-col items-end">
-              <span className="tabular text-[14px] text-muted-foreground">{formatMoney(o.face, "GHS", showAmounts)}</span>
-              <span className="text-[12px] text-muted-foreground">Waiting to settle</span>
+              <span className="tabular text-body text-muted-foreground">{formatMoney(o.face, "GHS", showAmounts)}</span>
+              <span className="text-meta text-muted-foreground">Waiting to settle</span>
             </span>
           </li>
         ))}

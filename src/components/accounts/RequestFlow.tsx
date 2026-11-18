@@ -431,8 +431,8 @@ export default function RequestFlow({ account }: { account: Account }) {
             <div className="flex w-full flex-col divide-y divide-border/60 overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
               {[["Request", KIND_META[kind].title] as [string, string], ...summary.rows].map(([label, value]) => (
                 <div key={label} className="flex w-full items-center justify-between gap-3 px-3 py-2">
-                  <span className="shrink-0 text-[13px] text-muted-foreground">{label}</span>
-                  <span className="min-w-0 truncate text-right text-[13px] text-foreground tabular">{value}</span>
+                  <span className="shrink-0 text-body text-muted-foreground">{label}</span>
+                  <span className="min-w-0 truncate text-right text-body text-foreground tabular">{value}</span>
                 </div>
               ))}
             </div>
@@ -440,14 +440,14 @@ export default function RequestFlow({ account }: { account: Account }) {
             <div className="my-1 w-full border-t border-border/70" />
 
             <div className="flex w-full items-center justify-between overflow-hidden rounded-2xl border border-border bg-muted/40 px-3 py-3 shadow-xs dark:bg-muted/20">
-              <span className="text-[13px] text-foreground">Fee</span>
-              <span className="text-[26px] tracking-[var(--ls-display)] text-foreground tabular sm:text-[28px]">
+              <span className="text-body text-foreground">Fee</span>
+              <span className="type-balance tracking-[var(--ls-display)] text-foreground tabular">
                 {formatMoney(summary.fee, "GHS", true)}
               </span>
             </div>
           </div>
 
-          <p className="-mt-1 px-3 text-center text-[12px] text-muted-foreground">
+          <p className="-mt-1 px-3 text-center text-meta text-muted-foreground">
             Clicking “Submit request” authorises GCB Bank PLC to charge the fee to {account.name} ∗∗ {last4}.
           </p>
 
@@ -524,9 +524,9 @@ function FlowSelect({
     <Select value={value ?? ""} onValueChange={(v) => v && onChange(v)}>
       <SelectTrigger >
         {selected ? (
-          <span className="truncate text-[15px] font-normal text-foreground">{selected.name}</span>
+          <span className="truncate text-body font-normal text-foreground">{selected.name}</span>
         ) : (
-          <span className="truncate text-[15px] font-normal text-muted-foreground">{placeholder}</span>
+          <span className="truncate text-body font-normal text-muted-foreground">{placeholder}</span>
         )}
       </SelectTrigger>
       <SelectContent>
@@ -536,13 +536,13 @@ function FlowSelect({
               <div className="flex flex-col text-left">
                 <span className="font-medium text-foreground">{o.name}</span>
                 {o.description && (
-                  <span className="text-[12px] font-normal text-muted-foreground">{o.description}</span>
+                  <span className="text-meta font-normal text-muted-foreground">{o.description}</span>
                 )}
               </div>
               {(o.fee || o.speed) && (
                 <div className="shrink-0 text-right">
-                  {o.fee && <span className="block text-[13px] font-medium text-foreground tabular">{o.fee}</span>}
-                  {o.speed && <span className="text-[11px] font-normal text-muted-foreground">{o.speed}</span>}
+                  {o.fee && <span className="block text-body font-medium text-foreground tabular">{o.fee}</span>}
+                  {o.speed && <span className="text-meta font-normal text-muted-foreground">{o.speed}</span>}
                 </div>
               )}
             </div>
@@ -617,7 +617,7 @@ function Stepper({
       >
         <Minus size={17} aria-hidden="true" />
       </button>
-      <span className="text-[15px] text-foreground tabular" aria-live="polite">
+      <span className="text-body text-foreground tabular" aria-live="polite">
         {value}
       </span>
       <button

@@ -36,8 +36,8 @@ export default function ChoiceRow({
           {icon}
         </div>
         <div className="flex flex-col">
-          <span className="text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground sm:text-[16px]">{title}</span>
-          <span className="mt-0.5 text-[13px] leading-snug text-muted-foreground">{description}</span>
+          <span className="text-heading font-medium tracking-[var(--ls-tight)] text-foreground">{title}</span>
+          <span className="mt-0.5 text-body leading-snug text-muted-foreground">{description}</span>
         </div>
       </div>
       {end ?? (

@@ -47,7 +47,7 @@ function CashflowTooltip({
 
   return (
     <div className="min-w-38 rounded-lg border border-border/50 bg-background px-2 py-2 shadow-xl">
-      <div className="text-[12px] text-foreground">
+      <div className="text-meta text-foreground">
         {bucket.rangeLabel}
         {bucket.partial && <span className="text-muted-foreground"> · so far</span>}
       </div>
@@ -59,15 +59,15 @@ function CashflowTooltip({
               className="h-0.5 w-2.5 shrink-0 rounded-full"
               style={{ backgroundColor: CHART_CONFIG[key].color }}
             />
-            <dt className="flex-1 text-[12px] text-muted-foreground">{CHART_CONFIG[key].label}</dt>
-            <dd className="text-[12px] text-foreground tabular">
+            <dt className="flex-1 text-meta text-muted-foreground">{CHART_CONFIG[key].label}</dt>
+            <dd className="text-meta text-foreground tabular">
               {exactMoney(bucket[key], showAmounts)}
             </dd>
           </div>
         ))}
         <div className="mt-0.5 flex items-center gap-2 border-t border-border/60 pt-2">
-          <dt className="flex-1 text-[12px] text-muted-foreground">Net</dt>
-          <dd className="text-[12px] text-foreground tabular">{exactMoney(net, showAmounts)}</dd>
+          <dt className="flex-1 text-meta text-muted-foreground">Net</dt>
+          <dd className="text-meta text-foreground tabular">{exactMoney(net, showAmounts)}</dd>
         </div>
       </dl>
     </div>

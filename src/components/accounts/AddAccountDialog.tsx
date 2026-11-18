@@ -169,7 +169,7 @@ export default function AddAccountDialog({
               <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
                 <ScanFace size={28} aria-hidden="true" />
               </div>
-              <p className="max-w-[340px] text-[14px] leading-relaxed text-muted-foreground">
+              <p className="max-w-[340px] text-body leading-relaxed text-muted-foreground">
                 To add an account, we&apos;ll ask you to take a quick selfie. We match it to your Ghana Card, then
                 show the accounts held in your name.
               </p>
@@ -191,7 +191,7 @@ export default function AddAccountDialog({
               <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
                 <ScanFace size={28} aria-hidden="true" />
               </div>
-              <p className="max-w-[340px] text-[14px] leading-relaxed text-muted-foreground">
+              <p className="max-w-[340px] text-body leading-relaxed text-muted-foreground">
                 This usually comes down to light, glare, or something covering part of your face. Find even light,
                 face the camera and try again.
               </p>
@@ -203,7 +203,7 @@ export default function AddAccountDialog({
               <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
                 <Landmark size={26} aria-hidden="true" />
               </div>
-              <p className="max-w-[340px] text-[14px] leading-relaxed text-muted-foreground">
+              <p className="max-w-[340px] text-body leading-relaxed text-muted-foreground">
                 Your selfie still didn&apos;t match, so we&apos;ve paused selfie checks for now. Bring your Ghana Card
                 to any GCB branch and we&apos;ll add the account for you there.
               </p>
@@ -215,10 +215,10 @@ export default function AddAccountDialog({
               <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
                 <Landmark size={26} aria-hidden="true" />
               </div>
-              <p className="text-[15px] tracking-[var(--ls-tight)] text-foreground">
+              <p className="text-body tracking-[var(--ls-tight)] text-foreground">
                 We didn&apos;t find a GCB account under your Ghana Card
               </p>
-              <p className="max-w-[340px] text-[13px] leading-relaxed text-muted-foreground">
+              <p className="max-w-[340px] text-body leading-relaxed text-muted-foreground">
                 You can open one at any GCB branch. Bring your Ghana Card, and it will show up here once it&apos;s open.
               </p>
             </div>
@@ -226,7 +226,7 @@ export default function AddAccountDialog({
 
           {view === "choose" && held.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-[13px] text-muted-foreground">Accounts held under your Ghana Card</p>
+              <p className="text-body text-muted-foreground">Accounts held under your Ghana Card</p>
               <div role="group" aria-label="Accounts" className="flex flex-col gap-2">
                 {held.map((account) => {
                   const already = existingIds.includes(account.id);
@@ -251,10 +251,10 @@ export default function AddAccountDialog({
                         <Landmark size={20} aria-hidden="true" />
                       </TileChip>
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">
+                        <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">
                           {account.name}
                         </span>
-                        <span className="truncate text-[13px] text-muted-foreground tabular">
+                        <span className="truncate text-body text-muted-foreground tabular">
                           {account.type} · {account.number}
                         </span>
                       </span>
@@ -272,7 +272,7 @@ export default function AddAccountDialog({
                 })}
               </div>
               {available.length === 0 && (
-                <p className="text-[13px] text-muted-foreground">
+                <p className="text-body text-muted-foreground">
                   Every account under your Ghana Card is already here.
                 </p>
               )}
@@ -284,25 +284,25 @@ export default function AddAccountDialog({
               {/* From → to, with the amount, so nothing moves unseen. */}
               <div className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-transparent p-3">
                 <span className="flex min-w-0 flex-1 flex-col items-start gap-1">
-                  <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+                  <span className="flex items-center gap-2 text-meta text-muted-foreground">
                     <Wallet size={14} aria-hidden="true" />
                     GCB Virtual Account
                   </span>
-                  <span className="text-[20px] tracking-[var(--ls-heading)] text-foreground tabular">
+                  <span className="text-fact tracking-[var(--ls-heading)] text-foreground tabular">
                     {formatMoney(wallet.balance, "GHS", true)}
                   </span>
                 </span>
                 <ArrowRight size={18} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                 <span className="flex min-w-0 flex-1 flex-col items-end gap-1 text-right">
-                  <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+                  <span className="flex items-center gap-2 text-meta text-muted-foreground">
                     <Landmark size={14} aria-hidden="true" />
                     {picked.type}
                   </span>
-                  <span className="truncate text-[15px] text-foreground">{picked.name}</span>
+                  <span className="truncate text-body text-foreground">{picked.name}</span>
                 </span>
               </div>
 
-              <ul className="flex flex-col gap-2 text-[13px] leading-relaxed text-muted-foreground">
+              <ul className="flex flex-col gap-2 text-body leading-relaxed text-muted-foreground">
                 {movesBalance && (
                   <li className="tabular">
                     Your wallet balance of {formatMoney(wallet.balance, "GHS", true)} moves to {picked.name}. No fees.
@@ -319,12 +319,12 @@ export default function AddAccountDialog({
               <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success">
                 <CheckCircle2 size={30} aria-hidden="true" />
               </div>
-              <p className="text-[17px] tracking-[var(--ls-tight)] text-foreground">
+              <p className="text-title tracking-[var(--ls-tight)] text-foreground">
                 {pickedAccounts.length > 1
                   ? `${pickedAccounts.length} Accounts Added`
                   : `${(added ?? pickedAccounts[0])?.name ?? "Account"} is added`}
               </p>
-              <p className="text-[13px] text-muted-foreground tabular">
+              <p className="text-body text-muted-foreground tabular">
                 {wallet && movesBalance
                   ? `${formatMoney(wallet.balance, "GHS", true)} moved from your wallet`
                   : pickedAccounts.length > 1
@@ -347,7 +347,7 @@ export default function AddAccountDialog({
         )}
         {view === "no_match" && (
           <DialogFooter className="justify-between gap-3">
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               <span className="tabular">{triesLeft}</span> {triesLeft === 1 ? "try" : "tries"} left before we ask you
               to visit a branch
             </p>

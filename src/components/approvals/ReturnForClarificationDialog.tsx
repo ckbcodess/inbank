@@ -70,7 +70,7 @@ export default function ReturnForClarificationDialog({
         </DialogHeader>
 
         <DialogBody>
-          <p className="text-[13px] text-muted-foreground leading-relaxed">
+          <p className="text-body text-muted-foreground leading-relaxed">
             {subheading || `This keeps ${reference} alive. The submitter answers your questions and resubmits, and the rest of the application is kept.`}
           </p>
 
@@ -83,7 +83,7 @@ export default function ReturnForClarificationDialog({
                 rows={4}
                 placeholder="What exactly do you need?"
               />
-              <p className="text-[12px] text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 {note.trim().length < 10
                   ? "At least 10 characters required."
                   : `${note.trim().length} characters`}
@@ -96,7 +96,7 @@ export default function ReturnForClarificationDialog({
                 {(items || TRADE_DOCUMENTS).map((doc) => (
                   <label
                     key={doc.id}
-                    className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-[13px] text-foreground hover:bg-muted/50"
+                    className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-body text-foreground hover:bg-muted/50"
                   >
                     <Checkbox
                       checked={flagged.includes(doc.id)}
@@ -104,7 +104,7 @@ export default function ReturnForClarificationDialog({
                     />
                     <span className="flex-1">{doc.name}</span>
                     {doc.status === "missing" && (
-                      <span className="text-[12px] text-warning-text">Missing</span>
+                      <span className="text-meta text-warning-text">Missing</span>
                     )}
                   </label>
                 ))}

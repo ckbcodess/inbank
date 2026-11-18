@@ -114,12 +114,12 @@ export function DashboardAnalyticsWidget() {
       {/* Top Header with Account Switcher & View All */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-[15px] font-medium text-foreground">Analytics</h2>
+          <h2 className="text-heading font-medium text-foreground">Analytics</h2>
           <div className="relative">
             <button
               type="button"
               onClick={() => setShowAccountMenu(!showAccountMenu)}
-              className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
+              className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-meta font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
             >
               <span>{selectedAccount}</span>
               <ChevronDown size={12} className="text-muted-foreground" />
@@ -135,7 +135,7 @@ export function DashboardAnalyticsWidget() {
                       setSelectedAccount(acc);
                       setShowAccountMenu(false);
                     }}
-                    className={`flex w-full items-center px-3 py-2 text-left text-[12px] transition-colors cursor-pointer ${
+                    className={`flex w-full items-center px-3 py-2 text-left text-meta transition-colors cursor-pointer ${
                       selectedAccount === acc
                         ? "bg-muted font-medium text-foreground"
                         : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -151,7 +151,7 @@ export function DashboardAnalyticsWidget() {
 
         <Link
           href="/reports"
-          className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
+          className="inline-flex items-center gap-1 text-meta font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
         >
           <span>View all</span>
           <ChevronRight size={13} />
@@ -208,17 +208,17 @@ export function DashboardAnalyticsWidget() {
 
               {/* Center Summary Label */}
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center px-2">
-                <span className="text-[11px] font-medium text-muted-foreground truncate max-w-[100px]">
+                <span className="text-meta font-medium text-muted-foreground truncate max-w-[100px]">
                   {activeItem ? activeItem.label : "Total Spend"}
                 </span>
-                <span className="text-[17px] sm:text-[18px] font-semibold tracking-tight text-foreground tabular leading-tight mt-0.5">
+                <span className="text-title font-medium tracking-tight text-foreground tabular leading-tight mt-0.5">
                   {showAmounts
                     ? `GHS ${new Intl.NumberFormat("en-GH").format(
                         activeItem ? activeItem.amount : totalSpend
                       )}`
                     : "GHS ∗∗∗∗"}
                 </span>
-                <span className="mt-0.5 text-[11px] text-muted-foreground tabular">
+                <span className="mt-0.5 text-meta text-muted-foreground tabular">
                   {activeItem ? `${activeItem.percentage}% of total` : activeDataset.trend}
                 </span>
               </div>
@@ -251,15 +251,15 @@ export function DashboardAnalyticsWidget() {
                       className="size-2 shrink-0 rounded-full transition-transform"
                       style={{ backgroundColor: cat.color }}
                     />
-                    <span className="truncate text-[12px] font-medium text-foreground">
+                    <span className="truncate text-meta font-medium text-foreground">
                       {cat.label}
                     </span>
-                    <span className="text-[11px] text-muted-foreground tabular">
+                    <span className="text-meta text-muted-foreground tabular">
                       {cat.percentage}%
                     </span>
                   </div>
                   <div className="flex items-center shrink-0 pl-2">
-                    <span className="text-[12px] font-medium text-foreground tabular">
+                    <span className="text-meta font-medium text-foreground tabular">
                       {showAmounts
                         ? `GHS ${new Intl.NumberFormat("en-GH").format(cat.amount)}`
                         : "GHS ∗∗∗∗"}

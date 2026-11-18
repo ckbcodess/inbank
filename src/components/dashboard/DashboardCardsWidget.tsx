@@ -97,10 +97,10 @@ export function DashboardCardsWidget() {
       <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-colors">
         {/* Top Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-[15px] font-medium text-foreground">Cards</h2>
+          <h2 className="text-heading font-medium text-foreground">Cards</h2>
           <Link
             href="/cards"
-            className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
+            className="inline-flex items-center gap-1 text-meta font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
           >
             <span>View all</span>
             <ChevronRight size={13} />
@@ -136,13 +136,13 @@ export function DashboardCardsWidget() {
                 {/* Card Details */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
-                    <span className="text-[13px] font-medium text-foreground">{card.type}</span>
-                    <span className="text-[11px] text-muted-foreground tabular">{card.maskedNumber}</span>
+                    <span className="text-body font-medium text-foreground">{card.type}</span>
+                    <span className="text-meta text-muted-foreground tabular">{card.maskedNumber}</span>
                   </div>
                   {card.frozen ? (
-                    <span className="text-[11px] font-medium text-destructive">Blocked</span>
+                    <span className="text-meta font-medium text-destructive">Blocked</span>
                   ) : (
-                    <span className="text-[11px] text-muted-foreground tabular">Active · GHS {card.limit.toLocaleString()} limit</span>
+                    <span className="text-meta text-muted-foreground tabular">Active · GHS {card.limit.toLocaleString()} limit</span>
                   )}
                 </div>
               </div>
@@ -152,7 +152,7 @@ export function DashboardCardsWidget() {
                 <button
                   type="button"
                   onClick={() => toggleFreeze(card.id)}
-                  className={`flex h-7 items-center gap-2 rounded-lg border px-2 text-[12px] font-medium transition-colors transition-transform cursor-pointer ${
+                  className={`flex h-7 items-center gap-2 rounded-lg border px-2 text-meta font-medium transition-colors transition-transform cursor-pointer ${
                     card.frozen
                       ? "border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20"
                       : "border-border bg-muted/60 text-foreground hover:bg-muted"
@@ -165,7 +165,7 @@ export function DashboardCardsWidget() {
                 <button
                   type="button"
                   onClick={() => setManagingCard(card)}
-                  className="flex h-7 items-center rounded-lg border border-border bg-muted/60 px-2 text-[12px] font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
+                  className="flex h-7 items-center rounded-lg border border-border bg-muted/60 px-2 text-meta font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
                 >
                   Manage
                 </button>
@@ -190,11 +190,12 @@ export function DashboardCardsWidget() {
                   style={{ background: managingCard.gradient }}
                 >
                   <div className="h-1.5 w-2 rounded-sm bg-primary/90" />
+                  {/* eslint-disable-next-line no-restricted-syntax -- card art, drawn to scale */}
                   <div className="text-[8px] font-medium text-white text-right">{managingCard.network}</div>
                 </div>
                 <div>
-                  <span className="text-[13px] font-medium text-foreground">{managingCard.maskedNumber}</span>
-                  <p className="text-[12px] text-muted-foreground">Expires 09/29</p>
+                  <span className="text-body font-medium text-foreground">{managingCard.maskedNumber}</span>
+                  <p className="text-meta text-muted-foreground">Expires 09/29</p>
                 </div>
               </div>
 
@@ -207,8 +208,8 @@ export function DashboardCardsWidget() {
                       <Lock size={16} />
                     </div>
                     <div>
-                      <span className="text-[13px] font-medium text-foreground">Block card</span>
-                      <p className="text-[12px] text-muted-foreground">Temporarily disable transactions</p>
+                      <span className="text-body font-medium text-foreground">Block card</span>
+                      <p className="text-meta text-muted-foreground">Temporarily disable transactions</p>
                     </div>
                   </div>
                   <button
@@ -233,8 +234,8 @@ export function DashboardCardsWidget() {
                       <Globe size={16} />
                     </div>
                     <div>
-                      <span className="text-[13px] font-medium text-foreground">Online purchases</span>
-                      <p className="text-[12px] text-muted-foreground">Allow web and e-commerce payments</p>
+                      <span className="text-body font-medium text-foreground">Online purchases</span>
+                      <p className="text-meta text-muted-foreground">Allow web and e-commerce payments</p>
                     </div>
                   </div>
                   <button
@@ -259,8 +260,8 @@ export function DashboardCardsWidget() {
                       <Smartphone size={16} />
                     </div>
                     <div>
-                      <span className="text-[13px] font-medium text-foreground">Contactless POS</span>
-                      <p className="text-[12px] text-muted-foreground">Tap-to-pay on point of sale terminals</p>
+                      <span className="text-body font-medium text-foreground">Contactless POS</span>
+                      <p className="text-meta text-muted-foreground">Tap-to-pay on point of sale terminals</p>
                     </div>
                   </div>
                   <button

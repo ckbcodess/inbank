@@ -64,7 +64,7 @@ export default function CustomerManagementPage() {
 
       <section className="rounded-2xl border border-border bg-card">
         <div className="flex items-center justify-between gap-2 p-3">
-          <span className="text-[13px] font-medium text-foreground">
+          <span className="text-body font-medium text-foreground">
             Customers ({filtered.length})
           </span>
           <ExpandableSearch
@@ -102,8 +102,8 @@ export default function CustomerManagementPage() {
                     <Building2 size={16} aria-hidden="true" />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[13px] text-foreground">{c.name}</span>
-                    <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
+                    <span className="truncate text-body text-foreground">{c.name}</span>
+                    <span className="mt-0.5 truncate text-meta text-muted-foreground tabular">
                       {c.ref} · {c.users} users
                     </span>
                   </span>

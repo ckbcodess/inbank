@@ -37,7 +37,7 @@ export function LosRedirectDialog({ loan, onClose }: { loan: string | null; onCl
         </>
       }
     >
-      <p className="text-[14px] leading-relaxed text-foreground">
+      <p className="text-body leading-relaxed text-foreground">
         You will be redirected to our Loan Origination Solution (LOS) to continue your loan application.
       </p>
     </Modal>

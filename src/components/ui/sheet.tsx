@@ -222,7 +222,7 @@ function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
     <SheetPrimitive.Title
       data-slot="sheet-title"
       className={cn(
-        "text-[16px] font-medium text-foreground tracking-[var(--ls-tight)] leading-snug",
+        "text-heading font-medium text-foreground tracking-[var(--ls-tight)] leading-snug",
         className
       )}
       {...props}
@@ -237,7 +237,7 @@ function SheetDescription({
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
-      className={cn("text-[13px] text-muted-foreground leading-normal", className)}
+      className={cn("text-body text-muted-foreground leading-normal", className)}
       {...props}
     />
   );
@@ -301,7 +301,7 @@ function SheetRow({
     <div
       data-slot="sheet-row"
       className={cn(
-        "flex items-start sm:items-center justify-between gap-2 py-2 first:pt-0 last:pb-0 text-[13px]",
+        "flex items-start sm:items-center justify-between gap-2 py-2 first:pt-0 last:pb-0 text-body",
         className
       )}
       {...props}
@@ -313,7 +313,7 @@ function SheetRow({
           <div className="flex flex-col">
             <span className="text-muted-foreground font-normal">{label}</span>
             {sublabel && (
-              <span className="text-[12px] text-muted-foreground/75 mt-0.5">
+              <span className="text-meta text-muted-foreground/75 mt-0.5">
                 {sublabel}
               </span>
             )}
@@ -357,11 +357,11 @@ function SheetHeroAmount({
       className={cn("flex flex-col items-center justify-center py-3", className)}
       {...props}
     >
-      <div className="text-[36px] sm:text-[40px] font-semibold text-foreground tracking-tight leading-none tabular">
+      <div className="type-balance text-foreground tracking-tight leading-none tabular">
         {currency ? `${currency}${formatted}` : formatted}
       </div>
       {label && (
-        <p className="mt-2 text-[13px] text-muted-foreground">{label}</p>
+        <p className="mt-2 text-body text-muted-foreground">{label}</p>
       )}
     </div>
   );

@@ -381,8 +381,8 @@ export function RailBeneficiaryStrip<T extends StripRecipient>({
           >
             <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
             <div className="flex w-full flex-col px-0.5">
-              <span className="w-full truncate text-[12px] font-medium text-foreground">{item.name}</span>
-              <span className="w-full truncate text-[11px] text-muted-foreground">{item.subtitle || item.bank}</span>
+              <span className="w-full truncate text-meta font-medium text-foreground">{item.name}</span>
+              <span className="w-full truncate text-meta text-muted-foreground">{item.subtitle || item.bank}</span>
             </div>
           </button>
         ))}
@@ -396,8 +396,8 @@ export function RailBeneficiaryStrip<T extends StripRecipient>({
               <Search size={18} aria-hidden="true" />
             </span>
             <div className="flex w-full flex-col px-0.5">
-              <span className="text-[12px] font-medium text-foreground">See all</span>
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-meta font-medium text-foreground">See all</span>
+              <span className="text-meta text-muted-foreground">
                 <span className="tabular">{items.length}</span> <span>saved</span>
               </span>
             </div>
@@ -478,12 +478,12 @@ export function BeneficiaryPicker<T extends StripRecipient>({
           aria-label="Search recipients"
         />
         {rows.length === 0 ? (
-          <p className="py-8 text-center text-[13px] text-muted-foreground">Nobody saved matches that. Clear the search to see everyone.</p>
+          <p className="py-8 text-center text-body text-muted-foreground">Nobody saved matches that. Clear the search to see everyone.</p>
         ) : (
           <div className="custom-scrollbar scroll-fade -mx-1 flex max-h-[50vh] flex-col gap-0.5 overflow-y-auto overscroll-contain px-1">
             {groups.map((g) => (
               <div key={g.label ?? "all"} className="flex flex-col gap-0.5">
-                {g.label && <p className="px-2 pb-1 pt-3 text-[12px] text-muted-foreground">{g.label}</p>}
+                {g.label && <p className="px-2 pb-1 pt-3 text-meta text-muted-foreground">{g.label}</p>}
                 {g.rows.map((item) => (
                   <button
                     key={item.id}
@@ -493,8 +493,8 @@ export function BeneficiaryPicker<T extends StripRecipient>({
                   >
                     <PayeeAvatar name={item.name} initials={item.initials} size="md" />
                     <span className="flex min-w-0 flex-col">
-                      <span className="truncate text-[14px] text-foreground">{item.name}</span>
-                      <span className="truncate text-[12px] text-muted-foreground">
+                      <span className="truncate text-body text-foreground">{item.name}</span>
+                      <span className="truncate text-meta text-muted-foreground">
                         {item.subtitle || item.bank}
                         {maskedAcct(item.acct) && <span className="tabular"> · {maskedAcct(item.acct)}</span>}
                       </span>

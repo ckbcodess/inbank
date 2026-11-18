@@ -17,7 +17,7 @@ export default function GetStartedPage() {
   const [showCoosModal, setShowCoosModal] = useState(false);
 
   const loginLine = (
-    <p className="text-center text-[13px] text-muted-foreground">
+    <p className="text-center text-body text-muted-foreground">
       Already registered?{" "}
       <Link
         href="/login"

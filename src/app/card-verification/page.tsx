@@ -92,7 +92,7 @@ export default function CardVerificationPage() {
   return (
     <div data-auth-shell className="flex min-h-dvh w-full flex-col bg-muted/30 dark:bg-background text-foreground">
       {/* Top Lock Header */}
-      <header className="flex h-12 items-center justify-center gap-2 px-3 text-[13px] text-muted-foreground">
+      <header className="flex h-12 items-center justify-center gap-2 px-3 text-body text-muted-foreground">
         <Lock size={13.5} aria-hidden="true" />
         <span>Secure card verification</span>
       </header>
@@ -117,8 +117,8 @@ export default function CardVerificationPage() {
               <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success-text">
                 <CheckCircle2 size={28} aria-hidden="true" />
               </div>
-              <h1 className="text-[20px] font-medium tracking-tight">{isPayment ? "Payment approved" : "Card verified"}</h1>
-              <div className="flex items-center gap-2 text-[13px] text-muted-foreground mt-1">
+              <h1 className="text-fact font-medium tracking-tight">{isPayment ? "Payment approved" : "Card verified"}</h1>
+              <div className="flex items-center gap-2 text-body text-muted-foreground mt-1">
                 <AppLoader size={14} />
                 Taking you back to GCB…
               </div>
@@ -128,15 +128,16 @@ export default function CardVerificationPage() {
               {/* Bank Logo / Mark */}
               <div className="flex flex-col items-center gap-2 mb-5">
                 <div className="flex size-12 items-center justify-center rounded-2xl bg-[#00E599] text-black shadow-sm select-none">
+                  {/* eslint-disable-next-line no-restricted-syntax -- logo mark */}
                   <span className="text-[28px] font-bold leading-none tracking-tight">U</span>
                 </div>
-                <span className="text-[17px] font-medium text-foreground tracking-[var(--ls-tight)]">UX Bank</span>
+                <span className="text-title font-medium text-foreground tracking-[var(--ls-tight)]">UX Bank</span>
               </div>
 
               {/* Title & Description */}
               <div className="flex flex-col items-center gap-2 text-center mb-5">
-                <h1 className="text-[22px] font-medium tracking-tight text-foreground">Confirm it&apos;s you</h1>
-                <p className="text-[13px] sm:text-[13px] leading-relaxed text-muted-foreground">
+                <h1 className="type-headline font-medium tracking-tight text-foreground">Confirm it&apos;s you</h1>
+                <p className="text-body leading-relaxed text-muted-foreground">
                   A request to approve this payment has been created.
                   <br />
                   Enter the code to confirm.
@@ -144,7 +145,7 @@ export default function CardVerificationPage() {
               </div>
 
               {/* Transaction Details Inset */}
-              <dl className="w-full flex flex-col gap-2 rounded-2xl bg-muted/50 dark:bg-muted/30 p-3 sm:p-4 text-[13px] mb-5">
+              <dl className="w-full flex flex-col gap-2 rounded-2xl bg-muted/50 dark:bg-muted/30 p-3 sm:p-4 text-body mb-5">
                 <div className="flex items-center justify-between gap-2 text-left">
                   <dt className="text-muted-foreground">Card</dt>
                   <dd className="flex items-center gap-2 tabular font-medium text-foreground">

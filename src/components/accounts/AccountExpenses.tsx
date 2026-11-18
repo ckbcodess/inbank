@@ -119,16 +119,16 @@ export function AccountExpensesView({
           <section className="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-10">
             <div className="flex flex-col items-center gap-4">
               <Donut slices={data.slices} selected={selected}>
-                <span className="max-w-[160px] truncate text-[14px] text-muted-foreground">
+                <span className="max-w-[160px] truncate text-body text-muted-foreground">
                   {activeSlice ? activeSlice.category : "You’ve spent"}
                 </span>
                 <RevealingAmount
                   amount={activeSlice ? activeSlice.amount : data.total}
                   currency={account.currency}
-                  className="mt-1 text-[26px] leading-[1.25] tracking-[-0.025em] text-foreground tabular sm:text-[30px]"
+                  className="mt-1 type-balance tracking-[var(--ls-heading)] text-foreground tabular"
                 />
                 {activeSlice && (
-                  <span className="mt-2 text-[12px] text-muted-foreground tabular">
+                  <span className="mt-2 text-meta text-muted-foreground tabular">
                     {percent(activeSlice.share)} of spend
                   </span>
                 )}
@@ -143,7 +143,7 @@ export function AccountExpensesView({
 
             <div className="flex flex-col gap-3 md:gap-5">
               {/* Same weight as the section headings on Accounts ("Sources of Funds"). */}
-              <h2 className="px-2 text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">
+              <h2 className="px-2 text-heading font-medium tracking-[var(--ls-tight)] text-foreground">
                 {BREAKDOWN_LABEL[view]}
               </h2>
               <ul className="flex flex-col gap-0.5" aria-label={BREAKDOWN_LABEL[view]}>
@@ -167,11 +167,11 @@ export function AccountExpensesView({
                         <span className="size-[10px] shrink-0 rounded-[3px]" style={{ backgroundColor: s.color }} />
                         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                           <span className="flex items-baseline gap-2">
-                            <span className="truncate text-[15px] text-foreground">{s.category}</span>
-                            <span className="shrink-0 text-[13px] text-muted-foreground tabular">{percent(s.share)}</span>
+                            <span className="truncate text-body text-foreground">{s.category}</span>
+                            <span className="shrink-0 text-body text-muted-foreground tabular">{percent(s.share)}</span>
                           </span>
                           {expandable && !isActive && (
-                            <span className="truncate text-[13px] text-muted-foreground">
+                            <span className="truncate text-body text-muted-foreground">
                               {/* One span per name so each category is translated on its own */}
                               {breakdown.map((b, i) => (
                                 <span key={b.category}>
@@ -185,7 +185,7 @@ export function AccountExpensesView({
                         <RevealingAmount
                           amount={s.amount}
                           currency={account.currency}
-                          className="shrink-0 text-[15px] leading-[1.25] text-foreground tabular"
+                          className="shrink-0 text-body leading-[1.25] text-foreground tabular"
                         />
                         {expandable && (
                           <ChevronDown
@@ -208,15 +208,15 @@ export function AccountExpensesView({
                           {breakdown.map((b) => (
                             <li key={b.category} className="flex items-center gap-2 px-2 py-2">
                               <span className="flex min-w-0 flex-1 items-baseline gap-2">
-                                <span className="truncate text-[14px] text-foreground">{b.category}</span>
-                                <span className="shrink-0 text-[12px] text-muted-foreground tabular">
+                                <span className="truncate text-body text-foreground">{b.category}</span>
+                                <span className="shrink-0 text-meta text-muted-foreground tabular">
                                   {percent(b.share)}
                                 </span>
                               </span>
                               <RevealingAmount
                                 amount={b.amount}
                                 currency={account.currency}
-                                className="shrink-0 text-[14px] leading-[1.25] text-foreground tabular"
+                                className="shrink-0 text-body leading-[1.25] text-foreground tabular"
                               />
                             </li>
                           ))}
@@ -256,7 +256,7 @@ function PeriodMenu({ value, onChange }: { value: ExpensePeriod; onChange: (p: E
           <DropdownMenuItem
             key={p}
             onClick={() => onChange(p)}
-            className={cn("text-[13px] tabular", value === p && "bg-muted")}
+            className={cn("text-body tabular", value === p && "bg-muted")}
           >
             {`Last ${EXPENSE_PERIOD_LABEL[p]}`}
           </DropdownMenuItem>
@@ -290,7 +290,7 @@ function Comparison({
       : diff > 0
         ? `${formatMoney(diff, currency)} more than the previous ${periodLabel}`
         : `${formatMoney(Math.abs(diff), currency)} less than the previous ${periodLabel}`;
-  return <p className="max-w-[260px] text-center text-[12px] leading-relaxed text-muted-foreground tabular">{text}</p>;
+  return <p className="max-w-[260px] text-center text-meta leading-relaxed text-muted-foreground tabular">{text}</p>;
 }
 
 /** Drawn in a 300-unit viewBox and scaled to its container, so it shrinks on phones. */

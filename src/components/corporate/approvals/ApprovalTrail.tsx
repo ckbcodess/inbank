@@ -82,9 +82,9 @@ function TrailRow({
         {!last && <span className="w-px flex-1 bg-border" aria-hidden="true" />}
       </div>
       <div className={cn("flex min-w-0 flex-col gap-1", !last && "pb-4")}>
-        <span className={cn("text-[14px]", icon === "waiting" ? "text-muted-foreground" : "text-foreground")}>{title}</span>
-        {meta && <span className="tabular text-[12px] text-muted-foreground">{meta}</span>}
-        {comment && <p className="text-[13px] leading-relaxed text-foreground">“{comment}”</p>}
+        <span className={cn("text-body", icon === "waiting" ? "text-muted-foreground" : "text-foreground")}>{title}</span>
+        {meta && <span className="tabular text-meta text-muted-foreground">{meta}</span>}
+        {comment && <p className="text-body leading-relaxed text-foreground">“{comment}”</p>}
       </div>
     </li>
   );

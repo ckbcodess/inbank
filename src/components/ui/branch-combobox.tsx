@@ -169,7 +169,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Search pickup branch"
-          className="flex-1 min-w-0 bg-transparent text-[14px] font-medium text-foreground placeholder:text-muted-foreground/60 placeholder:font-normal outline-none"
+          className="flex-1 min-w-0 bg-transparent text-body font-medium text-foreground placeholder:text-muted-foreground/60 placeholder:font-normal outline-none"
         />
         {query && (
           <button
@@ -221,7 +221,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
                     aria-selected={isSelected}
                     onClick={() => handleSelect(branch)}
                     onMouseEnter={() => setHighlightedIndex(index)}
-                    className={`w-full text-left px-3 py-2 rounded-xl text-[14px] font-medium transition-colors flex items-center justify-between cursor-pointer ${
+                    className={`w-full text-left px-3 py-2 rounded-xl text-body font-medium transition-colors flex items-center justify-between cursor-pointer ${
                       isHighlighted || isSelected
                         ? "bg-muted text-foreground"
                         : "text-foreground hover:bg-muted/60"
@@ -236,7 +236,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
               })}
             </div>
           ) : (
-            <div className="p-2 text-center text-[13px] text-muted-foreground">
+            <div className="p-2 text-center text-body text-muted-foreground">
               <span>No branches found matching &ldquo;{query}&rdquo;</span>
             </div>
           )}

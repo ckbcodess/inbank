@@ -117,8 +117,8 @@ function PaneHeader({
       </button>
       {/* The title row keeps one height on every pane, so titles start at the same place with or without a subtitle. */}
       <div className="flex min-w-0 flex-col">
-        <h2 className="flex h-12 items-center text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground sm:h-10 sm:text-[16px]">{title}</h2>
-        {description ? <p className="-mt-1 text-[14px] leading-relaxed text-muted-foreground">{description}</p> : null}
+        <h2 className="flex h-12 items-center text-title font-medium tracking-[var(--ls-heading)] text-foreground sm:h-10 sm:text-heading">{title}</h2>
+        {description ? <p className="-mt-1 text-body leading-relaxed text-muted-foreground">{description}</p> : null}
       </div>
       {action ? <div className="ml-auto shrink-0">{action}</div> : null}
     </div>
@@ -140,7 +140,7 @@ function StepHeader({ back, title, onBack }: { back: string; title: string; onBa
       >
         <ChevronLeft size={18} />
       </button>
-      <h2 className="min-w-0 truncate text-[18px] font-medium tracking-[var(--ls-heading)] text-foreground sm:text-[16px]">{title}</h2>
+      <h2 className="min-w-0 truncate text-title font-medium tracking-[var(--ls-heading)] text-foreground sm:text-heading">{title}</h2>
     </div>
   );
 }
@@ -164,10 +164,10 @@ function Row({
   return (
     <div className="flex items-center justify-between gap-4 py-4 sm:py-3">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <span id={titleId} className="text-[14px] text-foreground">
+        <span id={titleId} className="text-body text-foreground">
           {title}
         </span>
-        {children ? <div className="text-[12px] leading-relaxed text-muted-foreground">{children}</div> : null}
+        {children ? <div className="text-meta leading-relaxed text-muted-foreground">{children}</div> : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
     </div>
@@ -187,8 +187,8 @@ function FactRow({ label, action, children }: { label: string; action?: React.Re
   return (
     <div className="flex items-center justify-between gap-4 py-4 sm:py-3">
       <div className="flex min-w-0 flex-col gap-1">
-        <span className="text-[12px] text-muted-foreground">{label}</span>
-        <span className="min-w-0 truncate text-[14px] text-foreground">{children}</span>
+        <span className="text-meta text-muted-foreground">{label}</span>
+        <span className="min-w-0 truncate text-body text-foreground">{children}</span>
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
     </div>
@@ -223,6 +223,7 @@ function ProfilePhotoRow({ name }: { name: string }) {
 
   return (
     <div className="flex items-center gap-4 pb-4 pt-2 sm:pb-2 sm:pt-0">
+      {/* eslint-disable-next-line no-restricted-syntax -- avatar initials */}
       <span className="flex size-24 shrink-0 sm:size-20 items-center justify-center overflow-hidden rounded-full bg-primary text-[28px] font-medium text-primary-foreground">
         {/* eslint-disable-next-line @next/next/no-img-element -- a small data URL from the profile photo store */}
         {photo ? <img src={photo} alt="" className="size-full object-cover" /> : initials}
@@ -357,7 +358,7 @@ export function SignOutAllDialog({ open, onOpenChange, actorId }: { open: boolea
         </>
       }
     >
-      <p className="text-[14px] leading-relaxed text-foreground">
+      <p className="text-body leading-relaxed text-foreground">
         {count === 1
           ? "1 device will be logged out. It’ll need a one-time code the next time it signs in. This device stays logged in."
           : `${count} devices will be logged out. They’ll need a one-time code the next time they log in. This device stays logged in.`}
@@ -394,11 +395,11 @@ function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (pa
       <PaneShell step="Enter your code">
         <StepHeader back="Back" title="Enter your code" onBack={() => { setStep("enter"); setWrongCode(false); setCode(Array(OTP_LENGTH).fill("")); }} />
         <div className="mx-auto flex w-full max-w-[440px] flex-col gap-5 pt-2">
-          <div className="flex flex-wrap items-center gap-x-1 text-[13px]">
+          <div className="flex flex-wrap items-center gap-x-1 text-body">
             <span className="text-muted-foreground">Code goes to</span>
             <span className="tabular text-foreground">{currentMasked}</span>
           </div>
-          <div className="flex flex-wrap items-center gap-x-1 text-[13px]">
+          <div className="flex flex-wrap items-center gap-x-1 text-body">
             <span className="text-muted-foreground">Changing to</span>
             <span className="tabular text-foreground">{maskEmail(value)}</span>
           </div>
@@ -412,7 +413,7 @@ function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (pa
             invalid={wrongCode}
           />
           {wrongCode ? (
-            <p role="alert" className="-mt-2 text-[12px] text-destructive">
+            <p role="alert" className="-mt-2 text-meta text-destructive">
               That code isn’t right. Try again.
             </p>
           ) : null}
@@ -431,7 +432,7 @@ function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (pa
           if (valid) setStep("code");
         }}
       >
-        <p className="text-[14px] leading-relaxed text-muted-foreground">
+        <p className="text-body leading-relaxed text-muted-foreground">
           We’ll send a code to <span className="text-foreground">{currentMasked}</span> to confirm it’s you.
         </p>
         <Field label="New Email" htmlFor="new-email" error={sameAsNow ? "That’s already your email." : undefined}>
@@ -522,20 +523,20 @@ export function DevicesPane({ onBackToMenu, onSignOutAll }: PaneProps) {
             <div key={d.id} className="flex items-center gap-4 py-4 sm:py-3">
               <Icon size={18} className="shrink-0 text-muted-foreground" aria-hidden="true" />
               <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="truncate text-[14px] font-medium text-foreground">{d.name}</span>
-                <span className="tabular text-[12px] text-muted-foreground">
+                <span className="truncate text-body font-medium text-foreground">{d.name}</span>
+                <span className="tabular text-meta text-muted-foreground">
                   {[DEVICE_KIND_LABEL[d.kind], current ? "Active now" : formatWhen(d.lastActive), d.place].join(" · ")}
                 </span>
               </div>
               <div className="flex shrink-0 items-center gap-3">
                 {d.trusted ? (
-                  <span className="hidden items-center gap-1 text-[12px] text-muted-foreground sm:inline-flex">
+                  <span className="hidden items-center gap-1 text-meta text-muted-foreground sm:inline-flex">
                     <ShieldCheck size={15} aria-hidden="true" />
                     Trusted
                   </span>
                 ) : null}
                 {current ? (
-                  <span className="text-[12px] font-medium text-foreground">This device</span>
+                  <span className="text-meta font-medium text-foreground">This device</span>
                 ) : (
                   <Button
                     variant="outline"
@@ -556,8 +557,8 @@ export function DevicesPane({ onBackToMenu, onSignOutAll }: PaneProps) {
       {others.length > 0 ? (
         <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
           <div className="flex flex-col gap-0.5">
-            <span className="text-[14px] font-medium text-foreground">Log out of all other devices</span>
-            <span className="text-[12px] leading-relaxed text-muted-foreground">
+            <span className="text-body font-medium text-foreground">Log out of all other devices</span>
+            <span className="text-meta leading-relaxed text-muted-foreground">
               Everywhere except this device. You’ll need to log in again on each one.
             </span>
           </div>
@@ -740,7 +741,7 @@ export function PreferencesPane({ onBackToMenu }: PaneProps) {
       <div className="flex flex-col gap-8">
         {/* Theme as three tiles, icon over label, full width under its title. */}
         <div className="flex flex-col gap-3">
-          <span id={themeId} className="text-[14px] text-foreground">
+          <span id={themeId} className="text-body text-foreground">
             Theme
           </span>
           <div role="radiogroup" aria-labelledby={themeId} className="grid grid-cols-3 gap-2">
@@ -752,7 +753,7 @@ export function PreferencesPane({ onBackToMenu }: PaneProps) {
                 aria-checked={current === value}
                 onClick={() => choose(value)}
                 className={cn(
-                  "flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border text-[12px] transition-colors duration-hover",
+                  "flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border text-meta transition-colors duration-hover",
                   current === value
                     ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
                     : "border-border bg-card text-muted-foreground hover:bg-muted/50 hover:text-foreground",
@@ -768,7 +769,7 @@ export function PreferencesPane({ onBackToMenu }: PaneProps) {
 
         {/* The dashboard hero's colour. Personal only; saved on this device (lib/dashboard-color.ts). */}
         <div className="flex flex-col gap-3">
-          <span id={colorId} className="text-[14px] text-foreground">
+          <span id={colorId} className="text-body text-foreground">
             Choose a backdrop
           </span>
           <div role="radiogroup" aria-labelledby={colorId} className="flex flex-wrap gap-3">
@@ -870,7 +871,7 @@ export function AlertsPane({ data, update, onBackToMenu }: PaneProps) {
           When someone joins with your link or code.
         </SwitchRow>
       </Rows>
-      <p className={cn("pt-3 text-[12px] leading-relaxed text-muted-foreground")}>
+      <p className={cn("pt-3 text-meta leading-relaxed text-muted-foreground")}>
         Every notification also shows in the app, under Notifications. Login and new-device alerts are always on.
       </p>
     </PaneShell>
@@ -910,7 +911,7 @@ export function ReferralPane({ onBackToMenu }: PaneProps) {
   // On the screen itself, not in the Dev Mode menu, which sits behind the Settings modal.
   const switcher = SHOW_DEMO_TOOLS ? (
     <div className="mt-auto flex items-center gap-3 pt-10 opacity-60 transition-opacity duration-hover hover:opacity-100">
-      <span className="text-[12px] text-muted-foreground">Demo</span>
+      <span className="text-meta text-muted-foreground">Demo</span>
       <SegmentedControl
         aria-label="Referrals demo state"
         options={REFERRAL_DEV_STATES.map((id) => ({ value: id, label: REFERRAL_DEV_LABELS[id] }))}
@@ -946,11 +947,11 @@ export function ReferralPane({ onBackToMenu }: PaneProps) {
         <Rows>
           {friends.map((f) => (
             <div key={f.id} className="flex items-center gap-4 py-4 sm:py-3">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-[12px] font-medium text-muted-foreground">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-meta font-medium text-muted-foreground">
                 {f.name.split(" ").map((p) => p[0]).join("")}
               </span>
-              <span className="min-w-0 flex-1 truncate text-[14px] text-foreground">{f.name}</span>
-              <span className="flex flex-col items-end gap-0.5 text-[12px]">
+              <span className="min-w-0 flex-1 truncate text-body text-foreground">{f.name}</span>
+              <span className="flex flex-col items-end gap-0.5 text-meta">
                 <span className={cn(f.status === "opened" ? "text-foreground" : "text-muted-foreground")}>{REFERRAL_STATUS[f.status]}</span>
                 <span className="tabular text-muted-foreground">{formatReferralDate(f.date)}</span>
               </span>
@@ -969,12 +970,12 @@ export function ReferralPane({ onBackToMenu }: PaneProps) {
         <section className="flex flex-col items-center gap-6 rounded-2xl border border-border/80 px-5 py-8 text-center sm:px-10 sm:py-10">
           <GcbEagleEmblem className="h-12 w-auto" />
           <div className="flex flex-col gap-2">
-            <h3 className="text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground">Invite others to GCB</h3>
-            <p className="text-[14px] leading-relaxed text-muted-foreground">Send your link. Friends who open it join with you already filled in.</p>
+            <h3 className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground">Invite others to GCB</h3>
+            <p className="text-body leading-relaxed text-muted-foreground">Send your link. Friends who open it join with you already filled in.</p>
           </div>
           <div className="flex w-full max-w-[380px] flex-col gap-3">
             <div className="flex h-[var(--control-xl)] items-center justify-between gap-2 rounded-lg border border-field-border bg-field pl-4 pr-1">
-              <span className="tabular min-w-0 select-all truncate text-[14px] text-foreground">{link.replace(/^https?:\/\//, "")}</span>
+              <span className="tabular min-w-0 select-all truncate text-body text-foreground">{link.replace(/^https?:\/\//, "")}</span>
               <Button variant="ghost" size="md" aria-label="Copy link" onClick={() => copy(link, "Link copied")}>
                 <Copy size={18} aria-hidden="true" />
               </Button>
@@ -982,7 +983,7 @@ export function ReferralPane({ onBackToMenu }: PaneProps) {
             <Button size="xl" className="w-full" onClick={share}>
               Share Your Link
             </Button>
-            <p className="text-[13px] text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               Or give them your code{" "}
               <button
                 type="button"
@@ -1002,13 +1003,13 @@ export function ReferralPane({ onBackToMenu }: PaneProps) {
             className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-border/80 px-5 py-4 text-left transition duration-hover hover:bg-muted/50"
           >
             <span className="flex flex-col gap-1">
-              <span className="text-[12px] text-muted-foreground">Your referrals</span>
-              <span className="tabular text-[16px] text-foreground">{`${friends.length} signed up`}</span>
+              <span className="text-meta text-muted-foreground">Your referrals</span>
+              <span className="tabular text-heading text-foreground">{`${friends.length} signed up`}</span>
             </span>
             <ChevronRight size={20} className="shrink-0 text-muted-foreground" aria-hidden="true" />
           </button>
         ) : (
-          <p className="px-1 text-center text-[13px] leading-relaxed text-muted-foreground">
+          <p className="px-1 text-center text-body leading-relaxed text-muted-foreground">
             No one has joined with your code yet. When they do, they’ll show here.
           </p>
         )}
@@ -1050,7 +1051,7 @@ export function LimitsPane({ onBackToMenu }: PaneProps) {
       </div>
       {SHOW_DEMO_TOOLS ? (
         <div className="mt-auto flex pt-10 items-center gap-3 opacity-60 transition-opacity duration-hover hover:opacity-100">
-          <span className="text-[12px] text-muted-foreground">Demo</span>
+          <span className="text-meta text-muted-foreground">Demo</span>
           <SegmentedControl
             aria-label="Limits demo usage"
             options={LIMIT_DEV_USE.map((id) => ({ value: id, label: LIMIT_DEV_LABELS[id] }))}
@@ -1104,14 +1105,14 @@ function LimitBar({
       <span className="flex size-6 shrink-0 items-center justify-center text-muted-foreground">
         <Icon size={18} aria-hidden="true" />
       </span>
-      <span className="min-w-0 flex-1 truncate text-[14px] text-foreground">{def.label}</span>
+      <span className="min-w-0 flex-1 truncate text-body text-foreground">{def.label}</span>
       <span className="h-1.5 w-16 shrink-0 overflow-hidden rounded-full bg-muted sm:w-36" aria-hidden="true">
         <span
           className={cn("block h-full rounded-full transition-[width] duration-move ease-settle", near ? "bg-warning" : "bg-foreground")}
           style={{ width: `${share * 100}%` }}
         />
       </span>
-      <span className="tabular w-28 shrink-0 text-right text-[14px] sm:w-32" aria-hidden="true">
+      <span className="tabular w-28 shrink-0 text-right text-body sm:w-32" aria-hidden="true">
         <span className={near ? "text-warning-text" : "text-foreground"}>{num(used)}</span>
         <span className="text-muted-foreground">{` / ${num(limit)}`}</span>
       </span>
@@ -1167,13 +1168,13 @@ function ChangeLimit({
       <PaneShell step="Enter your code">
         <StepHeader back="Back" title="Enter your code" onBack={() => { setStep("enter"); setWrongCode(false); setCode(Array(OTP_LENGTH).fill("")); }} />
         <div className="mx-auto flex w-full max-w-[440px] flex-col gap-5 pt-2">
-          <div className="flex flex-col gap-1 text-[13px]">
+          <div className="flex flex-col gap-1 text-body">
             <span className="text-muted-foreground">{`${def.label}, a day`}</span>
             <span className="tabular text-foreground">
               {money(current)} → {money(amount)}
             </span>
           </div>
-          <div className="flex flex-wrap items-center gap-x-1 text-[13px]">
+          <div className="flex flex-wrap items-center gap-x-1 text-body">
             <span className="text-muted-foreground">Code goes to</span>
             <span className="tabular text-foreground">{actor ? formatMobile(actor.phone) : ""}</span>
           </div>
@@ -1186,7 +1187,7 @@ function ChangeLimit({
             invalid={wrongCode}
           />
           {wrongCode ? (
-            <p role="alert" className="-mt-2 text-[12px] text-destructive">
+            <p role="alert" className="-mt-2 text-meta text-destructive">
               That code isn’t right. Try again.
             </p>
           ) : null}
@@ -1211,7 +1212,7 @@ function ChangeLimit({
         }}
       >
         {/* What's true today, before the change. */}
-        <dl className="flex flex-col gap-3 rounded-2xl border border-border/80 p-4 text-[14px]">
+        <dl className="flex flex-col gap-3 rounded-2xl border border-border/80 p-4 text-body">
           <div className="flex items-center justify-between gap-4">
             <dt className="text-muted-foreground">Daily limit</dt>
             <dd className="tabular text-foreground">{money(current)}</dd>

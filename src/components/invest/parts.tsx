@@ -57,7 +57,7 @@ export function SecurityIcon({ kind, muted = false }: { kind: SecurityKind; mute
 /** Label on the left, value on the right, one line each. The same panel the scheduled payment and review screens use. */
 export function FactsPanel({ rows, keyRow }: { rows: Array<[React.ReactNode, React.ReactNode]>; keyRow?: number }) {
   return (
-    <div className={cn(LIST_CARD_CLASS, "gap-0 text-[14px]")}>
+    <div className={cn(LIST_CARD_CLASS, "gap-0 text-body")}>
       {rows.map(([label, value], i) =>
         i === keyRow ? (
           // The key fact, styled as the total on a payment review, with the same dashed line after it.
@@ -98,12 +98,12 @@ export function FactGroups({ groups, boxed = false }: { groups: FactGroup[]; box
             ) : (
               <div
                 key={j}
-                className={cn("flex justify-between gap-5 rounded-xl px-2", g.quiet ? "items-baseline py-2 text-[12px]" : "items-baseline py-3 text-[14px]")}
+                className={cn("flex justify-between gap-5 rounded-xl px-2", g.quiet ? "items-baseline py-2 text-meta" : "items-baseline py-3 text-body")}
               >
                 <span className="shrink-0 text-muted-foreground">{r.label}</span>
                 <span className="flex min-w-0 flex-col items-end gap-0.5 text-right">
-                  <span className={cn("tabular", g.quiet ? "text-muted-foreground" : "text-foreground", r.lead && "text-[20px]")}>{r.value}</span>
-                  {r.note && <span className="tabular text-[12px] leading-relaxed text-muted-foreground">{r.note}</span>}
+                  <span className={cn("tabular", g.quiet ? "text-muted-foreground" : "text-foreground", r.lead && "text-fact")}>{r.value}</span>
+                  {r.note && <span className="tabular text-meta leading-relaxed text-muted-foreground">{r.note}</span>}
                 </span>
               </div>
             ))}
@@ -131,14 +131,14 @@ export function MaturityInstructionField({
     <Field label={label}>
       <Select value={value} onValueChange={(v) => v && onChange(v as MaturityInstructionId)}>
         <SelectTrigger>
-          <span className="truncate text-[14px] text-foreground">{current?.label}</span>
+          <span className="truncate text-body text-foreground">{current?.label}</span>
         </SelectTrigger>
         <SelectContent>
           {MATURITY_INSTRUCTIONS.map((m) => (
             <SelectItem key={m.id} value={m.id} label={m.label}>
               <div className="flex flex-col py-0.5 text-left">
                 <span className="text-foreground">{m.label}</span>
-                <span className="max-w-[22rem] whitespace-normal text-[12px] font-normal text-muted-foreground">{m.detail}</span>
+                <span className="max-w-[22rem] whitespace-normal text-meta font-normal text-muted-foreground">{m.detail}</span>
               </div>
             </SelectItem>
           ))}

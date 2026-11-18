@@ -26,14 +26,14 @@ export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenCha
         </DialogHeader>
         <DialogBody className="custom-scrollbar gap-5 py-5">
           <div>
-            <p className="text-[12px] text-muted-foreground">US dollar weighted median</p>
-            <p className="mt-1 text-[32px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
+            <p className="text-meta text-muted-foreground">US dollar weighted median</p>
+            <p className="mt-1 type-balance leading-none tracking-[var(--ls-heading)] text-foreground tabular">
               GHS {BOG_WEIGHTED_MEDIAN_RATE.toFixed(4)}
             </p>
           </div>
 
           <div>
-            <div className={`${COLS} pb-2 text-[12px] text-muted-foreground`}>
+            <div className={`${COLS} pb-2 text-meta text-muted-foreground`}>
               <span />
               <span className="text-right">Buy</span>
               <span className="text-right">Sell</span>
@@ -46,12 +46,12 @@ export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenCha
                   <li key={r.pair} className={`${COLS} py-3`}>
                     <div className="flex min-w-0 items-center gap-2">
                       <CurrencyLogo currency={r.base} size={24} showBorder={false} />
-                      <p className="truncate text-[14px] text-foreground">{r.currencyName}</p>
+                      <p className="truncate text-body text-foreground">{r.currencyName}</p>
                     </div>
-                    <span className="text-right text-[14px] text-foreground tabular">{rateText(r.buy)}</span>
-                    <span className="text-right text-[14px] text-foreground tabular">{rateText(r.sell)}</span>
+                    <span className="text-right text-body text-foreground tabular">{rateText(r.buy)}</span>
+                    <span className="text-right text-body text-foreground tabular">{rateText(r.sell)}</span>
                     <span
-                      className={`flex items-center justify-end gap-1 text-[13px] tabular ${r.changePct >= 0 ? "text-success-text" : "text-destructive"}`}
+                      className={`flex items-center justify-end gap-1 text-body tabular ${r.changePct >= 0 ? "text-success-text" : "text-destructive"}`}
                     >
                       <Trend size={13} strokeWidth={1.9} aria-hidden="true" />
                       {Math.abs(r.changePct).toFixed(2)}%
@@ -63,7 +63,7 @@ export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenCha
           </div>
         </DialogBody>
         <DialogFooter className="justify-between">
-          <p className="text-[13px] text-muted-foreground tabular">Updated {formatDate(FX_PUBLISHED_AT)}</p>
+          <p className="text-body text-muted-foreground tabular">Updated {formatDate(FX_PUBLISHED_AT)}</p>
           <Button variant="outline" nativeButton={false} render={<Link href="/fx-rates" />}>
             All rates
           </Button>

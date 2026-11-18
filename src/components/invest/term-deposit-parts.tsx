@@ -91,14 +91,14 @@ export function DepositInstructionField({
     <Field label={label}>
       <Select value={value} onValueChange={(v) => v && onChange(v as DepositInstruction)}>
         <SelectTrigger>
-          <span className="truncate text-[14px] text-foreground">{current?.label}</span>
+          <span className="truncate text-body text-foreground">{current?.label}</span>
         </SelectTrigger>
         <SelectContent>
           {DEPOSIT_INSTRUCTIONS.map((i) => (
             <SelectItem key={i.id} value={i.id} label={i.label}>
               <div className="flex flex-col py-0.5 text-left">
                 <span className="text-foreground">{i.label}</span>
-                <span className="max-w-[22rem] whitespace-normal text-[12px] font-normal text-muted-foreground">{i.detail}</span>
+                <span className="max-w-[22rem] whitespace-normal text-meta font-normal text-muted-foreground">{i.detail}</span>
               </div>
             </SelectItem>
           ))}

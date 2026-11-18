@@ -69,7 +69,7 @@ export default function OpsTransactionDetailsPage({ params }: { params: Promise<
       {/* View-only indicator — the defining constraint of this variant */}
       <div className="flex items-start gap-2 rounded-2xl border border-border bg-muted/40 p-3">
         <Eye size={16} aria-hidden="true" className="mt-px shrink-0 text-muted-foreground" />
-        <p className="text-[13px] leading-relaxed text-muted-foreground">
+        <p className="text-body leading-relaxed text-muted-foreground">
           View-only. Internal staff can investigate and annotate this transaction but cannot execute,
           amend or reverse it from the Admin Portal.
         </p>
@@ -78,8 +78,8 @@ export default function OpsTransactionDetailsPage({ params }: { params: Promise<
       <section className="rounded-2xl border border-border bg-card p-4">
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
           <div>
-            <span className="text-[12px] text-muted-foreground">Amount</span>
-            <p className="mt-2 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
+            <span className="text-meta text-muted-foreground">Amount</span>
+            <p className="mt-2 type-balance leading-none tracking-[var(--ls-heading)] text-foreground tabular">
               {formatMoney(txn.amount, txn.currency)}
             </p>
           </div>
@@ -106,8 +106,8 @@ export default function OpsTransactionDetailsPage({ params }: { params: Promise<
               className="mt-px shrink-0 text-warning-text"
             />
             <div>
-              <p className="text-[14px] text-warning-text">Exception attached</p>
-              <p className="mt-2 text-[13px] leading-relaxed text-foreground/90">
+              <p className="text-body text-warning-text">Exception attached</p>
+              <p className="mt-2 text-body leading-relaxed text-foreground/90">
                 {txn.failureReason ?? "This transaction is flagged for operational review."}
               </p>
             </div>
@@ -116,13 +116,13 @@ export default function OpsTransactionDetailsPage({ params }: { params: Promise<
       )}
 
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="border-b border-border px-4 py-3 text-[15px] text-foreground">Audit trail</h2>
+        <h2 className="border-b border-border px-4 py-3 text-heading text-foreground">Audit trail</h2>
         <ul className="divide-y divide-border">
           {AUDIT_TRAIL.map((e, i) => (
             <li key={i} className="flex gap-3 px-4 py-2">
-              <span className="w-28 shrink-0 text-[12px] text-muted-foreground tabular">{e.at}</span>
-              <span className="min-w-0 flex-1 text-[13px] text-foreground">{e.event}</span>
-              <span className="shrink-0 text-[12px] text-muted-foreground">{e.actor}</span>
+              <span className="w-28 shrink-0 text-meta text-muted-foreground tabular">{e.at}</span>
+              <span className="min-w-0 flex-1 text-body text-foreground">{e.event}</span>
+              <span className="shrink-0 text-meta text-muted-foreground">{e.actor}</span>
             </li>
           ))}
         </ul>

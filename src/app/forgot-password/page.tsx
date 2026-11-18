@@ -263,7 +263,7 @@ function ForgotPasswordFlow() {
           </div>
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
@@ -276,7 +276,7 @@ function ForgotPasswordFlow() {
                 setCountdown(RESEND_SECONDS);
                 setErrorMsg("");
               }}
-              className="text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
+              className="text-body text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
             >
               {countdown > 0 ? (
                 <>
@@ -287,13 +287,13 @@ function ForgotPasswordFlow() {
               )}
             </button>
 
-            <p className="text-center text-[13px] text-muted-foreground">
+            <p className="text-center text-body text-muted-foreground">
               Dial <a href="tel:*422*11%23" className="tabular font-medium text-foreground underline underline-offset-4 hover:text-foreground/80">*422*11#</a> to retrieve your code
             </p>
           </div>
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Verifying code...</span>
             </div>
@@ -338,7 +338,7 @@ function ForgotPasswordFlow() {
           <Button variant="default" size="md" onClick={retrySelfie} className="w-full">
             Try again
           </Button>
-          <p className="text-center text-[12px] text-muted-foreground tabular">
+          <p className="text-center text-meta text-muted-foreground tabular">
             {MAX_SELFIE_ATTEMPTS - failedAttempts === 1
               ? "1 try left before we ask you to visit a branch"
               : `${MAX_SELFIE_ATTEMPTS - failedAttempts} tries left before we ask you to visit a branch`}

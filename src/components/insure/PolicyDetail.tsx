@@ -56,8 +56,8 @@ function ActionRow({
           <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-[14px] text-foreground">{title}</span>
-          <span className="tabular truncate text-[12px] text-muted-foreground">{meta}</span>
+          <span className="truncate text-body text-foreground">{title}</span>
+          <span className="tabular truncate text-meta text-muted-foreground">{meta}</span>
         </span>
         <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
       </Link>
@@ -159,17 +159,17 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
               {policyClaims.map((c) => (
                 <li key={c.id} className="flex items-center gap-3 rounded-xl px-2 py-3 sm:px-3">
                   <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[14px] text-foreground">{CLAIM_TYPES[c.type].label}</span>
-                    <span className="tabular truncate text-[12px] text-muted-foreground">{`${c.reference} · ${c.subject}`}</span>
+                    <span className="truncate text-body text-foreground">{CLAIM_TYPES[c.type].label}</span>
+                    <span className="tabular truncate text-meta text-muted-foreground">{`${c.reference} · ${c.subject}`}</span>
                   </span>
                   <span className="flex shrink-0 flex-col items-end">
-                    <span className="text-[13px] text-foreground">Under review</span>
-                    <span className="tabular text-[12px] text-muted-foreground">{`Sent ${formatDate(c.submittedOn)}`}</span>
+                    <span className="text-body text-foreground">Under review</span>
+                    <span className="tabular text-meta text-muted-foreground">{`Sent ${formatDate(c.submittedOn)}`}</span>
                   </span>
                 </li>
               ))}
             </ListCard>
-            <p className="px-1 text-[12px] text-muted-foreground">{`${PROVIDER} contacts you within 48 hours of a claim, once every document is in.`}</p>
+            <p className="px-1 text-meta text-muted-foreground">{`${PROVIDER} contacts you within 48 hours of a claim, once every document is in.`}</p>
           </section>
         )}
 

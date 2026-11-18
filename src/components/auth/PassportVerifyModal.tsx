@@ -28,8 +28,8 @@ function Fact({ icon, title, children }: { icon: ReactNode; title: string; child
     <div className="flex items-start gap-3">
       <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center text-foreground">{icon}</span>
       <div className="flex flex-col gap-1">
-        <p className="text-[16px] font-medium text-foreground">{title}</p>
-        <p className="text-[14px] leading-relaxed text-muted-foreground">{children}</p>
+        <p className="text-heading font-medium text-foreground">{title}</p>
+        <p className="text-body leading-relaxed text-muted-foreground">{children}</p>
       </div>
     </div>
   );
@@ -72,7 +72,7 @@ export default function PassportVerifyModal({
     >
       {/* Who this is for, as an amber note: the one thing to check before going on (designer override, WORKING_LOG). */}
       <div className="rounded-xl bg-warning/10 p-4">
-        <p className="text-[14px] leading-relaxed text-foreground">
+        <p className="text-body leading-relaxed text-foreground">
           This option is only for customers who opened their GCB accounts using an international passport. e.g.
           Link2Home
         </p>

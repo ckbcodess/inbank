@@ -135,14 +135,14 @@ export function SchedulePaymentFlow() {
       >
         <ChevronLeft size={20} />
       </button>
-      <h1 className="truncate text-[18px] font-medium leading-[24px] tracking-[var(--ls-heading)] text-foreground sm:text-[20px] sm:leading-[28px] lg:text-[22px]">
+      <h1 className="truncate type-page-title font-medium leading-[24px] tracking-[var(--ls-heading)] text-foreground sm:leading-[28px]">
         {title}
       </h1>
     </div>
   );
 
   const rowsCard = (rows: Array<[string, string]>) => (
-    <div className="flex flex-col rounded-2xl border border-border bg-card p-2 text-[14px]">
+    <div className="flex flex-col rounded-2xl border border-border bg-card p-2 text-body">
       {rows.map(([label, value]) => (
         <div key={label} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
           <span className="shrink-0 text-muted-foreground">{label}</span>
@@ -217,7 +217,7 @@ export function SchedulePaymentFlow() {
         </Select>
         {frequency === "Custom" && (
           <div className="flex items-center gap-2 animate-in fade-in duration-150">
-            <span className="text-[13px] text-muted-foreground">Repeat after</span>
+            <span className="text-body text-muted-foreground">Repeat after</span>
             <Input
               type="text"
               inputMode="numeric"
@@ -226,7 +226,7 @@ export function SchedulePaymentFlow() {
               onChange={(e) => setIntervalDays(e.target.value.replace(/[^0-9]/g, "").slice(0, 3))}
               className="tabular w-17 text-center"
             />
-            <span className="text-[13px] text-muted-foreground">days</span>
+            <span className="text-body text-muted-foreground">days</span>
           </div>
         )}
       </Field>

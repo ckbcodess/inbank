@@ -79,7 +79,7 @@ export function CancelPolicyFlow({ policyId }: { policyId: string }) {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={{ href: base, label: plan?.name ?? "Policy" }} />
       <div className="flex flex-col gap-5">
-        <dl className="flex flex-col gap-2 px-1 text-[14px]">
+        <dl className="flex flex-col gap-2 px-1 text-body">
           {consequences.map(([label, value]) => (
             <div key={label} className="flex items-baseline justify-between gap-5">
               <dt className="text-muted-foreground">{label}</dt>
@@ -127,7 +127,7 @@ export function CancelPolicyFlow({ policyId }: { policyId: string }) {
           >
             {withdraw ? "Withdraw Application" : "Request Cancellation"}
           </Button>
-          <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">{`${PROVIDER} will call you to complete it.`}</p>
+          <p className="px-1 pt-2 text-center text-meta text-muted-foreground">{`${PROVIDER} will call you to complete it.`}</p>
         </div>
       </div>
     </div>

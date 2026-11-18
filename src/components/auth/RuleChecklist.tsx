@@ -24,7 +24,7 @@ export default function RuleChecklist({
         <li
           key={rule.id}
           className={cn(
-            "flex items-center gap-2 text-[13px] transition-colors duration-hover",
+            "flex items-center gap-2 text-body transition-colors duration-hover",
             rule.state === "met" && "text-foreground",
             rule.state === "pending" && "text-muted-foreground",
             rule.state === "broken" && "text-warning-text",

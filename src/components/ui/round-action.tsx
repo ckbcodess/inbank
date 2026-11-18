@@ -48,7 +48,7 @@ export function RoundAction({
       >
         <Icon size={size === "sm" ? 18 : 20} strokeWidth={1.8} aria-hidden="true" />
       </span>
-      <span className={cn(fill ? "text-center leading-tight" : "whitespace-nowrap", "text-[13px] text-foreground", labelClassName)}>{label}</span>
+      <span className={cn(fill ? "text-center leading-tight" : "whitespace-nowrap", "text-body text-foreground", labelClassName)}>{label}</span>
     </>
   );
   const cls = cn(

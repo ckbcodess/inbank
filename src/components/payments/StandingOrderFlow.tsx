@@ -779,7 +779,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   set("groupName", "");
                   setResolvedName("");
                 }}
-                className="relative bg-background px-2 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                className="relative bg-background px-2 text-meta font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 Or enter new details
               </button>
@@ -885,11 +885,11 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {rail === "group" && (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[13px] text-muted-foreground">Select Contribution Circle</span>
+                    <span className="text-body text-muted-foreground">Select Contribution Circle</span>
                     <button
                       type="button"
                       onClick={() => setCreateGroupOpen(true)}
-                      className="text-[13px] text-foreground hover:underline font-medium cursor-pointer flex items-center gap-1"
+                      className="text-body text-foreground hover:underline font-medium cursor-pointer flex items-center gap-1"
                     >
                       <Plus size={13} />
                       Create new group
@@ -1056,7 +1056,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
                   {f.frequency === "Custom" && (
                     <div className="flex items-center gap-2 animate-in fade-in duration-150">
-                      <span className="text-[13px] text-muted-foreground">Repeat after</span>
+                      <span className="text-body text-muted-foreground">Repeat after</span>
                       <Input
                         type="text"
                         inputMode="numeric"
@@ -1065,7 +1065,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                         onChange={(e) => set("intervalDays", e.target.value.replace(/[^0-9]/g, "").slice(0, 3))}
                         className="tabular w-17 text-center"
                       />
-                      <span className="text-[13px] text-muted-foreground">days</span>
+                      <span className="text-body text-muted-foreground">days</span>
                     </div>
                   )}
 </Field>

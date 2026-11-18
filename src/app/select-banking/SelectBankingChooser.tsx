@@ -32,7 +32,7 @@ export default function SelectBankingChooser() {
   return (
     <AuthLayout
       title="How do you prefer using Internet Banking?"
-      titleClassName="text-[19px] sm:text-[21px] sm:whitespace-nowrap"
+      titleClassName="text-fact sm:whitespace-nowrap"
       width="compact"
     >
       <div className="flex flex-col gap-2">
@@ -49,8 +49,8 @@ export default function SelectBankingChooser() {
                 <Icon size={18} />
               </div>
               <div className="flex flex-col">
-                <span className="text-[15px] sm:text-[16px] font-medium text-foreground tracking-[var(--ls-tight)]">{title}</span>
-                <span className="mt-0.5 text-[13px] sm:text-[13px] leading-snug text-muted-foreground">{description}</span>
+                <span className="text-heading font-medium text-foreground tracking-[var(--ls-tight)]">{title}</span>
+                <span className="mt-0.5 text-body leading-snug text-muted-foreground">{description}</span>
               </div>
             </div>
             <ChevronRight

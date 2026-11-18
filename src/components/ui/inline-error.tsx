@@ -14,7 +14,7 @@ export function InlineError({
 }) {
   if (!message) return null;
   return (
-    <p role="alert" className={cn("text-center text-[13px] text-destructive", className)}>
+    <p role="alert" className={cn("text-center text-body text-destructive", className)}>
       {message}
     </p>
   );

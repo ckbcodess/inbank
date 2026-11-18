@@ -243,7 +243,7 @@ export function QuickFundFlow({
   const body = (
     <>
           {stage === "otp" && (
-            <p className="text-[13px] text-muted-foreground mb-3 leading-relaxed">
+            <p className="text-body text-muted-foreground mb-3 leading-relaxed">
               Enter the 6-digit code sent to <span className="font-medium text-foreground">{maskMobile(displayGhanaMobile(phone))}</span>.
             </p>
           )}
@@ -362,7 +362,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
               />
 
               {busy && (
-                <div className="flex items-center justify-center gap-2 text-[13px] text-muted-foreground">
+                <div className="flex items-center justify-center gap-2 text-body text-muted-foreground">
                   <AppLoader size={16} />
                   <span>Verifying code…</span>
                 </div>
@@ -370,7 +370,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
 
               <InlineError message={errorMsg} />
 
-              <div className="flex items-center justify-between w-full pt-1 text-[13px]">
+              <div className="flex items-center justify-between w-full pt-1 text-body">
                 <button
                   type="button"
                   onClick={() => setStage("form")}
@@ -403,14 +403,14 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 <Smartphone size={24} />
               </div>
               <div className="flex flex-col gap-1">
-                <span className="tabular-nums text-[20px] font-medium tracking-tight text-foreground">
+                <span className="tabular-nums text-fact font-medium tracking-tight text-foreground">
                   GHS {parseFloat(amount).toFixed(2)}
                 </span>
-                <p className="text-[13px] text-muted-foreground">
+                <p className="text-body text-muted-foreground">
                   Enter your Mobile Money PIN on your phone to approve.
                 </p>
               </div>
-              <div className="flex items-center gap-2 pt-2 text-[12px] text-muted-foreground">
+              <div className="flex items-center gap-2 pt-2 text-meta text-muted-foreground">
                 <AppLoader size={14} />
                 <span>Waiting for approval…</span>
               </div>
@@ -425,10 +425,10 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="tabular-nums text-[20px] font-medium tracking-tight text-foreground">
+                <h4 className="tabular-nums text-fact font-medium tracking-tight text-foreground">
                   GHS {parseFloat(amount).toFixed(2)} deposited
                 </h4>
-                <p className="text-[13px] text-muted-foreground">
+                <p className="text-body text-muted-foreground">
                   Available in your account now.
                 </p>
               </div>
@@ -438,7 +438,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 variant="default"
                 size="md"
                 onClick={handleFinish}
-                className="mt-2 h-9 w-full text-[13.5px]"
+                className="mt-2 h-9 w-full text-body"
               >
                 <span>Continue</span>
               </Button>
@@ -452,7 +452,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
           {back}
-          <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">{title}</DialogTitle>
+          <DialogTitle className="type-headline font-medium tracking-tight text-foreground">{title}</DialogTitle>
         </div>
         <div>{body}</div>
       </div>

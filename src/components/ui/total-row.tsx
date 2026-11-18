@@ -22,8 +22,8 @@ export function TotalRow({
   const Figure = definition ? "dd" : "span";
   return (
     <div className={cn("flex items-baseline justify-between gap-3", className)}>
-      <Label className="min-w-0 text-[14px] text-foreground">{label}</Label>
-      <Figure className="tabular shrink-0 text-[20px] text-foreground">{value}</Figure>
+      <Label className="min-w-0 text-body text-foreground">{label}</Label>
+      <Figure className="tabular shrink-0 text-fact text-foreground">{value}</Figure>
     </div>
   );
 }

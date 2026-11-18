@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import {
   ArrowRightLeft,
   ArrowUpDown,
@@ -26,7 +26,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { DURATION, EASE, SPRING } from "@/lib/motion";
 
 export interface FilterOption {
   value: string;
@@ -140,7 +142,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
           <Button
             variant="outline"
             className={cn(
-              "h-(--control-md) shrink-0 gap-2 rounded-xl border-transparent px-3 text-[13px] text-foreground shadow-none transition-transform duration-hover field-surface bg-field dark:bg-field aria-expanded:[--field-border:var(--field-border-hover)]",
+              "h-(--control-md) shrink-0 gap-2 rounded-xl border-transparent px-3 text-body text-foreground shadow-none transition-transform duration-hover field-surface bg-field dark:bg-field aria-expanded:[--field-border:var(--field-border-hover)]",
               className
             )}
           />
@@ -149,7 +151,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
         <SlidersHorizontal size={15} className="text-muted-foreground" aria-hidden="true" />
         <span>Filters</span>
         {active > 0 && (
-          <span className="flex size-3.5 items-center justify-center rounded-full bg-foreground text-[10px] leading-none text-background tabular">
+          <span className="flex size-3.5 items-center justify-center rounded-full bg-foreground text-meta leading-none text-background tabular">
             {active}
           </span>
         )}
@@ -188,16 +190,16 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                 <DropdownMenuSub key={group.id}>
                   <DropdownMenuSubTrigger
                     chevron={
-                      <span className="ml-auto text-[9px] text-muted-foreground/45 group-data-popup-open:text-foreground select-none" aria-hidden="true">
+                      <span className="ml-auto text-meta text-muted-foreground/45 group-data-popup-open:text-foreground select-none" aria-hidden="true">
                         ▸
                       </span>
                     }
-                    className="group gap-2 px-2 py-2 text-[13px] cursor-pointer"
+                    className="group gap-2 px-2 py-2 text-body cursor-pointer"
                   >
                     <Icon size={14} strokeWidth={1.8} className="shrink-0 text-muted-foreground/80" />
                     <span className="truncate text-foreground font-medium">{group.label}</span>
                     {summary && (
-                      <span className="ml-auto mr-1 max-w-[80px] truncate text-[11px] text-muted-foreground tabular">
+                      <span className="ml-auto mr-1 max-w-[80px] truncate text-meta text-muted-foreground tabular">
                         {summary}
                       </span>
                     )}
@@ -213,7 +215,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                     <DropdownMenuItem
                       onClick={clear}
                       closeOnClick={false}
-                      className="justify-between px-2 py-2 text-[13px] cursor-pointer"
+                      className="justify-between px-2 py-2 text-body cursor-pointer"
                     >
                       <span className="truncate">{anyLabel}</span>
                       {anyOn && (
@@ -231,7 +233,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                           key={o.value}
                           onClick={() => select(o.value)}
                           closeOnClick={false}
-                          className="justify-between px-2 py-2 text-[13px] cursor-pointer"
+                          className="justify-between px-2 py-2 text-body cursor-pointer"
                         >
                           <span className="truncate">{o.label}</span>
                           {isSelected && (
@@ -261,7 +263,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                 <div className="my-1 border-t border-border/50" role="separator" />
                 <DropdownMenuItem
                   onClick={onClear}
-                  className="gap-2 px-2 py-2 text-[12px] text-muted-foreground hover:text-foreground justify-center cursor-pointer"
+                  className="gap-2 px-2 py-2 text-meta text-muted-foreground hover:text-foreground justify-center cursor-pointer"
                 >
                   <X size={13} aria-hidden="true" />
                   Clear all filters
@@ -295,7 +297,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                   <DropdownMenuItem
                     onClick={clear}
                     closeOnClick={false}
-                    className="justify-between px-2 py-2 text-[13px] cursor-pointer"
+                    className="justify-between px-2 py-2 text-body cursor-pointer"
                   >
                     <span className="truncate">{anyLabel}</span>
                     {anyOn && (
@@ -313,7 +315,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                         key={o.value}
                         onClick={() => select(o.value)}
                         closeOnClick={false}
-                        className="justify-between px-2 py-2 text-[13px] cursor-pointer"
+                        className="justify-between px-2 py-2 text-body cursor-pointer"
                       >
                         <span className="truncate">{o.label}</span>
                         {isSelected && (
@@ -338,7 +340,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                       <div className="my-1 border-t border-border/50" role="separator" />
                       <DropdownMenuItem
                         onClick={onClear}
-                        className="gap-2 px-2 py-2 text-[12px] text-muted-foreground hover:text-foreground justify-center cursor-pointer"
+                        className="gap-2 px-2 py-2 text-meta text-muted-foreground hover:text-foreground justify-center cursor-pointer"
                       >
                         <X size={13} aria-hidden="true" />
                         Clear filter
@@ -355,11 +357,27 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
   );
 }
 
+const CHIP_IN = { opacity: 1, scale: 1 };
+const CHIP_OUT = { opacity: 0, scale: 0.9 };
+const CHIP_TRANSITION = { duration: DURATION.entrance, ease: EASE.settle, layout: SPRING.settle };
+
 /**
- * AppliedFilters — one removable chip per active filter, shown under the toolbar.
- * Renders nothing when no filter is on, so it never takes space on a clean list.
+ * AppliedFilters — one removable chip per active filter. Amber, like the chosen pills in `MultiChoice`.
+ *
+ * Chips fade and scale in and out, and the rest slide over to close the gap.
+ * - `row` (default): its own row under the search bar. The row opens and closes its height, and carries its own 12px
+ *   gap above, so the toolbar and the row must share a parent with no gap; the page's gap separates it from the list.
+ * - `inline`: chips sit in the toolbar beside the Filters button, so there's no row to open.
  */
-export function AppliedFilters({ groups, className }: { groups: FilterGroup[]; className?: string }) {
+export function AppliedFilters({
+  groups,
+  layout = "row",
+  className,
+}: {
+  groups: FilterGroup[];
+  layout?: "row" | "inline";
+  className?: string;
+}) {
   const chips: { key: string; label: string; remove: () => void }[] = [];
   for (const g of groups) {
     if (!isActive(g)) continue;
@@ -379,22 +397,45 @@ export function AppliedFilters({ groups, className }: { groups: FilterGroup[]; c
       }
     }
   }
-  if (chips.length === 0) return null;
-  return (
-    <ul className={cn("flex flex-wrap items-center gap-2", className)} aria-label="Applied filters">
-      {chips.map((c) => (
-        <li key={c.key}>
-          <button
-            type="button"
-            onClick={c.remove}
-            aria-label={`Remove filter: ${c.label}`}
-            className="flex h-6 cursor-pointer items-center gap-2 rounded-full bg-muted pl-2 pr-2 text-[12px] text-foreground transition-colors duration-hover hover:bg-muted/70"
-          >
-            <span>{c.label}</span>
-            <X size={12} className="text-muted-foreground" aria-hidden="true" />
-          </button>
-        </li>
-      ))}
+
+  // Skip the entrance only for chips already on when the page loads; a first chip added later still scales in.
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+  }, []);
+
+  const list = (
+    <ul className={cn("relative flex flex-wrap items-center gap-2", layout === "row" && "pt-3", className)} aria-label="Applied filters">
+      <AnimatePresence mode="popLayout" initial={mounted.current}>
+        {chips.map((c) => (
+          <motion.li key={c.key} layout initial={CHIP_OUT} animate={CHIP_IN} exit={CHIP_OUT} transition={CHIP_TRANSITION}>
+            <button
+              type="button"
+              onClick={c.remove}
+              aria-label={`Remove filter: ${c.label}`}
+              className="flex h-6 cursor-pointer items-center gap-2 rounded-full bg-primary pl-2 pr-2 text-meta font-medium text-primary-foreground transition-colors duration-hover hover:bg-primary/85"
+            >
+              <span>{c.label}</span>
+              <X size={12} className="text-primary-foreground/70" aria-hidden="true" />
+            </button>
+          </motion.li>
+        ))}
+      </AnimatePresence>
     </ul>
+  );
+
+  // Inline: the list stays mounted (empty when nothing is on) so the last chip can still animate out.
+  if (layout === "inline") return list;
+
+  // Row: always mounted, so the last chip plays its own exit while the row closes. Its height follows the chips in
+  // step with their scale (no mask), so a chip arriving or leaving is what moves the list. Closed, it takes no space.
+  return (
+    <motion.div
+      initial={false}
+      animate={{ height: chips.length > 0 ? "auto" : 0 }}
+      transition={{ duration: DURATION.entrance, ease: EASE.settle }}
+    >
+      {list}
+    </motion.div>
   );
 }

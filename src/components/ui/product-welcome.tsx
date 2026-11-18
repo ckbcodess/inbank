@@ -52,7 +52,7 @@ export function ProductWelcome({
               <div className="flex justify-start">
                 <GCBLogo className="h-8 w-auto" />
               </div>
-              <DialogTitle className="text-[22px] font-medium leading-tight tracking-tight text-foreground sm:text-[24px]">
+              <DialogTitle className="type-headline font-medium leading-tight tracking-tight text-foreground">
                 {title}
               </DialogTitle>
               <div className="flex flex-col gap-5">
@@ -62,8 +62,8 @@ export function ProductWelcome({
                       <Icon size={16} aria-hidden="true" />
                     </span>
                     <div className="flex min-w-0 flex-col gap-0.5">
-                      <span className="text-[14px] text-foreground">{t}</span>
-                      <span className="text-[13px] leading-relaxed text-muted-foreground">{detail}</span>
+                      <span className="text-body text-foreground">{t}</span>
+                      <span className="text-body leading-relaxed text-muted-foreground">{detail}</span>
                     </div>
                   </div>
                 ))}

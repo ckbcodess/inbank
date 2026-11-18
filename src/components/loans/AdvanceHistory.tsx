@@ -42,7 +42,7 @@ export function AdvanceHistory() {
             const inYear = repaid.filter((a) => whenOf(a).startsWith(year));
             return (
               <section key={year} className="flex flex-col gap-2">
-                <div className="tabular flex items-baseline justify-between gap-4 px-1 text-[13px] text-muted-foreground">
+                <div className="tabular flex items-baseline justify-between gap-4 px-1 text-body text-muted-foreground">
                   <span>{year}</span>
                   <span>{`${inYear.length} ${inYear.length === 1 ? "advance" : "advances"} · ${formatMoney(sumMoney(inYear.map((a) => a.amount)), "GHS", showAmounts)}`}</span>
                 </div>

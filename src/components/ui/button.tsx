@@ -15,7 +15,7 @@ export const GLASS_CLASS =
   "overflow-visible border-[color-mix(in_srgb,var(--white)_16%,transparent)] bg-clip-padding backdrop-blur-md transition-[color,background-color,box-shadow,transform] duration-hover bg-[linear-gradient(to_bottom,var(--hero-glass-top),var(--hero-glass-bottom))] text-[var(--hero-button-foreground)] shadow-[inset_0_0_0_999px_transparent] hover:shadow-[inset_0_0_0_999px_var(--hero-glass-hover)] group-hover:shadow-[inset_0_0_0_999px_var(--hero-glass-hover)]";
 
 const buttonVariants = cva(
-  "group/button relative overflow-hidden inline-flex shrink-0 items-center justify-center rounded-xl border border-transparent text-[13px] font-medium whitespace-nowrap [transition:color_var(--dur-hover)_var(--ease-in-out),background-color_var(--dur-hover)_var(--ease-in-out),border-color_var(--dur-hover)_var(--ease-in-out),box-shadow_var(--dur-hover)_var(--ease-in-out),scale_var(--dur-hover)_var(--ease-snappy)] select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground disabled:border-transparent disabled:shadow-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 cursor-pointer",
+  "group/button relative overflow-hidden inline-flex shrink-0 items-center justify-center rounded-xl border border-transparent text-body font-medium whitespace-nowrap [transition:color_var(--dur-hover)_var(--ease-in-out),background-color_var(--dur-hover)_var(--ease-in-out),border-color_var(--dur-hover)_var(--ease-in-out),box-shadow_var(--dur-hover)_var(--ease-in-out),scale_var(--dur-hover)_var(--ease-snappy)] select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground disabled:border-transparent disabled:shadow-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 cursor-pointer",
   {
     variants: {
       variant: {
@@ -46,12 +46,12 @@ const buttonVariants = cva(
        * A full-width button in a flow is `xl`. Never override height or text size with className.
        */
       size: {
-        xs: "active:scale-[0.96] h-(--control-xs) gap-1 rounded-xl px-2 text-xs in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-2.5",
-        sm: "active:scale-[0.97] h-(--control-sm) gap-2 rounded-xl px-2 text-[12.5px] in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xs: "active:scale-[0.96] h-(--control-xs) gap-1 rounded-xl px-2 text-meta in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-2.5",
+        sm: "active:scale-[0.97] h-(--control-sm) gap-2 rounded-xl px-2 text-meta in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         default:
           "active:scale-[0.98] h-(--control-default) gap-2 px-3 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        md: "active:scale-[0.98] h-(--control-md) gap-2 px-3 text-[14px] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xl: "active:scale-[0.98] h-(--control-xl) gap-2 px-4 text-[16px] has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+        md: "active:scale-[0.98] h-(--control-md) gap-2 px-3 text-body has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xl: "active:scale-[0.98] h-(--control-xl) gap-2 px-4 text-heading has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
         // Icon-only buttons are square on the same steps.
         "icon-xs":
           "active:scale-[0.96] size-(--control-xs) rounded-xl in-data-[slot=button-group]:rounded-xl [&_svg:not([class*='size-'])]:size-2.5",

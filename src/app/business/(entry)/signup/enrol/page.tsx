@@ -447,8 +447,8 @@ function CorporateEnrolmentFlow() {
       >
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-1">
-            <span className="text-[12px] text-muted-foreground">Your reference</span>
-            <span className="tabular text-[22px] tracking-[var(--ls-heading)] text-foreground">{reference}</span>
+            <span className="text-meta text-muted-foreground">Your reference</span>
+            <span className="tabular type-headline tracking-[var(--ls-heading)] text-foreground">{reference}</span>
           </div>
           <div className="flex flex-col gap-3">
             <Button
@@ -538,7 +538,7 @@ function CorporateEnrolmentFlow() {
 
             {company && (
               <div className="flex flex-col gap-3">
-                <h2 className="text-[14px] font-medium text-foreground">{company.companyName}</h2>
+                <h2 className="text-body font-medium text-foreground">{company.companyName}</h2>
                 <div className="flex flex-col gap-1">
                   {company.accounts.map((acc) => {
                     const checked = selectedAccountIds.includes(acc.id);
@@ -556,9 +556,9 @@ function CorporateEnrolmentFlow() {
                               )
                             }
                           />
-                          <span className="truncate text-[14px] text-foreground">{acc.name}</span>
+                          <span className="truncate text-body text-foreground">{acc.name}</span>
                         </span>
-                        <span className="tabular shrink-0 text-[13px] text-muted-foreground">{lastFour(acc.number)}</span>
+                        <span className="tabular shrink-0 text-body text-muted-foreground">{lastFour(acc.number)}</span>
                       </label>
                     );
                   })}
@@ -577,7 +577,7 @@ function CorporateEnrolmentFlow() {
                 {company ? "Continue" : "Find Company"}
               </Button>
               {company && selectedAccountIds.length === 0 && (
-                <p className="text-center text-[12px] text-muted-foreground">Choose at least one account.</p>
+                <p className="text-center text-meta text-muted-foreground">Choose at least one account.</p>
               )}
             </div>
           </form>
@@ -646,7 +646,7 @@ function CorporateEnrolmentFlow() {
                 Send Code
               </Button>
               {applicantChoice === "other" && (
-                <p className="text-center text-[12px] text-muted-foreground">
+                <p className="text-center text-meta text-muted-foreground">
                   {`Your signatories approve the application by signing the letter we write (${company.signingRule}).`}
                 </p>
               )}
@@ -676,7 +676,7 @@ function CorporateEnrolmentFlow() {
             />
 
             {errorMsg && (
-              <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+              <p role="alert" className="-mt-2 text-center text-body text-destructive">
                 {errorMsg}
               </p>
             )}
@@ -689,7 +689,7 @@ function CorporateEnrolmentFlow() {
                   setCountdown(RESEND_SECONDS);
                   setErrorMsg("");
                 }}
-                className="cursor-pointer text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
+                className="cursor-pointer text-body text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
               >
                 {countdown > 0 ? (
                   <>
@@ -699,7 +699,7 @@ function CorporateEnrolmentFlow() {
                   "Resend code"
                 )}
               </button>
-              <p className="text-center text-[13px] text-muted-foreground">
+              <p className="text-center text-body text-muted-foreground">
                 Dial{" "}
                 <a
                   href="tel:*422*11%23"
@@ -712,7 +712,7 @@ function CorporateEnrolmentFlow() {
             </div>
 
             {busy && (
-              <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+              <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
                 <AppLoader size={16} />
                 <span>Verifying code...</span>
               </div>
@@ -727,8 +727,8 @@ function CorporateEnrolmentFlow() {
               {users.map((u) => (
                 <li key={u.id} className="flex items-center justify-between gap-3 py-2">
                   <div className="min-w-0">
-                    <p className="truncate text-[14px] text-foreground">{u.name}</p>
-                    <p className="truncate text-[12px] text-muted-foreground">
+                    <p className="truncate text-body text-foreground">{u.name}</p>
+                    <p className="truncate text-meta text-muted-foreground">
                       {u.isFromMandate ? u.designation : (u.designation ?? "Added by you")}
                     </p>
                   </div>
@@ -767,7 +767,7 @@ function CorporateEnrolmentFlow() {
 
             {adding ? (
               <form onSubmit={handleAddUser} className="flex flex-col gap-4">
-                <h2 className="text-[14px] font-medium text-foreground">Add a User</h2>
+                <h2 className="text-body font-medium text-foreground">Add a User</h2>
                 <Field label="Full Name" htmlFor="newName">
                   <Input id="newName" autoComplete="off" value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus />
                 </Field>
@@ -822,7 +822,7 @@ function CorporateEnrolmentFlow() {
               </div>
             )}
 
-            <dl className="flex flex-col gap-1 text-[12px] text-muted-foreground">
+            <dl className="flex flex-col gap-1 text-meta text-muted-foreground">
               {(Object.keys(CORPORATE_ROLE_LINE) as CorporateAppRole[]).map((r) => (
                 <div key={r} className="flex gap-1">
                   <dt className="text-foreground">{r}:</dt>
@@ -841,7 +841,7 @@ function CorporateEnrolmentFlow() {
                 >
                   Continue
                 </Button>
-                {usersBlock && <p className="text-center text-[12px] text-muted-foreground">{usersBlock}</p>}
+                {usersBlock && <p className="text-center text-meta text-muted-foreground">{usersBlock}</p>}
               </div>
             )}
           </div>
@@ -891,7 +891,7 @@ function CorporateEnrolmentFlow() {
                 <FileText size={16} />
                 Open Letter to Print
               </Button>
-              <p className="tabular text-center text-[12px] text-muted-foreground">
+              <p className="tabular text-center text-meta text-muted-foreground">
                 {`Your reference ${reference} is printed on it.`}
               </p>
             </div>
@@ -916,7 +916,7 @@ function CorporateEnrolmentFlow() {
                   Submit Application
                 </Button>
                 {!letter && (
-                  <p className="text-center text-[12px] text-muted-foreground">Upload the signed letter to submit.</p>
+                  <p className="text-center text-meta text-muted-foreground">Upload the signed letter to submit.</p>
                 )}
               </div>
               <Button
@@ -961,10 +961,10 @@ function ApplicantOption({
       }`}
     >
       <span className="min-w-0">
-        <span className="block truncate text-[14px] text-foreground">{primary}</span>
-        <span className="block truncate text-[12px] text-muted-foreground">{secondary}</span>
+        <span className="block truncate text-body text-foreground">{primary}</span>
+        <span className="block truncate text-meta text-muted-foreground">{secondary}</span>
       </span>
-      {meta && <span className="tabular shrink-0 text-[13px] text-muted-foreground">{meta}</span>}
+      {meta && <span className="tabular shrink-0 text-body text-muted-foreground">{meta}</span>}
     </button>
   );
 }
@@ -973,12 +973,12 @@ function ReviewGroup({ title, onEdit, children }: { title: string; onEdit?: () =
   return (
     <section className="flex flex-col gap-2">
       <div className="flex min-h-6 items-center justify-between">
-        <h2 className="text-[14px] font-medium text-foreground">{title}</h2>
+        <h2 className="text-body font-medium text-foreground">{title}</h2>
         {onEdit && (
           <button
             type="button"
             onClick={onEdit}
-            className="cursor-pointer text-[13px] text-muted-foreground underline underline-offset-4 transition-colors duration-hover hover:text-foreground"
+            className="cursor-pointer text-body text-muted-foreground underline underline-offset-4 transition-colors duration-hover hover:text-foreground"
           >
             Edit
           </button>
@@ -992,9 +992,9 @@ function ReviewGroup({ title, onEdit, children }: { title: string; onEdit?: () =
 function ReviewLine({ primary, secondary, tabular }: { primary: string; secondary?: string; tabular?: boolean }) {
   return (
     <div className="flex items-center justify-between gap-3 py-1">
-      <span className="truncate text-[13px] text-foreground">{primary}</span>
+      <span className="truncate text-body text-foreground">{primary}</span>
       {secondary && (
-        <span className={`shrink-0 text-[13px] text-muted-foreground ${tabular ? "tabular" : ""}`}>{secondary}</span>
+        <span className={`shrink-0 text-body text-muted-foreground ${tabular ? "tabular" : ""}`}>{secondary}</span>
       )}
     </div>
   );

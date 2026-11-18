@@ -54,8 +54,8 @@ export function TrueEmptyState({
       <div className="mb-6 text-muted-foreground/60 flex items-center justify-center">
         {illustration ? <StateIllustration id={illustration} fallback={fallbackIcon} /> : fallbackIcon}
       </div>
-      <p className="text-[18px] sm:text-[20px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</p>
-      {description && <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-muted-foreground">{description}</p>}
+      <p className="text-title sm:text-fact font-medium tracking-[var(--ls-tight)] text-foreground">{title}</p>
+      {description && <p className="mt-2 max-w-xl text-body leading-relaxed text-muted-foreground">{description}</p>}
       {action && <div className="mt-6">{action}</div>}
     </div>
   );
@@ -80,8 +80,8 @@ export function FilteredEmptyState({
       <div className="mb-2 text-muted-foreground/60 flex items-center justify-center">
         <StateIllustration id="no-results" fallback={<SearchX size={22} />} />
       </div>
-      <p className="text-[14px] font-medium text-foreground">No results found</p>
-      <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
+      <p className="text-body font-medium text-foreground">No results found</p>
+      <p className="mt-1 max-w-sm text-body leading-relaxed text-muted-foreground">{description}</p>
       <Button variant="outline" size="sm" className="mt-3" onClick={onReset}>
         <RefreshCw size={13} />
         Reset filters
@@ -104,8 +104,8 @@ export function ListErrorState({
       <div className="mb-2 text-destructive/80 flex items-center justify-center">
         <StateIllustration id="load-error" fallback={<AlertCircle size={22} />} />
       </div>
-      <p className="text-[14px] font-medium text-foreground">Couldn&apos;t load records</p>
-      <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
+      <p className="text-body font-medium text-foreground">Couldn&apos;t load records</p>
+      <p className="mt-1 max-w-sm text-body leading-relaxed text-muted-foreground">{description}</p>
       <Button variant="outline" size="sm" className="mt-3" onClick={onRetry}>
         <RefreshCw size={13} />
         Retry
@@ -120,7 +120,7 @@ export function ListErrorState({
  */
 export function PartialLoadFooter() {
   return (
-    <div className="flex items-center justify-center gap-2 border-t border-border/60 px-3 py-3 text-[13px] text-muted-foreground">
+    <div className="flex items-center justify-center gap-2 border-t border-border/60 px-3 py-3 text-body text-muted-foreground">
       <RefreshCw size={13} className="animate-spin" />
       Loading more records…
     </div>

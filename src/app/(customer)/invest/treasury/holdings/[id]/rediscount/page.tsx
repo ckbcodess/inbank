@@ -107,7 +107,7 @@ export default function RediscountPage() {
         )}
 
         {valid && (
-          <dl className="flex flex-col gap-2 px-1 text-[14px] animate-in fade-in slide-in-from-top-2 duration-200">
+          <dl className="flex flex-col gap-2 px-1 text-body animate-in fade-in slide-in-from-top-2 duration-200">
             {(
               [
                 ["You receive today", money(net)],
@@ -126,7 +126,7 @@ export default function RediscountPage() {
 
         <div>
           <ProceedButton disabled={!valid} onClick={() => setAuthOpen(true)} />
-          {valid && <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">Once it’s processed, this can’t be undone.</p>}
+          {valid && <p className="px-1 pt-2 text-center text-meta text-muted-foreground">Once it’s processed, this can’t be undone.</p>}
         </div>
       </div>
 

@@ -109,7 +109,7 @@ export default function AuditLogPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <FilterPanel groups={filterGroups} onClear={() => setChannel("all")} align="start" />
-          <AppliedFilters groups={filterGroups} />
+          <AppliedFilters groups={filterGroups} layout="inline" />
         </div>
 
         <ExpandableSearch
@@ -161,20 +161,20 @@ export default function AuditLogPage() {
 
                 <div className="flex min-w-0 flex-1 flex-col">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-[14px] text-foreground">{event.action}</span>
+                    <span className="text-body text-foreground">{event.action}</span>
                     <Badge variant={event.channel === "Admin Portal" ? "secondary" : "outline"}>
                       {event.channel}
                     </Badge>
                   </div>
-                  <span className="mt-0.5 break-words text-[13px] text-muted-foreground">
+                  <span className="mt-0.5 break-words text-body text-muted-foreground">
                     {event.target}
                   </span>
-                  <span className="mt-2 text-[12px] text-muted-foreground">
+                  <span className="mt-2 text-meta text-muted-foreground">
                     {event.actor} · {event.role} · IP {event.ip}
                   </span>
                 </div>
 
-                <span className="shrink-0 text-right text-[12px] text-muted-foreground tabular">
+                <span className="shrink-0 text-right text-meta text-muted-foreground tabular">
                   {formatDateTime(event.timestamp)}
                 </span>
               </li>
@@ -186,7 +186,7 @@ export default function AuditLogPage() {
       </Skeleton>
       )}
 
-      <p className="text-[12px] leading-relaxed text-muted-foreground">
+      <p className="text-meta leading-relaxed text-muted-foreground">
         Retention follows FR-21 — entries remain searchable for at least the configured retention
         period. Export for regulatory review is handled through Reports.
       </p>

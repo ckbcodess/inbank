@@ -108,7 +108,7 @@ export default function ComplianceActionDialog({
             </DialogHeader>
 
             <DialogBody>
-              <p className="text-[13px] text-muted-foreground leading-relaxed">{description}</p>
+              <p className="text-body text-muted-foreground leading-relaxed">{description}</p>
 
               <div className="flex flex-col gap-2 pt-1">
                 <Label htmlFor="compliance-reason">Reason (Required)</Label>
@@ -119,7 +119,7 @@ export default function ComplianceActionDialog({
                   rows={3}
                   placeholder={reasonPlaceholder}
                 />
-                <p className="text-[12px] text-muted-foreground">
+                <p className="text-meta text-muted-foreground">
                   {reason.trim().length < minReason
                     ? `At least ${minReason} characters required.`
                     : `${reason.trim().length} characters`}
@@ -153,7 +153,7 @@ export default function ComplianceActionDialog({
             </DialogHeader>
 
             <DialogBody>
-              <p className="text-[13px] text-muted-foreground leading-relaxed">
+              <p className="text-body text-muted-foreground leading-relaxed">
                 High-risk changes need a second factor. Enter the 6-digit code from your authenticator to apply this change.
               </p>
 

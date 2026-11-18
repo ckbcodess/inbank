@@ -275,12 +275,12 @@ export function PolicyRow({ policy, showAmounts }: { policy: Policy; showAmounts
       >
         <PlanIcon planId={policy.planId} />
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-[14px] text-foreground">{plan?.name}</span>
-          <span className="tabular truncate text-[12px] text-muted-foreground">{policyMeta(policy)}</span>
+          <span className="truncate text-body text-foreground">{plan?.name}</span>
+          <span className="tabular truncate text-meta text-muted-foreground">{policyMeta(policy)}</span>
         </span>
         <span className="flex shrink-0 flex-col items-end">
-          <span className="tabular text-[14px] text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
-          <span className="tabular text-[12px] text-muted-foreground">{premiumLine(policy, showAmounts)}</span>
+          <span className="tabular text-body text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
+          <span className="tabular text-meta text-muted-foreground">{premiumLine(policy, showAmounts)}</span>
         </span>
         <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
       </Link>
@@ -310,12 +310,12 @@ export function PlanPolicyRow({ policy, showAmounts }: { policy: Policy; showAmo
         className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
       >
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className="tabular truncate text-[14px] text-foreground">{policy.number}</span>
-          {second && <span className={cn("truncate text-[12px]", attention ? "text-warning-text" : "text-muted-foreground")}>{second}</span>}
+          <span className="tabular truncate text-body text-foreground">{policy.number}</span>
+          {second && <span className={cn("truncate text-meta", attention ? "text-warning-text" : "text-muted-foreground")}>{second}</span>}
         </span>
         <span className="flex shrink-0 flex-col items-end">
-          <span className="tabular text-[14px] text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
-          <span className="tabular text-[12px] text-muted-foreground">
+          <span className="tabular text-body text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
+          <span className="tabular text-meta text-muted-foreground">
             {maturity ? `Ends ${formatDate(maturity)}` : premiumLine(policy, showAmounts)}
           </span>
         </span>

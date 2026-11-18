@@ -45,14 +45,14 @@ export function CardsPanel({
   return (
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card">
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <h2 className="text-[15px] text-foreground">Your cards</h2>
-        <Link href="/cards" className="text-[12px] text-foreground underline-offset-4 hover:underline">
+        <h2 className="text-heading text-foreground">Your cards</h2>
+        <Link href="/cards" className="text-meta text-foreground underline-offset-4 hover:underline">
           View all cards
         </Link>
       </div>
 
       {cards.length === 0 ? (
-        <p className="px-4 py-6 text-center text-[13px] text-muted-foreground">
+        <p className="px-4 py-6 text-center text-body text-muted-foreground">
           No cards on this relationship yet.
         </p>
       ) : (
@@ -72,16 +72,16 @@ export function CardsPanel({
                     className="flex min-w-0 flex-1 flex-col"
                   >
                     <span className="flex items-center gap-2">
-                      <span className="truncate text-[13px] text-foreground">{card.name}</span>
+                      <span className="truncate text-body text-foreground">{card.name}</span>
                       {card.status !== "Active" && (
                         <Badge variant="destructive">{card.status}</Badge>
                       )}
                     </span>
-                    <span className="mt-0.5 text-[11px] text-muted-foreground tabular">
+                    <span className="mt-0.5 text-meta text-muted-foreground tabular">
                       {card.type} · {card.maskedNumber}
                     </span>
                   </Link>
-                  <span className="shrink-0 text-right text-[13px] text-foreground tabular">
+                  <span className="shrink-0 text-right text-body text-foreground tabular">
                     {card.balance !== null
                       ? formatMoney(card.balance, card.currency, showAmounts)
                       : (() => {
@@ -104,7 +104,7 @@ export function CardsPanel({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-6 gap-2 px-2 text-[12px]"
+                    className="h-6 gap-2 px-2 text-meta"
                     onClick={() => toggleBlock(card)}
                     disabled={expired}
                     aria-label={blocked ? `Unblock ${card.name}` : `Block ${card.name}`}
@@ -121,7 +121,7 @@ export function CardsPanel({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-6 gap-2 px-2 text-[12px]"
+                      className="h-6 gap-2 px-2 text-meta"
                       onClick={() => onTopUp(card.id)}
                       aria-label={`Fund ${card.name}`}
                     >
@@ -131,7 +131,7 @@ export function CardsPanel({
                   )}
 
                   {blocked && (
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-meta text-muted-foreground">
                       Transactions declined while blocked
                     </span>
                   )}

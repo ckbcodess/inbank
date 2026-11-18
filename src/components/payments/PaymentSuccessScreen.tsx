@@ -397,7 +397,7 @@ export function PaymentSuccessScreen({
           type="button"
           onClick={handleReplay}
           aria-label="Replay animation"
-          className="absolute right-1 top-1 z-30 flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-2 py-2 text-[12px] text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
+          className="absolute right-1 top-1 z-30 flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-2 py-2 text-meta text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
         >
           <RotateCcw size={13} />
           <span>Replay</span>
@@ -505,7 +505,7 @@ export function PaymentSuccessScreen({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.44, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="text-[26px] sm:text-[30px] font-medium leading-[34px] sm:leading-[38px] tracking-[var(--ls-heading)] text-foreground text-center"
+            className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground text-center"
           >
             {normalizedTitle}
           </motion.h1>
@@ -514,7 +514,7 @@ export function PaymentSuccessScreen({
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[15px] sm:text-[16px] leading-[23px] sm:leading-[25px] text-muted-foreground text-center max-w-[440px]"
+              className="text-body sm:text-heading leading-[23px] sm:leading-[25px] text-muted-foreground text-center max-w-[440px]"
             >
               {emphasise(message, beneficiaryName)}
             </motion.p>
@@ -537,7 +537,7 @@ export function PaymentSuccessScreen({
               label={ACTION_LABEL[card.id] ?? card.label}
               onClick={card.onClick}
               chipClassName={cn("bg-action-chip text-foreground group-hover:bg-action-chip-hover", card.active && "bg-primary/15 ring-1 ring-primary/40")}
-              labelClassName="text-[12px] leading-[17px]"
+              labelClassName="text-meta leading-[17px]"
             />
           ))}
         </motion.div>
@@ -551,7 +551,7 @@ export function PaymentSuccessScreen({
           transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="flex items-center justify-between px-[18px] py-[16px] rounded-xl border border-border dark:border-border bg-tile dark:bg-card w-full max-w-[460px] mt-2 shadow-xs"
         >
-          <span id="save-beneficiary-label" className="text-[14px] font-normal text-foreground">
+          <span id="save-beneficiary-label" className="text-body font-normal text-foreground">
             {saveBeneficiaryLabel}
           </span>
           <Switch checked={saveBeneficiary} onCheckedChange={handleToggleBeneficiary} aria-labelledby="save-beneficiary-label" />
@@ -611,11 +611,12 @@ export function PaymentSuccessScreen({
                             : "border-transparent bg-muted group-hover:bg-muted/70"
                         )}
                       >
+                        {/* eslint-disable-next-line no-restricted-syntax -- emoji glyph */}
                         <span className="text-[26px] leading-none" aria-hidden="true">
                           {opt.emoji}
                         </span>
                       </span>
-                      <span className={cn("text-[13px]", selected ? "font-medium text-foreground" : "text-muted-foreground")}>
+                      <span className={cn("text-body", selected ? "font-medium text-foreground" : "text-muted-foreground")}>
                         {opt.label}
                       </span>
                     </button>

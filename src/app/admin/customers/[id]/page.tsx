@@ -65,8 +65,8 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
             <Building2 size={19} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[15px] text-foreground">Corporate relationship</p>
-            <p className="mt-0.5 text-[12px] text-muted-foreground tabular">
+            <p className="text-body text-foreground">Corporate relationship</p>
+            <p className="mt-0.5 text-meta text-muted-foreground tabular">
               Onboarded 12 Mar 2021 · Relationship manager: A. Owusu
             </p>
           </div>
@@ -78,11 +78,11 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
           <Fact mono label="Accounts" value="4" />
           <Fact mono label="Users" value={String(CUSTOMER_USERS.length)} />
           <div className="flex flex-col">
-            <dt className="text-[12px] text-muted-foreground">Enrolment</dt>
+            <dt className="text-meta text-muted-foreground">Enrolment</dt>
             <dd className="mt-1">
               <Link
                 href="/admin/enrolments/enr-2026-0814"
-                className="text-[13px] font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 flex items-center gap-1"
+                className="text-body font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 flex items-center gap-1"
               >
                 <span>Active (ENR-2026-0814)</span>
               </Link>
@@ -93,7 +93,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
 
       {/* Issued Payment Cards */}
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
+        <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-heading text-foreground">
           <CreditCard size={16} aria-hidden="true" className="text-muted-foreground" />
           Issued payment cards
         </h2>
@@ -103,14 +103,14 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
               <div className="flex items-center gap-2 min-w-0">
                 <MiniCardThumbnail card={c} />
                 <div className="flex flex-col min-w-0">
-                  <span className="truncate text-[13px] font-medium text-foreground">{c.name}</span>
-                  <span className="mt-0.5 text-[11px] text-muted-foreground tabular">
+                  <span className="truncate text-body font-medium text-foreground">{c.name}</span>
+                  <span className="mt-0.5 text-meta text-muted-foreground tabular">
                     {c.scheme} · {c.maskedNumber} · {c.holder}
                   </span>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[13px] text-foreground tabular">
+                <span className="text-body text-foreground tabular">
                   {c.type === "Prepaid" && c.balance !== null ? formatMoney(c.balance, c.currency) : "Debit"}
                 </span>
                 <Badge variant={c.status === "Active" ? "success" : "destructive"}>{c.status}</Badge>
@@ -122,14 +122,14 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
 
       {/* User Access — a section within Customer Details, not its own screen */}
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-[15px] text-foreground">
+        <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-heading text-foreground">
           <UserCog size={16} aria-hidden="true" className="text-muted-foreground" />
           User access
         </h2>
         <ul className="divide-y divide-border">
           {CUSTOMER_USERS.map((u) => (
             <li key={u.id} className="flex items-center gap-3 px-4 py-3">
-              <span className="min-w-0 flex-1 truncate text-[13px] text-foreground">{u.name}</span>
+              <span className="min-w-0 flex-1 truncate text-body text-foreground">{u.name}</span>
               <Badge variant="outline">{u.role}</Badge>
               <Badge variant={u.status === "Active" ? "success" : "warning"}>{u.status}</Badge>
               <Button variant="ghost" size="xs" disabled>

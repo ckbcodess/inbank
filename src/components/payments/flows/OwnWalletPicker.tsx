@@ -149,7 +149,7 @@ export function OwnWalletPicker({
   return (
     <>
       {removedNotice && (
-        <p role="status" className="flex items-start gap-2 rounded-xl bg-warning/10 px-3 py-2 text-[13px] text-foreground">
+        <p role="status" className="flex items-start gap-2 rounded-xl bg-warning/10 px-3 py-2 text-body text-foreground">
           <AlertCircle size={15} className="mt-0.5 shrink-0 text-warning" aria-hidden="true" />
           That {line ? "number" : "wallet"} is no longer linked, so we&apos;ve switched to your registered one. Choose again below.
         </p>
@@ -174,11 +174,11 @@ export function OwnWalletPicker({
             <div className="flex min-w-0 items-center gap-2">
               <OperatorLogo name={current.network} size={36} />
               <span className="flex min-w-0 flex-col gap-0.5">
-                <span className="truncate text-[14px] text-foreground">{nameOf(current)}</span>
-                <span className="flex items-center gap-2 text-[12px] text-muted-foreground tabular">
-                  <span className="truncate">{formatGhPhone(current.phone)}</span>
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="truncate text-body text-foreground">{nameOf(current)}</span>
                   <WalletTag tag={current.tag} />
                 </span>
+                <span className="truncate text-meta text-muted-foreground tabular">{formatGhPhone(current.phone)}</span>
               </span>
             </div>
           )}
@@ -189,11 +189,11 @@ export function OwnWalletPicker({
               <div className="flex items-center gap-2">
                 <OperatorLogo name={w.network} size={32} />
                 <span className="flex min-w-0 flex-col gap-0.5">
-                  <span className="truncate text-[14px] text-foreground">{nameOf(w)}</span>
-                  <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground tabular">
-                    <span className="truncate">{formatGhPhone(w.phone)}</span>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className="truncate text-body text-foreground">{nameOf(w)}</span>
                     <WalletTag tag={w.tag} />
                   </span>
+                  <span className="truncate text-meta text-muted-foreground tabular">{formatGhPhone(w.phone)}</span>
                 </span>
               </div>
             </SelectItem>
@@ -203,7 +203,7 @@ export function OwnWalletPicker({
               <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-dashed border-border text-muted-foreground">
                 <Plus size={15} aria-hidden="true" />
               </span>
-              <span className="text-[14px] text-foreground">{line ? "Add another of your numbers" : "Link another wallet"}</span>
+              <span className="text-body text-foreground">{line ? "Add another of your numbers" : "Link another wallet"}</span>
             </div>
           </SelectItem>
         </SelectContent>

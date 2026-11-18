@@ -156,8 +156,8 @@ export default function ReportsPage() {
             <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground">
               <BarChart3 size={15} aria-hidden="true" />
             </span>
-            <span className="mt-2 text-[14px] text-foreground">{r.label}</span>
-            <span className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
+            <span className="mt-2 text-body text-foreground">{r.label}</span>
+            <span className="mt-1 text-meta leading-relaxed text-muted-foreground">
               {r.description}
             </span>
           </button>
@@ -192,10 +192,10 @@ export default function ReportsPage() {
         </div>
 
         <div className="mt-4 flex flex-wrap items-baseline justify-between gap-2 border-t border-border pt-4">
-          <span className="text-[13px] text-muted-foreground">
+          <span className="text-body text-muted-foreground">
             {rowCount} {rowCount === 1 ? "record" : "records"} · total debits
           </span>
-          <span className="text-[18px] leading-tight text-foreground tabular">
+          <span className="text-title leading-tight text-foreground tabular">
             {formatMoney(total)}
           </span>
         </div>
@@ -203,7 +203,7 @@ export default function ReportsPage() {
 
       {/* Results */}
       <div className="flex items-center justify-between px-1">
-        <h2 className="text-[14px] font-medium text-foreground">{active.label}</h2>
+        <h2 className="text-body font-medium text-foreground">{active.label}</h2>
         <Button variant="outline" size="sm" onClick={handleExport} disabled={rowCount === 0}>
           <Download size={14} aria-hidden="true" />
           Export CSV
@@ -240,7 +240,7 @@ export default function ReportsPage() {
       <Skeleton loading={effective === "loading"}>
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-[13px]">
+            <table className="w-full min-w-[720px] text-body">
               <thead>
                 <tr className="border-b border-border text-left text-muted-foreground">
                   <th className="px-3 py-2 font-normal">Reference</th>

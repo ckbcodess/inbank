@@ -79,9 +79,9 @@ export default function TradeTypeSelectionPage() {
                 <Icon size={19} aria-hidden="true" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-[15px] text-foreground">{t.name}</p>
-                <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{t.desc}</p>
-                <p className="mt-2 text-[12px] text-muted-foreground">
+                <p className="text-body text-foreground">{t.name}</p>
+                <p className="mt-1 text-body leading-relaxed text-muted-foreground">{t.desc}</p>
+                <p className="mt-2 text-meta text-muted-foreground">
                   <span className="text-foreground/70">Type-specific fields:</span> {t.fields}
                 </p>
               </div>
@@ -94,11 +94,11 @@ export default function TradeTypeSelectionPage() {
       </div>
 
       <section className={cn(LIST_CARD_CLASS, "p-4")}>
-        <h2 className="flex items-center gap-2 text-[15px] text-foreground">
+        <h2 className="flex items-center gap-2 text-heading text-foreground">
           <FileText size={16} aria-hidden="true" className="text-muted-foreground" />
           Remaining steps
         </h2>
-        <ol className="mt-2 flex flex-col gap-2 text-[13px] text-muted-foreground">
+        <ol className="mt-2 flex flex-col gap-2 text-body text-muted-foreground">
           <li>2. Trade Request — type-specific fields</li>
           <li>3. Documents — attached within the request workflow, not a separate screen</li>
           <li>4. Trade Review — strong confirmation before submission</li>

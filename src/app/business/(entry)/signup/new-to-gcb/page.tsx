@@ -102,8 +102,8 @@ function NewToGcbContent() {
                 <Icon size={18} />
               </span>
               <span className="min-w-0">
-                <span className="block text-[14px] text-foreground">{label}</span>
-                <span className="block text-[12px] text-muted-foreground">{line}</span>
+                <span className="block text-body text-foreground">{label}</span>
+                <span className="block text-meta text-muted-foreground">{line}</span>
               </span>
             </button>
           ))}

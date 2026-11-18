@@ -169,7 +169,7 @@ export default function SupplierPaymentFlow() {
     return (
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title="Pay a Supplier" backTo={{ href: "/business/overview", label: "Home" }} />
-        <p className="text-[14px] leading-relaxed text-muted-foreground">
+        <p className="text-body leading-relaxed text-muted-foreground">
           Payments are prepared by inputters. You review or authorise them in Approvals.
         </p>
       </div>
@@ -182,10 +182,10 @@ export default function SupplierPaymentFlow() {
         <div className="flex flex-col items-start gap-3">
           <CheckCircle2 size={24} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
-            <h1 className="text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground">
+            <h1 className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground">
               {direct ? "Payment on its way" : "Submitted for approval"}
             </h1>
-            <p className="text-[14px] leading-relaxed text-muted-foreground">
+            <p className="text-body leading-relaxed text-muted-foreground">
               {direct ? (
                 <>
                   <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} has left{" "}
@@ -198,7 +198,7 @@ export default function SupplierPaymentFlow() {
                 </>
               )}
             </p>
-            <p className="tabular text-[12px] text-muted-foreground">Reference {submitted.reference}</p>
+            <p className="tabular text-meta text-muted-foreground">Reference {submitted.reference}</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -247,7 +247,7 @@ export default function SupplierPaymentFlow() {
         />
 
         {!direct && (
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
+          <p className="text-body leading-relaxed text-muted-foreground">
             {`This goes to ${describePath(path)}. Either can send it back to you with a comment. Nothing is sent, and nothing is debited, until it is authorised.`}
           </p>
         )}
@@ -277,7 +277,7 @@ export default function SupplierPaymentFlow() {
       <PageHeader title="Pay a Supplier" backTo={{ href: "/business/payments", label: "Send & Pay" }} />
 
       {accounts.length === 0 ? (
-        <p className="text-[13px] text-muted-foreground">There is no active account to pay from. Contact your bank if this looks wrong.</p>
+        <p className="text-body text-muted-foreground">There is no active account to pay from. Contact your bank if this looks wrong.</p>
       ) : (
         <div className="flex flex-col gap-5">
           <FromAccountSelector accounts={accounts} value={fromId} onChange={setFromId} />
@@ -294,7 +294,7 @@ export default function SupplierPaymentFlow() {
               <div className="flex flex-col gap-3">
                 {suppliers.length > 0 && !verified && (
                   <div className="flex flex-col gap-1">
-                    <span className="text-[12px] text-muted-foreground">Paid recently</span>
+                    <span className="text-meta text-muted-foreground">Paid recently</span>
                     <ul className="flex flex-col">
                       {suppliers.map((s) => (
                         <li key={s.account}>
@@ -303,8 +303,8 @@ export default function SupplierPaymentFlow() {
                             onClick={() => pick(s)}
                             className="-mx-2 flex w-[calc(100%+16px)] cursor-pointer items-center justify-between gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60"
                           >
-                            <span className="truncate text-[14px] text-foreground">{s.name}</span>
-                            <span className="shrink-0 text-[12px] text-muted-foreground">{s.bank}</span>
+                            <span className="truncate text-body text-foreground">{s.name}</span>
+                            <span className="shrink-0 text-meta text-muted-foreground">{s.bank}</span>
                           </button>
                         </li>
                       ))}

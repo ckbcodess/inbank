@@ -113,7 +113,7 @@ const years = (min: number, max: number) => Array.from({ length: max - min + 1 }
 /** One label/value line in the live result under the quote. */
 function ResultRows({ rows }: { rows: Array<[string, string]> }) {
   return (
-    <dl className="flex flex-col gap-2 px-1 text-[14px]">
+    <dl className="flex flex-col gap-2 px-1 text-body">
       {rows.map(([label, value], i) => (
         <div key={`${i}-${label}`} className="flex items-baseline justify-between gap-5">
           <dt className="text-muted-foreground">{label}</dt>
@@ -497,7 +497,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
         <PageHeader title="Review and Confirm" backTo={{ ...back, label: "Beneficiaries", onClick: () => setScreen("beneficiaries") }} actions={<StepBar current={3} total={3} compact />} />
         <div className="flex flex-col gap-5">
           <ReviewSummary details={details} total={money(premium)} totalLabel={premiumLabel} />
-          <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
+          <p className="px-1 text-body leading-relaxed text-muted-foreground">
             {needsMedical
               ? `Above ${money(NON_MEDICAL_LIMIT)}, ${PROVIDER} needs a medical first and will call you. Nothing is deducted until you’re covered.`
               : monthly
@@ -735,12 +735,12 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
               {members.map((m) => (
                 <li key={m.id} className="flex items-center gap-3 rounded-xl px-2 py-2 sm:px-3">
                   <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[14px] text-foreground" translate="no">
+                    <span className="truncate text-body text-foreground" translate="no">
                       {m.fullName}
                     </span>
-                    <span className="truncate text-[12px] text-muted-foreground">{`${m.relationship} · ${findTier(m.tier).label} · ${money(findTier(m.tier).benefit)}`}</span>
+                    <span className="truncate text-meta text-muted-foreground">{`${m.relationship} · ${findTier(m.tier).label} · ${money(findTier(m.tier).benefit)}`}</span>
                   </span>
-                  <span className="tabular shrink-0 text-[14px] text-foreground">{`${money(memberMonthly(m.tier, m.relationship))} a month`}</span>
+                  <span className="tabular shrink-0 text-body text-foreground">{`${money(memberMonthly(m.tier, m.relationship))} a month`}</span>
                   <button
                     type="button"
                     onClick={() => setMembers(members.filter((x) => x.id !== m.id))}
@@ -779,7 +779,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
               ]}
             />
             {needsMedical && (
-              <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
+              <p className="px-1 text-body leading-relaxed text-muted-foreground">
                 {`Above ${money(NON_MEDICAL_LIMIT)} needs a medical. You can still apply, and a ${PROVIDER} representative will call you.`}
               </p>
             )}

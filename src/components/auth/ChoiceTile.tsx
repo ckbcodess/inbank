@@ -27,10 +27,10 @@ export default function ChoiceTile({
           <Icon size={18} />
         </div>
         <div className="flex flex-col">
-          <span className="text-[15.5px] font-medium tracking-[var(--ls-tight)] text-foreground sm:text-[16.5px]">
+          <span className="text-heading font-medium tracking-[var(--ls-tight)] text-foreground">
             {label}
           </span>
-          <span className="mt-0.5 text-[13px] leading-snug text-muted-foreground sm:text-[13.5px]">{line}</span>
+          <span className="mt-0.5 text-body leading-snug text-muted-foreground">{line}</span>
         </div>
       </div>
       <ChevronRight

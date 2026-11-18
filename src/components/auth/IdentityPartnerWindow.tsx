@@ -128,7 +128,7 @@ export default function IdentityPartnerWindow({
           <span className="flex size-5 shrink-0 items-center justify-center rounded-sm bg-foreground text-background">
             <ShieldCheck size={12} />
           </span>
-          <DialogTitle className="flex-1 text-[12px] text-foreground">Identity verification</DialogTitle>
+          <DialogTitle className="flex-1 text-meta text-foreground">Identity verification</DialogTitle>
           <button
             type="button"
             onClick={onClose}
@@ -140,7 +140,7 @@ export default function IdentityPartnerWindow({
         </div>
         {/* Address bar: a secure page that isn't GCB's. The partner isn't named to customers. */}
         <div className="shrink-0 border-b border-border bg-muted px-2 pb-2">
-          <div className="flex h-(--control-sm) items-center gap-2 rounded-full bg-modal px-3 text-[12px] text-muted-foreground">
+          <div className="flex h-(--control-sm) items-center gap-2 rounded-full bg-modal px-3 text-meta text-muted-foreground">
             <Lock size={12} />
             <span className="truncate">Secure connection</span>
           </div>
@@ -153,7 +153,7 @@ export default function IdentityPartnerWindow({
         <div className="flex shrink-0 flex-col gap-3 border-t border-border px-4 py-3">
           {SHOW_DEMO_TOOLS && progress !== "done" && (
             <div className="flex items-center gap-3">
-              <span className="shrink-0 text-[12px] text-muted-foreground">Demo result</span>
+              <span className="shrink-0 text-meta text-muted-foreground">Demo result</span>
               <SegmentedControl
                 aria-label="Demo result"
                 fullWidth
@@ -163,7 +163,7 @@ export default function IdentityPartnerWindow({
               />
             </div>
           )}
-          <p className="text-center text-[12px] text-muted-foreground">
+          <p className="text-center text-meta text-muted-foreground">
             Identity verification for GCB Bank PLC
           </p>
         </div>
@@ -198,23 +198,23 @@ function PartnerStep({ progress, onNext }: { progress: PartnerProgress; onNext: 
     return (
       <>
         <div className="flex items-center gap-3 text-muted-foreground">
-          <span className="flex size-10 items-center justify-center rounded-lg bg-primary text-[14px] font-medium text-primary-foreground">G</span>
+          <span className="flex size-10 items-center justify-center rounded-lg bg-primary text-body font-medium text-primary-foreground">G</span>
           <ArrowLeftRight size={16} />
           <span className="flex size-10 items-center justify-center rounded-lg bg-foreground text-background">
             <ShieldCheck size={18} />
           </span>
         </div>
-        <h2 className="text-[18px] font-medium tracking-[var(--ls-tight)]">GCB Bank wants to confirm it’s you</h2>
-        <p className="max-w-80 text-[14px] leading-relaxed text-muted-foreground">
+        <h2 className="text-title font-medium tracking-[var(--ls-tight)]">GCB Bank wants to confirm it’s you</h2>
+        <p className="max-w-80 text-body leading-relaxed text-muted-foreground">
           You’ll check your passport and take a selfie on your phone. Then we share this with GCB Bank, and nothing else:
         </p>
-        <ul className="w-full rounded-xl border border-border px-4 py-3 text-left text-[14px] leading-loose">
+        <ul className="w-full rounded-xl border border-border px-4 py-3 text-left text-body leading-loose">
           <li>Your name and date of birth</li>
           <li>Your passport number and expiry date</li>
           <li>Whether the check passed</li>
         </ul>
         <div className="mt-auto w-full">{partnerButton("Continue", "handoff")}</div>
-        <a href="#" className="text-[12px] text-muted-foreground underline underline-offset-4 hover:text-foreground">
+        <a href="#" className="text-meta text-muted-foreground underline underline-offset-4 hover:text-foreground">
           Privacy notice
         </a>
       </>
@@ -224,14 +224,14 @@ function PartnerStep({ progress, onNext }: { progress: PartnerProgress; onNext: 
   if (progress === "handoff") {
     return (
       <>
-        <h2 className="text-[18px] font-medium tracking-[var(--ls-tight)]">Continue on your phone</h2>
-        <p className="max-w-80 text-[14px] leading-relaxed text-muted-foreground">
+        <h2 className="text-title font-medium tracking-[var(--ls-tight)]">Continue on your phone</h2>
+        <p className="max-w-80 text-body leading-relaxed text-muted-foreground">
           Scan this with your phone’s camera to check your passport there. This window moves on when you’re done.
         </p>
         <div className="rounded-xl border border-border bg-background p-3 text-foreground">
           <QrCode value="https://example.com/verify/session" size={160} aria-label="Code to continue on your phone" />
         </div>
-        <div className="flex items-center gap-2 text-[13px] text-muted-foreground" role="status">
+        <div className="flex items-center gap-2 text-body text-muted-foreground" role="status">
           <AppLoader size={16} />
           Waiting for your phone
         </div>
@@ -250,8 +250,8 @@ function PartnerStep({ progress, onNext }: { progress: PartnerProgress; onNext: 
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4" role="status">
         <AppLoader size={32} />
-        <h2 className="text-[18px] font-medium tracking-[var(--ls-tight)]">Checking your passport</h2>
-        <p className="text-[14px] text-muted-foreground">This takes a few seconds.</p>
+        <h2 className="text-title font-medium tracking-[var(--ls-tight)]">Checking your passport</h2>
+        <p className="text-body text-muted-foreground">This takes a few seconds.</p>
       </div>
     );
   }
@@ -261,8 +261,8 @@ function PartnerStep({ progress, onNext }: { progress: PartnerProgress; onNext: 
       <span className="flex size-14 items-center justify-center rounded-full bg-success text-success-foreground">
         <Check size={24} />
       </span>
-      <h2 className="text-[18px] font-medium tracking-[var(--ls-tight)]">Done</h2>
-      <p className="text-[14px] text-muted-foreground">Taking you back to GCB Bank.</p>
+      <h2 className="text-title font-medium tracking-[var(--ls-tight)]">Done</h2>
+      <p className="text-body text-muted-foreground">Taking you back to GCB Bank.</p>
     </div>
   );
 }

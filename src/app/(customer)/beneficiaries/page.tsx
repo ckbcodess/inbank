@@ -615,11 +615,11 @@ function BeneficiariesContent() {
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="truncate text-[14px] font-medium text-foreground leading-snug">{b.name}</span>
+              <span className="truncate text-body font-medium text-foreground leading-snug">{b.name}</span>
               {/* A tick on every row says nothing; only the exception is marked */}
-              {!b.verified && <Badge variant="warning" className="text-[10px] py-0 px-2">Pending approval</Badge>}
+              {!b.verified && <Badge variant="warning" className="text-meta py-0 px-2">Pending approval</Badge>}
             </div>
-            <div className="mt-0.5 flex items-center gap-2 text-[12px] text-muted-foreground tabular flex-wrap">
+            <div className="mt-0.5 flex items-center gap-2 text-meta text-muted-foreground tabular flex-wrap">
               <span>{b.detail}</span>
             </div>
           </div>
@@ -688,10 +688,10 @@ function BeneficiariesContent() {
           <PayeeAvatar name={g.name} />
 
           <div className="flex flex-col min-w-0">
-            <span className="truncate text-[14px] text-foreground leading-snug">
+            <span className="truncate text-body text-foreground leading-snug">
               {g.name}
             </span>
-            <span className="text-[12px] text-muted-foreground leading-normal mt-0.5 tabular-nums numorainput">
+            <span className="text-meta text-muted-foreground leading-normal mt-0.5 tabular-nums numorainput">
               {g.members.length} {g.members.length === 1 ? "member" : "members"}
             </span>
           </div>
@@ -700,10 +700,10 @@ function BeneficiariesContent() {
         {/* Right: Total Amount + Per-member Split + Minimal Action Icons */}
         <div className="flex items-center gap-4 sm:gap-5 shrink-0 [@media(hover:hover)]:gap-0">
           <div className="flex flex-col text-right ">
-            <span className="text-[14px] text-foreground tabular-nums numorainput leading-snug">
+            <span className="text-body text-foreground tabular-nums numorainput leading-snug">
               GHS {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
-            <span className="text-[12px] text-muted-foreground tabular-nums numorainput leading-normal mt-0.5">
+            <span className="text-meta text-muted-foreground tabular-nums numorainput leading-normal mt-0.5">
               {g.splitType === "equal"
                 ? `GHS ${g.defaultPerMemberAmount.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} each`
                 : "Custom split"}
@@ -941,7 +941,7 @@ function BeneficiariesContent() {
                     const meta = TYPE_CONFIG[t];
                     const Icon = meta.icon;
                     return (
-                      <SelectItem key={t} value={t} className="text-[13px] py-2">
+                      <SelectItem key={t} value={t} className="text-body py-2">
                         <div className="flex items-center gap-2">
                           <Icon size={15} className="text-muted-foreground shrink-0" />
                           <span>{meta.label}</span>
@@ -1144,7 +1144,7 @@ function BeneficiariesContent() {
             {form.transactionType === "proxy" && (
               <Field label="Proxy Identifier">
                 <div className="relative flex items-center">
-                  <span className="absolute left-3 text-[15px] font-semibold text-muted-foreground select-none pointer-events-none">
+                  <span className="absolute left-3 text-heading font-medium text-muted-foreground select-none pointer-events-none">
                     @
                   </span>
                   <Input
@@ -1342,7 +1342,7 @@ function BeneficiariesContent() {
               Remove Beneficiary
             </DialogTitle>
           </DialogHeader>
-          <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground">
+          <div className="px-4 sm:px-5 py-4 text-body text-muted-foreground">
             Are you sure you want to remove <span className="text-foreground">{toRemove?.name}</span>? This will not affect past transactions.
           </div>
           <DialogFooter>
@@ -1363,7 +1363,7 @@ function BeneficiariesContent() {
               Delete Payment Group
             </DialogTitle>
           </DialogHeader>
-          <div className="px-4 sm:px-5 py-4 text-[13px] text-muted-foreground">
+          <div className="px-4 sm:px-5 py-4 text-body text-muted-foreground">
             Are you sure you want to delete <span className="text-foreground">{toRemoveGroup?.name}</span>? Group members will remain in your individual beneficiaries directory.
           </div>
           <DialogFooter>

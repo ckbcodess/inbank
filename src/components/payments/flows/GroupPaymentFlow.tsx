@@ -107,13 +107,13 @@ function GroupAmountsPage({
 
       {/* The group, with its member actions on the same line, above the list they act on. */}
       <div className="flex items-center justify-between gap-3">
-        <span className="min-w-0 truncate text-[14px] font-medium text-foreground">{groupName}</span>
+        <span className="min-w-0 truncate text-body font-medium text-foreground">{groupName}</span>
         <div className="flex shrink-0 items-center gap-4">
           {hasAdjustments && (
             <button
               type="button"
               onClick={onClearMemberAmounts}
-              className="cursor-pointer text-[12px] text-foreground underline underline-offset-4"
+              className="cursor-pointer text-meta text-foreground underline underline-offset-4"
             >
               Reset all
             </button>
@@ -121,7 +121,7 @@ function GroupAmountsPage({
           <button
             type="button"
             onClick={onAddOrRemoveMembers}
-            className="cursor-pointer text-[12px] text-foreground underline underline-offset-4"
+            className="cursor-pointer text-meta text-foreground underline underline-offset-4"
           >
             Add or remove members
           </button>
@@ -144,10 +144,10 @@ function GroupAmountsPage({
               <div className="flex min-w-0 items-center gap-3">
                 <PayeeAvatar name={m.name} size="md" />
                 <span className="flex min-w-0 flex-col">
-                  <span className={cn("truncate text-[14px]", leftOut ? "text-muted-foreground" : "text-foreground")}>
+                  <span className={cn("truncate text-body", leftOut ? "text-muted-foreground" : "text-foreground")}>
                     {m.name}
                   </span>
-                  <span className="tabular truncate text-[12px] text-muted-foreground">
+                  <span className="tabular truncate text-meta text-muted-foreground">
                     {leftOut ? "Left out" : changed ? `Was ${formatMoney(base, "GHS", true)}` : m.networkOrBank}
                   </span>
                 </span>
@@ -178,7 +178,7 @@ function GroupAmountsPage({
           );
         })}
         {visibleMembers.length === 0 && (
-          <p className="p-2 text-[13px] text-muted-foreground">{`No members found matching “${search.trim()}”.`}</p>
+          <p className="p-2 text-body text-muted-foreground">{`No members found matching “${search.trim()}”.`}</p>
         )}
       </div>
 
@@ -254,8 +254,8 @@ export function GroupMemberBreakdown({
         aria-expanded={open}
         className="flex w-full cursor-pointer items-center justify-between gap-4 px-3 py-2 text-left"
       >
-        <span className="shrink-0 text-[13px] text-muted-foreground">Members</span>
-        <span className="flex min-w-0 items-center gap-2 text-[13px] text-foreground">
+        <span className="shrink-0 text-body text-muted-foreground">Members</span>
+        <span className="flex min-w-0 items-center gap-2 text-body text-foreground">
           <span className="tabular truncate text-right">{summary}</span>
           <ChevronDown size={16} className={cn("shrink-0 text-muted-foreground transition-transform duration-hover", open && "rotate-180")} />
         </span>
@@ -268,15 +268,15 @@ export function GroupMemberBreakdown({
             return (
               <div key={m.id} className="flex items-center justify-between gap-4 py-2">
                 <span className="flex min-w-0 flex-col">
-                  <span className={cn("truncate text-[13px]", amount > 0 ? "text-foreground" : "text-muted-foreground")}>{m.name}</span>
-                  <span className="tabular truncate text-[12px] text-muted-foreground">
+                  <span className={cn("truncate text-body", amount > 0 ? "text-foreground" : "text-muted-foreground")}>{m.name}</span>
+                  <span className="tabular truncate text-meta text-muted-foreground">
                     {m.networkOrBank ? `${m.networkOrBank} · ${m.destination}` : m.destination}
                   </span>
                 </span>
                 {amount > 0 ? (
-                  <span className="tabular shrink-0 text-[13px] text-foreground">{formatMoney(amount, "GHS", true)}</span>
+                  <span className="tabular shrink-0 text-body text-foreground">{formatMoney(amount, "GHS", true)}</span>
                 ) : (
-                  <span className="shrink-0 text-[13px] text-muted-foreground">Left out</span>
+                  <span className="shrink-0 text-body text-muted-foreground">Left out</span>
                 )}
               </div>
             );
@@ -296,11 +296,11 @@ function GroupOption({ name, detail, muted }: { name: string; detail?: string; m
       </span>
       {detail ? (
         <div className="flex min-w-0 flex-col gap-0.5 text-left">
-          <span className="truncate text-[14px] font-medium leading-tight tracking-[var(--ls-tight)] text-foreground">{name}</span>
-          <span className="tabular truncate text-[12px] font-normal leading-tight text-muted-foreground">{detail}</span>
+          <span className="truncate text-body font-medium leading-tight tracking-[var(--ls-tight)] text-foreground">{name}</span>
+          <span className="tabular truncate text-meta font-normal leading-tight text-muted-foreground">{detail}</span>
         </div>
       ) : (
-        <span className="truncate text-[14px] font-normal text-muted-foreground">{name}</span>
+        <span className="truncate text-body font-normal text-muted-foreground">{name}</span>
       )}
     </div>
   );
@@ -464,7 +464,7 @@ export function GroupPaymentFlow({
             <button
               type="button"
               onClick={onOpenCreateGroup}
-              className="cursor-pointer text-[13px] text-foreground underline underline-offset-4"
+              className="cursor-pointer text-body text-foreground underline underline-offset-4"
             >
               Send to new group
             </button>
@@ -475,11 +475,11 @@ export function GroupPaymentFlow({
         {groups.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border/80 p-5 text-center">
             <Users size={28} className="text-muted-foreground" />
-            <p className="text-[14px] text-muted-foreground">No groups created yet.</p>
+            <p className="text-body text-muted-foreground">No groups created yet.</p>
             <button
               type="button"
               onClick={onOpenCreateGroup}
-              className="cursor-pointer text-[13px] text-foreground underline underline-offset-4"
+              className="cursor-pointer text-body text-foreground underline underline-offset-4"
             >
               Create your first group
             </button>
@@ -527,7 +527,7 @@ export function GroupPaymentFlow({
 
       {/* A group can only be paid once it has people in it. */}
       {selectedGroup && memberCount === 0 && (
-        <p className="text-[13px] text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           This group has no members yet.{" "}
           <button
             type="button"
@@ -551,7 +551,7 @@ export function GroupPaymentFlow({
                 onChange={(val) => onChange("grpAmount", val)}
                 label="Amount per Member"
                 action={
-                  <button type="button" onClick={openAmounts} className="cursor-pointer text-[13px] text-foreground underline underline-offset-4">
+                  <button type="button" onClick={openAmounts} className="cursor-pointer text-body text-foreground underline underline-offset-4">
                     Edit amounts
                   </button>
                 }
@@ -560,7 +560,7 @@ export function GroupPaymentFlow({
               <Field
                 label="Amounts"
                 action={
-                  <button type="button" onClick={openAmounts} className="cursor-pointer text-[13px] text-foreground underline underline-offset-4">
+                  <button type="button" onClick={openAmounts} className="cursor-pointer text-body text-foreground underline underline-offset-4">
                     Edit amounts
                   </button>
                 }
@@ -578,10 +578,10 @@ export function GroupPaymentFlow({
                         <PayeeAvatar key={m.id} name={m.name} size="sm" className={cn("ring-2 ring-field", i > 0 && "-ml-2")} />
                       ))}
                       {memberCount > STACK_SIZE && (
-                        <span className="tabular ml-2 text-[12px] text-muted-foreground">+{memberCount - STACK_SIZE}</span>
+                        <span className="tabular ml-2 text-meta text-muted-foreground">+{memberCount - STACK_SIZE}</span>
                       )}
                     </span>
-                    {hasAdjustments && <span className="truncate text-[13px] text-foreground">Changed for this payment</span>}
+                    {hasAdjustments && <span className="truncate text-body text-foreground">Changed for this payment</span>}
                   </span>
                   <ChevronDown
                     size={16}
@@ -601,13 +601,13 @@ export function GroupPaymentFlow({
                           <span className="flex min-w-0 items-center gap-3">
                             <PayeeAvatar name={m.name} size="md" />
                             <span className="flex min-w-0 flex-col">
-                              <span className={cn("truncate text-[14px]", leftOut ? "text-muted-foreground" : "text-foreground")}>{m.name}</span>
-                              <span className="truncate text-[12px] text-muted-foreground">
+                              <span className={cn("truncate text-body", leftOut ? "text-muted-foreground" : "text-foreground")}>{m.name}</span>
+                              <span className="truncate text-meta text-muted-foreground">
                                 {leftOut ? "Left out" : changed ? `Was ${formatMoney(base, "GHS", true)}` : m.networkOrBank}
                               </span>
                             </span>
                           </span>
-                          <span className="tabular shrink-0 text-[14px] text-foreground">{formatMoney(amount, "GHS", true)}</span>
+                          <span className="tabular shrink-0 text-body text-foreground">{formatMoney(amount, "GHS", true)}</span>
                         </div>
                       );
                     })}
@@ -654,7 +654,7 @@ export function GroupPaymentFlow({
           label="Proceed"
         />
         {everyoneLeftOut && (
-          <p className="text-[12px] text-muted-foreground">Add an amount for at least one member to proceed.</p>
+          <p className="text-meta text-muted-foreground">Add an amount for at least one member to proceed.</p>
         )}
       </div>
 

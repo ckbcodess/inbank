@@ -142,7 +142,7 @@ export default function FxRatesPage() {
       <PageHeader
         title="Foreign Exchange Rates"
         actions={
-          <span className="text-[12px] text-muted-foreground">
+          <span className="text-meta text-muted-foreground">
             Published {formatDateTime(FX_PUBLISHED_AT)}
           </span>
         }
@@ -177,8 +177,8 @@ export default function FxRatesPage() {
           <section className="rounded-2xl border border-border bg-card p-4 sm:p-5 w-full">
             <div className="w-full">
               <div className="mb-3">
-                <h2 className="text-[15px] font-medium text-foreground">Currency converter</h2>
-                <p className="text-[12px] text-muted-foreground">
+                <h2 className="text-heading font-medium text-foreground">Currency converter</h2>
+                <p className="text-meta text-muted-foreground">
                   Indicative calculator based on today&apos;s published rates.
                 </p>
               </div>
@@ -190,6 +190,7 @@ export default function FxRatesPage() {
                   <div className="relative flex-1 min-w-0 flex items-center pr-2">
                     <span
                       aria-hidden="true"
+                      // eslint-disable-next-line no-restricted-syntax -- the amount field is bespoke (CONSTITUTION §9)
                       className={`pointer-events-none whitespace-pre text-2xl sm:text-3xl font-sans font-bold tracking-tight tabular-nums select-none leading-none numorainput ${
                         amount ? "text-foreground" : "text-muted-foreground/30"
                       }`}
@@ -205,6 +206,7 @@ export default function FxRatesPage() {
                       value={amount}
                       onChange={handleAmountChange}
                       placeholder="0.00"
+                      // eslint-disable-next-line no-restricted-syntax -- the amount field is bespoke (CONSTITUTION §9)
                       className="numorainput absolute inset-0 w-full h-full m-0 p-0 border-0 bg-transparent text-transparent placeholder-transparent outline-none focus:outline-none font-sans text-2xl sm:text-3xl font-bold tracking-tight tabular-nums leading-none caret-primary"
                     />
                   </div>
@@ -216,7 +218,7 @@ export default function FxRatesPage() {
                     >
                       <div className="flex items-center gap-2">
                         <CurrencyLogo currency={fromCcy} size={24} />
-                        <span className="text-[15px] font-bold text-foreground tabular tracking-tight">
+                        <span className="text-heading font-medium text-foreground tabular tracking-tight">
                           {fromCcy}
                         </span>
                         <ChevronDown size={15} className="text-muted-foreground" />
@@ -228,7 +230,7 @@ export default function FxRatesPage() {
                           <div className="flex items-center gap-2">
                             <CurrencyLogo currency={c.code} size={20} />
                             <span className="font-semibold tabular">{c.code}</span>
-                            <span className="text-[12px] text-muted-foreground">· {c.name}</span>
+                            <span className="text-meta text-muted-foreground">· {c.name}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -253,6 +255,7 @@ export default function FxRatesPage() {
 
                 {/* Bottom Output Card */}
                 <div className="flex items-center justify-between rounded-2xl border border-field-border bg-field px-3 py-3 sm:px-4 sm:py-3 shadow-xs transition-colors">
+                  {/* eslint-disable-next-line no-restricted-syntax -- the amount field is bespoke (CONSTITUTION §9) */}
                   <div className="min-w-0 flex-1 truncate text-2xl sm:text-3xl font-bold tabular tracking-tight text-foreground numorainput pr-2">
                     <TextMorph ease={{ stiffness: 400, damping: 30 }}>
                       {convertedFormatted}
@@ -266,7 +269,7 @@ export default function FxRatesPage() {
                     >
                       <div className="flex items-center gap-2">
                         <CurrencyLogo currency={toCcy} size={24} />
-                        <span className="text-[15px] font-bold text-foreground tabular tracking-tight">
+                        <span className="text-heading font-medium text-foreground tabular tracking-tight">
                           {toCcy}
                         </span>
                         <ChevronDown size={15} className="text-muted-foreground" />
@@ -278,7 +281,7 @@ export default function FxRatesPage() {
                           <div className="flex items-center gap-2">
                             <CurrencyLogo currency={c.code} size={20} />
                             <span className="font-semibold tabular">{c.code}</span>
-                            <span className="text-[12px] text-muted-foreground">· {c.name}</span>
+                            <span className="text-meta text-muted-foreground">· {c.name}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -287,7 +290,7 @@ export default function FxRatesPage() {
                 </div>
               </div>
 
-              <p className="mt-3 text-center text-[12px] font-medium text-muted-foreground tabular">
+              <p className="mt-3 text-center text-meta font-medium text-muted-foreground tabular">
                 1 {fromCcy} = {formatRate(conversion.rate)} {toCcy}
               </p>
             </div>
@@ -305,23 +308,23 @@ export default function FxRatesPage() {
                     <div className="flex items-center gap-2 min-w-0">
                       <CurrencyPairLogos base={rate.base} quote={rate.quote} size={26} />
                       <div className="flex flex-col min-w-0">
-                        <span className="font-medium text-[14px] text-foreground tabular">
+                        <span className="font-medium text-body text-foreground tabular">
                           {rate.pair}
                         </span>
-                        <span className="text-[11px] text-muted-foreground truncate">
+                        <span className="text-meta text-muted-foreground truncate">
                           {meta.name}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex flex-col items-end shrink-0">
-                      <div className="flex items-center gap-2 text-[13px] tabular font-medium text-foreground">
+                      <div className="flex items-center gap-2 text-body tabular font-medium text-foreground">
                         <span>Buy {formatRate(rate.buy)}</span>
                         <span className="text-muted-foreground/50">·</span>
                         <span>Sell {formatRate(rate.sell)}</span>
                       </div>
                       <span
-                        className={`mt-0.5 inline-flex items-center gap-1 text-[11px] tabular font-medium ${
+                        className={`mt-0.5 inline-flex items-center gap-1 text-meta tabular font-medium ${
                           up ? "text-success-text" : "text-destructive"
                         }`}
                       >
@@ -341,7 +344,7 @@ export default function FxRatesPage() {
 
             {/* Desktop Table View (hidden sm:block) */}
             <div className="hidden sm:block overflow-x-auto">
-              <table className="w-full min-w-[560px] text-[13px]">
+              <table className="w-full min-w-[560px] text-body">
                 <thead>
                   <tr className="border-b border-border text-left text-muted-foreground">
                     <th className="px-3 py-2 font-normal">Currency pair</th>
@@ -364,7 +367,7 @@ export default function FxRatesPage() {
                               <span className="font-medium text-foreground tabular">
                                 {rate.pair}
                               </span>
-                              <span className="text-[11px] text-muted-foreground">
+                              <span className="text-meta text-muted-foreground">
                                 {meta.name} · {meta.country}
                               </span>
                             </div>

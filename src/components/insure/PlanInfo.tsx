@@ -51,7 +51,7 @@ export function PlanAboutBody({ plan, showAmounts }: { plan: InsurancePlan; show
   const rows: Array<[React.ReactNode, React.ReactNode]> = [
     ...planFactRows(plan, showAmounts),
     ...(from !== null
-      ? ([["Premiums from", <span key="from" className="text-[20px]">{`${formatMoney(from, "GHS", showAmounts)} a month`}</span>]] as Array<[React.ReactNode, React.ReactNode]>)
+      ? ([["Premiums from", <span key="from" className="text-fact">{`${formatMoney(from, "GHS", showAmounts)} a month`}</span>]] as Array<[React.ReactNode, React.ReactNode]>)
       : []),
   ];
   return <ProductAboutBody highlights={plan.highlights ?? []} rows={rows} />;

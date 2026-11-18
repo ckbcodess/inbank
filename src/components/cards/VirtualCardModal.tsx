@@ -118,7 +118,7 @@ export function VirtualCardView({
       {/* Header */}
       {showTitleHeader && (
         <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80">
-          <h2 className="text-[17px] font-medium text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-title font-medium text-slate-900 dark:text-white tracking-tight">
             Virtual Card
           </h2>
           {onClose && (
@@ -169,11 +169,12 @@ export function VirtualCardView({
             </div>
 
             {/* Status Badge */}
-            <div className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1 text-[12px] font-medium shadow-2xs ${
+            <div className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1 text-meta font-medium shadow-2xs ${
               isFrozen
                 ? "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300"
                 : "border-slate-200/90 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200"
             }`}>
+              {/* eslint-disable-next-line no-restricted-syntax -- card art, drawn to scale */}
               <span className={`flex size-3 items-center justify-center rounded-full text-white text-[8px] font-medium ${isFrozen ? "bg-amber-500" : "bg-[#22c55e]"}`}>
                 {isFrozen ? "!" : "✓"}
               </span>
@@ -188,9 +189,10 @@ export function VirtualCardView({
         {/* Middle & Bottom Content of Card Graphic */}
         <div className="relative z-10 mt-6 flex items-end justify-between">
           <div className="flex flex-col">
-            <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400">
+            <span className="text-body font-normal text-slate-500 dark:text-slate-400">
               {activeCard.name ?? "Savings Card"}
             </span>
+            {/* eslint-disable-next-line no-restricted-syntax -- card art, drawn to scale */}
             <span className="mt-0.5 text-[28px] font-medium tracking-tight text-slate-900 dark:text-white tabular">
               {formatMoney(activeCard.balance ?? 16058.94, activeCard.currency ?? "USD")}
             </span>
@@ -222,7 +224,7 @@ export function VirtualCardView({
 
 
       {/* Card Details Key-Value List */}
-      <div className="mt-4 space-y-3 text-[13px]">
+      <div className="mt-4 space-y-3 text-body">
         <div className="flex items-center justify-between">
           <span className="text-slate-500 dark:text-slate-400 font-normal">Card number</span>
           <span className="font-medium text-slate-900 dark:text-slate-100 tabular tracking-wide">
@@ -280,7 +282,7 @@ export function VirtualCardView({
 
       {/* Security Channels Panel */}
       {showSecurityModal && (
-        <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3 text-[12px]">
+        <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3 text-meta">
           <div className="flex items-center justify-between font-medium text-slate-800 dark:text-slate-200 pb-1 border-b border-slate-200 dark:border-slate-800">
             <span>Card Security Channels</span>
             <button type="button" onClick={() => setShowSecurityModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -304,7 +306,7 @@ export function VirtualCardView({
 
       {/* More Options Dropdown Panel */}
       {showMoreMenu && (
-        <div className="mt-3 flex flex-col divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-850/90 text-[13px] overflow-hidden shadow-sm">
+        <div className="mt-3 flex flex-col divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-850/90 text-body overflow-hidden shadow-sm">
           <button
             type="button"
             onClick={handleToggleFreeze}

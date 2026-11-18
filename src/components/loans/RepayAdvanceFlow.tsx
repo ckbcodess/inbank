@@ -191,7 +191,7 @@ export function RepayAdvanceFlow({ advanceId }: { advanceId: string }) {
           total={money(payAmount)}
         />
 
-        {!isPart && <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">Your next credit arrives in full.</p>}
+        {!isPart && <p className="px-1 text-body leading-relaxed text-muted-foreground">Your next credit arrives in full.</p>}
 
         <ProceedButton
           disabled={!from || overBalance || !isValidAmount}

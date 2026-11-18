@@ -78,7 +78,7 @@ export function CashoutCodeSuccess({
           type="button"
           onClick={() => setRun((n) => n + 1)}
           aria-label="Replay animation"
-          className="absolute right-1 top-1 z-30 flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-2 py-2 text-[12px] text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
+          className="absolute right-1 top-1 z-30 flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-2 py-2 text-meta text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
         >
           <RotateCcw size={13} />
           <span>Replay</span>
@@ -118,7 +118,7 @@ export function CashoutCodeSuccess({
               ? { duration: 0.44, delay: 0.15, ease: [0.22, 1, 0.36, 1] }
               : { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
           }
-          className="text-[26px] leading-none text-foreground"
+          className="type-headline leading-none text-foreground"
         >
           Code generated!
         </motion.p>
@@ -128,7 +128,7 @@ export function CashoutCodeSuccess({
           animate={{ opacity: revealRest ? 1 : 0, y: revealRest ? 0 : 8 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className={cn(
-            "max-w-[340px] text-balance text-[16px] leading-5 tracking-[-0.18px] text-muted-foreground sm:max-w-none sm:text-[18px]",
+            "max-w-[340px] text-balance text-heading leading-5 tracking-[-0.18px] text-muted-foreground sm:max-w-none sm:text-title",
             !revealRest && "invisible",
           )}
         >

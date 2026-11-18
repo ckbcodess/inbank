@@ -22,14 +22,14 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
   return (
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-[15px] text-foreground">Cards</h2>
-        <Link href="/cards" className="text-[12px] text-foreground underline-offset-4 hover:underline">
+        <h2 className="text-heading text-foreground">Cards</h2>
+        <Link href="/cards" className="text-meta text-foreground underline-offset-4 hover:underline">
           Manage all →
         </Link>
       </div>
 
       {!front ? (
-        <p className="mt-5 flex-1 text-center text-[13px] text-muted-foreground">
+        <p className="mt-5 flex-1 text-center text-body text-muted-foreground">
           No cards on this relationship yet.
         </p>
       ) : (
@@ -40,10 +40,13 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
                 className="absolute inset-x-3.5 top-5 flex h-28 flex-col justify-between rounded-xl bg-primary p-3 text-primary-foreground shadow-sm"
                 style={{ transform: "rotate(-2.2deg)" }}
               >
-                <div className="flex items-center justify-between text-[11px] opacity-90">
+                <div className="flex items-center justify-between text-meta opacity-90">
                   <span className="truncate">{back.name}</span>
                   {(back.type === "Virtual" || back.isVirtual) && (
-                    <span className="shrink-0 rounded-full bg-primary-foreground/20 px-2 py-0.5 text-[8px] uppercase tracking-wide">
+                    <span
+                      // eslint-disable-next-line no-restricted-syntax -- card art, drawn to scale
+                      className="shrink-0 rounded-full bg-primary-foreground/20 px-2 py-0.5 text-[8px] uppercase tracking-wide"
+                    >
                       Virtual
                     </span>
                   )}
@@ -54,23 +57,26 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
             <div className="absolute inset-x-0 top-9 flex h-[132px] flex-col justify-between rounded-xl bg-foreground p-3 text-background shadow-md">
               <div className="flex items-center justify-between">
                 <span className="h-[19px] w-[26px] rounded-sm bg-background/20" aria-hidden="true" />
+                {/* eslint-disable-next-line no-restricted-syntax -- card art, drawn to scale */}
                 <Badge variant={front.status === "Active" ? "success" : "destructive"} className="text-[9px]">
                   {front.status}
                 </Badge>
               </div>
-              <div className="tabular text-[14px] tracking-[0.08em]">
+              <div className="tabular text-body tracking-[0.08em]">
                 **** **** **** {front.maskedNumber.replace(/\D/g, "")}
               </div>
               <div className="flex items-end justify-between">
                 <div>
+                  {/* eslint-disable-next-line no-restricted-syntax -- card art, drawn to scale */}
                   <div className="text-[7px] uppercase tracking-wide opacity-55">Card holder</div>
-                  <div className="mt-0.5 text-[11px]">{front.holder.toUpperCase()}</div>
+                  <div className="mt-0.5 text-meta">{front.holder.toUpperCase()}</div>
                 </div>
                 <div>
+                  {/* eslint-disable-next-line no-restricted-syntax -- card art, drawn to scale */}
                   <div className="text-[7px] uppercase tracking-wide opacity-55">Expires</div>
-                  <div className="tabular mt-0.5 text-[11px]">{front.expiry}</div>
+                  <div className="tabular mt-0.5 text-meta">{front.expiry}</div>
                 </div>
-                <div className="text-[13px] italic tracking-[var(--ls-heading)]">{front.scheme}</div>
+                <div className="text-body italic tracking-[var(--ls-heading)]">{front.scheme}</div>
               </div>
             </div>
           </div>
@@ -89,12 +95,12 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
                   <CreditCard size={15} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[12px] text-foreground">{card.name}</span>
-                  <span className="tabular mt-0.5 text-[11px] text-muted-foreground">
+                  <span className="truncate text-meta text-foreground">{card.name}</span>
+                  <span className="tabular mt-0.5 text-meta text-muted-foreground">
                     {card.maskedNumber} · Exp {card.expiry}
                   </span>
                 </span>
-                <Badge variant={card.status === "Active" ? "success" : "destructive"} className="text-[10px]">
+                <Badge variant={card.status === "Active" ? "success" : "destructive"} className="text-meta">
                   {card.status}
                 </Badge>
               </li>

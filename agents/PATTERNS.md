@@ -75,7 +75,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 
 ### 3. Data table
 - **When:** the admin portal and genuinely tabular data. Customer lists use pattern 2.
-- **Structure:** `overflow-x-auto` around `table.w-full.min-w-[720px].text-[13px]`; muted
+- **Structure:** `overflow-x-auto` around `table.w-full.min-w-[720px].text-body`; muted
   `th.font-normal`; `tbody.divide-y` with rows `hover:bg-muted/50`; cells `px-3 py-3`.
 - **Don't:** use `font-medium` on a header (muted colour carries it), or let the page scroll sideways.
 - **Examples:** `admin/fee-concessions/page.tsx`.

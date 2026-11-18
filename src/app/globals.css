@@ -25,6 +25,18 @@
   --text-sm--line-height: 1.5;
   --text-xs: 12px;
   --text-xs--line-height: 1.5;
+  /* The type scale (CONSTITUTION §5). Components use these names, never text-[Npx]; lint enforces it. Each matches a
+     Figma text style. A label is text-body at font-medium; there is no separate label size. The responsive steps (page title, headline, balances) are the type-* utilities further down. */
+  --text-meta: 12px;
+  --text-meta--line-height: 1.5;
+  --text-body: 14px;
+  --text-body--line-height: 1.5;
+  --text-heading: 16px;
+  --text-heading--line-height: 1.5;
+  --text-title: 18px;
+  --text-title--line-height: 1.4;
+  --text-fact: 20px;
+  --text-fact--line-height: 1.4;
   --ease-settle: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-standard: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
@@ -110,7 +122,13 @@
     box-shadow: 0 0 0 2px var(--destructive), 0 2px 2px -1px var(--field-drop);
   }
 }
-@utility type-page-title { @apply text-[18px] sm:text-[20px] lg:text-[22px]; }
+/* Responsive type steps (CONSTITUTION §5). A leading-* class still wins over the default line height. */
+@utility type-page-title { font-size: 18px; @variant sm { font-size: 20px; } @variant lg { font-size: 22px; } }
+/* Outcome screens, welcome dialogs and other large titles. */
+@utility type-headline { font-size: 22px; line-height: var(--tw-leading, 1.25); @variant sm { font-size: 24px; } }
+/* Balances (money held or owed) only: the dashboard hero, the account page, detail pages and sheets. One size
+   everywhere, so a seven-figure balance (GHS 1,284,530.44) fits one line on a phone. */
+@utility type-balance { font-size: 32px; line-height: var(--tw-leading, 1.1); }
 
 /* Page header to first content: 40px on a phone, 48px from sm, on every page. The header (`data-page-header`, set by
    PageHeader and the skeletons' header bones) sits in the page's flex column, whose gap would add to any margin. So the

@@ -187,7 +187,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
     return (
       <div className="mx-auto flex w-full max-w-[440px] flex-col gap-2">
         <PageHeader title="Account Not Found" backTo={{ href: "/accounts", label: "My Accounts" }} />
-        <p className="pl-10 text-[13px] text-muted-foreground">
+        <p className="pl-10 text-body text-muted-foreground">
           This account isn&apos;t available under the current banking relationship.
         </p>
       </div>
@@ -337,7 +337,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
             <DialogTitle>Remove {account.name}?</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
+            <p className="text-body leading-relaxed text-muted-foreground">
               It leaves your accounts list. The account stays open at the bank and your money isn&apos;t affected. You can add it
               back from Accounts with a selfie check.
             </p>
@@ -375,7 +375,7 @@ function HeaderPill({ onClick, children }: { onClick: () => void; children: Reac
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex h-7 shrink-0 cursor-pointer items-center rounded-lg bg-muted px-2 text-[13px] font-medium text-foreground transition-colors hover:bg-muted/80"
+      className="inline-flex h-7 shrink-0 cursor-pointer items-center rounded-lg bg-muted px-2 text-body font-medium text-foreground transition-colors hover:bg-muted/80"
     >
       {children}
     </button>
@@ -406,7 +406,7 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
 
       {isDefault && <Badge variant="brand" className="absolute right-3 top-3 z-10">Default</Badge>}
 
-      <div className="relative flex flex-col gap-2 text-[14px] tracking-[var(--ls-tight)] text-muted-foreground">
+      <div className="relative flex flex-col gap-2 text-body tracking-[var(--ls-tight)] text-muted-foreground">
         <span className="flex items-center gap-1">
           <Landmark size={15} aria-hidden="true" />
           {account.type}
@@ -424,7 +424,7 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
         <RevealingAmount
           amount={account.available}
           currency={account.currency}
-          className="text-[30px] leading-[1.25] tracking-[-0.015em] text-foreground tabular sm:text-[36px]"
+          className="type-balance leading-[1.25] tracking-[var(--ls-heading)] text-foreground tabular"
         />
       </div>
     </section>
@@ -453,20 +453,20 @@ function ActivityRow({
       >
         <TransactionMark transaction={t} />
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="truncate text-[14px] text-foreground">{t.counterparty || t.description}</span>
-          <span className="truncate text-[12px] text-muted-foreground">
+          <span className="truncate text-body text-foreground">{t.counterparty || t.description}</span>
+          <span className="truncate text-meta text-muted-foreground">
             {getTransactionType(t)} · <span className="tabular">{formatDate(t.date)}</span>
           </span>
         </span>
         <span className="flex shrink-0 flex-col items-end gap-0.5">
-          <span className={"text-[14px] tabular text-foreground"}>
+          <span className={"text-body tabular text-foreground"}>
             {isCredit ? "+ " : "− "}
             {formatMoney(t.amount, t.currency, true)}
           </span>
           {isFailed ? (
-            <span className="text-[12px] text-destructive">Failed</span>
+            <span className="text-meta text-destructive">Failed</span>
           ) : isPending ? (
-            <span className="text-[12px] text-warning">Pending</span>
+            <span className="text-meta text-warning">Pending</span>
           ) : null}
         </span>
       </button>

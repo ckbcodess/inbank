@@ -183,10 +183,10 @@ function TransactionRow({ t, onSelect }: { t: Transaction; onSelect: (t: Transac
 
       {/* Counterparty & Metadata */}
       <div className="flex-1 min-w-0 flex flex-col gap-2">
-        <span className="font-normal text-foreground text-[14px] leading-tight truncate">
+        <span className="font-normal text-foreground text-body leading-tight truncate">
           {t.counterparty || t.description}
         </span>
-        <div className="flex items-center gap-2 text-[12px] text-muted-foreground truncate">
+        <div className="flex items-center gap-2 text-meta text-muted-foreground truncate">
           <span className="truncate">{getTransactionType(t)}</span>
           <span>·</span>
           <span>{formatTableDate(t.date)}</span>
@@ -195,7 +195,7 @@ function TransactionRow({ t, onSelect }: { t: Transaction; onSelect: (t: Transac
 
       {/* Amount & State / Account Number */}
       <div className="shrink-0 flex flex-col items-end gap-2">
-        <span className={cn("tabular text-[14px]", colorClass)}>
+        <span className={cn("tabular text-body", colorClass)}>
           {prefix}
           {t.currency}{" "}
           {t.amount.toLocaleString("en-US", {
@@ -612,7 +612,7 @@ export default function TransactionList({
           type="button"
           onClick={() => setCurrentPage(page)}
           className={cn(
-            "min-w-7 h-7 px-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer",
+            "min-w-7 h-7 px-2 rounded-lg text-body font-medium transition-colors cursor-pointer",
             isActive
               ? "bg-muted/80 text-foreground border border-border/80 shadow-xs"
               : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
@@ -652,23 +652,24 @@ export default function TransactionList({
         </Button>
       </div>
 
-      {/* Full-width search with the Filters button beside it */}
-      <div className="flex w-full items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search reference or recipient" />
-        <FilterPanel
-          groups={filterGroups}
-          onClear={clearFilterGroups}
-          className="px-3"
-        />
+      {/* Full-width search with the Filters button beside it. The applied-filter row brings its own gap. */}
+      <div className="flex flex-col">
+        <div className="flex w-full items-center gap-2">
+          <SearchField value={query} onChange={setQuery} placeholder="Search reference or recipient" />
+          <FilterPanel
+            groups={filterGroups}
+            onClear={clearFilterGroups}
+            className="px-3"
+          />
+        </div>
+        <AppliedFilters groups={filterGroups} />
       </div>
-
-      <AppliedFilters groups={filterGroups} className="-mt-2" />
 
       {/* Custom Date Range Controls (Desktop) */}
       {datePreset === "custom" && (
         <div className="hidden sm:flex flex-wrap items-center gap-2 p-2 rounded-lg border border-border/60 bg-muted/20 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="flex items-center gap-2">
-            <span className="text-[12px] font-medium text-muted-foreground">From:</span>
+            <span className="text-meta font-medium text-muted-foreground">From:</span>
             <Input
               type="date"
               value={dateFrom}
@@ -677,7 +678,7 @@ export default function TransactionList({
             />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[12px] font-medium text-muted-foreground">To:</span>
+            <span className="text-meta font-medium text-muted-foreground">To:</span>
             <Input
               type="date"
               value={dateTo}
@@ -692,7 +693,7 @@ export default function TransactionList({
                 setDateFrom("");
                 setDateTo("");
               }}
-              className="text-[12px] text-muted-foreground hover:text-foreground cursor-pointer underline underline-offset-2 ml-1"
+              className="text-meta text-muted-foreground hover:text-foreground cursor-pointer underline underline-offset-2 ml-1"
             >
               Clear date range
             </button>
@@ -720,7 +721,7 @@ export default function TransactionList({
           description="Activity will appear here once money moves."
           action={
             startHref ? (
-              <Button nativeButton={false} render={<Link href={startHref} />} className="h-8 px-3 text-[13px]">
+              <Button nativeButton={false} render={<Link href={startHref} />} className="h-8 px-3 text-body">
                 Start a transaction
               </Button>
             ) : undefined
@@ -764,7 +765,7 @@ export default function TransactionList({
           {effective === "partial-load" && <PartialLoadFooter />}
 
           {/* Pagination Footer */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-1 text-[13px] text-muted-foreground">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-1 text-body text-muted-foreground">
             <div>
               Showing {rows.length === 0 ? 0 : startIndex + 1}–
               {Math.min(startIndex + pageSize, rows.length)} of {rows.length} payments
@@ -776,7 +777,7 @@ export default function TransactionList({
                   size="sm"
                   disabled={currentPage <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="h-7 gap-1 px-2 text-[12px] text-muted-foreground hover:text-foreground"
+                  className="h-7 gap-1 px-2 text-meta text-muted-foreground hover:text-foreground"
                 >
                   <ChevronLeft size={14} />
                   Previous
@@ -788,7 +789,7 @@ export default function TransactionList({
                   size="sm"
                   disabled={currentPage >= totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="h-7 gap-1 px-2 text-[12px] text-muted-foreground hover:text-foreground"
+                  className="h-7 gap-1 px-2 text-meta text-muted-foreground hover:text-foreground"
                 >
                   Next
                   <ChevronRight size={14} />

@@ -68,12 +68,12 @@ export function FxPulse() {
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card">
       <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
         <div>
-          <h2 className="text-[15px] text-foreground">Today&apos;s rates</h2>
-          <p className="mt-0.5 text-[12px] text-muted-foreground">
+          <h2 className="text-heading text-foreground">Today&apos;s rates</h2>
+          <p className="mt-0.5 text-meta text-muted-foreground">
             Published {formatDateTime(FX_PUBLISHED_AT)}
           </p>
         </div>
-        <Link href="/fx-rates" className="text-[12px] text-foreground underline-offset-4 hover:underline">
+        <Link href="/fx-rates" className="text-meta text-foreground underline-offset-4 hover:underline">
           All rates
         </Link>
       </div>
@@ -135,14 +135,14 @@ export function FxPulse() {
         </div>
 
         <div className="rounded-xl border border-border bg-muted/40 px-3 py-2">
-          <p className="text-[12px] text-muted-foreground">You get approximately</p>
+          <p className="text-meta text-muted-foreground">You get approximately</p>
           <div className="mt-1 flex items-center gap-2">
             <CurrencyLogo currency={toCurrency} size={22} />
-            <p className="text-[19px] font-semibold leading-tight text-foreground tabular">
+            <p className="text-fact font-medium leading-tight text-foreground tabular">
               {valid ? format(result, toCurrency, showAmounts) : "—"}
             </p>
           </div>
-          <p className="mt-2 text-[11px] text-muted-foreground tabular">
+          <p className="mt-2 text-meta text-muted-foreground tabular">
             {direction === "to-ghs" ? "Bank buys" : "Bank sells"} at {appliedRate.toFixed(4)} ·{" "}
             <span className={rate.changePct >= 0 ? "text-success-text font-medium" : "text-destructive font-medium"}>
               <RateTrend size={11} aria-hidden="true" className="inline align-[-1px]" />{" "}
@@ -153,7 +153,7 @@ export function FxPulse() {
           </p>
         </div>
 
-        <p className="text-[11px] leading-relaxed text-muted-foreground">
+        <p className="text-meta leading-relaxed text-muted-foreground">
           Indicative only. The rate applied to a transfer is struck when you submit it.
         </p>
 

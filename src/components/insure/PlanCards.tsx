@@ -77,17 +77,17 @@ function ProductRow({
       <span className="flex min-w-0 items-center gap-3">
         {lead}
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="truncate text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{name}</span>
-          {line && <span className="text-[14px] text-muted-foreground">{line}</span>}
+          <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">{name}</span>
+          {line && <span className="text-body text-muted-foreground">{line}</span>}
           {showPrice && price && (
-            <span className="tabular text-[14px]">
+            <span className="tabular text-body">
               <span className="text-muted-foreground">{`${price.label} `}</span>
               {price.amount}
               {price.unit && <span className="text-muted-foreground">{` ${price.unit}`}</span>}
             </span>
           )}
           {status && (
-            <span className={cn("tabular text-[12px]", status.attention ? "text-warning-text" : "text-muted-foreground")}>{titleCase(status.text)}</span>
+            <span className={cn("tabular text-meta", status.attention ? "text-warning-text" : "text-muted-foreground")}>{titleCase(status.text)}</span>
           )}
         </span>
       </span>
@@ -167,16 +167,16 @@ export function ProductCard({
   const showPrice = Boolean(price) && alwaysPrice;
 
   const statusLine = status && (
-    <span className={cn("tabular text-[12px]", status.attention ? "text-warning-text" : "text-muted-foreground")}>{titleCase(status.text)}</span>
+    <span className={cn("tabular text-meta", status.attention ? "text-warning-text" : "text-muted-foreground")}>{titleCase(status.text)}</span>
   );
 
   // Name, descriptor and price at the top left, clear of the icon; the status alone at the bottom left.
   const head = (
     <span className="relative z-10 flex max-w-[66%] flex-col gap-1">
-      <span className="text-[16px] font-medium">{name}</span>
-      {line && <span className="text-[13px] leading-snug text-muted-foreground">{line}</span>}
+      <span className="text-heading font-medium">{name}</span>
+      {line && <span className="text-body leading-snug text-muted-foreground">{line}</span>}
       {showPrice && price && (
-        <span className="tabular mt-1 text-[14px]">
+        <span className="tabular mt-1 text-body">
           <span className="text-muted-foreground">{`${price.label} `}</span>
           {price.amount}
           {price.unit && <span className="text-muted-foreground">{` ${price.unit}`}</span>}
@@ -203,10 +203,10 @@ export function ProductCard({
       <>
         <PlanImage planId={id} src={image} className={single ? "h-28" : "h-40"} />
         <span className="flex flex-col gap-1 p-5 sm:p-6">
-          <span className="text-[16px] font-medium">{name}</span>
-          {line && <span className="text-[13px] leading-snug text-muted-foreground">{line}</span>}
+          <span className="text-heading font-medium">{name}</span>
+          {line && <span className="text-body leading-snug text-muted-foreground">{line}</span>}
           {showPrice && price && (
-            <span className="tabular mt-1 text-[14px]">
+            <span className="tabular mt-1 text-body">
               <span className="text-muted-foreground">{`${price.label} `}</span>
               {price.amount}
               {price.unit && <span className="text-muted-foreground">{` ${price.unit}`}</span>}

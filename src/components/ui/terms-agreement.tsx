@@ -28,7 +28,7 @@ export function TermsAgreement({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <label className="flex cursor-pointer items-start gap-2 px-1 py-2 text-[13px] leading-relaxed text-foreground">
+      <label className="flex cursor-pointer items-start gap-2 px-1 py-2 text-body leading-relaxed text-foreground">
         <Checkbox checked={checked} onCheckedChange={(v) => onCheckedChange(Boolean(v))} aria-label="Agree to the Terms and Conditions" className="mt-0.5" />
         <span>
           {"I have read and agree to the "}
@@ -54,7 +54,7 @@ export function TermsAgreement({
             <DialogTitle>Terms and Conditions</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <ul className="flex flex-col gap-3 text-[14px] leading-relaxed text-muted-foreground">
+            <ul className="flex flex-col gap-3 text-body leading-relaxed text-muted-foreground">
               {terms.map((t) => (
                 <li key={t}>{t}</li>
               ))}

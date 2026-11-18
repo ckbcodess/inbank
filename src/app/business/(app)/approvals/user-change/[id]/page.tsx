@@ -68,16 +68,16 @@ export default function UserChangeApprovalPage({ params }: { params: Promise<{ i
       <PageHeader title={title} description={`Proposed by ${change.proposedBy} · ${change.proposedAt}`} backTo={back} />
 
       <section className="flex flex-col gap-3">
-        <h2 className="min-h-6 text-[16px] font-medium text-foreground">What Changes</h2>
+        <h2 className="min-h-6 text-heading font-medium text-foreground">What Changes</h2>
         <UserChangeSummary change={change} />
-        <p className="text-[12px] text-muted-foreground">
+        <p className="text-meta text-muted-foreground">
           {`${change.after.designation}${change.after.onMandate ? " · on your mandate" : ""} · ${change.after.email}`}
         </p>
       </section>
 
       {mine ? (
         <section className="flex flex-col gap-5">
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             {`It applies as soon as you approve, and we tell ${name.split(" ")[0]} by SMS and email.`}
           </p>
           <Field label="Reason" htmlFor="decline-reason" optional error={reasonError}>
@@ -101,7 +101,7 @@ export default function UserChangeApprovalPage({ params }: { params: Promise<{ i
           </div>
         </section>
       ) : (
-        <p className="text-[13px] text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           {change.status === "approved"
             ? `Approved by ${change.decidedBy}.`
             : change.status === "declined"

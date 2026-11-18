@@ -72,7 +72,7 @@ export function StatusPill({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full px-2 py-1 text-[11px] font-medium leading-none",
+        "inline-flex shrink-0 items-center rounded-full px-2 py-1 text-meta font-medium leading-none",
         TONE_CLASS[note.tone],
         className,
       )}
@@ -88,17 +88,17 @@ export function CardDetails({ card }: { card: PaymentCard }) {
     <div className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3 sm:p-4">
       <div className="flex min-w-0 flex-col gap-1">
         <div className="flex items-center gap-2">
-          <span className="truncate text-[15px] font-medium text-foreground">{card.name}</span>
+          <span className="truncate text-heading font-medium text-foreground">{card.name}</span>
           <StatusPill card={card} />
         </div>
-        <span className="tabular text-[12px] text-muted-foreground">
+        <span className="tabular text-meta text-muted-foreground">
           {figure.label} · <span className="text-foreground">{figure.value}</span>
         </span>
       </div>
       <Button nativeButton={false}
         render={<Link href={`/cards/${card.id}`} />}
         variant="outline"
-        className="h-8 shrink-0 px-3 text-[13px]"
+        className="h-8 shrink-0 px-3 text-body"
       >
         Manage
       </Button>

@@ -381,7 +381,7 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_choice" && onboarding && (
               <div className="flex flex-col gap-5">
-                <p className="text-[15px] leading-relaxed text-muted-foreground">
+                <p className="text-body leading-relaxed text-muted-foreground">
                   Choose an account or payment method to link to your new account.
                 </p>
                 <div className="flex flex-col gap-3">
@@ -446,7 +446,7 @@ export default function LinkSourceAccountModal({
               <form onSubmit={handleInternalTransferSubmit} className="flex flex-col gap-4">
                 {!canTransferBetween ? (
                   <div className="flex flex-col gap-2 py-3 text-center">
-                    <p className="text-[13px] text-muted-foreground">
+                    <p className="text-body text-muted-foreground">
                       No other internal accounts available to transfer from.
                     </p>
                     <Button
@@ -497,7 +497,7 @@ export default function LinkSourceAccountModal({
                         <Link
                           href={`/payments/send?rail=bank&returnUrl=/accounts/${destinationAccount?.id || ""}`}
                           onClick={handleClose}
-                          className="text-[12px] text-muted-foreground hover:text-foreground transition-colors"
+                          className="text-meta text-muted-foreground hover:text-foreground transition-colors"
                         >
                           Need to schedule a payment? <span className="underline underline-offset-2">Use Full Payments</span>
                         </Link>
@@ -518,15 +518,15 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-[17px] font-medium text-foreground">
+                  <h3 className="text-title font-medium text-foreground">
                     {formatMoney(Number(internalAmount || 0), "GHS", true)} Transferred
                   </h3>
-                  <p className="text-[13px] text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     Transfer completed successfully.
                   </p>
                 </div>
 
-                <div className="w-full rounded-2xl border border-border/80 bg-muted/20 p-3 text-left text-[13px] flex flex-col gap-2">
+                <div className="w-full rounded-2xl border border-border/80 bg-muted/20 p-3 text-left text-body flex flex-col gap-2">
                   <div className="flex justify-between py-0.5 text-muted-foreground">
                     <span>From:</span>
                     <span className="font-medium text-foreground">{selectedSourceAccount?.name}</span>
@@ -575,10 +575,10 @@ export default function LinkSourceAccountModal({
                             <div className="flex items-center gap-2">
                               <SourceMark type={source.type} operator={source.operator} title={source.title} />
                               <div className="flex flex-col text-left">
-                                <span className="text-[14px] font-medium text-foreground">
+                                <span className="text-body font-medium text-foreground">
                                   {source.title}
                                 </span>
-                                <span className="text-[12px] text-muted-foreground">
+                                <span className="text-meta text-muted-foreground">
                                   {source.subtitle}
                                 </span>
                               </div>
@@ -591,7 +591,7 @@ export default function LinkSourceAccountModal({
 
                   {/* Only sources already linked can fund an account here; linking lives on Accounts. */}
                   {linkedSources.length === 0 && (
-                    <p className="rounded-2xl border border-border/80 bg-muted/20 px-3 py-3 text-[13px] text-muted-foreground">
+                    <p className="rounded-2xl border border-border/80 bg-muted/20 px-3 py-3 text-body text-muted-foreground">
                       You haven&apos;t linked a wallet or card yet.{" "}
                       <Link
                         href="/accounts?link_source=true"
@@ -632,10 +632,10 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-[17px] font-medium text-foreground">
+                  <h3 className="text-title font-medium text-foreground">
                     Mobile Money Prompt Sent
                   </h3>
-                  <p className="text-[13px] text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     Enter your PIN on <strong className="text-foreground">{activeLinkedSource?.subtitle}</strong> to add {formatMoney(Number(linkedAmount || 0), "GHS", true)} to {destinationAccount?.name}.
                   </p>
                 </div>
@@ -652,15 +652,15 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-[17px] font-medium text-foreground">
+                  <h3 className="text-title font-medium text-foreground">
                     {formatMoney(Number(linkedAmount || 0), "GHS", true)} added to {destinationAccount?.name}
                   </h3>
-                  <p className="text-[13px] text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     From {activeLinkedSource?.title}. It&apos;s in your balance now.
                   </p>
                 </div>
 
-                <div className="w-full rounded-2xl border border-border/80 bg-muted/20 p-3 text-left text-[13px] flex flex-col gap-2">
+                <div className="w-full rounded-2xl border border-border/80 bg-muted/20 p-3 text-left text-body flex flex-col gap-2">
                   <div className="flex justify-between py-0.5 text-muted-foreground">
                     <span>Source:</span>
                     <span className="font-medium text-foreground">{activeLinkedSource?.title}</span>
@@ -714,7 +714,7 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_momo_code" && (
               <div className="flex flex-col items-center gap-4 py-2 text-center">
-                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                <p className="text-body leading-relaxed text-muted-foreground">
                   Enter the 6-digit code sent to{" "}
                   <span className="text-foreground tabular">{displayGhanaMobile(newMomoNumber)}</span>.
                 </p>
@@ -729,7 +729,7 @@ export default function LinkSourceAccountModal({
                   invalid={momoCodeError}
                 />
                 {busy && (
-                  <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+                  <div className="flex items-center gap-2 text-body text-muted-foreground">
                     <AppLoader size={16} />
                     <span>Verifying code…</span>
                   </div>
@@ -741,7 +741,7 @@ export default function LinkSourceAccountModal({
                   size="sm"
                   disabled={busy || momoResent}
                   onClick={() => setMomoResent(true)}
-                  className="text-[13px] text-muted-foreground"
+                  className="text-body text-muted-foreground"
                 >
                   {momoResent ? "Code sent again" : "Didn't get it? Send again"}
                 </Button>
@@ -755,8 +755,8 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="flex flex-col gap-2" role="status">
-                  <h3 className="text-[17px] text-foreground tracking-[var(--ls-tight)]">Approve on your phone</h3>
-                  <p className="text-[13px] leading-relaxed text-muted-foreground tabular">
+                  <h3 className="text-title text-foreground tracking-[var(--ls-tight)]">Approve on your phone</h3>
+                  <p className="text-body leading-relaxed text-muted-foreground tabular">
                     We&apos;ve sent a request to {displayGhanaMobile(newMomoNumber)}. Approve it with your{" "}
                     {newMomoOperator} MoMo PIN, then come back here to confirm.
                   </p>
@@ -769,7 +769,7 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_card" && (
               <div className="flex flex-col gap-4">
-                <p className="flex items-start gap-2 text-[12px] leading-relaxed text-muted-foreground">
+                <p className="flex items-start gap-2 text-meta leading-relaxed text-muted-foreground">
                   <ShieldCheck size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
                   This links a card from another bank. GCB cards aren&apos;t included. You&apos;ll enter the card and confirm it&apos;s you on the provider&apos;s site.
                 </p>

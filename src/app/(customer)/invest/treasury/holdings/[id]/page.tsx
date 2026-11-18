@@ -53,8 +53,8 @@ export default function HoldingDetailPage() {
 
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1 px-1">
-          <span className="text-[14px] text-muted-foreground">Paid at maturity</span>
-          <span className={cn("tabular text-[32px] leading-none tracking-[var(--ls-heading)]", cashing ? "text-muted-foreground" : "text-foreground")}>
+          <span className="text-body text-muted-foreground">Paid at maturity</span>
+          <span className={cn("tabular type-balance leading-none tracking-[var(--ls-heading)]", cashing ? "text-muted-foreground" : "text-foreground")}>
             {formatMoney(h.face, "GHS", showAmounts)}
           </span>
         </div>
@@ -72,7 +72,7 @@ export default function HoldingDetailPage() {
           />
           <ActionTile icon={Undo2} title="Rediscount" description="Cash in all or part of it early" href={`${base}/rediscount`} disabled={cashing} />
           {cashing && (
-            <p className="px-1 text-[12px] text-muted-foreground">
+            <p className="px-1 text-meta text-muted-foreground">
               A cash-in is on its way, so changes aren’t available until it’s processed.
             </p>
           )}

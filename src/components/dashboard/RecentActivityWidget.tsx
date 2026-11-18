@@ -158,13 +158,13 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
         {/* Top Section */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-[15px] font-medium text-foreground">Recent activity</h2>
+            <h2 className="text-heading font-medium text-foreground">Recent activity</h2>
             {/* Account Filter Pill Dropdown */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
-                className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
+                className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-meta font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
               >
                 <span>{selectedAccount}</span>
                 <ChevronDown size={12} className="text-muted-foreground" />
@@ -180,7 +180,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                         setSelectedAccount(opt.label);
                         setShowFilterMenu(false);
                       }}
-                      className={`flex w-full items-center px-3 py-2 text-left text-[12px] transition-colors cursor-pointer ${
+                      className={`flex w-full items-center px-3 py-2 text-left text-meta transition-colors cursor-pointer ${
                         selectedAccount === opt.label
                           ? "bg-muted font-medium text-foreground"
                           : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -196,7 +196,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
           <Link
             href="/transactions"
-            className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
+            className="inline-flex items-center gap-1 text-meta font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
           >
             <span>View all</span>
             <ChevronRight size={13} />
@@ -228,17 +228,17 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
                 {/* Counterparty & Metadata */}
                 <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                  <span className="font-normal text-foreground text-[14px] leading-tight truncate">
+                  <span className="font-normal text-foreground text-body leading-tight truncate">
                     {item.title}
                   </span>
-                  <div className="flex items-center gap-2 text-[12px] text-muted-foreground truncate">
+                  <div className="flex items-center gap-2 text-meta text-muted-foreground truncate">
                     <span>{item.subtitle}</span>
                   </div>
                 </div>
 
                 {/* Amount & State / Account Number */}
                 <div className="shrink-0 flex flex-col items-end gap-0.5">
-                  <span className="tabular text-[14px] font-normal text-foreground">
+                  <span className="tabular text-body font-normal text-foreground">
                     {isDebit ? "− " : "+ "}
                     {formatMoney(item.amount, "GHS", true)}
                   </span>
@@ -262,25 +262,25 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
               <div className="flex items-center gap-2 p-2 rounded-xl bg-muted/40 border border-border/60">
                 <TransactionMark transaction={{ direction: selectedTx.direction === "debit" ? "debit" : "credit", paymentMethod: undefined, counterparty: selectedTx.title }} />
                 <div>
-                  <span className="text-[14px] font-medium text-foreground">{selectedTx.title}</span>
-                  <p className="text-[12px] text-muted-foreground">{selectedTx.subtitle}</p>
+                  <span className="text-body font-medium text-foreground">{selectedTx.title}</span>
+                  <p className="text-meta text-muted-foreground">{selectedTx.subtitle}</p>
                 </div>
               </div>
 
               {/* Receipt Summary */}
               <div className="my-1 flex flex-col items-center justify-center rounded-xl bg-muted/30 p-3 text-center">
-                <span className="text-[12px] text-muted-foreground">Amount transferred</span>
-                <span className="mt-1 text-[24px] font-medium tabular text-foreground">
+                <span className="text-meta text-muted-foreground">Amount transferred</span>
+                <span className="mt-1 type-headline font-medium tabular text-foreground">
                   GHS {selectedTx.amount.toFixed(2)}
                 </span>
-                <span className="mt-2 inline-flex items-center gap-2 text-[12px] text-muted-foreground">
+                <span className="mt-2 inline-flex items-center gap-2 text-meta text-muted-foreground">
                   <span className="size-1.5 rounded-full bg-success/80 shrink-0" />
                   {selectedTx.status}
                 </span>
               </div>
 
               {/* Breakdown Details */}
-              <div className="flex flex-col divide-y divide-border/60 text-[13px]">
+              <div className="flex flex-col divide-y divide-border/60 text-body">
                 <div className="flex justify-between py-2">
                   <span className="text-muted-foreground">Reference</span>
                   <span className="text-foreground">{selectedTx.reference}</span>

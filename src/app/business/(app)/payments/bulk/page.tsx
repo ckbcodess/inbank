@@ -97,7 +97,7 @@ export default function BulkPaymentPage() {
     return (
       <div className="mx-auto flex w-full max-w-[640px] flex-col gap-6">
         <PageHeader title="Pay in Bulk" backTo={{ href: "/business/overview", label: "Home" }} />
-        <p className="text-[14px] text-muted-foreground">Payments are prepared by inputters. You review or authorise them in Approvals.</p>
+        <p className="text-body text-muted-foreground">Payments are prepared by inputters. You review or authorise them in Approvals.</p>
       </div>
     );
   }
@@ -138,11 +138,11 @@ export default function BulkPaymentPage() {
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6 pt-6">
         <CheckCircle2 size={24} className="text-success-text" aria-hidden="true" />
         <div className="flex flex-col gap-1">
-          <h1 className="text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground">Submitted for approval</h1>
-          <p className="text-[14px] leading-relaxed text-muted-foreground">
+          <h1 className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground">Submitted for approval</h1>
+          <p className="text-body leading-relaxed text-muted-foreground">
             {`${submitted.lines.length} payments in ${submitted.name} go to ${describePath(approvalPath(sum.amount))}. Nothing leaves ${from?.name ?? "the account"} until it's authorised.`}
           </p>
-          <p className="tabular text-[12px] text-muted-foreground">{`Batch ${submitted.id}`}</p>
+          <p className="tabular text-meta text-muted-foreground">{`Batch ${submitted.id}`}</p>
         </div>
         <div className="flex flex-wrap gap-3">
           <Button nativeButton={false} render={<Link href={`/business/payments/bulk/${submitted.id}`} />}>
@@ -176,7 +176,7 @@ export default function BulkPaymentPage() {
           total={formatMoney(sum.debit, "GHS", true)}
           totalLabel="Total Once Approved"
         />
-        <p className="text-[13px] leading-relaxed text-muted-foreground">
+        <p className="text-body leading-relaxed text-muted-foreground">
           {`This goes to ${describePath(approvalPath(sum.amount))}. Either can send it back to you with a comment. Nothing is debited until it's authorised; then each payment goes out on its own and shows its own status.`}
         </p>
         <div className="flex flex-wrap gap-3">
@@ -215,7 +215,7 @@ export default function BulkPaymentPage() {
 
       <section className="flex flex-col gap-3">
         <div className="flex min-h-6 flex-wrap items-center justify-between gap-2">
-          <h2 className="text-[16px] font-medium text-foreground">Payments</h2>
+          <h2 className="text-heading font-medium text-foreground">Payments</h2>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={() => download("bulk-payments-template.csv", CSV_TEMPLATE)}>
               <Download size={14} aria-hidden="true" />
@@ -243,14 +243,14 @@ export default function BulkPaymentPage() {
           }}
         />
         {fileProblem && (
-          <p role="alert" className="text-[13px] text-destructive-text">
+          <p role="alert" className="text-body text-destructive-text">
             {fileProblem}
           </p>
         )}
 
         {lines.length > 0 && (
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="tabular text-[13px] text-muted-foreground">
+            <p className="tabular text-body text-muted-foreground">
               {`${lines.length} ${lines.length === 1 ? "payment" : "payments"} · ${formatMoney(sum.amount, "GHS", true)}`}
               {needAttention > 0 && <span className="text-warning-text">{` · ${needAttention} need attention`}</span>}
             </p>
@@ -266,7 +266,7 @@ export default function BulkPaymentPage() {
         {editing && <LineForm draft={editing.draft} onChange={(draft) => setEditing({ ...editing, draft })} onSave={saveLine} onCancel={() => setEditing(null)} />}
 
         {lines.length === 0 && !editing ? (
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             Upload a CSV in the template&apos;s columns, or add payments one by one. You can do both.
           </p>
         ) : (
@@ -274,19 +274,19 @@ export default function BulkPaymentPage() {
             <ListCard>
               {checked.map(({ line, errors }) => (
                 <li key={line.row} className="flex items-start gap-3 rounded-xl px-2 py-3 sm:px-3">
-                  <span className="tabular w-6 shrink-0 pt-0.5 text-[12px] text-muted-foreground">{line.row}</span>
+                  <span className="tabular w-6 shrink-0 pt-0.5 text-meta text-muted-foreground">{line.row}</span>
                   <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    <span className="truncate text-[14px] text-foreground">{line.name || "No name"}</span>
-                    <span className="tabular truncate text-[12px] text-muted-foreground">
+                    <span className="truncate text-body text-foreground">{line.name || "No name"}</span>
+                    <span className="tabular truncate text-meta text-muted-foreground">
                       {`${line.bank || "No bank"} · ${line.account || "No account"} · ${railFor(line.rail)?.shortName ?? line.rail.toUpperCase()}`}
                     </span>
                     {errors.map((e) => (
-                      <span key={e} className="text-[12px] text-destructive-text">
+                      <span key={e} className="text-meta text-destructive-text">
                         {e}
                       </span>
                     ))}
                   </span>
-                  <span className="tabular shrink-0 pt-0.5 text-[14px] text-foreground">{formatMoney(line.amount, "GHS", true)}</span>
+                  <span className="tabular shrink-0 pt-0.5 text-body text-foreground">{formatMoney(line.amount, "GHS", true)}</span>
                   <span className="flex shrink-0">
                     <Button
                       variant="ghost"
@@ -318,7 +318,7 @@ export default function BulkPaymentPage() {
         <Button disabled={Boolean(blocked)} onClick={() => setStep("review")} className="self-start">
           Review Batch
         </Button>
-        {blocked && lines.length > 0 && <p className="text-[12px] text-muted-foreground">{blocked}</p>}
+        {blocked && lines.length > 0 && <p className="text-meta text-muted-foreground">{blocked}</p>}
       </div>
     </div>
   );

@@ -106,7 +106,7 @@ export function Eyebrow({
   return (
     <span
       className={cn(
-        "text-[12px] text-muted-foreground",
+        "text-meta text-muted-foreground",
         className,
       )}
     >
@@ -128,7 +128,7 @@ export function DeltaLine({
 }) {
   const up = delta >= 0;
   return (
-    <div className="flex items-center gap-2 text-[13px]">
+    <div className="flex items-center gap-2 text-body">
       <span
         className={cn(
           "inline-flex items-center gap-1 tabular",
@@ -263,9 +263,9 @@ export function DotLegend({
       {slices.map((s, i) => (
         <li key={`${s.label}-${i}`} className="flex items-center gap-2 py-3">
           <span className="size-2 shrink-0 rounded-full" style={{ background: s.color }} aria-hidden="true" />
-          <span className="flex-1 truncate text-[13px] text-foreground">{s.label}</span>
-          {!compact && <span className="tabular text-[12px] text-muted-foreground">{pct(s.share)}</span>}
-          <span className="tabular text-[13px] text-foreground">
+          <span className="flex-1 truncate text-body text-foreground">{s.label}</span>
+          {!compact && <span className="tabular text-meta text-muted-foreground">{pct(s.share)}</span>}
+          <span className="tabular text-body text-foreground">
             {fmtGHS(s.amount, showAmounts, { compact })}
           </span>
         </li>
@@ -297,16 +297,16 @@ export function AccountRows({
               <span
                 className={cn(
                   "truncate text-foreground transition-colors group-hover:text-muted-foreground",
-                  size === "lg" ? "text-[17px] tracking-[var(--ls-tight)]" : "text-[14px]",
+                  size === "lg" ? "text-title tracking-[var(--ls-tight)]" : "text-body",
                 )}
               >
                 {shortName(a.name)}
               </span>
-              <span className="text-[12px] text-muted-foreground tabular">
+              <span className="text-meta text-muted-foreground tabular">
                 {a.type} · ∗∗{a.number.slice(-4)}
               </span>
             </span>
-            <span className={cn("tabular text-foreground", size === "lg" ? "text-[17px]" : "text-[14px]")}>
+            <span className={cn("tabular text-foreground", size === "lg" ? "text-title" : "text-body")}>
               {fmtGHS(a.balance ?? 0, showAmounts)}
             </span>
           </Link>
@@ -331,10 +331,10 @@ export function LatestTransactions({
         const credit = t.direction === "credit";
         return (
           <li key={t.id} className="flex items-center justify-between gap-2 py-2">
-            <span className="min-w-0 flex-1 truncate text-[13px] text-foreground">
+            <span className="min-w-0 flex-1 truncate text-body text-foreground">
               {t.counterparty || t.description}
             </span>
-            <span className={"tabular text-[13px] text-foreground"}>
+            <span className={"tabular text-body text-foreground"}>
               {credit ? "+" : "−"}
               {fmtGHS(Math.abs(t.amount), showAmounts, { compact: true }).replace("GHS ", "GHS ")}
             </span>
@@ -361,7 +361,7 @@ export function QuickActionsText({ className }: { className?: string }) {
         <Link
           key={a.href}
           href={a.href}
-          className="text-[14px] text-muted-foreground transition-colors hover:text-foreground"
+          className="text-body text-muted-foreground transition-colors hover:text-foreground"
         >
           {a.label}
         </Link>
@@ -387,7 +387,7 @@ export function RangeTabs({
           type="button"
           onClick={() => onChange(r)}
           className={cn(
-            "cursor-pointer rounded-full px-2 py-1 text-[12px] tabular transition-colors",
+            "cursor-pointer rounded-full px-2 py-1 text-meta tabular transition-colors",
             value === r ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
         >
@@ -438,7 +438,7 @@ export function AccountsDisclosure({
       >
         <span className="flex shrink-0 items-center gap-2">
           <Eyebrow>Accounts</Eyebrow>
-          <span className="text-[12px] text-muted-foreground tabular">{accounts.length}</span>
+          <span className="text-meta text-muted-foreground tabular">{accounts.length}</span>
         </span>
         <span className="min-w-0 flex-1">
           <AllocationBar slices={slices} thickness={6} />
@@ -475,7 +475,7 @@ export function SectionHeader({
       {href && (
         <Link
           href={href}
-          className="text-[12px] text-muted-foreground transition-colors hover:text-foreground"
+          className="text-meta text-muted-foreground transition-colors hover:text-foreground"
         >
           {cta}
         </Link>
@@ -514,7 +514,7 @@ export function RecentTransactions({
 
   if (txns.length === 0) {
     return (
-      <p className="py-6 text-center text-[13px] text-muted-foreground">No activity yet.</p>
+      <p className="py-6 text-center text-body text-muted-foreground">No activity yet.</p>
     );
   }
   return (
@@ -530,13 +530,13 @@ export function RecentTransactions({
               >
                 <TransactionMark transaction={t} />
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <span className="truncate text-[13px] font-medium text-foreground">
+                  <span className="truncate text-body font-medium text-foreground">
                     {t.counterparty || t.description}
                   </span>
-                  <span className="text-[12px] text-muted-foreground">{getTransactionType(t)} · <span className="tabular">{friendlyDate(t.date)}</span></span>
+                  <span className="text-meta text-muted-foreground">{getTransactionType(t)} · <span className="tabular">{friendlyDate(t.date)}</span></span>
                 </span>
                 <span className="flex shrink-0 flex-col items-end gap-0.5">
-                  <span className={cn("tabular text-[13px]", amountStyling(t).colorClass)}>
+                  <span className={cn("tabular text-body", amountStyling(t).colorClass)}>
                     {amountStyling(t).prefix}
                     {fmtGHS(Math.abs(t.amount), showAmounts)}
                   </span>
@@ -563,16 +563,16 @@ export function SpendDetail({
   showAmounts: boolean;
 }) {
   if (breakdown.slices.length === 0) {
-    return <p className="py-6 text-center text-[13px] text-muted-foreground">No spending yet.</p>;
+    return <p className="py-6 text-center text-body text-muted-foreground">No spending yet.</p>;
   }
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <span className="text-[12px] text-muted-foreground">Total spend</span>
-        <span className="tabular text-[24px] leading-none tracking-[var(--ls-heading)] text-foreground">
+        <span className="text-meta text-muted-foreground">Total spend</span>
+        <span className="tabular type-headline leading-none tracking-[var(--ls-heading)] text-foreground">
           {fmtGHS(breakdown.total, showAmounts)}
         </span>
-        <span className="text-[12px] text-muted-foreground tabular">
+        <span className="text-meta text-muted-foreground tabular">
           {breakdown.count} transactions
         </span>
       </div>
@@ -597,7 +597,7 @@ export function CardsMini({
   const shown = cards.slice(0, limit);
 
   if (shown.length === 0) {
-    return <p className="py-6 text-center text-[13px] text-muted-foreground">{t("dashboard.noCards", "No cards yet.")}</p>;
+    return <p className="py-6 text-center text-body text-muted-foreground">{t("dashboard.noCards", "No cards yet.")}</p>;
   }
 
   const setCardBlocked = (id: string, value: boolean) =>
@@ -629,8 +629,8 @@ export function CardsMini({
               <NetworkLogo scheme={c.scheme} className="h-2" />
             </span>
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span className="truncate text-[13px] text-foreground">{c.name}</span>
-              <span className="text-[12px] text-muted-foreground tabular">
+              <span className="truncate text-body text-foreground">{c.name}</span>
+              <span className="text-meta text-muted-foreground tabular">
                 {c.type} · {c.maskedNumber}
               </span>
             </span>
@@ -639,7 +639,7 @@ export function CardsMini({
               onClick={() => (isBlocked ? setUnblockFor(c) : block(c))}
               aria-pressed={isBlocked}
               className={cn(
-                "flex items-center gap-2 rounded-full border px-2 py-1 text-[12px] transition-colors cursor-pointer",
+                "flex items-center gap-2 rounded-full border px-2 py-1 text-meta transition-colors cursor-pointer",
                 isBlocked
                   ? "border-transparent bg-muted text-foreground"
                   : "border-border text-muted-foreground hover:text-foreground",
@@ -700,25 +700,25 @@ export function FxRatesMini() {
       <ul className="flex flex-col">
         {rows.map((f) => (
           <li key={f.pair} className="flex items-center justify-between gap-3 py-2">
-            <span className="text-[13px] text-foreground tabular">{f.base} / {f.quote}</span>
+            <span className="text-body text-foreground tabular">{f.base} / {f.quote}</span>
             <span className="flex items-baseline gap-2">
               <span
                 className={cn(
-                  "text-[12px] tabular",
+                  "text-meta tabular",
                   f.changePct > 0 ? "text-success" : "text-muted-foreground",
                 )}
               >
                 {f.changePct > 0 ? "+" : f.changePct < 0 ? "−" : ""}
                 {Math.abs(f.changePct).toFixed(2)}%
               </span>
-              <span className="w-[64px] text-right text-[13px] text-foreground tabular">{fmtRate(f.mid)}</span>
+              <span className="w-[64px] text-right text-body text-foreground tabular">{fmtRate(f.mid)}</span>
             </span>
           </li>
         ))}
       </ul>
       <div className="flex items-center justify-between gap-3">
-        <span className="text-[11px] text-muted-foreground tabular">Mid-rate · published {published}</span>
-        <Link href="/fx-rates" className="text-[12px] text-muted-foreground transition-colors hover:text-foreground">
+        <span className="text-meta text-muted-foreground tabular">Mid-rate · published {published}</span>
+        <Link href="/fx-rates" className="text-meta text-muted-foreground transition-colors hover:text-foreground">
           {t("dashboard.allRates", "All rates")}
         </Link>
       </div>

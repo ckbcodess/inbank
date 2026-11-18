@@ -182,7 +182,7 @@ export default function Sidebar({
           href={item.path}
           onClick={onClose}
           aria-label={collapsed ? label : undefined}
-          className={`relative flex h-8 items-center gap-2 overflow-hidden rounded-lg px-2 text-[13px] font-medium transition duration-hover ${
+          className={`relative flex h-8 items-center gap-2 overflow-hidden rounded-lg px-2 text-body font-medium transition duration-hover ${
             indent ? "ml-2 w-[calc(100%-8px)]" : "w-full"
           } ${
             active
@@ -268,7 +268,7 @@ export default function Sidebar({
           </button>
         </SimpleTooltip>
         <span
-          className={`min-w-0 max-w-[9rem] shrink-0 truncate text-[14px] font-medium leading-tight tracking-tight text-foreground transition-opacity duration-hover ${
+          className={`min-w-0 max-w-[9rem] shrink-0 truncate text-body font-medium leading-tight tracking-tight text-foreground transition-opacity duration-hover ${
             collapsed ? "opacity-0" : "opacity-100"
           }`}
           aria-hidden={collapsed}
@@ -312,7 +312,7 @@ export default function Sidebar({
                     onClick={() => setOpenGroups((p) => ({ ...p, [name]: !open }))}
                     aria-expanded={open}
                     data-product-tour={name === "More Services" ? "more" : undefined}
-                    className={`relative flex h-8 items-center gap-2 rounded-lg px-2 text-[13px] font-medium transition duration-hover cursor-pointer hover:bg-muted/50 hover:text-foreground ${
+                    className={`relative flex h-8 items-center gap-2 rounded-lg px-2 text-body font-medium transition duration-hover cursor-pointer hover:bg-muted/50 hover:text-foreground ${
                       hasActiveChild && !open ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >

@@ -75,13 +75,13 @@ function renderBusinessBand(state: TransactionState, txn: Transaction) {
       <Band tone="warning" icon={<FileWarning size={17} aria-hidden="true" />} title="Returned by bank operations">
         <p>{txn.failureReason ?? "This trade request was returned for correction."}</p>
         <div className="mt-2 rounded-xl border border-border bg-card">
-          <p className="flex items-center gap-2 border-b border-border px-2 py-2 text-[12px] text-muted-foreground">
+          <p className="flex items-center gap-2 border-b border-border px-2 py-2 text-meta text-muted-foreground">
             <History size={13} />
             Version history
           </p>
           <ul className="divide-y divide-border">
             {TRADE_VERSIONS.map((v) => (
-              <li key={v.version} className="flex items-center gap-2 px-2 py-2 text-[13px]">
+              <li key={v.version} className="flex items-center gap-2 px-2 py-2 text-body">
                 <span className="w-7 shrink-0 text-muted-foreground tabular">v{v.version}</span>
                 <span className="min-w-0 flex-1 truncate text-foreground">{v.summary}</span>
               </li>

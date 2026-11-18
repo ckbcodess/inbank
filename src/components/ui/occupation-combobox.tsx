@@ -216,7 +216,7 @@ export function OccupationCombobox({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoComplete="organization-title"
-          className="min-w-0 flex-1 bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground"
+          className="min-w-0 flex-1 bg-transparent text-body text-foreground outline-none placeholder:text-muted-foreground"
         />
         {query && (
           <button
@@ -269,7 +269,7 @@ export function OccupationCombobox({
                     aria-selected={isSelected}
                     onClick={() => handleSelect(occ)}
                     onMouseEnter={() => setHighlightedIndex(index)}
-                    className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-2 text-left text-[14px] transition-colors ${
+                    className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-2 text-left text-body transition-colors ${
                       isHighlighted || isSelected
                         ? "bg-muted text-foreground"
                         : "text-foreground hover:bg-muted/60"
@@ -290,14 +290,14 @@ export function OccupationCombobox({
                 role="option"
                 aria-selected={false}
                 onClick={() => handleSelect(query.trim())}
-                className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-muted/60 px-2 py-2 text-left text-[14px] text-foreground hover:bg-muted"
+                className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-muted/60 px-2 py-2 text-left text-body text-foreground hover:bg-muted"
               >
                 <span>Use &ldquo;{query.trim()}&rdquo;</span>
                 <Check size={15} className="ml-2 shrink-0 text-muted-foreground" />
               </button>
             </div>
           ) : (
-            <div className="p-2 text-center text-[13px] text-muted-foreground">
+            <div className="p-2 text-center text-body text-muted-foreground">
               No occupations found
             </div>
           )}
@@ -309,7 +309,7 @@ export function OccupationCombobox({
                 role="option"
                 aria-selected={false}
                 onClick={() => handleSelect(query.trim())}
-                className="flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-2 text-left text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-2 text-left text-body text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 <span>Or use &ldquo;{query.trim()}&rdquo;</span>
               </button>

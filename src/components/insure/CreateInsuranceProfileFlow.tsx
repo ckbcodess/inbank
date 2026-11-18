@@ -72,8 +72,8 @@ function Question({ text, note, children }: { text: string; note?: string; child
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-0.5">
-        <p className="text-[13px] font-medium text-foreground">{text}</p>
-        {note && <p className="text-[12px] leading-relaxed text-muted-foreground">{note}</p>}
+        <p className="text-body font-medium text-foreground">{text}</p>
+        {note && <p className="text-meta leading-relaxed text-muted-foreground">{note}</p>}
       </div>
       {children}
     </div>
@@ -109,15 +109,15 @@ function PickOne({ value, onChange, options, placeholder, label }: { value: stri
 function Section({ title, rows, onEdit }: { title: string; rows: Array<[string, string, Step?]>; onEdit: (step: Step) => void }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="px-1 text-[16px] font-medium text-foreground">{title}</h2>
+      <h2 className="px-1 text-heading font-medium text-foreground">{title}</h2>
       <ListCard as="div">
         {rows.map(([label, value, editStep]) => (
           <div key={label} className="flex items-baseline justify-between gap-4 px-3 py-2">
-            <span className="shrink-0 text-[13.5px] text-muted-foreground">{label}</span>
+            <span className="shrink-0 text-body text-muted-foreground">{label}</span>
             <span className="flex min-w-0 items-baseline justify-end gap-3">
-              <span className="min-w-0 text-right text-[13.5px] text-foreground">{value}</span>
+              <span className="min-w-0 text-right text-body text-foreground">{value}</span>
               {editStep && (
-                <button type="button" onClick={() => onEdit(editStep)} aria-label={`Edit ${label}`} className="shrink-0 cursor-pointer text-[13px] text-foreground underline underline-offset-4">
+                <button type="button" onClick={() => onEdit(editStep)} aria-label={`Edit ${label}`} className="shrink-0 cursor-pointer text-body text-foreground underline underline-offset-4">
                   Edit
                 </button>
               )}

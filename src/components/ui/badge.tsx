@@ -30,8 +30,8 @@ const badgeVariants = cva(
       },
       /* sm is the one small pill, the size of the status chip on a transaction receipt (12px text, the Meta size, 20px high), used in tables, lists and headers; md is for a pill that stands on its own, such as a card chip. */
       size: {
-        sm: "h-5 px-2 text-[12px]",
-        md: "h-6 px-3 text-[13px]",
+        sm: "h-5 px-2 text-meta",
+        md: "h-6 px-3 text-body",
       },
     },
     defaultVariants: {

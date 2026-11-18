@@ -161,7 +161,7 @@ export function CardTopUpFlow({
                   className="tabular uppercase tracking-widest placeholder:normal-case placeholder:tracking-normal"
                 />
                 {refCode.length === 8 && (
-                  <div className="flex items-center gap-2 rounded-xl bg-muted/40 p-2 text-[13px] text-foreground font-medium animate-in fade-in duration-150">
+                  <div className="flex items-center gap-2 rounded-xl bg-muted/40 p-2 text-body text-foreground font-medium animate-in fade-in duration-150">
                     <CreditCard size={16} className="text-primary shrink-0" />
                     <span>Verified Recipient: GCB Prepaid Card ({refCode})</span>
                   </div>
@@ -182,7 +182,7 @@ export function CardTopUpFlow({
                       <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
                         <CreditCard size={20} className="shrink-0" />
                       </span>
-                      <span className="text-[14px] text-muted-foreground font-normal">
+                      <span className="text-body text-muted-foreground font-normal">
                         Select your GCB card
                       </span>
                     </div>
@@ -193,19 +193,19 @@ export function CardTopUpFlow({
                           <CreditCard size={20} className="shrink-0" />
                         </span>
                         <div className="flex flex-col min-w-0 text-left gap-0.5">
-                          <span className="text-[14px] text-foreground font-medium truncate leading-tight">
+                          <span className="text-body text-foreground font-medium truncate leading-tight">
                             GCB {selectedCard.name}
                           </span>
-                          <span className="text-[12px] text-muted-foreground font-normal truncate leading-tight">
+                          <span className="text-meta text-muted-foreground font-normal truncate leading-tight">
                             GCB {selectedCard.type} · {selectedCard.scheme} · {selectedCard.maskedNumber}
                           </span>
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="text-[14px] text-foreground font-semibold tabular block">
+                        <span className="text-body text-foreground font-medium tabular block">
                           {formatMoney(selectedCard.balance ?? 0, selectedCard.currency, true)}
                         </span>
-                        <span className="text-[11px] text-muted-foreground font-normal">Balance</span>
+                        <span className="text-meta text-muted-foreground font-normal">Balance</span>
                       </div>
                     </div>
                   )}

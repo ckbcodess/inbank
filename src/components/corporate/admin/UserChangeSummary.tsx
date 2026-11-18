@@ -42,8 +42,8 @@ export default function UserChangeSummary({ change }: { change: UserChange }) {
     <dl className="flex flex-col gap-2">
       {changeLines(change).map((line) => (
         <div key={line.label} className="flex items-start justify-between gap-4">
-          <dt className="text-[13px] text-muted-foreground">{line.label}</dt>
-          <dd className="tabular text-right text-[13px] text-foreground">{line.value}</dd>
+          <dt className="text-body text-muted-foreground">{line.label}</dt>
+          <dd className="tabular text-right text-body text-foreground">{line.value}</dd>
         </div>
       ))}
     </dl>

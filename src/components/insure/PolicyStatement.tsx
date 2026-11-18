@@ -55,7 +55,7 @@ export function PolicyStatement({ policyId }: { policyId: string }) {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title="Statement" backTo={{ href: `/insure/policies/${policy.id}`, label: plan?.name ?? "Policy" }} />
       <div className="flex flex-col gap-5">
-        <p className="tabular px-1 text-[13px] text-muted-foreground">{`${plan?.name} · ${policy.number}`}</p>
+        <p className="tabular px-1 text-body text-muted-foreground">{`${plan?.name} · ${policy.number}`}</p>
 
         {yearsHeld.length > 0 ? (
           <>
@@ -65,10 +65,10 @@ export function PolicyStatement({ policyId }: { policyId: string }) {
               {shown.map((p) => (
                 <li key={p.date} className="flex items-center justify-between gap-3 rounded-xl px-2 py-3 sm:px-3">
                   <span className="flex min-w-0 flex-col">
-                    <span className="text-[14px] text-foreground">Premium</span>
-                    <span className="tabular text-[12px] text-muted-foreground">{formatDate(p.date)}</span>
+                    <span className="text-body text-foreground">Premium</span>
+                    <span className="tabular text-meta text-muted-foreground">{formatDate(p.date)}</span>
                   </span>
-                  <span className="tabular shrink-0 text-[14px] text-foreground">{money(p.amount)}</span>
+                  <span className="tabular shrink-0 text-body text-foreground">{money(p.amount)}</span>
                 </li>
               ))}
             </ListCard>
@@ -77,12 +77,12 @@ export function PolicyStatement({ policyId }: { policyId: string }) {
                 <Button type="button" variant="outline" size="xl" className="w-full" loading={sending} onClick={send}>
                   Email Statement
                 </Button>
-                <p className="px-1 text-center text-[12px] text-muted-foreground">{`Sent to ${email}, your registered email.`}</p>
+                <p className="px-1 text-center text-meta text-muted-foreground">{`Sent to ${email}, your registered email.`}</p>
               </div>
             )}
           </>
         ) : (
-          <p className="px-1 text-[14px] text-muted-foreground">No premiums paid yet.</p>
+          <p className="px-1 text-body text-muted-foreground">No premiums paid yet.</p>
         )}
       </div>
     </div>

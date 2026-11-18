@@ -111,7 +111,7 @@ export default function AdminEnrolmentDetailPage({
           backTo={{ href: "/admin/enrolments", label: "Enrolments queue" }}
         />
         <div className="rounded-2xl border border-border bg-card p-6 text-center">
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             Please return to the work queue to select an active application.
           </p>
           <Button nativeButton={false} render={<Link href="/admin/enrolments" />} className="mt-3">
@@ -284,7 +284,7 @@ export default function AdminEnrolmentDetailPage({
       />
 
       {feedbackMsg && (
-        <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-3 text-[13px] text-emerald-800 dark:text-emerald-300 animate-in fade-in">
+        <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-3 text-body text-emerald-800 dark:text-emerald-300 animate-in fade-in">
           <Check size={16} />
           {feedbackMsg}
         </div>
@@ -294,18 +294,18 @@ export default function AdminEnrolmentDetailPage({
       <div className="flex items-start justify-between gap-3 rounded-2xl border border-border bg-muted/30 p-3.5">
         <div className="flex items-start gap-2.5">
           <Eye size={17} className="mt-0.5 text-muted-foreground shrink-0" />
-          <div className="text-[13px] leading-relaxed text-muted-foreground">
+          <div className="text-body leading-relaxed text-muted-foreground">
             <span className="font-medium text-foreground">Staff Review Mode: </span>
             Verify wet signatures against cards on file and complete the security callback verification before issuing corporate access.
           </div>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[12px] text-muted-foreground">Assigned:</span>
+          <span className="text-meta text-muted-foreground">Assigned:</span>
           <Badge variant={application.assignedTo.type === "rm" ? "default" : "outline"}>
             {application.assignedTo.name}
           </Badge>
-          <Button variant="ghost" size="xs" onClick={handleReassign} className="text-[11px] h-7">
+          <Button variant="ghost" size="xs" onClick={handleReassign} className="text-meta h-7">
             <ArrowRightLeft size={12} className="mr-1" />
             Reassign
           </Button>
@@ -319,12 +319,12 @@ export default function AdminEnrolmentDetailPage({
           <div className="flex items-center justify-between border-b border-border pb-3">
             <div className="flex items-center gap-2">
               <Building2 size={17} className="text-muted-foreground" />
-              <h2 className="text-[15px] font-medium text-foreground">Company & Accounts</h2>
+              <h2 className="text-heading font-medium text-foreground">Company & Accounts</h2>
             </div>
             <Badge variant="outline">{application.mandate}</Badge>
           </div>
 
-          <dl className="grid grid-cols-1 gap-y-2.5 text-[13px]">
+          <dl className="grid grid-cols-1 gap-y-2.5 text-body">
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Registered Name</dt>
               <dd className="font-medium text-foreground">{application.companyName}</dd>
@@ -338,7 +338,7 @@ export default function AdminEnrolmentDetailPage({
               <dd className="font-medium text-foreground">
                 {application.applicant.name} ({application.applicant.mobile})
                 {!application.applicant.isSignatory && (
-                  <span className="block text-[12px] font-normal text-muted-foreground">
+                  <span className="block text-meta font-normal text-muted-foreground">
                     {application.applicant.designation ?? "Not a signatory"}, not on the mandate
                   </span>
                 )}
@@ -353,10 +353,10 @@ export default function AdminEnrolmentDetailPage({
           </dl>
 
           <div className="pt-2 border-t border-border/50">
-            <p className="text-[12px] font-medium text-muted-foreground mb-2">
+            <p className="text-meta font-medium text-muted-foreground mb-2">
               Enrolled Accounts ({application.accounts.length})
             </p>
-            <div className="flex flex-col gap-1.5 text-[12px]">
+            <div className="flex flex-col gap-1.5 text-meta">
               {application.accounts.map((acc) => (
                 <div
                   key={acc.id}
@@ -364,7 +364,7 @@ export default function AdminEnrolmentDetailPage({
                 >
                   <div>
                     <p className="font-medium text-foreground">{acc.name}</p>
-                    <p className="text-[11px] text-muted-foreground tabular">
+                    <p className="text-meta text-muted-foreground tabular">
                       {acc.type} · {acc.number}
                     </p>
                   </div>
@@ -384,11 +384,11 @@ export default function AdminEnrolmentDetailPage({
           <div className="flex items-center justify-between border-b border-border pb-3">
             <div className="flex items-center gap-2">
               <Users size={17} className="text-muted-foreground" />
-              <h2 className="text-[15px] font-medium text-foreground">
+              <h2 className="text-heading font-medium text-foreground">
                 Designated Users ({application.users.length})
               </h2>
             </div>
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-meta text-muted-foreground">
               Will receive activation links
             </span>
           </div>
@@ -401,19 +401,19 @@ export default function AdminEnrolmentDetailPage({
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-[13px] font-medium text-foreground">{u.name}</p>
+                    <p className="text-body font-medium text-foreground">{u.name}</p>
                     {u.isFromMandate && (
-                      <span className="rounded-md bg-primary/15 px-1.5 py-0.2 text-[10px] font-medium text-foreground">
+                      <span className="rounded-md bg-primary/15 px-1.5 py-0.2 text-meta font-medium text-foreground">
                         Mandate Signatory
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-muted-foreground truncate">
+                  <p className="text-meta text-muted-foreground truncate">
                     {u.email} · {u.mobile}
                   </p>
                 </div>
 
-                <Badge variant="outline" className="shrink-0 text-[11px]">
+                <Badge variant="outline" className="shrink-0 text-meta">
                   {u.role}
                 </Badge>
               </div>
@@ -421,7 +421,7 @@ export default function AdminEnrolmentDetailPage({
           </div>
 
           {letterIn ? (
-            <div className="mt-auto pt-2 border-t border-border/50 flex items-center justify-between text-[12px] text-muted-foreground">
+            <div className="mt-auto pt-2 border-t border-border/50 flex items-center justify-between text-meta text-muted-foreground">
               <span>Signed letter</span>
               <span className="flex items-center gap-1 font-medium text-foreground truncate max-w-[240px]">
                 <FileCheck2 size={13} className="text-primary shrink-0" />
@@ -431,7 +431,7 @@ export default function AdminEnrolmentDetailPage({
             </div>
           ) : (
             <div className="mt-auto flex flex-col gap-2 pt-2 border-t border-border/50">
-              <p className="text-[12px] text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 Signed letter not received yet. Record it when it arrives.
               </p>
               <div className="flex items-center gap-2">
@@ -463,10 +463,10 @@ export default function AdminEnrolmentDetailPage({
           <div className="flex items-center gap-2">
             <ShieldCheck size={18} className="text-primary" />
             <div>
-              <h2 className="text-[15px] font-medium text-foreground">
+              <h2 className="text-heading font-medium text-foreground">
                 Wet-Ink Signature Verification ({matchedSignatures}/{totalSignatures} Matched)
               </h2>
-              <p className="text-[12px] text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 Compare the signatures on the letter with the specimen signatures in Flexcube.
               </p>
             </div>
@@ -494,14 +494,14 @@ export default function AdminEnrolmentDetailPage({
             >
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-2.5">
                 <div>
-                  <p className="text-[14px] font-medium text-foreground">
+                  <p className="text-body font-medium text-foreground">
                     {check.signatoryName}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">{check.role}</p>
+                  <p className="text-meta text-muted-foreground">{check.role}</p>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-[12px] text-muted-foreground mr-1">Status:</span>
+                  <span className="text-meta text-muted-foreground mr-1">Status:</span>
                   <Button
                     type="button"
                     variant={check.status === "match" ? "default" : "outline"}
@@ -518,7 +518,7 @@ export default function AdminEnrolmentDetailPage({
                     size="xs"
                     disabled={!letterIn}
                     onClick={() => handleSignatureDecision(idx, "no_match")}
-                    className="h-7 text-[12px]"
+                    className="h-7 text-meta"
                   >
                     <X size={12} className="mr-1" />
                     No match
@@ -530,7 +530,7 @@ export default function AdminEnrolmentDetailPage({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
                 {/* Column 1: Card on File */}
                 <div className="flex flex-col gap-1.5 rounded-xl border border-border/80 bg-background/50 p-3">
-                  <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <div className="flex items-center justify-between text-meta text-muted-foreground">
                     <span>Registered Specimen Card</span>
                     <span className="tabular font-medium text-foreground">High St. Branch</span>
                   </div>
@@ -539,14 +539,14 @@ export default function AdminEnrolmentDetailPage({
                       <path d="M 10 40 Q 30 10 50 35 T 90 25 T 130 40 T 170 15 T 190 30" />
                     </svg>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-meta text-muted-foreground">
                     Card ID: SIG-GCB-{check.signatoryName.slice(0, 3).toUpperCase()}-2021
                   </p>
                 </div>
 
                 {/* Column 2: Uploaded Document */}
                 <div className="flex flex-col gap-1.5 rounded-xl border border-border/80 bg-background/50 p-3">
-                  <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <div className="flex items-center justify-between text-meta text-muted-foreground">
                     <span>Uploaded Request Pack</span>
                     <span className="tabular font-medium text-foreground">Page 2 Box {idx + 1}</span>
                   </div>
@@ -555,7 +555,7 @@ export default function AdminEnrolmentDetailPage({
                       <path d={check.status === "no_match" ? "M 15 20 Q 40 50 80 20 T 140 45" : "M 12 38 Q 32 12 52 34 T 92 24 T 132 39 T 168 17 T 188 31"} />
                     </svg>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-meta text-muted-foreground">
                     Scanned 300 DPI · Wet-ink confirmed
                   </p>
                 </div>
@@ -571,10 +571,10 @@ export default function AdminEnrolmentDetailPage({
           <div className="flex items-center gap-2">
             <PhoneCall size={18} className="text-primary" />
             <div>
-              <h2 className="text-[15px] font-medium text-foreground">
+              <h2 className="text-heading font-medium text-foreground">
                 Security Callback Verification
               </h2>
-              <p className="text-[12px] text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 Required security call to verify request legitimacy and confirm appointed corporate users.
               </p>
             </div>
@@ -640,7 +640,7 @@ export default function AdminEnrolmentDetailPage({
             variant="outline"
             size="sm"
             onClick={handleLogCall}
-            className="text-[13px] h-8"
+            className="text-body h-8"
           >
             <Phone size={13} className="mr-1.5" />
             {callLogged ? "Update call log" : "Log verification call"}
@@ -650,7 +650,7 @@ export default function AdminEnrolmentDetailPage({
 
       {/* Decision Action Bar */}
       <section className="rounded-2xl border border-border bg-card p-4 flex flex-col gap-3">
-        <h2 className="text-[14px] font-medium text-foreground">Application Decisions</h2>
+        <h2 className="text-body font-medium text-foreground">Application Decisions</h2>
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
@@ -658,7 +658,7 @@ export default function AdminEnrolmentDetailPage({
               variant="default"
               disabled={!canApprove}
               onClick={handleApprove}
-              className="h-10 text-[13px] px-5"
+              className="h-10 text-body px-5"
             >
               <CheckCircle2 size={16} className="mr-1.5" />
               Approve & Issue User Links
@@ -667,7 +667,7 @@ export default function AdminEnrolmentDetailPage({
             <Button
               variant="outline"
               onClick={() => setReturnDialogOpen(true)}
-              className="h-10 text-[13px]"
+              className="h-10 text-body"
             >
               <RotateCcw size={15} className="mr-1.5 text-warning-text" />
               Return for Clarification
@@ -676,20 +676,20 @@ export default function AdminEnrolmentDetailPage({
             <Button
               variant="destructive"
               onClick={() => setRejectionDialogOpen(true)}
-              className="h-10 text-[13px]"
+              className="h-10 text-body"
             >
               <XCircle size={15} className="mr-1.5" />
               Reject Application
             </Button>
           </div>
 
-          <div className="text-[12px] text-muted-foreground">
+          <div className="text-meta text-muted-foreground">
             Current Status: <span className="font-medium text-foreground capitalize">{application.status.replace("_", " ")}</span>
           </div>
         </div>
 
         {approvalBlockReason && (
-          <p className="text-[12px] text-muted-foreground bg-muted/30 rounded-lg p-2.5">
+          <p className="text-meta text-muted-foreground bg-muted/30 rounded-lg p-2.5">
             {approvalBlockReason}
           </p>
         )}

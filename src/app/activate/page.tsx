@@ -47,7 +47,12 @@ import {
 
 import { Field } from "@/components/ui/field";
 import { GhanaCardInput } from "@/components/ui/ghana-card-input";
-import { isCompleteGhanaCard } from "@/lib/ghana-card";
+import {
+  NIA_SELFIE_OUTCOME_LABELS,
+  NIA_SELFIE_OUTCOMES,
+  isCompleteGhanaCard,
+  type NiaSelfieOutcome,
+} from "@/lib/ghana-card";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import PassportVerifyModal from "@/components/auth/PassportVerifyModal";
 import ChoiceRow from "@/components/auth/ChoiceRow";
@@ -96,7 +101,7 @@ type PassportState =
   | "no_account";
 
 const linkClass =
-  "inline-flex min-h-8 cursor-pointer items-center text-[13px] text-foreground underline decoration-border underline-offset-4 transition-colors duration-hover hover:decoration-foreground";
+  "inline-flex min-h-8 cursor-pointer items-center text-body text-foreground underline decoration-border underline-offset-4 transition-colors duration-hover hover:decoration-foreground";
 
 function ActivateContent() {
   const router = useRouter();
@@ -168,6 +173,9 @@ function ActivateContent() {
 
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // The selfie goes to NIA and the result comes back on the selfie screen. A photo that doesn't match asks to try again.
+  const [niaOutcome, setNiaOutcome] = useState<NiaSelfieOutcome>("matched");
+  const [selfieMismatch, setSelfieMismatch] = useState(false);
 
   // OTP State
   const [digits, setDigits] = useState<string[]>(() => Array<string>(OTP_LENGTH).fill(""));
@@ -358,9 +366,15 @@ function ActivateContent() {
 
   function handleCaptureSelfie(imageDataUrl: string) {
     setSelfieImage(imageDataUrl);
+    setSelfieMismatch(false);
     setBusy(true);
     setTimeout(() => {
       setBusy(false);
+      if (niaOutcome === "no_match") {
+        // The photo stays on screen with a red cross; Try Again retakes it.
+        setSelfieMismatch(true);
+        return;
+      }
       setStep("review_details");
     }, 800);
   }
@@ -497,6 +511,7 @@ function ActivateContent() {
       setSelfieImage(null);
       setStep("selfie");
     } else if (step === "selfie") {
+      setSelfieMismatch(false);
       setStep("ghana_card");
     } else {
       setChoosingId(true);
@@ -637,7 +652,7 @@ function ActivateContent() {
             description="For Link2Home accounts and diplomats only."
             onClick={() => setPassportModalOpen(true)}
           />
-          <p className="mt-3 text-center text-[13px] text-muted-foreground">
+          <p className="mt-3 text-center text-body text-muted-foreground">
             Already registered?{" "}
             <Link href="/login" className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80">
               Login
@@ -687,7 +702,7 @@ function ActivateContent() {
                 Continue
               </Button>
             </KeyboardDock>
-            <p className="text-center text-[12px] leading-5 text-muted-foreground">
+            <p className="text-center text-meta leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
               <a href="#" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Terms</a>{" "}
               and{" "}
@@ -725,7 +740,7 @@ function ActivateContent() {
           {(passportState === "waiting" || passportState === "checking" || passportState === "matching") && (
             <div className="flex items-start gap-3 border-y border-border py-4" role="status">
               <AppLoader size={16} />
-              <span className="text-[14px] text-foreground">
+              <span className="text-body text-foreground">
                 {passportState === "matching"
                   ? "Looking for your account"
                   : passportState === "checking"
@@ -746,7 +761,7 @@ function ActivateContent() {
               <button
                 type="button"
                 onClick={switchToGhanaCard}
-                className="inline-flex min-h-8 cursor-pointer items-center text-[13px] text-foreground underline decoration-foreground underline-offset-4 transition-colors duration-hover hover:decoration-muted-foreground"
+                className="inline-flex min-h-8 cursor-pointer items-center text-body text-foreground underline decoration-foreground underline-offset-4 transition-colors duration-hover hover:decoration-muted-foreground"
               >
                 Cancel
               </button>
@@ -826,14 +841,14 @@ function ActivateContent() {
             <>
               <div className="flex flex-col">
                 <div className="flex flex-col gap-1 border-b border-border py-3">
-                  <span className="text-[14px] font-medium text-foreground">Renewed your passport since opening the account?</span>
-                  <span className="text-[14px] leading-relaxed text-muted-foreground">
+                  <span className="text-body font-medium text-foreground">Renewed your passport since opening the account?</span>
+                  <span className="text-body leading-relaxed text-muted-foreground">
                     The bank still has your old one on record. Talk to us and we’ll update it, then you can activate.
                   </span>
                 </div>
                 <div className="flex flex-col gap-1 py-3">
-                  <span className="text-[14px] font-medium text-foreground">Opened your account with a Ghana Card?</span>
-                  <span className="text-[14px] leading-relaxed text-muted-foreground">Activate with your Ghana Card instead.</span>
+                  <span className="text-body font-medium text-foreground">Opened your account with a Ghana Card?</span>
+                  <span className="text-body leading-relaxed text-muted-foreground">Activate with your Ghana Card instead.</span>
                 </div>
               </div>
               <div className="flex flex-col gap-3">
@@ -856,14 +871,30 @@ function ActivateContent() {
 
       {/* STEP 2: Selfie / Photo Capture */}
       {step === "selfie" && !isPassport && (
+        <StateSwitcher
+          states={NIA_SELFIE_OUTCOMES}
+          labels={NIA_SELFIE_OUTCOME_LABELS}
+          value={niaOutcome}
+          onChange={setNiaOutcome}
+          section="NIA"
+          label="Selfie match result"
+        />
+      )}
+
+      {step === "selfie" && !isPassport && (
         <SelfieCapture
           onCapture={handleCaptureSelfie}
           busy={busy}
           capturedImage={selfieImage}
           onRetake={() => {
+            // Back to the normal selfie screen: no message, "Take photo".
             setSelfieImage(null);
+            setSelfieMismatch(false);
           }}
           dataTour="activate-selfie"
+          failed={selfieMismatch}
+          notice={selfieMismatch ? "The Ghana Card and the selfie do not match." : null}
+          captureLabel={selfieMismatch ? "Try Again" : "Take photo"}
         />
       )}
 
@@ -883,16 +914,16 @@ function ActivateContent() {
                 )}
               </div>
               <div className="min-w-0">
-                <span className="text-[14px] font-medium text-foreground block truncate">
+                <span className="text-body font-medium text-foreground block truncate">
                   {activePersona.holderName}
                 </span>
-                <span className="tabular text-[12px] text-muted-foreground">
+                <span className="tabular text-meta text-muted-foreground">
                   {isPassport ? `Passport ${passportLastFour}` : activePersona.ghanaCard}
                 </span>
               </div>
             </div>
 
-            <span className="inline-flex items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-[11px] font-medium text-pill-success-text shrink-0">
+            <span className="inline-flex items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-meta font-medium text-pill-success-text shrink-0">
               <Check size={12} />
               Verified
             </span>
@@ -920,11 +951,11 @@ function ActivateContent() {
                           <span className="font-medium text-foreground truncate">
                             {selectedPrimaryAccount.name}
                           </span>
-                          <span className="text-muted-foreground text-[12px] shrink-0">
+                          <span className="text-muted-foreground text-meta shrink-0">
                             **** {selectedPrimaryAccount.number.slice(-4)}
                           </span>
                           {selectedPrimaryAccount.isJoint && (
-                            <span className="inline-flex items-center gap-1 rounded-lg bg-primary/15 px-2 py-0.2 text-[10px] font-medium text-foreground shrink-0">
+                            <span className="inline-flex items-center gap-1 rounded-lg bg-primary/15 px-2 py-0.2 text-meta font-medium text-foreground shrink-0">
                               <Users size={10} className="text-primary" />
                               Joint
                             </span>
@@ -943,17 +974,17 @@ function ActivateContent() {
                         <div className="flex items-center justify-between w-full gap-2 py-0.5">
                           <div className="flex items-center gap-2 truncate">
                             <span className="font-medium text-foreground truncate">{acc.name}</span>
-                            <span className="rounded-lg bg-muted px-2 py-0.5 text-[11px] text-muted-foreground shrink-0">
+                            <span className="rounded-lg bg-muted px-2 py-0.5 text-meta text-muted-foreground shrink-0">
                               {acc.type}
                             </span>
                             {acc.isJoint && (
-                              <span className="inline-flex items-center gap-1 rounded-lg bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-foreground shrink-0">
+                              <span className="inline-flex items-center gap-1 rounded-lg bg-primary/15 px-2 py-0.5 text-meta font-medium text-foreground shrink-0">
                                 <Users size={11} className="text-primary" />
                                 Joint
                               </span>
                             )}
                           </div>
-                          <span className="text-[12px] text-muted-foreground shrink-0">
+                          <span className="text-meta text-muted-foreground shrink-0">
                             **** {acc.number.slice(-4)}
                           </span>
                         </div>
@@ -969,10 +1000,10 @@ function ActivateContent() {
                   <div className="flex items-start gap-2">
                     <Users size={15} className="text-primary mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-[12px] font-medium text-foreground block">
+                      <span className="text-meta font-medium text-foreground block">
                         Joint Mandate: {selectedPrimaryAccount.mandate || "Both Signatures Required"}
                       </span>
-                      <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
+                      <p className="text-meta text-muted-foreground mt-0.5 leading-relaxed">
                         Alerts will be sent to both signatories upon activation.
                       </p>
                     </div>
@@ -986,23 +1017,23 @@ function ActivateContent() {
           {!showAccountPicker && (
             <div className="rounded-xl border border-border/80 bg-muted/20 p-3 divide-y divide-border/60">
               <div className="flex items-center justify-between pb-2">
-                <span className="text-[13px] text-muted-foreground">Default Account</span>
+                <span className="text-body text-muted-foreground">Default Account</span>
                 <div className="text-right">
-                  <span className="text-[14px] font-medium text-foreground block">
+                  <span className="text-body font-medium text-foreground block">
                     {activePersona.accounts[0]?.name}
                   </span>
-                  <span className="text-[12px] text-muted-foreground">
+                  <span className="text-meta text-muted-foreground">
                     **** {activePersona.accounts[0]?.number.slice(-4)}
                   </span>
                 </div>
               </div>
               <div className="flex items-center justify-between py-2">
-                <span className="text-[13px] text-muted-foreground">Registered Phone</span>
-                <span className="text-[13px] font-medium text-foreground">{activePersona.phone}</span>
+                <span className="text-body text-muted-foreground">Registered Phone</span>
+                <span className="text-body font-medium text-foreground">{activePersona.phone}</span>
               </div>
               <div className="flex items-center justify-between pt-2">
-                <span className="text-[13px] text-muted-foreground">Registered Email</span>
-                <span className="text-[13px] font-medium text-foreground">{activePersona.email}</span>
+                <span className="text-body text-muted-foreground">Registered Email</span>
+                <span className="text-body font-medium text-foreground">{activePersona.email}</span>
               </div>
             </div>
           )}
@@ -1023,7 +1054,7 @@ function ActivateContent() {
             <button
               type="button"
               onClick={() => setStep("ghana_card")}
-              className="text-center text-[12px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
+              className="text-center text-meta text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
             >
               Use a different Ghana Card
             </button>
@@ -1055,7 +1086,7 @@ function ActivateContent() {
           </div>
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
@@ -1069,7 +1100,7 @@ function ActivateContent() {
                 setCountdown(RESEND_SECONDS);
                 setErrorMsg("");
               }}
-              className="text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
+              className="text-body text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
             >
               {countdown > 0 ? (
                 <>
@@ -1080,19 +1111,19 @@ function ActivateContent() {
               )}
             </button>
 
-            <p className="text-center text-[13px] text-muted-foreground">
+            <p className="text-center text-body text-muted-foreground">
               Dial <a href="tel:*422*11%23" className="tabular font-medium text-foreground underline underline-offset-4 hover:text-foreground/80">*422*11#</a> to retrieve your code
             </p>
           </div>
 
           {isJoint && (
-            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3 text-[12px] text-muted-foreground">
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3 text-meta text-muted-foreground">
               <span className="font-medium text-foreground">Joint mandate notice:</span> Notice sent to co-holder Esther ({activePersona.coSignatoryPhone}).
             </div>
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Verifying code...</span>
             </div>
@@ -1166,16 +1197,16 @@ function ActivateContent() {
           <PinRequirements pin={pinDigits.join("")} />
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
           {!errorMsg && pinNote && (
-            <p className="-mt-2 text-center text-[13px] text-muted-foreground">{pinNote}</p>
+            <p className="-mt-2 text-center text-body text-muted-foreground">{pinNote}</p>
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Saving your PIN…</span>
             </div>
@@ -1211,13 +1242,13 @@ function ActivateContent() {
 
 
           {errorMsg && (
-            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-body text-destructive">
               {errorMsg}
             </p>
           )}
 
           {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 py-1 text-body text-muted-foreground">
               <AppLoader size={16} />
               <span>Activating...</span>
             </div>

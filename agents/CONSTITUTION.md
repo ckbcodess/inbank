@@ -148,16 +148,23 @@ here. Never fall back to dense, boxed layouts.
 
 ## 5. Typography
 
-- **Open Sans everywhere** (`--font-sans`; `--font-mono` is an alias for it). There are no monospace
-  faces.
+- **Open Sans on the web, DM Sans in the native app** (designer, 2026-11-18). The web app uses Open Sans
+  (`--font-sans`; `--font-mono` is an alias for it). The native mobile app uses DM Sans. In Figma, this is the
+  **App** mode of the typography collections; **Mobile** there means phone-width web, which stays Open Sans.
+  There are no monospace faces. The weight rule below applies to both fonts. In Figma, Medium is the
+  variable font's weight axis at 500, never a font file named "Medium".
 - **Letter-spacing is a token, not a number.** Use `tracking-[var(--ls-tight)]`, `--ls-heading`, `--ls-display` or `--ls-label` (globals.css), never a raw `tracking-[-0.02em]`. Kerning is the font's own and stays on.
 - **Two weights.** Regular (400) for body text and numbers. Medium (`font-medium`, 500) for headings,
   section titles, form labels and buttons. **Semibold and bold are banned.** `globals.css` resets
   text elements to `font-weight: inherit`; `font-medium` overrides that on purpose.
 - **The root font size is 14px; spacing and radius are in px.** `--spacing: 4px` (globals.css), so a step is
-  4px. Rem-based values outside those scales (`text-base`, `max-w-md`) still follow the 14px root. `text-sm` and
-  `text-xs` are the exception: globals.css redefines them as the scale's 14px and 12px (designer, 2026-11-10), and
-  they're the names Figma's Body and Meta sizes carry as code syntax.
+  4px. Rem-based values outside those scales (`max-w-md`) still follow the 14px root.
+- **Font sizes come only from the type scale** (designer, 2026-11-18). Every size is one of the eight named steps in the table
+  below (designer, 2026-11-18: Micro, Label and two hero sizes were cut), defined once in globals.css and matching a Figma text style of the same role. Never write `text-[Npx]`,
+  `text-base`, `text-lg` or `text-2xl`; lint enforces it. `text-sm` and `text-xs` still work (14 and 12px) but new
+  code writes `text-body` and `text-meta`. Exempt: drawn objects and bespoke fields (card art, the cash-out ticket,
+  avatar initials, `OtpInput`, the amount field, codes to read out) and prototype tooling. A one-off exemption
+  carries an `eslint-disable-next-line no-restricted-syntax -- reason` comment. A new step needs the designer.
 - **Log in, never sign in** (designer, 2026-11-17). Log in / Log out / logged in / login (noun) everywhere: buttons,
   copy, notifications, comments. "Sign in" and "sign out" never appear. Sign up stays as it is.
 - **All numbers carry `.tabular`:** money, dates, account numbers, references, percentages and rates.
@@ -169,14 +176,16 @@ here. Never fall back to dense, boxed layouts.
 
 | Use | Classes |
 |---|---|
-| Page title (via `PageHeader`) | `type-page-title` (18 → 20 → 22px, defined in globals.css) `font-medium tracking-[var(--ls-heading)]` |
-| Balance figure (a balance only, never a fact like a sum assured) | `text-[32px]` on a detail page, `text-[40px]`–`[76px]` on home and account screens, `tracking-[var(--ls-heading)]` (`--ls-display` for the biggest), regular, `.tabular` |
-| Key-fact value (first row, page with no balance figure) | `text-[20px]` regular, `.tabular` |
-| Section / panel heading | `text-[16px] font-medium` (14px under `sm` where space is tight) |
-| Body: paragraphs, row primary text, table cells (designer, 2026-11-10; was 13px) | `text-[14px] text-foreground` |
-| Form input values and placeholders (`Input`, `Textarea`, select triggers) | `text-[14px] text-foreground`, the same as body. The placeholder is the same size as the value; never size it separately. |
-| Form labels | `text-[13px] font-medium text-foreground` (never muted) |
-| Meta, captions, micro-labels | `text-[12px] text-muted-foreground`, sentence case |
+| Balance or payment amount: dashboard hero, account page, detail pages, sheets, approvals | `type-balance` (32px everywhere, so a seven-figure balance fits a phone), `tracking-[var(--ls-heading)]`, regular, `.tabular`. Balances and the amount being approved only, never a fact like a sum assured. |
+| Headline: outcome screens (success, failed), welcome dialogs, large dialog titles | `type-headline` (22 → 24px) `font-medium` |
+| Page title (via `PageHeader`), and the title of the auth screens (`AuthLayout`) | `type-page-title` (18 → 20 → 22px) `font-medium tracking-[var(--ls-heading)]` |
+| Key-fact value (first row, page with no balance figure) | `text-fact` (20px) regular, `.tabular` |
+| Dialog and sheet titles | `text-title` (18px) `font-medium` |
+| Section / panel heading | `text-heading` (16px) `font-medium` (`text-body` under `sm` where space is tight) |
+| Body: paragraphs, row primary text, table cells, input values and placeholders | `text-body` (14px) `text-foreground`. The placeholder is the same size as the value; never size it separately. |
+| Form labels (via `Label` / `Field`) | `text-meta font-medium text-foreground` (12px Medium), never muted. There is no separate label size. |
+| Emphasised row text | `text-body font-medium` (14px Medium) |
+| Meta: captions, badges, pills, chart axes, timestamps | `text-meta` (12px) `text-muted-foreground`, sentence case, never uppercase |
 | Long-form paragraphs | add `leading-relaxed` |
 
 ## 6. Shape and spacing
@@ -239,7 +248,7 @@ here. Never fall back to dense, boxed layouts.
 
 - **Permissions hide, they don't disable.** If a role can't use something, it isn't in the DOM.
 - **A control disabled because of state says why,** directly below it in
-  `text-[12px] text-muted-foreground`. Never grey something out without a reason.
+  `text-meta text-muted-foreground`. Never grey something out without a reason.
 - **Validation is inline,** under the field, with `aria-invalid`. Never in a modal.
 - **Alerts and confirmations are toasts** (Sonner, or `AlertToast`). Never draw an inline banner.
   The exception is errors about what the person just typed (a field, a code, a PIN): those sit inline

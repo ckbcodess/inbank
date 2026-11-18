@@ -79,13 +79,13 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
 
           {/* User & Account details */}
           <div className="flex flex-col items-center text-center">
-            <span className="text-[15px] font-semibold text-foreground">
+            <span className="text-heading font-medium text-foreground">
               {userName}
             </span>
-            <span className="text-[12px] text-muted-foreground font-mono">
+            <span className="text-meta text-muted-foreground font-mono">
               {primaryAccount.name} ∗∗∗∗ {primaryAccount.number.replace(/\s+/g, "").slice(-4)}
             </span>
-            <p className="text-[11px] text-muted-foreground/80 pt-2 max-w-[260px] text-center">
+            <p className="text-meta text-muted-foreground/80 pt-2 max-w-[260px] text-center">
               Scan with any GhQR, GhanaPay, or mobile banking app to receive instant payments.
             </p>
           </div>
@@ -115,7 +115,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
           <Link
             href="/payments/send?rail=qr&mode=myqr"
             onClick={() => onOpenChange(false)}
-            className="flex items-center justify-center gap-2 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors pt-1 cursor-pointer"
+            className="flex items-center justify-center gap-2 text-meta font-medium text-muted-foreground hover:text-foreground transition-colors pt-1 cursor-pointer"
           >
             <ScanLine size={13} />
             <span>Open scanner to pay a merchant</span>
