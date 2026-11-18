@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { AppLoader } from "@/components/ui/loader";
-import { ArrowLeftRight, Camera, Check, Lock, ScanFace, ShieldCheck, Smartphone, Upload, X } from "@/components/ui/icons";
+import { ArrowLeftRight, Check, Lock, ShieldCheck, X } from "@/components/ui/icons";
 import { QrCode } from "@/components/ui/qr-code";
 import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { cn } from "@/lib/utils";
@@ -173,25 +173,14 @@ export default function IdentityPartnerWindow({
 }
 
 /**
- * The partner's own screens. The passport can be photographed or uploaded (a scan or photo already on the computer).
- * The selfie can't be uploaded, because it's the liveness check. A computer without a camera hands off to the phone.
+ * The partner's own screens. The check is QR-only: the passport and the selfie are taken on the customer's phone,
+ * never on this computer, so there is no photo capture or upload here.
  */
 function PartnerStep({ progress, onNext }: { progress: PartnerProgress; onNext: (p: PartnerProgress) => void }) {
-  const fileInput = useRef<HTMLInputElement>(null);
   const partnerButton = (label: string, next: PartnerProgress) => (
     <Button type="button" size="xl" onClick={() => onNext(next)} className="w-full">
       {label}
     </Button>
-  );
-  const usePhone = (
-    <button
-      type="button"
-      onClick={() => onNext("handoff")}
-      className="hidden min-h-8 items-center gap-2 text-[13px] text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground sm:inline-flex"
-    >
-      <Smartphone size={16} />
-      No camera? Continue on your phone
-    </button>
   );
 
   if (progress === "opening") {
@@ -217,65 +206,17 @@ function PartnerStep({ progress, onNext }: { progress: PartnerProgress; onNext: 
         </div>
         <h2 className="text-[18px] font-medium tracking-[var(--ls-tight)]">GCB Bank wants to confirm it’s you</h2>
         <p className="max-w-80 text-[14px] leading-relaxed text-muted-foreground">
-          We’ll read your passport and take a selfie. Then we share this with GCB Bank, and nothing else:
+          You’ll check your passport and take a selfie on your phone. Then we share this with GCB Bank, and nothing else:
         </p>
         <ul className="w-full rounded-xl border border-border px-4 py-3 text-left text-[14px] leading-loose">
           <li>Your name and date of birth</li>
           <li>Your passport number and expiry date</li>
           <li>Whether the check passed</li>
         </ul>
-        <div className="mt-auto w-full">{partnerButton("Continue", "passport")}</div>
+        <div className="mt-auto w-full">{partnerButton("Continue", "handoff")}</div>
         <a href="#" className="text-[12px] text-muted-foreground underline underline-offset-4 hover:text-foreground">
           Privacy notice
         </a>
-      </>
-    );
-  }
-
-  if (progress === "passport") {
-    return (
-      <>
-        <span className="text-[12px] text-muted-foreground">Step 1 of 2</span>
-        <h2 className="text-[18px] font-medium tracking-[var(--ls-tight)]">Photograph your passport photo page</h2>
-        <div className="flex h-40 w-60 items-center justify-center rounded-xl border-2 border-dashed border-border text-muted-foreground">
-          <Camera size={18} />
-        </div>
-        <p className="max-w-80 text-[14px] leading-relaxed text-muted-foreground">
-          Lay it flat in good light, with no glare on the photo.
-        </p>
-        <div className="mt-auto flex w-full flex-col gap-3">
-          {partnerButton("Take Photo", "selfie")}
-          <Button type="button" variant="outline" size="xl" className="w-full" onClick={() => fileInput.current?.click()}>
-            <Upload size={16} />
-            Upload a Photo
-          </Button>
-          <input
-            ref={fileInput}
-            type="file"
-            accept="image/*,application/pdf"
-            className="hidden"
-            aria-label="Upload a photo of your passport photo page"
-            onChange={(e) => {
-              if (e.target.files?.length) onNext("selfie");
-            }}
-          />
-        </div>
-        {usePhone}
-      </>
-    );
-  }
-
-  if (progress === "selfie") {
-    return (
-      <>
-        <span className="text-[12px] text-muted-foreground">Step 2 of 2</span>
-        <h2 className="text-[18px] font-medium tracking-[var(--ls-tight)]">Take a selfie</h2>
-        <div className="flex size-40 items-center justify-center rounded-full border-2 border-dashed border-border text-muted-foreground">
-          <ScanFace size={18} />
-        </div>
-        <p className="max-w-80 text-[14px] leading-relaxed text-muted-foreground">We compare it with your passport photo.</p>
-        <div className="mt-auto w-full">{partnerButton("Take Selfie", "checking")}</div>
-        {usePhone}
       </>
     );
   }
@@ -285,7 +226,7 @@ function PartnerStep({ progress, onNext }: { progress: PartnerProgress; onNext: 
       <>
         <h2 className="text-[18px] font-medium tracking-[var(--ls-tight)]">Continue on your phone</h2>
         <p className="max-w-80 text-[14px] leading-relaxed text-muted-foreground">
-          Scan this with your phone’s camera to take the photos there. This window moves on when you’re done.
+          Scan this with your phone’s camera to check your passport there. This window moves on when you’re done.
         </p>
         <div className="rounded-xl border border-border bg-background p-3 text-foreground">
           <QrCode value="https://example.com/verify/session" size={160} aria-label="Code to continue on your phone" />
@@ -294,20 +235,13 @@ function PartnerStep({ progress, onNext }: { progress: PartnerProgress; onNext: 
           <AppLoader size={16} />
           Waiting for your phone
         </div>
-        <div className="mt-auto flex w-full flex-col items-center gap-3">
-          {SHOW_DEMO_TOOLS && (
+        {SHOW_DEMO_TOOLS && (
+          <div className="mt-auto flex w-full flex-col items-center gap-3">
             <Button type="button" variant="outline" size="xl" className="w-full" onClick={() => onNext("checking")}>
               Demo: Finish on Phone
             </Button>
-          )}
-          <button
-            type="button"
-            onClick={() => onNext("passport")}
-            className="min-h-8 text-[13px] text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
-          >
-            Use this computer instead
-          </button>
-        </div>
+          </div>
+        )}
       </>
     );
   }

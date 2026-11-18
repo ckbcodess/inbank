@@ -52,7 +52,10 @@ import PassportVerifyModal from "@/components/auth/PassportVerifyModal";
 import ChoiceRow from "@/components/auth/ChoiceRow";
 import IdentityPartnerWindow from "@/components/auth/IdentityPartnerWindow";
 import {
+  fetchPartnerStatus,
   maskPassport,
+  newPartnerSessionId,
+  recordPartnerOutcome,
   type PartnerProgress,
   type PartnerResult,
 } from "@/lib/identity-partner";
@@ -64,9 +67,18 @@ const GCB_HELP_URL = "https://www.gcbbank.com.gh";
 
 /**
  * The passport path's second step, in place of our selfie: the identity partner's window is open, was closed early,
- * came back, or we're matching its passport to an account.
+ * passed and waits for the customer to confirm here, or we're matching its passport to an account.
  */
-type PassportState = "waiting" | "closed" | "failed" | "expired" | "matching" | "no_account";
+type PassportState =
+  | "waiting"
+  | "closed"
+  | "ready"
+  | "checking"
+  | "pending"
+  | "failed"
+  | "expired"
+  | "matching"
+  | "no_account";
 
 const linkClass =
   "inline-flex min-h-8 cursor-pointer items-center text-[13px] text-foreground underline decoration-border underline-offset-4 transition-colors duration-hover hover:decoration-foreground";
@@ -96,7 +108,7 @@ function ActivateContent() {
   const [partnerOpen, setPartnerOpen] = useState(false);
   const [partnerSession, setPartnerSession] = useState(0);
   const [partnerFlash, setPartnerFlash] = useState(0);
-  const [partnerProgress, setPartnerProgress] = useState<PartnerProgress>("opening");
+  const [, setPartnerProgress] = useState<PartnerProgress>("opening");
   const [passportState, setPassportState] = useState<PassportState>("waiting");
   const [passportNumber, setPassportNumber] = useState("");
   const [passportExpiry, setPassportExpiry] = useState("");
@@ -245,7 +257,7 @@ function ActivateContent() {
     setIdMethod("passport");
     setPassportState("waiting");
     setPartnerProgress("opening");
-    setPartnerSession((s) => s + 1);
+    setPartnerSession(newPartnerSessionId());
     setPartnerFlash(0);
     setPartnerOpen(true);
     setErrorMsg("");
@@ -259,18 +271,35 @@ function ActivateContent() {
 
   function handlePartnerResult(result: PartnerResult) {
     setPartnerOpen(false);
-    if (result.status === "failed") {
-      setPassportExpiry(result.expiry ?? "");
-      setPassportState(result.reason === "expired" ? "expired" : "failed");
+    // The partner keeps the outcome for this session. Nothing is shown or used here until the customer confirms.
+    recordPartnerOutcome(partnerSession, result);
+    setPassportState("ready");
+  }
+
+  /**
+   * The customer says they've finished. We ask for this session's status and act only on that answer:
+   * pending shows "still checking", a failure shows its error, and a pass goes on to find the account.
+   */
+  async function confirmPassportVerification() {
+    const session = partnerSession;
+    setPassportState("checking");
+    const status = await fetchPartnerStatus(session);
+    // The person may have left the passport path (Back, Use Ghana Card) or started again meanwhile.
+    if (matchSession.current !== session) return;
+    if (status.state === "pending") {
+      setPassportState("pending");
       return;
     }
-    setPassportNumber(result.passportNumber);
+    if (status.state === "failed") {
+      setPassportExpiry(status.expiry ?? "");
+      setPassportState(status.reason === "expired" ? "expired" : "failed");
+      return;
+    }
+    setPassportNumber(status.passportNumber);
     setPassportState("matching");
-    const session = partnerSession;
     window.setTimeout(() => {
-      // The person may have left the passport path (Back, Use Ghana Card) or reopened the window meanwhile.
       if (matchSession.current !== session) return;
-      const match = getPersonaByPassport(result.passportNumber);
+      const match = getPersonaByPassport(status.passportNumber);
       if (!match) {
         setPassportState("no_account");
         return;
@@ -456,11 +485,19 @@ function ActivateContent() {
   const passportCopy: Record<PassportState, { title: string; description: string }> = {
     waiting: {
       title: "Finish in the Verification Window",
-      description: "Your check is open in a separate window. This page moves on by itself when it’s done.",
+      description: "Finish on your phone. When you’re done, come back here and confirm.",
     },
     closed: {
       title: "Verification Not Finished",
-      description: "The verification window was closed before the check was done, so nothing was shared with GCB.",
+      description: "The verification window was closed. If you finished on your phone, confirm below. Otherwise, resume.",
+    },
+    checking: {
+      title: "Checking Your Verification",
+      description: "This takes a few seconds.",
+    },
+    pending: {
+      title: "Still Checking",
+      description: "Your check isn’t finished yet. Check again in a moment, or verify again if you haven’t finished.",
     },
     failed: {
       title: "We Couldn’t Verify Your Passport",
@@ -472,6 +509,10 @@ function ActivateContent() {
         ? `The passport you used expired on ${passportExpiryText}. Activate with a valid passport. If you’ve renewed it, the bank needs the new one on your account first.`
         : "Activate with a valid passport. If you’ve renewed it, the bank needs the new one on your account first.",
     },
+    ready: {
+      title: "Complete Your Verification",
+      description: "Your check is finished. Confirm below so we can find your account.",
+    },
     matching: {
       title: "Finding Your Account",
       description: `Passport ${passportLastFour} is verified. We’re looking for the account it was used to open.`,
@@ -481,14 +522,12 @@ function ActivateContent() {
       description: `Passport ${passportLastFour} was verified, but no GCB account was opened with it.`,
     },
   };
-  const passportRead = ["selfie", "checking", "done"].includes(partnerProgress);
-  const selfieTaken = ["checking", "done"].includes(partnerProgress);
 
   return (
     <AuthLayout
       title={
         choosingId
-          ? "How Was Your Account Opened?"
+          ? "How Will You Like To Proceed?"
           : step === "ghana_card"
           ? "Verify Your Identity"
           : step === "selfie"
@@ -511,7 +550,7 @@ function ActivateContent() {
       }
       description={
         choosingId
-          ? "Choose the ID you gave the bank when you opened your GCB account."
+          ? "Choose the ID required to access your account."
           : step === "ghana_card"
           ? "We will securely verify your identity using your Ghana Card."
           : step === "selfie"
@@ -561,7 +600,7 @@ function ActivateContent() {
             dataTour="activate-with-passport"
             icon={<Passport size={18} />}
             title="With Passport"
-            description="I opened my account with a passport."
+            description="For Link2Home accounts and diplomats only."
             onClick={() => setPassportModalOpen(true)}
           />
           <p className="mt-3 text-center text-[13px] text-muted-foreground">
@@ -616,36 +655,30 @@ function ActivateContent() {
       {/* STEP 2 (passport): the identity partner's window stands in for our selfie */}
       {step === "selfie" && isPassport && (
         <div className="flex flex-col gap-4">
-          {(passportState === "waiting" || passportState === "matching") && (
+          {(passportState === "waiting" || passportState === "checking" || passportState === "matching") && (
             <div className="flex items-start gap-3 border-y border-border py-4" role="status">
               <AppLoader size={16} />
-              <div className="flex flex-1 flex-col gap-2">
-                <span className="text-[14px] text-foreground">
-                  {passportState === "matching" ? "Looking for your account" : "Waiting for verification"}
-                </span>
-                {passportState === "waiting" && (
-                  <ul className="flex flex-col gap-2">
-                    {[
-                      { done: passportRead, label: "Passport read" },
-                      { done: selfieTaken, label: "Selfie taken" },
-                    ].map((item) => (
-                      <li
-                        key={item.label}
-                        className={`flex items-center gap-2 text-[13px] ${item.done ? "text-foreground" : "text-muted-foreground"}`}
-                      >
-                        <span
-                          className={`flex size-4 items-center justify-center rounded-full border ${
-                            item.done ? "border-transparent bg-pill-success text-pill-success-text" : "border-border"
-                          }`}
-                        >
-                          {item.done && <Check size={12} />}
-                        </span>
-                        {item.label}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              <span className="text-[14px] text-foreground">
+                {passportState === "matching"
+                  ? "Looking for your account"
+                  : passportState === "checking"
+                  ? "Checking your verification"
+                  : "Waiting for verification"}
+              </span>
+            </div>
+          )}
+
+          {passportState === "ready" && (
+            <div className="flex flex-col items-center gap-3">
+              <Button type="button" size="xl" className="w-full" onClick={confirmPassportVerification}>
+                Complete Verification
+              </Button>
+              <Button type="button" variant="outline" size="xl" className="w-full" onClick={openPartner}>
+                Verify Again
+              </Button>
+              <button type="button" onClick={switchToGhanaCard} className={linkClass}>
+                Cancel
+              </button>
             </div>
           )}
 
@@ -665,8 +698,25 @@ function ActivateContent() {
               <Button type="button" size="xl" className="w-full" onClick={openPartner}>
                 Resume Verification
               </Button>
+              <Button type="button" variant="outline" size="xl" className="w-full" onClick={confirmPassportVerification}>
+                I’ve Already Finished
+              </Button>
               <button type="button" onClick={switchToGhanaCard} className={linkClass}>
                 Use Ghana Card instead
+              </button>
+            </div>
+          )}
+
+          {passportState === "pending" && (
+            <div className="flex flex-col items-center gap-3">
+              <Button type="button" size="xl" className="w-full" onClick={confirmPassportVerification}>
+                Check Again
+              </Button>
+              <Button type="button" variant="outline" size="xl" className="w-full" onClick={openPartner}>
+                Verify Again
+              </Button>
+              <button type="button" onClick={switchToGhanaCard} className={linkClass}>
+                Cancel
               </button>
             </div>
           )}

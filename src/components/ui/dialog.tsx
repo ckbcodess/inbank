@@ -91,10 +91,10 @@ function DialogOverlay({
 export type DialogSize = "sm" | "md" | "lg" | "xl" | "full"
 
 const sizeClasses: Record<DialogSize, string> = {
-  sm: "sm:max-w-[420px]",
-  md: "sm:max-w-[480px]",
-  lg: "sm:max-w-[540px]",
-  xl: "sm:max-w-[640px]",
+  sm: "sm:max-w-[456px]",
+  md: "sm:max-w-[520px]",
+  lg: "sm:max-w-[584px]",
+  xl: "sm:max-w-[688px]",
   full: "max-sm:fixed max-sm:inset-0 max-sm:w-full max-sm:h-full max-sm:max-h-none max-sm:rounded-none sm:max-w-none sm:w-full sm:h-full sm:rounded-none",
 }
 
