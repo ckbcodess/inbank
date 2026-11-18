@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Camera, CameraOff, Check, RefreshCw, Upload } from "@/components/ui/icons";
+import { Camera, CameraOff, Check, RefreshCw, Upload, X } from "@/components/ui/icons";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 
@@ -25,6 +25,12 @@ interface SelfieCaptureProps {
   capturedImage?: string | null;
   onRetake?: () => void;
   dataTour?: string;
+  /** A line under the viewfinder, e.g. why the last photo didn't pass. */
+  notice?: string | null;
+  /** The capture button's label. "Try Again" after a photo that didn't pass. */
+  captureLabel?: string;
+  /** The photo on screen didn't pass: it is marked with a red cross and the button retakes it. */
+  failed?: boolean;
 }
 
 type FacePosition = "centered" | "off_center" | "too_close" | "no_face" | "detecting";
@@ -35,12 +41,17 @@ export default function SelfieCapture({
   capturedImage = null,
   onRetake,
   dataTour = "selfie-capture-btn",
+  notice = null,
+  captureLabel = "Take photo",
+  failed = false,
 }: SelfieCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const animFrameRef = useRef<number | null>(null);
   const detectorRef = useRef<NativeFaceDetector | null>(null);
+  // One camera start at a time: Try Again and the capture effect can both ask for it.
+  const startingRef = useRef(false);
 
   const [cameraState, setCameraState] = useState<
     "idle" | "requesting" | "ready" | "denied" | "unsupported"
@@ -62,7 +73,7 @@ export default function SelfieCapture({
   }, []);
 
   const startCamera = useCallback(async () => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || startingRef.current || streamRef.current) return;
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setCameraState("unsupported");
@@ -72,6 +83,7 @@ export default function SelfieCapture({
 
     setCameraState("requesting");
     setErrorMessage("");
+    startingRef.current = true;
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -99,6 +111,8 @@ export default function SelfieCapture({
       } else {
         setErrorMessage("Unable to access camera feed.");
       }
+    } finally {
+      startingRef.current = false;
     }
   }, []);
 
@@ -332,7 +346,9 @@ export default function SelfieCapture({
         <div
           className={`relative flex size-42 sm:size-49 items-center justify-center overflow-hidden rounded-full border-4 transition-colors duration-hover bg-muted/40 shadow-inner ${
             capturedImage
-              ? "border-success/80"
+              ? failed
+                ? "border-destructive"
+                : "border-success/80"
               : facePosition === "centered"
               ? "border-success ring-4 ring-success/20"
               : facePosition === "off_center" || facePosition === "too_close"
@@ -350,8 +366,12 @@ export default function SelfieCapture({
               {/* A camera snapshot (data URL) — nothing for the optimiser to do. */}
               <Image src={capturedImage} alt="Captured selfie" fill unoptimized className="object-cover" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/15">
-                <div className="flex size-10 items-center justify-center rounded-full bg-success text-white shadow-sm">
-                  <Check size={22} />
+                <div
+                  className={`flex size-10 items-center justify-center rounded-full text-white shadow-sm ${
+                    failed ? "bg-destructive" : "bg-success"
+                  }`}
+                >
+                  {failed ? <X size={22} /> : <Check size={22} />}
                 </div>
               </div>
             </div>
@@ -425,9 +445,19 @@ export default function SelfieCapture({
         )}
       </div>
 
+      {notice && (
+        <p role="alert" className="text-center text-[14px] leading-relaxed text-destructive-text">
+          {notice}
+        </p>
+      )}
+
       {/* Action Controls */}
       <div className="w-full flex flex-col gap-2">
-        {capturedImage ? (
+        {capturedImage && failed ? (
+          <Button type="button" variant="default" size="md" onClick={handleRetakeClick} className="w-full">
+            {captureLabel}
+          </Button>
+        ) : capturedImage ? (
           <div className="flex flex-col gap-2">
             <Button
               type="button"
@@ -436,7 +466,7 @@ export default function SelfieCapture({
               loading={busy}
               className="w-full"
             >
-              Verified ✓
+              {busy ? "Checking your selfie" : "Verified ✓"}
             </Button>
             {onRetake && !busy && (
               <button
@@ -460,7 +490,7 @@ export default function SelfieCapture({
             className="w-full"
           >
             <Camera size={16} className="mr-2" />
-            Take photo
+            {captureLabel}
           </Button>
         ) : cameraState === "denied" || cameraState === "unsupported" ? (
           <div className="flex flex-col gap-2 w-full">

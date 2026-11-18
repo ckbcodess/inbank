@@ -41,9 +41,18 @@ import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswo
 import { Field } from "@/components/ui/field";
 import { GhanaCardInput } from "@/components/ui/ghana-card-input";
 import { isCompleteGhanaCard } from "@/lib/ghana-card";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
 type Step = OnboardingStep;
 
 const RESEND_SECONDS = 30;
+
+/** What NIA returns for the selfie. Dev Mode picks it under Screen states. */
+type NiaOutcome = "matched" | "no_match";
+const NIA_OUTCOMES: readonly NiaOutcome[] = ["matched", "no_match"];
+const NIA_OUTCOME_LABELS: Record<NiaOutcome, string> = {
+  matched: "Matches",
+  no_match: "Does not match",
+};
 
 function SignupContent() {
   const router = useRouter();
@@ -70,6 +79,9 @@ function SignupContent() {
     /^\S+@\S+\.\S+$/.test(email.trim());
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // The selfie goes to NIA and the result comes back on the selfie screen. A photo that doesn't match asks to try again.
+  const [niaOutcome, setNiaOutcome] = useState<NiaOutcome>("matched");
+  const [selfieMismatch, setSelfieMismatch] = useState(false);
 
   // OTP State
   const [digits, setDigits] = useState<string[]>(() => Array<string>(OTP_LENGTH).fill(""));
@@ -149,9 +161,15 @@ function SignupContent() {
 
   function handleCaptureSelfie(imageDataUrl: string) {
     setSelfieImage(imageDataUrl);
+    setSelfieMismatch(false);
     setBusy(true);
     setTimeout(() => {
       setBusy(false);
+      if (niaOutcome === "no_match") {
+        // The photo stays on screen with a red cross; Try Again retakes it.
+        setSelfieMismatch(true);
+        return;
+      }
       setStep("review_details");
     }, 800);
   }
@@ -363,14 +381,30 @@ function SignupContent() {
 
       {/* STEP 2: Selfie / Photo Capture */}
       {step === "selfie" && (
+        <StateSwitcher
+          states={NIA_OUTCOMES}
+          labels={NIA_OUTCOME_LABELS}
+          value={niaOutcome}
+          onChange={setNiaOutcome}
+          section="NIA"
+          label="Selfie match result"
+        />
+      )}
+
+      {step === "selfie" && (
         <SelfieCapture
           onCapture={handleCaptureSelfie}
           busy={busy}
           capturedImage={selfieImage}
           onRetake={() => {
+            // Back to the normal selfie screen: no message, "Take photo".
             setSelfieImage(null);
+            setSelfieMismatch(false);
           }}
           dataTour="signup-selfie"
+          failed={selfieMismatch}
+          notice={selfieMismatch ? "The Ghana Card and the selfie do not match." : null}
+          captureLabel={selfieMismatch ? "Try Again" : "Take photo"}
         />
       )}
 

@@ -48,6 +48,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { GhanaCardInput } from "@/components/ui/ghana-card-input";
 import { isCompleteGhanaCard } from "@/lib/ghana-card";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
 import PassportVerifyModal from "@/components/auth/PassportVerifyModal";
 import ChoiceRow from "@/components/auth/ChoiceRow";
 import IdentityPartnerWindow from "@/components/auth/IdentityPartnerWindow";
@@ -64,6 +65,20 @@ type Step = OnboardingStep;
 const RESEND_SECONDS = 30;
 /** Where a customer abroad gets help. The bank's own site until a diaspora contact channel is agreed (WORKING_LOG). */
 const GCB_HELP_URL = "https://www.gcbbank.com.gh";
+/** Where an existing GCB account is linked to a Ghana Card (the ePay portal). */
+const LINK_ACCOUNT_URL = "https://epay.gcbltd.com:200/";
+/** Where a new GCB account is opened. */
+const OPEN_ACCOUNT_URL = "https://accountopeningportal.gcbltd.com/get-started";
+
+/** What the Ghana Card step shows on screen. */
+type GhanaCardView = "idle" | "not_found";
+/** What the registry check returns when the customer presses Continue. Dev Mode picks it under Screen states. */
+type GhanaCardOutcome = "verified" | "not_found";
+const GHANA_CARD_OUTCOMES: readonly GhanaCardOutcome[] = ["verified", "not_found"];
+const GHANA_CARD_OUTCOME_LABELS: Record<GhanaCardOutcome, string> = {
+  verified: "Passes",
+  not_found: "No record found",
+};
 
 /**
  * The passport path's second step, in place of our selfie: the identity partner's window is open, was closed early,
@@ -124,6 +139,9 @@ function ActivateContent() {
   const isJoint = activePersona.isJoint ?? false;
   const isMobileSync = activePersona.mobileAppLinked ?? false;
   const isMultiAccount = activePersona.accounts.length > 1;
+  // Everyone picks a default account on this step, even with one account (it is preselected). Joint and
+  // mobile-linked customers keep their own review screens.
+  const showAccountPicker = isMultiAccount || (!isJoint && !isMobileSync);
 
   const { signIn, selectProfile, verifyMfa } = useSession();
 
@@ -140,6 +158,10 @@ function ActivateContent() {
     setBusy(false);
   }, [stepParam]);
   const [ghanaCard, setGhanaCard] = useState(activePersona.ghanaCard);
+  // What the Ghana Card check found on the last attempt. "idle" shows the number field; the checking itself
+  // runs on the Continue button (its loading state).
+  const [ghanaCardState, setGhanaCardState] = useState<GhanaCardView>("idle");
+  const [ghanaCardOutcome, setGhanaCardOutcome] = useState<GhanaCardOutcome>("verified");
   const [selectedPrimaryAccountId, setSelectedPrimaryAccountId] = useState<string>(
     activePersona.accounts.length > 1 ? "" : activePersona.accounts[0]?.id ?? ""
   );
@@ -235,19 +257,25 @@ function ActivateContent() {
       return;
     }
 
-    // Auto-detect persona if card matches known demo pattern
-    const detected = getPersonaByGhanaCard(ghanaCard);
-    if (detected.id !== "diaspora" && detected.id !== activePersonaKey) {
-      setActivePersonaKey(detected.id);
-      setSelectedPrimaryAccountId(detected.accounts.length > 1 ? "" : detected.accounts[0]?.id ?? "");
-    }
-
     setErrorMsg("");
+    setGhanaCardState("idle");
     setBusy(true);
     setTimeout(() => {
       setBusy(false);
+      // The registry check and the account lookup, simulated by the result picked in Dev Mode. Only a pass moves on.
+      const check = ghanaCardOutcome;
+      if (check === "not_found") {
+        setGhanaCardState("not_found");
+        return;
+      }
+      // Auto-detect persona if card matches known demo pattern
+      const detected = getPersonaByGhanaCard(ghanaCard);
+      if (detected.id !== "diaspora" && detected.id !== activePersonaKey) {
+        setActivePersonaKey(detected.id);
+        setSelectedPrimaryAccountId(detected.accounts.length > 1 ? "" : detected.accounts[0]?.id ?? "");
+      }
       setStep("selfie");
-    }, 600);
+    }, 900);
   }
 
   /** Opens (or reopens) the identity partner's window. Each opening is a fresh session. */
@@ -324,6 +352,7 @@ function ActivateContent() {
       ACTIVATION_PERSONAS[activePersonaKey].accounts.length > 1 ? "" : ACTIVATION_PERSONAS[activePersonaKey].accounts[0]?.id ?? ""
     );
     setErrorMsg("");
+    setGhanaCardState("idle");
     setStep("ghana_card");
   }
 
@@ -511,7 +540,7 @@ function ActivateContent() {
     },
     ready: {
       title: "Select The Option To Proceed",
-      description: "Your check is finished. Confirm below so we can find your account.",
+      description: "Confirm below so we can find your account.",
     },
     matching: {
       title: "Finding Your Account",
@@ -529,13 +558,15 @@ function ActivateContent() {
         choosingId
           ? "How Will You Like To Proceed?"
           : step === "ghana_card"
-          ? "Verify Your Identity"
+          ? ghanaCardState === "not_found"
+            ? "No Record Found"
+            : "Verify Your Identity"
           : step === "selfie"
           ? isPassport
             ? passportCopy[passportState].title
             : "Selfie Match"
           : step === "review_details"
-          ? isMultiAccount
+          ? showAccountPicker
             ? "Select Your Default Account"
             : isJoint
             ? "Review Joint Account Details"
@@ -552,13 +583,15 @@ function ActivateContent() {
         choosingId
           ? "Choose the ID required to access your account."
           : step === "ghana_card"
-          ? "We will securely verify your identity using your Ghana Card."
+          ? ghanaCardState === "not_found"
+            ? "We could not find this Ghana Card in our records. Please check the number and try again, or link your existing account to this Ghana Card."
+            : "We will securely verify your identity using your Ghana Card."
           : step === "selfie"
           ? isPassport
             ? passportCopy[passportState].description
             : "Center your face in the frame."
           : step === "review_details"
-          ? isMultiAccount
+          ? showAccountPicker
             ? "Select your default account for everyday banking."
             : isJoint
             ? "Confirm your joint account details."
@@ -593,6 +626,7 @@ function ActivateContent() {
             description="I opened my account with my Ghana Card."
             onClick={() => {
               setChoosingId(false);
+              setGhanaCardState("idle");
               setStep("ghana_card");
             }}
           />
@@ -613,7 +647,19 @@ function ActivateContent() {
       )}
 
       {/* STEP 1: Enter Ghana Card */}
+      {/* Dev Mode: the result the check returns when Continue is pressed. The screen only changes after that. */}
       {!choosingId && step === "ghana_card" && (
+        <StateSwitcher
+          states={GHANA_CARD_OUTCOMES}
+          labels={GHANA_CARD_OUTCOME_LABELS}
+          value={ghanaCardOutcome}
+          onChange={setGhanaCardOutcome}
+          section="Ghana Card"
+          label="Check result"
+        />
+      )}
+
+      {!choosingId && step === "ghana_card" && ghanaCardState === "idle" && (
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
 
           {/* Card Input Field */}
@@ -650,6 +696,27 @@ function ActivateContent() {
           </div>
 
         </form>
+      )}
+
+      {/* STEP 1, when the number isn't in the registry: link an existing account to this card, or try the number again. */}
+      {!choosingId && step === "ghana_card" && ghanaCardState === "not_found" && (
+        <div className="flex flex-col items-center gap-3">
+          <Button type="button" size="xl" className="w-full" onClick={() => setGhanaCardState("idle")}>
+            Try Again
+          </Button>
+          <Button
+            variant="outline"
+            size="xl"
+            className="w-full"
+            nativeButton={false}
+            render={<a href={LINK_ACCOUNT_URL} target="_blank" rel="noreferrer" />}
+          >
+            Link Account
+          </Button>
+          <a href={OPEN_ACCOUNT_URL} target="_blank" rel="noreferrer" className={linkClass}>
+            Open a GCB account
+          </a>
+        </div>
       )}
 
       {/* STEP 2 (passport): the identity partner's window stands in for our selfie */}
@@ -729,6 +796,9 @@ function ActivateContent() {
             <div className="flex flex-col items-center gap-3">
               <Button type="button" size="xl" className="w-full" onClick={openPartner}>
                 Try Again
+              </Button>
+              <Button type="button" variant="outline" size="xl" className="w-full" onClick={switchToGhanaCard}>
+                Use a Ghana Card instead
               </Button>
               <a href={GCB_HELP_URL} target="_blank" rel="noreferrer" className={linkClass}>
                 Still stuck? Talk to us
@@ -829,7 +899,7 @@ function ActivateContent() {
           </div>
 
           {/* CASE A: Multi-Account Dropdown Selection */}
-          {isMultiAccount && (
+          {showAccountPicker && (
             <div className="space-y-2">
               <Label htmlFor="primary-account-select">
                 Default Account
@@ -913,7 +983,7 @@ function ActivateContent() {
           )}
 
           {/* CASE B: Single Account Display */}
-          {!isMultiAccount && (
+          {!showAccountPicker && (
             <div className="rounded-xl border border-border/80 bg-muted/20 p-3 divide-y divide-border/60">
               <div className="flex items-center justify-between pb-2">
                 <span className="text-[13px] text-muted-foreground">Default Account</span>
@@ -949,13 +1019,15 @@ function ActivateContent() {
             Proceed
           </Button>
 
-          <button
-            type="button"
-            onClick={isPassport ? switchToGhanaCard : () => setStep("ghana_card")}
-            className="text-center text-[12px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
-          >
-            {isPassport ? "Use a Ghana Card instead" : "Use a different Ghana Card"}
-          </button>
+          {!isPassport && (
+            <button
+              type="button"
+              onClick={() => setStep("ghana_card")}
+              className="text-center text-[12px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
+            >
+              Use a different Ghana Card
+            </button>
+          )}
         </div>
       )}
 
