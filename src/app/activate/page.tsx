@@ -510,7 +510,7 @@ function ActivateContent() {
         : "Activate with a valid passport. If you’ve renewed it, the bank needs the new one on your account first.",
     },
     ready: {
-      title: "Complete Your Verification",
+      title: "Select The Option To Proceed",
       description: "Your check is finished. Confirm below so we can find your account.",
     },
     matching: {
@@ -671,12 +671,16 @@ function ActivateContent() {
           {passportState === "ready" && (
             <div className="flex flex-col items-center gap-3">
               <Button type="button" size="xl" className="w-full" onClick={confirmPassportVerification}>
-                Complete Verification
+                I Have Completed My Verification
               </Button>
               <Button type="button" variant="outline" size="xl" className="w-full" onClick={openPartner}>
                 Verify Again
               </Button>
-              <button type="button" onClick={switchToGhanaCard} className={linkClass}>
+              <button
+                type="button"
+                onClick={switchToGhanaCard}
+                className="inline-flex min-h-8 cursor-pointer items-center text-[13px] text-foreground underline decoration-foreground underline-offset-4 transition-colors duration-hover hover:decoration-muted-foreground"
+              >
                 Cancel
               </button>
             </div>
