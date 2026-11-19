@@ -784,7 +784,7 @@ export function RequestCardFlow() {
                   {selectedAccount?.name ?? "Current Account"}
                 </span>
                 <span className="text-caption text-muted-foreground tabular-nums">
-                  {selectedAccount?.number ?? "1414 4124 4214"}
+                  {selectedAccount?.number ?? "1414412442140"}
                 </span>
               </div>
             </div>

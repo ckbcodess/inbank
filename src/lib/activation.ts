@@ -169,7 +169,7 @@ export const ACTIVATION_PERSONAS: Record<
       {
         id: "acc-current-1",
         name: "Current Account",
-        number: "1001 4821 4561",
+        number: "1001482145610",
         type: "Current",
         currency: "GHS",
         balance: 42300.0,
@@ -178,7 +178,7 @@ export const ACTIVATION_PERSONAS: Record<
       {
         id: "acc-joint-1",
         name: "Joint Savings Account",
-        number: "3300 8844 9922",
+        number: "3300884499220",
         type: "Savings",
         currency: "GHS",
         balance: 245800.0,
@@ -189,7 +189,7 @@ export const ACTIVATION_PERSONAS: Record<
       {
         id: "acc-savings-2",
         name: "Savings Account",
-        number: "3300 1122 5566",
+        number: "3300112255660",
         type: "Savings",
         currency: "GHS",
         balance: 128450.0,
@@ -197,7 +197,7 @@ export const ACTIVATION_PERSONAS: Record<
       {
         id: "acc-fx-1",
         name: "Foreign Currency Account",
-        number: "7700 9944 1092",
+        number: "7700994410920",
         type: "Foreign Currency",
         currency: "USD",
         balance: 14250.0,
@@ -218,7 +218,7 @@ export const ACTIVATION_PERSONAS: Record<
       {
         id: "acc-savings-1",
         name: "Savings Account",
-        number: "3300 1122 5566",
+        number: "3300112255660",
         type: "Savings",
         currency: "GHS",
         balance: 128450.0,
@@ -240,7 +240,7 @@ export const ACTIVATION_PERSONAS: Record<
       {
         id: "acc-current-1",
         name: "Current Account",
-        number: "1001 4821 4561",
+        number: "1001482145610",
         type: "Current",
         currency: "GHS",
         balance: 42300.0,
@@ -249,7 +249,7 @@ export const ACTIVATION_PERSONAS: Record<
       {
         id: "acc-joint-1",
         name: "Joint Savings Account",
-        number: "3300 8844 9922",
+        number: "3300884499220",
         type: "Savings",
         currency: "GHS",
         balance: 245800.0,
@@ -274,7 +274,7 @@ export const ACTIVATION_PERSONAS: Record<
       {
         id: "acc-mobile-1",
         name: "Current Account",
-        number: "1001 4821 4821",
+        number: "1001482148210",
         type: "Current",
         currency: "GHS",
         balance: 18200.0,
@@ -283,7 +283,7 @@ export const ACTIVATION_PERSONAS: Record<
       {
         id: "acc-mobile-2",
         name: "Savings Account",
-        number: "3300 4455 9012",
+        number: "3300445590120",
         type: "Savings",
         currency: "GHS",
         balance: 5400.0,
@@ -312,7 +312,7 @@ export const PASSPORT_PERSONA: ActivationPersonaConfig & { passport: string } = 
     {
       id: "acc-diaspora-1",
       name: "Savings Account",
-      number: "3300 7712 8812",
+      number: "3300771288120",
       type: "Savings",
       currency: "GHS",
       balance: 36800.0,
@@ -354,14 +354,14 @@ export const DEMO_IDENTIFIERS: readonly DemoIdentifier[] = [
   { value: "GHA-998877665-1", outcome: "Multi-Account · Kwame Boateng (Pick Primary)", alreadyEnrolled: false, personaKey: "multi" },
   { value: "GHA-001234567-9", outcome: "Joint Account · Samuel Quartey & Esther Appiah", alreadyEnrolled: false, personaKey: "joint" },
   { value: "GHA-554433221-0", outcome: "Mobile Sync · Abena Osei", alreadyEnrolled: false, personaKey: "mobile_sync" },
-  { value: "3300 1122 5566", outcome: "Already activated", alreadyEnrolled: true },
+  { value: "3300112255660", outcome: "Already activated", alreadyEnrolled: true },
 ];
 
 export const DEMO_MOBILE = "+233241234567";
 
 export function matchIdentity(identifier: string, mobile: string): ActivationMatch | null {
-  const id = identifier.trim().replace(/\s+/g, " ").toUpperCase();
-  const known = DEMO_IDENTIFIERS.find((d) => d.value.toUpperCase() === id);
+  const id = identifier.trim().replace(/\s+/g, "").toUpperCase();
+  const known = DEMO_IDENTIFIERS.find((d) => d.value.replace(/\s+/g, "").toUpperCase() === id);
   const mobileDigits = mobile.replace(/\D/g, "");
   const mobileMatches = mobileDigits.length >= 9 && DEMO_MOBILE.endsWith(mobileDigits.slice(-9));
 

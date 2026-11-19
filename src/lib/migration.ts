@@ -48,8 +48,8 @@ export function parseMigrationStep(value: string | null): MigrationStep | null {
 export const MIGRATED_DATA = {
   lastLegacySignIn: "2026-09-14T19:22:00Z",
   accounts: [
-    { name: "Current", number: "∗∗∗∗ 4561" },
-    { name: "Savings", number: "∗∗∗∗ 9922" },
+    { name: "Current", number: "∗∗∗∗ 5610" },
+    { name: "Savings", number: "∗∗∗∗ 1000" },
   ],
   // `recipient` is what the payment deep link opens with (number, account or reference); `detail` is what's shown.
   payees: [

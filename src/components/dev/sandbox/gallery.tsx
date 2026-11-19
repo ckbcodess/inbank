@@ -466,7 +466,7 @@ export function DataTab() {
       <Specimen title="Review summary">
         <ReviewSummary
           details={[
-            { label: "From", value: "Savings Account · 4001 9922 1100" },
+            { label: "From", value: "Savings Account · 4001 9922 1100 0" },
             { label: "Deposit period", value: "91 days" },
             { label: "Interest rate", value: "12.5%", tabular: true },
           ]}

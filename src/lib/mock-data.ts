@@ -26,7 +26,7 @@ export const RETAIL_PROFILE: Profile = {
   id: "prof-retail",
   kind: "RETAIL",
   name: "Personal Banking",
-  reference: "∗∗∗∗ 4561",
+  reference: "∗∗∗∗ 5610",
 };
 
 export const CLEAN_PROFILE: Profile = {
@@ -40,7 +40,7 @@ export const SINGLE_PROFILE: Profile = {
   id: "prof-single",
   kind: "RETAIL",
   name: "Personal Banking",
-  reference: "∗∗∗∗ 0313",
+  reference: "∗∗∗∗ 3130",
 };
 
 const JOINT_PROFILE: Profile = {
@@ -233,7 +233,7 @@ export const ACCOUNTS: Account[] = [
   {
     id: "acc-personal",
     name: "Current Account",
-    number: "1001 4821 4561",
+    number: "1001482145610",
     type: "Current",
     currency: "GHS",
     balance: 42_300.0,
@@ -246,7 +246,7 @@ export const ACCOUNTS: Account[] = [
   {
     id: "acc-ret-001",
     name: "Savings Account",
-    number: "4001 9922 1100",
+    number: "4001992211000",
     type: "Savings",
     currency: "GHS",
     balance: 14_250.0,
@@ -258,7 +258,7 @@ export const ACCOUNTS: Account[] = [
   {
     id: "acc-single-001",
     name: "Current Account",
-    number: "4001 5512 0313",
+    number: "4001551203130",
     type: "Current",
     currency: "GHS",
     balance: 4_250.0,
@@ -489,8 +489,8 @@ const REPEAT_PAYMENT_SEED: Array<{
 }> = [
   { to: "Ransford Gyasi", account: "0244 123 456", method: "momo", category: "Family & Friends", payments: [["2026-08-12", 150], ["2026-09-12", 150], ["2026-10-12", 150]] },
   { to: "Ishmael Gyan", account: "0201 987 654", method: "momo", category: "Family & Friends", payments: [["2026-10-11", 80], ["2026-10-18", 80], ["2026-10-25", 80], ["2026-11-01", 80]] },
-  { to: "Justice Oduro", account: "0231 4455 88901", method: "gip", bank: "GCB Bank", category: "Other", payments: [["2026-08-08", 500], ["2026-09-08", 500], ["2026-10-08", 500]] },
-  { to: "Abena Osei", account: "1089 3322 1100", method: "gip", bank: "Stanbic Bank", category: "Household", payments: [["2026-08-25", 1200], ["2026-09-25", 1200], ["2026-10-25", 1200]] },
+  { to: "Justice Oduro", account: "0231445588901", method: "gip", bank: "GCB Bank", category: "Other", payments: [["2026-08-08", 500], ["2026-09-08", 500], ["2026-10-08", 500]] },
+  { to: "Abena Osei", account: "108933221100", method: "gip", bank: "Stanbic Bank", category: "Household", payments: [["2026-08-25", 1200], ["2026-09-25", 1200], ["2026-10-25", 1200]] },
   { to: "Kofi Boateng", account: "0277 456 789", method: "momo", category: "Family & Friends", payments: [["2026-08-20", 40], ["2026-10-02", 60], ["2026-10-30", 40]] },
   { to: "Ransford Gyasi", account: "0244 123 456", method: "airtime", category: "Data", payments: [["2026-10-06", 20], ["2026-10-20", 20], ["2026-11-03", 10]] },
   { to: "ECG Prepaid", account: "P-8839210", method: "bill", category: "Bills", payments: [["2026-08-30", 170], ["2026-09-29", 185], ["2026-10-30", 180]] },
@@ -716,7 +716,7 @@ export const TRANSACTIONS: Transaction[] = [
     valueDate: "2026-08-05",
     description: "GhIPSS Instant Pay (GIP) — Rent Contribution",
     counterparty: "Landlord Properties",
-    counterpartyAccount: "0122 3344 5566",
+    counterpartyAccount: "012233445566",
     counterpartyBank: "Stanbic Bank Ghana",
     accountId: "acc-ret-001",
     currency: "GHS",
@@ -736,7 +736,7 @@ export const TRANSACTIONS: Transaction[] = [
     valueDate: "2026-08-04",
     description: "Shoprite Accra Mall — Groceries",
     counterparty: "Shoprite Ghana",
-    counterpartyAccount: "0100 8822 1100",
+    counterpartyAccount: "010088221100",
     accountId: "acc-ret-001",
     currency: "GHS",
     amount: 320.4,
@@ -755,7 +755,7 @@ export const TRANSACTIONS: Transaction[] = [
     valueDate: "2026-08-03",
     description: "ECG Prepaid Electricity Top-up",
     counterparty: "Electricity Company of Ghana",
-    counterpartyAccount: "0300 4455 6677",
+    counterpartyAccount: "030044556677",
     accountId: "acc-ret-002",
     currency: "GHS",
     amount: 250.0,
@@ -774,7 +774,7 @@ export const TRANSACTIONS: Transaction[] = [
     valueDate: "2026-08-02",
     description: "Ghana Water Company Bill",
     counterparty: "Ghana Water Ltd",
-    counterpartyAccount: "0300 5566 7788",
+    counterpartyAccount: "030055667788",
     accountId: "acc-ret-002",
     currency: "GHS",
     amount: 85.0,
@@ -793,7 +793,7 @@ export const TRANSACTIONS: Transaction[] = [
     valueDate: "2026-08-01",
     description: "Salary Advance Settlement",
     counterparty: "Employer Ltd",
-    counterpartyAccount: "1001 2345 6789",
+    counterpartyAccount: "1001234567890",
     counterpartyBank: "Absa Bank Ghana",
     accountId: "acc-ret-002",
     currency: "GHS",
@@ -812,7 +812,7 @@ export const TRANSACTIONS: Transaction[] = [
     valueDate: "2026-07-30",
     description: "Fuel Station Purchase — TotalEnergies",
     counterparty: "TotalEnergies Ghana",
-    counterpartyAccount: "0200 9900 1122",
+    counterpartyAccount: "020099001122",
     accountId: "acc-ret-002",
     currency: "GHS",
     amount: 400.0,
@@ -831,7 +831,7 @@ export const TRANSACTIONS: Transaction[] = [
     valueDate: "2026-07-28",
     description: "Pharmacy Settlement — Danpong",
     counterparty: "Danpong Healthcare",
-    counterpartyAccount: "0100 3344 5566",
+    counterpartyAccount: "010033445566",
     accountId: "acc-ret-002",
     currency: "GHS",
     amount: 180.0,
@@ -850,7 +850,7 @@ export const TRANSACTIONS: Transaction[] = [
     valueDate: "2026-07-25",
     description: "Inter-Account Transfer to Savings",
     counterparty: "Savings Account",
-    counterpartyAccount: "4001 9922 1100",
+    counterpartyAccount: "4001992211000",
     accountId: "acc-ret-001",
     currency: "GHS",
     amount: 1_500.0,
@@ -962,7 +962,7 @@ export const TRANSACTIONS: Transaction[] = [
     valueDate: "2026-07-10",
     description: "Restaurant Dining — Buka Accra",
     counterparty: "Buka Restaurant",
-    counterpartyAccount: "0100 7766 5544",
+    counterpartyAccount: "010077665544",
     accountId: "acc-ret-002",
     currency: "GHS",
     amount: 280.0,
@@ -1014,7 +1014,7 @@ export const SINGLE_USER_TRANSACTIONS: Transaction[] = [
     valueDate: "2026-10-09",
     description: "Salary Credit — Min of Education",
     counterparty: "Ministry of Education Ghana",
-    counterpartyAccount: "0100 2233 4455",
+    counterpartyAccount: "010022334455",
     accountId: "acc-single-001",
     currency: "GHS",
     amount: 5200.0,
@@ -1132,11 +1132,11 @@ export interface Beneficiary {
 }
 
 export const BENEFICIARIES: Beneficiary[] = [
-  { id: "ben-1", name: "Accra Fabrics Ltd", accountNumber: "0231 4455 8890", bank: "Standard Bank Ghana", currency: "GHS" },
-  { id: "ben-2", name: "Tema Logistics", accountNumber: "0554 7781 2200", bank: "Ecobank Ghana", currency: "GHS" },
-  { id: "ben-3", name: "Volta Machinery Ltd", accountNumber: "0661 9902 3345", bank: "Absa Ghana", currency: "GHS" },
-  { id: "ben-4", name: "Kumasi Supplies", accountNumber: "0788 3312 00911", bank: "GCB Bank", currency: "GHS" },
-  { id: "ben-5", name: "Shenzhen Textile Group", accountNumber: "CN-8891-40023", bank: "Bank of China", currency: "USD" },
+  { id: "ben-1", name: "Accra Fabrics Ltd", accountNumber: "023144558890", bank: "Standard Bank Ghana", currency: "GHS" },
+  { id: "ben-2", name: "Tema Logistics", accountNumber: "055477812200", bank: "Ecobank Ghana", currency: "GHS" },
+  { id: "ben-3", name: "Volta Machinery Ltd", accountNumber: "066199023345", bank: "Absa Ghana", currency: "GHS" },
+  { id: "ben-4", name: "Kumasi Supplies", accountNumber: "0788331200911", bank: "GCB Bank", currency: "GHS" },
+  { id: "ben-5", name: "Shenzhen Textile Group", accountNumber: "CN889140023", bank: "Bank of China", currency: "USD" },
 ];
 
 /* ── Cards — FR-33 (fund prepaid card), FR-34 (block / unblock) ─────────────── */

@@ -83,7 +83,7 @@ const STATUS_OPTIONS: readonly { readonly id: StatusFilter; readonly name: strin
 
 function formatAccountDisplay(accountId: string): string {
   const acc = findAccount(accountId);
-  if (!acc) return "Current ∗∗∗4561";
+  if (!acc) return "Current ∗∗∗5610";
   const cleanName = acc.name.replace(/\s+Account$/i, "");
   const cleanNum = acc.number.replace(/\s+/g, "");
   const last4 = cleanNum.slice(-4);

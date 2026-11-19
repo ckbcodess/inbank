@@ -49,9 +49,9 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
     companyTin: "C0012345678",
     companyAddress: "Plot 14 Industrial Area, North Kaneshie, Accra",
     accounts: [
-      { id: "acc-001", name: "Corporate Current Account", number: "1001 2345 6789", currency: "GHS", type: "Current", balance: 1284530.44 },
-      { id: "acc-002", name: "Payroll Account", number: "1001 2345 7710", currency: "GHS", type: "Current", balance: 342118.90 },
-      { id: "acc-003", name: "USD Trade Account", number: "2200 8891 0043", currency: "USD", type: "Foreign Currency", balance: 486220.15 },
+      { id: "acc-001", name: "Corporate Current Account", number: "1001234567890", currency: "GHS", type: "Current", balance: 1284530.44 },
+      { id: "acc-002", name: "Payroll Account", number: "1001234577100", currency: "GHS", type: "Current", balance: 342118.90 },
+      { id: "acc-003", name: "USD Trade Account", number: "2200889100430", currency: "USD", type: "Foreign Currency", balance: 486220.15 },
     ],
     applicant: {
       name: "Ransford Gyasi",
@@ -194,7 +194,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
     companyTin: "C0098765432",
     companyAddress: "Heavy Industrial Area, Tema Harbour Road, Tema",
     accounts: [
-      { id: "acc-volta-1", name: "Commercial Operating Account", number: "1001 8844 2200", currency: "GHS", type: "Current", balance: 780400.00 },
+      { id: "acc-volta-1", name: "Commercial Operating Account", number: "1001884422000", currency: "GHS", type: "Current", balance: 780400.00 },
     ],
     applicant: {
       name: "Kofi Mensah",
@@ -307,7 +307,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
     companyTin: "C0055443322",
     companyAddress: "Timber Market, Old Fadama Road, Accra",
     accounts: [
-      { id: "acc-timber-1", name: "Corporate Operations", number: "1001 5566 7788", currency: "GHS", type: "Current", balance: 512000.00 },
+      { id: "acc-timber-1", name: "Corporate Operations", number: "1001556677880", currency: "GHS", type: "Current", balance: 512000.00 },
     ],
     applicant: {
       name: "Kwabena Yeboah",
@@ -420,8 +420,8 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
     companyTin: "C0033221100",
     companyAddress: "Kumasi Industrial Park, Kaase, Kumasi",
     accounts: [
-      { id: "acc-ashanti-1", name: "Commercial Current Account", number: "1001 7722 3344", currency: "GHS", type: "Current", balance: 2150000.00 },
-      { id: "acc-ashanti-2", name: "EUR Export Proceeds", number: "2200 7722 3345", currency: "EUR", type: "Foreign Currency", balance: 340000.00 },
+      { id: "acc-ashanti-1", name: "Commercial Current Account", number: "1001772233440", currency: "GHS", type: "Current", balance: 2150000.00 },
+      { id: "acc-ashanti-2", name: "EUR Export Proceeds", number: "2200772233450", currency: "EUR", type: "Foreign Currency", balance: 340000.00 },
     ],
     applicant: {
       name: "Nana Akua Osei",
@@ -554,7 +554,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
     companyTin: "C0098765432",
     companyAddress: "Harbour Road, Tema",
     accounts: [
-      { id: "acc-volta-1", name: "Commercial Operating Account", number: "1001 8844 2200", currency: "GHS", type: "Current", balance: 780400 },
+      { id: "acc-volta-1", name: "Commercial Operating Account", number: "1001884422000", currency: "GHS", type: "Current", balance: 780400 },
     ],
     applicant: {
       name: "Kofi Mensah",

@@ -165,17 +165,3 @@ export function resolveDefaultAccountId(
   return accounts.find((a) => a.status === "Active")?.id ?? null;
 }
 
-/**
- * Why an account can't be removed, or null when it can. The default account can't go (pick another default first),
- * and neither can the last account, which is always the default.
- */
-export function accountRemovalBlock(
-  accounts: { id: string }[],
-  defaultId: string | null,
-  id: string,
-): string | null {
-  if (!accounts.some((a) => a.id === id)) return null;
-  if (accounts.length <= 1) return "This is your only account, so it can't be removed.";
-  if (id === defaultId) return "Set another account as your default to remove this one.";
-  return null;
-}

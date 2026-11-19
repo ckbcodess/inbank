@@ -44,7 +44,7 @@ import { findAccount, formatDate, formatMoney, transactionsForAccount, type Acco
 import { useSession } from "@/lib/session-store";
 import { accountHolderName } from "@/lib/account-holder";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
-import { accountRemovalBlock, useAccountPrefs } from "@/lib/accounts-store";
+import { useAccountPrefs } from "@/lib/accounts-store";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import LinkSourceAccountModal, { type ModalScreen } from "@/components/dashboard/LinkSourceAccountModal";
 import { useCardLinkReturn } from "@/lib/card-link";
@@ -101,6 +101,8 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   const restoreAccount = useAccountPrefs((s) => s.restoreAccount);
   const router = useRouter();
   const [removeOpen, setRemoveOpen] = useState(false);
+  // Only used when the default account is removed: the account that takes over as default.
+  const [replacementId, setReplacementId] = useState<string | null>(null);
   const [state, setState] = useState<BaselineState>("populated");
   const [devStatus, setDevStatus] = useState<DevStatus>("real");
   const [devOwnership, setDevOwnership] = useState<DevOwnership>("real");
@@ -205,20 +207,31 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
       : !dormant && customerAccounts.length > 1 && customerAccounts.some((a) => a.id === account.id);
   const isDefault = choosable && (devDefault === "real" ? account.id === defaultId : devDefault === "default");
   const canBeDefault = choosable && !isDefault;
-  // The rule comes from the data, not from the Dev Mode switches: the default (and the last account) can't be removed.
+  // Set as default and remove only appear when there's another account. A customer with one account sees neither.
   const inList = customerAccounts.some((a) => a.id === account.id);
-  // Set as default and remove only appear when there's another account to fall back on.
   const managed = inList && customerAccounts.length > 1;
-  const removalBlock = accountRemovalBlock(customerAccounts, defaultId, account.id);
+  // Removing the default is allowed: the customer picks which account takes over as default first.
+  // Dormant accounts can't be a default, so they aren't offered.
+  const replacementCandidates = customerAccounts.filter((a) => a.id !== account.id && a.status !== "Dormant");
 
   function handleRemove() {
-    if (!account || accountRemovalBlock(customerAccounts, defaultId, account.id)) return;
+    if (!account) return;
+    if (isDefault && !replacementId) return;
     const { id: removedId, name } = account;
+    const previousDefault = defaultId;
     setRemoveOpen(false);
+    setReplacementId(null);
+    if (isDefault && replacementId) setDefaultAccount(replacementId);
     removeAccount(removedId);
     toast(`${name} removed`, {
       description: "It stays open at the bank. Add it back any time from Accounts.",
-      action: { label: "Undo", onClick: () => restoreAccount(removedId) },
+      action: {
+        label: "Undo",
+        onClick: () => {
+          restoreAccount(removedId);
+          if (isDefault && previousDefault) setDefaultAccount(previousDefault);
+        },
+      },
     });
     router.replace("/accounts");
   }
@@ -290,12 +303,9 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
             {/* The card's badge shows which account is the default; these rows are the only way to change either setting. */}
             {managed && (
               <div className="flex flex-col gap-3">
-                {/* Greyed out, with the reason under it, when the account can't be removed. */}
                 <ActionTile
                   leading={<Trash2 size={20} strokeWidth={1.8} aria-hidden="true" className="text-destructive" />}
                   title="Remove Account"
-                  description={removalBlock ?? undefined}
-                  disabled={Boolean(removalBlock)}
                   onClick={() => setRemoveOpen(true)}
                 />
                 {canBeDefault && (
@@ -331,7 +341,13 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
         initialDestinationId={fundResume?.destinationId}
         targetAccount={account}
       />
-      <Dialog open={removeOpen} onOpenChange={setRemoveOpen}>
+      <Dialog
+        open={removeOpen}
+        onOpenChange={(open) => {
+          setRemoveOpen(open);
+          if (!open) setReplacementId(null);
+        }}
+      >
         <DialogContent size="sm">
           <DialogHeader>
             <DialogTitle>Remove {account.name}?</DialogTitle>
@@ -341,13 +357,49 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
               It leaves your accounts list. The account stays open at the bank and your money isn&apos;t affected. You can add it
               back from Accounts with a selfie check.
             </p>
+            {isDefault && (
+              <div className="mt-5 flex flex-col gap-3">
+                <p className="text-body font-medium text-foreground">Choose your new default account</p>
+                {replacementCandidates.length > 0 ? (
+                  <ul className="flex flex-col gap-2">
+                    {replacementCandidates.map((a) => (
+                      <li key={a.id}>
+                        <button
+                          type="button"
+                          aria-pressed={replacementId === a.id}
+                          onClick={() => setReplacementId(a.id)}
+                          className={`flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-colors ${
+                            replacementId === a.id
+                              ? "border-[var(--active-border)] bg-[var(--active-bg)]"
+                              : "border-border bg-card hover:bg-muted/50"
+                          }`}
+                        >
+                          <span className="text-body text-foreground">{a.name}</span>
+                          <span className="tabular text-caption text-muted-foreground">{a.number}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-body text-muted-foreground">
+                    No other account can be your default right now, so this one can&apos;t be removed yet.
+                  </p>
+                )}
+              </div>
+            )}
           </DialogBody>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setRemoveOpen(false)} className="flex-1">
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleRemove} className="flex-1">
-              Remove
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleRemove}
+              disabled={isDefault && (!replacementId || replacementCandidates.length === 0)}
+              className="flex-1"
+            >
+              {isDefault ? "Remove and Set Default" : "Remove"}
             </Button>
           </DialogFooter>
         </DialogContent>

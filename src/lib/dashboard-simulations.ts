@@ -159,7 +159,7 @@ function unfundedWallet(holder: string): { accounts: Account[]; cards: PaymentCa
       {
         id: "acc-new-unfunded",
         name: "Virtual Wallet",
-        number: "1011 8920 1920",
+        number: "1011892019200",
         currency: "GHS",
         balance: 0,
         available: 0,
@@ -245,7 +245,7 @@ export function getSimulatedDashboardData({
         {
           id: "acc-new-1",
           name: "Savings Account",
-          number: "1011 8920 1920",
+          number: "1011892019200",
           currency: "GHS",
           balance: 500,
           available: 500,
@@ -280,7 +280,7 @@ export function getSimulatedDashboardData({
           valueDate: new Date().toISOString().slice(0, 10),
           description: "Opening Deposit",
           counterparty: "GCB Instant Transfer",
-          counterpartyAccount: "0100 8821 9912",
+          counterpartyAccount: "010088219912",
           accountId: "acc-new-1",
           amount: 500,
           currency: "GHS",
@@ -346,7 +346,7 @@ export function getSimulatedDashboardData({
           valueDate: new Date().toISOString().slice(0, 10),
           description: "Monthly Payroll Credit",
           counterparty: "Consolidated Shipping Ltd",
-          counterpartyAccount: "0100 4481 2291",
+          counterpartyAccount: "010044812291",
           accountId: baseAccounts[0]?.id ?? "acc-personal",
           amount: 28450.0,
           currency: "GHS",
@@ -371,7 +371,7 @@ export function getSimulatedDashboardData({
         {
           id: "acc-w-1",
           name: "Current Account",
-          number: "1018 9024 5100",
+          number: "1018902451000",
           currency: "GHS",
           balance: 285400.0,
           available: 285400.0,
@@ -382,7 +382,7 @@ export function getSimulatedDashboardData({
         {
           id: "acc-w-2",
           name: "Savings Account",
-          number: "1028 9045 1200",
+          number: "1028904512000",
           currency: "GHS",
           balance: 450000.0,
           available: 450000.0,
@@ -393,7 +393,7 @@ export function getSimulatedDashboardData({
         {
           id: "acc-w-3",
           name: "Foreign Currency Account",
-          number: "2019 9041 2300",
+          number: "2019904123000",
           currency: "USD",
           balance: 65000.0,
           available: 65000.0,
@@ -411,7 +411,7 @@ export function getSimulatedDashboardData({
         {
           id: "acc-emp-1",
           name: "Savings Account",
-          number: "1011 8920 1920",
+          number: "1011892019200",
           currency: "GHS",
           balance: 0,
           available: 0,

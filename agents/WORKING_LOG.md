@@ -183,6 +183,10 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ## Inbox
 
 ### 2026-11-19
+- Decision: Other GCB Accounts (`flows/OtherGcbFlow.tsx`) no longer looks the beneficiary up while typing. Search appears at 10 digits and the person runs it (Enter or Search); the number accepts up to 13 digits. Saved recipients still verify without a search. Reason: a 13-digit auto-check can't cover a 10-digit account or a virtual account, and a lookup that fires on every keystroke isn't a real check.
+- Decision: Other GCB search at 11 or 12 digits runs and returns an inline "No account has N digits. Check the number." (under the field, via `Field error`), instead of resolving. Only 10 and 13 digits resolve: virtual accounts are 10 digits, GCB accounts 13.
+- Gap: the check is a mock (`resolveAccountName`), so every 10- or 13-digit number resolves to a name. The real lookup must return "no match" for unknown accounts with the same inline message. Other flows that auto-resolve (Other Bank, Wallet) should get the same rule if virtual accounts apply there too.
+- Gap: the new Other GCB copy is hardcoded English, like the rest of this flow. It needs FR/ES/ZH catalog rows.
 - Decision: one session at a time (no concurrent sessions). Settings > "Linked devices" is now "Trusted devices": only devices that skip the one-time code, each with Remove (ends trust; next login there asks for a code). Per-device "Log out" and "Log out of all other devices" are gone. Store: `lib/trusted-devices.ts`.
 - Decision: every login on an untrusted browser goes to `/mfa?device=new` (was only the u-yaw persona). After the code, the customer sees a toast once on arrival: "We recognise you're signing in from a new device", with the browser name and "Change password". `NewDeviceNotice` in `CustomerShell`; flag via `setNewDeviceSignIn` in `lib/device-trust.ts`.
 - Decision: the new-device code screen offers "Remember this device for 30 days", unticked by default (opt-in on shared computers). Trust is written only when ticked.
@@ -1479,6 +1483,15 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Gap: the tour points at controls in the hero-split layout and the shared parts. `HeroLayout` carries the same attributes; the other layouts skip steps they lack.
 - Gap: not viewed in a browser. Check the Settings step in particular (the header menu is held open by the tour and made non-modal), the phone More step (it sits in the tab bar, which hides on scroll, so the tour scrolls to the top first), and tooltip placement at 375px.
 - Candidate pattern: `ui/popover` `PopoverContent` now takes `anchor`, so a popover can point at an element it has no trigger for.
+
+### 2026-11-19
+- Decision: GCB account numbers are 13 digits in mock data. The seeded 12-digit ones got a trailing `0` (e.g. `1001 4821 4561 0`), covering own, corporate and enrolment accounts and the matching `corporate-enrolment` lookup keys. Masked tails were updated to match (`∗∗∗∗ 5610`, `3130`, `1000`, `•••• 7890`).
+- Decision: GCB account numbers are stored and shown as one unbroken run of digits (`1001482145610`), no spaces. `groupDigits` no longer groups, and activation's identifier match ignores spaces.
+- Decision: removing an account stays possible when it's the default. The customer picks the new default in the Remove dialog first (dormant accounts aren't offered). A customer with one account sees no Remove option. Undo restores the old default.
+- Gap: if every other account is dormant, the default can't be removed. The dialog says so.
+- Decision: bank account numbers of other banks are unbroken digits too. Phone numbers and wallets keep their spaces, and card numbers stay grouped.
+- Decision: counterparties with another bank's label (Ecobank, Absa, Stanbic, Standard Chartered, Fidelity and the rest) keep their own formats. Only GCB-held numbers are 13 digits.
+- Gap: the `0100…`, `0300…` and similar counterparty numbers have no bank label in some ledger rows, so they were left alone. Confirm which are GCB before changing them.
 
 ## Consolidation history
 - **2026-10-03:** Bootstrap. Built the five files from these sources:

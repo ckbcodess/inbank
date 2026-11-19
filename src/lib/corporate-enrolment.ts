@@ -59,7 +59,7 @@ export const CORPORATE_ENROLMENT_SCENARIOS: readonly CorporateEnrolmentScenario[
   { id: "review", label: "Review", step: "review" },
   { id: "letter", label: "Sign the letter", step: "letter" },
   { id: "submitted", label: "Submitted", step: "submitted" },
-  { id: "no-rm", label: "Company without an RM", step: "account", account: "1001 8844 2200" },
+  { id: "no-rm", label: "Company without an RM", step: "account", account: "1001884422000" },
   { id: "not-found", label: "Account not found", outcome: "not-found" },
   { id: "already-enrolled", label: "Already on internet banking", outcome: "already-enrolled" },
 ];
@@ -290,7 +290,7 @@ export function cleanAccountNumber(input: string): string {
 
 export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = {
   // Several accounts and a dedicated RM
-  "100123456789": {
+  "1001234567890": {
     companyName: "Adinkra Textiles Ltd",
     tin: "C0012345678",
     address: "Plot 14 Industrial Area, North Kaneshie, Accra",
@@ -304,9 +304,9 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
       phone: "+233 24 499 1821",
     },
     accounts: [
-      { id: "acc-001", name: "Corporate Current Account", number: "1001 2345 6789", currency: "GHS", type: "Current", balance: 1284530.44 },
-      { id: "acc-002", name: "Payroll Account", number: "1001 2345 7710", currency: "GHS", type: "Current", balance: 342118.9 },
-      { id: "acc-003", name: "USD Trade Account", number: "2200 8891 0043", currency: "USD", type: "Foreign Currency", balance: 486220.15 },
+      { id: "acc-001", name: "Corporate Current Account", number: "1001234567890", currency: "GHS", type: "Current", balance: 1284530.44 },
+      { id: "acc-002", name: "Payroll Account", number: "1001234577100", currency: "GHS", type: "Current", balance: 342118.9 },
+      { id: "acc-003", name: "USD Trade Account", number: "2200889100430", currency: "USD", type: "Foreign Currency", balance: 486220.15 },
     ],
     signatories: [
       { name: "Yaw Oppong", designation: "Managing Director", signingClass: "A", email: "yaw.oppong@adinkratextiles.com", mobile: "0244123456", ghanaCard: "GHA-789012345-1", specimenUrl: "/signatures/specimen-yaw.svg" },
@@ -315,7 +315,7 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
     ],
   },
   // One account, no RM: the Corporate Banking Team reviews it
-  "100188442200": {
+  "1001884422000": {
     companyName: "Volta River Logistics Ltd",
     tin: "C0098765432",
     address: "Harbour Road, Tema",
@@ -325,7 +325,7 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
     approvalRule: "Single authorisation: any registered signatory can approve up to GHS 500,000",
     relationshipManager: null,
     accounts: [
-      { id: "acc-volta-1", name: "Commercial Operating Account", number: "1001 8844 2200", currency: "GHS", type: "Current", balance: 780400 },
+      { id: "acc-volta-1", name: "Commercial Operating Account", number: "1001884422000", currency: "GHS", type: "Current", balance: 780400 },
     ],
     signatories: [
       { name: "Kofi Mensah", designation: "Chief Executive Officer", email: "kofi.mensah@voltariver.com", mobile: "0201200314", ghanaCard: "GHA-901234567-3", specimenUrl: "/signatures/specimen-kofi.svg" },
@@ -333,7 +333,7 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
     ],
   },
   // Already on internet banking
-  "100199224411": {
+  "1001992244110": {
     companyName: "Gold Coast Agro Processing Ltd",
     tin: "C0044556677",
     address: "Spintex Road, Accra",
@@ -348,7 +348,7 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
       phone: "+233 24 440 0512",
     },
     accounts: [
-      { id: "acc-agro-1", name: "Primary Treasury", number: "1001 9922 4411", currency: "GHS", type: "Current", balance: 3500000 },
+      { id: "acc-agro-1", name: "Primary Treasury", number: "1001992244110", currency: "GHS", type: "Current", balance: 3500000 },
     ],
     signatories: [
       { name: "Nana Addo Dankwa", designation: "Chairman", email: "nana.addo@goldcoastagro.com", mobile: "0244400511", ghanaCard: "GHA-556677889-1", specimenUrl: "/signatures/specimen-nana.svg" },
@@ -357,10 +357,10 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
 };
 
 export const ENROLMENT_DEMO_ACCOUNTS = {
-  default: "1001 2345 6789",
-  noRm: "1001 8844 2200",
-  alreadyEnrolled: "1001 9922 4411",
-  notFound: "9999 0000 1111",
+  default: "1001234567890",
+  noRm: "1001884422000",
+  alreadyEnrolled: "1001992244110",
+  notFound: "9999000011110",
 } as const;
 
 export function lookupCorporateAccount(rawAccountNumber: string): CorporateCompanyRecord | null {
@@ -372,7 +372,7 @@ export function signatoryLabel(s: Pick<MandateSignatory, "designation" | "signin
   return s.signingClass ? `${s.designation} · Signatory ${s.signingClass}` : s.designation;
 }
 
-/** "•••• 6789" */
+/** "•••• 7890" */
 export function lastFour(accountNumber: string): string {
   return `•••• ${accountNumber.replace(/\s/g, "").slice(-4)}`;
 }

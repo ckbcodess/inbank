@@ -566,7 +566,6 @@ export const GHANAIAN_NAMES = [
 /** Numbers pinned to a name (with and without spaces), so the demo flows resolve the same person every time. */
 export const ACCOUNT_RESOLUTIONS: Record<string, string> = {
   "0231445588901": "Justice Oduro",
-  "0231 4455 88901": "Justice Oduro",
   "01234567890": "Elias Ayettey",
   "1234567890": "Elias Ayettey",
   "0123456789012": "Samuel Quartey",
@@ -579,7 +578,6 @@ export const ACCOUNT_RESOLUTIONS: Record<string, string> = {
   "0271445900": "Reuben Abuga-Williams",
   "0271 445 900": "Reuben Abuga-Williams",
   "1023445566012": "Kelvin Oso",
-  "1023 4455 66012": "Kelvin Oso",
   "0277456789": "Kofi Boateng",
   "0277 456 789": "Kofi Boateng",
   "0244123821": "My Phone (Self)",

@@ -337,9 +337,9 @@ export default function FigmaDesignFidelityDashboard() {
 
                 <div className="divide-y divide-[#f8f9fa]">
                   {[
-                    { name: "Savings Account", type: "Savings", num: "4001 9922 1100", amount: "GHS 12,340.00" },
-                    { name: "Current Account", type: "Current", num: "4001 9922 3344", amount: "GHS 5,730.50" },
-                    { name: "Investment Pot", type: "Fixed Deposit", num: "4001 9922 8899", amount: "GHS 0.00" },
+                    { name: "Savings Account", type: "Savings", num: "4001992211000", amount: "GHS 12,340.00" },
+                    { name: "Current Account", type: "Current", num: "4001992233440", amount: "GHS 5,730.50" },
+                    { name: "Investment Pot", type: "Fixed Deposit", num: "4001992288990", amount: "GHS 0.00" },
                   ].map(acc => (
                     <div key={acc.name} className="p-3 flex items-center justify-between hover:bg-[#fafafa] transition-colors">
                       <div className="flex items-center gap-2">

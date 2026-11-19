@@ -9,10 +9,9 @@ import type { Account } from "@/lib/mock-data";
 
 export const SWIFT_CODE = "GHCBGHAC";
 
-/** "1243 5456 6233" — easier to read out and to check against a payslip. */
+/** Account numbers show as one unbroken run of digits, never grouped. */
 export function groupDigits(number: string): string {
-  const digits = number.replace(/\s+/g, "");
-  return /^\d+$/.test(digits) ? digits.replace(/(\d{4})(?=\d)/g, "$1 ") : number;
+  return number.replace(/\s+/g, "");
 }
 
 export function ShareDetailsDialog({
