@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   // barrel instead rewrites `{ Tick02Icon } from "@hugeicons/core-free-icons"`
   // to the single-icon subpath, so a compile touches one file, not the barrel.
   experimental: {
+    agentUpgrade: "security",
     optimizePackageImports: [
       "@hugeicons/core-free-icons",
       "@hugeicons/react",
