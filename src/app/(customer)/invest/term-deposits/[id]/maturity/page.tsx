@@ -106,7 +106,7 @@ export default function DepositMaturityPage() {
               Proceed
             </Button>
           </div>
-          {!changed && <p className="px-1 pt-2 text-center text-meta text-muted-foreground">Choose a different option to change it.</p>}
+          {!changed && <p className="px-1 pt-2 text-center text-caption text-muted-foreground">Choose a different option to change it.</p>}
         </div>
       </div>
 

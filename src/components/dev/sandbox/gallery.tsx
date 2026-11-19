@@ -675,7 +675,7 @@ export function TypeTab() {
     <div className="flex flex-col gap-10">
       <Specimen title="Scale" note="Open Sans, two weights: regular and medium.">
         <div className="flex flex-col gap-4">
-          <p className="type-page-title font-medium tracking-[var(--ls-heading)]">Page title, 18 to 22</p>
+          <p className="text-h2">Page title, 18 to 22</p>
           <p className="tabular text-[40px] tracking-[var(--ls-heading)]">GHS 18,070.50</p>
           <p className="tabular text-[32px] tracking-[var(--ls-heading)]">GHS 18,070.50</p>
           <p className="tabular text-[20px]">Key-fact value, 20</p>

@@ -43,7 +43,7 @@ function Row({ payee, action, onAction }: { payee: PayAgainPayee; action: string
       <PayeeAvatar name={payee.name} size="sm" />
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-body text-foreground">{payee.name}</span>
-        <span className="tabular truncate text-meta text-muted-foreground">{second}</span>
+        <span className="tabular truncate text-caption text-muted-foreground">{second}</span>
       </span>
       {h && money !== null && (
         <span className="tabular shrink-0 text-body text-foreground">

@@ -68,8 +68,8 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
       <section className="rounded-2xl border border-border bg-card p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <span className="text-meta text-muted-foreground">Trade value</span>
-            <p className="mt-2 type-balance leading-none tracking-[var(--ls-heading)] text-foreground tabular">
+            <span className="text-caption text-muted-foreground">Trade value</span>
+            <p className="mt-2 text-display leading-none tracking-[var(--ls-heading)] text-foreground tabular">
               {formatMoney(128000, "USD")}
             </p>
           </div>
@@ -97,7 +97,7 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Document audit */}
         <section className="rounded-2xl border border-border bg-card">
-          <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-heading text-foreground">
+          <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-h4 text-foreground">
             <FileSearch size={16} className="text-muted-foreground" />
             Document audit
           </h2>
@@ -106,7 +106,7 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
               <li key={d.id} className="flex items-center gap-2 px-4 py-2">
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-body text-foreground">{d.name}</span>
-                  <span className="block text-meta text-muted-foreground tabular">{d.uploadedAt}</span>
+                  <span className="block text-caption text-muted-foreground tabular">{d.uploadedAt}</span>
                 </span>
                 {d.status === "missing" ? (
                   <Badge variant="warning">Missing</Badge>
@@ -120,17 +120,17 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
 
         {/* Version history */}
         <section className="rounded-2xl border border-border bg-card">
-          <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-heading text-foreground">
+          <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-h4 text-foreground">
             <History size={16} className="text-muted-foreground" />
             Version history
           </h2>
           <ul className="divide-y divide-border">
             {TRADE_VERSIONS.map((v) => (
               <li key={v.version} className="flex items-start gap-2 px-4 py-2">
-                <span className="w-6 shrink-0 text-meta text-muted-foreground tabular">v{v.version}</span>
+                <span className="w-6 shrink-0 text-caption text-muted-foreground tabular">v{v.version}</span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-body text-foreground">{v.summary}</span>
-                  <span className="block text-meta text-muted-foreground tabular">
+                  <span className="block text-caption text-muted-foreground tabular">
                     {v.submittedAt} · {v.submittedBy}
                   </span>
                 </span>
@@ -142,16 +142,16 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
 
       {/* Audit trail */}
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-heading text-foreground">
+        <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-h4 text-foreground">
           <ScrollText size={16} className="text-muted-foreground" />
           Audit trail
         </h2>
         <ul className="divide-y divide-border">
           {AUDIT.map((e, i) => (
             <li key={i} className="flex gap-3 px-4 py-2">
-              <span className="w-28 shrink-0 text-meta text-muted-foreground tabular">{e.at}</span>
+              <span className="w-28 shrink-0 text-caption text-muted-foreground tabular">{e.at}</span>
               <span className="min-w-0 flex-1 text-body text-foreground">{e.event}</span>
-              <span className="hidden shrink-0 text-meta text-muted-foreground sm:block">{e.actor}</span>
+              <span className="hidden shrink-0 text-caption text-muted-foreground sm:block">{e.actor}</span>
             </li>
           ))}
         </ul>

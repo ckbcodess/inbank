@@ -119,11 +119,11 @@ export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: bo
       <OfferIcon icon={offer.icon} />
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-body text-foreground">{offer.title}</span>
-        <span className="tabular flex min-w-0 gap-1 truncate text-meta text-muted-foreground">{meta}</span>
+        <span className="tabular flex min-w-0 gap-1 truncate text-caption text-muted-foreground">{meta}</span>
       </span>
       <span className="flex shrink-0 flex-col items-end">
         <span className="tabular text-body text-foreground">{formatRate(offer.rate)}</span>
-        {sub && <span className="tabular text-meta text-muted-foreground">{sub}</span>}
+        {sub && <span className="tabular text-caption text-muted-foreground">{sub}</span>}
       </span>
       <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
     </>

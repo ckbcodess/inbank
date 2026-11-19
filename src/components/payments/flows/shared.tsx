@@ -670,7 +670,7 @@ export function AccountSelectTriggerContent({
           <span className="text-body text-foreground font-medium tracking-[var(--ls-tight)] truncate leading-tight">
             {account.name}
           </span>
-          <span className="text-meta text-muted-foreground font-normal truncate tabular leading-tight">
+          <span className="text-caption text-muted-foreground font-normal truncate tabular leading-tight">
             {account.number}
           </span>
         </div>
@@ -678,7 +678,7 @@ export function AccountSelectTriggerContent({
 
       {/* Right: Balance */}
       <div className="text-right shrink-0">
-        <span className="text-body text-foreground font-medium tabular tracking-tight">
+        <span className="text-body text-foreground font-medium tabular tracking-[var(--ls-tight)]">
           {formatMoney(account.available ?? 0, account.currency || "GHS", true)}
         </span>
       </div>
@@ -1381,7 +1381,7 @@ export function CollapsedDetailsBadge({
         ) : provider ? (
           <BankMark name={provider} size={32} />
         ) : (
-          <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-meta text-muted-foreground font-medium">
+          <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-caption text-muted-foreground font-medium">
             {initials || <User size={16} aria-hidden="true" />}
           </span>
         )}
@@ -1399,11 +1399,11 @@ export function CollapsedDetailsBadge({
             )}
           </span>
           {subtitle && (
-            <span className="truncate text-meta leading-tight text-muted-foreground tabular">{subtitle}</span>
+            <span className="truncate text-caption leading-tight text-muted-foreground tabular">{subtitle}</span>
           )}
           {nameCheck &&
             !nameCheck.confirmed && (
-              <span className="flex items-center gap-1 text-meta leading-tight text-warning">
+              <span className="flex items-center gap-1 text-caption leading-tight text-warning">
                 <AlertCircle size={12} className="shrink-0" aria-hidden="true" />
                 <span className="truncate">Name not confirmed — check the details before you send</span>
               </span>
@@ -1530,7 +1530,7 @@ export function SchedulePaymentSection({
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <span id="schedule-payment-label" className="text-body font-medium text-foreground">Schedule Payment</span>
-          <span className="text-meta text-muted-foreground">
+          <span className="text-caption text-muted-foreground">
             Set up a future date or recurring transfer
           </span>
         </div>
@@ -1728,11 +1728,11 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
             <div className="flex w-full items-center justify-between gap-3 py-0.5">
               <div className="flex flex-col text-left">
                 <span className="font-medium text-foreground">{m.name}</span>
-                <span className="text-meta font-normal text-muted-foreground">{m.description}</span>
+                <span className="text-caption font-normal text-muted-foreground">{m.description}</span>
               </div>
               <div className="shrink-0 text-right">
                 <span className="tabular block text-body font-medium text-foreground">{m.feeText}</span>
-                <span className="text-meta font-normal text-muted-foreground">{m.speed}</span>
+                <span className="text-caption font-normal text-muted-foreground">{m.speed}</span>
               </div>
             </div>
           </SelectItem>
@@ -1832,7 +1832,7 @@ export function LookupInput({
           {resolving ? (
             <span key="verifying" className="animate-lookup-state flex items-center gap-1.5">
               <AppLoader size={12} className="text-muted-foreground" />
-              <span className="text-meta text-muted-foreground">Verifying...</span>
+              <span className="text-caption text-muted-foreground">Verifying...</span>
             </span>
           ) : verified ? (
             // The resolved name, in the slot the Search label uses. It's announced politely so it isn't missed.

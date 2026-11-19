@@ -98,12 +98,12 @@ export function FactGroups({ groups, boxed = false }: { groups: FactGroup[]; box
             ) : (
               <div
                 key={j}
-                className={cn("flex justify-between gap-5 rounded-xl px-2", g.quiet ? "items-baseline py-2 text-meta" : "items-baseline py-3 text-body")}
+                className={cn("flex justify-between gap-5 rounded-xl px-2", g.quiet ? "items-baseline py-2 text-caption" : "items-baseline py-3 text-body")}
               >
                 <span className="shrink-0 text-muted-foreground">{r.label}</span>
                 <span className="flex min-w-0 flex-col items-end gap-0.5 text-right">
-                  <span className={cn("tabular", g.quiet ? "text-muted-foreground" : "text-foreground", r.lead && "text-fact")}>{r.value}</span>
-                  {r.note && <span className="tabular text-meta leading-relaxed text-muted-foreground">{r.note}</span>}
+                  <span className={cn("tabular", g.quiet ? "text-muted-foreground" : "text-foreground", r.lead && "text-body-lg")}>{r.value}</span>
+                  {r.note && <span className="tabular text-caption leading-relaxed text-muted-foreground">{r.note}</span>}
                 </span>
               </div>
             ))}
@@ -138,7 +138,7 @@ export function MaturityInstructionField({
             <SelectItem key={m.id} value={m.id} label={m.label}>
               <div className="flex flex-col py-0.5 text-left">
                 <span className="text-foreground">{m.label}</span>
-                <span className="max-w-[22rem] whitespace-normal text-meta font-normal text-muted-foreground">{m.detail}</span>
+                <span className="max-w-[22rem] whitespace-normal text-caption font-normal text-muted-foreground">{m.detail}</span>
               </div>
             </SelectItem>
           ))}

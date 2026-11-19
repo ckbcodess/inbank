@@ -110,7 +110,7 @@ export function OwnAccountFlow({
             <p>You have one active account. Link another account under your Ghana Card to transfer between them.</p>
             <Link
               href="/accounts"
-              className="mt-2 inline-flex items-center gap-2 text-primary hover:underline font-medium text-meta"
+              className="mt-2 inline-flex items-center gap-2 text-primary hover:underline font-medium text-caption"
             >
               Go to Accounts &amp; Cards to link an account &rarr;
             </Link>
@@ -151,7 +151,7 @@ export function OwnAccountFlow({
           </Select>
         )}
         {Boolean(state.toOwnAccountId && state.toOwnAccountId === state.fromId) && (
-          <div className="flex items-center gap-2 text-meta text-destructive animate-in fade-in duration-150">
+          <div className="flex items-center gap-2 text-caption text-destructive animate-in fade-in duration-150">
             <AlertCircle size={14} className="shrink-0" />
             <span>Destination account cannot be the same as source account.</span>
           </div>

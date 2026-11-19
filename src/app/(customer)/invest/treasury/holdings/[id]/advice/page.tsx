@@ -107,7 +107,7 @@ export default function HoldingAdvicePage() {
       <div className="flex flex-col gap-6">
         <section className="flex flex-col gap-2 px-1">
           <span className="text-body text-muted-foreground">You paid</span>
-          <span className="tabular type-balance leading-none tracking-[var(--ls-heading)] text-foreground">{money(h.cost)}</span>
+          <span className="tabular text-display leading-none tracking-[var(--ls-heading)] text-foreground">{money(h.cost)}</span>
           <span className="text-body text-muted-foreground">{`${h.title} · bought ${formatDate(h.boughtOn)}`}</span>
         </section>
 
@@ -120,7 +120,7 @@ export default function HoldingAdvicePage() {
               <li key={d} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
                 <span className="flex items-center gap-2 text-foreground">
                   <span className="tabular">{formatDate(d)}</span>
-                  {i === 0 && <span className="text-meta text-muted-foreground">Next</span>}
+                  {i === 0 && <span className="text-caption text-muted-foreground">Next</span>}
                 </span>
                 <span className="tabular text-foreground">{money(coupon)}</span>
               </li>
@@ -130,7 +130,7 @@ export default function HoldingAdvicePage() {
               <span className="tabular text-foreground">{money(h.kind === "bond" ? sumMoney([h.face, coupon]) : h.face)}</span>
             </li>
           </ListCard>
-          <p className="px-1 text-meta text-muted-foreground">
+          <p className="px-1 text-caption text-muted-foreground">
             {h.kind === "bond"
               ? "The last payment is the face value plus the final interest payment."
               : "A bill pays its face value once, at maturity."}

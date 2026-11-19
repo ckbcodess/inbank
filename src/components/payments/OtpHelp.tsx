@@ -98,14 +98,14 @@ export function OtpHelp({
 
       {open && !controlled && (
         <div className="flex w-full flex-col items-center gap-2 py-2 text-center animate-in fade-in duration-150">
-          <span className="text-title text-foreground">Dial</span>
+          <span className="text-h3 text-foreground">Dial</span>
           <a
             href={`tel:${OTP_SHORTCODE.replace("#", "%23")}`}
-            className="tabular type-balance leading-none tracking-[var(--ls-heading)] text-foreground"
+            className="tabular text-display leading-none tracking-[var(--ls-heading)] text-foreground"
           >
             {OTP_SHORTCODE}
           </a>
-          <span className="text-heading text-foreground">to see your code</span>
+          <span className="text-h4 text-foreground">to see your code</span>
           <span aria-hidden="true" className="mt-2 h-0.5 w-4 rounded-full bg-primary" />
         </div>
       )}

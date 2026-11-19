@@ -276,11 +276,11 @@ export function PolicyRow({ policy, showAmounts }: { policy: Policy; showAmounts
         <PlanIcon planId={policy.planId} />
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-body text-foreground">{plan?.name}</span>
-          <span className="tabular truncate text-meta text-muted-foreground">{policyMeta(policy)}</span>
+          <span className="tabular truncate text-caption text-muted-foreground">{policyMeta(policy)}</span>
         </span>
         <span className="flex shrink-0 flex-col items-end">
           <span className="tabular text-body text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
-          <span className="tabular text-meta text-muted-foreground">{premiumLine(policy, showAmounts)}</span>
+          <span className="tabular text-caption text-muted-foreground">{premiumLine(policy, showAmounts)}</span>
         </span>
         <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
       </Link>
@@ -311,11 +311,11 @@ export function PlanPolicyRow({ policy, showAmounts }: { policy: Policy; showAmo
       >
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="tabular truncate text-body text-foreground">{policy.number}</span>
-          {second && <span className={cn("truncate text-meta", attention ? "text-warning-text" : "text-muted-foreground")}>{second}</span>}
+          {second && <span className={cn("truncate text-caption", attention ? "text-warning-text" : "text-muted-foreground")}>{second}</span>}
         </span>
         <span className="flex shrink-0 flex-col items-end">
           <span className="tabular text-body text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
-          <span className="tabular text-meta text-muted-foreground">
+          <span className="tabular text-caption text-muted-foreground">
             {maturity ? `Ends ${formatDate(maturity)}` : premiumLine(policy, showAmounts)}
           </span>
         </span>

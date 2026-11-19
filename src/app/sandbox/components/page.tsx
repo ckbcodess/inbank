@@ -87,7 +87,7 @@ function Sandbox() {
       <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-8 px-3 py-6 sm:px-6 lg:px-8">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <h1 className="type-page-title font-medium tracking-[var(--ls-heading)]">Component sandbox</h1>
+            <h1 className="text-h2">Component sandbox</h1>
             <p className="text-[13px] text-muted-foreground">The real components. Tune the tokens on the right; colours open in the tuner.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">

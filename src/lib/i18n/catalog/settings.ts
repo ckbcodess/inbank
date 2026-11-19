@@ -32,7 +32,7 @@ const settings: Entry[] = [
   ["Logged out of all other devices", "Tous les autres appareils sont déconnectés", "Sesión cerrada en todos los demás dispositivos", "已退出所有其他设备"],
   ["1 device will be logged out. It’ll need a one-time code the next time it signs in. This device stays logged in.", "1 appareil sera déconnecté. Il aura besoin d’un code à usage unique à sa prochaine connexion. Cet appareil reste connecté.", "Se cerrará la sesión en 1 dispositivo. Necesitará un código de un solo uso la próxima vez que inicie sesión. Este dispositivo sigue con la sesión iniciada.", "将退出 1 台设备。它下次登录时需要一次性验证码。本设备保持登录。"],
   ["{0} devices will be logged out. They’ll need a one-time code the next time they log in. This device stays logged in.", "{0} appareils seront déconnectés. Ils auront besoin d’un code à usage unique à leur prochaine connexion. Cet appareil reste connecté.", "Se cerrará la sesión en {0} dispositivos. Necesitarán un código de un solo uso la próxima vez que inicien sesión. Este dispositivo sigue con la sesión iniciada.", "将退出 {0} 台设备。它们下次登录时需要一次性验证码。本设备保持登录。"],
-  ["Linked devices", "Appareils associés", "Dispositivos vinculados", "已关联设备"],
+  ["Trusted devices", "Appareils de confiance", "Dispositivos de confianza", "受信任的设备"],
   ["{0} devices logged in", "{0} appareils connectés", "{0} dispositivos con sesión iniciada", "{0} 台设备已登录"],
   ["{0} · This device", "{0} · Cet appareil", "{0} · Este dispositivo", "{0} · 本设备"],
   ["Active now", "Actif maintenant", "Activo ahora", "当前活跃"],

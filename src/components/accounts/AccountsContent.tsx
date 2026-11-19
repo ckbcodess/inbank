@@ -155,7 +155,7 @@ function AccountRow({
         </TileChip>
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="flex flex-wrap items-center gap-2">
-            <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">{account.name}</span>
+            <span className="truncate text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">{account.name}</span>
             {showDefault && isDefault && <Badge variant="brand">Default</Badge>}
             {account.isJoint && <Badge variant="outline">Joint</Badge>}
             {dormant && <Badge variant="warning">Dormant</Badge>}
@@ -165,7 +165,7 @@ function AccountRow({
             {account.isJoint && otherHolder ? ` · with ${otherHolder}` : ""}
           </span>
           {pending && (
-            <span className="flex items-center gap-2 text-meta text-muted-foreground">
+            <span className="flex items-center gap-2 text-caption text-muted-foreground">
               <Clock size={13} className="shrink-0 text-warning" aria-hidden="true" />
               <span className="tabular">
                 {formatMoney(pending.amount, "GHS", true)} from {pending.from} on its way · usually arrives within minutes
@@ -201,7 +201,7 @@ function SourceRow({ source, onOpen, onRemove }: { source: LinkedSource; onOpen:
         <SourceMark type={source.type} operator={source.operator} title={source.title} />
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="flex items-center gap-2">
-            <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">{source.title}</span>
+            <span className="truncate text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">{source.title}</span>
             <WalletTag tag={sourceTag(source)} />
           </span>
           <span className="truncate text-body text-muted-foreground tabular">{source.subtitle}</span>
@@ -549,7 +549,7 @@ export function AccountsContent({ linkSource = false, loading: forced = false }:
               <div className="flex size-21 items-center justify-center rounded-full bg-primary/15 text-foreground shadow-[0_0_60px_20px_color-mix(in_oklab,var(--primary)_18%,transparent)]">
                 <HandCoins size={40} aria-hidden="true" />
               </div>
-              <DialogTitle className="type-headline tracking-[var(--ls-heading)]">You&apos;re Almost There…</DialogTitle>
+              <DialogTitle className="text-h1 tracking-[var(--ls-heading)]">You&apos;re Almost There…</DialogTitle>
               <p className="max-w-[320px] text-body leading-relaxed text-muted-foreground">
                 Deposit to unlock instant banking. Fund your account today for quick payments and everyday
                 convenience.
@@ -604,7 +604,7 @@ export function AccountsContent({ linkSource = false, loading: forced = false }:
             <div className="flex flex-col items-center gap-6 pb-4 pt-5 text-center">
               {viewing && <SourceMark large type={viewing.type} operator={viewing.operator} title={viewing.title} />}
               <div className="flex flex-col items-center gap-2">
-                <DialogTitle className="text-title tracking-[var(--ls-heading)]">{viewing?.title}</DialogTitle>
+                <DialogTitle className="text-h3 tracking-[var(--ls-heading)]">{viewing?.title}</DialogTitle>
                 <p className="text-body text-muted-foreground tabular">{viewing?.subtitle}</p>
               </div>
               {viewing && (

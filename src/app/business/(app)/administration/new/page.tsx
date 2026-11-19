@@ -169,7 +169,7 @@ function WhoOption({
       }`}
     >
       <span className="truncate text-body text-foreground">{primary}</span>
-      <span className="truncate text-meta text-muted-foreground">{secondary}</span>
+      <span className="truncate text-caption text-muted-foreground">{secondary}</span>
     </button>
   );
 }

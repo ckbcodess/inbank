@@ -32,8 +32,8 @@ export function AnalyticsPreview({ profileKind }: { profileKind: ProfileKind }) 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-heading text-foreground">Analytics</h2>
-        <Link href="/reports" className="text-meta text-foreground underline-offset-4 hover:underline">
+        <h2 className="text-h4 text-foreground">Analytics</h2>
+        <Link href="/reports" className="text-caption text-foreground underline-offset-4 hover:underline">
           View more →
         </Link>
       </div>
@@ -46,7 +46,7 @@ export function AnalyticsPreview({ profileKind }: { profileKind: ProfileKind }) 
         <>
           <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
             <div className="flex flex-col gap-1">
-              <span className="flex items-center gap-2 text-meta text-muted-foreground">
+              <span className="flex items-center gap-2 text-caption text-muted-foreground">
                 <span
                   aria-hidden="true"
                   className="size-1.5 shrink-0 rounded-[2px]"
@@ -59,7 +59,7 @@ export function AnalyticsPreview({ profileKind }: { profileKind: ProfileKind }) 
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="flex items-center gap-2 text-meta text-muted-foreground">
+              <span className="flex items-center gap-2 text-caption text-muted-foreground">
                 <span
                   aria-hidden="true"
                   className="size-1.5 shrink-0 rounded-[2px]"

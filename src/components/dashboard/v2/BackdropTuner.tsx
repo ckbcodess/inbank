@@ -128,7 +128,7 @@ function Panel() {
     >
       <div className="flex items-center justify-between">
         <span className="text-body text-foreground">Backdrop tuner</span>
-        <span className="rounded-full bg-muted px-2 py-0.5 text-meta text-muted-foreground">{theme === "dark" ? "Dark" : "Light"}</span>
+        <span className="rounded-full bg-muted px-2 py-0.5 text-caption text-muted-foreground">{theme === "dark" ? "Dark" : "Light"}</span>
       </div>
 
       <div role="radiogroup" aria-label="Backdrop" className="flex flex-wrap gap-2">
@@ -150,11 +150,11 @@ function Panel() {
           </button>
         ))}
       </div>
-      <p className="-mt-2 text-meta text-muted-foreground">Switch the app theme to tune the other mode.</p>
+      <p className="-mt-2 text-caption text-muted-foreground">Switch the app theme to tune the other mode.</p>
 
       {BACKDROP_TOKENS.map((group) => (
         <div key={group.group} className="flex flex-col gap-2">
-          <span className="text-meta font-medium text-foreground">{group.group}</span>
+          <span className="text-caption font-medium text-foreground">{group.group}</span>
           {group.tokens.map(({ id, label }) => {
             const value: TunedColor = tuned[id] ?? readToken(id);
             const changed = !!tuned[id];
@@ -167,7 +167,7 @@ function Panel() {
                   onChange={(e) => setToken(backdrop, theme, id, { ...value, hex: e.target.value })}
                   className="size-7 shrink-0 cursor-pointer rounded-sm border border-border bg-transparent p-0"
                 />
-                <span className={cn("min-w-0 flex-1 truncate text-meta", changed ? "text-foreground" : "text-muted-foreground")}>{label}</span>
+                <span className={cn("min-w-0 flex-1 truncate text-caption", changed ? "text-foreground" : "text-muted-foreground")}>{label}</span>
                 <input
                   type="range"
                   min={0}
@@ -177,7 +177,7 @@ function Panel() {
                   onChange={(e) => setToken(backdrop, theme, id, { ...value, alpha: Number(e.target.value) })}
                   className="h-1.5 w-20 cursor-pointer accent-[var(--primary)]"
                 />
-                <span className="tabular w-8 text-right text-meta text-muted-foreground">{value.alpha}%</span>
+                <span className="tabular w-8 text-right text-caption text-muted-foreground">{value.alpha}%</span>
                 <button
                   type="button"
                   onClick={() => reset(backdrop, theme, id)}

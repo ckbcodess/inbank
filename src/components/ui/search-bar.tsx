@@ -32,7 +32,7 @@ export function SearchBar({ value, onChange, placeholder = 'Search...', classNam
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="flex-1 bg-transparent outline-none text-meta text-foreground placeholder:text-muted-foreground font-normal"
+        className="flex-1 bg-transparent outline-none text-caption text-foreground placeholder:text-muted-foreground font-normal"
       />
       {value && (
         <Button variant="ghost" size="icon-xs" onClick={() => onChange('')}>

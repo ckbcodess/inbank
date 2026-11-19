@@ -125,10 +125,10 @@ export function AccountExpensesView({
                 <RevealingAmount
                   amount={activeSlice ? activeSlice.amount : data.total}
                   currency={account.currency}
-                  className="mt-1 type-balance tracking-[var(--ls-heading)] text-foreground tabular"
+                  className="mt-1 text-display tracking-[var(--ls-heading)] text-foreground tabular"
                 />
                 {activeSlice && (
-                  <span className="mt-2 text-meta text-muted-foreground tabular">
+                  <span className="mt-2 text-caption text-muted-foreground tabular">
                     {percent(activeSlice.share)} of spend
                   </span>
                 )}
@@ -143,7 +143,7 @@ export function AccountExpensesView({
 
             <div className="flex flex-col gap-3 md:gap-5">
               {/* Same weight as the section headings on Accounts ("Sources of Funds"). */}
-              <h2 className="px-2 text-heading font-medium tracking-[var(--ls-tight)] text-foreground">
+              <h2 className="px-2 text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">
                 {BREAKDOWN_LABEL[view]}
               </h2>
               <ul className="flex flex-col gap-0.5" aria-label={BREAKDOWN_LABEL[view]}>
@@ -209,7 +209,7 @@ export function AccountExpensesView({
                             <li key={b.category} className="flex items-center gap-2 px-2 py-2">
                               <span className="flex min-w-0 flex-1 items-baseline gap-2">
                                 <span className="truncate text-body text-foreground">{b.category}</span>
-                                <span className="shrink-0 text-meta text-muted-foreground tabular">
+                                <span className="shrink-0 text-caption text-muted-foreground tabular">
                                   {percent(b.share)}
                                 </span>
                               </span>
@@ -290,7 +290,7 @@ function Comparison({
       : diff > 0
         ? `${formatMoney(diff, currency)} more than the previous ${periodLabel}`
         : `${formatMoney(Math.abs(diff), currency)} less than the previous ${periodLabel}`;
-  return <p className="max-w-[260px] text-center text-meta leading-relaxed text-muted-foreground tabular">{text}</p>;
+  return <p className="max-w-[260px] text-center text-caption leading-relaxed text-muted-foreground tabular">{text}</p>;
 }
 
 /** Drawn in a 300-unit viewBox and scaled to its container, so it shrinks on phones. */

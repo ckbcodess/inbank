@@ -447,8 +447,8 @@ function CorporateEnrolmentFlow() {
       >
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-1">
-            <span className="text-meta text-muted-foreground">Your reference</span>
-            <span className="tabular type-headline tracking-[var(--ls-heading)] text-foreground">{reference}</span>
+            <span className="text-caption text-muted-foreground">Your reference</span>
+            <span className="tabular text-h1 tracking-[var(--ls-heading)] text-foreground">{reference}</span>
           </div>
           <div className="flex flex-col gap-3">
             <Button
@@ -577,7 +577,7 @@ function CorporateEnrolmentFlow() {
                 {company ? "Continue" : "Find Company"}
               </Button>
               {company && selectedAccountIds.length === 0 && (
-                <p className="text-center text-meta text-muted-foreground">Choose at least one account.</p>
+                <p className="text-center text-caption text-muted-foreground">Choose at least one account.</p>
               )}
             </div>
           </form>
@@ -646,7 +646,7 @@ function CorporateEnrolmentFlow() {
                 Send Code
               </Button>
               {applicantChoice === "other" && (
-                <p className="text-center text-meta text-muted-foreground">
+                <p className="text-center text-caption text-muted-foreground">
                   {`Your signatories approve the application by signing the letter we write (${company.signingRule}).`}
                 </p>
               )}
@@ -728,7 +728,7 @@ function CorporateEnrolmentFlow() {
                 <li key={u.id} className="flex items-center justify-between gap-3 py-2">
                   <div className="min-w-0">
                     <p className="truncate text-body text-foreground">{u.name}</p>
-                    <p className="truncate text-meta text-muted-foreground">
+                    <p className="truncate text-caption text-muted-foreground">
                       {u.isFromMandate ? u.designation : (u.designation ?? "Added by you")}
                     </p>
                   </div>
@@ -822,7 +822,7 @@ function CorporateEnrolmentFlow() {
               </div>
             )}
 
-            <dl className="flex flex-col gap-1 text-meta text-muted-foreground">
+            <dl className="flex flex-col gap-1 text-caption text-muted-foreground">
               {(Object.keys(CORPORATE_ROLE_LINE) as CorporateAppRole[]).map((r) => (
                 <div key={r} className="flex gap-1">
                   <dt className="text-foreground">{r}:</dt>
@@ -841,7 +841,7 @@ function CorporateEnrolmentFlow() {
                 >
                   Continue
                 </Button>
-                {usersBlock && <p className="text-center text-meta text-muted-foreground">{usersBlock}</p>}
+                {usersBlock && <p className="text-center text-caption text-muted-foreground">{usersBlock}</p>}
               </div>
             )}
           </div>
@@ -891,7 +891,7 @@ function CorporateEnrolmentFlow() {
                 <FileText size={16} />
                 Open Letter to Print
               </Button>
-              <p className="tabular text-center text-meta text-muted-foreground">
+              <p className="tabular text-center text-caption text-muted-foreground">
                 {`Your reference ${reference} is printed on it.`}
               </p>
             </div>
@@ -916,7 +916,7 @@ function CorporateEnrolmentFlow() {
                   Submit Application
                 </Button>
                 {!letter && (
-                  <p className="text-center text-meta text-muted-foreground">Upload the signed letter to submit.</p>
+                  <p className="text-center text-caption text-muted-foreground">Upload the signed letter to submit.</p>
                 )}
               </div>
               <Button
@@ -962,7 +962,7 @@ function ApplicantOption({
     >
       <span className="min-w-0">
         <span className="block truncate text-body text-foreground">{primary}</span>
-        <span className="block truncate text-meta text-muted-foreground">{secondary}</span>
+        <span className="block truncate text-caption text-muted-foreground">{secondary}</span>
       </span>
       {meta && <span className="tabular shrink-0 text-body text-muted-foreground">{meta}</span>}
     </button>

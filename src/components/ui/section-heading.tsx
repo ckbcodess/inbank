@@ -34,7 +34,7 @@ export function SectionHeading({
   return (
     <div className={cn("flex min-h-7 items-center justify-between gap-3 px-1", className)}>
       <div className="flex items-center gap-2">
-        <h2 id={id} className="text-heading font-medium tracking-[var(--ls-tight)] text-foreground">
+        <h2 id={id} className="text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">
           {title}
         </h2>
         {hint && (
@@ -47,7 +47,7 @@ export function SectionHeading({
               >
                 <Info size={15} aria-hidden="true" />
               </TooltipTrigger>
-              <TooltipContent side="bottom" align="start" className="w-64 whitespace-normal text-meta font-normal leading-relaxed">
+              <TooltipContent side="bottom" align="start" className="w-64 whitespace-normal text-caption font-normal leading-relaxed">
                 {hint}
               </TooltipContent>
             </Tooltip>

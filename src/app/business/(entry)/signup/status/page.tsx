@@ -297,7 +297,7 @@ function StatusContent() {
             <Button size="md" loading={busy} disabled={!letter} onClick={handleSendLetter} className="w-full">
               Send Letter
             </Button>
-            <p className="text-center text-meta text-muted-foreground">
+            <p className="text-center text-caption text-muted-foreground">
               {`Or email it to ${reviewer.email ?? "your relationship manager"}, post it, or bring it to any branch.`}
             </p>
           </section>
@@ -327,7 +327,7 @@ function StatusContent() {
                   <li key={u.id} className="flex items-center justify-between gap-3 py-1">
                     <div className="min-w-0">
                       <p className="truncate text-body text-foreground">{u.name}</p>
-                      <p className="truncate text-meta text-muted-foreground">
+                      <p className="truncate text-caption text-muted-foreground">
                         {u.role} · {used ? "Logged in" : expired ? "Link expired" : "Details sent"}
                       </p>
                     </div>
@@ -352,7 +352,7 @@ function StatusContent() {
                 );
               })}
             </ul>
-            <p className="text-meta text-muted-foreground">
+            <p className="text-caption text-muted-foreground">
               Each person gets their username by SMS and a link to set their password by email.
             </p>
           </section>
@@ -387,15 +387,15 @@ function StatusContent() {
                         {item.label}
                         <span className="sr-only">{item.done ? " (done)" : item.current ? " (now)" : " (to come)"}</span>
                       </p>
-                      <span className="tabular shrink-0 text-meta text-muted-foreground">{item.timestamp}</span>
+                      <span className="tabular shrink-0 text-caption text-muted-foreground">{item.timestamp}</span>
                     </div>
-                    <p className="text-meta leading-relaxed text-muted-foreground">{item.description}</p>
+                    <p className="text-caption leading-relaxed text-muted-foreground">{item.description}</p>
                   </div>
                 </li>
               );
             })}
           </ol>
-          <p className="text-meta text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             {reviewer.type === "rm" ? `${reviewer.name}, your relationship manager, is handling this.` : `Our ${reviewer.name} is handling this.`}
             {reviewer.email ? ` ${reviewer.email}` : ""}
           </p>

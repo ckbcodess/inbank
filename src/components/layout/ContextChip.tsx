@@ -22,7 +22,7 @@ export function ContextChip({
     <span
       title={title}
       className={cn(
-        "inline-flex min-w-0 max-w-full items-center gap-2 rounded-full bg-muted px-2 py-1 text-meta leading-none text-muted-foreground",
+        "inline-flex min-w-0 max-w-full items-center gap-2 rounded-full bg-muted px-2 py-1 text-caption leading-none text-muted-foreground",
         className,
       )}
     >

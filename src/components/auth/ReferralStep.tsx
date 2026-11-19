@@ -68,7 +68,7 @@ export default function ReferralStep({
     >
       {/* Top area */}
       <div className="flex flex-col gap-2">
-        <DialogTitle className="type-headline font-medium tracking-tight text-foreground">
+        <DialogTitle className="text-h1 font-medium tracking-tight text-foreground">
           Were You Referred by Someone?
         </DialogTitle>
         <DialogDescription className="text-body text-muted-foreground leading-normal">
@@ -98,7 +98,7 @@ export default function ReferralStep({
               autoCapitalize="characters"
               autoComplete="off"
               maxLength={9}
-              className="tabular text-center text-title font-medium"
+              className="tabular text-center text-h3 font-medium"
             />
 
             {referrer && (

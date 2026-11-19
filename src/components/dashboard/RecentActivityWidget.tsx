@@ -158,13 +158,13 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
         {/* Top Section */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-heading font-medium text-foreground">Recent activity</h2>
+            <h2 className="text-h4 font-medium text-foreground">Recent activity</h2>
             {/* Account Filter Pill Dropdown */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
-                className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-meta font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
+                className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-caption font-medium text-foreground transition-colors hover:bg-muted transition-transform cursor-pointer"
               >
                 <span>{selectedAccount}</span>
                 <ChevronDown size={12} className="text-muted-foreground" />
@@ -180,7 +180,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                         setSelectedAccount(opt.label);
                         setShowFilterMenu(false);
                       }}
-                      className={`flex w-full items-center px-3 py-2 text-left text-meta transition-colors cursor-pointer ${
+                      className={`flex w-full items-center px-3 py-2 text-left text-caption transition-colors cursor-pointer ${
                         selectedAccount === opt.label
                           ? "bg-muted font-medium text-foreground"
                           : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -196,7 +196,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
           <Link
             href="/transactions"
-            className="inline-flex items-center gap-1 text-meta font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
+            className="inline-flex items-center gap-1 text-caption font-medium text-muted-foreground hover:text-foreground transition-colors transition-transform"
           >
             <span>View all</span>
             <ChevronRight size={13} />
@@ -231,7 +231,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                   <span className="font-normal text-foreground text-body leading-tight truncate">
                     {item.title}
                   </span>
-                  <div className="flex items-center gap-2 text-meta text-muted-foreground truncate">
+                  <div className="flex items-center gap-2 text-caption text-muted-foreground truncate">
                     <span>{item.subtitle}</span>
                   </div>
                 </div>
@@ -239,7 +239,6 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                 {/* Amount & State / Account Number */}
                 <div className="shrink-0 flex flex-col items-end gap-0.5">
                   <span className="tabular text-body font-normal text-foreground">
-                    {isDebit ? "− " : "+ "}
                     {formatMoney(item.amount, "GHS", true)}
                   </span>
                   {isFailed ? <Badge variant="destructive">Failed</Badge> : isPending ? <Badge variant="warning">Pending</Badge> : null}
@@ -263,17 +262,17 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                 <TransactionMark transaction={{ direction: selectedTx.direction === "debit" ? "debit" : "credit", paymentMethod: undefined, counterparty: selectedTx.title }} />
                 <div>
                   <span className="text-body font-medium text-foreground">{selectedTx.title}</span>
-                  <p className="text-meta text-muted-foreground">{selectedTx.subtitle}</p>
+                  <p className="text-caption text-muted-foreground">{selectedTx.subtitle}</p>
                 </div>
               </div>
 
               {/* Receipt Summary */}
               <div className="my-1 flex flex-col items-center justify-center rounded-xl bg-muted/30 p-3 text-center">
-                <span className="text-meta text-muted-foreground">Amount transferred</span>
-                <span className="mt-1 type-headline font-medium tabular text-foreground">
+                <span className="text-caption text-muted-foreground">Amount transferred</span>
+                <span className="mt-1 text-h1 font-medium tabular text-foreground">
                   GHS {selectedTx.amount.toFixed(2)}
                 </span>
-                <span className="mt-2 inline-flex items-center gap-2 text-meta text-muted-foreground">
+                <span className="mt-2 inline-flex items-center gap-2 text-caption text-muted-foreground">
                   <span className="size-1.5 rounded-full bg-success/80 shrink-0" />
                   {selectedTx.status}
                 </span>

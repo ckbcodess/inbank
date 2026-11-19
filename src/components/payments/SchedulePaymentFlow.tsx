@@ -9,9 +9,9 @@
  * receipt showed rather than the fields of one particular form.
  */
 
+import PageHeader from "@/components/layout/PageHeader";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -126,19 +126,7 @@ export function SchedulePaymentFlow() {
   }
 
   const header = (title: string, onBack: () => void, label: string) => (
-    <div data-page-header className="flex min-w-0 items-center gap-2">
-      <button
-        type="button"
-        onClick={onBack}
-        className="relative -ml-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:ml-0 sm:size-8"
-        aria-label={label}
-      >
-        <ChevronLeft size={20} />
-      </button>
-      <h1 className="truncate type-page-title font-medium leading-[24px] tracking-[var(--ls-heading)] text-foreground sm:leading-[28px]">
-        {title}
-      </h1>
-    </div>
+    <PageHeader title={title} backTo={{ href: "", label, onClick: onBack }} />
   );
 
   const rowsCard = (rows: Array<[string, string]>) => (
@@ -155,7 +143,7 @@ export function SchedulePaymentFlow() {
   if (screen === "review") {
     return (
       <div className="mx-auto flex w-full max-w-2xl animate-in flex-col gap-6 duration-200 ease-out fade-in">
-        {header("Schedule Summary", () => setScreen("form"), "Back to the schedule")}
+        {header("Schedule Summary", () => setScreen("form"), "the schedule")}
         <div className="flex flex-col gap-4">
           <ReviewSummary
             details={[
@@ -195,7 +183,7 @@ export function SchedulePaymentFlow() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl animate-in flex-col gap-6 duration-200 ease-out fade-in">
-      {header("Schedule Payment", handleBack, "Back")}
+      {header("Schedule Payment", handleBack, "previous step")}
 
       {/* The payment as it was paid: filled in, nothing to type again. */}
       {rowsCard(paymentRows)}

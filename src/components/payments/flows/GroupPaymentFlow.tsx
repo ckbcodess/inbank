@@ -1,7 +1,8 @@
 "use client";
 
+import PageHeader from "@/components/layout/PageHeader";
 import { useState, useMemo } from "react";
-import { ChevronDown, ChevronLeft, CircleMinus, RotateCcw, UserPlus, Users } from "@/components/ui/icons";
+import { ChevronDown, CircleMinus, RotateCcw, UserPlus, Users } from "@/components/ui/icons";
 import { Account, formatMoney } from "@/lib/mock-data";
 import { GroupMember, PaymentGroup } from "@/lib/groups-store";
 import { Button } from "@/components/ui/button";
@@ -91,19 +92,7 @@ function GroupAmountsPage({
 
   return (
     <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
-      <div data-page-header className="flex min-w-0 items-center gap-2">
-        <button
-          type="button"
-          onClick={onDone}
-          className="relative -ml-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:ml-0 sm:size-8"
-          aria-label="Back to payment"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <h1 className="type-page-title min-w-0 truncate font-medium tracking-[var(--ls-heading)] text-foreground">
-          Edit Amounts
-        </h1>
-      </div>
+      <PageHeader title="Edit Amounts" backTo={{ href: "", label: "payment", onClick: onDone }} />
 
       {/* The group, with its member actions on the same line, above the list they act on. */}
       <div className="flex items-center justify-between gap-3">
@@ -113,7 +102,7 @@ function GroupAmountsPage({
             <button
               type="button"
               onClick={onClearMemberAmounts}
-              className="cursor-pointer text-meta text-foreground underline underline-offset-4"
+              className="cursor-pointer text-caption text-foreground underline underline-offset-4"
             >
               Reset all
             </button>
@@ -121,7 +110,7 @@ function GroupAmountsPage({
           <button
             type="button"
             onClick={onAddOrRemoveMembers}
-            className="cursor-pointer text-meta text-foreground underline underline-offset-4"
+            className="cursor-pointer text-caption text-foreground underline underline-offset-4"
           >
             Add or remove members
           </button>
@@ -147,7 +136,7 @@ function GroupAmountsPage({
                   <span className={cn("truncate text-body", leftOut ? "text-muted-foreground" : "text-foreground")}>
                     {m.name}
                   </span>
-                  <span className="tabular truncate text-meta text-muted-foreground">
+                  <span className="tabular truncate text-caption text-muted-foreground">
                     {leftOut ? "Left out" : changed ? `Was ${formatMoney(base, "GHS", true)}` : m.networkOrBank}
                   </span>
                 </span>
@@ -269,7 +258,7 @@ export function GroupMemberBreakdown({
               <div key={m.id} className="flex items-center justify-between gap-4 py-2">
                 <span className="flex min-w-0 flex-col">
                   <span className={cn("truncate text-body", amount > 0 ? "text-foreground" : "text-muted-foreground")}>{m.name}</span>
-                  <span className="tabular truncate text-meta text-muted-foreground">
+                  <span className="tabular truncate text-caption text-muted-foreground">
                     {m.networkOrBank ? `${m.networkOrBank} · ${m.destination}` : m.destination}
                   </span>
                 </span>
@@ -297,7 +286,7 @@ function GroupOption({ name, detail, muted }: { name: string; detail?: string; m
       {detail ? (
         <div className="flex min-w-0 flex-col gap-0.5 text-left">
           <span className="truncate text-body font-medium leading-tight tracking-[var(--ls-tight)] text-foreground">{name}</span>
-          <span className="tabular truncate text-meta font-normal leading-tight text-muted-foreground">{detail}</span>
+          <span className="tabular truncate text-caption font-normal leading-tight text-muted-foreground">{detail}</span>
         </div>
       ) : (
         <span className="truncate text-body font-normal text-muted-foreground">{name}</span>
@@ -578,7 +567,7 @@ export function GroupPaymentFlow({
                         <PayeeAvatar key={m.id} name={m.name} size="sm" className={cn("ring-2 ring-field", i > 0 && "-ml-2")} />
                       ))}
                       {memberCount > STACK_SIZE && (
-                        <span className="tabular ml-2 text-meta text-muted-foreground">+{memberCount - STACK_SIZE}</span>
+                        <span className="tabular ml-2 text-caption text-muted-foreground">+{memberCount - STACK_SIZE}</span>
                       )}
                     </span>
                     {hasAdjustments && <span className="truncate text-body text-foreground">Changed for this payment</span>}
@@ -602,7 +591,7 @@ export function GroupPaymentFlow({
                             <PayeeAvatar name={m.name} size="md" />
                             <span className="flex min-w-0 flex-col">
                               <span className={cn("truncate text-body", leftOut ? "text-muted-foreground" : "text-foreground")}>{m.name}</span>
-                              <span className="truncate text-meta text-muted-foreground">
+                              <span className="truncate text-caption text-muted-foreground">
                                 {leftOut ? "Left out" : changed ? `Was ${formatMoney(base, "GHS", true)}` : m.networkOrBank}
                               </span>
                             </span>
@@ -654,7 +643,7 @@ export function GroupPaymentFlow({
           label="Proceed"
         />
         {everyoneLeftOut && (
-          <p className="text-meta text-muted-foreground">Add an amount for at least one member to proceed.</p>
+          <p className="text-caption text-muted-foreground">Add an amount for at least one member to proceed.</p>
         )}
       </div>
 

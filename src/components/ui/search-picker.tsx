@@ -111,7 +111,7 @@ export function SearchPicker({
                   {item.mark(36)}
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-body text-foreground">{item.label}</span>
-                    {item.sublabel && <span className="truncate text-meta text-muted-foreground">{item.sublabel}</span>}
+                    {item.sublabel && <span className="truncate text-caption text-muted-foreground">{item.sublabel}</span>}
                   </span>
                   {item.id === value && <Check size={14} className="shrink-0 text-foreground" aria-hidden="true" />}
                 </button>

@@ -57,7 +57,7 @@ export function RadioGroup<T extends string>({ options, value, onChange, classNa
             </span>
             <span className="flex min-w-0 flex-col">
               <span className="text-body font-medium leading-tight">{o.label}</span>
-              {o.description && <span className="mt-0.5 text-meta text-muted-foreground">{o.description}</span>}
+              {o.description && <span className="mt-0.5 text-caption text-muted-foreground">{o.description}</span>}
             </span>
           </button>
         );

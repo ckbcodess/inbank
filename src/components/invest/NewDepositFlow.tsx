@@ -210,7 +210,7 @@ export function NewDepositFlow() {
                   <span className="flex w-full items-center justify-between gap-4">
                     <span className="flex flex-col">
                       <span>{`${t.days} days`}</span>
-                      <span className="text-meta text-muted-foreground">{`Matures ${formatDate(addDays(MOCK_TODAY, t.days))}`}</span>
+                      <span className="text-caption text-muted-foreground">{`Matures ${formatDate(addDays(MOCK_TODAY, t.days))}`}</span>
                     </span>
                     <span className="tabular text-foreground">{`${t.rate}%`}</span>
                   </span>

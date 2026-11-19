@@ -89,7 +89,7 @@ function Tuner() {
       <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-8 px-3 py-6 sm:px-6 lg:px-8">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <h1 className="type-page-title font-medium tracking-[var(--ls-heading)]">Skeleton tuner</h1>
+            <h1 className="text-h2">Skeleton tuner</h1>
             <p className="text-[13px] text-muted-foreground">The real loading skeletons. Tune them on the right; this page only.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">

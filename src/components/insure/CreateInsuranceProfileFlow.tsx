@@ -73,7 +73,7 @@ function Question({ text, note, children }: { text: string; note?: string; child
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-0.5">
         <p className="text-body font-medium text-foreground">{text}</p>
-        {note && <p className="text-meta leading-relaxed text-muted-foreground">{note}</p>}
+        {note && <p className="text-caption leading-relaxed text-muted-foreground">{note}</p>}
       </div>
       {children}
     </div>
@@ -109,7 +109,7 @@ function PickOne({ value, onChange, options, placeholder, label }: { value: stri
 function Section({ title, rows, onEdit }: { title: string; rows: Array<[string, string, Step?]>; onEdit: (step: Step) => void }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="px-1 text-heading font-medium text-foreground">{title}</h2>
+      <h2 className="px-1 text-h4 font-medium text-foreground">{title}</h2>
       <ListCard as="div">
         {rows.map(([label, value, editStep]) => (
           <div key={label} className="flex items-baseline justify-between gap-4 px-3 py-2">

@@ -57,7 +57,7 @@ function ActionRow({
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-body text-foreground">{title}</span>
-          <span className="tabular truncate text-meta text-muted-foreground">{meta}</span>
+          <span className="tabular truncate text-caption text-muted-foreground">{meta}</span>
         </span>
         <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
       </Link>
@@ -160,16 +160,16 @@ export function PolicyDetail({ policyId }: { policyId: string }) {
                 <li key={c.id} className="flex items-center gap-3 rounded-xl px-2 py-3 sm:px-3">
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-body text-foreground">{CLAIM_TYPES[c.type].label}</span>
-                    <span className="tabular truncate text-meta text-muted-foreground">{`${c.reference} · ${c.subject}`}</span>
+                    <span className="tabular truncate text-caption text-muted-foreground">{`${c.reference} · ${c.subject}`}</span>
                   </span>
                   <span className="flex shrink-0 flex-col items-end">
                     <span className="text-body text-foreground">Under review</span>
-                    <span className="tabular text-meta text-muted-foreground">{`Sent ${formatDate(c.submittedOn)}`}</span>
+                    <span className="tabular text-caption text-muted-foreground">{`Sent ${formatDate(c.submittedOn)}`}</span>
                   </span>
                 </li>
               ))}
             </ListCard>
-            <p className="px-1 text-meta text-muted-foreground">{`${PROVIDER} contacts you within 48 hours of a claim, once every document is in.`}</p>
+            <p className="px-1 text-caption text-muted-foreground">{`${PROVIDER} contacts you within 48 hours of a claim, once every document is in.`}</p>
           </section>
         )}
 

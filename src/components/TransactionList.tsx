@@ -11,6 +11,7 @@
  * - Pagination: "Showing 1–10 of X payments" + Previous / page numbers / Next.
  */
 
+import PageHeader from "@/components/layout/PageHeader";
 import { SearchField } from "@/components/ui/search-field";
 import { ListCard } from "@/components/ui/list-card";
 import { Skeleton } from "skullet/react";
@@ -186,7 +187,7 @@ function TransactionRow({ t, onSelect }: { t: Transaction; onSelect: (t: Transac
         <span className="font-normal text-foreground text-body leading-tight truncate">
           {t.counterparty || t.description}
         </span>
-        <div className="flex items-center gap-2 text-meta text-muted-foreground truncate">
+        <div className="flex items-center gap-2 text-caption text-muted-foreground truncate">
           <span className="truncate">{getTransactionType(t)}</span>
           <span>·</span>
           <span>{formatTableDate(t.date)}</span>
@@ -638,10 +639,9 @@ export default function TransactionList({
       )}
 
       {/* ── Page Header: Title & Export Action (no description underneath) ── */}
-      <div data-page-header className="flex items-center justify-between gap-2 w-full">
-        <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-          Transaction History
-        </h1>
+      <PageHeader
+        title="Transaction History"
+        actions={
         <Button variant="outline" size="md"
           onClick={() => exportTransactionsCSV(results)}
           className="gap-2 px-2 sm:px-3 shrink-0"
@@ -650,7 +650,8 @@ export default function TransactionList({
           <span className="hidden sm:inline">Export Transactions</span>
           <span className="sm:hidden">Export</span>
         </Button>
-      </div>
+        }
+      />
 
       {/* Full-width search with the Filters button beside it. The applied-filter row brings its own gap. */}
       <div className="flex flex-col">
@@ -669,7 +670,7 @@ export default function TransactionList({
       {datePreset === "custom" && (
         <div className="hidden sm:flex flex-wrap items-center gap-2 p-2 rounded-lg border border-border/60 bg-muted/20 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="flex items-center gap-2">
-            <span className="text-meta font-medium text-muted-foreground">From:</span>
+            <span className="text-caption font-medium text-muted-foreground">From:</span>
             <Input
               type="date"
               value={dateFrom}
@@ -678,7 +679,7 @@ export default function TransactionList({
             />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-meta font-medium text-muted-foreground">To:</span>
+            <span className="text-caption font-medium text-muted-foreground">To:</span>
             <Input
               type="date"
               value={dateTo}
@@ -693,7 +694,7 @@ export default function TransactionList({
                 setDateFrom("");
                 setDateTo("");
               }}
-              className="text-meta text-muted-foreground hover:text-foreground cursor-pointer underline underline-offset-2 ml-1"
+              className="text-caption text-muted-foreground hover:text-foreground cursor-pointer underline underline-offset-2 ml-1"
             >
               Clear date range
             </button>
@@ -777,7 +778,7 @@ export default function TransactionList({
                   size="sm"
                   disabled={currentPage <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="h-7 gap-1 px-2 text-meta text-muted-foreground hover:text-foreground"
+                  className="h-7 gap-1 px-2 text-caption text-muted-foreground hover:text-foreground"
                 >
                   <ChevronLeft size={14} />
                   Previous
@@ -789,7 +790,7 @@ export default function TransactionList({
                   size="sm"
                   disabled={currentPage >= totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="h-7 gap-1 px-2 text-meta text-muted-foreground hover:text-foreground"
+                  className="h-7 gap-1 px-2 text-caption text-muted-foreground hover:text-foreground"
                 >
                   Next
                   <ChevronRight size={14} />

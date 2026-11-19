@@ -47,7 +47,7 @@ export function SetupPrompt({
     return (
       <div className={cn(GLASS_TILE_CLASS, "flex flex-col gap-6 rounded-3xl p-5 sm:p-8")}>
         <div className="flex flex-col gap-1.5">
-          <h2 className="text-title font-medium tracking-[var(--ls-tight)] text-foreground">{heading}</h2>
+          <h2 className="text-h3 font-medium tracking-[var(--ls-tight)] text-foreground">{heading}</h2>
           <p className="max-w-[520px] text-body leading-relaxed text-muted-foreground">{text}</p>
         </div>
         <ol className="grid gap-5 sm:grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
@@ -55,7 +55,7 @@ export function SetupPrompt({
             <li key={step.title} className="flex flex-col gap-2.5">
               <span
                 className={cn(
-                  "tabular flex size-7 items-center justify-center rounded-full border text-meta",
+                  "tabular flex size-7 items-center justify-center rounded-full border text-caption",
                   i === 0 ? "border-transparent bg-primary text-primary-foreground" : "border-border text-muted-foreground",
                 )}
               >
@@ -78,7 +78,7 @@ export function SetupPrompt({
       <div className={cn(GLASS_TILE_CLASS, "flex flex-col gap-5 rounded-2xl p-5")}>
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
           <div className="flex flex-col gap-0.5">
-            <span className="text-heading font-medium text-foreground">{progressLabel}</span>
+            <span className="text-h4 font-medium text-foreground">{progressLabel}</span>
             <span className="text-body text-muted-foreground">{progressNote}</span>
           </div>
           {action}
@@ -87,7 +87,7 @@ export function SetupPrompt({
           {steps.map((step, i) => (
             <li key={step.title} className="flex flex-col gap-2">
               <span className={cn("h-1 rounded-full", i === 0 ? "bg-primary/40" : "bg-border")} />
-              <span className="text-meta text-muted-foreground">{step.title}</span>
+              <span className="text-caption text-muted-foreground">{step.title}</span>
             </li>
           ))}
         </ol>

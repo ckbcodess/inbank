@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import PageHeader from "@/components/layout/PageHeader";
 import { useMemo, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useContextualBack } from "@/lib/contextual-back";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronLeft,
   CreditCard,
   Wallet,
   Sparkles,
@@ -353,20 +353,7 @@ export function RequestCardFlow() {
             className="w-full max-w-[540px] mx-auto flex flex-col gap-5"
           >
           {/* Header Row: Back Link & Title */}
-          <div data-page-header className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleBackNavigation}
-              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              title="Back"
-              aria-label="Back"
-            >
-              <ChevronLeft size={22} />
-            </button>
-            <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
-              Request a Card
-            </h1>
-          </div>
+          <PageHeader title="Request a Card" backTo={{ href: "", label: "Cards", onClick: handleBackNavigation }} />
 
           {/* List of Card Types */}
           <div className="flex flex-col gap-3 w-full">
@@ -408,21 +395,7 @@ export function RequestCardFlow() {
           className="w-full max-w-[540px] mx-auto flex flex-col gap-5"
         >
           {/* Header Row: Back to Step 1 & Title */}
-          <div data-page-header className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() =>
-                replacing ? handleBackNavigation() : setStep("select-type")
-              }
-              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              aria-label="Back"
-            >
-              <ChevronLeft size={22} />
-            </button>
-            <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
-              {isReplacement ? "Replace" : "Configure"} {cardType} Card
-            </h1>
-          </div>
+          <PageHeader title={`${isReplacement ? "Replace" : "Configure"} ${cardType} Card`} backTo={{ href: "", label: "previous step", onClick: () => replacing ? handleBackNavigation() : setStep("select-type") }} />
 
           {/* Form Container */}
           <div className="flex flex-col gap-4 w-full">
@@ -524,7 +497,7 @@ export function RequestCardFlow() {
                           {networkType || "Select card tier"}
                         </span>
                         {networkType && (
-                          <span className="text-meta text-muted-foreground truncate leading-tight mt-0.5">
+                          <span className="text-caption text-muted-foreground truncate leading-tight mt-0.5">
                             {NETWORK_TIERS[cardScheme].find((t) => t.id === networkType)?.description ?? "Card tier"}
                           </span>
                         )}
@@ -535,7 +508,7 @@ export function RequestCardFlow() {
                         <SelectItem key={opt.id} value={opt.id}>
                           <div className="flex flex-col min-w-0 py-0.5 text-left">
                             <span className="text-body font-medium text-foreground">{opt.label}</span>
-                            <span className="text-meta text-muted-foreground">{opt.description}</span>
+                            <span className="text-caption text-muted-foreground">{opt.description}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -616,19 +589,7 @@ export function RequestCardFlow() {
           className="w-full max-w-[540px] mx-auto flex flex-col items-center gap-5"
         >
           {/* Header Row: Back to Step 2 & Title */}
-          <div data-page-header className="flex items-center gap-2 w-full">
-            <button
-              type="button"
-              onClick={() => setStep("details")}
-              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              aria-label="Back"
-            >
-              <ChevronLeft size={22} />
-            </button>
-            <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
-              Customize card
-            </h1>
-          </div>
+          <PageHeader title="Customize card" backTo={{ href: "", label: "previous step", onClick: () => setStep("details") }} />
 
           {/* Interactive Full Card Preview with 3D Mouse Tilt & Smooth Color Crossfades */}
           <div className="w-full flex flex-col items-center gap-5">
@@ -683,19 +644,19 @@ export function RequestCardFlow() {
                 {/* Bottom Row: CARD HOLDER (Left), EXP (Center), VISA/Mastercard (Right) */}
                 <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-3 transition-colors duration-300">
                   <div className="flex flex-col gap-0.5 text-left">
-                    <span className="text-meta font-medium opacity-60 leading-[16px]">
+                    <span className="text-caption font-medium opacity-60 leading-[16px]">
                       CARD HOLDER
                     </span>
-                    <span className="text-heading sm:text-title font-medium leading-[22px] tracking-tight">
+                    <span className="text-h4 sm:text-h3 font-medium leading-[22px] tracking-tight">
                       {actor?.name ?? "RANSFORD GYASI"}
                     </span>
                   </div>
 
                   <div className="flex flex-col gap-0.5 text-left">
-                    <span className="text-meta font-medium opacity-60 leading-[16px]">
+                    <span className="text-caption font-medium opacity-60 leading-[16px]">
                       EXP
                     </span>
-                    <span className="text-heading sm:text-title font-medium leading-[22px] tracking-tight">
+                    <span className="text-h4 sm:text-h3 font-medium leading-[22px] tracking-tight">
                       09/28
                     </span>
                   </div>
@@ -779,19 +740,7 @@ export function RequestCardFlow() {
           className="w-full max-w-[540px] mx-auto flex flex-col gap-5"
         >
           {/* Header Row: Back to Customize & Title */}
-          <div data-page-header className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setStep("customize")}
-              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              aria-label="Back"
-            >
-              <ChevronLeft size={22} />
-            </button>
-            <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
-              {isReplacement ? "Review replacement" : "Review request"}
-            </h1>
-          </div>
+          <PageHeader title={isReplacement ? "Review replacement" : "Review request"} backTo={{ href: "", label: "previous step", onClick: () => setStep("customize") }} />
 
           {/* Mini Card Spec Banner */}
           <div className="rounded-2xl border border-border/80 bg-card p-3 flex items-center gap-3">
@@ -808,7 +757,7 @@ export function RequestCardFlow() {
               </div>
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-heading font-medium text-foreground tracking-[var(--ls-tight)] truncate">
+              <span className="text-h4 font-medium text-foreground tracking-[var(--ls-tight)] truncate">
                 {cardName.trim() || `${cardType} Card`}
               </span>
               <span className="text-body text-muted-foreground mt-0.5">
@@ -834,7 +783,7 @@ export function RequestCardFlow() {
                 <span className="text-body font-medium text-foreground">
                   {selectedAccount?.name ?? "Current Account"}
                 </span>
-                <span className="text-meta text-muted-foreground tabular-nums">
+                <span className="text-caption text-muted-foreground tabular-nums">
                   {selectedAccount?.number ?? "1414 4124 4214"}
                 </span>
               </div>
@@ -876,7 +825,7 @@ export function RequestCardFlow() {
                       <span className="text-body font-medium text-foreground">
                         Branch pickup
                       </span>
-                      <span className="text-meta text-muted-foreground mt-0.5">
+                      <span className="text-caption text-muted-foreground mt-0.5">
                         {selectedBranch?.name ?? "Branch pickup"}
                       </span>
                     </>
@@ -885,7 +834,7 @@ export function RequestCardFlow() {
                       <span className="text-body font-medium text-foreground">
                         Doorstep delivery
                       </span>
-                      <span className="text-meta text-muted-foreground mt-0.5">
+                      <span className="text-caption text-muted-foreground mt-0.5">
                         {deliveryAddress}, {deliveryCity}
                       </span>
                     </>
@@ -906,7 +855,7 @@ export function RequestCardFlow() {
                 <span className="text-body font-medium text-foreground tabular">
                   {fmtGhs(issuanceFee, currency)}
                 </span>
-                <span className="text-meta text-muted-foreground">Charged to source account</span>
+                <span className="text-caption text-muted-foreground">Charged to source account</span>
               </div>
             </div>
           </div>
@@ -1046,7 +995,7 @@ export function RequestCardFlow() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.44, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-                className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground text-center"
+                className="text-h1 font-medium tracking-[var(--ls-heading)] text-foreground text-center"
               >
                 {isReplacement ? "Replacement Request Confirmed" : "Card Request Confirmed"}
               </motion.h1>

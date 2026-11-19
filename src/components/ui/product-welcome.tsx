@@ -52,7 +52,7 @@ export function ProductWelcome({
               <div className="flex justify-start">
                 <GCBLogo className="h-8 w-auto" />
               </div>
-              <DialogTitle className="type-headline font-medium leading-tight tracking-tight text-foreground">
+              <DialogTitle className="text-h1 font-medium leading-tight tracking-tight text-foreground">
                 {title}
               </DialogTitle>
               <div className="flex flex-col gap-5">

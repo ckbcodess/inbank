@@ -222,7 +222,7 @@ function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
     <SheetPrimitive.Title
       data-slot="sheet-title"
       className={cn(
-        "text-heading font-medium text-foreground tracking-[var(--ls-tight)] leading-snug",
+        "text-h4 font-medium text-foreground tracking-[var(--ls-tight)] leading-snug",
         className
       )}
       {...props}
@@ -313,7 +313,7 @@ function SheetRow({
           <div className="flex flex-col">
             <span className="text-muted-foreground font-normal">{label}</span>
             {sublabel && (
-              <span className="text-meta text-muted-foreground/75 mt-0.5">
+              <span className="text-caption text-muted-foreground/75 mt-0.5">
                 {sublabel}
               </span>
             )}
@@ -357,7 +357,7 @@ function SheetHeroAmount({
       className={cn("flex flex-col items-center justify-center py-3", className)}
       {...props}
     >
-      <div className="type-balance text-foreground tracking-tight leading-none tabular">
+      <div className="text-display text-foreground tracking-tight leading-none tabular">
         {currency ? `${currency}${formatted}` : formatted}
       </div>
       {label && (

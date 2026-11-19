@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export function Fact({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div>
-      <dt className="text-meta text-muted-foreground">{label}</dt>
+      <dt className="text-caption text-muted-foreground">{label}</dt>
       <dd className={cn("mt-0.5 text-body text-foreground", mono && "tabular")}>{value}</dd>
     </div>
   );

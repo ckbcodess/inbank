@@ -169,12 +169,12 @@ export default function AuditLogPage() {
                   <span className="mt-0.5 break-words text-body text-muted-foreground">
                     {event.target}
                   </span>
-                  <span className="mt-2 text-meta text-muted-foreground">
+                  <span className="mt-2 text-caption text-muted-foreground">
                     {event.actor} · {event.role} · IP {event.ip}
                   </span>
                 </div>
 
-                <span className="shrink-0 text-right text-meta text-muted-foreground tabular">
+                <span className="shrink-0 text-right text-caption text-muted-foreground tabular">
                   {formatDateTime(event.timestamp)}
                 </span>
               </li>
@@ -186,7 +186,7 @@ export default function AuditLogPage() {
       </Skeleton>
       )}
 
-      <p className="text-meta leading-relaxed text-muted-foreground">
+      <p className="text-caption leading-relaxed text-muted-foreground">
         Retention follows FR-21 — entries remain searchable for at least the configured retention
         period. Export for regulatory review is handled through Reports.
       </p>

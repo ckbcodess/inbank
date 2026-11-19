@@ -17,7 +17,7 @@ export default function StubNotice({
   return (
     <div className="flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-3 py-3">
       <Construction size={16} className="mt-px shrink-0 text-muted-foreground" />
-      <div className="text-meta leading-relaxed text-muted-foreground">
+      <div className="text-caption leading-relaxed text-muted-foreground">
         <span className="text-foreground">Static stub.</span> Structure and placement per {section}.
         {states && <> Full interaction and the {states} state model are not built in this pass.</>}
       </div>

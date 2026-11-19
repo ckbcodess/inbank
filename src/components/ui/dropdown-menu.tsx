@@ -91,7 +91,7 @@ function DropdownMenuLabel({
       data-slot="dropdown-menu-label"
       data-inset={inset}
       className={cn(
-        "px-2 py-1 text-meta font-medium text-muted-foreground data-inset:pl-6",
+        "px-2 py-1 text-caption font-medium text-muted-foreground data-inset:pl-6",
         className
       )}
       {...props}
@@ -267,7 +267,7 @@ function DropdownMenuShortcut({
     <span
       data-slot="dropdown-menu-shortcut"
       className={cn(
-        "ml-auto text-meta tracking-widest text-muted-foreground group-focus/dropdown-menu-item:text-accent-foreground",
+        "ml-auto text-caption tracking-widest text-muted-foreground group-focus/dropdown-menu-item:text-accent-foreground",
         className
       )}
       {...props}

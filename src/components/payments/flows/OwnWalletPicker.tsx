@@ -178,7 +178,7 @@ export function OwnWalletPicker({
                   <span className="truncate text-body text-foreground">{nameOf(current)}</span>
                   <WalletTag tag={current.tag} />
                 </span>
-                <span className="truncate text-meta text-muted-foreground tabular">{formatGhPhone(current.phone)}</span>
+                <span className="truncate text-caption text-muted-foreground tabular">{formatGhPhone(current.phone)}</span>
               </span>
             </div>
           )}
@@ -193,7 +193,7 @@ export function OwnWalletPicker({
                     <span className="truncate text-body text-foreground">{nameOf(w)}</span>
                     <WalletTag tag={w.tag} />
                   </span>
-                  <span className="truncate text-meta text-muted-foreground tabular">{formatGhPhone(w.phone)}</span>
+                  <span className="truncate text-caption text-muted-foreground tabular">{formatGhPhone(w.phone)}</span>
                 </span>
               </div>
             </SelectItem>

@@ -47,7 +47,7 @@ const STATUS_TEXT_CLASS: Record<Variant, string> = {
 /** The same status as plain coloured text, for a dense list where a pill would crowd the amount beside it. */
 export function TransactionStatusText({ state, className }: { state: TransactionState; className?: string }) {
   const { label, variant } = TRANSACTION_STATUS[state];
-  return <span className={cn("text-meta", STATUS_TEXT_CLASS[variant], className)}>{label}</span>;
+  return <span className={cn("text-caption", STATUS_TEXT_CLASS[variant], className)}>{label}</span>;
 }
 
 /** Generic status pill for trade/approval lifecycle labels. */

@@ -71,7 +71,7 @@ function ProductPhoto({ productId, image, provider }: { productId: ProductKey; i
     <div className="relative">
       <PlanImage planId={productId} src={src} className={cn("w-full rounded-3xl", PRODUCT_PHOTO_HEIGHT)} />
       {provider && (
-        <span className={cn("absolute bottom-3 right-3 flex items-center gap-2 rounded-full bg-[color-mix(in_srgb,var(--black)_28%,transparent)] py-1 pr-3 text-meta text-[var(--white)] backdrop-blur-md", logo ? "pl-1" : "pl-3")}>
+        <span className={cn("absolute bottom-3 right-3 flex items-center gap-2 rounded-full bg-[color-mix(in_srgb,var(--black)_28%,transparent)] py-1 pr-3 text-caption text-[var(--white)] backdrop-blur-md", logo ? "pl-1" : "pl-3")}>
           {/* eslint-disable-next-line @next/next/no-img-element -- a 16px logo, already a small WebP */}
           {logo && <img src={logo} alt="" width={16} height={16} className="size-4 shrink-0 rounded-full" />}
           {`Powered by ${provider}`}
@@ -108,7 +108,7 @@ function PriceDivider({ price }: { price?: PitchPrice }) {
     <div className="flex items-center gap-4 text-body text-muted-foreground">
       <span aria-hidden="true" className="h-px flex-1 bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />
       <span className="tabular">
-        {price.prefix} <span className="text-title text-foreground">{price.figure}</span>
+        {price.prefix} <span className="text-h3 text-foreground">{price.figure}</span>
         {price.suffix ? ` ${price.suffix}` : ""}
       </span>
       <span aria-hidden="true" className="h-px flex-1 bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />

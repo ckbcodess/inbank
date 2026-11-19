@@ -124,7 +124,7 @@ export default function AdminEnrolmentsPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 flex-wrap">
             {/* Assignment segment */}
-            <div className="inline-flex rounded-xl bg-muted p-1 text-meta">
+            <div className="inline-flex rounded-xl bg-muted p-1 text-caption">
               <button
                 type="button"
                 onClick={() => setAssignmentFilter("all")}
@@ -158,7 +158,7 @@ export default function AdminEnrolmentsPage() {
             <select
               value={stageFilter}
               onChange={(e) => setStageFilter(e.target.value as StageFilter)}
-              className="h-8 rounded-lg field-surface border border-transparent bg-field px-2.5 text-meta text-foreground outline-hidden cursor-pointer"
+              className="h-8 rounded-lg field-surface border border-transparent bg-field px-2.5 text-caption text-foreground outline-hidden cursor-pointer"
             >
               <option value="all">All Stages</option>
               <option value="waiting-letter">Waiting on signed letter</option>
@@ -178,7 +178,7 @@ export default function AdminEnrolmentsPage() {
         </div>
 
         {/* Count summary */}
-        <div className="flex items-center justify-between text-meta text-muted-foreground pt-1 border-t border-border/50">
+        <div className="flex items-center justify-between text-caption text-muted-foreground pt-1 border-t border-border/50">
           <span>
             Showing <span className="text-foreground font-medium tabular">{displayRows.length}</span> of{" "}
             <span className="text-foreground font-medium tabular">{applications.length}</span> enrolments
@@ -232,16 +232,16 @@ export default function AdminEnrolmentsPage() {
                     <span className="text-body font-medium text-foreground truncate">
                       {app.companyName}
                     </span>
-                    <span className="text-meta text-muted-foreground tabular">
+                    <span className="text-caption text-muted-foreground tabular">
                       {app.reference}
                     </span>
                   </div>
 
-                  <p className="text-meta text-muted-foreground mt-0.5">
+                  <p className="text-caption text-muted-foreground mt-0.5">
                     Applicant: <span className="text-foreground">{app.applicant.name}</span> ({app.applicant.mobile}) · {app.accounts.length} account{app.accounts.length === 1 ? "" : "s"} · {CHANNEL_LABEL[app.channel]}
                   </p>
 
-                  <div className="flex items-center gap-3 text-meta text-muted-foreground mt-1">
+                  <div className="flex items-center gap-3 text-caption text-muted-foreground mt-1">
                     <span>
                       Assigned: <span className="font-medium text-foreground">{app.assignedTo.name}</span>
                     </span>

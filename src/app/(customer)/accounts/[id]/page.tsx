@@ -424,7 +424,7 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
         <RevealingAmount
           amount={account.available}
           currency={account.currency}
-          className="type-balance leading-[1.25] tracking-[var(--ls-heading)] text-foreground tabular"
+          className="text-display leading-[1.25] tracking-[var(--ls-heading)] text-foreground tabular"
         />
       </div>
     </section>
@@ -440,7 +440,6 @@ function ActivityRow({
   t: Transaction;
   onSelect: (t: Transaction) => void;
 }) {
-  const isCredit = t.direction === "credit";
   const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
   const isPending = t.state === "pending" || t.state === "awaiting-approval";
 
@@ -454,19 +453,18 @@ function ActivityRow({
         <TransactionMark transaction={t} />
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="truncate text-body text-foreground">{t.counterparty || t.description}</span>
-          <span className="truncate text-meta text-muted-foreground">
+          <span className="truncate text-caption text-muted-foreground">
             {getTransactionType(t)} · <span className="tabular">{formatDate(t.date)}</span>
           </span>
         </span>
         <span className="flex shrink-0 flex-col items-end gap-0.5">
           <span className={"text-body tabular text-foreground"}>
-            {isCredit ? "+ " : "− "}
             {formatMoney(t.amount, t.currency, true)}
           </span>
           {isFailed ? (
-            <span className="text-meta text-destructive">Failed</span>
+            <span className="text-caption text-destructive">Failed</span>
           ) : isPending ? (
-            <span className="text-meta text-warning">Pending</span>
+            <span className="text-caption text-warning">Pending</span>
           ) : null}
         </span>
       </button>

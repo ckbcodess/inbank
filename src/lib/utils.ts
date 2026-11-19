@@ -5,8 +5,7 @@ import { extendTailwindMerge } from "tailwind-merge"
    drops it when a real colour such as `text-foreground` sits beside it. */
 const twMerge = extendTailwindMerge({
   extend: {
-    theme: { text: ["meta", "body", "heading", "title", "fact"] },
-    classGroups: { "font-size": [{ type: ["page-title", "headline", "balance"] }] },
+    theme: { text: ["caption", "body", "body-lg", "h4", "h3", "h2", "h1", "display"] },
   },
 })
 

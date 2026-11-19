@@ -320,7 +320,7 @@ export function InternationalWireFlow({
                       <SelectItem key={m.id} value={m.id} label={m.label}>
                         <span className="flex flex-col">
                           <span>{m.label}</span>
-                          <span className="text-meta text-muted-foreground">{m.note ?? m.hint}</span>
+                          <span className="text-caption text-muted-foreground">{m.note ?? m.hint}</span>
                         </span>
                       </SelectItem>
                     ))}
@@ -426,7 +426,7 @@ export function InternationalWireFlow({
                     </Field>
                   </div>
                   {!emailOk && (
-                    <p className="text-meta text-warning">That email address doesn&apos;t look right.</p>
+                    <p className="text-caption text-warning">That email address doesn&apos;t look right.</p>
                   )}
               </div>
             </div>
@@ -487,7 +487,7 @@ export function InternationalWireFlow({
             />
 
             {/* Exchange rate display underneath fields */}
-            <div className="flex items-center justify-end px-1 pt-0.5 text-meta text-muted-foreground font-medium">
+            <div className="flex items-center justify-end px-1 pt-0.5 text-caption text-muted-foreground font-medium">
               <span>Rate: 1 {state.wCurrency || "USD"} = GHS {rate}</span>
             </div>
 
@@ -512,7 +512,7 @@ export function InternationalWireFlow({
                   <SelectItem key={c.id} value={c.id} label={c.label}>
                     <span className="flex flex-col">
                       <span>{c.label}</span>
-                      <span className="text-meta text-muted-foreground">{c.note}</span>
+                      <span className="text-caption text-muted-foreground">{c.note}</span>
                     </span>
                   </SelectItem>
                 ))}

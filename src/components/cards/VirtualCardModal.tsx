@@ -118,7 +118,7 @@ export function VirtualCardView({
       {/* Header */}
       {showTitleHeader && (
         <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80">
-          <h2 className="text-title font-medium text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-h3 font-medium text-slate-900 dark:text-white tracking-tight">
             Virtual Card
           </h2>
           {onClose && (
@@ -169,7 +169,7 @@ export function VirtualCardView({
             </div>
 
             {/* Status Badge */}
-            <div className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1 text-meta font-medium shadow-2xs ${
+            <div className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1 text-caption font-medium shadow-2xs ${
               isFrozen
                 ? "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300"
                 : "border-slate-200/90 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200"
@@ -282,7 +282,7 @@ export function VirtualCardView({
 
       {/* Security Channels Panel */}
       {showSecurityModal && (
-        <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3 text-meta">
+        <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3 text-caption">
           <div className="flex items-center justify-between font-medium text-slate-800 dark:text-slate-200 pb-1 border-b border-slate-200 dark:border-slate-800">
             <span>Card Security Channels</span>
             <button type="button" onClick={() => setShowSecurityModal(false)} className="text-slate-400 hover:text-slate-600">

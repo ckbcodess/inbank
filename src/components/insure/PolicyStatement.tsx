@@ -66,7 +66,7 @@ export function PolicyStatement({ policyId }: { policyId: string }) {
                 <li key={p.date} className="flex items-center justify-between gap-3 rounded-xl px-2 py-3 sm:px-3">
                   <span className="flex min-w-0 flex-col">
                     <span className="text-body text-foreground">Premium</span>
-                    <span className="tabular text-meta text-muted-foreground">{formatDate(p.date)}</span>
+                    <span className="tabular text-caption text-muted-foreground">{formatDate(p.date)}</span>
                   </span>
                   <span className="tabular shrink-0 text-body text-foreground">{money(p.amount)}</span>
                 </li>
@@ -77,7 +77,7 @@ export function PolicyStatement({ policyId }: { policyId: string }) {
                 <Button type="button" variant="outline" size="xl" className="w-full" loading={sending} onClick={send}>
                   Email Statement
                 </Button>
-                <p className="px-1 text-center text-meta text-muted-foreground">{`Sent to ${email}, your registered email.`}</p>
+                <p className="px-1 text-center text-caption text-muted-foreground">{`Sent to ${email}, your registered email.`}</p>
               </div>
             )}
           </>

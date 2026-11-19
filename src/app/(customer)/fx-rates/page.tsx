@@ -142,7 +142,7 @@ export default function FxRatesPage() {
       <PageHeader
         title="Foreign Exchange Rates"
         actions={
-          <span className="text-meta text-muted-foreground">
+          <span className="text-caption text-muted-foreground">
             Published {formatDateTime(FX_PUBLISHED_AT)}
           </span>
         }
@@ -177,8 +177,8 @@ export default function FxRatesPage() {
           <section className="rounded-2xl border border-border bg-card p-4 sm:p-5 w-full">
             <div className="w-full">
               <div className="mb-3">
-                <h2 className="text-heading font-medium text-foreground">Currency converter</h2>
-                <p className="text-meta text-muted-foreground">
+                <h2 className="text-h4 font-medium text-foreground">Currency converter</h2>
+                <p className="text-caption text-muted-foreground">
                   Indicative calculator based on today&apos;s published rates.
                 </p>
               </div>
@@ -218,7 +218,7 @@ export default function FxRatesPage() {
                     >
                       <div className="flex items-center gap-2">
                         <CurrencyLogo currency={fromCcy} size={24} />
-                        <span className="text-heading font-medium text-foreground tabular tracking-tight">
+                        <span className="text-h4 font-medium text-foreground tabular tracking-tight">
                           {fromCcy}
                         </span>
                         <ChevronDown size={15} className="text-muted-foreground" />
@@ -230,7 +230,7 @@ export default function FxRatesPage() {
                           <div className="flex items-center gap-2">
                             <CurrencyLogo currency={c.code} size={20} />
                             <span className="font-semibold tabular">{c.code}</span>
-                            <span className="text-meta text-muted-foreground">· {c.name}</span>
+                            <span className="text-caption text-muted-foreground">· {c.name}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -269,7 +269,7 @@ export default function FxRatesPage() {
                     >
                       <div className="flex items-center gap-2">
                         <CurrencyLogo currency={toCcy} size={24} />
-                        <span className="text-heading font-medium text-foreground tabular tracking-tight">
+                        <span className="text-h4 font-medium text-foreground tabular tracking-tight">
                           {toCcy}
                         </span>
                         <ChevronDown size={15} className="text-muted-foreground" />
@@ -281,7 +281,7 @@ export default function FxRatesPage() {
                           <div className="flex items-center gap-2">
                             <CurrencyLogo currency={c.code} size={20} />
                             <span className="font-semibold tabular">{c.code}</span>
-                            <span className="text-meta text-muted-foreground">· {c.name}</span>
+                            <span className="text-caption text-muted-foreground">· {c.name}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -290,7 +290,7 @@ export default function FxRatesPage() {
                 </div>
               </div>
 
-              <p className="mt-3 text-center text-meta font-medium text-muted-foreground tabular">
+              <p className="mt-3 text-center text-caption font-medium text-muted-foreground tabular">
                 1 {fromCcy} = {formatRate(conversion.rate)} {toCcy}
               </p>
             </div>
@@ -311,7 +311,7 @@ export default function FxRatesPage() {
                         <span className="font-medium text-body text-foreground tabular">
                           {rate.pair}
                         </span>
-                        <span className="text-meta text-muted-foreground truncate">
+                        <span className="text-caption text-muted-foreground truncate">
                           {meta.name}
                         </span>
                       </div>
@@ -324,7 +324,7 @@ export default function FxRatesPage() {
                         <span>Sell {formatRate(rate.sell)}</span>
                       </div>
                       <span
-                        className={`mt-0.5 inline-flex items-center gap-1 text-meta tabular font-medium ${
+                        className={`mt-0.5 inline-flex items-center gap-1 text-caption tabular font-medium ${
                           up ? "text-success-text" : "text-destructive"
                         }`}
                       >
@@ -367,7 +367,7 @@ export default function FxRatesPage() {
                               <span className="font-medium text-foreground tabular">
                                 {rate.pair}
                               </span>
-                              <span className="text-meta text-muted-foreground">
+                              <span className="text-caption text-muted-foreground">
                                 {meta.name} · {meta.country}
                               </span>
                             </div>

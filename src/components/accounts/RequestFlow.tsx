@@ -441,13 +441,13 @@ export default function RequestFlow({ account }: { account: Account }) {
 
             <div className="flex w-full items-center justify-between overflow-hidden rounded-2xl border border-border bg-muted/40 px-3 py-3 shadow-xs dark:bg-muted/20">
               <span className="text-body text-foreground">Fee</span>
-              <span className="type-balance tracking-[var(--ls-display)] text-foreground tabular">
+              <span className="text-display tracking-[var(--ls-display)] text-foreground tabular">
                 {formatMoney(summary.fee, "GHS", true)}
               </span>
             </div>
           </div>
 
-          <p className="-mt-1 px-3 text-center text-meta text-muted-foreground">
+          <p className="-mt-1 px-3 text-center text-caption text-muted-foreground">
             Clicking “Submit request” authorises GCB Bank PLC to charge the fee to {account.name} ∗∗ {last4}.
           </p>
 
@@ -536,13 +536,13 @@ function FlowSelect({
               <div className="flex flex-col text-left">
                 <span className="font-medium text-foreground">{o.name}</span>
                 {o.description && (
-                  <span className="text-meta font-normal text-muted-foreground">{o.description}</span>
+                  <span className="text-caption font-normal text-muted-foreground">{o.description}</span>
                 )}
               </div>
               {(o.fee || o.speed) && (
                 <div className="shrink-0 text-right">
                   {o.fee && <span className="block text-body font-medium text-foreground tabular">{o.fee}</span>}
-                  {o.speed && <span className="text-meta font-normal text-muted-foreground">{o.speed}</span>}
+                  {o.speed && <span className="text-caption font-normal text-muted-foreground">{o.speed}</span>}
                 </div>
               )}
             </div>

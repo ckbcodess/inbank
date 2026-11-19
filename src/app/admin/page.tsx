@@ -72,7 +72,7 @@ export default function AdminOverviewPage() {
 
       {/* Each internal role gets its own work queue, per the 12.3 matrix */}
       <section className="rounded-2xl border border-border bg-card p-4">
-        <h2 className="text-heading text-foreground">Your work queue</h2>
+        <h2 className="text-h4 text-foreground">Your work queue</h2>
         <p className="mt-1 text-body text-muted-foreground">
           The Admin Portal shows only what your internal role covers — customer banking surfaces are
           never visible here.
@@ -118,7 +118,7 @@ function QueueLink({
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="text-body text-foreground">{label}</span>
-        <span className="text-meta text-muted-foreground">{hint}</span>
+        <span className="text-caption text-muted-foreground">{hint}</span>
       </span>
       <ChevronRight size={17} aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform group-hover:text-foreground" />
     </Link>

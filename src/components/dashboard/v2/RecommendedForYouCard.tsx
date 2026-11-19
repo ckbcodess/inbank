@@ -204,7 +204,7 @@ export function RecommendedForYouCard({
       <Shapes index={index} />
 
       <div className="relative z-10 flex items-center justify-between">
-        <span className="text-body font-medium leading-none text-foreground sm:text-heading">
+        <span className="text-body font-medium leading-none text-foreground sm:text-h4">
           {t("dashboard.recommendedForYou", "Recommended for you")}
         </span>
         <Chevrons i={index} total={recommendations.length} onChange={setIndex} />
@@ -219,7 +219,7 @@ export function RecommendedForYouCard({
           className="relative z-10 flex flex-1 flex-col items-center justify-between text-center"
         >
           <div className="flex flex-1 flex-col items-center justify-center gap-2 px-2">
-            <p className="text-fact font-medium leading-[1.35] tracking-[var(--ls-tight)] text-foreground">
+            <p className="text-body-lg font-medium leading-[1.35] tracking-[var(--ls-tight)] text-foreground">
               {words.map((w, n) => (
                 <Fragment key={n}>
                   <motion.span className="inline-block" {...reveal(n * WORD_STEP)}>
@@ -229,7 +229,7 @@ export function RecommendedForYouCard({
                 </Fragment>
               ))}
             </p>
-            <motion.p className="text-meta text-muted-foreground" {...reveal(reasonAt)}>
+            <motion.p className="text-caption text-muted-foreground" {...reveal(reasonAt)}>
               {r.reason}
             </motion.p>
           </div>

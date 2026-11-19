@@ -130,7 +130,7 @@ export function BeneficiaryDetailSheet({
             <SheetDescription className="flex flex-wrap items-center justify-center gap-2 text-body text-muted-foreground">
               {getBeneficiaryCategory(beneficiary.transactionType)}
               {!beneficiary.verified && (
-                <Badge variant="warning" className="text-meta py-0 px-2">
+                <Badge variant="warning" className="text-caption py-0 px-2">
                   Pending approval
                 </Badge>
               )}

@@ -196,7 +196,7 @@ export function CardTopUpFlow({
                           <span className="text-body text-foreground font-medium truncate leading-tight">
                             GCB {selectedCard.name}
                           </span>
-                          <span className="text-meta text-muted-foreground font-normal truncate leading-tight">
+                          <span className="text-caption text-muted-foreground font-normal truncate leading-tight">
                             GCB {selectedCard.type} · {selectedCard.scheme} · {selectedCard.maskedNumber}
                           </span>
                         </div>
@@ -205,7 +205,7 @@ export function CardTopUpFlow({
                         <span className="text-body text-foreground font-medium tabular block">
                           {formatMoney(selectedCard.balance ?? 0, selectedCard.currency, true)}
                         </span>
-                        <span className="text-meta text-muted-foreground font-normal">Balance</span>
+                        <span className="text-caption text-muted-foreground font-normal">Balance</span>
                       </div>
                     </div>
                   )}

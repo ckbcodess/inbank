@@ -127,7 +127,7 @@ export function CancelPolicyFlow({ policyId }: { policyId: string }) {
           >
             {withdraw ? "Withdraw Application" : "Request Cancellation"}
           </Button>
-          <p className="px-1 pt-2 text-center text-meta text-muted-foreground">{`${PROVIDER} will call you to complete it.`}</p>
+          <p className="px-1 pt-2 text-center text-caption text-muted-foreground">{`${PROVIDER} will call you to complete it.`}</p>
         </div>
       </div>
     </div>

@@ -397,7 +397,7 @@ export function PaymentSuccessScreen({
           type="button"
           onClick={handleReplay}
           aria-label="Replay animation"
-          className="absolute right-1 top-1 z-30 flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-2 py-2 text-meta text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
+          className="absolute right-1 top-1 z-30 flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-2 py-2 text-caption text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
         >
           <RotateCcw size={13} />
           <span>Replay</span>
@@ -505,7 +505,7 @@ export function PaymentSuccessScreen({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.44, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground text-center"
+            className="text-h1 font-medium tracking-[var(--ls-heading)] text-foreground text-center"
           >
             {normalizedTitle}
           </motion.h1>
@@ -514,7 +514,7 @@ export function PaymentSuccessScreen({
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="text-body sm:text-heading leading-[23px] sm:leading-[25px] text-muted-foreground text-center max-w-[440px]"
+              className="text-body sm:text-h4 leading-[23px] sm:leading-[25px] text-muted-foreground text-center max-w-[440px]"
             >
               {emphasise(message, beneficiaryName)}
             </motion.p>
@@ -537,7 +537,7 @@ export function PaymentSuccessScreen({
               label={ACTION_LABEL[card.id] ?? card.label}
               onClick={card.onClick}
               chipClassName={cn("bg-action-chip text-foreground group-hover:bg-action-chip-hover", card.active && "bg-primary/15 ring-1 ring-primary/40")}
-              labelClassName="text-meta leading-[17px]"
+              labelClassName="text-caption leading-[17px]"
             />
           ))}
         </motion.div>

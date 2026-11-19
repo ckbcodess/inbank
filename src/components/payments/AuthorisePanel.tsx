@@ -113,7 +113,7 @@ export function AuthorisePanel({
 
         {isPin ? (
           <div className="flex flex-col items-center gap-2 text-center">
-            <span className="text-heading font-medium text-foreground">Enter Transaction PIN</span>
+            <span className="text-h4 font-medium text-foreground">Enter Transaction PIN</span>
             <span className="text-body text-muted-foreground">Enter your 4-digit transaction PIN created during onboarding</span>
           </div>
         ) : (
@@ -122,7 +122,7 @@ export function AuthorisePanel({
             open={shortcodeOpen}
             title="Enter OTP Verification Code"
             description={`A 6-digit one-time code was sent to ${REGISTERED_PHONE}`}
-            titleClass="text-heading font-medium text-foreground"
+            titleClass="text-h4 font-medium text-foreground"
             descClass="mt-2 text-body text-muted-foreground"
           />
         )}
@@ -188,7 +188,7 @@ export function AuthorisePanel({
           )}
         </div>
 
-        <div className="flex items-center justify-center gap-2 pt-1 text-meta text-muted-foreground">
+        <div className="flex items-center justify-center gap-2 pt-1 text-caption text-muted-foreground">
           <ShieldCheck size={14} className="shrink-0 text-success-text" />
           <span>Secured by End-to-End Encryption · Never share your PIN or OTP</span>
         </div>
@@ -222,7 +222,7 @@ export function AuthorisePanel({
           </div>
 
           {/* Heading */}
-          <h2 className="mt-5 type-headline font-medium tracking-[var(--ls-heading)] text-foreground">
+          <h2 className="mt-5 text-h1 font-medium tracking-[var(--ls-heading)] text-foreground">
             Enter your 4-digit PIN to authorise
           </h2>
 
@@ -328,7 +328,7 @@ export function AuthorisePanel({
                 <span className="font-medium text-foreground tabular whitespace-nowrap">{REGISTERED_PHONE}</span>
               </>
             }
-            titleClass="mt-5 type-headline font-medium tracking-[var(--ls-heading)] text-foreground"
+            titleClass="mt-5 text-h1 font-medium tracking-[var(--ls-heading)] text-foreground"
             descClass="mt-2 text-body text-muted-foreground max-w-xs"
           />
 

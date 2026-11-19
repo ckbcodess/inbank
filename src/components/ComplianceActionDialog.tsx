@@ -119,7 +119,7 @@ export default function ComplianceActionDialog({
                   rows={3}
                   placeholder={reasonPlaceholder}
                 />
-                <p className="text-meta text-muted-foreground">
+                <p className="text-caption text-muted-foreground">
                   {reason.trim().length < minReason
                     ? `At least ${minReason} characters required.`
                     : `${reason.trim().length} characters`}

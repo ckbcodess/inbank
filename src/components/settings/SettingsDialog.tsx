@@ -8,7 +8,7 @@ import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui
 import { useSession } from "@/lib/session-store";
 import { closeSettings, showSettingsSection, useSettingsModal, type SettingsSection } from "@/lib/settings-modal";
 import { cn } from "@/lib/utils";
-import { AlertsPane, DevicesPane, LimitsPane, PreferencesPane, ProfilePane, ReferralPane, SecurityPane, SignOutAllDialog, type SettingsData } from "./SettingsPanes";
+import { AlertsPane, DevicesPane, LimitsPane, PreferencesPane, ProfilePane, ReferralPane, SecurityPane, type SettingsData } from "./SettingsPanes";
 
 /** Settings in one place: a modal beside a section list on desktop, a bottom sheet that drills in on phone. */
 
@@ -24,7 +24,7 @@ const GROUPS: { label: string; items: { id: SettingsSection; label: string; icon
     label: "Safety",
     items: [
       { id: "security", label: "Security", icon: Lock },
-      { id: "devices", label: "Linked devices", icon: Smartphone },
+      { id: "devices", label: "Trusted devices", icon: Smartphone },
       { id: "limits", label: "Limits", icon: Gauge },
       { id: "alerts", label: "Notifications", icon: Bell },
     ],
@@ -49,9 +49,7 @@ const SETTINGS_INDEX: { label: string; section: SettingsSection; words?: string 
   { label: "Language", section: "preferences", words: "english french spanish chinese" },
   { label: "Password", section: "security", words: "change reset" },
   { label: "Auto log out", section: "security", words: "timeout session inactivity" },
-  { label: "Linked devices", section: "devices", words: "phone computer sessions" },
-  { label: "Trusted devices", section: "devices", words: "code" },
-  { label: "Log out of all other devices", section: "devices", words: "sessions" },
+  { label: "Trusted devices", section: "devices", words: "remember code phone computer skip" },
   { label: "Bank transfers limit", section: "limits", words: "daily gcb other banks" },
   { label: "Mobile money limit", section: "limits", words: "daily wallet airtime data" },
   { label: "Bills limit", section: "limits", words: "daily utilities tv school fees" },
@@ -74,8 +72,6 @@ export default function SettingsDialog() {
   // What the customer has changed this session, over what the account already says. Held here so it survives
   // closing and reopening the modal.
   const [changes, setChanges] = useState<Partial<SettingsData>>({});
-  // The logout-all confirmation lives beside this dialog, not inside it (see `SignOutAllDialog`).
-  const [confirmSignOutAll, setConfirmSignOutAll] = useState(false);
   const [query, setQuery] = useState("");
   // The section on screen while Settings is open, held through the closing animation.
   const [held, setHeld] = useState<SettingsSection | null>(section);
@@ -110,7 +106,7 @@ export default function SettingsDialog() {
   // Closing clears the URL before the exit animation ends; keep showing what was open so it doesn't flash to Profile.
   const shown = open ? section : held;
   const active: SettingsSection = shown ?? "profile";
-  const paneProps = { data, update, onBackToMenu: () => showSettingsSection("menu"), onSignOutAll: () => setConfirmSignOutAll(true) };
+  const paneProps = { data, update, onBackToMenu: () => showSettingsSection("menu") };
 
   return (
     <>
@@ -132,7 +128,7 @@ export default function SettingsDialog() {
             )}
           >
             <div className="flex h-12 items-center justify-between pl-3 pr-2 sm:hidden">
-              <h2 className="text-title font-medium tracking-[var(--ls-heading)] text-foreground">Settings</h2>
+              <h2 className="text-h3 font-medium tracking-[var(--ls-heading)] text-foreground">Settings</h2>
               <DialogClose render={<Button variant="ghost" size="md" aria-label="Close settings" />}>
                 <X size={20} />
               </DialogClose>
@@ -164,7 +160,7 @@ export default function SettingsDialog() {
                         <Icon size={16} className="mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true" />
                         <span className="flex min-w-0 flex-col gap-0.5">
                           <span className="truncate text-body text-foreground">{r.label}</span>
-                          {r.isSection ? null : <span className="text-meta text-muted-foreground">{item.label}</span>}
+                          {r.isSection ? null : <span className="text-caption text-muted-foreground">{item.label}</span>}
                         </span>
                       </button>
                     );
@@ -175,7 +171,7 @@ export default function SettingsDialog() {
 
             {q ? null : GROUPS.map((group) => (
               <div key={group.label} className="flex flex-col gap-0.5">
-                <span className="flex h-7 items-center px-3 text-meta text-muted-foreground">{group.label}</span>
+                <span className="flex h-7 items-center px-3 text-caption text-muted-foreground">{group.label}</span>
                 {group.items.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
@@ -221,7 +217,6 @@ export default function SettingsDialog() {
         </div>
       </DialogContent>
     </Dialog>
-    <SignOutAllDialog open={confirmSignOutAll} onOpenChange={setConfirmSignOutAll} actorId={actor.id} />
     </>
   );
 }

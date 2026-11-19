@@ -66,7 +66,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-body text-foreground">Corporate relationship</p>
-            <p className="mt-0.5 text-meta text-muted-foreground tabular">
+            <p className="mt-0.5 text-caption text-muted-foreground tabular">
               Onboarded 12 Mar 2021 · Relationship manager: A. Owusu
             </p>
           </div>
@@ -78,7 +78,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
           <Fact mono label="Accounts" value="4" />
           <Fact mono label="Users" value={String(CUSTOMER_USERS.length)} />
           <div className="flex flex-col">
-            <dt className="text-meta text-muted-foreground">Enrolment</dt>
+            <dt className="text-caption text-muted-foreground">Enrolment</dt>
             <dd className="mt-1">
               <Link
                 href="/admin/enrolments/enr-2026-0814"
@@ -93,7 +93,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
 
       {/* Issued Payment Cards */}
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-heading text-foreground">
+        <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-h4 text-foreground">
           <CreditCard size={16} aria-hidden="true" className="text-muted-foreground" />
           Issued payment cards
         </h2>
@@ -104,7 +104,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
                 <MiniCardThumbnail card={c} />
                 <div className="flex flex-col min-w-0">
                   <span className="truncate text-body font-medium text-foreground">{c.name}</span>
-                  <span className="mt-0.5 text-meta text-muted-foreground tabular">
+                  <span className="mt-0.5 text-caption text-muted-foreground tabular">
                     {c.scheme} · {c.maskedNumber} · {c.holder}
                   </span>
                 </div>
@@ -122,7 +122,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
 
       {/* User Access — a section within Customer Details, not its own screen */}
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-heading text-foreground">
+        <h2 className="flex items-center gap-2 border-b border-border px-4 py-3 text-h4 text-foreground">
           <UserCog size={16} aria-hidden="true" className="text-muted-foreground" />
           User access
         </h2>

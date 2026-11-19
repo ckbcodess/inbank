@@ -81,7 +81,7 @@ export default function TradeTypeSelectionPage() {
               <div className="min-w-0 flex-1">
                 <p className="text-body text-foreground">{t.name}</p>
                 <p className="mt-1 text-body leading-relaxed text-muted-foreground">{t.desc}</p>
-                <p className="mt-2 text-meta text-muted-foreground">
+                <p className="mt-2 text-caption text-muted-foreground">
                   <span className="text-foreground/70">Type-specific fields:</span> {t.fields}
                 </p>
               </div>
@@ -94,7 +94,7 @@ export default function TradeTypeSelectionPage() {
       </div>
 
       <section className={cn(LIST_CARD_CLASS, "p-4")}>
-        <h2 className="flex items-center gap-2 text-heading text-foreground">
+        <h2 className="flex items-center gap-2 text-h4 text-foreground">
           <FileText size={16} aria-hidden="true" className="text-muted-foreground" />
           Remaining steps
         </h2>

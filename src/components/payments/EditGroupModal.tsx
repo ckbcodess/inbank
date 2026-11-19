@@ -377,7 +377,7 @@ export default function EditGroupModal({
             {/* Members Section Header + Add Button */}
             <div className="flex flex-col gap-3 pt-2">
               <div className="flex min-h-6 items-center justify-between">
-                <span className="text-heading font-medium text-foreground">Members ({members.length})</span>
+                <span className="text-h4 font-medium text-foreground">Members ({members.length})</span>
 
               </div>
 
@@ -394,7 +394,7 @@ export default function EditGroupModal({
                       <PayeeAvatar name={m.name} size="md" />
                       <span className="flex min-w-0 flex-col">
                         <span className="truncate text-body text-foreground">{m.name}</span>
-                        <span className="truncate text-meta text-muted-foreground">
+                        <span className="truncate text-caption text-muted-foreground">
                           {m.networkOrBank || "GCB Bank"} • {m.destination}
                         </span>
                       </span>
@@ -438,7 +438,7 @@ export default function EditGroupModal({
               </div>
 
               {errors.members && (
-                <p className="text-meta text-destructive">{errors.members}</p>
+                <p className="text-caption text-destructive">{errors.members}</p>
               )}
             </div>
 
@@ -447,7 +447,7 @@ export default function EditGroupModal({
               <span className="text-body text-muted-foreground">
                 Total for {members.length} {members.length === 1 ? "member" : "members"}
               </span>
-              <span className="text-title font-normal text-foreground tracking-[var(--ls-tight)] tabular-nums numorainput">
+              <span className="text-h3 font-normal text-foreground tracking-[var(--ls-tight)] tabular-nums numorainput">
                 GHS {totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
@@ -523,7 +523,7 @@ export default function EditGroupModal({
                       <PayeeAvatar name={b.name} size="md" />
                       <span className="flex min-w-0 flex-col">
                         <span className="truncate text-body text-foreground">{b.name}</span>
-                        <span className="truncate text-meta text-muted-foreground">
+                        <span className="truncate text-caption text-muted-foreground">
                           {b.bankName || b.network} <span className="tabular">· {b.accountNumber || b.phoneNumber || b.proxyId}</span>
                         </span>
                       </span>

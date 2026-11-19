@@ -460,7 +460,7 @@ function SoleProprietorSignupContent() {
             >
               Continue
             </Button>
-            <p className="text-center text-meta leading-5 text-muted-foreground">
+            <p className="text-center text-caption leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
               <a
                 href="#"
@@ -515,10 +515,10 @@ function SoleProprietorSignupContent() {
                 <span className="block truncate text-body font-medium text-foreground">
                   {SOLE_PROPRIETOR_DEMO.holderName}
                 </span>
-                <span className="tabular text-meta text-muted-foreground">{ghanaCard}</span>
+                <span className="tabular text-caption text-muted-foreground">{ghanaCard}</span>
               </div>
             </div>
-            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-meta font-medium text-pill-success-text">
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-caption font-medium text-pill-success-text">
               <Check size={12} />
               Verified
             </span>

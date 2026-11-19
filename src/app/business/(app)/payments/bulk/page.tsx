@@ -138,11 +138,11 @@ export default function BulkPaymentPage() {
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6 pt-6">
         <CheckCircle2 size={24} className="text-success-text" aria-hidden="true" />
         <div className="flex flex-col gap-1">
-          <h1 className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground">Submitted for approval</h1>
+          <h1 className="text-h1 font-medium tracking-[var(--ls-heading)] text-foreground">Submitted for approval</h1>
           <p className="text-body leading-relaxed text-muted-foreground">
             {`${submitted.lines.length} payments in ${submitted.name} go to ${describePath(approvalPath(sum.amount))}. Nothing leaves ${from?.name ?? "the account"} until it's authorised.`}
           </p>
-          <p className="tabular text-meta text-muted-foreground">{`Batch ${submitted.id}`}</p>
+          <p className="tabular text-caption text-muted-foreground">{`Batch ${submitted.id}`}</p>
         </div>
         <div className="flex flex-wrap gap-3">
           <Button nativeButton={false} render={<Link href={`/business/payments/bulk/${submitted.id}`} />}>
@@ -215,7 +215,7 @@ export default function BulkPaymentPage() {
 
       <section className="flex flex-col gap-3">
         <div className="flex min-h-6 flex-wrap items-center justify-between gap-2">
-          <h2 className="text-heading font-medium text-foreground">Payments</h2>
+          <h2 className="text-h4 font-medium text-foreground">Payments</h2>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={() => download("bulk-payments-template.csv", CSV_TEMPLATE)}>
               <Download size={14} aria-hidden="true" />
@@ -274,14 +274,14 @@ export default function BulkPaymentPage() {
             <ListCard>
               {checked.map(({ line, errors }) => (
                 <li key={line.row} className="flex items-start gap-3 rounded-xl px-2 py-3 sm:px-3">
-                  <span className="tabular w-6 shrink-0 pt-0.5 text-meta text-muted-foreground">{line.row}</span>
+                  <span className="tabular w-6 shrink-0 pt-0.5 text-caption text-muted-foreground">{line.row}</span>
                   <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span className="truncate text-body text-foreground">{line.name || "No name"}</span>
-                    <span className="tabular truncate text-meta text-muted-foreground">
+                    <span className="tabular truncate text-caption text-muted-foreground">
                       {`${line.bank || "No bank"} · ${line.account || "No account"} · ${railFor(line.rail)?.shortName ?? line.rail.toUpperCase()}`}
                     </span>
                     {errors.map((e) => (
-                      <span key={e} className="text-meta text-destructive-text">
+                      <span key={e} className="text-caption text-destructive-text">
                         {e}
                       </span>
                     ))}
@@ -318,7 +318,7 @@ export default function BulkPaymentPage() {
         <Button disabled={Boolean(blocked)} onClick={() => setStep("review")} className="self-start">
           Review Batch
         </Button>
-        {blocked && lines.length > 0 && <p className="text-meta text-muted-foreground">{blocked}</p>}
+        {blocked && lines.length > 0 && <p className="text-caption text-muted-foreground">{blocked}</p>}
       </div>
     </div>
   );

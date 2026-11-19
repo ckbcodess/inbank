@@ -83,7 +83,7 @@ export default function ReturnForClarificationDialog({
                 rows={4}
                 placeholder="What exactly do you need?"
               />
-              <p className="text-meta text-muted-foreground">
+              <p className="text-caption text-muted-foreground">
                 {note.trim().length < 10
                   ? "At least 10 characters required."
                   : `${note.trim().length} characters`}
@@ -104,7 +104,7 @@ export default function ReturnForClarificationDialog({
                     />
                     <span className="flex-1">{doc.name}</span>
                     {doc.status === "missing" && (
-                      <span className="text-meta text-warning-text">Missing</span>
+                      <span className="text-caption text-warning-text">Missing</span>
                     )}
                   </label>
                 ))}

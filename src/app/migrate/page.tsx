@@ -190,7 +190,7 @@ function MigrateContent() {
               <span className="text-body text-muted-foreground">Unchanged</span>
             </div>
           </div>
-          <p className="text-meta text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             Something missing? You can tell us from Help once you&apos;re in — nothing on your accounts has changed.
           </p>
           <div className="flex gap-2">
@@ -242,7 +242,7 @@ function MigrateContent() {
             />
             <span className="flex flex-col gap-1">
               <span>I accept the updated Terms of Use</span>
-              <span className="text-meta text-muted-foreground">
+              <span className="text-caption text-muted-foreground">
                 The main change: you can now log in with a passkey on devices you choose to remember.
               </span>
             </span>

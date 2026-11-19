@@ -59,7 +59,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
         <span className="text-body text-muted-foreground">
           {`${batch.lines.length} payments${account ? ` from ${account.name}` : ""}`}
         </span>
-        <span className="tabular type-balance leading-none tracking-[var(--ls-heading)] text-foreground">{formatMoney(sum.amount, "GHS", true)}</span>
+        <span className="tabular text-display leading-none tracking-[var(--ls-heading)] text-foreground">{formatMoney(sum.amount, "GHS", true)}</span>
         <span className="tabular text-body text-muted-foreground">{`Fees ${formatMoney(sum.fees, "GHS", true)} · ${headline}`}</span>
       </section>
 
@@ -75,17 +75,17 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
         <ListCard>
           {batch.lines.map((l) => (
             <li key={l.row} className="flex items-start gap-3 rounded-xl px-2 py-3 sm:px-3">
-              <span className="tabular w-6 shrink-0 pt-0.5 text-meta text-muted-foreground">{l.row}</span>
+              <span className="tabular w-6 shrink-0 pt-0.5 text-caption text-muted-foreground">{l.row}</span>
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <span className="truncate text-body text-foreground">{l.name}</span>
-                <span className="tabular truncate text-meta text-muted-foreground">
+                <span className="tabular truncate text-caption text-muted-foreground">
                   {`${l.bank} · ${l.account} · ${railFor(l.rail)?.shortName ?? l.rail}`}
                 </span>
-                {l.failure && <span className="text-meta text-destructive-text">{l.failure}</span>}
+                {l.failure && <span className="text-caption text-destructive-text">{l.failure}</span>}
               </span>
               <span className="flex shrink-0 flex-col items-end gap-1">
                 <span className="tabular text-body text-foreground">{formatMoney(l.amount, "GHS", true)}</span>
-                <span className="flex items-center gap-1 text-meta text-muted-foreground">
+                <span className="flex items-center gap-1 text-caption text-muted-foreground">
                   {STATUS[l.status].icon}
                   {STATUS[l.status].label}
                 </span>
@@ -94,7 +94,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
           ))}
         </ListCard>
         {failed.length > 0 && (
-          <p className="text-meta text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             <Badge variant="warning" className="mr-2">
               {failed.length === 1 ? "1 failed" : `${failed.length} failed`}
             </Badge>

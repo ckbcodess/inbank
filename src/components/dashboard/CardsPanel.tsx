@@ -45,8 +45,8 @@ export function CardsPanel({
   return (
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card">
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <h2 className="text-heading text-foreground">Your cards</h2>
-        <Link href="/cards" className="text-meta text-foreground underline-offset-4 hover:underline">
+        <h2 className="text-h4 text-foreground">Your cards</h2>
+        <Link href="/cards" className="text-caption text-foreground underline-offset-4 hover:underline">
           View all cards
         </Link>
       </div>
@@ -77,7 +77,7 @@ export function CardsPanel({
                         <Badge variant="destructive">{card.status}</Badge>
                       )}
                     </span>
-                    <span className="mt-0.5 text-meta text-muted-foreground tabular">
+                    <span className="mt-0.5 text-caption text-muted-foreground tabular">
                       {card.type} · {card.maskedNumber}
                     </span>
                   </Link>
@@ -104,7 +104,7 @@ export function CardsPanel({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-6 gap-2 px-2 text-meta"
+                    className="h-6 gap-2 px-2 text-caption"
                     onClick={() => toggleBlock(card)}
                     disabled={expired}
                     aria-label={blocked ? `Unblock ${card.name}` : `Block ${card.name}`}
@@ -121,7 +121,7 @@ export function CardsPanel({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-6 gap-2 px-2 text-meta"
+                      className="h-6 gap-2 px-2 text-caption"
                       onClick={() => onTopUp(card.id)}
                       aria-label={`Fund ${card.name}`}
                     >
@@ -131,7 +131,7 @@ export function CardsPanel({
                   )}
 
                   {blocked && (
-                    <span className="text-meta text-muted-foreground">
+                    <span className="text-caption text-muted-foreground">
                       Transactions declined while blocked
                     </span>
                   )}

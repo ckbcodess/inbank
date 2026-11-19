@@ -251,7 +251,7 @@ export default function AddAccountDialog({
                         <Landmark size={20} aria-hidden="true" />
                       </TileChip>
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">
+                        <span className="truncate text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">
                           {account.name}
                         </span>
                         <span className="truncate text-body text-muted-foreground tabular">
@@ -284,17 +284,17 @@ export default function AddAccountDialog({
               {/* From → to, with the amount, so nothing moves unseen. */}
               <div className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-transparent p-3">
                 <span className="flex min-w-0 flex-1 flex-col items-start gap-1">
-                  <span className="flex items-center gap-2 text-meta text-muted-foreground">
+                  <span className="flex items-center gap-2 text-caption text-muted-foreground">
                     <Wallet size={14} aria-hidden="true" />
                     GCB Virtual Account
                   </span>
-                  <span className="text-fact tracking-[var(--ls-heading)] text-foreground tabular">
+                  <span className="text-body-lg tracking-[var(--ls-heading)] text-foreground tabular">
                     {formatMoney(wallet.balance, "GHS", true)}
                   </span>
                 </span>
                 <ArrowRight size={18} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                 <span className="flex min-w-0 flex-1 flex-col items-end gap-1 text-right">
-                  <span className="flex items-center gap-2 text-meta text-muted-foreground">
+                  <span className="flex items-center gap-2 text-caption text-muted-foreground">
                     <Landmark size={14} aria-hidden="true" />
                     {picked.type}
                   </span>
@@ -319,7 +319,7 @@ export default function AddAccountDialog({
               <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success">
                 <CheckCircle2 size={30} aria-hidden="true" />
               </div>
-              <p className="text-title tracking-[var(--ls-tight)] text-foreground">
+              <p className="text-h3 tracking-[var(--ls-tight)] text-foreground">
                 {pickedAccounts.length > 1
                   ? `${pickedAccounts.length} Accounts Added`
                   : `${(added ?? pickedAccounts[0])?.name ?? "Account"} is added`}
@@ -347,7 +347,7 @@ export default function AddAccountDialog({
         )}
         {view === "no_match" && (
           <DialogFooter className="justify-between gap-3">
-            <p className="text-meta text-muted-foreground">
+            <p className="text-caption text-muted-foreground">
               <span className="tabular">{triesLeft}</span> {triesLeft === 1 ? "try" : "tries"} left before we ask you
               to visit a branch
             </p>

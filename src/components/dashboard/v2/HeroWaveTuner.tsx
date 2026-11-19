@@ -112,7 +112,7 @@ function TunerPanel() {
         </div>
       </div>
 
-      <p className="text-meta text-muted-foreground">
+      <p className="text-caption text-muted-foreground">
         Colours (card, text, wave, glow) are in the Colour tuner, under Dashboard hero.
       </p>
 
@@ -121,7 +121,7 @@ function TunerPanel() {
           const changed = wave[key] !== HERO_WAVE_DEFAULTS[key];
           return (
             <label key={key} className="flex flex-col gap-2">
-              <span className="flex items-center justify-between text-meta text-muted-foreground">
+              <span className="flex items-center justify-between text-caption text-muted-foreground">
                 {label}
                 <span className={cn("tabular", changed ? "text-foreground" : "text-muted-foreground")}>
                   {wave[key]}

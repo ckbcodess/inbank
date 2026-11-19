@@ -59,7 +59,7 @@ function termFacts() {
   const rows: Array<[React.ReactNode, React.ReactNode]> = [
     ["Terms", `${Math.min(...days)} to ${Math.max(...days)} days`],
     ["Early exit", "Allowed. The cost is shown first"],
-    ["Rates from", <span key="rate" className="text-fact">{`${formatRate(Math.min(...offers.map((o) => o.rate)))} a year`}</span>],
+    ["Rates from", <span key="rate" className="text-body-lg">{`${formatRate(Math.min(...offers.map((o) => o.rate)))} a year`}</span>],
   ];
   return { offers, highlights, rows };
 }
@@ -124,7 +124,7 @@ function treasuryFacts(marketOpen: boolean) {
     ["Held in", "Your own securities account at the CSD"],
     ["Early exit", "Sell back through a rediscount"],
     ...(allOffers.length > 0
-      ? ([["Rates from", <span key="rate" className="text-fact">{`${formatRate(Math.min(...allOffers.map((o) => o.rate)))} a year`}</span>]] as Array<[React.ReactNode, React.ReactNode]>)
+      ? ([["Rates from", <span key="rate" className="text-body-lg">{`${formatRate(Math.min(...allOffers.map((o) => o.rate)))} a year`}</span>]] as Array<[React.ReactNode, React.ReactNode]>)
       : []),
   ];
   return { highlights: TREASURY_HIGHLIGHTS, rows };

@@ -342,7 +342,7 @@ function CardsPageContent() {
       {devState.simulation !== "clean" &&
         devState.simulation !== "all" &&
         activeSimulatedCard && (
-          <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-3 py-2 text-meta">
+          <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-3 py-2 text-caption">
             <div className="flex items-center gap-2 min-w-0">
               <Layers
                 size={14}
@@ -364,14 +364,14 @@ function CardsPageContent() {
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 href={`/cards/${activeSimulatedCard.id}`}
-                className="text-meta font-medium text-foreground hover:underline"
+                className="text-caption font-medium text-foreground hover:underline"
               >
                 View card details →
               </Link>
               <button
                 type="button"
                 onClick={() => devState.resetToClean()}
-                className="text-meta text-muted-foreground hover:text-foreground cursor-pointer underline"
+                className="text-caption text-muted-foreground hover:text-foreground cursor-pointer underline"
               >
                 Reset to clean
               </button>
@@ -380,7 +380,7 @@ function CardsPageContent() {
         )}
 
       {devState.simulation === "all" && (
-        <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-3 py-2 text-meta">
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-3 py-2 text-caption">
           <div className="flex items-center gap-2 min-w-0">
             <Layers
               size={14}
@@ -394,7 +394,7 @@ function CardsPageContent() {
           <button
             type="button"
             onClick={() => devState.resetToClean()}
-            className="text-meta text-muted-foreground hover:text-foreground cursor-pointer underline shrink-0"
+            className="text-caption text-muted-foreground hover:text-foreground cursor-pointer underline shrink-0"
           >
             Reset to clean (3 cards)
           </button>

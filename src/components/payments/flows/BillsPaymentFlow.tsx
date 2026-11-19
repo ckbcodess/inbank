@@ -403,7 +403,7 @@ export function BillsPaymentFlow({
           <div className="flex flex-col gap-2">
             {state.subType === "ecg" ? (
               <>
-                <div className="flex h-11 items-center gap-3 rounded-2xl border border-border/80 bg-muted/30 px-3 text-heading font-medium text-foreground">
+                <div className="flex h-11 items-center gap-3 rounded-2xl border border-border/80 bg-muted/30 px-3 text-h4 font-medium text-foreground">
                   <BillerMark name="ECG" category="Bills & Utilities" size={28} />
                   Electricity Company of Ghana (ECG)
                 </div>
@@ -621,7 +621,7 @@ export function BillsPaymentFlow({
                               >
                                 <span className="flex min-w-0 flex-col">
                                   <span className="tabular truncate text-body text-foreground">{inv.number}</span>
-                                  <span className="truncate text-meta text-muted-foreground">{inv.serviceName}</span>
+                                  <span className="truncate text-caption text-muted-foreground">{inv.serviceName}</span>
                                 </span>
                                 <span className="tabular text-body text-foreground">{formatMoney(inv.amount, "GHS", true)}</span>
                               </button>
@@ -713,9 +713,9 @@ export function BillsPaymentFlow({
                 <BillerMark name={selectedBiller?.name} category={selectedBiller?.category} size={36} />
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                   <span className="truncate text-body text-foreground">{charge.title}</span>
-                  <span className="text-meta text-muted-foreground tabular">{charge.detail}</span>
+                  <span className="text-caption text-muted-foreground tabular">{charge.detail}</span>
                 </div>
-                <span className="text-heading text-foreground tabular">{formatMoney(charge.amount, "GHS", true)}</span>
+                <span className="text-h4 text-foreground tabular">{formatMoney(charge.amount, "GHS", true)}</span>
               </div>
               {govCharge ? (
                 overBalance && <InsufficientFundsAlert />

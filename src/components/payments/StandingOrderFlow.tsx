@@ -17,11 +17,11 @@
  *   9. Review summary with fee breakdown and one-time code authorization.
  */
 
+import PageHeader from "@/components/layout/PageHeader";
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeftRight,
-  ChevronLeft,
   Landmark,
   PhoneCall,
   Plus,
@@ -568,22 +568,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   if (!rail) {
     return (
       <div className="mx-auto flex w-full max-w-[580px] flex-col gap-5 py-2">
-        <div data-page-header className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              if (onDone) onDone();
-              else handleBackNavigation();
-            }}
-            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
-            aria-label="Back to Scheduled Payments"
-          >
-            <ChevronLeft size={22} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
-            What do you want to schedule?
-          </h1>
-        </div>
+        <PageHeader title="What do you want to schedule?" backTo={{ href: "", label: "Scheduled Payments", onClick: () => (onDone ? onDone() : handleBackNavigation()) }} />
 
         <div className="flex flex-col gap-2">
           {STANDING_ORDER_OPTIONS.map((opt) => {
@@ -679,19 +664,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
         {/* Header with back button */}
-        <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={() => setScreen("form")}
-            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-            aria-label="Back to form"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-            Scheduled Payment Summary
-          </h1>
-        </div>
+        <PageHeader title="Scheduled Payment Summary" backTo={{ href: "", label: "form", onClick: () => setScreen("form") }} />
 
         <div className="flex flex-col gap-4">
           <ReviewSummary
@@ -744,19 +717,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* Header with back button */}
-      <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
-        <button
-          type="button"
-          onClick={() => setRail(null)}
-          className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-          aria-label="Back to payment types"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-          {railConfig.title} Scheduled Payment
-        </h1>
-      </div>
+      <PageHeader title={`${railConfig.title} Scheduled Payment`} backTo={{ href: "", label: "payment types", onClick: () => setRail(null) }} />
 
       <div className="flex flex-col gap-5">
         {/* 1. Beneficiaries Avatars Strip */}
@@ -779,7 +740,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   set("groupName", "");
                   setResolvedName("");
                 }}
-                className="relative bg-background px-2 text-meta font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                className="relative bg-background px-2 text-caption font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 Or enter new details
               </button>

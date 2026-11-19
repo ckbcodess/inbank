@@ -15,6 +15,8 @@ import { OtpHelp } from "@/components/payments/OtpHelp";
 import { OTP_SHORTCODE, PIN_LENGTH, REGISTERED_PHONE, useAuthorisation } from "@/components/payments/useAuthorisation";
 import { homePathForProfile } from "@/lib/navigation";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
+import { setNewDeviceSignIn, thisDeviceName, trustThisDevice } from "@/lib/device-trust";
+import { RememberDeviceRow } from "@/components/auth/RememberDeviceRow";
 
 /**
  * The step after the password. It runs on the same authorisation as Send & Pay (`useAuthorisation`): the
@@ -32,6 +34,8 @@ function PinContent() {
   useBusinessTheme(isBusinessProfile(actor?.profiles[0]));
   const auth = useAuthorisation("pin");
   const [verifying, setVerifying] = useState(false);
+  // Off by default: on a shared computer the customer should opt in, not be opted in.
+  const [remember, setRemember] = useState(false);
   const hydrated = useSessionHydrated();
   const usingPin = auth.method === "pin";
   const [shortcodeOpen, setShortcodeOpen] = useState(false);
@@ -44,6 +48,10 @@ function PinContent() {
     if (!actor || verifying || !auth.verify(code)) return;
     setVerifying(true);
     window.setTimeout(() => {
+      if (isNewDevice) {
+        if (remember) trustThisDevice(actor);
+        setNewDeviceSignIn(thisDeviceName());
+      }
       verifyMfa();
       router.push(actor.shell === "admin" ? "/admin" : homePathForProfile(actor.profiles[0]));
     }, 500);
@@ -73,12 +81,18 @@ function PinContent() {
         <div data-tour="mfa-device-info" className="mb-5 rounded-2xl border border-primary/20 bg-primary/5 p-3 text-left space-y-2">
           <div className="flex items-center gap-2 text-body font-medium text-foreground">
             <Laptop size={17} className="text-primary" />
-            <span>Windows PC · Google Chrome</span>
+            <span>{thisDeviceName()}</span>
           </div>
-          <div className="flex items-center gap-2 text-meta text-muted-foreground">
+          <div className="flex items-center gap-2 text-caption text-muted-foreground">
             <MapPin size={15} />
             <span>Accra, Greater Accra · IP 154.160.22.84</span>
           </div>
+        </div>
+      )}
+
+      {isNewDevice && (
+        <div className="mb-5">
+          <RememberDeviceRow checked={remember} onCheckedChange={setRemember} />
         </div>
       )}
 

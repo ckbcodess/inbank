@@ -25,18 +25,19 @@
   --text-sm--line-height: 1.5;
   --text-xs: 12px;
   --text-xs--line-height: 1.5;
-  /* The type scale (CONSTITUTION §5). Components use these names, never text-[Npx]; lint enforces it. Each matches a
-     Figma text style. A label is text-body at font-medium; there is no separate label size. The responsive steps (page title, headline, balances) are the type-* utilities further down. */
-  --text-meta: 12px;
-  --text-meta--line-height: 1.5;
+  /* The type scale (CONSTITUTION §5): Display, Heading 1-4, Body large, Body, Caption. Components use these names,
+     never text-[Npx]; lint enforces it. Each matches a Figma text style of the same name. A label is text-caption at
+     font-medium. The responsive steps (text-h2, text-h1) and text-display are utilities further down. */
+  --text-caption: 12px;
+  --text-caption--line-height: 1.5;
   --text-body: 14px;
   --text-body--line-height: 1.5;
-  --text-heading: 16px;
-  --text-heading--line-height: 1.5;
-  --text-title: 18px;
-  --text-title--line-height: 1.4;
-  --text-fact: 20px;
-  --text-fact--line-height: 1.4;
+  --text-h4: 16px;
+  --text-h4--line-height: 1.5;
+  --text-h3: 18px;
+  --text-h3--line-height: 1.4;
+  --text-body-lg: 20px;
+  --text-body-lg--line-height: 1.4;
   --ease-settle: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-standard: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
@@ -123,12 +124,18 @@
   }
 }
 /* Responsive type steps (CONSTITUTION §5). A leading-* class still wins over the default line height. */
-@utility type-page-title { font-size: 18px; @variant sm { font-size: 20px; } @variant lg { font-size: 22px; } }
-/* Outcome screens, welcome dialogs and other large titles. */
-@utility type-headline { font-size: 22px; line-height: var(--tw-leading, 1.25); @variant sm { font-size: 24px; } }
-/* Balances (money held or owed) only: the dashboard hero, the account page, detail pages and sheets. One size
+/* Heading 2, the page title: the whole style lives here (size, weight, line height, tracking), so every page and flow
+   title is `text-h2` and nothing else. */
+@utility text-h2 {
+  font-size: 18px; font-weight: 500; line-height: var(--tw-leading, 24px); letter-spacing: var(--ls-heading);
+  @variant sm { font-size: 20px; line-height: var(--tw-leading, 28px); }
+  @variant lg { font-size: 22px; }
+}
+/* Heading 1: outcome screens, welcome dialogs and other large titles. Heading 2 (above) is the page title. */
+@utility text-h1 { font-size: 22px; line-height: var(--tw-leading, 1.25); @variant sm { font-size: 24px; } }
+/* Display: balances (money held or owed) only: the dashboard hero, the account page, detail pages and sheets. One size
    everywhere, so a seven-figure balance (GHS 1,284,530.44) fits one line on a phone. */
-@utility type-balance { font-size: 32px; line-height: var(--tw-leading, 1.1); }
+@utility text-display { font-size: 32px; line-height: var(--tw-leading, 1.1); }
 
 /* Page header to first content: 40px on a phone, 48px from sm, on every page. The header (`data-page-header`, set by
    PageHeader and the skeletons' header bones) sits in the page's flex column, whose gap would add to any margin. So the

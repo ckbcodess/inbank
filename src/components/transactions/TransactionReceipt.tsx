@@ -123,7 +123,7 @@ export function TransactionReceipt({ id, list, success, repeatHref, extraStates 
   if (!txn) {
     return (
       <div className="mx-auto flex max-w-[480px] flex-col items-center justify-center gap-3 py-12 text-center">
-        <h1 className="text-fact text-foreground">Transaction not found</h1>
+        <h1 className="text-body-lg text-foreground">Transaction not found</h1>
         <p className="text-body text-muted-foreground">
           The transaction record you requested could not be located.
         </p>
@@ -197,7 +197,7 @@ export function TransactionReceipt({ id, list, success, repeatHref, extraStates 
             [isCredit ? "Total credited" : "Total debited", formatMoney(totalDebit, "GHS")],
           ] as [string, string][])),
     ];
-    const amount = masked ? "Amount hidden" : `${isCredit ? "+" : "-"}${formatMoney(txn.amount, txn.currency)}`;
+    const amount = masked ? "Amount hidden" : formatMoney(txn.amount, txn.currency);
     const html = `<!doctype html><html><head><meta charset="utf-8"><title>GCB-receipt-${esc(txn.reference)}</title>
 <style>
   body { font-family: "Open Sans", Arial, sans-serif; color: #2e2e2e; margin: 48px auto; max-width: 520px; }
@@ -285,13 +285,12 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
           <div className="mb-2 flex items-center justify-center">
             <GCBLogo className="h-7 w-auto text-foreground" />
           </div>
-          <span className="text-heading font-medium text-foreground">{getTransactionType(txn)}</span>
+          <span className="text-h4 font-medium text-foreground">{getTransactionType(txn)}</span>
           <span
             className={cn(
-              "tabular type-balance tracking-[var(--ls-heading)] text-foreground",
+              "tabular text-display tracking-[var(--ls-heading)] text-foreground",
             )}
           >
-            {isCredit ? "+" : "-"}
             {formatMoney(txn.amount, txn.currency, true)}
           </span>
           <span className="tabular text-body text-muted-foreground">
@@ -308,8 +307,8 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
         <StateBand state={state} txn={txn} repeatTo={repeatTo} renderBand={renderBand} />
 
         <section className="flex flex-col gap-2">
-          {/* Grouped: the payment itself, who it went from and to, what it was for, and the money. Dashed lines between groups. */}
-          <div className="flex flex-col divide-y divide-dashed divide-border">
+          {/* Grouped: the payment itself, who it went from and to, what it was for, and the money. Whitespace separates the groups. */}
+          <div className="flex flex-col">
             {[
               [
                 { label: "Status", value: <TransactionStatusBadge state={state} /> },

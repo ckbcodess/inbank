@@ -35,7 +35,7 @@ export function CardsList({ cards }: CardsLayoutProps) {
                       <span className="truncate text-body font-medium text-foreground">{card.name}</span>
                       <StatusPill card={card} />
                     </div>
-                    <span className="tabular mt-0.5 text-meta text-muted-foreground">
+                    <span className="tabular mt-0.5 text-caption text-muted-foreground">
                       {card.type} · {card.maskedNumber}
                     </span>
                   </div>

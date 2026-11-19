@@ -33,8 +33,8 @@ export function OptionTile({ title, detail, value, selected, onSelect }: OptionT
       )}
     >
       <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="truncate text-heading font-medium text-foreground">{title}</span>
-        {detail && <span className="text-meta text-muted-foreground">{detail}</span>}
+        <span className="truncate text-h4 font-medium text-foreground">{title}</span>
+        {detail && <span className="text-caption text-muted-foreground">{detail}</span>}
       </span>
       {value && <span className="tabular shrink-0 text-body text-foreground">{value}</span>}
     </button>

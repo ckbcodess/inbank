@@ -37,7 +37,7 @@ export function advanceRows(limitNote: string, limit: number | null, showAmounts
     ...(limit !== null
       ? ([
           ["Based on", limitNote],
-          ["Up to", <span key="limit" className="text-fact">{money(limit)}</span>],
+          ["Up to", <span key="limit" className="text-body-lg">{money(limit)}</span>],
         ] as Array<[React.ReactNode, React.ReactNode]>)
       : []),
   ];

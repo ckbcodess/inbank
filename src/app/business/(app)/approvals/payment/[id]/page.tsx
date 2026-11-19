@@ -93,7 +93,7 @@ export default function PaymentApprovalPage({ params }: { params: Promise<{ id: 
 
       <section className="flex flex-col gap-2" aria-label="Amount">
         <span className="text-body text-muted-foreground">To {item.counterparty}</span>
-        <span className="tabular type-balance leading-none tracking-[var(--ls-heading)] text-foreground">
+        <span className="tabular text-display leading-none tracking-[var(--ls-heading)] text-foreground">
           <RevealingAmount amount={item.amount} currency={item.currency} />
         </span>
       </section>
@@ -106,7 +106,7 @@ export default function PaymentApprovalPage({ params }: { params: Promise<{ id: 
       </dl>
 
       <section className="flex flex-col gap-3">
-        <h2 className="min-h-6 text-heading font-medium text-foreground">Approval Path</h2>
+        <h2 className="min-h-6 text-h4 font-medium text-foreground">Approval Path</h2>
         <ApprovalTrail item={item} />
         {item.batchId && (
           <Link
@@ -158,7 +158,7 @@ export default function PaymentApprovalPage({ params }: { params: Promise<{ id: 
                 Send Back to {inputter}
               </Button>
             </div>
-            {blockedReason && <p className="text-meta text-muted-foreground">{blockedReason}</p>}
+            {blockedReason && <p className="text-caption text-muted-foreground">{blockedReason}</p>}
           </div>
         </section>
       ) : (

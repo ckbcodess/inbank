@@ -75,7 +75,7 @@ function renderBusinessBand(state: TransactionState, txn: Transaction) {
       <Band tone="warning" icon={<FileWarning size={17} aria-hidden="true" />} title="Returned by bank operations">
         <p>{txn.failureReason ?? "This trade request was returned for correction."}</p>
         <div className="mt-2 rounded-xl border border-border bg-card">
-          <p className="flex items-center gap-2 border-b border-border px-2 py-2 text-meta text-muted-foreground">
+          <p className="flex items-center gap-2 border-b border-border px-2 py-2 text-caption text-muted-foreground">
             <History size={13} />
             Version history
           </p>

@@ -26,14 +26,14 @@ export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenCha
         </DialogHeader>
         <DialogBody className="custom-scrollbar gap-5 py-5">
           <div>
-            <p className="text-meta text-muted-foreground">US dollar weighted median</p>
-            <p className="mt-1 type-balance leading-none tracking-[var(--ls-heading)] text-foreground tabular">
+            <p className="text-caption text-muted-foreground">US dollar weighted median</p>
+            <p className="mt-1 text-display leading-none tracking-[var(--ls-heading)] text-foreground tabular">
               GHS {BOG_WEIGHTED_MEDIAN_RATE.toFixed(4)}
             </p>
           </div>
 
           <div>
-            <div className={`${COLS} pb-2 text-meta text-muted-foreground`}>
+            <div className={`${COLS} pb-2 text-caption text-muted-foreground`}>
               <span />
               <span className="text-right">Buy</span>
               <span className="text-right">Sell</span>

@@ -159,10 +159,10 @@ here. Never fall back to dense, boxed layouts.
   text elements to `font-weight: inherit`; `font-medium` overrides that on purpose.
 - **The root font size is 14px; spacing and radius are in px.** `--spacing: 4px` (globals.css), so a step is
   4px. Rem-based values outside those scales (`max-w-md`) still follow the 14px root.
-- **Font sizes come only from the type scale** (designer, 2026-11-18). Every size is one of the eight named steps in the table
+- **Font sizes come only from the type scale** (designer, 2026-11-18). Every size is one of the eight named steps in the table (Display, Heading 1–4, Body large, Body, Caption; renamed from the role names on 2026-11-19)
   below (designer, 2026-11-18: Micro, Label and two hero sizes were cut), defined once in globals.css and matching a Figma text style of the same role. Never write `text-[Npx]`,
   `text-base`, `text-lg` or `text-2xl`; lint enforces it. `text-sm` and `text-xs` still work (14 and 12px) but new
-  code writes `text-body` and `text-meta`. Exempt: drawn objects and bespoke fields (card art, the cash-out ticket,
+  code writes `text-body` and `text-caption`. Exempt: drawn objects and bespoke fields (card art, the cash-out ticket,
   avatar initials, `OtpInput`, the amount field, codes to read out) and prototype tooling. A one-off exemption
   carries an `eslint-disable-next-line no-restricted-syntax -- reason` comment. A new step needs the designer.
 - **Log in, never sign in** (designer, 2026-11-17). Log in / Log out / logged in / login (noun) everywhere: buttons,
@@ -176,16 +176,16 @@ here. Never fall back to dense, boxed layouts.
 
 | Use | Classes |
 |---|---|
-| Balance or payment amount: dashboard hero, account page, detail pages, sheets, approvals | `type-balance` (32px everywhere, so a seven-figure balance fits a phone), `tracking-[var(--ls-heading)]`, regular, `.tabular`. Balances and the amount being approved only, never a fact like a sum assured. |
-| Headline: outcome screens (success, failed), welcome dialogs, large dialog titles | `type-headline` (22 → 24px) `font-medium` |
-| Page title (via `PageHeader`), and the title of the auth screens (`AuthLayout`) | `type-page-title` (18 → 20 → 22px) `font-medium tracking-[var(--ls-heading)]` |
-| Key-fact value (first row, page with no balance figure) | `text-fact` (20px) regular, `.tabular` |
-| Dialog and sheet titles | `text-title` (18px) `font-medium` |
-| Section / panel heading | `text-heading` (16px) `font-medium` (`text-body` under `sm` where space is tight) |
-| Body: paragraphs, row primary text, table cells, input values and placeholders | `text-body` (14px) `text-foreground`. The placeholder is the same size as the value; never size it separately. |
-| Form labels (via `Label` / `Field`) | `text-meta font-medium text-foreground` (12px Medium), never muted. There is no separate label size. |
+| **Display**: balance or payment amount: dashboard hero, account page, detail pages, sheets, approvals | `text-display` (32px everywhere, so a seven-figure balance fits a phone), `tracking-[var(--ls-heading)]`, regular, `.tabular`. Balances and the amount being approved only, never a fact like a sum assured. |
+| **Heading 1**: outcome screens (success, failed), welcome dialogs, large dialog titles | `text-h1` (22 → 24px) `font-medium` |
+| **Heading 2**: page title (via `PageHeader`), flow titles and the auth screens (`AuthLayout`) | `text-h2` (18 → 20 → 22px). The utility carries the whole style (Medium, line height, `--ls-heading`), so write `text-h2` alone; never copy those classes beside it. |
+| **Body large**: key-fact value (first row, page with no balance figure) | `text-body-lg` (20px) regular, `.tabular` |
+| **Heading 3**: dialog and sheet titles | `text-h3` (18px) `font-medium` |
+| **Heading 4**: section / panel heading | `text-h4` (16px) `font-medium` (`text-body` under `sm` where space is tight) |
+| **Body**: paragraphs, row primary text, table cells, input values and placeholders | `text-body` (14px) `text-foreground`. The placeholder is the same size as the value; never size it separately. |
+| Form labels (via `Label` / `Field`) | `text-caption font-medium text-foreground` (12px Medium), never muted. There is no separate label size. |
 | Emphasised row text | `text-body font-medium` (14px Medium) |
-| Meta: captions, badges, pills, chart axes, timestamps | `text-meta` (12px) `text-muted-foreground`, sentence case, never uppercase |
+| **Caption**: captions, badges, pills, chart axes, timestamps | `text-caption` (12px) `text-muted-foreground`, sentence case, never uppercase |
 | Long-form paragraphs | add `leading-relaxed` |
 
 ## 6. Shape and spacing
@@ -248,7 +248,7 @@ here. Never fall back to dense, boxed layouts.
 
 - **Permissions hide, they don't disable.** If a role can't use something, it isn't in the DOM.
 - **A control disabled because of state says why,** directly below it in
-  `text-meta text-muted-foreground`. Never grey something out without a reason.
+  `text-caption text-muted-foreground`. Never grey something out without a reason.
 - **Validation is inline,** under the field, with `aria-invalid`. Never in a modal.
 - **Alerts and confirmations are toasts** (Sonner, or `AlertToast`). Never draw an inline banner.
   The exception is errors about what the person just typed (a field, a code, a PIN): those sit inline

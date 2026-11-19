@@ -391,17 +391,17 @@ function BusinessActivateContent() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-1">
-              <span className="text-meta text-muted-foreground">Your Role</span>
+              <span className="text-caption text-muted-foreground">Your Role</span>
               <span className="text-body font-medium text-foreground">
                 {BUSINESS_INVITE_DEMO.role}
               </span>
-              <span className="text-meta text-muted-foreground">
+              <span className="text-caption text-muted-foreground">
                 {BUSINESS_ROLE_LINE[BUSINESS_INVITE_DEMO.role]}
               </span>
             </div>
 
             <div className="flex flex-col gap-2">
-              <span className="text-meta text-muted-foreground">Accounts You Can See</span>
+              <span className="text-caption text-muted-foreground">Accounts You Can See</span>
               <div className="flex flex-col gap-1.5">
                 {inviteAccounts.map((acc) => (
                   <div key={acc.id} className="flex items-center justify-between text-body">

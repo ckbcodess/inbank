@@ -18,9 +18,9 @@ export function Panel({ children, className }: { children: React.ReactNode; clas
 export function PanelHeader({ title, href, cta = "View all" }: { title: string; href?: string; cta?: string }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-body font-medium leading-none text-foreground sm:text-heading">{title}</span>
+      <span className="text-body font-medium leading-none text-foreground sm:text-h4">{title}</span>
       {href && (
-        <Link href={href} className="-my-2 py-2 text-meta text-muted-foreground transition-colors duration-hover hover:text-foreground">
+        <Link href={href} className="-my-2 py-2 text-caption text-muted-foreground transition-colors duration-hover hover:text-foreground">
           {cta}
         </Link>
       )}
@@ -48,7 +48,7 @@ export function PanelRow({
       >
         <span className="flex min-w-0 flex-col gap-0.5">
           <span className="truncate text-body text-foreground">{title}</span>
-          {meta && <span className="truncate text-meta text-muted-foreground">{meta}</span>}
+          {meta && <span className="truncate text-caption text-muted-foreground">{meta}</span>}
         </span>
         {figure && <span className="tabular shrink-0 text-body text-foreground">{figure}</span>}
       </Link>

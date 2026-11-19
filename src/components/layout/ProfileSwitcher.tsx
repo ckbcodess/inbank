@@ -43,10 +43,10 @@ export default function ProfileSwitcher({ profiles, active, onSelect }: ProfileS
       <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-2">
         <ActiveIcon size={14} strokeWidth={1.9} className="text-muted-foreground" />
         <span className="text-body leading-none text-foreground">{active.name}</span>
-        <span className="rounded-full bg-muted px-2 py-0.5 text-meta leading-none text-muted-foreground">
+        <span className="rounded-full bg-muted px-2 py-0.5 text-caption leading-none text-muted-foreground">
           {active.kind === "CORPORATE" ? "Corporate" : "Personal"}
         </span>
-        <span className="text-meta leading-none text-muted-foreground tabular">{active.reference}</span>
+        <span className="text-caption leading-none text-muted-foreground tabular">{active.reference}</span>
       </div>
     );
   }
@@ -60,7 +60,7 @@ export default function ProfileSwitcher({ profiles, active, onSelect }: ProfileS
         <ActiveIcon size={14} strokeWidth={1.9} className="text-muted-foreground" />
         <span className="text-body leading-none font-medium text-foreground">{active.name}</span>
         <span
-          className={`rounded-full px-2 py-0.5 text-meta leading-none font-medium ${
+          className={`rounded-full px-2 py-0.5 text-caption leading-none font-medium ${
             active.kind === "CORPORATE"
               ? "bg-pill-warning text-pill-warning-text"
               : "bg-pill-success text-pill-success-text"
@@ -68,7 +68,7 @@ export default function ProfileSwitcher({ profiles, active, onSelect }: ProfileS
         >
           {active.kind === "CORPORATE" ? "Corporate" : "Personal"}
         </span>
-        <span className="hidden text-meta leading-none text-muted-foreground tabular sm:inline">
+        <span className="hidden text-caption leading-none text-muted-foreground tabular sm:inline">
           {active.reference}
         </span>
         <ChevronsUpDown size={13} className="text-muted-foreground" />
@@ -85,11 +85,11 @@ export default function ProfileSwitcher({ profiles, active, onSelect }: ProfileS
               <span className="flex min-w-0 flex-1 flex-col">
                 <span className="flex items-center gap-2">
                   <span className="truncate text-body text-foreground">{p.name}</span>
-                  <span className="rounded-full bg-muted px-2 py-0.2 text-meta text-muted-foreground">
+                  <span className="rounded-full bg-muted px-2 py-0.2 text-caption text-muted-foreground">
                     {p.kind === "CORPORATE" ? "Corporate" : "Personal"}
                   </span>
                 </span>
-                <span className="text-meta text-muted-foreground tabular">{p.reference}</span>
+                <span className="text-caption text-muted-foreground tabular">{p.reference}</span>
               </span>
               {isActive && <Check size={14} className="text-primary" />}
             </DropdownMenuItem>

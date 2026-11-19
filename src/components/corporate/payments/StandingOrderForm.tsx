@@ -93,7 +93,7 @@ export default function StandingOrderForm() {
         <div className="flex flex-col items-start gap-3">
           <CheckCircle2 size={24} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
-            <h1 className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground">Standing order set up</h1>
+            <h1 className="text-h1 font-medium tracking-[var(--ls-heading)] text-foreground">Standing order set up</h1>
             <p className="text-body leading-relaxed text-muted-foreground">
               <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> will go to {supplierName}{" "}
               {cadencePhrase(preview).toLowerCase()}, starting {formatDate(startDate)}. You can pause or cancel it anytime.

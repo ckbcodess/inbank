@@ -172,7 +172,7 @@ export function ScanAndPayFlow({
     <div className="flex flex-col gap-5">
       {/* ── STAGE A: IDENTIFY / VIEW QR (When no merchant is selected yet) ── */}
       {!isMerchantSelected ? (
-        <div className="flex flex-col w-full max-w-xl mx-auto min-h-[calc(100dvh-200px)] sm:min-h-[calc(100dvh-240px)]">
+        <div className="flex flex-col w-full min-h-[calc(100dvh-200px)] sm:min-h-[calc(100dvh-240px)]">
           {/* Segmented Control Switcher stays anchored at top */}
           <SegmentedControl
             aria-label="QR Mode"
@@ -229,7 +229,7 @@ export function ScanAndPayFlow({
                   />
                   <div className="mt-3 flex flex-col items-center text-center">
                     <span className="text-body font-medium text-foreground tracking-tight">{userName}</span>
-                    <span className="text-meta text-muted-foreground font-mono mt-0.5">
+                    <span className="text-caption text-muted-foreground font-mono mt-0.5">
                       {receiveAccount?.name || "Operating Account"} ∗∗∗∗ {(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}
                     </span>
                   </div>
@@ -363,7 +363,7 @@ export function ScanAndPayFlow({
             <DialogContent size="sm" className="rounded-3xl p-0 overflow-hidden shadow-2xl border border-border/70 bg-card text-foreground">
               {/* Header: Title on left, close on right */}
               <div className="flex items-center justify-between px-5 py-3 border-b border-border/60">
-                <span className="text-heading font-medium text-foreground tracking-tight">
+                <span className="text-h4 font-medium text-foreground tracking-tight">
                   Merchant ID
                 </span>
                 <button
@@ -384,7 +384,7 @@ export function ScanAndPayFlow({
                 </div>
 
                 {/* Headline */}
-                <h3 className="type-headline font-medium text-foreground tracking-tight text-center mb-4">
+                <h3 className="text-h1 font-medium text-foreground tracking-tight text-center mb-4">
                   Enter the merchant ID
                 </h3>
 
@@ -464,7 +464,7 @@ export function ScanAndPayFlow({
                         <Check size={9} className="shrink-0" />
                       </span>
                     </div>
-                    <span className="text-meta text-muted-foreground font-mono">
+                    <span className="text-caption text-muted-foreground font-mono">
                       Terminal: {state.qrCode || "Universal QR Verified"}
                     </span>
                   </div>
@@ -474,7 +474,7 @@ export function ScanAndPayFlow({
                   variant="ghost"
                   size="sm"
                   onClick={handleClearMerchant}
-                  className="text-meta text-muted-foreground hover:text-foreground h-7 px-2"
+                  className="text-caption text-muted-foreground hover:text-foreground h-7 px-2"
                   aria-label="Change merchant"
                 >
                   Change

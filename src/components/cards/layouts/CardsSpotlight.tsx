@@ -43,7 +43,7 @@ export function CardsSpotlight({ cards }: CardsLayoutProps) {
               </div>
               <div className="flex min-w-0 flex-col gap-1">
                 <span className="truncate text-body font-medium text-foreground">{card.name}</span>
-                <span className="tabular text-meta text-muted-foreground">{card.maskedNumber}</span>
+                <span className="tabular text-caption text-muted-foreground">{card.maskedNumber}</span>
                 <StatusPill card={card} className="w-fit" />
               </div>
             </button>

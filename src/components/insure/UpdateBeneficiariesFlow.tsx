@@ -45,13 +45,13 @@ function Editor({ policy }: { policy: Policy }) {
             <span className="tabular truncate text-body text-foreground">{policy.number}</span>
             <span className="flex shrink-0 flex-col items-end">
               <span className="tabular text-body text-foreground">{formatMoney(policy.sumAssured, "GHS", showAmounts)}</span>
-              <span className="tabular text-meta text-muted-foreground">{premiumLine(policy, showAmounts)}</span>
+              <span className="tabular text-caption text-muted-foreground">{premiumLine(policy, showAmounts)}</span>
             </span>
           </li>
         </ListCard>
         <BeneficiaryEditor ownerId={ownerId} people={people} value={list} onChange={setList} trusteeId={trusteeId} onTrusteeChange={setTrusteeId} />
         <ProceedButton disabled={!changed || !beneficiariesReady(list, people, trusteeId)} onClick={() => setAuthOpen(true)} label="Save Changes" />
-        {!changed && <p className="-mt-8 px-1 text-center text-meta text-muted-foreground">Change a share, or add or remove someone, to save.</p>}
+        {!changed && <p className="-mt-8 px-1 text-center text-caption text-muted-foreground">Change a share, or add or remove someone, to save.</p>}
       </div>
 
       <TransactionOtpModal

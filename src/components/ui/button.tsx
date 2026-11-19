@@ -46,12 +46,12 @@ const buttonVariants = cva(
        * A full-width button in a flow is `xl`. Never override height or text size with className.
        */
       size: {
-        xs: "active:scale-[0.96] h-(--control-xs) gap-1 rounded-xl px-2 text-meta in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-2.5",
-        sm: "active:scale-[0.97] h-(--control-sm) gap-2 rounded-xl px-2 text-meta in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xs: "active:scale-[0.96] h-(--control-xs) gap-1 rounded-xl px-2 text-caption in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-2.5",
+        sm: "active:scale-[0.97] h-(--control-sm) gap-2 rounded-xl px-2 text-caption in-data-[slot=button-group]:rounded-xl has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         default:
           "active:scale-[0.98] h-(--control-default) gap-2 px-3 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         md: "active:scale-[0.98] h-(--control-md) gap-2 px-3 text-body has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xl: "active:scale-[0.98] h-(--control-xl) gap-2 px-4 text-heading has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+        xl: "active:scale-[0.98] h-(--control-xl) gap-2 px-4 text-h4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
         // Icon-only buttons are square on the same steps.
         "icon-xs":
           "active:scale-[0.96] size-(--control-xs) rounded-xl in-data-[slot=button-group]:rounded-xl [&_svg:not([class*='size-'])]:size-2.5",

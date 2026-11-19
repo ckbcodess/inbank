@@ -738,7 +738,7 @@ export function BuyPlanFlow({ planId }: { planId: PlanId }) {
                     <span className="truncate text-body text-foreground" translate="no">
                       {m.fullName}
                     </span>
-                    <span className="truncate text-meta text-muted-foreground">{`${m.relationship} · ${findTier(m.tier).label} · ${money(findTier(m.tier).benefit)}`}</span>
+                    <span className="truncate text-caption text-muted-foreground">{`${m.relationship} · ${findTier(m.tier).label} · ${money(findTier(m.tier).benefit)}`}</span>
                   </span>
                   <span className="tabular shrink-0 text-body text-foreground">{`${money(memberMonthly(m.tier, m.relationship))} a month`}</span>
                   <button

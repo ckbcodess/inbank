@@ -43,7 +43,7 @@ const FEED_LIMIT = 10;
 
 function DayHeading({ children }: { children: React.ReactNode }) {
   return (
-    <li className="pb-1 pt-4 text-meta text-muted-foreground tabular first:pt-0">{children}</li>
+    <li className="pb-1 pt-4 text-caption text-muted-foreground tabular first:pt-0">{children}</li>
   );
 }
 
@@ -55,12 +55,12 @@ function ScheduledRow({ p, showAmounts }: { p: UpcomingPayment; showAmounts: boo
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="truncate text-body text-foreground">{p.payee}</span>
-        <span className="text-meta text-muted-foreground tabular">
+        <span className="text-caption text-muted-foreground tabular">
           {dayLabel(p.date)} · {p.frequencyLabel}
         </span>
       </span>
       <span className="shrink-0 tabular text-body text-muted-foreground">
-        − {formatMoney(p.amount, p.currency, showAmounts)}
+        {formatMoney(p.amount, p.currency, showAmounts)}
       </span>
     </li>
   );
@@ -86,7 +86,7 @@ function TxnRow({
         <TransactionMark transaction={txn} />
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="truncate text-body text-foreground">{txn.counterparty || txn.description}</span>
-          <span className="text-meta text-muted-foreground">{txn.category || txn.channel}</span>
+          <span className="text-caption text-muted-foreground">{txn.category || txn.channel}</span>
         </span>
         <span className="flex shrink-0 flex-col items-end gap-1">
           <span className={cn("tabular text-body", colorClass)}>

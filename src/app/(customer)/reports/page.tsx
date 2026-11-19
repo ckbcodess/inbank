@@ -157,7 +157,7 @@ export default function ReportsPage() {
               <BarChart3 size={15} aria-hidden="true" />
             </span>
             <span className="mt-2 text-body text-foreground">{r.label}</span>
-            <span className="mt-1 text-meta leading-relaxed text-muted-foreground">
+            <span className="mt-1 text-caption leading-relaxed text-muted-foreground">
               {r.description}
             </span>
           </button>
@@ -195,7 +195,7 @@ export default function ReportsPage() {
           <span className="text-body text-muted-foreground">
             {rowCount} {rowCount === 1 ? "record" : "records"} · total debits
           </span>
-          <span className="text-title leading-tight text-foreground tabular">
+          <span className="text-h3 leading-tight text-foreground tabular">
             {formatMoney(total)}
           </span>
         </div>
@@ -265,7 +265,6 @@ export default function ReportsPage() {
                     <td className="px-3 py-3 text-muted-foreground tabular">{formatDate(t.date)}</td>
                     <td className="px-3 py-3 text-foreground">{t.description}</td>
                     <td className="px-3 py-3 text-right text-foreground tabular">
-                      {t.direction === "debit" ? "−" : "+"}
                       {formatMoney(t.amount, t.currency)}
                     </td>
                     <td className="px-3 py-3">

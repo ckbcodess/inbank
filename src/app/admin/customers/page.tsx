@@ -103,7 +103,7 @@ export default function CustomerManagementPage() {
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-body text-foreground">{c.name}</span>
-                    <span className="mt-0.5 truncate text-meta text-muted-foreground tabular">
+                    <span className="mt-0.5 truncate text-caption text-muted-foreground tabular">
                       {c.ref} · {c.users} users
                     </span>
                   </span>

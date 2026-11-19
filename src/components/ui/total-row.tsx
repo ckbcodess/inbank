@@ -23,7 +23,7 @@ export function TotalRow({
   return (
     <div className={cn("flex items-baseline justify-between gap-3", className)}>
       <Label className="min-w-0 text-body text-foreground">{label}</Label>
-      <Figure className="tabular shrink-0 text-fact text-foreground">{value}</Figure>
+      <Figure className="tabular shrink-0 text-body-lg text-foreground">{value}</Figure>
     </div>
   );
 }

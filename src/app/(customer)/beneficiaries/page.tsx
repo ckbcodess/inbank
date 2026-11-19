@@ -617,9 +617,9 @@ function BeneficiariesContent() {
             <div className="flex items-center gap-2 flex-wrap">
               <span className="truncate text-body font-medium text-foreground leading-snug">{b.name}</span>
               {/* A tick on every row says nothing; only the exception is marked */}
-              {!b.verified && <Badge variant="warning" className="text-meta py-0 px-2">Pending approval</Badge>}
+              {!b.verified && <Badge variant="warning" className="text-caption py-0 px-2">Pending approval</Badge>}
             </div>
-            <div className="mt-0.5 flex items-center gap-2 text-meta text-muted-foreground tabular flex-wrap">
+            <div className="mt-0.5 flex items-center gap-2 text-caption text-muted-foreground tabular flex-wrap">
               <span>{b.detail}</span>
             </div>
           </div>
@@ -691,7 +691,7 @@ function BeneficiariesContent() {
             <span className="truncate text-body text-foreground leading-snug">
               {g.name}
             </span>
-            <span className="text-meta text-muted-foreground leading-normal mt-0.5 tabular-nums numorainput">
+            <span className="text-caption text-muted-foreground leading-normal mt-0.5 tabular-nums numorainput">
               {g.members.length} {g.members.length === 1 ? "member" : "members"}
             </span>
           </div>
@@ -703,7 +703,7 @@ function BeneficiariesContent() {
             <span className="text-body text-foreground tabular-nums numorainput leading-snug">
               GHS {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
-            <span className="text-meta text-muted-foreground tabular-nums numorainput leading-normal mt-0.5">
+            <span className="text-caption text-muted-foreground tabular-nums numorainput leading-normal mt-0.5">
               {g.splitType === "equal"
                 ? `GHS ${g.defaultPerMemberAmount.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} each`
                 : "Custom split"}
@@ -1144,7 +1144,7 @@ function BeneficiariesContent() {
             {form.transactionType === "proxy" && (
               <Field label="Proxy Identifier">
                 <div className="relative flex items-center">
-                  <span className="absolute left-3 text-heading font-medium text-muted-foreground select-none pointer-events-none">
+                  <span className="absolute left-3 text-h4 font-medium text-muted-foreground select-none pointer-events-none">
                     @
                   </span>
                   <Input

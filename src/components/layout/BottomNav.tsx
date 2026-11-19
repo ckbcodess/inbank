@@ -89,7 +89,7 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
               )}
             >
               <Icon size={21} strokeWidth={isActive ? 1.85 : 1.5} className="shrink-0 transition-colors" />
-              <span className="text-meta font-medium tracking-[var(--ls-tight)] leading-none whitespace-nowrap">
+              <span className="text-caption font-medium tracking-[var(--ls-tight)] leading-none whitespace-nowrap">
                 {tab.label}
               </span>
             </div>

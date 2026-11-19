@@ -383,7 +383,7 @@ function ForgotPinContent() {
           <Button variant="default" size="md" onClick={retrySelfie} className="w-full">
             Try again
           </Button>
-          <p className="text-center text-meta text-muted-foreground tabular">
+          <p className="text-center text-caption text-muted-foreground tabular">
             {MAX_SELFIE_ATTEMPTS - failedAttempts === 1
               ? "1 try left before we ask you to visit a branch"
               : `${MAX_SELFIE_ATTEMPTS - failedAttempts} tries left before we ask you to visit a branch`}

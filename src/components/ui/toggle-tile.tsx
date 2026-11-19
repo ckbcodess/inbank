@@ -57,7 +57,7 @@ export function ToggleTile({
           <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
         </TileChip>
       )}
-      <span id={titleId} className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">{title}</span>
+      <span id={titleId} className="truncate text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">{title}</span>
     </span>
   );
 

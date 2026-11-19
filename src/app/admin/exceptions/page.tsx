@@ -54,7 +54,7 @@ export default function ExceptionsPage() {
       <section className="rounded-2xl border border-border bg-card">
         <div className="flex items-center gap-2 border-b border-border px-4 py-3">
           <AlertTriangle size={16} aria-hidden="true" className="text-warning-text" />
-          <h2 className="text-heading text-foreground">{exceptions.length} open exceptions</h2>
+          <h2 className="text-h4 text-foreground">{exceptions.length} open exceptions</h2>
         </div>
 
         <ul className="divide-y divide-border">
@@ -66,10 +66,10 @@ export default function ExceptionsPage() {
               >
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-body text-foreground">{t.description}</span>
-                  <span className="mt-0.5 truncate text-meta text-muted-foreground">
+                  <span className="mt-0.5 truncate text-caption text-muted-foreground">
                     {t.failureReason ?? "Flagged for operational review"}
                   </span>
-                  <span className="mt-0.5 truncate text-meta text-muted-foreground tabular">
+                  <span className="mt-0.5 truncate text-caption text-muted-foreground tabular">
                     {t.reference} · {formatDate(t.date)}
                   </span>
                 </span>

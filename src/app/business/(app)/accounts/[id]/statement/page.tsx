@@ -107,8 +107,8 @@ export default function BusinessStatementPage({ params }: { params: Promise<{ id
             <section className="flex flex-col gap-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <h2 className="text-heading font-medium text-foreground">Preview</h2>
-                  <p className="mt-0.5 text-meta text-muted-foreground tabular">
+                  <h2 className="text-h4 font-medium text-foreground">Preview</h2>
+                  <p className="mt-0.5 text-caption text-muted-foreground tabular">
                     {rows.length === 1
                       ? `${formatDate(from)} – ${formatDate(to)} · 1 transaction`
                       : `${formatDate(from)} – ${formatDate(to)} · ${rows.length} transactions`}
@@ -133,10 +133,9 @@ export default function BusinessStatementPage({ params }: { params: Promise<{ id
                 <ListCard>
                     {rows.map((t) => (
                       <li key={t.id} className="flex items-center gap-3 rounded-xl px-2 py-2 sm:px-3">
-                        <span className="w-21 shrink-0 text-meta text-muted-foreground tabular">{formatDate(t.date)}</span>
+                        <span className="w-21 shrink-0 text-caption text-muted-foreground tabular">{formatDate(t.date)}</span>
                         <span className="min-w-0 flex-1 truncate text-body text-foreground">{t.description}</span>
                         <span className="shrink-0 text-body text-foreground tabular">
-                          {t.direction === "debit" ? "−" : "+"}
                           {formatMoney(t.amount, t.currency)}
                         </span>
                       </li>

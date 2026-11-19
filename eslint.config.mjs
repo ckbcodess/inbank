@@ -27,13 +27,13 @@ const RETAIL_ZONE = [
 const PERSONAL_PATH =
   "/^\\/(overview|accounts|cards|payments|transactions|beneficiaries|settings|reports|fx-rates|notifications|invest|loans|insure|lifestyle|locate-us|groups)([/?#]|$)/";
 
-// Type scale (CONSTITUTION §5): font sizes come from the named steps (text-meta … text-fact, type-page-title,
-// type-headline, type-balance), never a raw px size or Tailwind's rem names, which the 14px root distorts.
+// Type scale (CONSTITUTION §5): font sizes come from the named steps (text-caption, text-body, text-body-lg,
+// text-h4 … text-h1, text-display), never a raw px size or Tailwind's rem names, which the 14px root distorts.
 // Exempt: drawn objects and bespoke fields (card art, the cash-out ticket, avatars, OtpInput, the amount field) and
 // prototype tooling. A one-off exemption carries an eslint-disable comment that says why.
 const TYPE_SCALE_MESSAGE =
-  "Use a type-scale step (text-meta/body/heading/title/fact, type-page-title, type-headline, type-balance), not a raw font size. A label is text-body font-medium.";
-const RAW_SIZE = String.raw`/(^|[\s:])text-(\[[0-9.]+px\]|base|lg|xl|[2-9]xl|micro|label)(\s|$)/`;
+  "Use a type-scale step (text-caption, text-body, text-body-lg, text-h4/h3/h2/h1, text-display), not a raw font size or an old name. A label is text-caption font-medium.";
+const RAW_SIZE = String.raw`/(^|[\s:])(text-(\[[0-9.]+px\]|base|lg|xl|[2-9]xl|micro|label|meta|heading|title|fact)|type-(page-title|headline|balance))(\s|$)/`;
 const TYPE_SCALE = [
   { selector: `Literal[value=${RAW_SIZE}]`, message: TYPE_SCALE_MESSAGE },
   { selector: `TemplateElement[value.raw=${RAW_SIZE}]`, message: TYPE_SCALE_MESSAGE },

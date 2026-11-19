@@ -300,15 +300,15 @@ export default function LocateUsPage() {
                   {/* Header Row: Title & Type Pill */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex flex-col">
-                      <span className="text-heading font-medium text-foreground tracking-tight">
+                      <span className="text-h4 font-medium text-foreground tracking-tight">
                         {loc.name}
                       </span>
-                      <span className="text-meta text-muted-foreground mt-0.5">
+                      <span className="text-caption text-muted-foreground mt-0.5">
                         {loc.address}, {loc.city}
                       </span>
                     </div>
                     <span
-                      className={`text-meta font-medium px-2 py-0.5 rounded-lg shrink-0 ${
+                      className={`text-caption font-medium px-2 py-0.5 rounded-lg shrink-0 ${
                         loc.type === "branch"
                           ? "bg-warning/10 text-warning-text"
                           : loc.type === "atm"
@@ -321,7 +321,7 @@ export default function LocateUsPage() {
                   </div>
 
                   {/* Hours & Contact */}
-                  <div className="flex flex-col gap-2 text-meta text-muted-foreground pt-1 border-t border-border/50">
+                  <div className="flex flex-col gap-2 text-caption text-muted-foreground pt-1 border-t border-border/50">
                     <div className="flex items-center gap-2">
                       <Clock size={14} className="shrink-0 text-muted-foreground" />
                       <span>{loc.hours}</span>
@@ -341,7 +341,7 @@ export default function LocateUsPage() {
                     {loc.services.map((svc) => (
                       <span
                         key={svc}
-                        className="text-meta bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-lg"
+                        className="text-caption bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-lg"
                       >
                         {svc}
                       </span>
@@ -351,7 +351,7 @@ export default function LocateUsPage() {
 
                 {/* Actions Footer */}
                 <div className="flex items-center justify-between gap-2 pt-3 mt-2 border-t border-border/60">
-                  <div className="flex items-center gap-2 text-meta text-success-text">
+                  <div className="flex items-center gap-2 text-caption text-success-text">
                     <span className="size-1.5 rounded-full bg-success" />
                     <span>Open for Service</span>
                   </div>
@@ -360,7 +360,7 @@ export default function LocateUsPage() {
                     href={directionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-meta font-medium text-primary hover:underline"
+                    className="inline-flex items-center gap-2 text-caption font-medium text-primary hover:underline"
                   >
                     <Navigation size={13} />
                     <span>Get Directions</span>

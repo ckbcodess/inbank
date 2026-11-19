@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { FxQuickModal } from "@/components/fx/FxQuickModal";
 import SettingsDialog from "@/components/settings/SettingsDialog";
+import NewDeviceNotice from "@/components/auth/NewDeviceNotice";
 import { BottomNav } from "./BottomNav";
 import { PullToRefresh } from "./PullToRefresh";
 
@@ -194,6 +195,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           <SettingsDialog />
         </Suspense>
       )}
+      <NewDeviceNotice />
       {splash !== "off" && <AppSplash leaving={splash === "leaving"} />}
     </>
   );

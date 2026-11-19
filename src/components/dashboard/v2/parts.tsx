@@ -153,14 +153,14 @@ export function CardHeader({ title, href, cta, onCta }: { title: string; href?: 
   const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between">
-      <span className="text-body font-medium leading-none text-foreground sm:text-heading">{title}</span>
+      <span className="text-body font-medium leading-none text-foreground sm:text-h4">{title}</span>
       {onCta ? (
-        <button type="button" onClick={onCta} className="-my-2 cursor-pointer py-2 text-meta text-muted-foreground transition-colors hover:text-foreground">
+        <button type="button" onClick={onCta} className="-my-2 cursor-pointer py-2 text-caption text-muted-foreground transition-colors hover:text-foreground">
           {cta ?? t("dashboard.viewAll", "View all")}
         </button>
       ) : href && (
         // Taller hit area for a thumb without moving the text.
-        <Link href={href} className="-my-2 py-2 text-meta text-muted-foreground transition-colors hover:text-foreground">
+        <Link href={href} className="-my-2 py-2 text-caption text-muted-foreground transition-colors hover:text-foreground">
           {cta ?? t("dashboard.viewAll", "View all")}
         </Link>
       )}
@@ -223,7 +223,7 @@ export function Greeting({ firstName, className }: { firstName: string; classNam
     <h1
       // Quieter on a phone so the balance, not the hello, is the loudest thing on screen.
       className={cn(
-        "type-page-title font-medium leading-[24px] tracking-[var(--ls-heading)] text-foreground sm:leading-[28px]",
+        "text-h2 text-foreground",
         className,
       )}
       suppressHydrationWarning
@@ -311,7 +311,7 @@ export function MoneyActions({
                   ? HERO_GLASS
                   : "border border-[var(--border)] bg-[var(--tile)] text-foreground group-hover:bg-[var(--tile-hover)]"
             }
-            labelClassName={cn("text-meta font-medium", hero && "text-[var(--hero-foreground)]")}
+            labelClassName={cn("text-caption font-medium", hero && "text-[var(--hero-foreground)]")}
           />
         ))}
         {picker}
@@ -320,7 +320,7 @@ export function MoneyActions({
   }
 
   const buttonClass = cn(
-    "h-auto gap-2 px-4 py-2 text-body leading-none max-sm:flex-1 max-sm:min-w-0 max-sm:h-9 max-sm:gap-1 max-sm:px-2 max-sm:py-2 max-sm:text-meta max-sm:font-medium max-sm:tracking-tight",
+    "h-auto gap-2 px-4 py-2 text-body leading-none max-sm:flex-1 max-sm:min-w-0 max-sm:h-9 max-sm:gap-1 max-sm:px-2 max-sm:py-2 max-sm:text-caption max-sm:font-medium max-sm:tracking-tight",
     // The hero's glass buttons keep the variant's own top highlight; a plain shadow here would replace it.
     hero ? "rounded-xl" : "shadow-xs",
   );
@@ -427,7 +427,7 @@ export function AccountSwitcher({
   const trigger = hero
     ? cn(
         buttonVariants({ variant: "glass" }),
-        "flex w-fit items-center gap-2 h-8 sm:h-9 px-3 rounded-xl text-body sm:text-heading font-medium outline-none transition-[box-shadow,transform] cursor-pointer",
+        "flex w-fit items-center gap-2 h-8 sm:h-9 px-3 rounded-xl text-body sm:text-h4 font-medium outline-none transition-[box-shadow,transform] cursor-pointer",
       )
     : "-mx-2 flex w-fit items-center gap-2 rounded-lg px-2 py-2 text-body leading-none text-foreground outline-none transition-colors hover:bg-muted";
   const chevron = hero ? "text-[var(--hero-foreground)]" : "text-muted-foreground";
@@ -461,7 +461,7 @@ export function AccountSwitcher({
             >
               <AccountLabel account={a} full />
               {a.id === data.defaultAccountId && (
-                <span className="ml-auto text-meta text-muted-foreground">{t("common.default", "Default")}</span>
+                <span className="ml-auto text-caption text-muted-foreground">{t("common.default", "Default")}</span>
               )}
             </DropdownMenuRadioItem>
           ))}
@@ -471,11 +471,11 @@ export function AccountSwitcher({
   );
 }
 
-// There is one balance step (type-balance, 32px), so every size is the same and a seven-figure balance fits one line.
+// There is one balance step (text-display, 32px), so every size is the same and a seven-figure balance fits one line.
 const FIGURE_SIZE = {
-  md: "type-balance",
-  lg: "type-balance",
-  xl: "type-balance",
+  md: "text-display",
+  lg: "text-display",
+  xl: "text-display",
 } as const;
 
 /** The balance number + eye toggle. The eye hides this figure only. */
@@ -574,7 +574,7 @@ export function BalanceMeta({
         </span>
       )}
       {timeLabel && (
-        <span className="text-meta tabular text-muted-foreground/75" suppressHydrationWarning>
+        <span className="text-caption tabular text-muted-foreground/75" suppressHydrationWarning>
           {timeLabel}
         </span>
       )}
@@ -619,12 +619,12 @@ export function UpcomingList({ items, showAmounts }: { items: UpcomingPayment[];
         <li key={p.id} className="flex items-center gap-3 py-2 sm:py-2 rounded-xl px-2 -mx-2 transition-colors hover:bg-item-hover">
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="truncate text-body font-medium text-foreground">{p.payee}</span>
-            <span className="text-meta text-muted-foreground tabular">
+            <span className="text-caption text-muted-foreground tabular">
               {dayLabel(p.date)} · {p.frequencyLabel}
             </span>
           </span>
           <span className="shrink-0 tabular text-body font-medium text-foreground">
-            − {formatMoney(p.amount, p.currency, showAmounts)}
+            {formatMoney(p.amount, p.currency, showAmounts)}
           </span>
         </li>
       ))}
@@ -735,11 +735,11 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
                 <span className="truncate text-body font-medium text-foreground">
                   {p.name}
                 </span>
-                <span className="truncate text-meta text-muted-foreground">
+                <span className="truncate text-caption text-muted-foreground">
                   {p.detail}
                 </span>
               </span>
-              <span className="shrink-0 flex items-center gap-1 text-meta text-muted-foreground group-hover:text-foreground transition-colors">
+              <span className="shrink-0 flex items-center gap-1 text-caption text-muted-foreground group-hover:text-foreground transition-colors">
                 <span>Pay</span>
                 <ChevronRight size={14} className="text-muted-foreground/60 group-hover:translate-x-0.5 transition-transform" />
               </span>
@@ -759,8 +759,8 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
               >
                 <PayeeAvatar name={p.name} size="md" />
                 <span className="flex w-full min-w-0 flex-col gap-0.5">
-                  <span className="truncate text-meta leading-tight text-foreground font-medium">{p.name}</span>
-                  <span className="truncate text-meta leading-tight text-muted-foreground">{p.detail}</span>
+                  <span className="truncate text-caption leading-tight text-foreground font-medium">{p.name}</span>
+                  <span className="truncate text-caption leading-tight text-muted-foreground">{p.detail}</span>
                 </span>
               </Link>
             ))}
@@ -864,7 +864,7 @@ export function CardsCard({
         <div className="flex flex-1 flex-col justify-between gap-2">
           <CardsMini cards={data.cards} />
           {isUnfunded && onOpenFundModal && (
-            <div className="mt-auto flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-meta text-muted-foreground">
+            <div className="mt-auto flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-caption text-muted-foreground">
               <span>Card ready · active once funded</span>
               <button
                 type="button"
@@ -907,10 +907,10 @@ export function AnalyticsCard({
       >
         <span className="sr-only">Loading</span>
         <div className="flex items-center justify-between">
-          <h2 className="text-body font-medium leading-none text-foreground sm:text-heading">
+          <h2 className="text-body font-medium leading-none text-foreground sm:text-h4">
             {t("dashboard.mySpends", "My Spends")}
           </h2>
-          <span className="text-meta text-muted-foreground">{t("dashboard.details", "Details")}</span>
+          <span className="text-caption text-muted-foreground">{t("dashboard.details", "Details")}</span>
         </div>
         <div className="relative my-auto flex flex-col items-center justify-center">
           <div className="relative aspect-[400/225] w-full max-w-[280px]">
@@ -962,7 +962,7 @@ export function FxBar({ defaultOpen = false, className }: { defaultOpen?: boolea
         className="flex w-full items-center justify-between gap-5 px-3 py-3 cursor-pointer sm:px-5"
         aria-expanded={open}
       >
-        <span className="shrink-0 text-body font-medium leading-none text-foreground sm:text-heading">
+        <span className="shrink-0 text-body font-medium leading-none text-foreground sm:text-h4">
           {t("dashboard.exchangeRates", "Exchange rates")}
         </span>
         <span className="flex min-w-0 flex-1 items-center justify-end gap-3">

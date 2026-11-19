@@ -1,9 +1,9 @@
 "use client";
 
+import PageHeader from "@/components/layout/PageHeader";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ChevronLeft,
   Check,
   Plus,
   X,
@@ -357,19 +357,7 @@ export default function CreateGroupFlow({
       {/* ────────────────────────────────────────────────────────────────────────── */}
       {/* HEADER: Inline Back Chevron + Screen Title matching Figma mockups          */}
       {/* ────────────────────────────────────────────────────────────────────────── */}
-      <div data-page-header className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={handleBack}
-          className="flex size-7 items-center justify-center rounded-lg text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
-          aria-label="Back"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
-          {step === 1 ? "Select group members" : "Select the amount per person"}
-        </h1>
-      </div>
+      <PageHeader title={step === 1 ? "Select group members" : "Select the amount per person"} backTo={{ href: "", label: "previous step", onClick: handleBack }} />
 
       {/* ────────────────────────────────────────────────────────────────────────── */}
       {/* STEP 1: SELECT GROUP MEMBERS (Design Mockup 1)                            */}
@@ -419,7 +407,7 @@ export default function CreateGroupFlow({
                       <PayeeAvatar name={m.name} initials={initials(m.name)} size="md" />
                       <span className="flex min-w-0 flex-col">
                         <span className="truncate text-body text-foreground">{m.name}</span>
-                        <span className="truncate text-meta text-muted-foreground">
+                        <span className="truncate text-caption text-muted-foreground">
                           {m.networkOrBank} <span className="tabular">· {m.destination}</span>
                         </span>
                       </span>
@@ -496,7 +484,7 @@ export default function CreateGroupFlow({
                             <PayeeAvatar name={contact.name} initials={initials(contact.name)} size="md" />
                             <span className="flex min-w-0 flex-col">
                               <span className="truncate text-body text-foreground">{contact.name}</span>
-                              <span className="truncate text-meta text-muted-foreground">
+                              <span className="truncate text-caption text-muted-foreground">
                                 {contact.networkOrBank} <span className="tabular">· {contact.destination}</span>
                               </span>
                             </span>
@@ -673,7 +661,7 @@ export default function CreateGroupFlow({
                 <button
                   type="button"
                   onClick={resetMemberAmounts}
-                  className="cursor-pointer text-meta text-foreground underline underline-offset-4"
+                  className="cursor-pointer text-caption text-foreground underline underline-offset-4"
                 >
                   Reset amounts
                 </button>
@@ -689,7 +677,7 @@ export default function CreateGroupFlow({
                     <PayeeAvatar name={member.name} initials={initials(member.name)} size="md" />
                     <span className="flex min-w-0 flex-col">
                       <span className="truncate text-body text-foreground">{member.name}</span>
-                      <span className="truncate text-meta text-muted-foreground tabular">{member.destination}</span>
+                      <span className="truncate text-caption text-muted-foreground tabular">{member.destination}</span>
                     </span>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">

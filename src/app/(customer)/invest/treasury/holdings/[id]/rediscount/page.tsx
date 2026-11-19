@@ -126,7 +126,7 @@ export default function RediscountPage() {
 
         <div>
           <ProceedButton disabled={!valid} onClick={() => setAuthOpen(true)} />
-          {valid && <p className="px-1 pt-2 text-center text-meta text-muted-foreground">Once it’s processed, this can’t be undone.</p>}
+          {valid && <p className="px-1 pt-2 text-center text-caption text-muted-foreground">Once it’s processed, this can’t be undone.</p>}
         </div>
       </div>
 

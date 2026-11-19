@@ -497,7 +497,7 @@ export default function LinkSourceAccountModal({
                         <Link
                           href={`/payments/send?rail=bank&returnUrl=/accounts/${destinationAccount?.id || ""}`}
                           onClick={handleClose}
-                          className="text-meta text-muted-foreground hover:text-foreground transition-colors"
+                          className="text-caption text-muted-foreground hover:text-foreground transition-colors"
                         >
                           Need to schedule a payment? <span className="underline underline-offset-2">Use Full Payments</span>
                         </Link>
@@ -518,7 +518,7 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-title font-medium text-foreground">
+                  <h3 className="text-h3 font-medium text-foreground">
                     {formatMoney(Number(internalAmount || 0), "GHS", true)} Transferred
                   </h3>
                   <p className="text-body text-muted-foreground">
@@ -578,7 +578,7 @@ export default function LinkSourceAccountModal({
                                 <span className="text-body font-medium text-foreground">
                                   {source.title}
                                 </span>
-                                <span className="text-meta text-muted-foreground">
+                                <span className="text-caption text-muted-foreground">
                                   {source.subtitle}
                                 </span>
                               </div>
@@ -632,7 +632,7 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-title font-medium text-foreground">
+                  <h3 className="text-h3 font-medium text-foreground">
                     Mobile Money Prompt Sent
                   </h3>
                   <p className="text-body text-muted-foreground">
@@ -652,7 +652,7 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-title font-medium text-foreground">
+                  <h3 className="text-h3 font-medium text-foreground">
                     {formatMoney(Number(linkedAmount || 0), "GHS", true)} added to {destinationAccount?.name}
                   </h3>
                   <p className="text-body text-muted-foreground">
@@ -755,7 +755,7 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="flex flex-col gap-2" role="status">
-                  <h3 className="text-title text-foreground tracking-[var(--ls-tight)]">Approve on your phone</h3>
+                  <h3 className="text-h3 text-foreground tracking-[var(--ls-tight)]">Approve on your phone</h3>
                   <p className="text-body leading-relaxed text-muted-foreground tabular">
                     We&apos;ve sent a request to {displayGhanaMobile(newMomoNumber)}. Approve it with your{" "}
                     {newMomoOperator} MoMo PIN, then come back here to confirm.
@@ -769,7 +769,7 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_card" && (
               <div className="flex flex-col gap-4">
-                <p className="flex items-start gap-2 text-meta leading-relaxed text-muted-foreground">
+                <p className="flex items-start gap-2 text-caption leading-relaxed text-muted-foreground">
                   <ShieldCheck size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
                   This links a card from another bank. GCB cards aren&apos;t included. You&apos;ll enter the card and confirm it&apos;s you on the provider&apos;s site.
                 </p>

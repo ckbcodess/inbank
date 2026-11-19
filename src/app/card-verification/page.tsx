@@ -117,7 +117,7 @@ export default function CardVerificationPage() {
               <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success-text">
                 <CheckCircle2 size={28} aria-hidden="true" />
               </div>
-              <h1 className="text-fact font-medium tracking-tight">{isPayment ? "Payment approved" : "Card verified"}</h1>
+              <h1 className="text-body-lg font-medium tracking-tight">{isPayment ? "Payment approved" : "Card verified"}</h1>
               <div className="flex items-center gap-2 text-body text-muted-foreground mt-1">
                 <AppLoader size={14} />
                 Taking you back to GCB…
@@ -131,12 +131,12 @@ export default function CardVerificationPage() {
                   {/* eslint-disable-next-line no-restricted-syntax -- logo mark */}
                   <span className="text-[28px] font-bold leading-none tracking-tight">U</span>
                 </div>
-                <span className="text-title font-medium text-foreground tracking-[var(--ls-tight)]">UX Bank</span>
+                <span className="text-h3 font-medium text-foreground tracking-[var(--ls-tight)]">UX Bank</span>
               </div>
 
               {/* Title & Description */}
               <div className="flex flex-col items-center gap-2 text-center mb-5">
-                <h1 className="type-headline font-medium tracking-tight text-foreground">Confirm it&apos;s you</h1>
+                <h1 className="text-h1 font-medium tracking-tight text-foreground">Confirm it&apos;s you</h1>
                 <p className="text-body leading-relaxed text-muted-foreground">
                   A request to approve this payment has been created.
                   <br />

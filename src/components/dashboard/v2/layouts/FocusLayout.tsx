@@ -80,7 +80,7 @@ export function FocusLayout(props: DashViewProps) {
   return (
     <div className="flex flex-col gap-6 sm:gap-10">
       <div className="flex items-center justify-between gap-3">
-        <Greeting firstName={data.firstName} className="sm:text-fact sm:leading-[26px]" />
+        <Greeting firstName={data.firstName} className="sm:text-body-lg sm:leading-[26px]" />
         <RefreshControl updatedAt={updatedAt} refreshing={loading} onRefresh={onRefresh} />
       </div>
 

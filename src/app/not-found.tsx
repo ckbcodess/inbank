@@ -11,7 +11,7 @@ export default function NotFound() {
           <GCBLogo className="h-9 w-auto text-foreground" />
         </div>
         <span className="text-body font-medium text-primary">404</span>
-        <h1 className="mt-1 type-headline font-medium tracking-tight text-foreground">Page not found</h1>
+        <h1 className="mt-1 text-h1 font-medium tracking-tight text-foreground">Page not found</h1>
         <p className="mt-2 text-body leading-relaxed text-muted-foreground">
           The page you are looking for does not exist or has been moved.
         </p>

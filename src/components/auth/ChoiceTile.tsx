@@ -27,7 +27,7 @@ export default function ChoiceTile({
           <Icon size={18} />
         </div>
         <div className="flex flex-col">
-          <span className="text-heading font-medium tracking-[var(--ls-tight)] text-foreground">
+          <span className="text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">
             {label}
           </span>
           <span className="mt-0.5 text-body leading-snug text-muted-foreground">{line}</span>

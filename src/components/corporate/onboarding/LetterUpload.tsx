@@ -41,7 +41,7 @@ export default function LetterUpload({
         </span>
         <div className="min-w-0">
           <p className="text-body font-medium text-foreground">{label}</p>
-          <p className="truncate text-meta text-muted-foreground">
+          <p className="truncate text-caption text-muted-foreground">
             {file ? (
               <>
                 {file.name} · <span className="tabular">{file.size}</span>

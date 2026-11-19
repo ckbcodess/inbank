@@ -79,7 +79,7 @@ function FlowTotal({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="flex items-center gap-2 text-meta text-muted-foreground">
+      <span className="flex items-center gap-2 text-caption text-muted-foreground">
         <span
           aria-hidden="true"
           className="size-1.5 shrink-0 rounded-[2px]"
@@ -124,11 +124,11 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
       {/* One filter row, above everything it scopes. */}
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="text-heading text-foreground">Where your money goes</h2>
+          <h2 className="text-h4 text-foreground">Where your money goes</h2>
           {/* Say out loud how the figures are built. A reader who adds up the
               individual accounts and gets a different total than "all
               accounts" should find the reason here, not have to guess. */}
-          <p className="mt-0.5 text-meta text-muted-foreground">
+          <p className="mt-0.5 text-caption text-muted-foreground">
             {grainCaption(grain)} · {scopeLabel} · settled only,{" "}
             {accountId
               ? "own-account transfers included"
@@ -164,7 +164,7 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
             // whether the chart is broken.
             <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-2 text-center">
               <p className="text-body text-foreground">No money moved in this period</p>
-              <p className="max-w-xs text-meta text-muted-foreground">
+              <p className="max-w-xs text-caption text-muted-foreground">
                 {scopeLabel} has no settled transactions across {grainCaption(grain).toLowerCase()}.
                 Try a longer period or another account.
               </p>
@@ -184,7 +184,7 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
                 color={CASHFLOW_CONFIG.expense.color}
               />
               <div className="flex flex-col gap-1">
-                <span className="text-meta text-muted-foreground">Net</span>
+                <span className="text-caption text-muted-foreground">Net</span>
                 <span className="text-body leading-tight text-foreground tabular">
                   {exactMoney(totals.net, showAmounts)}
                 </span>
@@ -192,7 +192,7 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
             </div>
 
             {totals.expenseChange !== null && (
-              <div className="flex items-center gap-2 text-meta text-muted-foreground">
+              <div className="flex items-center gap-2 text-caption text-muted-foreground">
                 <TrendIcon size={14} strokeWidth={1.9} aria-hidden="true" />
                 <span>
                   Spending {formatSignedPercent(totals.expenseChange)} vs{" "}

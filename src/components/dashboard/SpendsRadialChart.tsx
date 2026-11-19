@@ -153,12 +153,12 @@ export function SpendsRadialChart({
     >
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-body font-medium leading-none text-foreground sm:text-heading">
+        <h2 className="text-body font-medium leading-none text-foreground sm:text-h4">
           My Spends
         </h2>
         <Link
           href={href}
-          className="text-meta text-muted-foreground transition-colors hover:text-foreground"
+          className="text-caption text-muted-foreground transition-colors hover:text-foreground"
         >
           Details
         </Link>

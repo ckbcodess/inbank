@@ -27,7 +27,7 @@ export function RememberDeviceRow({
       />
       <span className="flex flex-col gap-0.5">
         <span>Remember this device for {TRUST_DAYS} days</span>
-        <span className="text-meta text-muted-foreground">{hint}</span>
+        <span className="text-caption text-muted-foreground">{hint}</span>
       </span>
     </label>
   );

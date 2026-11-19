@@ -182,7 +182,7 @@ export default function SupplierPaymentFlow() {
         <div className="flex flex-col items-start gap-3">
           <CheckCircle2 size={24} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
-            <h1 className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground">
+            <h1 className="text-h1 font-medium tracking-[var(--ls-heading)] text-foreground">
               {direct ? "Payment on its way" : "Submitted for approval"}
             </h1>
             <p className="text-body leading-relaxed text-muted-foreground">
@@ -198,7 +198,7 @@ export default function SupplierPaymentFlow() {
                 </>
               )}
             </p>
-            <p className="tabular text-meta text-muted-foreground">Reference {submitted.reference}</p>
+            <p className="tabular text-caption text-muted-foreground">Reference {submitted.reference}</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -294,7 +294,7 @@ export default function SupplierPaymentFlow() {
               <div className="flex flex-col gap-3">
                 {suppliers.length > 0 && !verified && (
                   <div className="flex flex-col gap-1">
-                    <span className="text-meta text-muted-foreground">Paid recently</span>
+                    <span className="text-caption text-muted-foreground">Paid recently</span>
                     <ul className="flex flex-col">
                       {suppliers.map((s) => (
                         <li key={s.account}>
@@ -304,7 +304,7 @@ export default function SupplierPaymentFlow() {
                             className="-mx-2 flex w-[calc(100%+16px)] cursor-pointer items-center justify-between gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60"
                           >
                             <span className="truncate text-body text-foreground">{s.name}</span>
-                            <span className="shrink-0 text-meta text-muted-foreground">{s.bank}</span>
+                            <span className="shrink-0 text-caption text-muted-foreground">{s.bank}</span>
                           </button>
                         </li>
                       ))}

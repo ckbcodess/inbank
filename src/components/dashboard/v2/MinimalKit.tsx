@@ -106,7 +106,7 @@ export function Eyebrow({
   return (
     <span
       className={cn(
-        "text-meta text-muted-foreground",
+        "text-caption text-muted-foreground",
         className,
       )}
     >
@@ -264,7 +264,7 @@ export function DotLegend({
         <li key={`${s.label}-${i}`} className="flex items-center gap-2 py-3">
           <span className="size-2 shrink-0 rounded-full" style={{ background: s.color }} aria-hidden="true" />
           <span className="flex-1 truncate text-body text-foreground">{s.label}</span>
-          {!compact && <span className="tabular text-meta text-muted-foreground">{pct(s.share)}</span>}
+          {!compact && <span className="tabular text-caption text-muted-foreground">{pct(s.share)}</span>}
           <span className="tabular text-body text-foreground">
             {fmtGHS(s.amount, showAmounts, { compact })}
           </span>
@@ -297,16 +297,16 @@ export function AccountRows({
               <span
                 className={cn(
                   "truncate text-foreground transition-colors group-hover:text-muted-foreground",
-                  size === "lg" ? "text-title tracking-[var(--ls-tight)]" : "text-body",
+                  size === "lg" ? "text-h3 tracking-[var(--ls-tight)]" : "text-body",
                 )}
               >
                 {shortName(a.name)}
               </span>
-              <span className="text-meta text-muted-foreground tabular">
+              <span className="text-caption text-muted-foreground tabular">
                 {a.type} · ∗∗{a.number.slice(-4)}
               </span>
             </span>
-            <span className={cn("tabular text-foreground", size === "lg" ? "text-title" : "text-body")}>
+            <span className={cn("tabular text-foreground", size === "lg" ? "text-h3" : "text-body")}>
               {fmtGHS(a.balance ?? 0, showAmounts)}
             </span>
           </Link>
@@ -328,14 +328,12 @@ export function LatestTransactions({
   return (
     <ul className="flex flex-col">
       {txns.slice(0, limit).map((t) => {
-        const credit = t.direction === "credit";
         return (
           <li key={t.id} className="flex items-center justify-between gap-2 py-2">
             <span className="min-w-0 flex-1 truncate text-body text-foreground">
               {t.counterparty || t.description}
             </span>
             <span className={"tabular text-body text-foreground"}>
-              {credit ? "+" : "−"}
               {fmtGHS(Math.abs(t.amount), showAmounts, { compact: true }).replace("GHS ", "GHS ")}
             </span>
           </li>
@@ -387,7 +385,7 @@ export function RangeTabs({
           type="button"
           onClick={() => onChange(r)}
           className={cn(
-            "cursor-pointer rounded-full px-2 py-1 text-meta tabular transition-colors",
+            "cursor-pointer rounded-full px-2 py-1 text-caption tabular transition-colors",
             value === r ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
         >
@@ -438,7 +436,7 @@ export function AccountsDisclosure({
       >
         <span className="flex shrink-0 items-center gap-2">
           <Eyebrow>Accounts</Eyebrow>
-          <span className="text-meta text-muted-foreground tabular">{accounts.length}</span>
+          <span className="text-caption text-muted-foreground tabular">{accounts.length}</span>
         </span>
         <span className="min-w-0 flex-1">
           <AllocationBar slices={slices} thickness={6} />
@@ -475,7 +473,7 @@ export function SectionHeader({
       {href && (
         <Link
           href={href}
-          className="text-meta text-muted-foreground transition-colors hover:text-foreground"
+          className="text-caption text-muted-foreground transition-colors hover:text-foreground"
         >
           {cta}
         </Link>
@@ -533,7 +531,7 @@ export function RecentTransactions({
                   <span className="truncate text-body font-medium text-foreground">
                     {t.counterparty || t.description}
                   </span>
-                  <span className="text-meta text-muted-foreground">{getTransactionType(t)} · <span className="tabular">{friendlyDate(t.date)}</span></span>
+                  <span className="text-caption text-muted-foreground">{getTransactionType(t)} · <span className="tabular">{friendlyDate(t.date)}</span></span>
                 </span>
                 <span className="flex shrink-0 flex-col items-end gap-0.5">
                   <span className={cn("tabular text-body", amountStyling(t).colorClass)}>
@@ -568,11 +566,11 @@ export function SpendDetail({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <span className="text-meta text-muted-foreground">Total spend</span>
-        <span className="tabular type-headline leading-none tracking-[var(--ls-heading)] text-foreground">
+        <span className="text-caption text-muted-foreground">Total spend</span>
+        <span className="tabular text-h1 leading-none tracking-[var(--ls-heading)] text-foreground">
           {fmtGHS(breakdown.total, showAmounts)}
         </span>
-        <span className="text-meta text-muted-foreground tabular">
+        <span className="text-caption text-muted-foreground tabular">
           {breakdown.count} transactions
         </span>
       </div>
@@ -630,7 +628,7 @@ export function CardsMini({
             </span>
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">
               <span className="truncate text-body text-foreground">{c.name}</span>
-              <span className="text-meta text-muted-foreground tabular">
+              <span className="text-caption text-muted-foreground tabular">
                 {c.type} · {c.maskedNumber}
               </span>
             </span>
@@ -639,7 +637,7 @@ export function CardsMini({
               onClick={() => (isBlocked ? setUnblockFor(c) : block(c))}
               aria-pressed={isBlocked}
               className={cn(
-                "flex items-center gap-2 rounded-full border px-2 py-1 text-meta transition-colors cursor-pointer",
+                "flex items-center gap-2 rounded-full border px-2 py-1 text-caption transition-colors cursor-pointer",
                 isBlocked
                   ? "border-transparent bg-muted text-foreground"
                   : "border-border text-muted-foreground hover:text-foreground",
@@ -704,7 +702,7 @@ export function FxRatesMini() {
             <span className="flex items-baseline gap-2">
               <span
                 className={cn(
-                  "text-meta tabular",
+                  "text-caption tabular",
                   f.changePct > 0 ? "text-success" : "text-muted-foreground",
                 )}
               >
@@ -717,8 +715,8 @@ export function FxRatesMini() {
         ))}
       </ul>
       <div className="flex items-center justify-between gap-3">
-        <span className="text-meta text-muted-foreground tabular">Mid-rate · published {published}</span>
-        <Link href="/fx-rates" className="text-meta text-muted-foreground transition-colors hover:text-foreground">
+        <span className="text-caption text-muted-foreground tabular">Mid-rate · published {published}</span>
+        <Link href="/fx-rates" className="text-caption text-muted-foreground transition-colors hover:text-foreground">
           {t("dashboard.allRates", "All rates")}
         </Link>
       </div>

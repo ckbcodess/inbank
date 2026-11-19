@@ -82,6 +82,39 @@ export function useTrustedDevice(): TrustedDevice | null {
   );
 }
 
+/** What this browser is, read from the browser itself. */
+export function thisDeviceName(): string {
+  if (typeof navigator === "undefined") return "This browser";
+  const ua = navigator.userAgent;
+  const browser = /Edg\//.test(ua) ? "Edge" : /Firefox\//.test(ua) ? "Firefox" : /Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "Browser";
+  const os = /Windows/.test(ua) ? "Windows" : /Mac OS X/.test(ua) ? "Mac" : /Android/.test(ua) ? "Android" : /iPhone|iPad/.test(ua) ? "iPhone" : /Linux/.test(ua) ? "Linux" : "this computer";
+  return `${browser} on ${os}`;
+}
+
+/* ── New-device sign-in notice ─────────────────────────────────────────────────
+   Set when a login completes on a browser that isn't trusted; the customer shell shows it once on arrival. */
+
+const NEW_DEVICE_KEY = "nibs-new-device-signin";
+
+export function setNewDeviceSignIn(device: string) {
+  try {
+    localStorage.setItem(NEW_DEVICE_KEY, device);
+  } catch {
+    // Storage blocked — the notice is skipped, nothing else changes.
+  }
+}
+
+/** Returns the pending notice's device and clears it, so it shows once. */
+export function takeNewDeviceSignIn(): string | null {
+  try {
+    const device = localStorage.getItem(NEW_DEVICE_KEY);
+    localStorage.removeItem(NEW_DEVICE_KEY);
+    return device;
+  } catch {
+    return null;
+  }
+}
+
 /* ── First-run welcome ──────────────────────────────────────────────────────
    Set when onboarding finishes; the dashboard shows the matching welcome once. */
 

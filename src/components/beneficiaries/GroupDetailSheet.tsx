@@ -48,7 +48,7 @@ export function GroupDetailSheet({ group, open, onOpenChange, onEdit, onDelete }
                 <div className="flex min-w-0 flex-col">
                   <span className="truncate text-body text-foreground">{m.name}</span>
                   {/* The number is what you check, so it never gets cut; the network name gives way instead */}
-                  <span className="flex min-w-0 text-meta text-muted-foreground tabular">
+                  <span className="flex min-w-0 text-caption text-muted-foreground tabular">
                     <span className="truncate">{m.networkOrBank || "GCB Bank"}</span>
                     <span className="shrink-0">&nbsp;· {m.destination}</span>
                   </span>

@@ -36,13 +36,13 @@ export function Field({
       <div className="flex items-center justify-between gap-2">
         <Label htmlFor={htmlFor}>
           {label}
-          {optional ? <span className="text-meta font-normal italic text-muted-foreground">(optional)</span> : null}
+          {optional ? <span className="text-caption font-normal italic text-muted-foreground">(optional)</span> : null}
         </Label>
         {action}
       </div>
       {children}
       {error ? (
-        <p role="alert" className="text-meta text-destructive">
+        <p role="alert" className="text-caption text-destructive">
           {error}
         </p>
       ) : null}

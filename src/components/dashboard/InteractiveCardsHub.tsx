@@ -33,8 +33,8 @@ export function InteractiveCardsHub({
     return (
       <div className="flex h-full flex-col rounded-3xl border border-border bg-card p-4">
         <div className="flex items-center justify-between border-b border-border pb-2">
-          <h2 className="text-heading font-medium text-foreground">Cards</h2>
-          <Link href="/cards" className="text-meta text-foreground hover:underline">
+          <h2 className="text-h4 font-medium text-foreground">Cards</h2>
+          <Link href="/cards" className="text-caption text-foreground hover:underline">
             Manage
           </Link>
         </div>
@@ -43,7 +43,7 @@ export function InteractiveCardsHub({
             <CreditCard size={20} />
           </span>
           <p className="text-body text-foreground font-medium">No cards active</p>
-          <p className="text-meta text-muted-foreground mt-0.5 mb-2">Request a physical or instant virtual card</p>
+          <p className="text-caption text-muted-foreground mt-0.5 mb-2">Request a physical or instant virtual card</p>
           <Button size="sm" variant="outline" render={<Link href="/cards" />} nativeButton={false}>
             Order Card
           </Button>
@@ -83,12 +83,12 @@ export function InteractiveCardsHub({
       {/* Header */}
       <div className="flex items-center justify-between pb-2 border-b border-border/60">
         <div className="flex items-center gap-2">
-          <h2 className="text-heading font-medium text-foreground">Cards &amp; Wallets</h2>
-          <span className="rounded-full bg-muted px-2 py-0.5 text-meta font-medium text-foreground">
+          <h2 className="text-h4 font-medium text-foreground">Cards &amp; Wallets</h2>
+          <span className="rounded-full bg-muted px-2 py-0.5 text-caption font-medium text-foreground">
             {cards.length}
           </span>
         </div>
-        <Link href="/cards" className="text-meta text-foreground hover:underline flex items-center gap-0.5">
+        <Link href="/cards" className="text-caption text-foreground hover:underline flex items-center gap-0.5">
           View all <ChevronRight size={13} />
         </Link>
       </div>
@@ -101,7 +101,7 @@ export function InteractiveCardsHub({
               key={c.id}
               type="button"
               onClick={() => setActiveCardIndex(i)}
-              className={`px-2 py-1 text-meta rounded-xl font-medium transition ${
+              className={`px-2 py-1 text-caption rounded-xl font-medium transition ${
                 activeCardIndex === i
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "bg-muted text-muted-foreground hover:text-foreground"
@@ -133,7 +133,7 @@ export function InteractiveCardsHub({
           {/* Top Row: Brand & Status */}
           <div className="flex items-center justify-between z-10">
             <div>
-              <span className="text-meta font-medium opacity-80 block">
+              <span className="text-caption font-medium opacity-80 block">
                 GCB BANK PLC
               </span>
               <span className="text-body font-medium">{currentCard.name}</span>
@@ -141,11 +141,11 @@ export function InteractiveCardsHub({
 
             <div className="flex items-center gap-2">
               {isBlocked ? (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pill-destructive text-pill-destructive-text text-meta font-medium border border-destructive/30">
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pill-destructive text-pill-destructive-text text-caption font-medium border border-destructive/30">
                   <Lock size={10} /> Frozen
                 </span>
               ) : (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text text-meta font-medium border border-success/30">
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text text-caption font-medium border border-success/30">
                   <Sparkles size={10} /> Active
                 </span>
               )}
@@ -154,7 +154,7 @@ export function InteractiveCardsHub({
 
           {/* Middle: Card Number (Masked or Unmasked) */}
           <div className="my-2 z-10 flex items-center justify-between">
-            <span className="text-heading tracking-wider font-medium">
+            <span className="text-h4 tracking-wider font-medium">
               {isRevealed
                 ? `4111 8820 9410 ${currentCard.maskedNumber.slice(-4)}`
                 : `∗∗∗∗ ∗∗∗∗ ∗∗∗∗ ${currentCard.maskedNumber.slice(-4)}`}
@@ -170,7 +170,7 @@ export function InteractiveCardsHub({
           </div>
 
           {/* Bottom Row: Expiry, CVV & Scheme */}
-          <div className="flex items-end justify-between text-meta z-10 opacity-90">
+          <div className="flex items-end justify-between text-caption z-10 opacity-90">
             <div className="flex gap-3">
               <div>
                 {/* eslint-disable-next-line no-restricted-syntax -- card art, drawn to scale */}
@@ -213,7 +213,7 @@ export function InteractiveCardsHub({
           <Button variant="outline"
             size="sm"
             onClick={() => onTopUp(currentCard.id)}
-            className="h-8 text-meta gap-2"
+            className="h-8 text-caption gap-2"
           >
             <Plus size={13} /> Top Up
           </Button>
@@ -222,7 +222,7 @@ export function InteractiveCardsHub({
             size="sm"
             render={<Link href={`/cards/${currentCard.id}`} />}
             nativeButton={false}
-            className="h-8 text-meta gap-2"
+            className="h-8 text-caption gap-2"
           >
             Limits &amp; PIN
           </Button>
@@ -230,7 +230,7 @@ export function InteractiveCardsHub({
       </div>
 
       {/* Spend Limit Meter */}
-      <div className="mt-3 pt-2 border-t border-border/60 text-meta">
+      <div className="mt-3 pt-2 border-t border-border/60 text-caption">
         <div className="flex justify-between items-center text-muted-foreground mb-1">
           <span>Monthly Spend Limit</span>
           <span className="text-foreground font-medium">GHS 2,450 / 10,000</span>

@@ -45,7 +45,7 @@ export function BlockReasonDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent size="md">
         <DialogHeader>
-          <DialogTitle className="text-title font-medium text-foreground">Why did you block this card?</DialogTitle>
+          <DialogTitle className="text-h3 font-medium text-foreground">Why did you block this card?</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>

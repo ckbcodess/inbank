@@ -66,7 +66,7 @@ export default function RejectionDialog({
               rows={4}
               placeholder="Why is this being rejected?"
             />
-            <p className="text-meta text-muted-foreground">
+            <p className="text-caption text-muted-foreground">
               {reason.trim().length < 10
                 ? "A reason of at least 10 characters is required."
                 : `${reason.trim().length} characters`}

@@ -177,15 +177,15 @@ export default function TopHeader({
             onClick={toggleDevPanel}
             aria-expanded={devPanelOpen}
             aria-controls="dev-mode-panel"
-            className="h-7 gap-2 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2 text-warning-text hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text text-meta font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0"
+            className="h-7 gap-2 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2 text-warning-text hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text text-caption font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0"
           >
             <Layers size={13} className="shrink-0" />
             <span className="hidden sm:inline whitespace-nowrap">Dev Mode</span>
-            <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-meta shrink-0 font-medium">
+            <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-caption shrink-0 font-medium">
               {simBadge}
             </span>
             {devState?.section && (
-              <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-meta shrink-0 hidden md:inline">
+              <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-caption shrink-0 hidden md:inline">
                 {devState.section}
               </span>
             )}
@@ -248,7 +248,7 @@ export default function TopHeader({
             aria-label="Account menu"
             data-product-tour="profile"
           >
-            <span className="flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-meta font-medium text-primary-foreground">
+            <span className="flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-caption font-medium text-primary-foreground">
               {/* eslint-disable-next-line @next/next/no-img-element -- a small data URL from the profile photo store */}
               {photo ? <img src={photo} alt="" className="size-full object-cover" /> : initials}
             </span>
@@ -257,19 +257,19 @@ export default function TopHeader({
             {actor.shell === "admin" && (
               <span className="hidden text-left leading-tight sm:block whitespace-nowrap">
                 <span className="block text-body font-medium text-foreground whitespace-nowrap">{actor.name}</span>
-                <span className="block text-meta text-muted-foreground whitespace-nowrap">{ROLE_LABEL[actor.role]}</span>
+                <span className="block text-caption text-muted-foreground whitespace-nowrap">{ROLE_LABEL[actor.role]}</span>
               </span>
             )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={6} className="w-[280px] p-2 rounded-2xl bg-menu/97! dark:bg-menu/92! backdrop-blur-3xl">
             {/* Header: a centred avatar, with the name and email under it */}
             <div className="flex flex-col items-center gap-3 px-4 pt-4 pb-3 text-center">
-              <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted border border-border/80 text-foreground font-medium text-fact shadow-2xs">
+              <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted border border-border/80 text-foreground font-medium text-body-lg shadow-2xs">
                 {/* eslint-disable-next-line @next/next/no-img-element -- a small data URL from the profile photo store */}
                 {photo ? <img src={photo} alt="" className="size-full object-cover" /> : initials}
               </div>
               <div className="flex w-full min-w-0 flex-col items-center gap-0.5">
-                <span className="w-full truncate text-heading font-medium text-foreground tracking-[var(--ls-tight)]">{actor.name}</span>
+                <span className="w-full truncate text-h4 font-medium text-foreground tracking-[var(--ls-tight)]">{actor.name}</span>
                 <span className="w-full truncate text-body text-muted-foreground">{actor.email}</span>
               </div>
             </div>
@@ -306,7 +306,7 @@ export default function TopHeader({
                   )}
                   <span>{devToolsHidden ? "Show floating dev tools" : "Hide floating dev tools"}</span>
                 </span>
-                <span className="text-meta font-mono text-muted-foreground/70 bg-muted px-2 py-0.5 rounded-sm">Ctrl+Shift+D</span>
+                <span className="text-caption font-mono text-muted-foreground/70 bg-muted px-2 py-0.5 rounded-sm">Ctrl+Shift+D</span>
               </DropdownMenuItem>
             )}
 

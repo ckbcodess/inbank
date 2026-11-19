@@ -70,7 +70,7 @@ const segmentColor = (i: number) => (i < 5 ? `var(--cat-${i + 1})` : "var(--cat-
 
 function Avatar({ name, color }: { name: string; color?: string }) {
   return (
-    <span className="relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-meta text-foreground" translate="no">
+    <span className="relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-caption text-foreground" translate="no">
       {initials(name)}
       {color && <span aria-hidden="true" className="absolute -right-px -bottom-px size-2.5 rounded-full border-2 border-background" style={{ background: color }} />}
     </span>
@@ -426,7 +426,7 @@ export function BeneficiaryEditor({
                       <span className="truncate text-body text-foreground" translate="no">
                         {p.fullName}
                       </span>
-                      <span className="truncate text-meta text-muted-foreground">
+                      <span className="truncate text-caption text-muted-foreground">
                         {isMinor(p) ? `${p.relationship} · Under 18` : p.relationship}
                       </span>
                     </span>
@@ -492,7 +492,7 @@ export function BeneficiaryEditor({
                             <span className="truncate text-body text-foreground" translate="no">
                               {p.fullName}
                             </span>
-                            <span className="truncate text-meta text-muted-foreground">{p.relationship}</span>
+                            <span className="truncate text-caption text-muted-foreground">{p.relationship}</span>
                           </span>
                         </span>
                       </SelectItem>

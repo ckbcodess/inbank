@@ -323,7 +323,7 @@ function ClaimForm({ policy }: { policy: Policy }) {
                 <SelectItem key={t} value={t} label={CLAIM_TYPES[t].label}>
                   <div className="flex flex-col py-0.5 text-left">
                     <span className="text-foreground">{CLAIM_TYPES[t].label}</span>
-                    <span className="max-w-[22rem] whitespace-normal text-meta font-normal text-muted-foreground">{CLAIM_TYPES[t].detail}</span>
+                    <span className="max-w-[22rem] whitespace-normal text-caption font-normal text-muted-foreground">{CLAIM_TYPES[t].detail}</span>
                   </div>
                 </SelectItem>
               ))}

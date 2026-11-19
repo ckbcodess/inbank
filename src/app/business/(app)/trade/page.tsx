@@ -63,8 +63,8 @@ export default function TradeHubPage() {
 
       <section className={cn(LIST_CARD_CLASS)}>
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h2 className="text-heading text-foreground">My trades</h2>
-          <span className="text-meta text-muted-foreground">{TRADES.length} active</span>
+          <h2 className="text-h4 text-foreground">My trades</h2>
+          <span className="text-caption text-muted-foreground">{TRADES.length} active</span>
         </div>
         <ul className="flex flex-col gap-0.5">
           {TRADES.map((t) => (
@@ -78,7 +78,7 @@ export default function TradeHubPage() {
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-body text-foreground">{t.desc}</span>
-                  <span className="mt-0.5 truncate text-meta text-muted-foreground tabular">
+                  <span className="mt-0.5 truncate text-caption text-muted-foreground tabular">
                     {t.ref} · {t.cp}
                   </span>
                 </span>
@@ -100,7 +100,7 @@ export default function TradeHubPage() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-body text-foreground">Start a new trade request</p>
-            <p className="mt-0.5 text-meta text-muted-foreground">
+            <p className="mt-0.5 text-caption text-muted-foreground">
               Trade Type Selection → Trade Request → Documents → Trade Review
             </p>
           </div>

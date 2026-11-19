@@ -68,9 +68,9 @@ export default function UserChangeApprovalPage({ params }: { params: Promise<{ i
       <PageHeader title={title} description={`Proposed by ${change.proposedBy} · ${change.proposedAt}`} backTo={back} />
 
       <section className="flex flex-col gap-3">
-        <h2 className="min-h-6 text-heading font-medium text-foreground">What Changes</h2>
+        <h2 className="min-h-6 text-h4 font-medium text-foreground">What Changes</h2>
         <UserChangeSummary change={change} />
-        <p className="text-meta text-muted-foreground">
+        <p className="text-caption text-muted-foreground">
           {`${change.after.designation}${change.after.onMandate ? " · on your mandate" : ""} · ${change.after.email}`}
         </p>
       </section>

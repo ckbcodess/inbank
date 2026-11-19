@@ -66,11 +66,11 @@ export function AdvanceRow({ advance, showAmounts }: { advance: Advance; showAmo
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
           <span className={cn("truncate text-body", muted ? "text-muted-foreground" : "text-foreground")}>{ADVANCE_PRODUCTS[advance.kind].name}</span>
-          <span className={cn("tabular truncate text-meta", overdue ? "text-warning-text" : "text-muted-foreground")}>{statusLine(advance)}</span>
+          <span className={cn("tabular truncate text-caption", overdue ? "text-warning-text" : "text-muted-foreground")}>{statusLine(advance)}</span>
         </span>
         <span className="flex shrink-0 flex-col items-end">
           <span className={cn("tabular text-body", muted ? "text-muted-foreground" : "text-foreground")}>{formatMoney(figure, "GHS", showAmounts)}</span>
-          {advance.status === "active" && <span className="text-meta text-muted-foreground">Owed today</span>}
+          {advance.status === "active" && <span className="text-caption text-muted-foreground">Owed today</span>}
         </span>
         <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
       </Link>
@@ -139,7 +139,7 @@ export function AdvanceProductPage() {
                   >
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-body text-foreground">Past Advances</span>
-                      <span className="tabular truncate text-meta text-muted-foreground">{`${repaid.length} repaid · ${money(borrowed)} borrowed`}</span>
+                      <span className="tabular truncate text-caption text-muted-foreground">{`${repaid.length} repaid · ${money(borrowed)} borrowed`}</span>
                     </span>
                     <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                   </Link>
@@ -147,7 +147,7 @@ export function AdvanceProductPage() {
               </ListCard>
             )}
             {open && (
-              <p className="px-1 text-meta text-muted-foreground">
+              <p className="px-1 text-caption text-muted-foreground">
                 Repay your current advance to take another.
               </p>
             )}

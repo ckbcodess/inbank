@@ -69,8 +69,8 @@ export default function AdministrationPage() {
 
       {waiting.length > 0 && (
         <section className="flex flex-col gap-3">
-          <h2 className="min-h-6 text-heading font-medium text-foreground">Waiting for Approval</h2>
-          <p className="text-meta text-muted-foreground">
+          <h2 className="min-h-6 text-h4 font-medium text-foreground">Waiting for Approval</h2>
+          <p className="text-caption text-muted-foreground">
             New access starts once an Authoriser or another administrator approves it. Nobody approves their own change.
           </p>
           <ListCard as="div" className="gap-5 p-4 sm:p-5">
@@ -88,7 +88,7 @@ export default function AdministrationPage() {
                         Review Change
                       </Button>
                     ) : (
-                      <span className="tabular text-meta text-muted-foreground">
+                      <span className="tabular text-caption text-muted-foreground">
                         {`Proposed by ${change.proposedBy} · ${change.proposedAt}`}
                       </span>
                     )}
@@ -103,7 +103,7 @@ export default function AdministrationPage() {
 
       <section className="flex flex-col gap-3">
         <div className="flex min-h-6 items-center justify-between gap-3">
-          <h2 className="text-heading font-medium text-foreground">Users</h2>
+          <h2 className="text-h4 font-medium text-foreground">Users</h2>
           <ExpandableSearch value={query} onChange={setQuery} placeholder="Search by name or role" tooltip="Search users" />
         </div>
 
@@ -122,7 +122,7 @@ export default function AdministrationPage() {
                   </TileChip>
                   <span className="flex min-w-0 flex-1 flex-col gap-1">
                     <span className="flex flex-wrap items-center gap-2">
-                      <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">{u.name}</span>
+                      <span className="truncate text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">{u.name}</span>
                       {u.status === "Suspended" && <Badge variant="warning">Suspended</Badge>}
                       {pendingChangeFor(u.id) && <Badge variant="outline">Change waiting</Badge>}
                     </span>

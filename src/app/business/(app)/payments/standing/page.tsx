@@ -50,7 +50,7 @@ export default function BusinessStandingOrdersPage() {
           </span>
           <span className="flex min-w-0 flex-1 flex-col">
             <span className={cn("truncate text-body", isPaused ? "text-muted-foreground" : "text-foreground")}>{orderTitle(si)}</span>
-            <span className="truncate text-meta text-muted-foreground">
+            <span className="truncate text-caption text-muted-foreground">
               {orderType(si)} · {frequencyLabel(si)}
             </span>
           </span>
@@ -58,7 +58,7 @@ export default function BusinessStandingOrdersPage() {
             <span className={cn("tabular text-body", isPaused ? "text-muted-foreground" : "text-foreground")}>
               {formatMoney(si.amount, si.currency, showAmounts)}
             </span>
-            <span className="tabular text-meta text-muted-foreground">{isPaused ? "Paused" : dayLabel(si.nextRun)}</span>
+            <span className="tabular text-caption text-muted-foreground">{isPaused ? "Paused" : dayLabel(si.nextRun)}</span>
           </span>
           <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
         </Link>
@@ -95,7 +95,7 @@ export default function BusinessStandingOrdersPage() {
         <>
           <section className="flex flex-col gap-2 px-1">
             <span className="text-body text-muted-foreground">Leaves your accounts each month</span>
-            <span className="tabular type-balance leading-none tracking-[var(--ls-tight)] text-foreground">
+            <span className="tabular text-display leading-none tracking-[var(--ls-tight)] text-foreground">
               {formatMoney(Math.round(perMonth), "GHS", showAmounts)}
             </span>
             {active.length === 0 && <span className="text-body text-muted-foreground">Everything is paused.</span>}

@@ -125,7 +125,7 @@ export default function ApprovalQueuePage() {
                       <UserCog size={20} aria-hidden="true" />
                     </TileChip>
                     <span className="flex min-w-0 flex-1 flex-col gap-1">
-                      <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">
+                      <span className="truncate text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">
                         {c.kind === "add" ? `Add ${name}` : c.kind === "reactivate" ? `Reactivate ${name}` : `Change ${name}'s access`}
                       </span>
                       <span className="tabular truncate text-body text-muted-foreground">{`Proposed by ${c.proposedBy} · ${c.proposedAt}`}</span>
@@ -143,7 +143,7 @@ export default function ApprovalQueuePage() {
         <StateSwitcher section="13.1" states={LIST_STATES} value={state} onChange={setState} labels={LIST_STATE_LABEL} />
 
         <div className="flex min-h-6 flex-wrap items-center justify-between gap-2">
-          <h2 className="text-heading font-medium text-foreground">Payments</h2>
+          <h2 className="text-h4 font-medium text-foreground">Payments</h2>
           <div className="flex flex-wrap items-center gap-2">
             <AppliedFilters groups={filterGroups} layout="inline" />
             <FilterPanel groups={filterGroups} onClear={() => setTypeFilter("all")} align="end" />
@@ -203,7 +203,7 @@ export default function ApprovalQueuePage() {
                       </TileChip>
                       <span className="flex min-w-0 flex-1 flex-col gap-1">
                         <span className="flex flex-wrap items-center gap-2">
-                          <span className="truncate text-heading font-medium tracking-[var(--ls-tight)] text-foreground">{item.counterparty}</span>
+                          <span className="truncate text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">{item.counterparty}</span>
                           {item.priority === "urgent" && <Badge variant="warning">Urgent</Badge>}
                           {!check.ok && <Badge variant="warning">{check.reason === "over-limit" ? "Above your limit" : "Over today's limit"}</Badge>}
                         </span>

@@ -365,7 +365,7 @@ function SignupContent() {
                 Continue
               </Button>
             </KeyboardDock>
-            <p className="text-center text-meta leading-5 text-muted-foreground">
+            <p className="text-center text-caption leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
               <a href="#" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Terms</a>{" "}
               and{" "}
@@ -420,10 +420,10 @@ function SignupContent() {
                 </div>
                 <div className="min-w-0">
                   <span className="block truncate text-body font-medium text-foreground">Ransford Gyasi</span>
-                  <span className="tabular text-meta text-muted-foreground">{ghanaCard}</span>
+                  <span className="tabular text-caption text-muted-foreground">{ghanaCard}</span>
                 </div>
               </div>
-              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-meta font-medium text-pill-success-text">
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-caption font-medium text-pill-success-text">
                 <Check size={12} />
                 Verified
               </span>
@@ -467,7 +467,7 @@ function SignupContent() {
                 onValueChange={setMobile}
                 placeholder="Enter mobile number"
               />
-              <p className="px-0.5 text-meta text-muted-foreground">We’ll send a verification code to this number.</p>
+              <p className="px-0.5 text-caption text-muted-foreground">We’ll send a verification code to this number.</p>
             </div>
           </div>
 

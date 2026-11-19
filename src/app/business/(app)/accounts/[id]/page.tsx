@@ -68,7 +68,7 @@ function BalanceCard({ account }: { account: Account }) {
       <RevealingAmount
         amount={account.available}
         currency={account.currency}
-        className="relative type-balance leading-[1.25] tracking-[var(--ls-heading)] text-foreground tabular"
+        className="relative text-display leading-[1.25] tracking-[var(--ls-heading)] text-foreground tabular"
       />
     </section>
   );
@@ -128,7 +128,7 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
             <div className="flex flex-col gap-5 lg:mx-auto lg:w-[78%]">
               <BalanceCard account={account} />
               {uncleared && (
-                <p className="text-meta text-muted-foreground tabular">
+                <p className="text-caption text-muted-foreground tabular">
                   {formatMoney(account.balance, account.currency)} in the ledger. The difference is funds not yet cleared or on hold.
                 </p>
               )}
@@ -166,14 +166,14 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
                   <ListCard as="div" className="gap-3 p-4">
                     <div className="flex flex-col gap-1">
                       <span className="text-body text-foreground">{account.mandate}</span>
-                      <span className="text-meta text-muted-foreground">{explainMandate(account.mandate)}</span>
+                      <span className="text-caption text-muted-foreground">{explainMandate(account.mandate)}</span>
                     </div>
                     {account.signatories && account.signatories.length > 0 && (
                       <ul className="flex flex-col gap-2 border-t border-border pt-3">
                         {account.signatories.map((s) => (
                           <li key={s.email} className="flex flex-col">
                             <span className="truncate text-body text-foreground">{s.name}</span>
-                            <span className="truncate text-meta text-muted-foreground">{s.role}</span>
+                            <span className="truncate text-caption text-muted-foreground">{s.role}</span>
                           </li>
                         ))}
                       </ul>
@@ -188,8 +188,8 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
                   {account.relationshipManager ? (
                     <>
                       <span className="text-body text-foreground">{account.relationshipManager.name}</span>
-                      <span className="text-meta text-muted-foreground">{`Relationship Manager · ${account.relationshipManager.email}`}</span>
-                      <span className="text-meta text-muted-foreground tabular">{account.relationshipManager.phone}</span>
+                      <span className="text-caption text-muted-foreground">{`Relationship Manager · ${account.relationshipManager.email}`}</span>
+                      <span className="text-caption text-muted-foreground tabular">{account.relationshipManager.phone}</span>
                     </>
                   ) : (
                     <p className="text-body text-muted-foreground">
@@ -208,7 +208,6 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
             ) : (
               <ListCard>
                 {recent.map((t) => {
-                  const credit = t.direction === "credit";
                   return (
                     <li key={t.id}>
                       <Link
@@ -218,12 +217,11 @@ export default function BusinessAccountDetailsPage({ params }: { params: Promise
                         <TransactionMark transaction={t} />
                         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                           <span className="truncate text-body text-foreground">{t.counterparty || t.description}</span>
-                          <span className="truncate text-meta text-muted-foreground">
+                          <span className="truncate text-caption text-muted-foreground">
                             {getTransactionType(t)} · <span className="tabular">{formatDate(t.date)}</span>
                           </span>
                         </span>
                         <span className="shrink-0 text-body text-foreground tabular">
-                          {credit ? "+ " : "− "}
                           {formatMoney(t.amount, t.currency, true)}
                         </span>
                       </Link>

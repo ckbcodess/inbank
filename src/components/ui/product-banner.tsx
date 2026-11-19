@@ -13,7 +13,7 @@ export function AlertMark({ tone, success = false, className }: { tone: ProductA
     <span
       aria-hidden="true"
       className={cn(
-        "flex size-5 shrink-0 items-center justify-center rounded-full text-meta font-medium",
+        "flex size-5 shrink-0 items-center justify-center rounded-full text-caption font-medium",
         success ? "bg-[color-mix(in_srgb,var(--success)_82%,var(--black))] text-white" : act ? "bg-primary text-primary-foreground" : "border border-border bg-muted text-muted-foreground",
         className,
       )}
@@ -97,7 +97,7 @@ export function ProductBanner({
           <AlertMark tone={one.tone} success={one.success} />
           <span className="flex min-w-0 flex-1 flex-col">
             <span className="text-body font-medium text-foreground">{one.headline}</span>
-            {one.detail && <span className="text-meta text-muted-foreground">{one.detail}</span>}
+            {one.detail && <span className="text-caption text-muted-foreground">{one.detail}</span>}
           </span>
           {one.action && <ActionLabel label={one.action.label} />}
         </AlertRow>
@@ -131,7 +131,7 @@ export function ProductBanner({
                 <AlertMark tone={i.alert.tone} />
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-body text-foreground">{i.alert.headline}</span>
-                  <span className="truncate text-meta text-muted-foreground">{i.label}</span>
+                  <span className="truncate text-caption text-muted-foreground">{i.label}</span>
                 </span>
                 {i.alert.action && <ActionLabel label={i.alert.action.label} />}
               </AlertRow>

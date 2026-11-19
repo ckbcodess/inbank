@@ -73,7 +73,7 @@ export function MoneyActionPicker({
 
       {groups.map((group, i) => (
         <section key={group.label ?? i} className="flex flex-col gap-3">
-          {group.label && <h3 className="text-meta text-muted-foreground">{group.label}</h3>}
+          {group.label && <h3 className="text-caption text-muted-foreground">{group.label}</h3>}
           <ul className="flex flex-col gap-3">
             {group.options.map((o) => (
               <li key={o.id}>

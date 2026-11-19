@@ -103,7 +103,7 @@ function NewToGcbContent() {
               </span>
               <span className="min-w-0">
                 <span className="block text-body text-foreground">{label}</span>
-                <span className="block text-meta text-muted-foreground">{line}</span>
+                <span className="block text-caption text-muted-foreground">{line}</span>
               </span>
             </button>
           ))}

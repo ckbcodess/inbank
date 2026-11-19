@@ -54,7 +54,7 @@ export default function TradeMonitoringPage() {
       <StubNotice section="section 6 / sitemap 12.5" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="border-b border-border px-4 py-3 text-heading text-foreground">
+        <h2 className="border-b border-border px-4 py-3 text-h4 text-foreground">
           Awaiting officer action
         </h2>
         <ul className="divide-y divide-border">
@@ -69,7 +69,7 @@ export default function TradeMonitoringPage() {
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-body text-foreground">{t.desc}</span>
-                  <span className="mt-0.5 truncate text-meta text-muted-foreground tabular">
+                  <span className="mt-0.5 truncate text-caption text-muted-foreground tabular">
                     {t.ref} · {t.customer}
                   </span>
                 </span>

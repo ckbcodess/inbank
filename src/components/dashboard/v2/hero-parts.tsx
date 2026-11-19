@@ -71,7 +71,7 @@ export function LastLogin({ className }: { className?: string }) {
   const previous = useSession((s) => s.previousSignIn);
   if (!previous) return null;
   return (
-    <span className={cn("tabular text-meta tracking-[var(--ls-tight)] text-muted-foreground", className)} suppressHydrationWarning>
+    <span className={cn("tabular text-caption tracking-[var(--ls-tight)] text-muted-foreground", className)} suppressHydrationWarning>
       {t("dashboard.lastLogin", "Last login: {0}", { 0: formatLastLogin(previous) })}
     </span>
   );
@@ -410,7 +410,7 @@ export function ManageAccountsLink({
     <Link
       href="/accounts"
       className={cn(
-        "relative flex w-fit items-center gap-0.5 rounded-lg py-2 text-body leading-none transition-opacity hover:opacity-80 sm:text-heading",
+        "relative flex w-fit items-center gap-0.5 rounded-lg py-2 text-body leading-none transition-opacity hover:opacity-80 sm:text-h4",
         className,
       )}
     >
@@ -423,9 +423,9 @@ export function ManageAccountsLink({
 /* ── Balance ─────────────────────────────────────────────────────────────── */
 
 const HERO_FIGURE = {
-  md: "type-balance",
-  lg: "type-balance",
-  xl: "type-balance",
+  md: "text-display",
+  lg: "text-display",
+  xl: "text-display",
 } as const;
 
 /** The selected account's balance in hero type, with the eye toggle. The eye hides this figure only. */
@@ -470,7 +470,7 @@ export function HeroBalance({
 export function HeroUpdated({ updatedAt, className }: { updatedAt: number; className?: string }) {
   const label = useUpdatedLabel(updatedAt);
   return (
-    <span className={cn("relative text-meta leading-5 tracking-[-0.005em] sm:text-body", className)} suppressHydrationWarning>
+    <span className={cn("relative text-caption leading-5 tracking-[-0.005em] sm:text-body", className)} suppressHydrationWarning>
       {label}
     </span>
   );

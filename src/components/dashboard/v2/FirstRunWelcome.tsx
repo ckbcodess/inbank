@@ -445,7 +445,7 @@ export function FirstRunWelcome({
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <DialogTitle className="type-headline font-medium tracking-tight text-foreground leading-tight">
+                        <DialogTitle className="text-h1 font-medium tracking-tight text-foreground leading-tight">
                           Welcome to GCB, {firstName}!
                         </DialogTitle>
                         <p className="text-body leading-relaxed text-muted-foreground max-w-[360px]">
@@ -487,7 +487,7 @@ export function FirstRunWelcome({
                         >
                           <ChevronLeft size={18} />
                         </button>
-                        <DialogTitle className="type-headline font-medium tracking-tight text-foreground">
+                        <DialogTitle className="text-h1 font-medium tracking-tight text-foreground">
                           Choose a Funding Method
                         </DialogTitle>
                       </div>
@@ -552,7 +552,7 @@ export function FirstRunWelcome({
                         >
                           <ChevronLeft size={18} />
                         </button>
-                        <DialogTitle className="type-headline font-medium tracking-tight text-foreground">
+                        <DialogTitle className="text-h1 font-medium tracking-tight text-foreground">
                           Mobile Money
                         </DialogTitle>
                       </div>
@@ -564,7 +564,7 @@ export function FirstRunWelcome({
                           <p className="truncate text-body font-medium tracking-[var(--ls-tight)] text-foreground">
                             {operator} Wallet
                           </p>
-                          <p className="tabular-nums truncate text-meta text-muted-foreground sm:text-body">
+                          <p className="tabular-nums truncate text-caption text-muted-foreground sm:text-body">
                             {displayGhanaMobile(phone)}
                           </p>
                         </div>
@@ -626,7 +626,7 @@ export function FirstRunWelcome({
                         >
                           <ChevronLeft size={18} />
                         </button>
-                        <DialogTitle className="type-headline font-medium tracking-tight text-foreground">
+                        <DialogTitle className="text-h1 font-medium tracking-tight text-foreground">
                           {method === "momo" ? "Mobile Money" : "Card deposit"}
                         </DialogTitle>
                       </div>
@@ -641,7 +641,7 @@ export function FirstRunWelcome({
                                 <p className="truncate text-body font-medium tracking-[var(--ls-tight)] text-foreground">
                                   {operator} Wallet
                                 </p>
-                                <p className="tabular-nums truncate text-meta text-muted-foreground">
+                                <p className="tabular-nums truncate text-caption text-muted-foreground">
                                   {displayGhanaMobile(phone)}
                                 </p>
                               </div>
@@ -743,7 +743,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                         >
                           <ChevronLeft size={18} />
                         </button>
-                        <DialogTitle className="type-headline font-medium tracking-tight text-foreground">
+                        <DialogTitle className="text-h1 font-medium tracking-tight text-foreground">
                           Confirm mobile number
                         </DialogTitle>
                       </div>
@@ -778,7 +778,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
 
                         <InlineError message={errorMsg} />
 
-                        <div className="flex items-center justify-center pt-2 text-meta">
+                        <div className="flex items-center justify-center pt-2 text-caption">
                           <button
                             type="button"
                             disabled={countdown > 0}
@@ -811,14 +811,14 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                       <Smartphone size={26} className="animate-pulse" />
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="tabular-nums type-headline font-medium tracking-tight text-foreground">
+                      <span className="tabular-nums text-h1 font-medium tracking-tight text-foreground">
                         GHS {parseFloat(amount).toFixed(2)}
                       </span>
                       <p className="text-body text-muted-foreground max-w-[280px]">
                         Enter your Mobile Money PIN on your phone to approve.
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 pt-2 text-meta text-muted-foreground">
+                    <div className="flex items-center gap-2 pt-2 text-caption text-muted-foreground">
                       <AppLoader size={14} />
                       <span>Waiting for approval…</span>
                     </div>
@@ -834,7 +834,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                       </div>
 
                       <div className="flex max-w-[320px] flex-col gap-2">
-                        <DialogTitle className="tabular-nums type-headline font-medium tracking-tight text-foreground">
+                        <DialogTitle className="tabular-nums text-h1 font-medium tracking-tight text-foreground">
                           GHS {parseFloat(amount).toFixed(2)} deposited
                         </DialogTitle>
                         <p className="text-body leading-relaxed text-muted-foreground">
@@ -898,7 +898,7 @@ function SaveSourcePane({
   return (
     <div className="flex flex-1 flex-col justify-between h-full">
       <div className="flex flex-col gap-3">
-        <DialogTitle className="type-headline font-medium tracking-tight text-foreground">
+        <DialogTitle className="text-h1 font-medium tracking-tight text-foreground">
           {heading}
         </DialogTitle>
         <SourceSummary source={source} />

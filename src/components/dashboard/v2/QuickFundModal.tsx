@@ -403,14 +403,14 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 <Smartphone size={24} />
               </div>
               <div className="flex flex-col gap-1">
-                <span className="tabular-nums text-fact font-medium tracking-tight text-foreground">
+                <span className="tabular-nums text-body-lg font-medium tracking-tight text-foreground">
                   GHS {parseFloat(amount).toFixed(2)}
                 </span>
                 <p className="text-body text-muted-foreground">
                   Enter your Mobile Money PIN on your phone to approve.
                 </p>
               </div>
-              <div className="flex items-center gap-2 pt-2 text-meta text-muted-foreground">
+              <div className="flex items-center gap-2 pt-2 text-caption text-muted-foreground">
                 <AppLoader size={14} />
                 <span>Waiting for approval…</span>
               </div>
@@ -425,7 +425,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="tabular-nums text-fact font-medium tracking-tight text-foreground">
+                <h4 className="tabular-nums text-body-lg font-medium tracking-tight text-foreground">
                   GHS {parseFloat(amount).toFixed(2)} deposited
                 </h4>
                 <p className="text-body text-muted-foreground">
@@ -452,7 +452,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
           {back}
-          <DialogTitle className="type-headline font-medium tracking-tight text-foreground">{title}</DialogTitle>
+          <DialogTitle className="text-h1 font-medium tracking-tight text-foreground">{title}</DialogTitle>
         </div>
         <div>{body}</div>
       </div>

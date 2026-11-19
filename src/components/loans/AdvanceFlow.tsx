@@ -274,7 +274,7 @@ export function AdvanceFlow() {
 
             {needsSwitch && incomeAccount && (
               <section className="flex flex-col gap-2 px-1">
-                <h2 className="text-heading font-medium text-foreground">This switches your account to a Salary Account</h2>
+                <h2 className="text-h4 font-medium text-foreground">This switches your account to a Salary Account</h2>
                 <p className="text-body leading-relaxed text-muted-foreground">
                   {product.switchSentence(incomeAccount.name, incomeAccount.number, money(SALARY_ACCOUNT_FEE))}
                 </p>

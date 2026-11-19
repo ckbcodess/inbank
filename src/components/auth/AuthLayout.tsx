@@ -183,7 +183,7 @@ export default function AuthLayout({
                           {title && (
                             <h1
                               className={cn(
-                                "type-page-title font-medium tracking-[var(--ls-heading)] text-foreground leading-snug",
+                                "text-h2 text-foreground leading-snug",
                                 titleClassName
                               )}
                             >
@@ -213,7 +213,7 @@ export default function AuthLayout({
                           <div className={cn(layer, !swap.show && hidden)} aria-hidden={!swap.show} inert={!swap.show}>
                             <h1
                               className={cn(
-                                "tabular type-page-title font-medium tracking-[var(--ls-heading)] text-foreground leading-snug",
+                                "tabular text-h2 text-foreground leading-snug",
                                 titleClassName
                               )}
                             >

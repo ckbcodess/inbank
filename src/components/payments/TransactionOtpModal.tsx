@@ -110,7 +110,7 @@ export default function TransactionOtpModal({
             </div>
             <div className="flex flex-col gap-1">
               {formattedAmount && (
-                <span className="tabular-nums type-headline font-medium tracking-tight text-foreground">
+                <span className="tabular-nums text-h1 font-medium tracking-tight text-foreground">
                   GHS {formattedAmount}
                 </span>
               )}
@@ -155,7 +155,7 @@ export default function TransactionOtpModal({
                 <span className="tabular whitespace-nowrap font-medium text-foreground">{displayPhone}</span>
               </>
             }
-            titleClass="mt-4 type-headline font-medium tracking-[var(--ls-heading)] text-foreground"
+            titleClass="mt-4 text-h1 font-medium tracking-[var(--ls-heading)] text-foreground"
             descClass="mt-2 max-w-xs text-body text-muted-foreground"
           />
 

@@ -98,7 +98,7 @@ export function DepositInstructionField({
             <SelectItem key={i.id} value={i.id} label={i.label}>
               <div className="flex flex-col py-0.5 text-left">
                 <span className="text-foreground">{i.label}</span>
-                <span className="max-w-[22rem] whitespace-normal text-meta font-normal text-muted-foreground">{i.detail}</span>
+                <span className="max-w-[22rem] whitespace-normal text-caption font-normal text-muted-foreground">{i.detail}</span>
               </div>
             </SelectItem>
           ))}

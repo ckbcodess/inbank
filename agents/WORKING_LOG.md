@@ -182,7 +182,22 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-19
+- Decision: one session at a time (no concurrent sessions). Settings > "Linked devices" is now "Trusted devices": only devices that skip the one-time code, each with Remove (ends trust; next login there asks for a code). Per-device "Log out" and "Log out of all other devices" are gone. Store: `lib/trusted-devices.ts`.
+- Decision: every login on an untrusted browser goes to `/mfa?device=new` (was only the u-yaw persona). After the code, the customer sees a toast once on arrival: "We recognise you're signing in from a new device", with the browser name and "Change password". `NewDeviceNotice` in `CustomerShell`; flag via `setNewDeviceSignIn` in `lib/device-trust.ts`.
+- Decision: the new-device code screen offers "Remember this device for 30 days", unticked by default (opt-in on shared computers). Trust is written only when ticked.
+- Gap: the prototype keeps trust for the browser visit only (`sessionStorage`, per device-trust.ts), so a fresh visit always sees the new-device notice. Real trust should persist 30 days in a server-side device key.
+- Gap: a new login does not end the session on another device, because the prototype has no other live session. The real system must end the earlier session.
+- Gap: new strings (trusted devices pane, new-device notice, MFA remember row) have no FR/ES/ZH catalog rows yet, except the renamed "Trusted devices" menu label.
+- Decision: Settings > Security "Login PIN" is now "Change" (was "Reset", which linked to /forgot-pin's selfie flow). `PinStep` in `components/settings/SettingsPanes.tsx` asks current PIN, new PIN (no runs or repeats), then confirm. The Forgot PIN flow stays on the login screen (`/mfa`).
+- Gap: `PinStep` copy is hardcoded English with no FR/ES/ZH catalog rows, like `PasswordStep`. Add them with the next settings i18n pass.
+- Question: the prototype treats any PIN except 0000 as the correct current PIN (mirrors `useAuthorisation`). Confirm the real check is server-side.
+- Decision: type steps renamed to Display, Heading 1–4, Body large, Body, Caption (`text-display`, `text-h1`…`text-h4`, `text-body-lg`, `text-body`, `text-caption`); Figma styles and `type/*` variables match. Old names fail lint. Entries above this date use the old names (meta = caption, heading = h4, title = h3, fact = body-lg, page-title = h2, headline = h1, balance = display).
+- Decision: `text-h2` carries the whole page-title style (Medium, line height, tracking). It replaced 22 hand-copied title class strings in flows (PaymentFlow, cards, standing orders, groups, TransactionList).
+- Decision: every flow header (Send & Pay, standing orders, schedule, group payments, request card, card details, create group) and Transaction History now render `PageHeader` with `backTo.onClick`; no screen hand-builds a back button and title. The per-flow differences (22px chevrons, a foreground-coloured chevron, a -4px phone nudge) are gone.
+
 ### 2026-11-18
+- Decision (designer): transaction amounts show no + or − anywhere (lists, statements, receipts, dashboard, Coming up). `amountStyling` returns an empty prefix. Gap: money in and out now read the same, so direction relies on the row's label. The PDF receipt and the dashboard's cash-flow "money out" figure keep their signs.
 - Decision (designer): applied-filter chips (`AppliedFilters`) are amber (`bg-primary`, dark text), the colour of the chosen `MultiChoice` pills. Text is Medium. Chips animate in and out, and the row under the search bar opens and closes its height (`layout="row"`, with its own 12px gap, so its parent must have no gap); in a toolbar use `layout="inline"`.
 - Decision (designer): font sizes come only from the named type scale (CONSTITUTION §5; mapping in `docs/TYPE-SCALE-MAPPING.md`). 11px is `text-micro`, 15px is gone, dialog titles are 18. `type-balance-lg` is 32px on a phone, not the drafted 44, so a seven-figure hero balance still fits on one line. Lint blocks raw sizes.
 - Decision (designer): the account page balance is `type-balance-sm` (32px); 40 → 48 read as too big. The dashboard hero stays at 32px. The auth screens' title uses `type-page-title`, not the headline. Headline is 22 → 24px (was 24 → 28), so it never outranks the 22px page title.
@@ -211,7 +226,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Gap: `/activate`'s older buttons are `md`; the constitution says flow actions are `xl`. The new passport buttons are `xl`.
 
 ### 2026-11-14
-- Decision: Linked devices is one list, not separate "trusted" and "signed in" lists. Columns: Device, Signed in, Last active. Trust shows as "Skips the code" under the place. Sign out is one tap per row and ends that device's trust; "Sign out of all other devices" confirms with its consequence. This device can't be removed here. Store: `lib/linked-devices.ts` (seeded per persona; this device comes from the live session and device-trust).
+- Superseded 2026-11-19 (see below): the "Linked devices" list with sign-out per device. Replaced by Trusted devices.
 - Gap: Business Settings has no linked devices pane (Reuse). The Demo hub "Welcome back" entry doesn't seed this list yet. Place and the current device's location are demo values.
 - Decision: Linked devices names and places wrap instead of truncating. "Sign out" fades in on row hover or focus (always shown on touch, `pointer-coarse`). `SettingsPanes.tsx` `DevicesPane`.
 - Decision: Insure "Card layout" Dev Mode switch gains "List with icons" and "List with card images": one column of Send & Pay style rows (bare plan icon, or the product picture). Look is ignored in list layouts. Pick one and delete the others plus the Dev Mode switch when chosen (`components/insure/PlanCards.tsx`, `lib/insure-cards-store.ts`). Shared by Insure, Invest and Loans, not yet viewed in a browser.

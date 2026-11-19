@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import PageHeader from "@/components/layout/PageHeader";
 import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import { securityCodeLabel } from "@/lib/card-schemes";
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   Building2,
-  ChevronLeft,
   ChevronRight,
   CreditCard,
   RefreshCw,
@@ -153,8 +153,8 @@ function DetailLine({ label, value, onCopy }: { label: string; value: string; on
   return (
     <div className="flex items-center justify-between gap-2 py-2">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-meta text-muted-foreground">{label}</span>
-        <span className="tabular truncate text-heading tracking-[var(--ls-tight)] text-foreground">{value}</span>
+        <span className="text-caption text-muted-foreground">{label}</span>
+        <span className="tabular truncate text-h4 tracking-[var(--ls-tight)] text-foreground">{value}</span>
       </div>
       {onCopy && (
         <button
@@ -714,7 +714,7 @@ export function VirtualCardDetailsView({
                         <Truck size={18} />
                       </div>
                     )}
-                    <span className="text-body sm:text-heading font-normal text-foreground truncate">
+                    <span className="text-body sm:text-h4 font-normal text-foreground truncate">
                       {effectiveCard.deliveryStatus === "out_for_delivery"
                         ? "Your card is being delivered to you!"
                         : effectiveCard.deliveryStatus === "in_transit"
@@ -767,7 +767,7 @@ export function VirtualCardDetailsView({
                     />
                   </div>
                   {isFrozen && !isFundable && hasPin && (
-                    <p className="text-center text-meta text-muted-foreground">Unblock the card to view its PIN</p>
+                    <p className="text-center text-caption text-muted-foreground">Unblock the card to view its PIN</p>
                   )}
                   </div>
                   {deliveryBannerNode}
@@ -783,8 +783,8 @@ export function VirtualCardDetailsView({
                       <CreditCard size={18} className="text-foreground" />
                     </div>
                     <div>
-                      <h3 className="text-heading font-medium text-foreground">Card Activation Required</h3>
-                      <p className="text-meta text-muted-foreground">
+                      <h3 className="text-h4 font-medium text-foreground">Card Activation Required</h3>
+                      <p className="text-caption text-muted-foreground">
                         Activate your physical {effectiveCard.type.toLowerCase()} card to unlock features and card controls.
                       </p>
                     </div>
@@ -923,7 +923,7 @@ export function VirtualCardDetailsView({
                 <CreditCard className="size-4" />
               </div>
               <p className="text-body font-normal text-foreground">Card not activated</p>
-              <p className="text-meta text-muted-foreground max-w-xs mt-1">
+              <p className="text-caption text-muted-foreground max-w-xs mt-1">
                 Activate this card to begin making transactions, online purchases, and ATM withdrawals.
               </p>
             </div>
@@ -933,7 +933,7 @@ export function VirtualCardDetailsView({
                 <CreditCard className="size-4" />
               </div>
               <p className="text-body font-normal text-foreground">No card activity yet</p>
-              <p className="text-meta text-muted-foreground max-w-xs mt-1">
+              <p className="text-caption text-muted-foreground max-w-xs mt-1">
                 Transactions, top-ups, and payments made with this card will appear here.
               </p>
             </div>
@@ -957,7 +957,7 @@ export function VirtualCardDetailsView({
                       <span className="font-normal text-foreground text-body leading-tight truncate">
                         {item.title}
                       </span>
-                      <div className="flex items-center gap-2 text-meta text-muted-foreground truncate">
+                      <div className="flex items-center gap-2 text-caption text-muted-foreground truncate">
                         <span>{item.date}</span>
                         <span>·</span>
                         <span className="truncate">{item.category}</span>
@@ -967,7 +967,6 @@ export function VirtualCardDetailsView({
                     {/* Amount & State / Card Ending */}
                     <div className="shrink-0 flex flex-col items-end gap-0.5">
                       <span className="tabular text-body font-normal text-foreground">
-                        {isCredit ? "+ " : "− "}
                         {formatMoney(item.amount, currentCard.currency || "GHS", true)}
                       </span>
                       {isFailed ? <Badge variant="destructive">Failed</Badge> : isPending ? <Badge variant="warning">Pending</Badge> : null}
@@ -1026,20 +1025,7 @@ export function VirtualCardDetailsView({
 
       {/* Back button, title and one context chip — the card's own balance
           (prepaid/virtual) or the account a debit card spends from. */}
-      <div data-page-header className="flex items-center gap-2 min-w-0">
-        <button
-          type="button"
-          onClick={handleBackNavigation}
-          className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-          title="Back"
-          aria-label="Back"
-        >
-          <ChevronLeft size={22} />
-        </button>
-        <h1 className="type-page-title font-medium leading-tight sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate min-w-0">
-          {cardNickname || "Virtual Card"}
-        </h1>
-      </div>
+      <PageHeader title={cardNickname || "Virtual Card"} backTo={{ href: "", label: "Cards", onClick: handleBackNavigation }} />
 
       {/* Main Container */}
       <div className="w-full flex flex-col gap-6">
@@ -1096,19 +1082,19 @@ export function VirtualCardDetailsView({
                     {/* Bottom Row: CARD HOLDER, EXP, Visa/Mastercard Logo */}
                     <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-3">
                       <div className="flex flex-col gap-0.5 text-left">
-                        <span className="text-meta font-medium opacity-60 leading-[14px]">
+                        <span className="text-caption font-medium opacity-60 leading-[14px]">
                           CARD HOLDER
                         </span>
-                        <span className="text-body sm:text-heading font-medium leading-[20px] tracking-tight">
+                        <span className="text-body sm:text-h4 font-medium leading-[20px] tracking-tight">
                           {effectiveCard.holder || actor?.name || "RANSFORD GYASI"}
                         </span>
                       </div>
 
                       <div className="flex flex-col gap-0.5 text-left">
-                        <span className="text-meta font-medium opacity-60 leading-[14px]">
+                        <span className="text-caption font-medium opacity-60 leading-[14px]">
                           EXP
                         </span>
-                        <span className="text-body sm:text-heading font-medium leading-[20px] tracking-tight">
+                        <span className="text-body sm:text-h4 font-medium leading-[20px] tracking-tight">
                           {effectiveCard.expiry || "09/30"}
                         </span>
                       </div>
@@ -1127,7 +1113,7 @@ export function VirtualCardDetailsView({
 
             {/* Headline & Subtitle */}
             <div className="flex flex-col gap-2 items-center text-center">
-              <h2 className="type-headline font-medium text-foreground tracking-[var(--ls-heading)]">
+              <h2 className="text-h1 font-medium text-foreground tracking-[var(--ls-heading)]">
                 {effectiveCard.deliveryStatus === "ready_for_pickup"
                   ? "Your card is ready for pickup"
                   : effectiveCard.deliveryStatus === "delivered"
@@ -1187,11 +1173,11 @@ export function VirtualCardDetailsView({
                       <span className="text-body font-medium text-foreground truncate">
                         {effectiveCard.courierRider.name}
                       </span>
-                      <span className="text-meta px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
+                      <span className="text-caption px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
                         Rider Assigned
                       </span>
                     </div>
-                    <span className="text-meta text-muted-foreground truncate">
+                    <span className="text-caption text-muted-foreground truncate">
                       {effectiveCard.courierRider.company || "GCB Express Courier"} • {effectiveCard.courierRider.vehiclePlate || "Motorbike"}
                     </span>
                   </div>
@@ -1341,7 +1327,7 @@ export function VirtualCardDetailsView({
             <DialogBody>
               {/* Current Balance */}
               <div className="flex items-center justify-between p-2 rounded-xl bg-muted/50 border border-border">
-                <span className="text-meta text-muted-foreground">Current Card Balance</span>
+                <span className="text-caption text-muted-foreground">Current Card Balance</span>
                 <span className="text-body font-medium text-foreground tabular">
                   GHS {(currentCard.balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
@@ -1426,7 +1412,7 @@ export function VirtualCardDetailsView({
                 ))}
               </div>
 
-              <p className="tabular text-meta text-muted-foreground">
+              <p className="tabular text-caption text-muted-foreground">
                 Closes automatically in {pinCountdown}s for your security
               </p>
             </div>
@@ -1509,7 +1495,7 @@ export function VirtualCardDetailsView({
                   placeholder="5000"
                   className="tabular"
                 />
-                <span className="text-meta text-muted-foreground">
+                <span className="text-caption text-muted-foreground">
                   Current spend today: GHS {dailySpent.toLocaleString()} · Maximum cap: GHS {maxDailyCap.toLocaleString()}
                 </span>
 </Field>
@@ -1565,7 +1551,7 @@ export function VirtualCardDetailsView({
                 <Globe size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
                   <span className="font-medium text-foreground">Online Checkout</span>
-                  <span className="text-meta text-muted-foreground">E-commerce & web transactions</span>
+                  <span className="text-caption text-muted-foreground">E-commerce & web transactions</span>
                 </div>
               </div>
               <Switch checked={onlineEnabled} onCheckedChange={(v) => {
@@ -1579,7 +1565,7 @@ export function VirtualCardDetailsView({
                 <Globe size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
                   <span className="font-medium text-foreground">International Usage</span>
-                  <span className="text-meta text-muted-foreground">Cross-border foreign exchange payments</span>
+                  <span className="text-caption text-muted-foreground">Cross-border foreign exchange payments</span>
                 </div>
               </div>
               <Switch checked={intlEnabled} onCheckedChange={(v) => {
@@ -1593,7 +1579,7 @@ export function VirtualCardDetailsView({
                 <CreditCard size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
                   <span className="font-medium text-foreground">ATM Cash Withdrawals</span>
-                  <span className="text-meta text-muted-foreground">Physical terminal cash access</span>
+                  <span className="text-caption text-muted-foreground">Physical terminal cash access</span>
                 </div>
               </div>
               <Switch checked={atmEnabled} onCheckedChange={(v) => {
@@ -1641,7 +1627,7 @@ export function VirtualCardDetailsView({
                 value={resetNewPin}
                 onChange={(e) => setResetNewPin(e.target.value.replace(/\D/g, ""))}
                 placeholder="∗∗∗∗"
-                className="tracking-widest text-heading text-center font-mono"
+                className="tracking-widest text-h4 text-center font-mono"
                 autoFocus
               />
             </Field>
@@ -1655,12 +1641,12 @@ export function VirtualCardDetailsView({
                 value={resetConfirmPin}
                 onChange={(e) => setResetConfirmPin(e.target.value.replace(/\D/g, ""))}
                 placeholder="∗∗∗∗"
-                className="tracking-widest text-heading text-center font-mono"
+                className="tracking-widest text-h4 text-center font-mono"
               />
             </Field>
 
             {resetConfirmPin.length > 0 && resetNewPin !== resetConfirmPin && (
-              <p className="text-meta text-destructive font-medium">PINs do not match</p>
+              <p className="text-caption text-destructive font-medium">PINs do not match</p>
             )}
           </DialogBody>
 
@@ -1776,7 +1762,7 @@ export function VirtualCardDetailsView({
                   className="tracking-wider"
                   required
                 />
-                <span className="text-meta text-muted-foreground">
+                <span className="text-caption text-muted-foreground">
                   Found on the signature strip on the back of your physical card.
                 </span>
 </Field>

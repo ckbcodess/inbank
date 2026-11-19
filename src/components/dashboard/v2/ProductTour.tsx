@@ -281,14 +281,14 @@ function TourRun({ ctx }: { ctx: TourContext }) {
             <button
               type="button"
               onClick={finish}
-              className="-my-2 cursor-pointer py-2 text-meta text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              className="-my-2 cursor-pointer py-2 text-caption text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
               Skip tour
             </button>
           </div>
 
           <div className="flex flex-col gap-1">
-            <PopoverTitle className="text-heading font-medium tracking-[var(--ls-tight)] text-foreground">
+            <PopoverTitle className="text-h4 font-medium tracking-[var(--ls-tight)] text-foreground">
               {step.title}
             </PopoverTitle>
             <PopoverDescription className="text-body leading-relaxed text-foreground">

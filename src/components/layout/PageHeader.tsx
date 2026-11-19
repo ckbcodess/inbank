@@ -44,7 +44,7 @@ export default function PageHeader({ title, badge, actions, backTo }: PageHeader
             </BackLink>
           )
         )}
-        <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+        <h1 className="text-h2 text-foreground truncate">
           {title}
         </h1>
         {badge && <div className="shrink-0">{badge}</div>}

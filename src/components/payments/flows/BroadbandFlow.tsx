@@ -236,9 +236,9 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
                   <OperatorLogo name={provider?.name} size={36} />
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span className="text-body text-foreground">{selected.label}</span>
-                    <span className="text-meta text-muted-foreground tabular">Due {formatDate(dueOn)}</span>
+                    <span className="text-caption text-muted-foreground tabular">Due {formatDate(dueOn)}</span>
                   </div>
-                  <span className="text-heading text-foreground tabular">{formatMoney(selected.price, "GHS", true)}</span>
+                  <span className="text-h4 text-foreground tabular">{formatMoney(selected.price, "GHS", true)}</span>
                 </div>
               ) : (
                 <p className="text-body text-muted-foreground">There’s no active package on this account right now.</p>

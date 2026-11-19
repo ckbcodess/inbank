@@ -46,11 +46,11 @@ function SliceTooltip({
           className="size-1.5 shrink-0 rounded-[2px]"
           style={{ backgroundColor: slice.color }}
         />
-        <span className="text-meta text-muted-foreground">{slice.category}</span>
+        <span className="text-caption text-muted-foreground">{slice.category}</span>
       </div>
       <div className="mt-1 text-body text-foreground tabular">
         {exactMoney(slice.amount, showAmounts)}
-        <span className="ml-2 text-meta text-muted-foreground">
+        <span className="ml-2 text-caption text-muted-foreground">
           {formatPercent(slice.share)}
         </span>
       </div>
@@ -101,8 +101,8 @@ export function SpendByCategory({ slices }: { slices: CategorySlice[] }) {
         </ChartContainer>
 
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-meta text-muted-foreground">Total spend</span>
-          <span className="mt-0.5 text-title leading-tight text-foreground">
+          <span className="text-caption text-muted-foreground">Total spend</span>
+          <span className="mt-0.5 text-h3 leading-tight text-foreground">
             {compactMoney(total, showAmounts)}
           </span>
         </div>
@@ -118,13 +118,13 @@ export function SpendByCategory({ slices }: { slices: CategorySlice[] }) {
               className="size-1.5 shrink-0 rounded-[2px]"
               style={{ backgroundColor: s.color }}
             />
-            <span className="min-w-0 flex-1 truncate text-meta text-foreground">
+            <span className="min-w-0 flex-1 truncate text-caption text-foreground">
               {s.category}
             </span>
-            <span className="shrink-0 text-meta text-muted-foreground tabular">
+            <span className="shrink-0 text-caption text-muted-foreground tabular">
               {formatPercent(s.share)}
             </span>
-            <span className="w-21 shrink-0 text-right text-meta text-foreground tabular">
+            <span className="w-21 shrink-0 text-right text-caption text-foreground tabular">
               {compactMoney(s.amount, showAmounts)}
             </span>
           </li>

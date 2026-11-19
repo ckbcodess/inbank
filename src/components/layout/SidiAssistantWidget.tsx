@@ -269,14 +269,14 @@ export function SidiAssistantWidget() {
                       <Phone size={16} className="text-muted-foreground" />
                       <span className="flex flex-col">
                         <span className="text-body text-foreground">Call customer care</span>
-                        <span className="text-meta text-muted-foreground tabular">+233 302 681 531, 24/7</span>
+                        <span className="text-caption text-muted-foreground tabular">+233 302 681 531, 24/7</span>
                       </span>
                     </DropdownMenuItem>
                     <DropdownMenuItem render={<Link href="/locate-us" onClick={() => setOpen(false)} />} className="gap-2 px-2 py-2">
                       <MapPin size={16} className="text-muted-foreground" />
                       <span className="flex flex-col">
                         <span className="text-body text-foreground">Find a branch</span>
-                        <span className="text-meta text-muted-foreground">Visit us in person</span>
+                        <span className="text-caption text-muted-foreground">Visit us in person</span>
                       </span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -308,7 +308,7 @@ export function SidiAssistantWidget() {
                   <div className="flex flex-col items-center gap-2">
                     <Image src="/sidi-avatar-clear.png" alt="" width={44} height={44} className="size-10 rounded-full bg-tile object-cover" />
                     <div className="flex flex-col gap-1">
-                      <h2 className="text-heading font-medium text-foreground">{firstName ? `Hi ${firstName}` : "Hi there"}</h2>
+                      <h2 className="text-h4 font-medium text-foreground">{firstName ? `Hi ${firstName}` : "Hi there"}</h2>
                       <p className="text-body text-muted-foreground">Ask anything or tell Sidi what you need</p>
                     </div>
                   </div>
@@ -341,7 +341,7 @@ export function SidiAssistantWidget() {
                       >
                         {chat.text}
                       </div>
-                      <span className="px-2 text-meta text-muted-foreground tabular">{chat.timestamp}</span>
+                      <span className="px-2 text-caption text-muted-foreground tabular">{chat.timestamp}</span>
                     </div>
                   ))}
                   <div ref={messagesEndRef} />

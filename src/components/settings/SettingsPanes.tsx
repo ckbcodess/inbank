@@ -1,27 +1,26 @@
 "use client";
 
 import { useEffect, useId, useMemo, useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { DURATION, EASE } from "@/lib/motion";
-import { ChevronLeft, ChevronRight, Copy, Globe, Landmark, Laptop, Monitor, Moon, ShieldCheck, Smartphone, Sun, Zap } from "@/components/ui/icons";
+import { ChevronLeft, ChevronRight, Copy, Globe, Landmark, Laptop, Monitor, Moon, Smartphone, Sun, Zap } from "@/components/ui/icons";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Modal } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import RuleChecklist from "@/components/auth/RuleChecklist";
+import PinRequirements from "@/components/auth/PinRequirements";
 import { DASHBOARD_COLORS, useDashboardColor } from "@/lib/dashboard-color";
-import { PASSWORD_RULES, maskEmail, passwordMeetsRules } from "@/lib/auth-shared";
+import { PASSWORD_RULES, hasConsecutiveDigits, hasRepeatingDigits, maskEmail, passwordMeetsRules } from "@/lib/auth-shared";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
-import { useTrustedDevice } from "@/lib/device-trust";
-import { otherDevicesFor, useLinkedDevices, type LinkedDevice } from "@/lib/linked-devices";
+import { forgetThisDevice, thisDeviceName, useTrustedDevice } from "@/lib/device-trust";
+import { otherTrustedDevicesFor, useTrustedDevices, type DeviceKind } from "@/lib/trusted-devices";
 import { shrinkPhoto, useProfilePhoto, useProfilePhotos } from "@/lib/profile-photo";
 import { switchTheme } from "@/lib/theme-transition";
 import { cn } from "@/lib/utils";
@@ -52,8 +51,6 @@ export interface PaneProps {
   update: (patch: Partial<SettingsData>) => void;
   /** Phone only: back to the section list. */
   onBackToMenu: () => void;
-  /** Opens the logout-all confirmation, which is rendered beside the Settings dialog (see `SignOutAllDialog`). */
-  onSignOutAll?: () => void;
 }
 
 /* ── Shared pieces ─────────────────────────────────────────────────────────── */
@@ -117,7 +114,7 @@ function PaneHeader({
       </button>
       {/* The title row keeps one height on every pane, so titles start at the same place with or without a subtitle. */}
       <div className="flex min-w-0 flex-col">
-        <h2 className="flex h-12 items-center text-title font-medium tracking-[var(--ls-heading)] text-foreground sm:h-10 sm:text-heading">{title}</h2>
+        <h2 className="flex h-12 items-center text-h3 font-medium tracking-[var(--ls-heading)] text-foreground sm:h-10 sm:text-h4">{title}</h2>
         {description ? <p className="-mt-1 text-body leading-relaxed text-muted-foreground">{description}</p> : null}
       </div>
       {action ? <div className="ml-auto shrink-0">{action}</div> : null}
@@ -140,7 +137,7 @@ function StepHeader({ back, title, onBack }: { back: string; title: string; onBa
       >
         <ChevronLeft size={18} />
       </button>
-      <h2 className="min-w-0 truncate text-title font-medium tracking-[var(--ls-heading)] text-foreground sm:text-heading">{title}</h2>
+      <h2 className="min-w-0 truncate text-h3 font-medium tracking-[var(--ls-heading)] text-foreground sm:text-h4">{title}</h2>
     </div>
   );
 }
@@ -167,7 +164,7 @@ function Row({
         <span id={titleId} className="text-body text-foreground">
           {title}
         </span>
-        {children ? <div className="text-meta leading-relaxed text-muted-foreground">{children}</div> : null}
+        {children ? <div className="text-caption leading-relaxed text-muted-foreground">{children}</div> : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
     </div>
@@ -187,7 +184,7 @@ function FactRow({ label, action, children }: { label: string; action?: React.Re
   return (
     <div className="flex items-center justify-between gap-4 py-4 sm:py-3">
       <div className="flex min-w-0 flex-col gap-1">
-        <span className="text-meta text-muted-foreground">{label}</span>
+        <span className="text-caption text-muted-foreground">{label}</span>
         <span className="min-w-0 truncate text-body text-foreground">{children}</span>
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
@@ -325,48 +322,6 @@ export function ProfilePane({ name, data, update, onBackToMenu }: PaneProps & { 
   );
 }
 
-/**
- * Confirms logging out every other device. Rendered beside the Settings dialog, not inside it: a dialog nested in
- * Settings' popup is clipped by that popup and its scrim doesn't cover the page.
- */
-export function SignOutAllDialog({ open, onOpenChange, actorId }: { open: boolean; onOpenChange: (open: boolean) => void; actorId: string }) {
-  const signedOut = useLinkedDevices((s) => s.signedOut[actorId]);
-  const signOutOthers = useLinkedDevices((s) => s.signOutOthers);
-  const count = otherDevicesFor(actorId, signedOut ?? []).length;
-
-  return (
-    <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      title="Log out of all other devices?"
-      size="sm"
-      footer={
-        <>
-          <Button variant="ghost" size="md" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button
-            size="md"
-            onClick={() => {
-              signOutOthers(actorId);
-              onOpenChange(false);
-              toast("Logged out of all other devices");
-            }}
-          >
-            Log out
-          </Button>
-        </>
-      }
-    >
-      <p className="text-body leading-relaxed text-foreground">
-        {count === 1
-          ? "1 device will be logged out. It’ll need a one-time code the next time it signs in. This device stays logged in."
-          : `${count} devices will be logged out. They’ll need a one-time code the next time they log in. This device stays logged in.`}
-      </p>
-    </Modal>
-  );
-}
-
 /** Changing the email asks for a code sent to the current one. The step stays inside the pane (no second modal on top of the first). */
 function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (patch: Partial<SettingsData>) => void; onDone: () => void }) {
   const [value, setValue] = useState("");
@@ -413,7 +368,7 @@ function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (pa
             invalid={wrongCode}
           />
           {wrongCode ? (
-            <p role="alert" className="-mt-2 text-meta text-destructive">
+            <p role="alert" className="-mt-2 text-caption text-destructive">
               That code isn’t right. Try again.
             </p>
           ) : null}
@@ -472,109 +427,87 @@ function formatWhen(ms: number) {
   return `${date}, ${time}`;
 }
 
-/** What this browser is, read from the browser itself. The place is a demo value; a real bank resolves it from the IP. */
-function thisDeviceName() {
-  if (typeof navigator === "undefined") return "This browser";
-  const ua = navigator.userAgent;
-  const browser = /Edg\//.test(ua) ? "Edge" : /Firefox\//.test(ua) ? "Firefox" : /Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "Browser";
-  const os = /Windows/.test(ua) ? "Windows" : /Mac OS X/.test(ua) ? "Mac" : /Android/.test(ua) ? "Android" : /iPhone|iPad/.test(ua) ? "iPhone" : /Linux/.test(ua) ? "Linux" : "this computer";
-  return `${browser} on ${os}`;
+function formatDay(ms: number) {
+  return new Date(ms).toLocaleDateString("en-GB", { day: "numeric", month: "long" });
+}
+
+interface TrustedRow {
+  id: string;
+  kind: DeviceKind;
+  name: string;
+  detail: string;
 }
 
 /**
- * Its own section in the Safety group. One list of every device that can get into the account: logged in now,
- * logged in before, and the ones that skip the one-time code. Signing a device out also ends its trust. State lives in
- * `lib/linked-devices.ts`; this device is built from the live session, never from the seed.
+ * Its own section in the Safety group. The devices that skip the one-time code. There is one session at a time, so
+ * nothing here is "logged in now": removing a device only ends its trust. State lives in `lib/trusted-devices.ts`;
+ * this browser is built from the live trust state, never from the seed.
  */
-export function DevicesPane({ onBackToMenu, onSignOutAll }: PaneProps) {
+export function DevicesPane({ onBackToMenu }: PaneProps) {
   const actor = useSession((s) => s.actor);
-  const signedInAt = useSession((s) => (actor ? s.signIns[actor.id] : undefined));
   const trustedHere = useTrustedDevice();
-  const signedOut = useLinkedDevices((s) => (actor ? s.signedOut[actor.id] : undefined));
-  const signOutDevice = useLinkedDevices((s) => s.signOutDevice);
+  const removed = useTrustedDevices((s) => (actor ? s.removed[actor.id] : undefined));
+  const removeDevice = useTrustedDevices((s) => s.removeDevice);
   const hydrated = useSessionHydrated();
 
-  const devices = useMemo<LinkedDevice[]>(() => {
+  const rows = useMemo<TrustedRow[]>(() => {
     if (!actor) return [];
-    const now = Date.now();
-    const here: LinkedDevice = {
-      id: "this",
-      kind: "laptop",
-      name: thisDeviceName(),
-      place: "Accra, Greater Accra",
-      signedIn: signedInAt ?? now,
-      lastActive: now,
-      trusted: !!trustedHere,
-    };
-    return [here, ...otherDevicesFor(actor.id, signedOut ?? [])];
-  }, [actor, signedInAt, trustedHere, signedOut]);
+    const list: TrustedRow[] = [];
+    if (trustedHere && trustedHere.actorId === actor.id) {
+      list.push({ id: "this", kind: "laptop", name: thisDeviceName(), detail: `Trusted until ${formatDay(trustedHere.until)}` });
+    }
+    for (const d of otherTrustedDevicesFor(actor.id, removed ?? [])) {
+      list.push({ id: d.id, kind: d.kind, name: d.name, detail: `Last used ${formatWhen(d.lastUsed)}` });
+    }
+    return list;
+  }, [actor, trustedHere, removed]);
 
   if (!hydrated || !actor) return null;
-  const others = devices.filter((d) => d.id !== "this");
 
   return (
     <PaneShell>
-      <PaneHeader title="Linked devices" onBack={onBackToMenu} />
-      <Rows>
-        {devices.map((d) => {
-          const Icon = DEVICE_ICONS[d.kind];
-          const current = d.id === "this";
-          return (
-            <div key={d.id} className="flex items-center gap-4 py-4 sm:py-3">
-              <Icon size={18} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="truncate text-body font-medium text-foreground">{d.name}</span>
-                <span className="tabular text-meta text-muted-foreground">
-                  {[DEVICE_KIND_LABEL[d.kind], current ? "Active now" : formatWhen(d.lastActive), d.place].join(" · ")}
-                </span>
+      <PaneHeader title="Trusted devices" onBack={onBackToMenu} />
+      {rows.length === 0 ? (
+        <p className="text-body leading-relaxed text-muted-foreground">
+          No trusted devices. Tick “Remember this device” when you log in on a device you use, and you won’t need a code there next time.
+        </p>
+      ) : (
+        <Rows>
+          {rows.map((d) => {
+            const Icon = DEVICE_ICONS[d.kind];
+            return (
+              <div key={d.id} className="flex items-center gap-4 py-4 sm:py-3">
+                <Icon size={18} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="truncate text-body font-medium text-foreground">{d.name}</span>
+                  <span className="tabular text-caption text-muted-foreground">{[DEVICE_KIND_LABEL[d.kind], d.detail].join(" · ")}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    if (d.id === "this") forgetThisDevice();
+                    else removeDevice(actor.id, d.id);
+                    toast(`Removed ${d.name}. It will need a code next time.`);
+                  }}
+                >
+                  Remove
+                </Button>
               </div>
-              <div className="flex shrink-0 items-center gap-3">
-                {d.trusted ? (
-                  <span className="hidden items-center gap-1 text-meta text-muted-foreground sm:inline-flex">
-                    <ShieldCheck size={15} aria-hidden="true" />
-                    Trusted
-                  </span>
-                ) : null}
-                {current ? (
-                  <span className="text-meta font-medium text-foreground">This device</span>
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      signOutDevice(actor.id, d.id);
-                      toast(`Logged out of ${d.name}`);
-                    }}
-                  >
-                    Log out
-                  </Button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </Rows>
-      {others.length > 0 ? (
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-body font-medium text-foreground">Log out of all other devices</span>
-            <span className="text-meta leading-relaxed text-muted-foreground">
-              Everywhere except this device. You’ll need to log in again on each one.
-            </span>
-          </div>
-          <Button variant="destructive" size="md" className="shrink-0" onClick={() => onSignOutAll?.()}>
-            Log Out All
-          </Button>
-        </div>
-      ) : null}
+            );
+          })}
+        </Rows>
+      )}
     </PaneShell>
   );
 }
 
 export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
   const [changingPassword, setChangingPassword] = useState(false);
+  const [changingPin, setChangingPin] = useState(false);
 
   if (changingPassword) return <PasswordStep onDone={() => setChangingPassword(false)} />;
+  if (changingPin) return <PinStep onDone={() => setChangingPin(false)} />;
 
   return (
     <PaneShell>
@@ -592,8 +525,8 @@ export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
         <Row
           title="Login PIN"
           action={
-            <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/forgot-pin" />}>
-              Reset
+            <Button variant="outline" size="sm" onClick={() => setChangingPin(true)}>
+              Change
             </Button>
           }
         />
@@ -678,6 +611,125 @@ function PasswordStep({ onDone }: { onDone: () => void }) {
   );
 }
 
+type PinStage = "current" | "new" | "confirm";
+
+const BLANK_PIN = ["", "", "", ""];
+const PIN_STAGE_COPY: Record<PinStage, { title: string; description: string; action: string }> = {
+  current: {
+    title: "Enter Your Current PIN",
+    description: "Confirm it’s you before we change your PIN.",
+    action: "Continue",
+  },
+  new: {
+    title: "Choose a New PIN",
+    description: "Pick a 4-digit PIN you’ll remember. You’ll use it to log in.",
+    action: "Continue",
+  },
+  confirm: {
+    title: "Confirm Your New PIN",
+    description: "Re-enter your new 4-digit PIN.",
+    action: "Change PIN",
+  },
+};
+
+/**
+ * Change the login PIN in three steps: current PIN, new PIN, confirm. Settings only; the Forgot PIN flow (selfie
+ * check) stays on the login screen. Prototype: any PIN except 0000 counts as the current one, as in useAuthorisation.
+ */
+function PinStep({ onDone }: { onDone: () => void }) {
+  const [stage, setStage] = useState<PinStage>("current");
+  const [current, setCurrent] = useState<string[]>(BLANK_PIN);
+  const [next, setNext] = useState<string[]>(BLANK_PIN);
+  const [confirm, setConfirm] = useState<string[]>(BLANK_PIN);
+  const [error, setError] = useState("");
+
+  const digits = stage === "current" ? current : stage === "new" ? next : confirm;
+  const setDigits = (value: string[]) => {
+    setError("");
+    if (stage === "current") setCurrent(value);
+    else if (stage === "new") setNext(value);
+    else setConfirm(value);
+  };
+  const code = digits.join("");
+  const copy = PIN_STAGE_COPY[stage];
+
+  function goBack() {
+    setError("");
+    if (stage === "current") {
+      onDone();
+    } else if (stage === "new") {
+      setCurrent(BLANK_PIN);
+      setStage("current");
+    } else {
+      setConfirm(BLANK_PIN);
+      setStage("new");
+    }
+  }
+
+  function submit() {
+    if (code.length < 4) return;
+    if (stage === "current") {
+      if (code === "0000") {
+        setError("That PIN isn’t right. Try again.");
+        setCurrent(BLANK_PIN);
+        return;
+      }
+      setStage("new");
+      return;
+    }
+    if (stage === "new") {
+      if (hasConsecutiveDigits(code)) {
+        setError("PIN cannot contain consecutive numbers.");
+        return;
+      }
+      if (hasRepeatingDigits(code)) {
+        setError("PIN cannot contain repeating numbers.");
+        return;
+      }
+      setStage("confirm");
+      return;
+    }
+    if (code !== next.join("")) {
+      setError("PINs don’t match. Try again.");
+      setConfirm(BLANK_PIN);
+      return;
+    }
+    toast.success("Login PIN changed");
+    onDone();
+  }
+
+  return (
+    <PaneShell step="Change Login PIN">
+      <StepHeader back={stage === "current" ? "Security" : "Back"} title="Change Login PIN" onBack={goBack} />
+      <form
+        key={stage}
+        className="mx-auto flex w-full max-w-[440px] flex-col items-center gap-5 pt-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit();
+        }}
+      >
+        <div className="flex flex-col gap-1 text-center">
+          <span className="text-h4 font-medium text-foreground">{copy.title}</span>
+          <span className="text-body text-muted-foreground">{copy.description}</span>
+        </div>
+        <div className="w-full">
+          <OtpInput value={digits} onChange={setDigits} length={4} mask invalid={!!error} autoFocus />
+        </div>
+        {stage === "new" && <PinRequirements pin={code} />}
+        {error && (
+          <p role="alert" className="-mt-2 text-center text-body text-destructive">
+            {error}
+          </p>
+        )}
+        <Button type="submit" size="xl" disabled={code.length < 4} className="w-full">
+          {copy.action}
+        </Button>
+      </form>
+    </PaneShell>
+  );
+}
+
 /**
  * A small sketch of the dashboard: the hero panel in the chosen backdrop (it reads the live `--hero-*` tokens, so it
  * changes the moment a swatch is picked) over the sheet of panels. Decorative; hidden from assistive tech.
@@ -753,7 +805,7 @@ export function PreferencesPane({ onBackToMenu }: PaneProps) {
                 aria-checked={current === value}
                 onClick={() => choose(value)}
                 className={cn(
-                  "flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border text-meta transition-colors duration-hover",
+                  "flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border text-caption transition-colors duration-hover",
                   current === value
                     ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
                     : "border-border bg-card text-muted-foreground hover:bg-muted/50 hover:text-foreground",
@@ -871,7 +923,7 @@ export function AlertsPane({ data, update, onBackToMenu }: PaneProps) {
           When someone joins with your link or code.
         </SwitchRow>
       </Rows>
-      <p className={cn("pt-3 text-meta leading-relaxed text-muted-foreground")}>
+      <p className={cn("pt-3 text-caption leading-relaxed text-muted-foreground")}>
         Every notification also shows in the app, under Notifications. Login and new-device alerts are always on.
       </p>
     </PaneShell>
@@ -911,7 +963,7 @@ export function ReferralPane({ onBackToMenu }: PaneProps) {
   // On the screen itself, not in the Dev Mode menu, which sits behind the Settings modal.
   const switcher = SHOW_DEMO_TOOLS ? (
     <div className="mt-auto flex items-center gap-3 pt-10 opacity-60 transition-opacity duration-hover hover:opacity-100">
-      <span className="text-meta text-muted-foreground">Demo</span>
+      <span className="text-caption text-muted-foreground">Demo</span>
       <SegmentedControl
         aria-label="Referrals demo state"
         options={REFERRAL_DEV_STATES.map((id) => ({ value: id, label: REFERRAL_DEV_LABELS[id] }))}
@@ -947,11 +999,11 @@ export function ReferralPane({ onBackToMenu }: PaneProps) {
         <Rows>
           {friends.map((f) => (
             <div key={f.id} className="flex items-center gap-4 py-4 sm:py-3">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-meta font-medium text-muted-foreground">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-caption font-medium text-muted-foreground">
                 {f.name.split(" ").map((p) => p[0]).join("")}
               </span>
               <span className="min-w-0 flex-1 truncate text-body text-foreground">{f.name}</span>
-              <span className="flex flex-col items-end gap-0.5 text-meta">
+              <span className="flex flex-col items-end gap-0.5 text-caption">
                 <span className={cn(f.status === "opened" ? "text-foreground" : "text-muted-foreground")}>{REFERRAL_STATUS[f.status]}</span>
                 <span className="tabular text-muted-foreground">{formatReferralDate(f.date)}</span>
               </span>
@@ -970,7 +1022,7 @@ export function ReferralPane({ onBackToMenu }: PaneProps) {
         <section className="flex flex-col items-center gap-6 rounded-2xl border border-border/80 px-5 py-8 text-center sm:px-10 sm:py-10">
           <GcbEagleEmblem className="h-12 w-auto" />
           <div className="flex flex-col gap-2">
-            <h3 className="type-headline font-medium tracking-[var(--ls-heading)] text-foreground">Invite others to GCB</h3>
+            <h3 className="text-h1 font-medium tracking-[var(--ls-heading)] text-foreground">Invite others to GCB</h3>
             <p className="text-body leading-relaxed text-muted-foreground">Send your link. Friends who open it join with you already filled in.</p>
           </div>
           <div className="flex w-full max-w-[380px] flex-col gap-3">
@@ -1003,8 +1055,8 @@ export function ReferralPane({ onBackToMenu }: PaneProps) {
             className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-border/80 px-5 py-4 text-left transition duration-hover hover:bg-muted/50"
           >
             <span className="flex flex-col gap-1">
-              <span className="text-meta text-muted-foreground">Your referrals</span>
-              <span className="tabular text-heading text-foreground">{`${friends.length} signed up`}</span>
+              <span className="text-caption text-muted-foreground">Your referrals</span>
+              <span className="tabular text-h4 text-foreground">{`${friends.length} signed up`}</span>
             </span>
             <ChevronRight size={20} className="shrink-0 text-muted-foreground" aria-hidden="true" />
           </button>
@@ -1051,7 +1103,7 @@ export function LimitsPane({ onBackToMenu }: PaneProps) {
       </div>
       {SHOW_DEMO_TOOLS ? (
         <div className="mt-auto flex pt-10 items-center gap-3 opacity-60 transition-opacity duration-hover hover:opacity-100">
-          <span className="text-meta text-muted-foreground">Demo</span>
+          <span className="text-caption text-muted-foreground">Demo</span>
           <SegmentedControl
             aria-label="Limits demo usage"
             options={LIMIT_DEV_USE.map((id) => ({ value: id, label: LIMIT_DEV_LABELS[id] }))}
@@ -1187,7 +1239,7 @@ function ChangeLimit({
             invalid={wrongCode}
           />
           {wrongCode ? (
-            <p role="alert" className="-mt-2 text-meta text-destructive">
+            <p role="alert" className="-mt-2 text-caption text-destructive">
               That code isn’t right. Try again.
             </p>
           ) : null}

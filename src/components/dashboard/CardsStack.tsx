@@ -22,8 +22,8 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
   return (
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-heading text-foreground">Cards</h2>
-        <Link href="/cards" className="text-meta text-foreground underline-offset-4 hover:underline">
+        <h2 className="text-h4 text-foreground">Cards</h2>
+        <Link href="/cards" className="text-caption text-foreground underline-offset-4 hover:underline">
           Manage all →
         </Link>
       </div>
@@ -40,7 +40,7 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
                 className="absolute inset-x-3.5 top-5 flex h-28 flex-col justify-between rounded-xl bg-primary p-3 text-primary-foreground shadow-sm"
                 style={{ transform: "rotate(-2.2deg)" }}
               >
-                <div className="flex items-center justify-between text-meta opacity-90">
+                <div className="flex items-center justify-between text-caption opacity-90">
                   <span className="truncate">{back.name}</span>
                   {(back.type === "Virtual" || back.isVirtual) && (
                     <span
@@ -69,12 +69,12 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
                 <div>
                   {/* eslint-disable-next-line no-restricted-syntax -- card art, drawn to scale */}
                   <div className="text-[7px] uppercase tracking-wide opacity-55">Card holder</div>
-                  <div className="mt-0.5 text-meta">{front.holder.toUpperCase()}</div>
+                  <div className="mt-0.5 text-caption">{front.holder.toUpperCase()}</div>
                 </div>
                 <div>
                   {/* eslint-disable-next-line no-restricted-syntax -- card art, drawn to scale */}
                   <div className="text-[7px] uppercase tracking-wide opacity-55">Expires</div>
-                  <div className="tabular mt-0.5 text-meta">{front.expiry}</div>
+                  <div className="tabular mt-0.5 text-caption">{front.expiry}</div>
                 </div>
                 <div className="text-body italic tracking-[var(--ls-heading)]">{front.scheme}</div>
               </div>
@@ -95,12 +95,12 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
                   <CreditCard size={15} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-meta text-foreground">{card.name}</span>
-                  <span className="tabular mt-0.5 text-meta text-muted-foreground">
+                  <span className="truncate text-caption text-foreground">{card.name}</span>
+                  <span className="tabular mt-0.5 text-caption text-muted-foreground">
                     {card.maskedNumber} · Exp {card.expiry}
                   </span>
                 </span>
-                <Badge variant={card.status === "Active" ? "success" : "destructive"} className="text-meta">
+                <Badge variant={card.status === "Active" ? "success" : "destructive"} className="text-caption">
                   {card.status}
                 </Badge>
               </li>

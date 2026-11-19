@@ -28,7 +28,7 @@ function Fact({ icon, title, children }: { icon: ReactNode; title: string; child
     <div className="flex items-start gap-3">
       <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center text-foreground">{icon}</span>
       <div className="flex flex-col gap-1">
-        <p className="text-heading font-medium text-foreground">{title}</p>
+        <p className="text-h4 font-medium text-foreground">{title}</p>
         <p className="text-body leading-relaxed text-muted-foreground">{children}</p>
       </div>
     </div>

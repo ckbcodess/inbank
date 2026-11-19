@@ -25,7 +25,7 @@ export default function AuthHeader() {
         <div className="flex items-center justify-center shrink-0">
           <GCBLogo className="h-7 w-auto text-foreground" />
         </div>
-        <span className="text-title font-medium tracking-tight text-foreground">
+        <span className="text-h3 font-medium tracking-tight text-foreground">
           {t("header.brand", "Internet Banking")}
         </span>
       </Link>

@@ -153,10 +153,10 @@ export function CardDeliveryTracker({
     <div className={cn("flex flex-col gap-5 w-full", className)}>
       {/* Subheader: Delivery Progress + Status Badge */}
       <div className="flex items-center justify-between">
-        <h3 className="text-title font-medium text-foreground tracking-[var(--ls-tight)]">
+        <h3 className="text-h3 font-medium text-foreground tracking-[var(--ls-tight)]">
           Delivery Progress
         </h3>
-        <span className="rounded-full bg-pill-warning px-2 py-0.5 text-meta font-medium text-pill-warning-text">
+        <span className="rounded-full bg-pill-warning px-2 py-0.5 text-caption font-medium text-pill-warning-text">
           {isReadyForPickup ? "Ready" : "Pending"}
         </span>
       </div>
@@ -188,13 +188,13 @@ export function CardDeliveryTracker({
                   "size-6 rounded-full flex items-center justify-center shrink-0 transition z-10 select-none",
                   isCompleted
                     ? "bg-primary text-primary-foreground font-medium"
-                    : "bg-muted text-muted-foreground text-meta border border-border"
+                    : "bg-muted text-muted-foreground text-caption border border-border"
                 )}
               >
                 {isCompleted ? (
                   <Check size={15} />
                 ) : (
-                  <span className="text-meta font-medium tabular-nums">{step.stepNum}</span>
+                  <span className="text-caption font-medium tabular-nums">{step.stepNum}</span>
                 )}
               </div>
 
@@ -239,7 +239,7 @@ export function CardDeliveryTracker({
             <Building2 size={20} />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-heading font-medium text-foreground leading-tight">
+            <span className="text-h4 font-medium text-foreground leading-tight">
               Branch Pickup
             </span>
             <span className="text-body text-muted-foreground mt-0.5 truncate">
@@ -261,11 +261,11 @@ export function CardDeliveryTracker({
                 <span className="text-body font-medium text-foreground truncate">
                   {card.courierRider.name}
                 </span>
-                <span className="text-meta px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
+                <span className="text-caption px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
                   Rider
                 </span>
               </div>
-              <span className="text-meta text-muted-foreground truncate">
+              <span className="text-caption text-muted-foreground truncate">
                 {card.courierRider.company || "GCB Express Courier"} • {card.courierRider.vehiclePlate || "Motorbike"}
               </span>
             </div>
@@ -292,7 +292,7 @@ export function CardDeliveryTracker({
             <div className="text-foreground shrink-0">
               <KeypadMatrixIcon className="size-4 text-foreground" />
             </div>
-            <span className="text-heading font-medium text-foreground">
+            <span className="text-h4 font-medium text-foreground">
               Show Pickup Code
             </span>
           </div>
@@ -361,7 +361,7 @@ export function CardDeliveryTrackerModal({
                 <ChevronLeft size={20} />
               </button>
             )}
-            <h2 className="text-title font-medium text-foreground tracking-[var(--ls-tight)]">
+            <h2 className="text-h3 font-medium text-foreground tracking-[var(--ls-tight)]">
               {view === "pickup-code"
                 ? isBranchPickup
                   ? "Branch Pickup Code"
@@ -405,7 +405,7 @@ export function CardDeliveryTrackerModal({
               </div>
 
               {/* Operating Hours & Support metadata */}
-              <div className="flex flex-col items-center gap-2 text-heading font-medium text-muted-foreground dark:text-muted-foreground/80">
+              <div className="flex flex-col items-center gap-2 text-h4 font-medium text-muted-foreground dark:text-muted-foreground/80">
                 <span>Hours: Mon - Fri (8:00 AM - 5:00 PM)</span>
                 <span>Branch Support: 030 4222 422</span>
               </div>
@@ -420,7 +420,7 @@ export function CardDeliveryTrackerModal({
                   {card.deliveryCode || card.pickupCode || "8419"}
                 </span>
 
-                <div className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-primary/15 text-foreground text-meta font-medium">
+                <div className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-primary/15 text-foreground text-caption font-medium">
                   <ShieldCheck size={14} className="text-foreground" />
                   <span>Handover Verification Code</span>
                 </div>
@@ -436,7 +436,7 @@ export function CardDeliveryTrackerModal({
               </div>
 
               {/* Security Hint */}
-              <div className="w-full rounded-xl bg-muted/40 border border-border/80 px-3 py-2 text-meta text-muted-foreground text-center">
+              <div className="w-full rounded-xl bg-muted/40 border border-border/80 px-3 py-2 text-caption text-muted-foreground text-center">
                 <span>Do not share this code via phone or SMS. Present it only in person upon delivery.</span>
               </div>
             </div>

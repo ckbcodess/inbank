@@ -168,7 +168,7 @@ function NotificationRow({
         </span>
         <span className="line-clamp-2 text-body leading-relaxed text-muted-foreground">{n.body}</span>
         {/* On phones there's no hover, so the date sits under the text. From `sm` it's at the right. */}
-        <span className="mt-0.5 text-meta text-muted-foreground tabular sm:hidden">{formatRelative(n.date)}</span>
+        <span className="mt-0.5 text-caption text-muted-foreground tabular sm:hidden">{formatRelative(n.date)}</span>
       </span>
     </>
   );
@@ -186,7 +186,7 @@ function NotificationRow({
       )}
 
       <div className="relative flex h-10 w-[88px] shrink-0 items-center justify-end">
-        <span className="text-meta text-muted-foreground tabular transition-opacity group-hover:opacity-0 group-focus-within:opacity-0 max-sm:hidden">
+        <span className="text-caption text-muted-foreground tabular transition-opacity group-hover:opacity-0 group-focus-within:opacity-0 max-sm:hidden">
           {formatRelative(n.date)}
         </span>
         <div className="absolute inset-0 flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 max-sm:opacity-100">
@@ -353,7 +353,7 @@ export function NotificationsMenu() {
     <div className={cn("flex flex-col [contain:paint]", desktop ? "h-[min(72vh,600px)]" : "h-full")}>
       <div className="flex h-12 shrink-0 items-center gap-1 pl-4 pr-2">
         {!desktop && <IconButton label="Close notifications" icon={X} onClick={close} />}
-        <h2 className="min-w-0 flex-1 truncate text-heading font-medium text-foreground">Notifications</h2>
+        <h2 className="min-w-0 flex-1 truncate text-h4 font-medium text-foreground">Notifications</h2>
         <IconButton
           label="Notification settings"
           icon={Settings}
@@ -370,7 +370,7 @@ export function NotificationsMenu() {
         </TabButton>
         <TabButton active={view === "archived"} onClick={() => switchView("archived")}>
           Archived
-          <span className="text-meta text-muted-foreground tabular">{archived.length}</span>
+          <span className="text-caption text-muted-foreground tabular">{archived.length}</span>
         </TabButton>
       </div>
 
@@ -389,7 +389,7 @@ export function NotificationsMenu() {
               </div>
             )}
             {!hasMore && (
-              <p className="px-4 py-4 text-center text-meta text-muted-foreground">You&apos;re all caught up.</p>
+              <p className="px-4 py-4 text-center text-caption text-muted-foreground">You&apos;re all caught up.</p>
             )}
           </>
         )}

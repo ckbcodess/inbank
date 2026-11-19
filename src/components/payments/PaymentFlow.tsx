@@ -11,6 +11,7 @@
  *   Receipt: Full transaction receipt with Share, Repeat, and Done actions.
  */
 
+import PageHeader from "@/components/layout/PageHeader";
 import { HorizontalScrollStrip } from "@/components/ui/horizontal-scroll-strip";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -19,7 +20,6 @@ import { useScheduleHandoff } from "@/lib/schedule-handoff";
 import {
   ArrowLeftRight,
   CheckCircle2,
-  ChevronLeft,
   Copy,
   CreditCard,
   Globe,
@@ -2410,19 +2410,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "bank" && !bankCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-            aria-label="Back to Send & Pay"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-            Which bank do you want to send to?
-          </h1>
-        </div>
+        <PageHeader title="Which bank do you want to send to?" backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* Recent Bank Beneficiaries Avatars */}
         <RailBeneficiaryStrip
@@ -2501,19 +2489,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if ((rail === "wallet" || rail === "momo") && !walletCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-            aria-label="Back to Send & Pay"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-            Which wallet do you want to send to?
-          </h1>
-        </div>
+        <PageHeader title="Which wallet do you want to send to?" backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* Recent Wallet Beneficiaries Avatars */}
         <RailBeneficiaryStrip
@@ -2571,19 +2547,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "cardless" && !cardlessCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-            aria-label="Back to Send & Pay"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-            Who is this code for?
-          </h1>
-        </div>
+        <PageHeader title="Who is this code for?" backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* Recent Beneficiaries Strip */}
         <RailBeneficiaryStrip
@@ -2673,19 +2637,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "card-topup" && !cardTopupCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-            aria-label="Back to Send & Pay"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-            Which card do you want to top up?
-          </h1>
-        </div>
+        <PageHeader title="Which card do you want to top up?" backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* Cards saved as beneficiaries */}
         <RailBeneficiaryStrip
@@ -2726,19 +2678,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "bill" && !billCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-            aria-label="Back to Send & Pay"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-            Bills
-          </h1>
-        </div>
+        <PageHeader title="Bills" backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* All Recent Bills Beneficiaries Avatars */}
         <RailBeneficiaryStrip
@@ -2773,19 +2713,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "proxy" && !proxyCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-            aria-label="Back to Send & Pay"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-            Proxy Payments
-          </h1>
-        </div>
+        <PageHeader title="Proxy Payments" backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* Your own proxy ID status */}
         {myProxy ? (
@@ -2793,7 +2721,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             <div className="flex min-w-0 items-center gap-3">
               <GCBLogo className="h-6 w-auto shrink-0" />
               <div className="flex min-w-0 flex-col gap-0.5">
-                <span className="text-meta text-muted-foreground">Your proxy ID</span>
+                <span className="text-caption text-muted-foreground">Your proxy ID</span>
                 <span className="text-body text-foreground tabular">{myProxy.value}</span>
               </div>
             </div>
@@ -2810,7 +2738,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             </button>
           </div>
         ) : (
-          <p className="rounded-2xl border border-dashed border-border bg-muted/20 px-3 py-2 text-meta text-muted-foreground">
+          <p className="rounded-2xl border border-dashed border-border bg-muted/20 px-3 py-2 text-caption text-muted-foreground">
             You don&apos;t have a proxy ID yet. Create one so others can pay you with your number.
           </p>
         )}
@@ -2975,19 +2903,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "group" && !groupCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-            aria-label="Back to Send & Pay"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-            Group Payments
-          </h1>
-        </div>
+        <PageHeader title="Group Payments" backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* Your groups quick pick */}
         {groups.length > 0 && (
@@ -3009,16 +2925,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
               >
                 <span
-                  className="flex size-12 items-center justify-center rounded-full text-fact text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
+                  className="flex size-12 items-center justify-center rounded-full text-body-lg text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
                   style={{ backgroundColor: groupAvatarTint(g.id) }}
                 >
                   {g.name.slice(0, 2).toUpperCase()}
                 </span>
                 <span className="flex flex-col">
-                  <span className="text-meta font-medium text-foreground truncate max-w-[80px]">
+                  <span className="text-caption font-medium text-foreground truncate max-w-[80px]">
                     {g.name.split(" ")[0]}
                   </span>
-                  <span className="text-meta text-muted-foreground tabular">
+                  <span className="text-caption text-muted-foreground tabular">
                     {g.members.length} {g.members.length === 1 ? "member" : "members"}
                   </span>
                 </span>
@@ -3059,19 +2975,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     const isData = rail === "data";
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <div data-page-header className="flex items-center gap-2 sm:gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-            aria-label="Back to Send & Pay"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-            {isData ? "Who is this internet bundle for?" : "Who is this airtime for?"}
-          </h1>
-        </div>
+        <PageHeader title={isData ? "Who is this internet bundle for?" : "Who is this airtime for?"} backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* Recent recipients (excluding the Self shortcut, which is its own card) */}
         <RailBeneficiaryStrip
@@ -3157,55 +3061,42 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       ? activeRailBeneficiaries
       : [];
 
+  // One step back through the flow: stage, then the chosen category, then out of the rail.
+  const goBack = () => {
+    if (stage === 3) {
+      setStage(2);
+    } else if (stage === 2) {
+      setStage(1);
+    } else if (rail === "qr" && f.qrMerchant) {
+      set("qrMerchant", "");
+      set("qrRef", "");
+      setStage1Collapsed(false);
+    } else if (rail === "bank" && bankCategory) {
+      setBankCategory(null);
+    } else if ((rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") && walletCategory) {
+      setWalletCategory(null);
+    } else if ((rail === "airtime" || rail === "data") && topupCategory) {
+      setTopupCategory(null);
+    } else if (rail === "proxy" && proxyCategory) {
+      setProxyCategory(null);
+    } else if (rail === "group" && groupCategory) {
+      setGroupCategory(null);
+    } else if (rail === "cardless" && cardlessCategory) {
+      setCardlessCategory(null);
+    } else if (rail === "bill" && billCategory) {
+      setBillCategory(null);
+    } else if (rail === "card-topup" && cardTopupCategory) {
+      setCardTopupCategory(null);
+    } else {
+      handleBackNavigation();
+    }
+  };
+
   // Unified Progressive Disclosure Experience across ALL Services
   return (
     <SavedRecipientsProvider items={savedForThisPayment} onSelect={rail === "cardless" ? pickCardlessRecipient : selectBeneficiary}>
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-      {/* Header with back button */}
-      <div className="flex items-center justify-between gap-2 min-w-0">
-        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={() => {
-              if (stage === 3) {
-                setStage(2);
-              } else if (stage === 2) {
-                setStage(1);
-              } else if (rail === "qr" && f.qrMerchant) {
-                set("qrMerchant", "");
-                set("qrRef", "");
-                setStage1Collapsed(false);
-              } else if (rail === "bank" && bankCategory) {
-                setBankCategory(null);
-              } else if ((rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") && walletCategory) {
-                setWalletCategory(null);
-              } else if ((rail === "airtime" || rail === "data") && topupCategory) {
-                setTopupCategory(null);
-              } else if (rail === "proxy" && proxyCategory) {
-                setProxyCategory(null);
-              } else if (rail === "group" && groupCategory) {
-                setGroupCategory(null);
-              } else if (rail === "cardless" && cardlessCategory) {
-                setCardlessCategory(null);
-              } else if (rail === "bill" && billCategory) {
-                setBillCategory(null);
-              } else if (rail === "card-topup" && cardTopupCategory) {
-                setCardTopupCategory(null);
-              } else {
-                handleBackNavigation();
-              }
-            }}
-            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
-            aria-label="Back to previous screen"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
-            {getPageTitle()}
-          </h1>
-        </div>
-
-      </div>
+      <PageHeader title={getPageTitle()} backTo={{ href: "", label: "previous screen", onClick: goBack }} />
 
       <div className="flex flex-col gap-6">
         {/* ===================================================================
@@ -3882,7 +3773,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             />
 
             {/* Disclaimer */}
-            <p className="text-meta text-muted-foreground text-center px-3 -mt-1">
+            <p className="text-caption text-muted-foreground text-center px-3 -mt-1">
               {f.isScheduled
                 ? "Clicking “Proceed & Schedule” authorizes GCB Bank PLC to schedule the payment order."
                 : "Clicking “Proceed to Pay” authorizes GCB Bank PLC to initiate the transaction."}
