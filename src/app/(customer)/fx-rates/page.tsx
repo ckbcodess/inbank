@@ -1,26 +1,21 @@
 "use client";
 
 /**
- * FX Rates — BRD FR-30.
+ * Rates: three segments on one page.
  *
- * "The system shall provide customers with access to the Bank's published daily
- * foreign exchange (FX) rates." This is a published-rates board: reference
- * data, not a dealing screen. There is no booking or execution action here, and
- * the converter is labelled indicative for that reason.
+ * - FX Rates (BRD FR-30): the Bank's published daily FX rates. Reference data, not a dealing screen, so
+ *   the converter is labelled indicative and carries no booking action.
+ * - Card Rates: placeholder rows for design review. No card rate sheet exists in the mock data yet.
+ * - Fixed Deposits: the tenures and rates the term-deposit flow already uses (`lib/term-deposits.ts`).
  *
- * 13.9 classes static/reference screens as baseline-only, so this screen
- * carries Loading / Empty / Populated / Error and nothing more.
+ * The active segment lives in the URL (`?tab=card|deposits`) and changes with router.replace, so switching
+ * never becomes a Back step (PATTERNS §4).
  */
 
+import { Suspense, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Skeleton } from "skullet/react";
-import { useMemo, useState } from "react";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  TrendingDown,
-  TrendingUp,
-} from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
+import { ChevronDown, TrendingDown, TrendingUp } from "@/components/ui/icons";
 import PageHeader from "@/components/layout/PageHeader";
 import {
   CurrencyLogo,
@@ -33,12 +28,14 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";
+import { DualAmountFields } from "@/components/payments/flows/shared";
 import type { BaselineState } from "@/lib/states";
-import { FX_PUBLISHED_AT, FX_RATES, formatDateTime } from "@/lib/mock-data";
-import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
-import { TextMorph } from "torph/react";
+import { roundMoney } from "@/lib/money";
+import { FX_PUBLISHED_AT, FX_RATES, formatDateTime, formatMoney } from "@/lib/mock-data";
+import { MIN_DEPOSIT, TENURES, interestFor } from "@/lib/term-deposits";
 
 const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
@@ -48,6 +45,24 @@ const BASELINE_LABEL: Record<BaselineState, string> = {
   populated: "Populated",
   error: "Error",
 };
+
+type RatesTab = "fx" | "card" | "deposits";
+
+const TABS: readonly { value: RatesTab; label: string }[] = [
+  { value: "fx", label: "FX Rates" },
+  { value: "card", label: "Card Rates" },
+  { value: "deposits", label: "Fixed Deposits" },
+];
+
+/**
+ * Placeholder card rates for design review. Not from a bank rate sheet; the bank has not confirmed them.
+ * Replace with the card pricing feed when it exists.
+ */
+const CARD_RATES: readonly { use: string; rate: string }[] = [
+  { use: "Card purchase in a foreign currency", rate: "Mid rate + 2.5%" },
+  { use: "Cash withdrawal abroad", rate: "Mid rate + 3.5%" },
+  { use: "Cash withdrawal at another bank’s ATM in Ghana", rate: "GHS 5.00 per withdrawal" },
+];
 
 const CURRENCIES = [
   { code: "USD", name: "US Dollar" },
@@ -66,37 +81,77 @@ function formatRate(value: number): string {
   return value.toFixed(decimals);
 }
 
-/** The converter is indicative: a 12-digit figure is already beyond any real transfer. */
-const MAX_WHOLE_DIGITS = 12;
+function parseTab(value: string | null): RatesTab {
+  return value === "card" || value === "deposits" ? value : "fx";
+}
 
-export default function FxRatesPage() {
+function RatesContent() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tab = parseTab(searchParams.get("tab"));
+
+  const selectTab = (next: RatesTab) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (next === "fx") params.delete("tab");
+    else params.set("tab", next);
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <PageHeader title="Rates" />
+
+      <SegmentedControl options={TABS} value={tab} onChange={selectTab} aria-label="Rates" />
+
+      {tab === "fx" && <FxRatesTab />}
+      {tab === "card" && <CardRatesTab />}
+      {tab === "deposits" && <FixedDepositsTab />}
+    </div>
+  );
+}
+
+/** A currency code the customer can change, shown in the amount box where the code sits. */
+function CurrencyPicker({
+  value,
+  other,
+  onChange,
+}: {
+  value: string;
+  other: string;
+  onChange: (code: string) => void;
+}) {
+  return (
+    <Select value={value} onValueChange={(val) => val && onChange(val)}>
+      <SelectTrigger hideChevron className="h-auto w-auto shrink-0 gap-2 border-0 bg-transparent p-1 hover:bg-muted/70 cursor-pointer">
+        <div className="flex items-center gap-2">
+          <CurrencyLogo currency={value} size={24} />
+          <span className="text-h4 font-medium text-foreground tabular">{value}</span>
+          <ChevronDown size={15} className="text-muted-foreground" />
+        </div>
+      </SelectTrigger>
+      <SelectContent align="start">
+        {CURRENCIES.filter((c) => c.code !== other).map((c) => (
+          <SelectItem key={c.code} value={c.code} label={c.code}>
+            <div className="flex items-center gap-2">
+              <CurrencyLogo currency={c.code} size={20} />
+              <span className="font-medium tabular">{c.code}</span>
+              <span className="text-caption text-muted-foreground">· {c.name}</span>
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+function FxRatesTab() {
   const [state, setState] = useState<BaselineState>("populated");
   const [fromCcy, setFromCcy] = useState("USD");
   const [toCcy, setToCcy] = useState("GHS");
-  const [amount, setAmount] = useState("1,000");
-
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputVal = e.target.value;
-    const raw = inputVal.replace(/[^0-9.]/g, "").replace(/(\..*?)\..*/g, "$1");
-    // At most 12 digits before the point (up to the hundreds of billions) and 2 after it
-    const [whole = "", frac] = raw.split(".");
-    const cleanVal = whole.slice(0, MAX_WHOLE_DIGITS) + (frac !== undefined ? `.${frac.slice(0, 2)}` : "");
-    if (!cleanVal) {
-      setAmount("");
-      return;
-    }
-    const { formatted } = formatValueForDisplay(cleanVal, 2, {
-      formatOn: FormatOn.Change,
-      thousandSeparator: ",",
-      thousandStyle: ThousandStyle.Thousand,
-    });
-    setAmount(formatted);
-  };
-
-  const handleSwap = () => {
-    setFromCcy(toCcy);
-    setToCcy(fromCcy);
-  };
+  // The box the customer typed in is the source; the other is worked out from it (as DualAmountFields does).
+  const [entry, setEntry] = useState<{ side: "from" | "to"; value: string }>({ side: "from", value: "1000" });
 
   const conversion = useMemo(() => {
     if (fromCcy === toCcy) {
@@ -121,40 +176,21 @@ export default function FxRatesPage() {
     return { rate: cross, label: "Indicative cross" };
   }, [fromCcy, toCcy]);
 
-  const amountValue = Number(amount.replace(/,/g, ""));
-  const amountValid = amount.trim() !== "" && !Number.isNaN(amountValue) && amountValue > 0;
+  const rate = conversion.rate;
+  const toNumber = (v: string) => Number(v.replace(/,/g, "")) || 0;
+  const toAmount =
+    entry.side === "to" ? entry.value : toNumber(entry.value) > 0 && rate > 0 ? String(roundMoney(toNumber(entry.value) * rate)) : "";
 
-  const converted = useMemo(() => {
-    if (!amountValid) return null;
-    return amountValue * conversion.rate;
-  }, [amountValid, amountValue, conversion.rate]);
-
-  const convertedFormatted =
-    converted === null
-      ? "—"
-      : converted.toLocaleString("en-GH", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
+  const handleSwap = () => {
+    // The amount the customer sees on the right becomes the left one, in the swapped currencies.
+    setEntry({ side: "from", value: toAmount });
+    setFromCcy(toCcy);
+    setToCcy(fromCcy);
+  };
 
   return (
-    <div className="flex flex-col gap-4">
-      <PageHeader
-        title="Foreign Exchange Rates"
-        actions={
-          <span className="text-caption text-muted-foreground">
-            Published {formatDateTime(FX_PUBLISHED_AT)}
-          </span>
-        }
-      />
-
-      <StateSwitcher
-        section="13.9"
-        states={BASELINE_STATES}
-        value={state}
-        onChange={setState}
-        labels={BASELINE_LABEL}
-      />
+    <div className="flex flex-col gap-6">
+      <StateSwitcher section="13.9" states={BASELINE_STATES} value={state} onChange={setState} labels={BASELINE_LABEL} />
 
       {state === "error" && (
         <ListErrorState
@@ -164,249 +200,204 @@ export default function FxRatesPage() {
       )}
 
       {state === "empty" && (
-        <TrueEmptyState illustration="empty-rates"
+        <TrueEmptyState
+          illustration="empty-rates"
           title="No rates published yet today"
           description="Yesterday's rates aren't shown; they may be out of date."
         />
       )}
 
       {(state === "populated" || state === "loading") && (
-      <Skeleton loading={state === "loading"}>
-        <>
-          {/* Indicative converter */}
-          <section className="rounded-2xl border border-border bg-card p-4 sm:p-5 w-full">
-            <div className="w-full">
-              <div className="mb-3">
-                <h2 className="text-h4 font-medium text-foreground">Currency converter</h2>
-                <p className="text-caption text-muted-foreground">
-                  Indicative calculator based on today&apos;s published rates.
+        <Skeleton loading={state === "loading"}>
+          <div className="flex flex-col gap-6">
+            {/* Indicative converter: the shared two-box amount field used for PAPSS and wire transfers */}
+            <section className="flex w-full flex-col gap-2">
+              <DualAmountFields
+                ghs={entry.side === "from" ? entry.value : ""}
+                foreign={toAmount}
+                rate={rate}
+                toForeign={(n) => roundMoney(n * rate)}
+                toGhs={(n) => (rate > 0 ? roundMoney(n / rate) : 0)}
+                sendCurrency={
+                  <CurrencyPicker value={fromCcy} other={toCcy} onChange={setFromCcy} />
+                }
+                foreignCurrency={
+                  <CurrencyPicker value={toCcy} other={fromCcy} onChange={setToCcy} />
+                }
+                labels={{ send: "From", get: "To" }}
+                onChange={({ ghs, foreign }) =>
+                  setEntry(ghs !== "" ? { side: "from", value: ghs } : { side: "to", value: foreign })
+                }
+                onSwap={handleSwap}
+              />
+
+              <div className="flex flex-col items-end gap-0.5 text-right">
+                <p className="text-caption font-medium text-foreground tabular">
+                  1 {fromCcy} = {formatRate(rate)} {toCcy}
                 </p>
+                <p className="text-caption text-muted-foreground">Indicative calculator based on today&apos;s published rates.</p>
               </div>
+            </section>
 
-              {/* Stacked Pills with Overlap Swap */}
-              <div className="flex flex-col w-full">
-                {/* Top Input Card */}
-                <div className="flex items-center justify-between rounded-2xl field-surface border border-transparent bg-field px-3 py-3 sm:px-4 sm:py-3 shadow-xs transition-colors focus-within:bg-field-focus">
-                  <div className="relative flex-1 min-w-0 flex items-center pr-2">
-                    <span
-                      aria-hidden="true"
-                      // eslint-disable-next-line no-restricted-syntax -- the amount field is bespoke (CONSTITUTION §9)
-                      className={`pointer-events-none whitespace-pre text-2xl sm:text-3xl font-sans font-bold tracking-tight tabular-nums select-none leading-none numorainput ${
-                        amount ? "text-foreground" : "text-muted-foreground/30"
-                      }`}
-                    >
-                      <TextMorph ease={{ stiffness: 400, damping: 30 }}>
-                        {amount || "0.00"}
-                      </TextMorph>
-                    </span>
-                    <input
-                      id="fx-amount"
-                      type="text"
-                      inputMode="decimal"
-                      value={amount}
-                      onChange={handleAmountChange}
-                      placeholder="0.00"
-                      // eslint-disable-next-line no-restricted-syntax -- the amount field is bespoke (CONSTITUTION §9)
-                      className="numorainput absolute inset-0 w-full h-full m-0 p-0 border-0 bg-transparent text-transparent placeholder-transparent outline-none focus:outline-none font-sans text-2xl sm:text-3xl font-bold tracking-tight tabular-nums leading-none caret-primary"
-                    />
-                  </div>
-
-                  <Select value={fromCcy} onValueChange={(val) => val && setFromCcy(val)}>
-                    <SelectTrigger
-                      hideChevron
-                      className="h-auto w-auto shrink-0 gap-2 border-0 p-1 hover:bg-muted/70 cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <CurrencyLogo currency={fromCcy} size={24} />
-                        <span className="text-h4 font-medium text-foreground tabular tracking-tight">
-                          {fromCcy}
-                        </span>
-                        <ChevronDown size={15} className="text-muted-foreground" />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent align="end">
-                      {CURRENCIES.filter((c) => c.code !== toCcy).map((c) => (
-                        <SelectItem key={c.code} value={c.code} label={c.code}>
-                          <div className="flex items-center gap-2">
-                            <CurrencyLogo currency={c.code} size={20} />
-                            <span className="font-semibold tabular">{c.code}</span>
-                            <span className="text-caption text-muted-foreground">· {c.name}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Centered Overlap Swap Button with increased size and spacing */}
-                <div className="z-10 -my-2 flex justify-center py-0.5">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handleSwap}
-                    aria-label="Swap currencies"
-                    title="Swap currencies"
-                    className="size-9 rounded-full text-muted-foreground hover:text-foreground"
-                  >
-                    <ArrowUpDown size={19} aria-hidden="true" />
-                  </Button>
-                </div>
-
-                {/* Bottom Output Card */}
-                <div className="flex items-center justify-between rounded-2xl border border-field-border bg-field px-3 py-3 sm:px-4 sm:py-3 shadow-xs transition-colors">
-                  {/* eslint-disable-next-line no-restricted-syntax -- the amount field is bespoke (CONSTITUTION §9) */}
-                  <div className="min-w-0 flex-1 truncate text-2xl sm:text-3xl font-bold tabular tracking-tight text-foreground numorainput pr-2">
-                    <TextMorph ease={{ stiffness: 400, damping: 30 }}>
-                      {convertedFormatted}
-                    </TextMorph>
-                  </div>
-
-                  <Select value={toCcy} onValueChange={(val) => val && setToCcy(val)}>
-                    <SelectTrigger
-                      hideChevron
-                      className="h-auto w-auto shrink-0 gap-2 border-0 p-1 hover:bg-muted/70 cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <CurrencyLogo currency={toCcy} size={24} />
-                        <span className="text-h4 font-medium text-foreground tabular tracking-tight">
-                          {toCcy}
-                        </span>
-                        <ChevronDown size={15} className="text-muted-foreground" />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent align="end">
-                      {CURRENCIES.filter((c) => c.code !== fromCcy).map((c) => (
-                        <SelectItem key={c.code} value={c.code} label={c.code}>
-                          <div className="flex items-center gap-2">
-                            <CurrencyLogo currency={c.code} size={20} />
-                            <span className="font-semibold tabular">{c.code}</span>
-                            <span className="text-caption text-muted-foreground">· {c.name}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <p className="mt-3 text-center text-caption font-medium text-muted-foreground tabular">
-                1 {fromCcy} = {formatRate(conversion.rate)} {toCcy}
-              </p>
-            </div>
-          </section>
-
-          {/* Rates board */}
-          <div className="overflow-hidden rounded-2xl border border-border bg-card">
-            {/* Mobile View (sm:hidden) */}
-            <div className="sm:hidden divide-y divide-border">
-              {FX_RATES.map((rate) => {
-                const up = rate.changePct >= 0;
-                const meta = getCurrencyMeta(rate.base);
-                return (
-                  <div key={rate.pair} className="flex items-center justify-between p-3 gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <CurrencyPairLogos base={rate.base} quote={rate.quote} size={26} />
-                      <div className="flex flex-col min-w-0">
-                        <span className="font-medium text-body text-foreground tabular">
-                          {rate.pair}
-                        </span>
-                        <span className="text-caption text-muted-foreground truncate">
-                          {meta.name}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-end shrink-0">
-                      <div className="flex items-center gap-2 text-body tabular font-medium text-foreground">
-                        <span>Buy {formatRate(rate.buy)}</span>
-                        <span className="text-muted-foreground/50">·</span>
-                        <span>Sell {formatRate(rate.sell)}</span>
-                      </div>
-                      <span
-                        className={`mt-0.5 inline-flex items-center gap-1 text-caption tabular font-medium ${
-                          up ? "text-success-text" : "text-destructive"
-                        }`}
-                      >
-                        {up ? (
-                          <TrendingUp size={12} aria-hidden="true" />
-                        ) : (
-                          <TrendingDown size={12} aria-hidden="true" />
-                        )}
-                        {up ? "+" : ""}
-                        {rate.changePct.toFixed(2)}%
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Desktop Table View (hidden sm:block) */}
-            <div className="hidden sm:block overflow-x-auto">
-              <table className="w-full min-w-[560px] text-body">
-                <thead>
-                  <tr className="border-b border-border text-left text-muted-foreground">
-                    <th className="px-3 py-2 font-normal">Currency pair</th>
-                    <th className="px-3 py-2 text-right font-normal">Bank buys</th>
-                    <th className="px-3 py-2 text-right font-normal">Bank sells</th>
-                    <th className="px-3 py-2 text-right font-normal">Mid</th>
-                    <th className="px-3 py-2 text-right font-normal">Change</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {FX_RATES.map((rate) => {
-                    const up = rate.changePct >= 0;
-                    const meta = getCurrencyMeta(rate.base);
+            {/* Rates board */}
+            <section className="flex flex-col gap-2">
+              <div className="overflow-hidden rounded-2xl border border-border bg-card">
+                {/* Phone: one row per pair */}
+                <div className="divide-y divide-border sm:hidden">
+                  {FX_RATES.map((r) => {
+                    const up = r.changePct >= 0;
+                    const meta = getCurrencyMeta(r.base);
                     return (
-                      <tr key={rate.pair} className="transition-colors hover:bg-muted/50">
-                        <td className="px-3 py-3">
-                          <div className="flex items-center gap-2">
-                            <CurrencyPairLogos base={rate.base} quote={rate.quote} size={28} />
-                            <div className="flex flex-col">
-                              <span className="font-medium text-foreground tabular">
-                                {rate.pair}
-                              </span>
-                              <span className="text-caption text-muted-foreground">
-                                {meta.name} · {meta.country}
-                              </span>
-                            </div>
+                      <div key={r.pair} className="flex items-center justify-between gap-2 p-3">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <CurrencyPairLogos base={r.base} quote={r.quote} size={26} />
+                          <div className="flex min-w-0 flex-col">
+                            <span className="text-body font-medium text-foreground tabular">{r.pair}</span>
+                            <span className="truncate text-caption text-muted-foreground">{meta.name}</span>
                           </div>
-                        </td>
-                        <td className="px-3 py-3 text-right text-foreground tabular font-medium">
-                          {formatRate(rate.buy)}
-                        </td>
-                        <td className="px-3 py-3 text-right text-foreground tabular font-medium">
-                          {formatRate(rate.sell)}
-                        </td>
-                        <td className="px-3 py-3 text-right text-muted-foreground tabular">
-                          {formatRate(rate.mid)}
-                        </td>
-                        <td className="px-3 py-3 text-right">
+                        </div>
+
+                        <div className="flex shrink-0 flex-col items-end">
+                          <div className="flex items-center gap-2 text-body font-medium text-foreground tabular">
+                            <span>Buy {formatRate(r.buy)}</span>
+                            <span className="text-muted-foreground/50">·</span>
+                            <span>Sell {formatRate(r.sell)}</span>
+                          </div>
                           <span
-                            className={`inline-flex items-center justify-end gap-1 tabular font-medium ${
+                            className={`mt-0.5 inline-flex items-center gap-1 text-caption font-medium tabular ${
                               up ? "text-success-text" : "text-destructive"
                             }`}
                           >
-                            {up ? (
-                              <TrendingUp size={13} aria-hidden="true" />
-                            ) : (
-                              <TrendingDown size={13} aria-hidden="true" />
-                            )}
+                            {up ? <TrendingUp size={12} aria-hidden="true" /> : <TrendingDown size={12} aria-hidden="true" />}
                             {up ? "+" : ""}
-                            {rate.changePct.toFixed(2)}%
+                            {r.changePct.toFixed(2)}%
                           </span>
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
+                </div>
+
+                {/* Tablet and up: the pair table */}
+                <div className="hidden overflow-x-auto sm:block">
+                  <table className="w-full min-w-[560px] text-body">
+                    <thead>
+                      <tr className="border-b border-border text-left text-muted-foreground">
+                        <th className="px-4 py-3 font-normal">Currency pair</th>
+                        <th className="px-4 py-3 text-right font-normal">Bank buys</th>
+                        <th className="px-4 py-3 text-right font-normal">Bank sells</th>
+                        <th className="px-4 py-3 text-right font-normal">Mid</th>
+                        <th className="px-4 py-3 text-right font-normal">Change</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {FX_RATES.map((r) => {
+                        const up = r.changePct >= 0;
+                        const meta = getCurrencyMeta(r.base);
+                        return (
+                          <tr key={r.pair} className="transition-colors hover:bg-muted/50">
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-3">
+                                <CurrencyPairLogos base={r.base} quote={r.quote} size={28} />
+                                <div className="flex flex-col">
+                                  <span className="font-medium text-foreground tabular">{r.pair}</span>
+                                  <span className="text-caption text-muted-foreground">
+                                    {meta.name} · {meta.country}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-right font-medium text-foreground tabular">{formatRate(r.buy)}</td>
+                            <td className="px-4 py-3 text-right font-medium text-foreground tabular">{formatRate(r.sell)}</td>
+                            <td className="px-4 py-3 text-right text-muted-foreground tabular">{formatRate(r.mid)}</td>
+                            <td className="px-4 py-3 text-right">
+                              <span
+                                className={`inline-flex items-center justify-end gap-1 font-medium tabular ${
+                                  up ? "text-success-text" : "text-destructive"
+                                }`}
+                              >
+                                {up ? <TrendingUp size={13} aria-hidden="true" /> : <TrendingDown size={13} aria-hidden="true" />}
+                                {up ? "+" : ""}
+                                {r.changePct.toFixed(2)}%
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <p className="text-caption text-muted-foreground tabular">Published {formatDateTime(FX_PUBLISHED_AT)}</p>
+            </section>
           </div>
-        </>
-      </Skeleton>
+        </Skeleton>
       )}
     </div>
+  );
+}
+
+function CardRatesTab() {
+  return (
+    <section className="flex flex-col gap-2">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card">
+        <table className="w-full text-body">
+          <thead>
+            <tr className="border-b border-border text-left text-muted-foreground">
+              <th className="px-4 py-3 font-normal">Card use</th>
+              <th className="px-4 py-3 text-right font-normal">Rate or fee</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {CARD_RATES.map((row) => (
+              <tr key={row.use} className="transition-colors hover:bg-muted/50">
+                <td className="px-4 py-3 text-foreground">{row.use}</td>
+                <td className="px-4 py-3 text-right font-medium text-foreground tabular">{row.rate}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-caption text-muted-foreground">Placeholder rates for design review. The bank has not confirmed them.</p>
+    </section>
+  );
+}
+
+function FixedDepositsTab() {
+  return (
+    <section className="flex flex-col gap-2">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card">
+        <table className="w-full text-body">
+          <thead>
+            <tr className="border-b border-border text-left text-muted-foreground">
+              <th className="px-4 py-3 font-normal">Tenure</th>
+              <th className="px-4 py-3 text-right font-normal">Rate per year</th>
+              <th className="px-4 py-3 text-right font-normal">Interest on minimum deposit</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {TENURES.map((t) => (
+              <tr key={t.days} className="transition-colors hover:bg-muted/50">
+                <td className="px-4 py-3 text-foreground tabular">{`${t.days} days`}</td>
+                <td className="px-4 py-3 text-right font-medium text-foreground tabular">{`${t.rate.toFixed(1)}%`}</td>
+                <td className="px-4 py-3 text-right text-foreground tabular">
+                  {formatMoney(interestFor(MIN_DEPOSIT, t.rate, t.days))}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-caption text-muted-foreground tabular">Minimum deposit {formatMoney(MIN_DEPOSIT)}</p>
+    </section>
+  );
+}
+
+export default function RatesPage() {
+  // The search params need a Suspense boundary (see beneficiaries/page.tsx).
+  return (
+    <Suspense fallback={null}>
+      <RatesContent />
+    </Suspense>
   );
 }

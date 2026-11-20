@@ -752,12 +752,16 @@ export function DualAmountFields({
   onChange,
   onFocus,
   hasError,
+  onSwap,
 }: {
   foreign: string;
   ghs: string;
   rate?: number;
-  foreignCurrency: string;
-  sendCurrency?: string;
+  /** A code, or a control such as a currency picker, shown in the box beside the amount. */
+  foreignCurrency: React.ReactNode;
+  sendCurrency?: React.ReactNode;
+  /** When given, the middle switch is a button that swaps the two sides, on every width. */
+  onSwap?: () => void;
   /** What the right box holds for this much in the left box. Defaults to the rate, rounded down. */
   toForeign?: (ghs: number) => number;
   /** What the left box holds for this much in the right box. Defaults to the rate, rounded. */
@@ -787,11 +791,23 @@ export function DualAmountFields({
         hasError={hasError}
       />
 
-      <div className="absolute left-1/2 top-[calc(50%+14px)] z-10 hidden -translate-x-1/2 -translate-y-1/2 md:flex">
-        <div className="flex size-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm">
-          <ArrowLeftRight size={15} />
+      {onSwap ? (
+        <button
+          type="button"
+          onClick={onSwap}
+          aria-label="Swap currencies"
+          title="Swap currencies"
+          className="absolute left-1/2 top-1/2 z-10 flex size-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 md:top-[calc(50%+14px)]"
+        >
+          <ArrowLeftRight size={18} aria-hidden="true" />
+        </button>
+      ) : (
+        <div className="absolute left-1/2 top-[calc(50%+14px)] z-10 hidden -translate-x-1/2 -translate-y-1/2 md:flex">
+          <div className="flex size-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm">
+            <ArrowLeftRight size={15} />
+          </div>
         </div>
-      </div>
+      )}
 
       <AmountInput
         value={foreign}
@@ -839,7 +855,8 @@ export function AmountInput({
   onChange: (val: string) => void;
   onFocus?: () => void;
   onNext?: () => void;
-  currency?: string;
+  /** The code, or a picker for it, shown before the amount. */
+  currency?: React.ReactNode;
   label?: string;
   /** A link or control that sits on the label row, right-aligned, as Send to new group does on a group field. */
   action?: React.ReactNode;
@@ -1035,7 +1052,8 @@ export function AmountInput({
               isError ? "text-destructive/80" : "text-muted-foreground"
             )}
           >
-            {currency}
+            {/* A picker in this slot must not also focus the amount */}
+            <span onClick={(e) => e.stopPropagation()}>{currency}</span>
           </span>
           <div className="relative inline-flex items-center min-h-[36px]">
             {/* Ghost text that dynamically drives the width of the input wrapper */}
