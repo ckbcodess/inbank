@@ -1,0 +1,2130 @@
+group,gcb_name,material_glyph,figma_node,used_in_app_as,lucide_icon,status
+Named,Activity,monitor_heart,12:3,,activity,matched (name)
+Named,Airplay,airplay,12:68,,airplay,matched (name)
+Named,Alert circle,error,12:121,AlertCircle,circle-exclamation-point,matched (name)
+Named,Alert octagon,report,12:166,FileWarning,octagon-exclamation-point,matched (name)
+Named,Alert triangle,warning,12:219,AlertTriangle TriangleAlert,triangle-exclamation-point,matched (name)
+Named,Align center,format_align_center,12:264,,text-align-center,matched (name)
+Named,Align justify,format_align_justify,12:305,,text-align-justify,matched (name)
+Named,Align left,format_align_left,12:353,,text-align-start,matched (name)
+Named,Align right,format_align_right,12:394,,text-align-end,matched (name)
+Named,Anchor,anchor,12:435,,anchor,matched (name)
+Named,Aperture,camera,12:480,,aperture,matched (name)
+Named,Archive,archive,12:525,Archive,archive,matched (name)
+Named,Arrow down,arrow_downward,12:570,,arrow-down,matched (name)
+Named,Arrow down-circle,arrow_circle_down,12:611,,circle-arrow-down,matched (name)
+Named,Arrow down-left,south_west,12:667,ArrowDownLeft,arrow-down-left,matched (name)
+Named,Arrow down-right,south_east,12:708,ArrowDownRight,arrow-down-right,matched (name)
+Named,Arrow left,arrow_back,12:749,ArrowLeft,arrow-left,matched (name)
+Named,Arrow left-circle,arrow_circle_left,12:790,,circle-arrow-left,matched (name)
+Named,Arrow right,arrow_forward,12:843,ArrowRight,arrow-right,matched (name)
+Named,Arrow right-circle,arrow_circle_right,12:884,,circle-arrow-right,matched (name)
+Named,Arrow up,arrow_upward,12:937,ArrowUp,arrow-up,matched (name)
+Named,Arrow up-circle,arrow_circle_up,12:985,,circle-arrow-up,matched (name)
+Named,Arrow up-left,north_west,12:1034,,arrow-up-left,matched (name)
+Named,Arrow up-right,north_east,12:1075,ArrowUpRight,arrow-up-right,matched (name)
+Named,At sign,alternate_email,12:1116,,at-sign,matched (name)
+Named,Award,workspace_premium,12:1157,,award,matched (name)
+Named,Bar chart,bar_chart,12:1202,BarChart3,chart-no-axes-column-increasing,matched (name)
+Named,Bar chart-2,insert_chart,12:1259,,chart-no-axes-column,matched (name)
+Named,Battery,battery_0_bar,12:1311,,battery,matched (name)
+Named,Battery charging,battery_charging_full,12:1360,,battery-charging,matched (name)
+Named,Bell,notifications,12:1401,Bell,bell,matched (name)
+Named,Bell off,notifications_off,12:1446,,bell-off,matched (name)
+Named,Bluetooth,bluetooth,12:1491,,bluetooth,matched (name)
+Named,Bold,format_bold,12:1532,,letter-b,matched (name)
+Named,Book,book,12:1573,,book,matched (name)
+Named,Book open,menu_book,12:1625,BookOpen,book-open,matched (name)
+Named,Bookmark,bookmark,12:1694,,bookmark,matched (name)
+Named,Box,inventory_2,12:1739,,box,matched (name)
+Named,Briefcase,work,12:1800,Briefcase,briefcase,matched (name)
+Named,Calendar,calendar_month,12:1845,Calendar,calendar,matched (name)
+Named,Camera,photo_camera,12:1894,Camera,camera,matched (name)
+Named,Camera off,no_photography,12:1939,CameraOff,camera-off,matched (name)
+Named,Cast,cast,12:1995,,cast,matched (name)
+Named,Check,check,12:2036,Check,check,matched (name)
+Named,Check circle,check_circle,12:2077,CheckCircle2,circle-check-big,matched (name)
+Named,Check square,check_box,12:2122,,square-check-big,matched (name)
+Named,Chevron down,keyboard_arrow_down,12:2167,ChevronDown,chevron-down,matched (name)
+Named,Chevron left,keyboard_arrow_left,12:2208,,chevron-left,matched (name)
+Named,Chevron right,keyboard_arrow_right,12:2249,,chevron-right,matched (name)
+Named,Chevron up,keyboard_arrow_up,12:2297,,chevron-up,matched (name)
+Named,Chevrons down,keyboard_double_arrow_down,12:2338,,chevrons-down,matched (name)
+Named,Chevrons left,keyboard_double_arrow_left,12:2391,,chevrons-left,matched (name)
+Named,Chevrons right,keyboard_double_arrow_right,12:2444,,chevrons-right,matched (name)
+Named,Chevrons up,keyboard_double_arrow_up,12:2497,,chevrons-up,matched (name)
+Named,Circle,circle,12:2550,Circle,circle,matched (name)
+Named,Clipboard,content_paste,12:2603,,clipboard,matched (name)
+Named,Clock,schedule,12:2655,Clock,clock,matched (name)
+Named,Cloud,cloud,12:2700,,cloud,matched (name)
+Named,Cloud drizzle,grain,12:2745,,cloud-drizzle,matched (name)
+Named,Cloud lightning,thunderstorm,12:2786,,cloud-lightning,matched (name)
+Named,Cloud off,cloud_off,12:2847,,cloud-off,matched (name)
+Named,Cloud rain,grain,12:2892,,cloud-rain,matched (name)
+Named,Cloud snow,ac_unit,12:2933,,cloud-snow,matched (name)
+Named,Code,code,12:2981,Code,code,matched (name)
+Named,Coffee,coffee,12:3022,,coffee,matched (name)
+Named,Columns,view_column,12:3079,,columns-2,matched (name)
+Named,Command,keyboard_command_key,12:3124,,command,matched (name)
+Named,Compass,explore,12:3173,,compass,matched (name)
+Named,Copy,content_copy,12:3218,Copy,copy,matched (name)
+Named,Corner down-left,subdirectory_arrow_left,12:3263,,corner-down-left,matched (name)
+Named,Corner down-right,subdirectory_arrow_right,12:3311,,corner-down-right,matched (name)
+Named,Corner left-down,u_turn_left,12:3352,,corner-left-down,matched (name)
+Named,Corner left-up,turn_left,12:3397,,corner-left-up,matched (name)
+Named,Corner right-down,u_turn_right,12:3442,,corner-right-down,matched (name)
+Named,Corner right-up,turn_right,12:3487,,corner-right-up,matched (name)
+Named,Corner up-left,turn_sharp_left,12:3532,,corner-up-left,matched (name)
+Named,Corner up-right,turn_sharp_right,12:3577,,corner-up-right,matched (name)
+Named,Cpu,memory,12:3629,,cpu,matched (name)
+Named,Credit card,credit_card,12:3674,CreditCard,credit-card,matched (name)
+Named,Crop,crop,12:3719,,crop,matched (name)
+Named,Crosshair,gps_fixed,12:3760,,crosshair,matched (name)
+Named,Database,storage,12:3805,,database,matched (name)
+Named,Delete,backspace,12:3846,,delete,matched (name)
+Named,Disc,album,12:3891,,disc,matched (name)
+Named,Dollar sign,attach_money,12:3943,,dollar-sign,matched (name)
+Named,Download,download,12:3984,ArrowDownToLine Download FileDown,download,matched (name)
+Named,Download cloud,cloud_download,12:4029,,cloud-download,matched (name)
+Named,Droplet,water_drop,12:4074,Droplets,droplet,matched (name)
+Named,Edit,edit,12:4119,Pencil,square-pen,matched (name)
+Named,Edit 2,create,12:4164,,pen,matched (name)
+Named,Edit 3,draw,12:4209,,pen-line,matched (name)
+Named,External link,open_in_new,12:4261,ExternalLink,external-link,matched (name)
+Named,Eye,visibility,12:4302,Eye,eye,matched (name)
+Named,Eye off,visibility_off,12:4347,EyeOff,eye-off,matched (name)
+Named,Fast forward,fast_forward,12:4392,,fast-forward,matched (name)
+Named,File minus,insert_drive_file,12:4498,,file-minus,matched (name)
+Named,File plus,note_add,12:4543,,file-plus,matched (name)
+Named,File text,description,12:4595,FileText,file-text,matched (name)
+Named,Film,local_movies,12:4640,,film,matched (name)
+Named,Filter,filter_alt,12:4685,,funnel,matched (name)
+Named,Flag,flag,12:4734,,flag,matched (name)
+Named,Folder,folder,12:4779,,folder,matched (name)
+Named,Folder minus,folder_delete,12:4824,,folder-minus,matched (name)
+Named,Folder plus,create_new_folder,12:4873,,folder-plus,matched (name)
+Named,Frown,sentiment_dissatisfied,12:4925,,face-slightly-frowning,matched (name)
+Named,Gift,redeem,12:4978,,gift,matched (name)
+Named,Git branch,account_tree,12:5023,,git-branch,matched (name)
+Named,Git commit,commit,12:5080,,git-commit-horizontal,matched (name)
+Named,Git merge,merge,12:5125,,git-merge,matched (name)
+Named,Git pull-request,alt_route,12:5170,,git-pull-request,matched (name)
+Named,Globe,public,12:5215,,globe,matched (name)
+Named,Grid,grid_view,12:5267,LayoutGrid,layout-grid,matched (synonym)
+Named,Hard drive,storage,12:5344,,hard-drive,matched (name)
+Named,Hash,tag,12:5385,,hash,matched (name)
+Named,Headphones,headphones,12:5430,,headphones,matched (name)
+Named,Heart,favorite,12:5487,Heart,heart,matched (name)
+Named,Help circle,help,12:5532,CircleHelp,circle-question-mark,matched (name)
+Named,Hexagon,hexagon,12:5577,,hexagon,matched (name)
+Named,Inbox,inbox,12:5723,Inbox,inbox,matched (name)
+Named,Info,info,12:5768,Info,info,matched (name)
+Named,Italic,format_italic,12:5813,,italic,matched (name)
+Named,Key,key,12:5854,Key,key,matched (name)
+Named,Layers,layers,12:5899,Layers,layers,matched (name)
+Named,Layout,space_dashboard,12:5951,,panels-top-left,matched (name)
+Named,Life buoy,support,12:5996,,life-buoy,matched (name)
+Named,Link,link,12:6061,Link2,link,matched (name)
+Named,Link 2,insert_link,12:6102,,link-2,matched (name)
+Named,Link 3,add_link,12:6143,,link,matched (synonym)
+Named,List,list,12:6188,,list,matched (name)
+Named,Loader,cached,12:6229,,loader,matched (name)
+Named,Lock,lock,12:6277,Lock,lock,matched (name)
+Named,Log in,login,12:6322,,log-in,matched (name)
+Named,Log out,logout,12:6367,LogOut,log-out,matched (name)
+Named,Mail,mail,12:6412,Mail,mail,matched (name)
+Named,Map,map,12:6457,,map,matched (name)
+Named,Map pin,place,12:6502,,map-pin,matched (name)
+Named,Maximize,fullscreen,12:6547,,maximize,matched (name)
+Named,Maximize 2,open_in_full,12:6595,Maximize2,maximize-2,matched (name)
+Named,Meh,sentiment_neutral,12:6636,,face-neutral,matched (name)
+Named,Menu,menu,12:6693,Menu,menu,matched (name)
+Named,Message circle,chat,12:6734,MessageCircle,message-circle,matched (name)
+Named,Message square,chat_bubble,12:6779,,message-square,matched (name)
+Named,Mic,mic,12:6824,,mic,matched (name)
+Named,Mic off,mic_off,12:6881,,mic-off,matched (name)
+Named,Minimize,fullscreen_exit,12:6933,,minimize,matched (name)
+Named,Minimize 2,close_fullscreen,12:6974,Minimize2,minimize-2,matched (name)
+Named,Minus,remove,12:7015,Minus,minus,matched (name)
+Named,Minus circle,remove_circle,12:7056,,circle-minus,matched (name)
+Named,Minus square,indeterminate_check_box,12:7101,,square-minus,matched (name)
+Named,Monitor,monitor,12:7146,,monitor,matched (name)
+Named,Moon,dark_mode,12:7199,Moon,moon,matched (name)
+Named,More horizontal,more_horiz,12:7251,MoreHorizontal,ellipsis,matched (name)
+Named,More vertical,more_vert,12:7292,MoreVertical,ellipsis-vertical,matched (name)
+Named,Mouse pointer,near_me,12:7333,,mouse-pointer,matched (name)
+Named,Move,open_with,12:7378,,move,matched (name)
+Named,Music,music_note,12:7419,,eighth-notes,matched (name)
+Named,Navigation 2,navigation,12:7509,Navigation,navigation-2,matched (name)
+Named,Navigation 3,near_me,12:7561,,navigation,matched (synonym)
+Named,Octagon,pentagon,12:7606,,octagon,matched (name)
+Named,Package,inventory,12:7655,,package,matched (name)
+Named,Paperclip,attach_file,12:7716,Paperclip,paperclip,matched (name)
+Named,Pause,pause,12:7757,Pause,pause,matched (name)
+Named,Pause circle,pause_circle,12:7798,,circle-pause,matched (name)
+Named,Pen tool,draw,12:7863,,pen-tool,matched (name)
+Named,Percent,percent,12:7915,Percent,percent,matched (name)
+Named,Phone,call,12:7968,Phone,phone,matched (name)
+Named,Phone call,ring_volume,12:8013,,phone-call,matched (name)
+Named,Phone forwarded,phone_forwarded,12:8058,,phone-forwarded,matched (name)
+Named,Phone incoming,call_received,12:8103,,phone-incoming,matched (name)
+Named,Phone missed,call_missed,12:8144,,phone-missed,matched (name)
+Named,Phone off,phone_disabled,12:8185,,phone-off,matched (name)
+Named,Phone outgoing,call_made,12:8241,,phone-outgoing,matched (name)
+Named,Pie chart,pie_chart,12:8282,PieChart,chart-pie,matched (name)
+Named,Play,play_arrow,12:8327,Play,play,matched (name)
+Named,Play circle,play_circle,12:8372,,circle-play,matched (name)
+Named,Plus,add,12:8429,Plus,plus,matched (name)
+Named,Plus circle,add_circle,12:8470,PlusCircle,circle-plus,matched (name)
+Named,Plus square,add_box,12:8515,,square-plus,matched (name)
+Named,Power,power_settings_new,12:8567,,power,matched (name)
+Named,Printer,print,12:8608,,printer,matched (name)
+Named,Radio,podcasts,12:8661,,radio,matched (name)
+Named,Refresh ccw,autorenew,12:8706,,refresh-ccw,matched (name)
+Named,Refresh cw,sync,12:8747,,refresh-cw,matched (name)
+Named,Repeat,repeat,12:8788,Repeat,repeat,matched (name)
+Named,Rewind,fast_rewind,12:8829,,rewind,matched (name)
+Named,Rotate ccw,rotate_left,12:8881,RotateCcw,rotate-ccw,matched (name)
+Named,Rotate cw,rotate_right,12:8922,RotateCw,rotate-cw,matched (name)
+Named,Rss,rss_feed,12:8963,,rss,matched (name)
+Named,Save,save,12:9008,,save,matched (name)
+Named,Scissors,content_cut,12:9053,,scissors,matched (name)
+Named,Send,send,12:9135,Send,send,matched (name)
+Named,Server,dns,12:9187,,server,matched (name)
+Named,Settings,settings,12:9232,Settings,settings,matched (name)
+Named,Share,ios_share,12:9277,,share,matched (name)
+Named,Share 2,share,12:9330,Share Share2,share-2,matched (name)
+Named,Share 3,share,12:9383,Share Share2,share,matched (exact)
+Named,Shield,shield,12:9436,Shield,shield,matched (name)
+Named,Shield off,remove_moderator,12:9489,ShieldOff,shield-off,matched (name)
+Named,Shopping bag,shopping_bag,12:9549,ShoppingBag,shopping-bag,matched (name)
+Named,Shopping cart,shopping_cart,12:9598,ShoppingCart,shopping-cart,matched (name)
+Named,Shuffle,shuffle,12:9643,,shuffle,matched (name)
+Named,Sidebar,view_sidebar,12:9684,,panel-left,matched (name)
+Named,Skip back,skip_previous,12:9741,,skip-back,matched (name)
+Named,Skip forward,skip_next,12:9786,,skip-forward,matched (name)
+Named,Slash,block,12:9831,,slash,matched (name)
+Named,Sliders,tune,12:9879,Sliders SlidersHorizontal,sliders-vertical,matched (name)
+Named,Smartphone,smartphone,12:9920,,smartphone,matched (name)
+Named,Smile,sentiment_satisfied,12:9965,,face-slightly-smiling,matched (name)
+Named,Speaker,speaker,12:10018,,speaker,matched (name)
+Named,Square,crop_square,12:10063,,square,matched (name)
+Named,Star,star,12:10104,,star,matched (name)
+Named,Stop circle,stop_circle,12:10157,,circle-stop,matched (name)
+Named,Sun,light_mode,12:10209,Sun,sun,matched (name)
+Named,Sunrise,wb_twilight,12:10254,,sunrise,matched (name)
+Named,Sunset,wb_twilight,12:10319,,sunset,matched (name)
+Named,Table,table_chart,12:10384,FileSpreadsheet,table,matched (name)
+Named,Tablet,tablet,12:10429,,tablet,matched (name)
+Named,Tag,local_offer,12:10474,,tag,matched (name)
+Named,Target,adjust,12:10523,,target,matched (name)
+Named,Terminal,terminal,12:10571,,terminal,matched (name)
+Named,Thermometer,device_thermostat,12:10632,,thermometer,matched (name)
+Named,Thumbs down,thumb_down,12:10681,,thumbs-down,matched (name)
+Named,Thumbs up,thumb_up,12:10726,,thumbs-up,matched (name)
+Named,Toggle left,toggle_off,12:10771,,toggle-left,matched (name)
+Named,Toggle right,toggle_on,12:10816,,toggle-right,matched (name)
+Named,Tool,build,12:10861,,wrench,matched (synonym)
+Named,Trash,delete,12:10913,Trash2,trash,matched (name)
+Named,Trash 2,delete,12:10958,Trash2,trash,matched (name)
+Named,Trash 3,delete_forever,12:11003,,trash,matched (synonym)
+Named,Trending down,trending_down,12:11048,TrendingDown,trending-down,matched (name)
+Named,Trending up,trending_up,12:11089,TrendingUp,trending-up,matched (name)
+Named,Triangle,change_history,12:11130,,triangle,matched (name)
+Named,Truck,local_shipping,12:11175,Truck,truck,matched (name)
+Named,Tv,tv,12:11227,Tv,tv,matched (name)
+Named,Type,text_fields,12:11272,,type,matched (name)
+Named,Umbrella,umbrella,12:11313,Umbrella,umbrella,matched (name)
+Named,Underline,format_underlined,12:11362,,underline,matched (name)
+Named,Unlock,lock_open,12:11403,Unlock,lock-open,matched (name)
+Named,Upload,upload,12:11448,Upload,upload,matched (name)
+Named,Upload cloud,cloud_upload,12:11493,,cloud-upload,matched (name)
+Named,User,person,12:11545,User UserRound,user,matched (name)
+Named,User check,how_to_reg,12:11594,,user-check,matched (name)
+Named,User minus,person_remove,12:11643,,user-minus,matched (name)
+Named,User plus,person_add,12:11708,UserPlus,user-plus,matched (name)
+Named,User x,person_off,12:11757,,user-x,matched (name)
+Named,Users,group,12:11802,Users,users,matched (name)
+Named,Video,videocam,12:11851,,video,matched (name)
+Named,Video off,videocam_off,12:11903,,video-off,matched (name)
+Named,Voicemail,voicemail,12:11948,,voicemail,matched (name)
+Named,Volume,volume_mute,12:11989,,volume,matched (name)
+Named,Volume 1,volume_down,12:12034,,volume-1,matched (name)
+Named,Volume 2,volume_up,12:12079,,volume-2,matched (name)
+Named,Volume 3,volume_up,12:12124,,volume-2,matched (synonym)
+Named,Volume 4,volume_up,12:12169,,volume-2,matched (synonym)
+Named,Volume x,volume_off,12:12221,,volume-x,matched (name)
+Named,Watch,watch,12:12266,,watch,matched (name)
+Named,Wifi,wifi,12:12311,Wifi,wifi,matched (name)
+Named,Wifi off,wifi_off,12:12352,,wifi-off,matched (name)
+Named,Wind,air,12:12393,,wind,matched (name)
+Named,X,close,12:12442,X,x,matched (name)
+Named,X circle,cancel,12:12483,XCircle,circle-x,matched (synonym)
+Named,X octagon,cancel,12:12535,XCircle,circle-x,matched (synonym)
+Named,X square,disabled_by_default,12:12580,,,no Lucide equivalent
+Named,Zap,bolt,12:12625,Zap,zap,matched (name)
+Named,Zap off,flash_off,12:12670,,zap-off,matched (name)
+Named,Zoom in,zoom_in,12:12711,,zoom-in,matched (name)
+Named,Zoom out,zoom_out,12:12752,,zoom-out,matched (name)
+Toggle,check_box_outline_blank,check_box_outline_blank,12:12803,,book-check,review (keyword guess)
+Toggle,radio_button_checked,radio_button_checked,12:12844,,radio,review (keyword guess)
+Toggle,radio_button_unchecked,radio_button_unchecked,12:12889,,radio,review (keyword guess)
+Toggle,star_border,star_border,12:12930,,circle-star,review (keyword guess)
+Toggle,star_border_purple500,star_border_purple500,12:12971,,circle-star,review (keyword guess)
+Toggle,star_half,star_half,12:13016,,star-half,matched (exact)
+Toggle,star_outline,star_outline,12:13057,,star,review (keyword guess)
+Toggle,star_purple500,star_purple500,12:13098,,circle-star,review (keyword guess)
+Social,18_up_rating,18_up_rating,12:13146,,arrow-up,review (keyword guess)
+Social,6_ft_apart,6_ft_apart,12:13215,,,no Lucide equivalent
+Social,add_moderator,add_moderator,12:13256,ShieldPlus,shield-plus,matched (app-map)
+Social,add_reaction,add_reaction,12:13317,,,no Lucide equivalent
+Social,architecture,architecture,12:13362,,,no Lucide equivalent
+Social,assist_walker,assist_walker,12:13419,,,no Lucide equivalent
+Social,back_hand,back_hand,12:13472,,hand,review (keyword guess)
+Social,blind,blind,12:13517,,,no Lucide equivalent
+Social,boy,boy,12:13570,,,no Lucide equivalent
+Social,cake,cake,12:13619,,cake,matched (exact)
+Social,catching_pokemon,catching_pokemon,12:13664,,,no Lucide equivalent
+Social,clean_hands,clean_hands,12:13709,,,no Lucide equivalent
+Social,co2,co2,12:13754,,,no Lucide equivalent
+Social,compost,compost,12:13795,,,no Lucide equivalent
+Social,connect_without_contact,connect_without_contact,12:13836,,contact,review (keyword guess)
+Social,construction,construction,12:13877,Construction,construction,matched (exact)
+Social,cookie,cookie,12:13930,,cookie,matched (exact)
+Social,coronavirus,coronavirus,12:13995,,,no Lucide equivalent
+Social,cruelty_free,cruelty_free,12:14040,,,no Lucide equivalent
+Social,cyclone,cyclone,12:14085,,,no Lucide equivalent
+Social,deck,deck,12:14146,,,no Lucide equivalent
+Social,diversity_1,diversity_1,12:14207,,,no Lucide equivalent
+Social,diversity_2,diversity_2,12:14292,,,no Lucide equivalent
+Social,diversity_3,diversity_3,12:14361,,,no Lucide equivalent
+Social,domain,domain,12:14426,,building-complex,matched (synonym)
+Social,domain_add,domain_add,12:14471,,,no Lucide equivalent
+Social,downhill_skiing,downhill_skiing,12:14520,,,no Lucide equivalent
+Social,edit_notifications,edit_notifications,12:14561,,,no Lucide equivalent
+Social,elderly,elderly,12:14614,,,no Lucide equivalent
+Social,elderly_woman,elderly_woman,12:14655,,,no Lucide equivalent
+Social,emoji_emotions,emoji_emotions,12:14708,,,no Lucide equivalent
+Social,emoji_events,emoji_events,12:14773,,,no Lucide equivalent
+Social,emoji_food_beverage,emoji_food_beverage,12:14818,,,no Lucide equivalent
+Social,emoji_nature,emoji_nature,12:14875,,,no Lucide equivalent
+Social,emoji_objects,emoji_objects,12:14948,,,no Lucide equivalent
+Social,emoji_people,emoji_people,12:15021,,,no Lucide equivalent
+Social,emoji_symbols,emoji_symbols,12:15074,,,no Lucide equivalent
+Social,emoji_transportation,emoji_transportation,12:15147,,,no Lucide equivalent
+Social,engineering,engineering,12:15216,,,no Lucide equivalent
+Social,face_2,face_2,12:15293,,,no Lucide equivalent
+Social,face_3,face_3,12:15374,,,no Lucide equivalent
+Social,face_4,face_4,12:15447,,,no Lucide equivalent
+Social,face_5,face_5,12:15516,,,no Lucide equivalent
+Social,face_6,face_6,12:15653,,,no Lucide equivalent
+Social,female,female,12:15714,,,no Lucide equivalent
+Social,fireplace,fireplace,12:15755,,,no Lucide equivalent
+Social,fitbit,fitbit,12:15812,,,no Lucide equivalent
+Social,flood,flood,12:15853,,,no Lucide equivalent
+Social,follow_the_signs,follow_the_signs,12:15910,,,no Lucide equivalent
+Social,front_hand,front_hand,12:15955,,bus-front,review (keyword guess)
+Social,girl,girl,12:16000,,,no Lucide equivalent
+Social,group_add,group_add,12:16049,,group,review (keyword guess)
+Social,group_off,group_off,12:16122,,group,review (keyword guess)
+Social,group_remove,group_remove,12:16167,,group,review (keyword guess)
+Social,groups,groups,12:16212,,,no Lucide equivalent
+Social,groups_2,groups_2,12:16265,,,no Lucide equivalent
+Social,groups_3,groups_3,12:16342,,,no Lucide equivalent
+Social,handshake,handshake,12:16419,,handshake,matched (exact)
+Social,health_and_safety,health_and_safety,12:16468,,,no Lucide equivalent
+Social,heart_broken,heart_broken,12:16513,,book-heart,review (keyword guess)
+Social,hiking,hiking,12:16570,,,no Lucide equivalent
+Social,history_edu,history_edu,12:16611,,,no Lucide equivalent
+Social,hive,hive,12:16680,,,no Lucide equivalent
+Social,ice_skating,ice_skating,12:16757,,,no Lucide equivalent
+Social,interests,interests,12:16810,,,no Lucide equivalent
+Social,kayaking,kayaking,12:16855,,,no Lucide equivalent
+Social,king_bed,king_bed,12:16896,,bed,review (keyword guess)
+Social,kitesurfing,kitesurfing,12:16949,,,no Lucide equivalent
+Social,landslide,landslide,12:16994,,,no Lucide equivalent
+Social,location_city,location_city,12:17071,,,no Lucide equivalent
+Social,luggage,luggage,12:17112,,luggage,matched (exact)
+Social,male,male,12:17165,,,no Lucide equivalent
+Social,man,man,12:17206,,,no Lucide equivalent
+Social,man_2,man_2,12:17259,,,no Lucide equivalent
+Social,man_3,man_3,12:17312,,,no Lucide equivalent
+Social,man_4,man_4,12:17365,,,no Lucide equivalent
+Social,masks,masks,12:17418,,,no Lucide equivalent
+Social,military_tech,military_tech,12:17463,,,no Lucide equivalent
+Social,mood,mood,12:17520,,,no Lucide equivalent
+Social,mood_bad,mood_bad,12:17577,,,no Lucide equivalent
+Social,nights_stay,nights_stay,12:17630,,,no Lucide equivalent
+Social,no_adult_content,no_adult_content,12:17687,,,no Lucide equivalent
+Social,no_luggage,no_luggage,12:17748,,luggage,review (keyword guess)
+Social,nordic_walking,nordic_walking,12:17809,,,no Lucide equivalent
+Social,notification_add,notification_add,12:17850,,,no Lucide equivalent
+Social,notifications_active,notifications_active,12:17895,,,no Lucide equivalent
+Social,notifications_none,notifications_none,12:17940,,,no Lucide equivalent
+Social,notifications_paused,notifications_paused,12:17985,,,no Lucide equivalent
+Social,outdoor_grill,outdoor_grill,12:18030,,,no Lucide equivalent
+Social,pages,pages,12:18099,,,no Lucide equivalent
+Social,paragliding,paragliding,12:18144,,,no Lucide equivalent
+Social,party_mode,party_mode,12:18189,,party-popper,review (keyword guess)
+Social,people,people,12:18234,,,no Lucide equivalent
+Social,people_alt,people_alt,12:18283,,,no Lucide equivalent
+Social,people_outline,people_outline,12:18352,,,no Lucide equivalent
+Social,person_2,person_2,12:18401,,,no Lucide equivalent
+Social,person_3,person_3,12:18462,,,no Lucide equivalent
+Social,person_4,person_4,12:18523,,,no Lucide equivalent
+Social,person_add_alt,person_add_alt,12:18584,,person-standing,review (keyword guess)
+Social,person_add_alt_1,person_add_alt_1,12:18649,,person-standing,review (keyword guess)
+Social,person_outline,person_outline,12:18714,,,no Lucide equivalent
+Social,person_remove_alt_1,person_remove_alt_1,12:18763,,person-standing,review (keyword guess)
+Social,personal_injury,personal_injury,12:18828,,,no Lucide equivalent
+Social,piano,piano,12:18873,,piano,matched (exact)
+Social,piano_off,piano_off,12:18918,,piano,review (keyword guess)
+Social,pix,pix,12:18963,,,no Lucide equivalent
+Social,plus_one,plus_one,12:19020,,badge-plus,review (keyword guess)
+Social,poll,poll,12:19061,,,no Lucide equivalent
+Social,precision_manufacturing,precision_manufacturing,12:19106,,,no Lucide equivalent
+Social,psychology,psychology,12:19163,,,no Lucide equivalent
+Social,psychology_alt,psychology_alt,12:19220,,,no Lucide equivalent
+Social,public_off,public_off,12:19281,,,no Lucide equivalent
+Social,real_estate_agent,real_estate_agent,12:19330,,,no Lucide equivalent
+Social,recommend,recommend,12:19375,,,no Lucide equivalent
+Social,recycling,recycling,12:19432,,,no Lucide equivalent
+Social,reduce_capacity,reduce_capacity,12:19473,,,no Lucide equivalent
+Social,roller_skating,roller_skating,12:19514,,paint-roller,review (keyword guess)
+Social,safety_divider,safety_divider,12:19579,,,no Lucide equivalent
+Social,sanitizer,sanitizer,12:19620,,,no Lucide equivalent
+Social,scale,scale,12:19665,,scale,matched (exact)
+Social,school,school,12:19714,GraduationCap,school,matched (exact)
+Social,science,science,12:19759,,,no Lucide equivalent
+Social,scoreboard,scoreboard,12:19812,,,no Lucide equivalent
+Social,scuba_diving,scuba_diving,12:19861,,,no Lucide equivalent
+Social,self_improvement,self_improvement,12:19906,,,no Lucide equivalent
+Social,sentiment_very_dissatisfied,sentiment_very_dissatisfied,12:19959,,,no Lucide equivalent
+Social,sentiment_very_satisfied,sentiment_very_satisfied,12:20004,,,no Lucide equivalent
+Social,severe_cold,severe_cold,12:20049,,,no Lucide equivalent
+Social,sick,sick,12:20106,,,no Lucide equivalent
+Social,sign_language,sign_language,12:20147,,at-sign,review (keyword guess)
+Social,single_bed,single_bed,12:20196,,bed-single,review (keyword guess)
+Social,skateboarding,skateboarding,12:20249,,,no Lucide equivalent
+Social,sledding,sledding,12:20290,,,no Lucide equivalent
+Social,snowboarding,snowboarding,12:20331,,,no Lucide equivalent
+Social,snowshoeing,snowshoeing,12:20372,,,no Lucide equivalent
+Social,social_distance,social_distance,12:20413,,,no Lucide equivalent
+Social,south_america,south_america,12:20454,,,no Lucide equivalent
+Social,sports,sports,12:20499,,,no Lucide equivalent
+Social,sports_baseball,sports_baseball,12:20560,,,no Lucide equivalent
+Social,sports_basketball,sports_basketball,12:20621,,,no Lucide equivalent
+Social,sports_cricket,sports_cricket,12:20702,,,no Lucide equivalent
+Social,sports_esports,sports_esports,12:20767,,,no Lucide equivalent
+Social,sports_football,sports_football,12:20832,,,no Lucide equivalent
+Social,sports_golf,sports_golf,12:20897,,,no Lucide equivalent
+Social,sports_gymnastics,sports_gymnastics,12:20966,,,no Lucide equivalent
+Social,sports_handball,sports_handball,12:21011,,,no Lucide equivalent
+Social,sports_hockey,sports_hockey,12:21068,,hockey-stick,review (keyword guess)
+Social,sports_kabaddi,sports_kabaddi,12:21133,,,no Lucide equivalent
+Social,sports_martial_arts,sports_martial_arts,12:21194,,,no Lucide equivalent
+Social,sports_mma,sports_mma,12:21247,,,no Lucide equivalent
+Social,sports_motorsports,sports_motorsports,12:21308,,,no Lucide equivalent
+Social,sports_rugby,sports_rugby,12:21361,,rugby-ball,review (keyword guess)
+Social,sports_soccer,sports_soccer,12:21422,,,no Lucide equivalent
+Social,sports_tennis,sports_tennis,12:21523,,,no Lucide equivalent
+Social,sports_volleyball,sports_volleyball,12:21572,,volleyball,review (keyword guess)
+Social,surfing,surfing,12:21645,,,no Lucide equivalent
+Social,switch_account,switch_account,12:21686,,switch-camera,review (keyword guess)
+Social,thumb_down_alt,thumb_down_alt,12:21739,,arrow-down,review (keyword guess)
+Social,thumb_up_alt,thumb_up_alt,12:21784,,arrow-up,review (keyword guess)
+Social,tornado,tornado,12:21829,,tornado,matched (exact)
+Social,transgender,transgender,12:21890,,transgender,matched (exact)
+Social,travel_explore,travel_explore,12:21931,,,no Lucide equivalent
+Social,tsunami,tsunami,12:21972,,,no Lucide equivalent
+Social,vaccines,vaccines,12:22029,,,no Lucide equivalent
+Social,volcano,volcano,12:22074,,,no Lucide equivalent
+Social,wallet,wallet,12:22155,,wallet,matched (exact)
+Social,waving_hand,waving_hand,12:22212,,hand,review (keyword guess)
+Social,whatshot,whatshot,12:22257,,,no Lucide equivalent
+Social,woman,woman,12:22302,,,no Lucide equivalent
+Social,woman_2,woman_2,12:22355,,,no Lucide equivalent
+Search,bathroom,bathroom,12:22415,,,no Lucide equivalent
+Search,bed,bed,12:22496,,bed,matched (exact)
+Search,bedroom_baby,bedroom_baby,12:22549,,baby,review (keyword guess)
+Search,bedroom_child,bedroom_child,12:22610,,,no Lucide equivalent
+Search,bedroom_parent,bedroom_parent,12:22663,,,no Lucide equivalent
+Search,blender,blender,12:22720,,blender,matched (exact)
+Search,camera_indoor,camera_indoor,12:22777,,camera,review (keyword guess)
+Search,camera_outdoor,camera_outdoor,12:22834,,camera,review (keyword guess)
+Search,chair,chair,12:22879,,,no Lucide equivalent
+Search,chair_alt,chair_alt,12:22936,,,no Lucide equivalent
+Search,coffee_maker,coffee_maker,12:22993,,coffee,review (keyword guess)
+Search,dining,dining,12:23054,,,no Lucide equivalent
+Search,door_back,door_back,12:23115,,door-closed,review (keyword guess)
+Search,door_front,door_front,12:23172,,bus-front,review (keyword guess)
+Search,door_sliding,door_sliding,12:23229,,door-closed,review (keyword guess)
+Search,doorbell,doorbell,12:23294,,,no Lucide equivalent
+Search,feed,feed,12:23355,,,no Lucide equivalent
+Search,flatware,flatware,12:23404,,,no Lucide equivalent
+Search,garage,garage,12:23449,,,no Lucide equivalent
+Search,light,light,12:23518,,,no Lucide equivalent
+Search,living,living,12:23571,,,no Lucide equivalent
+Search,manage_search,manage_search,12:23624,,book-search,review (keyword guess)
+Search,shower,shower,12:23685,,,no Lucide equivalent
+Search,table_bar,table_bar,12:23762,,chart-bar,review (keyword guess)
+Search,table_restaurant,table_restaurant,12:23815,,table,review (keyword guess)
+Search,window,window,12:23868,,,no Lucide equivalent
+Search,yard,yard,12:23933,,,no Lucide equivalent
+Places,airport_shuttle,airport_shuttle,12:24001,,,no Lucide equivalent
+Places,all_inclusive,all_inclusive,12:24046,,replace-all,review (keyword guess)
+Places,apartment,apartment,12:24087,Building2,building-complex,matched (synonym)
+Places,baby_changing_station,baby_changing_station,12:24132,,baby,review (keyword guess)
+Places,backpack,backpack,12:24177,,backpack,matched (exact)
+Places,balcony,balcony,12:24226,,,no Lucide equivalent
+Places,bathtub,bathtub,12:24271,,,no Lucide equivalent
+Places,beach_access,beach_access,12:24328,,,no Lucide equivalent
+Places,bento,bento,12:24373,,,no Lucide equivalent
+Places,bungalow,bungalow,12:24426,,,no Lucide equivalent
+Places,business_center,business_center,12:24471,,briefcase-business,review (keyword guess)
+Places,cabin,cabin,12:24516,,,no Lucide equivalent
+Places,carpenter,carpenter,12:24561,,,no Lucide equivalent
+Places,casino,casino,12:24606,,,no Lucide equivalent
+Places,chalet,chalet,12:24671,,,no Lucide equivalent
+Places,charging_station,charging_station,12:24716,,battery-charging,review (keyword guess)
+Places,checkroom,checkroom,12:24765,,,no Lucide equivalent
+Places,child_care,child_care,12:24810,,,no Lucide equivalent
+Places,child_friendly,child_friendly,12:24863,,,no Lucide equivalent
+Places,corporate_fare,corporate_fare,12:24908,,,no Lucide equivalent
+Places,cottage,cottage,12:24953,,,no Lucide equivalent
+Places,countertops,countertops,12:24998,,,no Lucide equivalent
+Places,crib,crib,12:25043,,,no Lucide equivalent
+Places,desk,desk,12:25088,,,no Lucide equivalent
+Places,do_not_step,do_not_step,12:25145,,equal-approximately-not,review (keyword guess)
+Places,do_not_touch,do_not_touch,12:25194,,equal-approximately-not,review (keyword guess)
+Places,dry,dry,12:25243,,,no Lucide equivalent
+Places,elevator,elevator,12:25292,,,no Lucide equivalent
+Places,escalator,escalator,12:25341,,,no Lucide equivalent
+Places,escalator_warning,escalator_warning,12:25390,,,no Lucide equivalent
+Places,family_restroom,family_restroom,12:25435,,,no Lucide equivalent
+Places,fence,fence,12:25480,,fence,matched (exact)
+Places,fire_extinguisher,fire_extinguisher,12:25533,,fire-extinguisher,matched (exact)
+Places,fitness_center,fitness_center,12:25578,,,no Lucide equivalent
+Places,food_bank,food_bank,12:25619,,piggy-bank,review (keyword guess)
+Places,foundation,foundation,12:25664,,,no Lucide equivalent
+Places,free_breakfast,free_breakfast,12:25709,,,no Lucide equivalent
+Places,gite,gite,12:25754,,,no Lucide equivalent
+Places,golf_course,golf_course,12:25799,,,no Lucide equivalent
+Places,grass,grass,12:25852,,,no Lucide equivalent
+Places,holiday_village,holiday_village,12:25893,,,no Lucide equivalent
+Places,hot_tub,hot_tub,12:25938,,,no Lucide equivalent
+Places,house,house,12:25983,,house,matched (exact)
+Places,house_siding,house_siding,12:26040,,house,review (keyword guess)
+Places,houseboat,houseboat,12:26085,,,no Lucide equivalent
+Places,iron,iron,12:26130,,,no Lucide equivalent
+Places,kitchen,kitchen,12:26175,,,no Lucide equivalent
+Places,meeting_room,meeting_room,12:26220,,,no Lucide equivalent
+Places,microwave,microwave,12:26265,,microwave,matched (exact)
+Places,night_shelter,night_shelter,12:26310,,,no Lucide equivalent
+Places,no_backpack,no_backpack,12:26355,,backpack,review (keyword guess)
+Places,no_cell,no_cell,12:26400,,,no Lucide equivalent
+Places,no_drinks,no_drinks,12:26449,,,no Lucide equivalent
+Places,no_flash,no_flash,12:26498,,,no Lucide equivalent
+Places,no_food,no_food,12:26547,,,no Lucide equivalent
+Places,no_meeting_room,no_meeting_room,12:26596,,,no Lucide equivalent
+Places,no_stroller,no_stroller,12:26641,,,no Lucide equivalent
+Places,other_houses,other_houses,12:26690,,houses,review (keyword guess)
+Places,pool,pool,12:26735,,,no Lucide equivalent
+Places,rice_bowl,rice_bowl,12:26788,,,no Lucide equivalent
+Places,roofing,roofing,12:26833,,,no Lucide equivalent
+Places,room_preferences,room_preferences,12:26878,,,no Lucide equivalent
+Places,room_service,room_service,12:26927,,,no Lucide equivalent
+Places,rv_hookup,rv_hookup,12:26972,,,no Lucide equivalent
+Places,smoke_free,smoke_free,12:27017,,alarm-smoke,review (keyword guess)
+Places,smoking_rooms,smoking_rooms,12:27058,,,no Lucide equivalent
+Places,soap,soap,12:27103,,,no Lucide equivalent
+Places,spa,spa,12:27152,,,no Lucide equivalent
+Places,sports_bar,sports_bar,12:27205,,chart-bar,review (keyword guess)
+Places,stairs,stairs,12:27250,,,no Lucide equivalent
+Places,storefront,storefront,12:27299,Store,store,matched (synonym)
+Places,stroller,stroller,12:27364,,,no Lucide equivalent
+Places,tapas,tapas,12:27413,,,no Lucide equivalent
+Places,tty,tty,12:27458,,,no Lucide equivalent
+Places,vape_free,vape_free,12:27507,,,no Lucide equivalent
+Places,vaping_rooms,vaping_rooms,12:27556,,,no Lucide equivalent
+Places,villa,villa,12:27605,,,no Lucide equivalent
+Places,wash,wash,12:27650,,,no Lucide equivalent
+Places,water_damage,water_damage,12:27699,,glass-water,review (keyword guess)
+Places,wheelchair_pickup,wheelchair_pickup,12:27744,,,no Lucide equivalent
+Notification,adb,adb,12:27792,,,no Lucide equivalent
+Notification,airline_seat_flat,airline_seat_flat,12:27833,,,no Lucide equivalent
+Notification,airline_seat_flat_angled,airline_seat_flat_angled,12:27878,,,no Lucide equivalent
+Notification,airline_seat_individual_suite,airline_seat_individual_suite,12:27923,,,no Lucide equivalent
+Notification,airline_seat_legroom_extra,airline_seat_legroom_extra,12:27972,,,no Lucide equivalent
+Notification,airline_seat_legroom_normal,airline_seat_legroom_normal,12:28013,,,no Lucide equivalent
+Notification,airline_seat_legroom_reduced,airline_seat_legroom_reduced,12:28054,,,no Lucide equivalent
+Notification,airline_seat_recline_extra,airline_seat_recline_extra,12:28095,,,no Lucide equivalent
+Notification,airline_seat_recline_normal,airline_seat_recline_normal,12:28136,,,no Lucide equivalent
+Notification,bluetooth_audio,bluetooth_audio,12:28177,,audio-lines,review (keyword guess)
+Notification,confirmation_number,confirmation_number,12:28218,Ticket,ticket,matched (synonym)
+Notification,directions_off,directions_off,12:28263,,,no Lucide equivalent
+Notification,disc_full,disc_full,12:28320,,battery-full,review (keyword guess)
+Notification,do_disturb,do_disturb,12:28365,,,no Lucide equivalent
+Notification,do_disturb_alt,do_disturb_alt,12:28406,,,no Lucide equivalent
+Notification,do_disturb_off,do_disturb_off,12:28447,,,no Lucide equivalent
+Notification,do_disturb_on,do_disturb_on,12:28492,,,no Lucide equivalent
+Notification,do_not_disturb,do_not_disturb,12:28537,,equal-approximately-not,review (keyword guess)
+Notification,do_not_disturb_alt,do_not_disturb_alt,12:28590,,equal-approximately-not,review (keyword guess)
+Notification,do_not_disturb_off,do_not_disturb_off,12:28643,,equal-approximately-not,review (keyword guess)
+Notification,do_not_disturb_on,do_not_disturb_on,12:28692,CircleMinus,circle-minus,matched (synonym)
+Notification,drive_eta,drive_eta,12:28753,,hard-drive,review (keyword guess)
+Notification,enhanced_encryption,enhanced_encryption,12:28806,,,no Lucide equivalent
+Notification,event_available,event_available,12:28851,,,no Lucide equivalent
+Notification,event_busy,event_busy,12:28896,,,no Lucide equivalent
+Notification,event_note,event_note,12:28941,,eighth-note,review (keyword guess)
+Notification,folder_special,folder_special,12:28986,,folder,review (keyword guess)
+Notification,imagesearch_roller,imagesearch_roller,12:29031,,paint-roller,review (keyword guess)
+Notification,live_tv,live_tv,12:29088,,tv,review (keyword guess)
+Notification,mms,mms,12:29133,,,no Lucide equivalent
+Notification,more,more,12:29178,,,no Lucide equivalent
+Notification,network_check,network_check,12:29235,,cloud-check,review (keyword guess)
+Notification,network_locked,network_locked,12:29276,,chart-network,review (keyword guess)
+Notification,no_encryption,no_encryption,12:29317,,,no Lucide equivalent
+Notification,no_encryption_gmailerrorred,no_encryption_gmailerrorred,12:29362,,,no Lucide equivalent
+Notification,ondemand_video,ondemand_video,12:29407,,list-video,review (keyword guess)
+Notification,personal_video,personal_video,12:29452,,list-video,review (keyword guess)
+Notification,phone_bluetooth_speaker,phone_bluetooth_speaker,12:29497,,bluetooth,review (keyword guess)
+Notification,phone_callback,phone_callback,12:29542,,phone,review (keyword guess)
+Notification,phone_locked,phone_locked,12:29587,,phone,review (keyword guess)
+Notification,phone_missed,phone_missed,12:29652,,phone-missed,matched (exact)
+Notification,phone_paused,phone_paused,12:29697,,phone,review (keyword guess)
+Notification,power,power,12:29742,,power,matched (exact)
+Notification,power_off,power_off,12:29787,,power-off,matched (exact)
+Notification,priority_high,priority_high,12:29832,,signal-high,review (keyword guess)
+Notification,running_with_errors,running_with_errors,12:29877,,,no Lucide equivalent
+Notification,sd_card,sd_card,12:29918,,card-sim,review (keyword guess)
+Notification,sd_card_alert,sd_card_alert,12:29963,,card-sim,review (keyword guess)
+Notification,sim_card_alert,sim_card_alert,12:30008,,card-sim,review (keyword guess)
+Notification,sms,sms,12:30077,,,no Lucide equivalent
+Notification,sms_failed,sms_failed,12:30122,,,no Lucide equivalent
+Notification,support_agent,support_agent,12:30167,,headset,matched (synonym)
+Notification,sync_disabled,sync_disabled,12:30228,,calendar-sync,review (keyword guess)
+Notification,sync_lock,sync_lock,12:30269,,book-lock,review (keyword guess)
+Notification,sync_problem,sync_problem,12:30314,,calendar-sync,review (keyword guess)
+Notification,system_update,system_update,12:30355,,,no Lucide equivalent
+Notification,tap_and_play,tap_and_play,12:30400,,bug-play,review (keyword guess)
+Notification,time_to_leave,time_to_leave,12:30441,,bring-to-front,review (keyword guess)
+Notification,tv_off,tv_off,12:30494,,tv,review (keyword guess)
+Notification,vibration,vibration,12:30539,,,no Lucide equivalent
+Notification,video_chat,video_chat,12:30584,,list-video,review (keyword guess)
+Notification,voice_chat,voice_chat,12:30641,,,no Lucide equivalent
+Notification,vpn_lock,vpn_lock,12:30686,,earth-lock,review (keyword guess)
+Notification,wc,wc,12:30731,,,no Lucide equivalent
+Navigation,add_home_work,add_home_work,12:30775,,,no Lucide equivalent
+Navigation,app_settings_alt,app_settings_alt,12:30848,,app-window,review (keyword guess)
+Navigation,apps,apps,12:30905,,,no Lucide equivalent
+Navigation,apps_outage,apps_outage,12:30946,,,no Lucide equivalent
+Navigation,arrow_back_ios,arrow_back_ios,12:30987,,arrow-big-left,review (keyword guess)
+Navigation,arrow_back_ios_new,arrow_back_ios_new,12:31028,,arrow-big-left,review (keyword guess)
+Navigation,arrow_drop_down,arrow_drop_down,12:31073,,a-arrow-down,review (keyword guess)
+Navigation,arrow_drop_down_circle,arrow_drop_down_circle,12:31114,,circle-arrow-down,review (keyword guess)
+Navigation,arrow_drop_up,arrow_drop_up,12:31159,,a-arrow-up,review (keyword guess)
+Navigation,arrow_forward_ios,arrow_forward_ios,12:31200,,arrow-big-down,review (keyword guess)
+Navigation,arrow_left,arrow_left,12:31245,,arrow-left,matched (exact)
+Navigation,arrow_right,arrow_right,12:31286,,arrow-right,matched (exact)
+Navigation,assistant_direction,assistant_direction,12:31327,,,no Lucide equivalent
+Navigation,campaign,campaign,12:31384,,,no Lucide equivalent
+Navigation,chevron_left,chevron_left,12:31445,ChevronLeft,chevron-left,matched (exact)
+Navigation,chevron_right,chevron_right,12:31486,ChevronRight,chevron-right,matched (exact)
+Navigation,double_arrow,double_arrow,12:31527,,arrow-down,review (keyword guess)
+Navigation,east,east,12:31580,,,no Lucide equivalent
+Navigation,expand_circle_down,expand_circle_down,12:31621,,circle-arrow-down,review (keyword guess)
+Navigation,expand_less,expand_less,12:31666,,chevron-up,matched (synonym)
+Navigation,expand_more,expand_more,12:31707,,chevron-down,matched (synonym)
+Navigation,first_page,first_page,12:31748,,chevron-first,review (keyword guess)
+Navigation,home_work,home_work,12:31789,,,no Lucide equivalent
+Navigation,last_page,last_page,12:31862,,chevron-last,review (keyword guess)
+Navigation,legend_toggle,legend_toggle,12:31903,,toggle-left,review (keyword guess)
+Navigation,maps_home_work,maps_home_work,12:31948,,,no Lucide equivalent
+Navigation,menu_open,menu_open,12:32021,,panel-top-open,review (keyword guess)
+Navigation,north,north,12:32062,,,no Lucide equivalent
+Navigation,offline_share,offline_share,12:32103,,screen-share,review (keyword guess)
+Navigation,payments,payments,12:32172,Banknote,banknote,matched (synonym)
+Navigation,pivot_table_chart,pivot_table_chart,12:32233,,chart-area,review (keyword guess)
+Navigation,refresh,refresh,12:32294,RefreshCw,refresh-cw,matched (synonym)
+Navigation,south,south,12:32335,,,no Lucide equivalent
+Navigation,switch_left,switch_left,12:32376,,toggle-left,review (keyword guess)
+Navigation,switch_right,switch_right,12:32421,,toggle-right,review (keyword guess)
+Navigation,unfold_less,unfold_less,12:32466,,,no Lucide equivalent
+Navigation,unfold_more,unfold_more,12:32507,ChevronsUpDown,chevrons-up-down,matched (app-map)
+Navigation,waterfall_chart,waterfall_chart,12:32548,,chart-area,review (keyword guess)
+Navigation,west,west,12:32597,,,no Lucide equivalent
+Maps,360,360,12:32641,,,no Lucide equivalent
+Maps,add_business,add_business,12:32682,,briefcase-business,review (keyword guess)
+Maps,add_location,add_location,12:32743,,,no Lucide equivalent
+Maps,add_location_alt,add_location_alt,12:32796,,,no Lucide equivalent
+Maps,add_road,add_road,12:32841,,road,review (keyword guess)
+Maps,agriculture,agriculture,12:32910,,,no Lucide equivalent
+Maps,airline_stops,airline_stops,12:32971,,,no Lucide equivalent
+Maps,airlines,airlines,12:33012,,,no Lucide equivalent
+Maps,atm,atm,12:33057,,,no Lucide equivalent
+Maps,attractions,attractions,12:33098,,,no Lucide equivalent
+Maps,badge,badge,12:33151,,badge,matched (exact)
+Maps,bakery_dining,bakery_dining,12:33204,,,no Lucide equivalent
+Maps,beenhere,beenhere,12:33273,,,no Lucide equivalent
+Maps,bike_scooter,bike_scooter,12:33318,,bike,review (keyword guess)
+Maps,breakfast_dining,breakfast_dining,12:33375,,,no Lucide equivalent
+Maps,brunch_dining,brunch_dining,12:33432,,,no Lucide equivalent
+Maps,bus_alert,bus_alert,12:33493,,bus,review (keyword guess)
+Maps,car_crash,car_crash,12:33562,,cable-car,review (keyword guess)
+Maps,car_rental,car_rental,12:33623,,cable-car,review (keyword guess)
+Maps,car_repair,car_repair,12:33688,,cable-car,review (keyword guess)
+Maps,castle,castle,12:33753,,castle,matched (exact)
+Maps,category,category,12:33826,,,no Lucide equivalent
+Maps,celebration,celebration,12:33875,PartyPopper,party-popper,matched (synonym)
+Maps,church,church,12:33944,Church,church,matched (exact)
+Maps,cleaning_services,cleaning_services,12:34001,,brush-cleaning,review (keyword guess)
+Maps,compass_calibration,compass_calibration,12:34058,,compass,review (keyword guess)
+Maps,connecting_airports,connecting_airports,12:34107,,,no Lucide equivalent
+Maps,crisis_alert,crisis_alert,12:34148,,,no Lucide equivalent
+Maps,delivery_dining,delivery_dining,12:34193,,,no Lucide equivalent
+Maps,departure_board,departure_board,12:34254,,circuit-board,review (keyword guess)
+Maps,design_services,design_services,12:34307,,,no Lucide equivalent
+Maps,diamond,diamond,12:34372,,diamond,matched (exact)
+Maps,dinner_dining,dinner_dining,12:34441,,,no Lucide equivalent
+Maps,directions,directions,12:34498,,,no Lucide equivalent
+Maps,directions_bike,directions_bike,12:34543,,bike,review (keyword guess)
+Maps,directions_boat,directions_boat,12:34584,Ship,ship,matched (app-map)
+Maps,directions_boat_filled,directions_boat_filled,12:34629,,,no Lucide equivalent
+Maps,directions_bus,directions_bus,12:34674,,bus,review (keyword guess)
+Maps,directions_bus_filled,directions_bus_filled,12:34727,,bus,review (keyword guess)
+Maps,directions_car,directions_car,12:34792,Car,car,matched (synonym)
+Maps,directions_car_filled,directions_car_filled,12:34845,,cable-car,review (keyword guess)
+Maps,directions_railway,directions_railway,12:34906,,,no Lucide equivalent
+Maps,directions_railway_filled,directions_railway_filled,12:34951,,,no Lucide equivalent
+Maps,directions_run,directions_run,12:35012,,,no Lucide equivalent
+Maps,directions_subway,directions_subway,12:35053,,,no Lucide equivalent
+Maps,directions_subway_filled,directions_subway_filled,12:35106,,,no Lucide equivalent
+Maps,directions_transit,directions_transit,12:35171,,,no Lucide equivalent
+Maps,directions_transit_filled,directions_transit_filled,12:35224,,,no Lucide equivalent
+Maps,directions_walk,directions_walk,12:35289,,,no Lucide equivalent
+Maps,dry_cleaning,dry_cleaning,12:35330,,brush-cleaning,review (keyword guess)
+Maps,edit_attributes,edit_attributes,12:35383,,,no Lucide equivalent
+Maps,edit_location,edit_location,12:35428,,,no Lucide equivalent
+Maps,edit_location_alt,edit_location_alt,12:35477,,,no Lucide equivalent
+Maps,edit_road,edit_road,12:35530,,road,review (keyword guess)
+Maps,egg,egg,12:35603,,egg,matched (exact)
+Maps,egg_alt,egg_alt,12:35660,,egg,review (keyword guess)
+Maps,electric_bike,electric_bike,12:35729,,bell-electric,review (keyword guess)
+Maps,electric_car,electric_car,12:35782,,car-battery,review (keyword guess)
+Maps,electric_moped,electric_moped,12:35847,,bell-electric,review (keyword guess)
+Maps,electric_rickshaw,electric_rickshaw,12:35912,,bell-electric,review (keyword guess)
+Maps,electric_scooter,electric_scooter,12:35977,,scooter,review (keyword guess)
+Maps,electrical_services,electrical_services,12:36034,,,no Lucide equivalent
+Maps,emergency,emergency,12:36091,,,no Lucide equivalent
+Maps,emergency_recording,emergency_recording,12:36136,,,no Lucide equivalent
+Maps,emergency_share,emergency_share,12:36185,,screen-share,review (keyword guess)
+Maps,ev_station,ev_station,12:36234,,ev-charger,review (keyword guess)
+Maps,factory,factory,12:36279,,factory,matched (exact)
+Maps,fastfood,fastfood,12:36328,,,no Lucide equivalent
+Maps,festival,festival,12:36377,,,no Lucide equivalent
+Maps,fire_hydrant_alt,fire_hydrant_alt,12:36454,,fire-extinguisher,review (keyword guess)
+Maps,fire_truck,fire_truck,12:36519,,fire-extinguisher,review (keyword guess)
+Maps,flight,flight,12:36580,Plane,plane,matched (synonym)
+Maps,flight_class,flight_class,12:36621,,,no Lucide equivalent
+Maps,forest,forest,12:36666,,,no Lucide equivalent
+Maps,fork_left,fork_left,12:36723,,arrow-left,review (keyword guess)
+Maps,fork_right,fork_right,12:36768,,arrow-right,review (keyword guess)
+Maps,fort,fort,12:36813,,,no Lucide equivalent
+Maps,hail,hail,12:36866,,,no Lucide equivalent
+Maps,handyman,handyman,12:36911,,,no Lucide equivalent
+Maps,hardware,hardware,12:36988,,,no Lucide equivalent
+Maps,home_repair_service,home_repair_service,12:37045,,,no Lucide equivalent
+Maps,hotel,hotel,12:37118,,hotel,matched (exact)
+Maps,hvac,hvac,12:37167,,,no Lucide equivalent
+Maps,icecream,icecream,12:37224,,,no Lucide equivalent
+Maps,kebab_dining,kebab_dining,12:37281,,,no Lucide equivalent
+Maps,layers_clear,layers_clear,12:37326,,layers-minus,review (keyword guess)
+Maps,liquor,liquor,12:37371,,,no Lucide equivalent
+Maps,local_activity,local_activity,12:37436,,activity,review (keyword guess)
+Maps,local_airport,local_airport,12:37481,,,no Lucide equivalent
+Maps,local_atm,local_atm,12:37526,,,no Lucide equivalent
+Maps,local_bar,local_bar,12:37571,,chart-bar,review (keyword guess)
+Maps,local_cafe,local_cafe,12:37616,,,no Lucide equivalent
+Maps,local_car_wash,local_car_wash,12:37661,,cable-car,review (keyword guess)
+Maps,local_convenience_store,local_convenience_store,12:37714,,store,review (keyword guess)
+Maps,local_dining,local_dining,12:37759,,,no Lucide equivalent
+Maps,local_drink,local_drink,12:37800,,,no Lucide equivalent
+Maps,local_fire_department,local_fire_department,12:37845,,fire-extinguisher,review (keyword guess)
+Maps,local_florist,local_florist,12:37902,,,no Lucide equivalent
+Maps,local_gas_station,local_gas_station,12:37947,Fuel,fuel,matched (synonym)
+Maps,local_grocery_store,local_grocery_store,12:37992,,store,review (keyword guess)
+Maps,local_hospital,local_hospital,12:38037,,hospital,review (keyword guess)
+Maps,local_hotel,local_hotel,12:38082,,hotel,review (keyword guess)
+Maps,local_laundry_service,local_laundry_service,12:38131,,,no Lucide equivalent
+Maps,local_library,local_library,12:38188,,library,review (keyword guess)
+Maps,local_mall,local_mall,12:38237,,,no Lucide equivalent
+Maps,local_parking,local_parking,12:38282,,parking-meter,review (keyword guess)
+Maps,local_pharmacy,local_pharmacy,12:38323,,,no Lucide equivalent
+Maps,local_phone,local_phone,12:38368,,phone,review (keyword guess)
+Maps,local_pizza,local_pizza,12:38413,,pizza,review (keyword guess)
+Maps,local_play,local_play,12:38458,,bug-play,review (keyword guess)
+Maps,local_police,local_police,12:38503,,,no Lucide equivalent
+Maps,local_post_office,local_post_office,12:38548,,,no Lucide equivalent
+Maps,local_printshop,local_printshop,12:38593,,,no Lucide equivalent
+Maps,local_see,local_see,12:38642,,,no Lucide equivalent
+Maps,local_taxi,local_taxi,12:38687,,,no Lucide equivalent
+Maps,lunch_dining,lunch_dining,12:38740,,,no Lucide equivalent
+Maps,maps_ugc,maps_ugc,12:38805,,,no Lucide equivalent
+Maps,medical_information,medical_information,12:38858,,briefcase-medical,review (keyword guess)
+Maps,medical_services,medical_services,12:38907,,briefcase-medical,review (keyword guess)
+Maps,minor_crash,minor_crash,12:38968,,server-crash,review (keyword guess)
+Maps,miscellaneous_services,miscellaneous_services,12:39017,,,no Lucide equivalent
+Maps,mode_of_travel,mode_of_travel,12:39070,,table-of-contents,review (keyword guess)
+Maps,money,money,12:39111,,,no Lucide equivalent
+Maps,moped,moped,12:39156,,moped,matched (exact)
+Maps,mosque,mosque,12:39217,,mosque,matched (exact)
+Maps,moving,moving,12:39274,,,no Lucide equivalent
+Maps,multiple_stop,multiple_stop,12:39315,,circle-stop,review (keyword guess)
+Maps,museum,museum,12:39360,,,no Lucide equivalent
+Maps,my_location,my_location,12:39417,Crosshair,locate-fixed,matched (synonym)
+Maps,near_me_disabled,near_me_disabled,12:39466,,,no Lucide equivalent
+Maps,nightlife,nightlife,12:39511,,,no Lucide equivalent
+Maps,no_crash,no_crash,12:39564,,server-crash,review (keyword guess)
+Maps,no_meals,no_meals,12:39613,,,no Lucide equivalent
+Maps,no_transfer,no_transfer,12:39654,,,no Lucide equivalent
+Maps,not_listed_location,not_listed_location,12:39699,,equal-approximately-not,review (keyword guess)
+Maps,park,park,12:39744,,park,matched (exact)
+Maps,pedal_bike,pedal_bike,12:39797,Bike,bike,matched (app-map)
+Maps,person_pin,person_pin,12:39842,,map-pin,review (keyword guess)
+Maps,person_pin_circle,person_pin_circle,12:39887,,circle-person-arms-spread,review (keyword guess)
+Maps,pest_control,pest_control,12:39932,,tower-control,review (keyword guess)
+Maps,pest_control_rodent,pest_control_rodent,12:39993,,tower-control,review (keyword guess)
+Maps,pin_drop,pin_drop,12:40050,,map-pin,review (keyword guess)
+Maps,plumbing,plumbing,12:40099,,,no Lucide equivalent
+Maps,railway_alert,railway_alert,12:40156,,,no Lucide equivalent
+Maps,ramen_dining,ramen_dining,12:40233,,,no Lucide equivalent
+Maps,ramp_left,ramp_left,12:40286,,arrow-left,review (keyword guess)
+Maps,ramp_right,ramp_right,12:40331,,triangle-right,review (keyword guess)
+Maps,rate_review,rate_review,12:40376,,,no Lucide equivalent
+Maps,remove_road,remove_road,12:40421,,remove-formatting,review (keyword guess)
+Maps,restaurant,restaurant,12:40490,UtensilsCrossed,utensils-crossed,matched (synonym)
+Maps,restaurant_menu,restaurant_menu,12:40531,,menu,review (keyword guess)
+Maps,roundabout_left,roundabout_left,12:40572,,arrow-left,review (keyword guess)
+Maps,roundabout_right,roundabout_right,12:40617,,arrow-right,review (keyword guess)
+Maps,route,route,12:40662,,route,matched (exact)
+Maps,run_circle,run_circle,12:40719,,circle-play,review (keyword guess)
+Maps,safety_check,safety_check,12:40780,,shield-check,review (keyword guess)
+Maps,sailing,sailing,12:40829,,,no Lucide equivalent
+Maps,satellite,satellite,12:40874,,satellite,matched (exact)
+Maps,screen_rotation_alt,screen_rotation_alt,12:40919,,screen-share,review (keyword guess)
+Maps,set_meal,set_meal,12:40964,,,no Lucide equivalent
+Maps,signpost,signpost,12:41009,,signpost,matched (exact)
+Maps,snowmobile,snowmobile,12:41058,,,no Lucide equivalent
+Maps,sos,sos,12:41103,,,no Lucide equivalent
+Maps,soup_kitchen,soup_kitchen,12:41148,,soup,review (keyword guess)
+Maps,stadium,stadium,12:41193,,,no Lucide equivalent
+Maps,store_mall_directory,store_mall_directory,12:41242,,store,review (keyword guess)
+Maps,straight,straight,12:41287,,,no Lucide equivalent
+Maps,streetview,streetview,12:41332,,,no Lucide equivalent
+Maps,subway,subway,12:41381,,,no Lucide equivalent
+Maps,synagogue,synagogue,12:41426,,,no Lucide equivalent
+Maps,takeout_dining,takeout_dining,12:41499,,,no Lucide equivalent
+Maps,taxi_alert,taxi_alert,12:41556,,,no Lucide equivalent
+Maps,temple_buddhist,temple_buddhist,12:41625,,,no Lucide equivalent
+Maps,temple_hindu,temple_hindu,12:41686,,,no Lucide equivalent
+Maps,terrain,terrain,12:41747,,,no Lucide equivalent
+Maps,theater_comedy,theater_comedy,12:41792,,theater,review (keyword guess)
+Maps,tire_repair,tire_repair,12:41877,,,no Lucide equivalent
+Maps,traffic,traffic,12:41926,,,no Lucide equivalent
+Maps,train,train,12:41971,,tram-front,matched (exact)
+Maps,tram,tram,12:42024,,,no Lucide equivalent
+Maps,transfer_within_a_station,transfer_within_a_station,12:42069,,a-arrow-down,review (keyword guess)
+Maps,transit_enterexit,transit_enterexit,12:42110,,,no Lucide equivalent
+Maps,trip_origin,trip_origin,12:42151,,,no Lucide equivalent
+Maps,turn_slight_left,turn_slight_left,12:42192,,arrow-big-left,review (keyword guess)
+Maps,turn_slight_right,turn_slight_right,12:42237,,arrow-big-right,review (keyword guess)
+Maps,two_wheeler,two_wheeler,12:42282,,,no Lucide equivalent
+Maps,volunteer_activism,volunteer_activism,12:42327,HandHeart,hand-heart,matched (synonym)
+Maps,warehouse,warehouse,12:42392,,warehouse,matched (exact)
+Maps,wine_bar,wine_bar,12:42437,,bottle-wine,review (keyword guess)
+Maps,wrong_location,wrong_location,12:42482,,,no Lucide equivalent
+Maps,zoom_in_map,zoom_in_map,12:42539,,zoom-in,review (keyword guess)
+Maps,zoom_out_map,zoom_out_map,12:42584,,zoom-out,review (keyword guess)
+Image,10mp,10mp,12:42628,,,no Lucide equivalent
+Image,11mp,11mp,12:42737,,,no Lucide equivalent
+Image,12mp,12mp,12:42818,,,no Lucide equivalent
+Image,13mp,13mp,12:42891,,,no Lucide equivalent
+Image,14mp,14mp,12:42972,,,no Lucide equivalent
+Image,15mp,15mp,12:43045,,,no Lucide equivalent
+Image,16mp,16mp,12:43118,,,no Lucide equivalent
+Image,17mp,17mp,12:43195,,,no Lucide equivalent
+Image,18mp,18mp,12:43268,,,no Lucide equivalent
+Image,19mp,19mp,12:43349,,,no Lucide equivalent
+Image,20mp,20mp,12:43426,,,no Lucide equivalent
+Image,21mp,21mp,12:43503,,,no Lucide equivalent
+Image,22mp,22mp,12:43576,,,no Lucide equivalent
+Image,23mp,23mp,12:43649,,,no Lucide equivalent
+Image,24mp,24mp,12:43722,,,no Lucide equivalent
+Image,2mp,2mp,12:43795,,,no Lucide equivalent
+Image,30fps_select,30fps_select,12:43864,,lasso-select,review (keyword guess)
+Image,3mp,3mp,12:43913,,,no Lucide equivalent
+Image,4mp,4mp,12:43982,,,no Lucide equivalent
+Image,5mp,5mp,12:44051,,,no Lucide equivalent
+Image,60fps_select,60fps_select,12:44120,,lasso-select,review (keyword guess)
+Image,6mp,6mp,12:44169,,,no Lucide equivalent
+Image,7mp,7mp,12:44242,,,no Lucide equivalent
+Image,8mp,8mp,12:44311,,,no Lucide equivalent
+Image,9mp,9mp,12:44388,,,no Lucide equivalent
+Image,add_a_photo,add_a_photo,12:44461,,a-arrow-down,review (keyword guess)
+Image,add_photo_alternate,add_photo_alternate,12:44506,,,no Lucide equivalent
+Image,add_to_photos,add_to_photos,12:44555,,bring-to-front,review (keyword guess)
+Image,animation,animation,12:44600,,,no Lucide equivalent
+Image,assistant,assistant,12:44665,,,no Lucide equivalent
+Image,assistant_photo,assistant_photo,12:44710,,,no Lucide equivalent
+Image,audiotrack,audiotrack,12:44755,,,no Lucide equivalent
+Image,auto_awesome,auto_awesome,12:44800,,sparkles,matched (synonym)
+Image,auto_awesome_mosaic,auto_awesome_mosaic,12:44861,,,no Lucide equivalent
+Image,auto_awesome_motion,auto_awesome_motion,12:44930,,,no Lucide equivalent
+Image,auto_fix_high,auto_fix_high,12:44991,,signal-high,review (keyword guess)
+Image,auto_fix_normal,auto_fix_normal,12:45056,,,no Lucide equivalent
+Image,auto_fix_off,auto_fix_off,12:45113,,,no Lucide equivalent
+Image,auto_stories,auto_stories,12:45174,,,no Lucide equivalent
+Image,autofps_select,autofps_select,12:45231,,lasso-select,review (keyword guess)
+Image,bedtime,bedtime,12:45300,,,no Lucide equivalent
+Image,bedtime_off,bedtime_off,12:45357,,,no Lucide equivalent
+Image,blur_circular,blur_circular,12:45422,,,no Lucide equivalent
+Image,blur_linear,blur_linear,12:45491,,,no Lucide equivalent
+Image,blur_off,blur_off,12:45584,,,no Lucide equivalent
+Image,blur_on,blur_on,12:45673,,,no Lucide equivalent
+Image,brightness_1,brightness_1,12:45794,,,no Lucide equivalent
+Image,brightness_2,brightness_2,12:45839,,,no Lucide equivalent
+Image,brightness_3,brightness_3,12:45884,,,no Lucide equivalent
+Image,brightness_4,brightness_4,12:45929,,,no Lucide equivalent
+Image,brightness_5,brightness_5,12:45974,,,no Lucide equivalent
+Image,brightness_6,brightness_6,12:46019,,,no Lucide equivalent
+Image,brightness_7,brightness_7,12:46064,,,no Lucide equivalent
+Image,broken_image,broken_image,12:46113,,book-image,review (keyword guess)
+Image,brush,brush,12:46158,Brush,brush,matched (exact)
+Image,burst_mode,burst_mode,12:46203,,,no Lucide equivalent
+Image,camera_alt,camera_alt,12:46248,,camera,review (keyword guess)
+Image,camera_front,camera_front,12:46293,,switch-camera,review (keyword guess)
+Image,camera_rear,camera_rear,12:46338,,camera,review (keyword guess)
+Image,camera_roll,camera_roll,12:46383,,camera,review (keyword guess)
+Image,cases,cases,12:46428,,,no Lucide equivalent
+Image,center_focus_strong,center_focus_strong,12:46485,,align-center-horizontal,review (keyword guess)
+Image,center_focus_weak,center_focus_weak,12:46530,,align-center-horizontal,review (keyword guess)
+Image,collections,collections,12:46575,,,no Lucide equivalent
+Image,collections_bookmark,collections_bookmark,12:46620,,book-bookmark,review (keyword guess)
+Image,color_lens,color_lens,12:46665,,lens,review (keyword guess)
+Image,colorize,colorize,12:46726,,,no Lucide equivalent
+Image,compare,compare,12:46771,,,no Lucide equivalent
+Image,contrast,contrast,12:46816,SunMoon,contrast,matched (exact)
+Image,control_point,control_point,12:46865,,tower-control,review (keyword guess)
+Image,control_point_duplicate,control_point_duplicate,12:46910,,badge-exclamation-point,review (keyword guess)
+Image,crop_16_9,crop_16_9,12:46955,,crop,review (keyword guess)
+Image,crop_3_2,crop_3_2,12:47008,,crop,review (keyword guess)
+Image,crop_5_4,crop_5_4,12:47061,,crop,review (keyword guess)
+Image,crop_7_5,crop_7_5,12:47114,,crop,review (keyword guess)
+Image,crop_din,crop_din,12:47167,,crop,review (keyword guess)
+Image,crop_free,crop_free,12:47208,,crop,review (keyword guess)
+Image,crop_landscape,crop_landscape,12:47249,,crop,review (keyword guess)
+Image,crop_original,crop_original,12:47290,,crop,review (keyword guess)
+Image,crop_portrait,crop_portrait,12:47331,,crop,review (keyword guess)
+Image,crop_rotate,crop_rotate,12:47372,,crop,review (keyword guess)
+Image,currency_bitcoin,currency_bitcoin,12:47413,,bitcoin,review (keyword guess)
+Image,currency_franc,currency_franc,12:47458,,swiss-franc,review (keyword guess)
+Image,currency_lira,currency_lira,12:47503,,turkish-lira,review (keyword guess)
+Image,currency_pound,currency_pound,12:47548,,pound-sterling,review (keyword guess)
+Image,currency_ruble,currency_ruble,12:47593,,belarusian-ruble,review (keyword guess)
+Image,currency_rupee,currency_rupee,12:47638,,indian-rupee,review (keyword guess)
+Image,currency_yen,currency_yen,12:47687,,japanese-yen,review (keyword guess)
+Image,currency_yuan,currency_yuan,12:47732,,currency,review (keyword guess)
+Image,deblur,deblur,12:47777,,,no Lucide equivalent
+Image,dehaze,dehaze,12:47878,,,no Lucide equivalent
+Image,details,details,12:47919,,,no Lucide equivalent
+Image,dirty_lens,dirty_lens,12:47964,,lens,review (keyword guess)
+Image,euro,euro,12:48021,,euro,matched (exact)
+Image,exposure,exposure,12:48066,,,no Lucide equivalent
+Image,exposure_neg_1,exposure_neg_1,12:48111,,,no Lucide equivalent
+Image,exposure_neg_2,exposure_neg_2,12:48152,,,no Lucide equivalent
+Image,exposure_plus_1,exposure_plus_1,12:48193,,badge-plus,review (keyword guess)
+Image,exposure_plus_2,exposure_plus_2,12:48234,,badge-plus,review (keyword guess)
+Image,exposure_zero,exposure_zero,12:48275,,signal-zero,review (keyword guess)
+Image,face_retouching_natural,face_retouching_natural,12:48316,,face-angry,review (keyword guess)
+Image,face_retouching_off,face_retouching_off,12:48385,,face-angry,review (keyword guess)
+Image,filter,filter,12:48438,,funnel,matched (exact)
+Image,filter_1,filter_1,12:48483,,,no Lucide equivalent
+Image,filter_2,filter_2,12:48528,,,no Lucide equivalent
+Image,filter_3,filter_3,12:48573,,,no Lucide equivalent
+Image,filter_4,filter_4,12:48618,,,no Lucide equivalent
+Image,filter_5,filter_5,12:48663,,,no Lucide equivalent
+Image,filter_6,filter_6,12:48708,,,no Lucide equivalent
+Image,filter_7,filter_7,12:48753,,,no Lucide equivalent
+Image,filter_8,filter_8,12:48798,,,no Lucide equivalent
+Image,filter_9,filter_9,12:48843,,,no Lucide equivalent
+Image,filter_9_plus,filter_9_plus,12:48888,,list-filter-plus,review (keyword guess)
+Image,filter_b_and_w,filter_b_and_w,12:48941,,circle-letter-b,review (keyword guess)
+Image,filter_center_focus,filter_center_focus,12:48986,,align-center-horizontal,review (keyword guess)
+Image,filter_drama,filter_drama,12:49027,,drama,review (keyword guess)
+Image,filter_frames,filter_frames,12:49072,,list-filter,review (keyword guess)
+Image,filter_hdr,filter_hdr,12:49117,,list-filter,review (keyword guess)
+Image,filter_none,filter_none,12:49162,,list-filter,review (keyword guess)
+Image,filter_tilt_shift,filter_tilt_shift,12:49207,,list-filter,review (keyword guess)
+Image,filter_vintage,filter_vintage,12:49248,,list-filter,review (keyword guess)
+Image,flare,flare,12:49293,,,no Lucide equivalent
+Image,flash_auto,flash_auto,12:49334,,,no Lucide equivalent
+Image,flash_on,flash_on,12:49375,,,no Lucide equivalent
+Image,flip,flip,12:49416,,,no Lucide equivalent
+Image,flip_camera_android,flip_camera_android,12:49457,,camera,review (keyword guess)
+Image,flip_camera_ios,flip_camera_ios,12:49518,,camera,review (keyword guess)
+Image,gradient,gradient,12:49587,,,no Lucide equivalent
+Image,grid_off,grid_off,12:49628,,,no Lucide equivalent
+Image,grid_on,grid_on,12:49673,,,no Lucide equivalent
+Image,hdr_enhanced_select,hdr_enhanced_select,12:49718,,lasso-select,review (keyword guess)
+Image,hdr_off,hdr_off,12:49791,,,no Lucide equivalent
+Image,hdr_on,hdr_on,12:49832,,,no Lucide equivalent
+Image,hdr_plus,hdr_plus,12:49873,,badge-plus,review (keyword guess)
+Image,hdr_strong,hdr_strong,12:49946,,,no Lucide equivalent
+Image,hdr_weak,hdr_weak,12:49991,,,no Lucide equivalent
+Image,healing,healing,12:50040,,,no Lucide equivalent
+Image,hevc,hevc,12:50085,,,no Lucide equivalent
+Image,hide_image,hide_image,12:50146,,image-off,review (keyword guess)
+Image,image_aspect_ratio,image_aspect_ratio,12:50207,,ratio,review (keyword guess)
+Image,image_not_supported,image_not_supported,12:50252,,book-image,review (keyword guess)
+Image,image_search,image_search,12:50305,,scan-search,review (keyword guess)
+Image,incomplete_circle,incomplete_circle,12:50350,,circle,review (keyword guess)
+Image,iso,iso,12:50391,,,no Lucide equivalent
+Image,landscape,landscape,12:50436,,,no Lucide equivalent
+Image,leak_add,leak_add,12:50481,,,no Lucide equivalent
+Image,leak_remove,leak_remove,12:50522,,remove-formatting,review (keyword guess)
+Image,lens,lens,12:50563,,lens,matched (exact)
+Image,linked_camera,linked_camera,12:50608,,boxes-linked,review (keyword guess)
+Image,logo_dev,logo_dev,12:50657,,,no Lucide equivalent
+Image,looks,looks,12:50710,,,no Lucide equivalent
+Image,looks_3,looks_3,12:50751,,,no Lucide equivalent
+Image,looks_4,looks_4,12:50796,,,no Lucide equivalent
+Image,looks_5,looks_5,12:50841,,,no Lucide equivalent
+Image,looks_6,looks_6,12:50886,,,no Lucide equivalent
+Image,looks_one,looks_one,12:50931,,,no Lucide equivalent
+Image,looks_two,looks_two,12:50976,,,no Lucide equivalent
+Image,loupe,loupe,12:51021,,,no Lucide equivalent
+Image,mic_external_off,mic_external_off,12:51066,,external-link,review (keyword guess)
+Image,mic_external_on,mic_external_on,12:51127,,external-link,review (keyword guess)
+Image,monochrome_photos,monochrome_photos,12:51184,,,no Lucide equivalent
+Image,motion_photos_auto,motion_photos_auto,12:51229,,,no Lucide equivalent
+Image,motion_photos_off,motion_photos_off,12:51270,,,no Lucide equivalent
+Image,motion_photos_on,motion_photos_on,12:51323,,,no Lucide equivalent
+Image,motion_photos_pause,motion_photos_pause,12:51364,,circle-pause,review (keyword guess)
+Image,motion_photos_paused,motion_photos_paused,12:51405,,,no Lucide equivalent
+Image,movie_creation,movie_creation,12:51450,,,no Lucide equivalent
+Image,movie_filter,movie_filter,12:51495,,list-filter,review (keyword guess)
+Image,mp,mp,12:51540,,,no Lucide equivalent
+Image,music_off,music_off,12:51605,,,no Lucide equivalent
+Image,nature,nature,12:51650,,,no Lucide equivalent
+Image,nature_people,nature_people,12:51695,,,no Lucide equivalent
+Image,navigate_before,navigate_before,12:51744,,,no Lucide equivalent
+Image,navigate_next,navigate_next,12:51785,,,no Lucide equivalent
+Image,palette,palette,12:51826,Palette,palette,matched (exact)
+Image,panorama,panorama,12:51903,,,no Lucide equivalent
+Image,panorama_fish_eye,panorama_fish_eye,12:51948,,eye,review (keyword guess)
+Image,panorama_horizontal,panorama_horizontal,12:51993,,gallery-horizontal,review (keyword guess)
+Image,panorama_horizontal_select,panorama_horizontal_select,12:52038,,align-center-horizontal,review (keyword guess)
+Image,panorama_photosphere,panorama_photosphere,12:52091,,,no Lucide equivalent
+Image,panorama_photosphere_select,panorama_photosphere_select,12:52144,,lasso-select,review (keyword guess)
+Image,panorama_vertical,panorama_vertical,12:52193,,ellipsis-vertical,review (keyword guess)
+Image,panorama_vertical_select,panorama_vertical_select,12:52238,,align-center-vertical,review (keyword guess)
+Image,panorama_wide_angle,panorama_wide_angle,12:52283,,angle,review (keyword guess)
+Image,panorama_wide_angle_select,panorama_wide_angle_select,12:52328,,angle,review (keyword guess)
+Image,photo,photo,12:52381,,image,matched (synonym)
+Image,photo_album,photo_album,12:52426,,disc-album,review (keyword guess)
+Image,photo_camera_back,photo_camera_back,12:52471,,switch-camera,review (keyword guess)
+Image,photo_camera_front,photo_camera_front,12:52520,,switch-camera,review (keyword guess)
+Image,photo_filter,photo_filter,12:52573,,list-filter,review (keyword guess)
+Image,photo_library,photo_library,12:52614,,library,review (keyword guess)
+Image,photo_size_select_actual,photo_size_select_actual,12:52659,,lasso-select,review (keyword guess)
+Image,photo_size_select_large,photo_size_select_large,12:52704,,a-large-small,review (keyword guess)
+Image,photo_size_select_small,photo_size_select_small,12:52745,,a-large-small,review (keyword guess)
+Image,picture_as_pdf,picture_as_pdf,12:52786,,picture-in-picture,review (keyword guess)
+Image,portrait,portrait,12:52835,,,no Lucide equivalent
+Image,raw_off,raw_off,12:52880,,,no Lucide equivalent
+Image,raw_on,raw_on,12:52933,,,no Lucide equivalent
+Image,receipt_long,receipt_long,12:52990,ReceiptText,receipt-text,matched (synonym)
+Image,remove_red_eye,remove_red_eye,12:53055,,eye,review (keyword guess)
+Image,rotate_90_degrees_ccw,rotate_90_degrees_ccw,12:53100,,rotate-ccw-square,review (keyword guess)
+Image,rotate_90_degrees_cw,rotate_90_degrees_cw,12:53145,,rotate-cw-square,review (keyword guess)
+Image,shutter_speed,shutter_speed,12:53202,,,no Lucide equivalent
+Image,slideshow,slideshow,12:53247,,,no Lucide equivalent
+Image,straighten,straighten,12:53292,,,no Lucide equivalent
+Image,style,style,12:53337,,,no Lucide equivalent
+Image,switch_camera,switch_camera,12:53390,,switch-camera,matched (exact)
+Image,switch_video,switch_video,12:53435,,list-video,review (keyword guess)
+Image,tag_faces,tag_faces,12:53480,,tag,review (keyword guess)
+Image,texture,texture,12:53537,,,no Lucide equivalent
+Image,thermostat_auto,thermostat_auto,12:53578,,,no Lucide equivalent
+Image,timelapse,timelapse,12:53631,,,no Lucide equivalent
+Image,timer,timer,12:53676,Timer,timer,matched (exact)
+Image,timer_10,timer_10,12:53737,,timer,review (keyword guess)
+Image,timer_3,timer_3,12:53778,,timer,review (keyword guess)
+Image,timer_off,timer_off,12:53819,,timer-off,matched (exact)
+Image,tonality,tonality,12:53888,,,no Lucide equivalent
+Image,transform,transform,12:53933,,,no Lucide equivalent
+Image,video_camera_back,video_camera_back,12:53974,,file-video-camera,review (keyword guess)
+Image,video_camera_front,video_camera_front,12:54031,,file-video-camera,review (keyword guess)
+Image,video_stable,video_stable,12:54084,,list-video,review (keyword guess)
+Image,view_comfy,view_comfy,12:54137,,view,review (keyword guess)
+Image,view_compact,view_compact,12:54190,,view,review (keyword guess)
+Image,vignette,vignette,12:54243,,,no Lucide equivalent
+Image,vrpano,vrpano,12:54288,,,no Lucide equivalent
+Image,wb_auto,wb_auto,12:54345,,,no Lucide equivalent
+Image,wb_cloudy,wb_cloudy,12:54390,,cloudy,review (keyword guess)
+Image,wb_incandescent,wb_incandescent,12:54435,,,no Lucide equivalent
+Image,wb_iridescent,wb_iridescent,12:54480,,,no Lucide equivalent
+Image,wb_shade,wb_shade,12:54525,,,no Lucide equivalent
+Image,wb_sunny,wb_sunny,12:54574,,,no Lucide equivalent
+Home,auto_mode,auto_mode,12:54622,,,no Lucide equivalent
+Home,blinds,blinds,12:54691,,blinds,matched (exact)
+Home,blinds_closed,blinds_closed,12:54756,,blinds,review (keyword guess)
+Home,broadcast_on_home,broadcast_on_home,12:54837,,,no Lucide equivalent
+Home,broadcast_on_personal,broadcast_on_personal,12:54906,,,no Lucide equivalent
+Home,curtains,curtains,12:54971,,,no Lucide equivalent
+Home,curtains_closed,curtains_closed,12:55036,,closed-caption,review (keyword guess)
+Home,electric_bolt,electric_bolt,12:55093,,bell-electric,review (keyword guess)
+Home,electric_meter,electric_meter,12:55142,,bell-electric,review (keyword guess)
+Home,energy_savings_leaf,energy_savings_leaf,12:55203,,leaf,review (keyword guess)
+Home,gas_meter,gas_meter,12:55264,,parking-meter,review (keyword guess)
+Home,heat_pump,heat_pump,12:55325,,,no Lucide equivalent
+Home,mode_fan_off,mode_fan_off,12:55382,,fan,review (keyword guess)
+Home,nest_cam_wired_stand,nest_cam_wired_stand,12:55459,,,no Lucide equivalent
+Home,oil_barrel,oil_barrel,12:55516,,barrel,review (keyword guess)
+Home,propane,propane,12:55573,,,no Lucide equivalent
+Home,propane_tank,propane_tank,12:55626,,,no Lucide equivalent
+Home,roller_shades,roller_shades,12:55683,,paint-roller,review (keyword guess)
+Home,roller_shades_closed,roller_shades_closed,12:55736,,closed-caption,review (keyword guess)
+Home,sensor_door,sensor_door,12:55793,,door-closed,review (keyword guess)
+Home,sensor_occupied,sensor_occupied,12:55842,,,no Lucide equivalent
+Home,sensor_window,sensor_window,12:55919,,app-window,review (keyword guess)
+Home,shield_moon,shield_moon,12:55968,,cloud-moon,review (keyword guess)
+Home,solar_power,solar_power,12:56025,,circle-power,review (keyword guess)
+Home,vertical_shades,vertical_shades,12:56118,,ellipsis-vertical,review (keyword guess)
+Home,vertical_shades_closed,vertical_shades_closed,12:56175,,align-center-vertical,review (keyword guess)
+Home,wind_power,wind_power,12:56240,,circle-power,review (keyword guess)
+Hardware,adf_scanner,adf_scanner,12:56320,,,no Lucide equivalent
+Hardware,browser_not_supported,browser_not_supported,12:56381,,equal-approximately-not,review (keyword guess)
+Hardware,browser_updated,browser_updated,12:56434,,,no Lucide equivalent
+Hardware,cast_connected,cast_connected,12:56475,,bluetooth-connected,review (keyword guess)
+Hardware,cast_for_education,cast_for_education,12:56520,,cast,review (keyword guess)
+Hardware,computer,computer,12:56561,,computer,matched (exact)
+Hardware,connected_tv,connected_tv,12:56606,,bluetooth-connected,review (keyword guess)
+Hardware,desktop_mac,desktop_mac,12:56659,,app-window-mac,review (keyword guess)
+Hardware,desktop_windows,desktop_windows,12:56704,Monitor,monitor,matched (synonym)
+Hardware,developer_board,developer_board,12:56749,,circuit-board,review (keyword guess)
+Hardware,developer_board_off,developer_board_off,12:56794,,circuit-board,review (keyword guess)
+Hardware,device_hub,device_hub,12:56839,,graph-hub,review (keyword guess)
+Hardware,device_unknown,device_unknown,12:56880,,,no Lucide equivalent
+Hardware,devices_other,devices_other,12:56925,,,no Lucide equivalent
+Hardware,dock,dock,12:56974,,dock,matched (exact)
+Hardware,earbuds,earbuds,12:57019,,earbuds,matched (exact)
+Hardware,earbuds_battery,earbuds_battery,12:57076,,battery,review (keyword guess)
+Hardware,gamepad,gamepad,12:57133,,gamepad,matched (exact)
+Hardware,headphones_battery,headphones_battery,12:57178,,battery,review (keyword guess)
+Hardware,headset,headset,12:57239,,headset,matched (exact)
+Hardware,headset_mic,headset_mic,12:57284,Headset,headset,matched (synonym)
+Hardware,headset_off,headset_off,12:57329,,headset,review (keyword guess)
+Hardware,home_max,home_max,12:57390,,,no Lucide equivalent
+Hardware,home_mini,home_mini,12:57443,,,no Lucide equivalent
+Hardware,keyboard,keyboard,12:57500,,keyboard,matched (exact)
+Hardware,keyboard_alt,keyboard_alt,12:57545,,keyboard,review (keyword guess)
+Hardware,keyboard_backspace,keyboard_backspace,12:57634,,keyboard,review (keyword guess)
+Hardware,keyboard_capslock,keyboard_capslock,12:57675,,keyboard,review (keyword guess)
+Hardware,keyboard_control_key,keyboard_control_key,12:57716,,book-key,review (keyword guess)
+Hardware,keyboard_hide,keyboard_hide,12:57761,,keyboard-off,review (keyword guess)
+Hardware,keyboard_option_key,keyboard_option_key,12:57806,,option,review (keyword guess)
+Hardware,keyboard_return,keyboard_return,12:57859,,keyboard,review (keyword guess)
+Hardware,keyboard_tab,keyboard_tab,12:57900,,keyboard,review (keyword guess)
+Hardware,keyboard_voice,keyboard_voice,12:57941,,keyboard,review (keyword guess)
+Hardware,laptop,laptop,12:57986,,laptop,matched (exact)
+Hardware,laptop_chromebook,laptop_chromebook,12:58039,,laptop,review (keyword guess)
+Hardware,laptop_mac,laptop_mac,12:58084,Laptop,laptop,matched (synonym)
+Hardware,laptop_windows,laptop_windows,12:58129,,laptop,review (keyword guess)
+Hardware,mouse,mouse,12:58174,,mouse,matched (exact)
+Hardware,phone_android,phone_android,12:58219,,phone,review (keyword guess)
+Hardware,phone_iphone,phone_iphone,12:58264,,phone,review (keyword guess)
+Hardware,phonelink,phonelink,12:58309,,,no Lucide equivalent
+Hardware,phonelink_off,phonelink_off,12:58354,,,no Lucide equivalent
+Hardware,point_of_sale,point_of_sale,12:58399,,badge-exclamation-point,review (keyword guess)
+Hardware,power_input,power_input,12:58448,,circle-power,review (keyword guess)
+Hardware,router,router,12:58489,,router,matched (exact)
+Hardware,scanner,scanner,12:58534,,,no Lucide equivalent
+Hardware,security,security,12:58579,,,no Lucide equivalent
+Hardware,sim_card,sim_card,12:58624,,card-sim,review (keyword guess)
+Hardware,smart_display,smart_display,12:58669,,,no Lucide equivalent
+Hardware,smart_screen,smart_screen,12:58726,,screen-share,review (keyword guess)
+Hardware,smart_toy,smart_toy,12:58775,,toy-brick,review (keyword guess)
+Hardware,speaker_group,speaker_group,12:58840,,group,review (keyword guess)
+Hardware,start,start,12:58885,,,no Lucide equivalent
+Hardware,tablet_android,tablet_android,12:58926,,tablet,review (keyword guess)
+Hardware,tablet_mac,tablet_mac,12:58971,,tablet,review (keyword guess)
+Hardware,toys,toys,12:59016,,,no Lucide equivalent
+Hardware,videogame_asset,videogame_asset,12:59069,,,no Lucide equivalent
+Hardware,videogame_asset_off,videogame_asset_off,12:59122,,,no Lucide equivalent
+Hardware,watch_off,watch_off,12:59167,,watch,review (keyword guess)
+File,approval,approval,12:59231,,,no Lucide equivalent
+File,attach_email,attach_email,12:59292,,,no Lucide equivalent
+File,attachment,attachment,12:59345,,,no Lucide equivalent
+File,cloud_circle,cloud_circle,12:59386,,circle,review (keyword guess)
+File,cloud_done,cloud_done,12:59431,,cloud-check,review (keyword guess)
+File,cloud_queue,cloud_queue,12:59476,,cloud,review (keyword guess)
+File,cloud_sync,cloud_sync,12:59521,,cloud-sync,matched (exact)
+File,difference,difference,12:59578,,,no Lucide equivalent
+File,download_done,download_done,12:59627,,cloud-download,review (keyword guess)
+File,download_for_offline,download_for_offline,12:59668,,cloud-download,review (keyword guess)
+File,downloading,downloading,12:59729,,,no Lucide equivalent
+File,drive_file_move,drive_file_move,12:59778,,hard-drive-upload,review (keyword guess)
+File,drive_file_move_rtl,drive_file_move_rtl,12:59835,,hard-drive-upload,review (keyword guess)
+File,drive_file_rename_outline,drive_file_rename_outline,12:59880,,file-pen,review (keyword guess)
+File,drive_folder_upload,drive_folder_upload,12:59941,,hard-drive-upload,review (keyword guess)
+File,file_download,file_download,12:59998,,file-down,review (keyword guess)
+File,file_download_done,file_download_done,12:60055,,file-check,review (keyword guess)
+File,file_download_off,file_download_off,12:60108,,file-down,review (keyword guess)
+File,file_open,file_open,12:60153,,book-open,review (keyword guess)
+File,file_upload,file_upload,12:60202,,cloud-upload,review (keyword guess)
+File,folder_copy,folder_copy,12:60259,,book-copy,review (keyword guess)
+File,folder_off,folder_off,12:60316,,folder,review (keyword guess)
+File,folder_open,folder_open,12:60381,,folder-open,matched (exact)
+File,folder_shared,folder_shared,12:60426,,folder-network,review (keyword guess)
+File,folder_zip,folder_zip,12:60471,,folder-archive,review (keyword guess)
+File,format_overline,format_overline,12:60520,,,no Lucide equivalent
+File,newspaper,newspaper,12:60565,,newspaper,matched (exact)
+File,request_quote,request_quote,12:60610,,quote,review (keyword guess)
+File,rule_folder,rule_folder,12:60659,,folder,review (keyword guess)
+File,snippet_folder,snippet_folder,12:60708,,folder,review (keyword guess)
+File,text_snippet,text_snippet,12:60757,,book-text,review (keyword guess)
+File,topic,topic,12:60806,,,no Lucide equivalent
+File,upload_file,upload_file,12:60855,,cloud-upload,review (keyword guess)
+File,workspaces,workspaces,12:60912,,,no Lucide equivalent
+Editor,add_chart,add_chart,12:60984,,chart-area,review (keyword guess)
+Editor,add_comment,add_comment,12:61049,,,no Lucide equivalent
+Editor,align_horizontal_center,align_horizontal_center,12:61094,,align-center-horizontal,review (keyword guess)
+Editor,align_horizontal_left,align_horizontal_left,12:61135,,align-horizontal-distribute-start,review (keyword guess)
+Editor,align_horizontal_right,align_horizontal_right,12:61176,,align-horizontal-distribute-end,review (keyword guess)
+Editor,align_vertical_bottom,align_vertical_bottom,12:61217,,align-vertical-distribute-end,review (keyword guess)
+Editor,align_vertical_center,align_vertical_center,12:61258,,align-center-vertical,review (keyword guess)
+Editor,align_vertical_top,align_vertical_top,12:61299,,align-vertical-distribute-start,review (keyword guess)
+Editor,area_chart,area_chart,12:61340,,chart-area,matched (exact)
+Editor,auto_graph,auto_graph,12:61385,,git-graph,review (keyword guess)
+Editor,border_all,border_all,12:61430,,replace-all,review (keyword guess)
+Editor,border_bottom,border_bottom,12:61471,,margin-bottom,review (keyword guess)
+Editor,border_clear,border_clear,12:61512,,,no Lucide equivalent
+Editor,border_color,border_color,12:61553,,,no Lucide equivalent
+Editor,border_horizontal,border_horizontal,12:61610,,gallery-horizontal,review (keyword guess)
+Editor,border_inner,border_inner,12:61651,,,no Lucide equivalent
+Editor,border_left,border_left,12:61692,,arrow-left,review (keyword guess)
+Editor,border_outer,border_outer,12:61733,,,no Lucide equivalent
+Editor,border_right,border_right,12:61774,,arrow-right,review (keyword guess)
+Editor,border_style,border_style,12:61815,,line-style,review (keyword guess)
+Editor,border_top,border_top,12:61856,,square-dashed-top-solid,review (keyword guess)
+Editor,border_vertical,border_vertical,12:61897,,ellipsis-vertical,review (keyword guess)
+Editor,bubble_chart,bubble_chart,12:61938,,chart-area,review (keyword guess)
+Editor,candlestick_chart,candlestick_chart,12:61991,,chart-candlestick,matched (exact)
+Editor,checklist,checklist,12:62052,,,no Lucide equivalent
+Editor,checklist_rtl,checklist_rtl,12:62093,,,no Lucide equivalent
+Editor,data_array,data_array,12:62134,,,no Lucide equivalent
+Editor,data_object,data_object,12:62187,,,no Lucide equivalent
+Editor,drag_handle,drag_handle,12:62240,,handle-bottom-right,review (keyword guess)
+Editor,edit_note,edit_note,12:62281,,eighth-note,review (keyword guess)
+Editor,format_clear,format_clear,12:62322,,,no Lucide equivalent
+Editor,format_color_fill,format_color_fill,12:62363,,,no Lucide equivalent
+Editor,format_color_reset,format_color_reset,12:62408,,timer-reset,review (keyword guess)
+Editor,format_color_text,format_color_text,12:62453,,text-initial,review (keyword guess)
+Editor,format_indent_decrease,format_indent_decrease,12:62498,,list-indent-decrease,review (keyword guess)
+Editor,format_indent_increase,format_indent_increase,12:62539,,list-indent-increase,review (keyword guess)
+Editor,format_line_spacing,format_line_spacing,12:62580,,line-height,review (keyword guess)
+Editor,format_list_bulleted,format_list_bulleted,12:62621,,clipboard-list,review (keyword guess)
+Editor,format_list_numbered,format_list_numbered,12:62674,,clipboard-list,review (keyword guess)
+Editor,format_list_numbered_rtl,format_list_numbered_rtl,12:62715,,clipboard-list,review (keyword guess)
+Editor,format_paint,format_paint,12:62756,,paint-bucket,review (keyword guess)
+Editor,format_quote,format_quote,12:62801,,quote,review (keyword guess)
+Editor,format_shapes,format_shapes,12:62846,,shapes,review (keyword guess)
+Editor,format_size,format_size,12:62891,,,no Lucide equivalent
+Editor,format_strikethrough,format_strikethrough,12:62932,,strikethrough,review (keyword guess)
+Editor,format_textdirection_l_to_r,format_textdirection_l_to_r,12:62973,,arrow-down-to-dot,review (keyword guess)
+Editor,format_textdirection_r_to_l,format_textdirection_r_to_l,12:63018,,arrow-down-to-dot,review (keyword guess)
+Editor,functions,functions,12:63063,,,no Lucide equivalent
+Editor,height,height,12:63104,,,no Lucide equivalent
+Editor,highlight,highlight,12:63149,,,no Lucide equivalent
+Editor,horizontal_distribute,horizontal_distribute,12:63194,,align-horizontal-distribute-center,review (keyword guess)
+Editor,horizontal_rule,horizontal_rule,12:63235,,gallery-horizontal,review (keyword guess)
+Editor,insert_chart_outlined,insert_chart_outlined,12:63284,,chart-area,review (keyword guess)
+Editor,insert_comment,insert_comment,12:63325,,,no Lucide equivalent
+Editor,insert_emoticon,insert_emoticon,12:63370,,,no Lucide equivalent
+Editor,insert_invitation,insert_invitation,12:63427,,,no Lucide equivalent
+Editor,insert_page_break,insert_page_break,12:63472,,,no Lucide equivalent
+Editor,insert_photo,insert_photo,12:63549,,,no Lucide equivalent
+Editor,line_axis,line_axis,12:63594,,square-axis-dashed-horizontal,review (keyword guess)
+Editor,linear_scale,linear_scale,12:63639,,scale,review (keyword guess)
+Editor,margin,margin,12:63680,,margin,matched (exact)
+Editor,merge_type,merge_type,12:63757,,book-type,review (keyword guess)
+Editor,mode,mode,12:63798,,,no Lucide equivalent
+Editor,mode_comment,mode_comment,12:63843,,,no Lucide equivalent
+Editor,mode_edit,mode_edit,12:63888,,,no Lucide equivalent
+Editor,mode_edit_outline,mode_edit_outline,12:63953,,,no Lucide equivalent
+Editor,monetization_on,monetization_on,12:64018,,,no Lucide equivalent
+Editor,money_off,money_off,12:64063,,,no Lucide equivalent
+Editor,money_off_csred,money_off_csred,12:64104,,,no Lucide equivalent
+Editor,move_down,move_down,12:64145,,move-down,matched (exact)
+Editor,move_up,move_up,12:64206,,move-up,matched (exact)
+Editor,multiline_chart,multiline_chart,12:64267,,chart-area,review (keyword guess)
+Editor,notes,notes,12:64308,,,no Lucide equivalent
+Editor,numbers,numbers,12:64349,,numbers,matched (exact)
+Editor,padding,padding,12:64394,,,no Lucide equivalent
+Editor,pie_chart_outline,pie_chart_outline,12:64459,,chart-pie,review (keyword guess)
+Editor,polyline,polyline,12:64500,,,no Lucide equivalent
+Editor,post_add,post_add,12:64549,,,no Lucide equivalent
+Editor,publish,publish,12:64614,,,no Lucide equivalent
+Editor,query_stats,query_stats,12:64659,,,no Lucide equivalent
+Editor,rectangle,rectangle,12:64704,,,no Lucide equivalent
+Editor,scatter_plot,scatter_plot,12:64761,,chart-scatter,review (keyword guess)
+Editor,schema,schema,12:64814,,,no Lucide equivalent
+Editor,score,score,12:64859,,,no Lucide equivalent
+Editor,shape_line,shape_line,12:64904,,line-squiggle,review (keyword guess)
+Editor,short_text,short_text,12:64969,,book-text,review (keyword guess)
+Editor,show_chart,show_chart,12:65010,LineChart,chart-line,matched (synonym)
+Editor,space_bar,space_bar,12:65051,,chart-bar,review (keyword guess)
+Editor,square,square,12:65092,,square,matched (exact)
+Editor,stacked_line_chart,stacked_line_chart,12:65149,,chart-bar-stacked,review (keyword guess)
+Editor,strikethrough_s,strikethrough_s,12:65190,,letter-s,review (keyword guess)
+Editor,subscript,subscript,12:65231,,subscript,matched (exact)
+Editor,superscript,superscript,12:65276,,superscript,matched (exact)
+Editor,table_rows,table_rows,12:65321,,table-rows-split,review (keyword guess)
+Editor,text_decrease,text_decrease,12:65366,,list-indent-decrease,review (keyword guess)
+Editor,text_increase,text_increase,12:65407,,list-indent-increase,review (keyword guess)
+Editor,title,title,12:65448,,,no Lucide equivalent
+Editor,type_specimen,type_specimen,12:65489,,book-type,review (keyword guess)
+Editor,vertical_align_bottom,vertical_align_bottom,12:65554,,align-vertical-distribute-end,review (keyword guess)
+Editor,vertical_align_center,vertical_align_center,12:65595,,align-center-vertical,review (keyword guess)
+Editor,vertical_align_top,vertical_align_top,12:65636,,align-vertical-distribute-start,review (keyword guess)
+Editor,vertical_distribute,vertical_distribute,12:65677,,align-vertical-distribute-center,review (keyword guess)
+Editor,wrap_text,wrap_text,12:65718,,text-wrap,matched (exact)
+Device,1x_mobiledata,1x_mobiledata,12:65762,,,no Lucide equivalent
+Device,30fps,30fps,12:65811,,,no Lucide equivalent
+Device,3g_mobiledata,3g_mobiledata,12:65860,,,no Lucide equivalent
+Device,4g_mobiledata,4g_mobiledata,12:65909,,,no Lucide equivalent
+Device,4g_plus_mobiledata,4g_plus_mobiledata,12:65958,,alarm-clock-plus,review (keyword guess)
+Device,60fps,60fps,12:66007,,,no Lucide equivalent
+Device,access_alarm,access_alarm,12:66056,,alarm-clock,review (keyword guess)
+Device,access_alarms,access_alarms,12:66101,,,no Lucide equivalent
+Device,access_time,access_time,12:66146,,,no Lucide equivalent
+Device,access_time_filled,access_time_filled,12:66191,,,no Lucide equivalent
+Device,ad_units,ad_units,12:66236,,ad,review (keyword guess)
+Device,add_alarm,add_alarm,12:66305,,alarm-clock-plus,review (keyword guess)
+Device,add_to_home_screen,add_to_home_screen,12:66350,,arrow-left-to-line,review (keyword guess)
+Device,airplane_ticket,airplane_ticket,12:66391,,ticket,review (keyword guess)
+Device,airplanemode_active,airplanemode_active,12:66448,,,no Lucide equivalent
+Device,airplanemode_inactive,airplanemode_inactive,12:66493,,,no Lucide equivalent
+Device,aod,aod,12:66538,,,no Lucide equivalent
+Device,battery_1_bar,battery_1_bar,12:66595,,battery,review (keyword guess)
+Device,battery_2_bar,battery_2_bar,12:66644,,battery,review (keyword guess)
+Device,battery_3_bar,battery_3_bar,12:66693,,battery,review (keyword guess)
+Device,battery_4_bar,battery_4_bar,12:66742,,battery,review (keyword guess)
+Device,battery_5_bar,battery_5_bar,12:66791,,battery,review (keyword guess)
+Device,battery_6_bar,battery_6_bar,12:66840,,battery,review (keyword guess)
+Device,battery_alert,battery_alert,12:66889,,battery-exclamation-point,review (keyword guess)
+Device,battery_full,battery_full,12:66930,,battery-full,matched (exact)
+Device,battery_saver,battery_saver,12:66971,,battery,review (keyword guess)
+Device,battery_std,battery_std,12:67020,,battery,review (keyword guess)
+Device,battery_unknown,battery_unknown,12:67061,,battery,review (keyword guess)
+Device,bloodtype,bloodtype,12:67102,,,no Lucide equivalent
+Device,bluetooth_connected,bluetooth_connected,12:67163,,bluetooth-connected,matched (exact)
+Device,bluetooth_disabled,bluetooth_disabled,12:67204,,bluetooth-off,review (keyword guess)
+Device,bluetooth_drive,bluetooth_drive,12:67245,,bluetooth,review (keyword guess)
+Device,bluetooth_searching,bluetooth_searching,12:67314,,bluetooth-searching,matched (exact)
+Device,brightness_auto,brightness_auto,12:67355,,,no Lucide equivalent
+Device,brightness_high,brightness_high,12:67400,,signal-high,review (keyword guess)
+Device,brightness_low,brightness_low,12:67449,,battery-low,review (keyword guess)
+Device,brightness_medium,brightness_medium,12:67494,,sun-medium,review (keyword guess)
+Device,cable,cable,12:67539,,cable,matched (exact)
+Device,cameraswitch,cameraswitch,12:67588,,,no Lucide equivalent
+Device,credit_score,credit_score,12:67653,,credit-card,review (keyword guess)
+Device,data_saver_off,data_saver_off,12:67698,,,no Lucide equivalent
+Device,data_saver_on,data_saver_on,12:67747,,,no Lucide equivalent
+Device,data_usage,data_usage,12:67796,,,no Lucide equivalent
+Device,dataset,dataset,12:67837,,,no Lucide equivalent
+Device,dataset_linked,dataset_linked,12:67926,,boxes-linked,review (keyword guess)
+Device,developer_mode,developer_mode,12:68019,,,no Lucide equivalent
+Device,devices,devices,12:68060,,,no Lucide equivalent
+Device,devices_fold,devices_fold,12:68105,,calendar-fold,review (keyword guess)
+Device,discount,discount,12:68214,,,no Lucide equivalent
+Device,do_not_disturb_on_total_silence,do_not_disturb_on_total_silence,12:68279,,equal-approximately-not,review (keyword guess)
+Device,dvr,dvr,12:68328,,,no Lucide equivalent
+Device,e_mobiledata,e_mobiledata,12:68373,,letter-e,review (keyword guess)
+Device,edgesensor_high,edgesensor_high,12:68422,,signal-high,review (keyword guess)
+Device,edgesensor_low,edgesensor_low,12:68495,,battery-low,review (keyword guess)
+Device,flashlight_off,flashlight_off,12:68560,,flashlight-off,matched (exact)
+Device,flashlight_on,flashlight_on,12:68633,,flashlight,review (keyword guess)
+Device,fluorescent,fluorescent,12:68694,,,no Lucide equivalent
+Device,fmd_bad,fmd_bad,12:68771,,,no Lucide equivalent
+Device,fmd_good,fmd_good,12:68824,,,no Lucide equivalent
+Device,g_mobiledata,g_mobiledata,12:68877,,letter-g,review (keyword guess)
+Device,gpp_bad,gpp_bad,12:68926,ShieldAlert,shield-exclamation-point,matched (app-map)
+Device,gpp_good,gpp_good,12:68979,,,no Lucide equivalent
+Device,gpp_maybe,gpp_maybe,12:69032,ShieldQuestion,shield-question-mark,matched (app-map)
+Device,gps_not_fixed,gps_not_fixed,12:69085,,locate-fixed,review (keyword guess)
+Device,gps_off,gps_off,12:69126,,,no Lucide equivalent
+Device,graphic_eq,graphic_eq,12:69167,,,no Lucide equivalent
+Device,grid_3x3,grid_3x3,12:69208,,grid-3x3,matched (exact)
+Device,grid_4x4,grid_4x4,12:69253,,grid-2x2,review (keyword guess)
+Device,grid_goldenratio,grid_goldenratio,12:69302,,grid-2x2,review (keyword guess)
+Device,h_mobiledata,h_mobiledata,12:69351,,letter-h,review (keyword guess)
+Device,h_plus_mobiledata,h_plus_mobiledata,12:69400,,alarm-clock-plus,review (keyword guess)
+Device,hdr_auto,hdr_auto,12:69449,,,no Lucide equivalent
+Device,hdr_auto_select,hdr_auto_select,12:69510,,lasso-select,review (keyword guess)
+Device,hdr_off_select,hdr_off_select,12:69579,,lasso-select,review (keyword guess)
+Device,hdr_on_select,hdr_on_select,12:69628,,lasso-select,review (keyword guess)
+Device,lan,lan,12:69677,,,no Lucide equivalent
+Device,lens_blur,lens_blur,12:69726,,lens,review (keyword guess)
+Device,location_disabled,location_disabled,12:69775,,,no Lucide equivalent
+Device,location_searching,location_searching,12:69816,,bluetooth-searching,review (keyword guess)
+Device,lte_mobiledata,lte_mobiledata,12:69857,,,no Lucide equivalent
+Device,lte_plus_mobiledata,lte_plus_mobiledata,12:69906,,alarm-clock-plus,review (keyword guess)
+Device,macro_off,macro_off,12:69955,,,no Lucide equivalent
+Device,media_bluetooth_off,media_bluetooth_off,12:70040,,bluetooth,review (keyword guess)
+Device,media_bluetooth_on,media_bluetooth_on,12:70089,,bluetooth,review (keyword guess)
+Device,medication,medication,12:70138,,,no Lucide equivalent
+Device,medication_liquid,medication_liquid,12:70199,,,no Lucide equivalent
+Device,mobile_friendly,mobile_friendly,12:70292,,,no Lucide equivalent
+Device,mobile_off,mobile_off,12:70333,,,no Lucide equivalent
+Device,mobiledata_off,mobiledata_off,12:70374,,,no Lucide equivalent
+Device,mode_night,mode_night,12:70427,,,no Lucide equivalent
+Device,mode_standby,mode_standby,12:70480,,,no Lucide equivalent
+Device,monitor_weight,monitor_weight,12:70529,,monitor,review (keyword guess)
+Device,nearby_error,nearby_error,12:70598,,,no Lucide equivalent
+Device,nearby_off,nearby_off,12:70647,,,no Lucide equivalent
+Device,network_cell,network_cell,12:70696,,chart-network,review (keyword guess)
+Device,network_wifi,network_wifi,12:70741,,house-wifi,review (keyword guess)
+Device,network_wifi_1_bar,network_wifi_1_bar,12:70786,,house-wifi,review (keyword guess)
+Device,network_wifi_2_bar,network_wifi_2_bar,12:70835,,house-wifi,review (keyword guess)
+Device,network_wifi_3_bar,network_wifi_3_bar,12:70884,,house-wifi,review (keyword guess)
+Device,nfc,nfc,12:70933,,nfc,matched (exact)
+Device,nightlight,nightlight,12:70974,,,no Lucide equivalent
+Device,note_alt,note_alt,12:71035,,,no Lucide equivalent
+Device,password,password,12:71096,,,no Lucide equivalent
+Device,pattern,pattern,12:71145,,,no Lucide equivalent
+Device,phishing,phishing,12:71194,,,no Lucide equivalent
+Device,pin,pin,12:71239,,pin,matched (exact)
+Device,play_lesson,play_lesson,12:71304,,bug-play,review (keyword guess)
+Device,price_change,price_change,12:71361,,,no Lucide equivalent
+Device,price_check,price_check,12:71426,,badge-check,review (keyword guess)
+Device,punch_clock,punch_clock,12:71479,,alarm-clock,review (keyword guess)
+Device,quiz,quiz,12:71544,,,no Lucide equivalent
+Device,r_mobiledata,r_mobiledata,12:71593,,letter-r,review (keyword guess)
+Device,radar,radar,12:71642,,radar,matched (exact)
+Device,remember_me,remember_me,12:71691,,,no Lucide equivalent
+Device,reset_tv,reset_tv,12:71760,,timer-reset,review (keyword guess)
+Device,restart_alt,restart_alt,12:71805,,,no Lucide equivalent
+Device,reviews,reviews,12:71858,,,no Lucide equivalent
+Device,rsvp,rsvp,12:71915,,,no Lucide equivalent
+Device,screen_lock_landscape,screen_lock_landscape,12:71964,,book-lock,review (keyword guess)
+Device,screen_lock_portrait,screen_lock_portrait,12:72009,,book-lock,review (keyword guess)
+Device,screen_lock_rotation,screen_lock_rotation,12:72054,,book-lock,review (keyword guess)
+Device,screen_rotation,screen_rotation,12:72095,,screen-share,review (keyword guess)
+Device,screen_search_desktop,screen_search_desktop,12:72140,,screen-share,review (keyword guess)
+Device,screenshot,screenshot,12:72201,,,no Lucide equivalent
+Device,screenshot_monitor,screenshot_monitor,12:72266,,monitor,review (keyword guess)
+Device,sd_storage,sd_storage,12:72327,,,no Lucide equivalent
+Device,security_update,security_update,12:72372,,,no Lucide equivalent
+Device,security_update_good,security_update_good,12:72429,,,no Lucide equivalent
+Device,security_update_warning,security_update_warning,12:72482,,,no Lucide equivalent
+Device,sell,sell,12:72551,Tag,tag,matched (synonym)
+Device,send_to_mobile,send_to_mobile,12:72608,,send-to-back,review (keyword guess)
+Device,settings_suggest,settings_suggest,12:72669,,settings,review (keyword guess)
+Device,settings_system_daydream,settings_system_daydream,12:72714,,settings,review (keyword guess)
+Device,share_location,share_location,12:72759,,screen-share,review (keyword guess)
+Device,shortcut,shortcut,12:72828,,,no Lucide equivalent
+Device,signal_cellular_0_bar,signal_cellular_0_bar,12:72873,,chart-bar,review (keyword guess)
+Device,signal_cellular_4_bar,signal_cellular_4_bar,12:72918,,chart-bar,review (keyword guess)
+Device,signal_cellular_alt,signal_cellular_alt,12:72959,Signal,signal,matched (synonym)
+Device,signal_cellular_alt_1_bar,signal_cellular_alt_1_bar,12:73000,,chart-bar,review (keyword guess)
+Device,signal_cellular_alt_2_bar,signal_cellular_alt_2_bar,12:73045,,chart-bar,review (keyword guess)
+Device,signal_cellular_connected_no_internet_0_bar,signal_cellular_connected_no_internet_0_bar,12:73094,,bluetooth-connected,review (keyword guess)
+Device,signal_cellular_connected_no_internet_4_bar,signal_cellular_connected_no_internet_4_bar,12:73135,,bluetooth-connected,review (keyword guess)
+Device,signal_cellular_no_sim,signal_cellular_no_sim,12:73188,,card-sim,review (keyword guess)
+Device,signal_cellular_nodata,signal_cellular_nodata,12:73233,,file-signal,review (keyword guess)
+Device,signal_cellular_null,signal_cellular_null,12:73282,,file-signal,review (keyword guess)
+Device,signal_cellular_off,signal_cellular_off,12:73323,,file-signal,review (keyword guess)
+Device,signal_wifi_0_bar,signal_wifi_0_bar,12:73364,,house-wifi,review (keyword guess)
+Device,signal_wifi_4_bar,signal_wifi_4_bar,12:73409,,house-wifi,review (keyword guess)
+Device,signal_wifi_4_bar_lock,signal_wifi_4_bar_lock,12:73450,,wifi-lock,review (keyword guess)
+Device,signal_wifi_bad,signal_wifi_bad,12:73503,,house-wifi,review (keyword guess)
+Device,signal_wifi_connected_no_internet_4,signal_wifi_connected_no_internet_4,12:73548,,house-wifi,review (keyword guess)
+Device,signal_wifi_off,signal_wifi_off,12:73593,,house-wifi,review (keyword guess)
+Device,signal_wifi_statusbar_4_bar,signal_wifi_statusbar_4_bar,12:73634,,house-wifi,review (keyword guess)
+Device,signal_wifi_statusbar_connected_no_internet_4,signal_wifi_statusbar_connected_no_internet_4,12:73679,,house-wifi,review (keyword guess)
+Device,signal_wifi_statusbar_null,signal_wifi_statusbar_null,12:73736,,house-wifi,review (keyword guess)
+Device,sim_card_download,sim_card_download,12:73781,,card-sim,review (keyword guess)
+Device,splitscreen,splitscreen,12:73838,,,no Lucide equivalent
+Device,sports_score,sports_score,12:73899,,,no Lucide equivalent
+Device,ssid_chart,ssid_chart,12:73948,,chart-area,review (keyword guess)
+Device,storm,storm,12:73993,,,no Lucide equivalent
+Device,summarize,summarize,12:74054,,,no Lucide equivalent
+Device,system_security_update,system_security_update,12:74119,,,no Lucide equivalent
+Device,system_security_update_good,system_security_update_good,12:74176,,,no Lucide equivalent
+Device,system_security_update_warning,system_security_update_warning,12:74229,,,no Lucide equivalent
+Device,task,task,12:74298,FileCheck FileCheck2,file-check,matched (synonym)
+Device,thermostat,thermostat,12:74347,,,no Lucide equivalent
+Device,timer_10_select,timer_10_select,12:74388,,lasso-select,review (keyword guess)
+Device,timer_3_select,timer_3_select,12:74429,,lasso-select,review (keyword guess)
+Device,tungsten,tungsten,12:74470,,,no Lucide equivalent
+Device,usb,usb,12:74543,,usb,matched (exact)
+Device,usb_off,usb_off,12:74584,,usb,review (keyword guess)
+Device,wallpaper,wallpaper,12:74625,,wallpaper,matched (exact)
+Device,water,water,12:74666,,,no Lucide equivalent
+Device,widgets,widgets,12:74715,,,no Lucide equivalent
+Device,wifi_1_bar,wifi_1_bar,12:74760,,chart-bar,review (keyword guess)
+Device,wifi_2_bar,wifi_2_bar,12:74805,,chart-bar,review (keyword guess)
+Device,wifi_calling_3,wifi_calling_3,12:74850,,house-wifi,review (keyword guess)
+Device,wifi_channel,wifi_channel,12:74923,,house-wifi,review (keyword guess)
+Device,wifi_find,wifi_find,12:74972,,house-wifi,review (keyword guess)
+Device,wifi_lock,wifi_lock,12:75029,,wifi-lock,matched (exact)
+Device,wifi_password,wifi_password,12:75082,,wifi-lock,review (keyword guess)
+Device,wifi_tethering,wifi_tethering,12:75127,,house-wifi,review (keyword guess)
+Device,wifi_tethering_error,wifi_tethering_error,12:75168,,house-wifi,review (keyword guess)
+Device,wifi_tethering_off,wifi_tethering_off,12:75217,,house-wifi,review (keyword guess)
+Content,add_circle_outline,add_circle_outline,12:75269,,circle-plus,review (keyword guess)
+Content,attribution,attribution,12:75310,,,no Lucide equivalent
+Content,ballot,ballot,12:75359,,,no Lucide equivalent
+Content,biotech,biotech,12:75404,,,no Lucide equivalent
+Content,calculate,calculate,12:75461,Calculator,calculator,matched (synonym)
+Content,change_circle,change_circle,12:75534,,circle,review (keyword guess)
+Content,clear,clear,12:75579,,,no Lucide equivalent
+Content,content_paste_go,content_paste_go,12:75620,,clipboard-paste,review (keyword guess)
+Content,content_paste_off,content_paste_off,12:75677,,clipboard-paste,review (keyword guess)
+Content,content_paste_search,content_paste_search,12:75722,,book-search,review (keyword guess)
+Content,copy_all,copy_all,12:75779,,save-all,review (keyword guess)
+Content,delete_sweep,delete_sweep,12:75824,,delete,review (keyword guess)
+Content,deselect,deselect,12:75869,,,no Lucide equivalent
+Content,drafts,drafts,12:75914,,,no Lucide equivalent
+Content,dynamic_feed,dynamic_feed,12:75959,,,no Lucide equivalent
+Content,file_copy,file_copy,12:76044,Files,files,matched (synonym)
+Content,filter_list,filter_list,12:76089,Filter,list-filter,matched (synonym)
+Content,filter_list_off,filter_list_off,12:76130,,list-filter,review (keyword guess)
+Content,flag_circle,flag_circle,12:76175,,circle,review (keyword guess)
+Content,font_download,font_download,12:76236,,cloud-download,review (keyword guess)
+Content,font_download_off,font_download_off,12:76281,,cloud-download,review (keyword guess)
+Content,forward,forward,12:76326,,forward,matched (exact)
+Content,gesture,gesture,12:76371,,,no Lucide equivalent
+Content,how_to_vote,how_to_vote,12:76412,,bring-to-front,review (keyword guess)
+Content,insights,insights,12:76465,,,no Lucide equivalent
+Content,link_off,link_off,12:76522,,link,review (keyword guess)
+Content,low_priority,low_priority,12:76563,,battery-low,review (keyword guess)
+Content,markunread,markunread,12:76604,,,no Lucide equivalent
+Content,move_to_inbox,move_to_inbox,12:76649,,bring-to-front,review (keyword guess)
+Content,next_week,next_week,12:76694,,,no Lucide equivalent
+Content,outlined_flag,outlined_flag,12:76739,,flag,review (keyword guess)
+Content,policy,policy,12:76780,,,no Lucide equivalent
+Content,push_pin,push_pin,12:76833,,map-pin,review (keyword guess)
+Content,redo,redo,12:76886,,redo,matched (exact)
+Content,remove_circle_outline,remove_circle_outline,12:76927,,circle-minus,review (keyword guess)
+Content,reply,reply,12:76968,,reply,matched (exact)
+Content,reply_all,reply_all,12:77009,,reply-all,matched (exact)
+Content,report_gmailerrorred,report_gmailerrorred,12:77050,,,no Lucide equivalent
+Content,report_off,report_off,12:77099,,,no Lucide equivalent
+Content,save_alt,save_alt,12:77152,,save,review (keyword guess)
+Content,save_as,save_as,12:77193,,save,review (keyword guess)
+Content,select_all,select_all,12:77242,,lasso-select,review (keyword guess)
+Content,sort,sort,12:77283,,,no Lucide equivalent
+Content,square_foot,square_foot,12:77324,,key-square,review (keyword guess)
+Content,stacked_bar_chart,stacked_bar_chart,12:77381,,chart-bar-stacked,review (keyword guess)
+Content,stream,stream,12:77450,,,no Lucide equivalent
+Content,text_format,text_format,12:77527,,text-initial,review (keyword guess)
+Content,unarchive,unarchive,12:77568,,,no Lucide equivalent
+Content,undo,undo,12:77613,Undo2,undo,matched (exact)
+Content,upcoming,upcoming,12:77654,,,no Lucide equivalent
+Content,waves,waves,12:77719,Waves,waves-horizontal,matched (exact)
+Content,web_stories,web_stories,12:77760,,,no Lucide equivalent
+Content,weekend,weekend,12:77821,,,no Lucide equivalent
+Content,where_to_vote,where_to_vote,12:77866,,bring-to-front,review (keyword guess)
+Communication,3p,3p,12:77914,,,no Lucide equivalent
+Communication,add_ic_call,add_ic_call,12:77963,,phone-call,review (keyword guess)
+Communication,app_registration,app_registration,12:78008,,app-window,review (keyword guess)
+Communication,business,business,12:78085,,building,matched (synonym)
+Communication,call_end,call_end,12:78130,,list-end,review (keyword guess)
+Communication,call_merge,call_merge,12:78175,,git-merge,review (keyword guess)
+Communication,call_missed_outgoing,call_missed_outgoing,12:78216,,phone-missed,review (keyword guess)
+Communication,call_split,call_split,12:78257,,phone-call,review (keyword guess)
+Communication,cancel_presentation,cancel_presentation,12:78298,,presentation,review (keyword guess)
+Communication,cell_tower,cell_tower,12:78343,,radio-tower,review (keyword guess)
+Communication,cell_wifi,cell_wifi,12:78408,,house-wifi,review (keyword guess)
+Communication,chat_bubble_outline,chat_bubble_outline,12:78453,,,no Lucide equivalent
+Communication,clear_all,clear_all,12:78494,,replace-all,review (keyword guess)
+Communication,co_present,co_present,12:78535,,,no Lucide equivalent
+Communication,comment,comment,12:78620,,,no Lucide equivalent
+Communication,comments_disabled,comments_disabled,12:78665,,,no Lucide equivalent
+Communication,contact_emergency,contact_emergency,12:78710,,contact,review (keyword guess)
+Communication,contact_mail,contact_mail,12:78771,,contact,review (keyword guess)
+Communication,contact_phone,contact_phone,12:78816,,phone-log,review (keyword guess)
+Communication,contacts,contacts,12:78861,,,no Lucide equivalent
+Communication,desktop_access_disabled,desktop_access_disabled,12:78906,,,no Lucide equivalent
+Communication,dialer_sip,dialer_sip,12:78951,,,no Lucide equivalent
+Communication,dialpad,dialpad,12:78996,,,no Lucide equivalent
+Communication,document_scanner,document_scanner,12:79037,ScanLine,scan-line,matched (app-map)
+Communication,domain_disabled,domain_disabled,12:79082,,,no Lucide equivalent
+Communication,domain_verification,domain_verification,12:79127,,,no Lucide equivalent
+Communication,duo,duo,12:79184,,,no Lucide equivalent
+Communication,email,email,12:79225,,,no Lucide equivalent
+Communication,forum,forum,12:79270,,,no Lucide equivalent
+Communication,forward_to_inbox,forward_to_inbox,12:79315,,bring-to-front,review (keyword guess)
+Communication,hourglass_bottom,hourglass_bottom,12:79364,,hourglass,review (keyword guess)
+Communication,hourglass_top,hourglass_top,12:79421,,hourglass,review (keyword guess)
+Communication,hub,hub,12:79478,,,no Lucide equivalent
+Communication,import_contacts,import_contacts,12:79523,,import,review (keyword guess)
+Communication,import_export,import_export,12:79568,,import,review (keyword guess)
+Communication,invert_colors_off,invert_colors_off,12:79609,,,no Lucide equivalent
+Communication,key_off,key_off,12:79654,,key,review (keyword guess)
+Communication,list_alt,list_alt,12:79711,,list,review (keyword guess)
+Communication,live_help,live_help,12:79756,,,no Lucide equivalent
+Communication,location_off,location_off,12:79801,,,no Lucide equivalent
+Communication,location_on,location_on,12:79842,MapPin,map-pin,matched (synonym)
+Communication,mail_lock,mail_lock,12:79891,,book-lock,review (keyword guess)
+Communication,mail_outline,mail_outline,12:79952,,mail,review (keyword guess)
+Communication,mark_chat_read,mark_chat_read,12:79993,,message-circle-question-mark,review (keyword guess)
+Communication,mark_chat_unread,mark_chat_unread,12:80042,,mail-question-mark,review (keyword guess)
+Communication,mark_email_read,mark_email_read,12:80091,,mail-question-mark,review (keyword guess)
+Communication,mark_email_unread,mark_email_unread,12:80140,,mail-question-mark,review (keyword guess)
+Communication,mark_unread_chat_alt,mark_unread_chat_alt,12:80189,,mail-question-mark,review (keyword guess)
+Communication,message,message,12:80262,,,no Lucide equivalent
+Communication,mobile_screen_share,mobile_screen_share,12:80307,,screen-share,review (keyword guess)
+Communication,more_time,more_time,12:80352,,,no Lucide equivalent
+Communication,nat,nat,12:80409,,,no Lucide equivalent
+Communication,no_sim,no_sim,12:80466,,card-sim,review (keyword guess)
+Communication,pause_presentation,pause_presentation,12:80519,,circle-pause,review (keyword guess)
+Communication,person_add_disabled,person_add_disabled,12:80564,,circle-person-arms-spread,review (keyword guess)
+Communication,person_search,person_search,12:80609,,user-search,review (keyword guess)
+Communication,phone,phone,12:80686,,phone,matched (exact)
+Communication,phone_enabled,phone_enabled,12:80731,,phone,review (keyword guess)
+Communication,phonelink_erase,phonelink_erase,12:80780,,,no Lucide equivalent
+Communication,phonelink_lock,phonelink_lock,12:80821,,book-lock,review (keyword guess)
+Communication,phonelink_ring,phonelink_ring,12:80862,,bell-ring,review (keyword guess)
+Communication,phonelink_setup,phonelink_setup,12:80907,,,no Lucide equivalent
+Communication,portable_wifi_off,portable_wifi_off,12:80948,,house-wifi,review (keyword guess)
+Communication,present_to_all,present_to_all,12:80989,,bring-to-front,review (keyword guess)
+Communication,print_disabled,print_disabled,12:81034,,paw-print,review (keyword guess)
+Communication,qr_code,qr_code,12:81095,,qr-code,matched (exact)
+Communication,qr_code_2,qr_code_2,12:81196,QrCode,qr-code,matched (synonym)
+Communication,qr_code_scanner,qr_code_scanner,12:81237,,scan-qr-code,review (keyword guess)
+Communication,read_more,read_more,12:81278,,,no Lucide equivalent
+Communication,rtt,rtt,12:81339,,,no Lucide equivalent
+Communication,screen_share,screen_share,12:81384,,screen-share,matched (exact)
+Communication,send_time_extension,send_time_extension,12:81429,,send,review (keyword guess)
+Communication,sentiment_satisfied_alt,sentiment_satisfied_alt,12:81490,,,no Lucide equivalent
+Communication,sip,sip,12:81543,,,no Lucide equivalent
+Communication,speaker_phone,speaker_phone,12:81612,,monitor-speaker,review (keyword guess)
+Communication,spoke,spoke,12:81657,,,no Lucide equivalent
+Communication,stay_current_landscape,stay_current_landscape,12:81702,,rectangle-landscape-play,review (keyword guess)
+Communication,stay_current_portrait,stay_current_portrait,12:81747,,,no Lucide equivalent
+Communication,stay_primary_landscape,stay_primary_landscape,12:81792,,rectangle-landscape-play,review (keyword guess)
+Communication,stay_primary_portrait,stay_primary_portrait,12:81837,,,no Lucide equivalent
+Communication,stop_screen_share,stop_screen_share,12:81882,,screen-share,review (keyword guess)
+Communication,swap_calls,swap_calls,12:81931,,,no Lucide equivalent
+Communication,textsms,textsms,12:81972,,,no Lucide equivalent
+Communication,unsubscribe,unsubscribe,12:82017,,,no Lucide equivalent
+Communication,vpn_key,vpn_key,12:82062,KeyRound,key-round,matched (synonym)
+Communication,vpn_key_off,vpn_key_off,12:82107,,book-key,review (keyword guess)
+Communication,wifi_calling,wifi_calling,12:82164,,house-wifi,review (keyword guess)
+Av,10k,10k,12:82232,,,no Lucide equivalent
+Av,1k,1k,12:82301,,,no Lucide equivalent
+Av,1k_plus,1k_plus,12:82362,,badge-plus,review (keyword guess)
+Av,2k,2k,12:82423,,,no Lucide equivalent
+Av,2k_plus,2k_plus,12:82484,,badge-plus,review (keyword guess)
+Av,3k,3k,12:82545,,,no Lucide equivalent
+Av,3k_plus,3k_plus,12:82606,,badge-plus,review (keyword guess)
+Av,4k,4k,12:82667,,,no Lucide equivalent
+Av,4k_plus,4k_plus,12:82712,,badge-plus,review (keyword guess)
+Av,5g,5g,12:82773,,,no Lucide equivalent
+Av,5k,5k,12:82826,,,no Lucide equivalent
+Av,5k_plus,5k_plus,12:82887,,badge-plus,review (keyword guess)
+Av,6k,6k,12:82948,,,no Lucide equivalent
+Av,6k_plus,6k_plus,12:83013,,badge-plus,review (keyword guess)
+Av,7k,7k,12:83078,,,no Lucide equivalent
+Av,7k_plus,7k_plus,12:83139,,badge-plus,review (keyword guess)
+Av,8k,8k,12:83200,,,no Lucide equivalent
+Av,8k_plus,8k_plus,12:83269,,badge-plus,review (keyword guess)
+Av,9k,9k,12:83338,,,no Lucide equivalent
+Av,9k_plus,9k_plus,12:83403,,badge-plus,review (keyword guess)
+Av,add_to_queue,add_to_queue,12:83468,,bring-to-front,review (keyword guess)
+Av,art_track,art_track,12:83513,,train-track,review (keyword guess)
+Av,audio_file,audio_file,12:83554,,file-headphone,review (keyword guess)
+Av,av_timer,av_timer,12:83611,,timer,review (keyword guess)
+Av,branding_watermark,branding_watermark,12:83664,,,no Lucide equivalent
+Av,call_to_action,call_to_action,12:83709,,bring-to-front,review (keyword guess)
+Av,closed_caption,closed_caption,12:83754,,closed-caption,matched (exact)
+Av,closed_caption_disabled,closed_caption_disabled,12:83799,,closed-caption,review (keyword guess)
+Av,closed_caption_off,closed_caption_off,12:83844,,closed-caption,review (keyword guess)
+Av,control_camera,control_camera,12:83909,,camera,review (keyword guess)
+Av,equalizer,equalizer,12:83954,,,no Lucide equivalent
+Av,explicit,explicit,12:83995,,,no Lucide equivalent
+Av,featured_play_list,featured_play_list,12:84040,,bug-play,review (keyword guess)
+Av,featured_video,featured_video,12:84085,,list-video,review (keyword guess)
+Av,fiber_dvr,fiber_dvr,12:84130,,,no Lucide equivalent
+Av,fiber_manual_record,fiber_manual_record,12:84179,,,no Lucide equivalent
+Av,fiber_new,fiber_new,12:84224,,,no Lucide equivalent
+Av,fiber_pin,fiber_pin,12:84273,,map-pin,review (keyword guess)
+Av,fiber_smart_record,fiber_smart_record,12:84322,,,no Lucide equivalent
+Av,forward_10,forward_10,12:84367,,forward,review (keyword guess)
+Av,forward_30,forward_30,12:84424,,forward,review (keyword guess)
+Av,forward_5,forward_5,12:84465,,forward,review (keyword guess)
+Av,games,games,12:84506,,,no Lucide equivalent
+Av,hd,hd,12:84551,,hd,matched (exact)
+Av,hearing,hearing,12:84596,,,no Lucide equivalent
+Av,hearing_disabled,hearing_disabled,12:84645,,,no Lucide equivalent
+Av,high_quality,high_quality,12:84690,,signal-high,review (keyword guess)
+Av,interpreter_mode,interpreter_mode,12:84735,,,no Lucide equivalent
+Av,library_add,library_add,12:84780,,library,review (keyword guess)
+Av,library_add_check,library_add_check,12:84825,,book-check,review (keyword guess)
+Av,library_books,library_books,12:84878,,library,review (keyword guess)
+Av,library_music,library_music,12:84923,,library,review (keyword guess)
+Av,loop,loop,12:84968,,,no Lucide equivalent
+Av,lyrics,lyrics,12:85009,,,no Lucide equivalent
+Av,mic_none,mic_none,12:85078,,mic,review (keyword guess)
+Av,missed_video_call,missed_video_call,12:85123,,phone-missed,review (keyword guess)
+Av,movie,movie,12:85168,,,no Lucide equivalent
+Av,music_video,music_video,12:85213,,file-music,review (keyword guess)
+Av,new_releases,new_releases,12:85258,,,no Lucide equivalent
+Av,not_interested,not_interested,12:85303,,equal-not,review (keyword guess)
+Av,note,note,12:85344,,,no Lucide equivalent
+Av,pause_circle_filled,pause_circle_filled,12:85389,,circle-pause,review (keyword guess)
+Av,pause_circle_outline,pause_circle_outline,12:85450,,circle-pause,review (keyword guess)
+Av,play_circle_filled,play_circle_filled,12:85491,,circle-play,review (keyword guess)
+Av,play_circle_outline,play_circle_outline,12:85536,,circle-play,review (keyword guess)
+Av,play_disabled,play_disabled,12:85577,,play-off,review (keyword guess)
+Av,playlist_add,playlist_add,12:85630,,,no Lucide equivalent
+Av,playlist_add_check,playlist_add_check,12:85675,,alarm-clock-check,review (keyword guess)
+Av,playlist_add_check_circle,playlist_add_check_circle,12:85736,,circle-check,review (keyword guess)
+Av,playlist_add_circle,playlist_add_circle,12:85781,,circle-chevrons-left,review (keyword guess)
+Av,playlist_play,playlist_play,12:85826,,bug-play,review (keyword guess)
+Av,playlist_remove,playlist_remove,12:85887,,remove-formatting,review (keyword guess)
+Av,queue,queue,12:85932,,,no Lucide equivalent
+Av,queue_music,queue_music,12:85977,,list-music,review (keyword guess)
+Av,queue_play_next,queue_play_next,12:86026,,bug-play,review (keyword guess)
+Av,radio,radio,12:86067,Radio,radio,matched (exact)
+Av,recent_actors,recent_actors,12:86116,,,no Lucide equivalent
+Av,remove_from_queue,remove_from_queue,12:86169,,remove-formatting,review (keyword guess)
+Av,repeat_on,repeat_on,12:86214,,repeat,review (keyword guess)
+Av,repeat_one,repeat_one,12:86259,,repeat,review (keyword guess)
+Av,repeat_one_on,repeat_one_on,12:86300,,repeat,review (keyword guess)
+Av,replay,replay,12:86345,,,no Lucide equivalent
+Av,replay_10,replay_10,12:86390,,,no Lucide equivalent
+Av,replay_30,replay_30,12:86431,,,no Lucide equivalent
+Av,replay_5,replay_5,12:86472,,,no Lucide equivalent
+Av,replay_circle_filled,replay_circle_filled,12:86513,,circle,review (keyword guess)
+Av,sd,sd,12:86558,,,no Lucide equivalent
+Av,shuffle_on,shuffle_on,12:86623,,shuffle,review (keyword guess)
+Av,slow_motion_video,slow_motion_video,12:86668,,file-video-camera,review (keyword guess)
+Av,snooze,snooze,12:86709,,,no Lucide equivalent
+Av,sort_by_alpha,sort_by_alpha,12:86750,,list-sort-ascending,review (keyword guess)
+Av,speed,speed,12:86791,Gauge,gauge,matched (synonym)
+Av,stop,stop,12:86836,,square,matched (synonym)
+Av,subscriptions,subscriptions,12:86881,,,no Lucide equivalent
+Av,subtitles,subtitles,12:86926,,captions,matched (exact)
+Av,surround_sound,surround_sound,12:86971,,,no Lucide equivalent
+Av,video_call,video_call,12:87036,,list-video,review (keyword guess)
+Av,video_file,video_file,12:87081,,file-video-camera,review (keyword guess)
+Av,video_label,video_label,12:87130,,list-video,review (keyword guess)
+Av,video_library,video_library,12:87175,,library,review (keyword guess)
+Av,video_settings,video_settings,12:87220,,list-video,review (keyword guess)
+Av,web,web,12:87277,,,no Lucide equivalent
+Av,web_asset,web_asset,12:87338,,,no Lucide equivalent
+Av,web_asset_off,web_asset_off,12:87383,,,no Lucide equivalent
+Alert,add_alert,add_alert,12:87431,,,no Lucide equivalent
+Alert,auto_delete,auto_delete,12:87476,,delete,review (keyword guess)
+Alert,error_outline,error_outline,12:87537,,,no Lucide equivalent
+Alert,notification_important,notification_important,12:87578,,,no Lucide equivalent
+Alert,warning_amber,warning_amber,12:87623,,,no Lucide equivalent
+Action,123,123,12:87667,,,no Lucide equivalent
+Action,3d_rotation,3d_rotation,12:87712,,axis-3d,review (keyword guess)
+Action,abc,abc,12:87753,,,no Lucide equivalent
+Action,accessibility,accessibility,12:87798,,accessibility,matched (exact)
+Action,accessibility_new,accessibility_new,12:87839,,accessibility,review (keyword guess)
+Action,accessible,accessible,12:87880,,,no Lucide equivalent
+Action,accessible_forward,accessible_forward,12:87925,,fast-forward,review (keyword guess)
+Action,account_balance,account_balance,12:87970,Landmark,landmark,matched (synonym)
+Action,account_balance_wallet,account_balance_wallet,12:88015,Wallet,wallet,matched (synonym)
+Action,account_box,account_box,12:88064,,boom-box,review (keyword guess)
+Action,account_circle,account_circle,12:88121,,circle-user,review (keyword guess)
+Action,add_card,add_card,12:88178,,credit-card-plus,review (keyword guess)
+Action,add_home,add_home,12:88223,,,no Lucide equivalent
+Action,add_shopping_cart,add_shopping_cart,12:88288,,shopping-cart,matched (synonym)
+Action,add_task,add_task,12:88329,,,no Lucide equivalent
+Action,add_to_drive,add_to_drive,12:88370,,bring-to-front,review (keyword guess)
+Action,addchart,addchart,12:88431,,,no Lucide equivalent
+Action,admin_panel_settings,admin_panel_settings,12:88476,,settings,review (keyword guess)
+Action,ads_click,ads_click,12:88541,,,no Lucide equivalent
+Action,alarm,alarm,12:88582,,alarm-clock,matched (synonym)
+Action,alarm_add,alarm_add,12:88627,,alarm-clock-plus,review (keyword guess)
+Action,alarm_off,alarm_off,12:88672,,,no Lucide equivalent
+Action,alarm_on,alarm_on,12:88713,,,no Lucide equivalent
+Action,all_inbox,all_inbox,12:88758,,inbox,review (keyword guess)
+Action,all_out,all_out,12:88803,,log-out,review (keyword guess)
+Action,analytics,analytics,12:88848,,,no Lucide equivalent
+Action,android,android,12:88921,,,no Lucide equivalent
+Action,announcement,announcement,12:88970,,,no Lucide equivalent
+Action,api,api,12:89015,,,no Lucide equivalent
+Action,app_blocking,app_blocking,12:89060,,app-window,review (keyword guess)
+Action,app_shortcut,app_shortcut,12:89125,,app-window,review (keyword guess)
+Action,arrow_outward,arrow_outward,12:89194,,arrow-down,review (keyword guess)
+Action,arrow_right_alt,arrow_right_alt,12:89239,,arrow-right,review (keyword guess)
+Action,article,article,12:89280,ScrollText,scroll-text,matched (app-map)
+Action,aspect_ratio,aspect_ratio,12:89329,,ratio,review (keyword guess)
+Action,assessment,assessment,12:89374,,,no Lucide equivalent
+Action,assignment,assignment,12:89419,ClipboardList,clipboard-list,matched (synonym)
+Action,assignment_ind,assignment_ind,12:89464,,,no Lucide equivalent
+Action,assignment_late,assignment_late,12:89509,,,no Lucide equivalent
+Action,assignment_return,assignment_return,12:89554,,,no Lucide equivalent
+Action,assignment_returned,assignment_returned,12:89599,,,no Lucide equivalent
+Action,assignment_turned_in,assignment_turned_in,12:89644,ClipboardCheck,clipboard-check,matched (synonym)
+Action,assured_workload,assured_workload,12:89689,,,no Lucide equivalent
+Action,backup,backup,12:89762,,,no Lucide equivalent
+Action,backup_table,backup_table,12:89807,,cloud-backup,review (keyword guess)
+Action,balance,balance,12:89872,,,no Lucide equivalent
+Action,batch_prediction,batch_prediction,12:89921,,,no Lucide equivalent
+Action,book_online,book_online,12:89970,,book,review (keyword guess)
+Action,bookmark_add,bookmark_add,12:90015,,bookmark-plus,review (keyword guess)
+Action,bookmark_added,bookmark_added,12:90060,,bookmark-plus,review (keyword guess)
+Action,bookmark_border,bookmark_border,12:90105,,book-bookmark,review (keyword guess)
+Action,bookmark_remove,bookmark_remove,12:90146,,bookmark-minus,review (keyword guess)
+Action,bookmarks,bookmarks,12:90191,,,no Lucide equivalent
+Action,browse_gallery,browse_gallery,12:90236,,gallery-horizontal,review (keyword guess)
+Action,bug_report,bug_report,12:90297,,bug,review (keyword guess)
+Action,build_circle,build_circle,12:90342,,circle,review (keyword guess)
+Action,calendar_today,calendar_today,12:90399,,calendar,matched (synonym)
+Action,calendar_view_day,calendar_view_day,12:90444,,calendar,review (keyword guess)
+Action,calendar_view_month,calendar_view_month,12:90489,,calendar,review (keyword guess)
+Action,calendar_view_week,calendar_view_week,12:90562,,calendar-days,review (keyword guess)
+Action,camera_enhance,camera_enhance,12:90627,,camera,review (keyword guess)
+Action,cancel_schedule_send,cancel_schedule_send,12:90672,,send,review (keyword guess)
+Action,card_giftcard,card_giftcard,12:90737,,gift,matched (synonym)
+Action,card_membership,card_membership,12:90782,,card-sim,review (keyword guess)
+Action,card_travel,card_travel,12:90827,,card-sim,review (keyword guess)
+Action,check_circle_outline,check_circle_outline,12:90872,,circle-check,review (keyword guess)
+Action,chrome_reader_mode,chrome_reader_mode,12:90913,,credit-card-reader,review (keyword guess)
+Action,circle_notifications,circle_notifications,12:90958,,circle,review (keyword guess)
+Action,class,class,12:91007,,,no Lucide equivalent
+Action,code_off,code_off,12:91052,,code,review (keyword guess)
+Action,comment_bank,comment_bank,12:91093,,piggy-bank,review (keyword guess)
+Action,commute,commute,12:91150,,,no Lucide equivalent
+Action,compare_arrows,compare_arrows,12:91191,GitCompare,git-compare,matched (app-map)
+Action,compress,compress,12:91232,,,no Lucide equivalent
+Action,contact_page,contact_page,12:91293,,contact,review (keyword guess)
+Action,contact_support,contact_support,12:91338,,contact,review (keyword guess)
+Action,contactless,contactless,12:91383,,,no Lucide equivalent
+Action,copyright,copyright,12:91448,,circle-letter-c,matched (exact)
+Action,credit_card_off,credit_card_off,12:91493,,credit-card,review (keyword guess)
+Action,css,css,12:91538,,,no Lucide equivalent
+Action,currency_exchange,currency_exchange,12:91583,,currency,review (keyword guess)
+Action,dangerous,dangerous,12:91628,,,no Lucide equivalent
+Action,dashboard,dashboard,12:91677,LayoutDashboard,layout-dashboard,matched (synonym)
+Action,dashboard_customize,dashboard_customize,12:91722,,layout-dashboard,review (keyword guess)
+Action,data_exploration,data_exploration,12:91795,,,no Lucide equivalent
+Action,data_thresholding,data_thresholding,12:91840,,,no Lucide equivalent
+Action,date_range,date_range,12:91901,,calendar-range,review (keyword guess)
+Action,delete_outline,delete_outline,12:91946,,delete,review (keyword guess)
+Action,density_large,density_large,12:91987,,,no Lucide equivalent
+Action,density_medium,density_medium,12:92040,,battery-medium,review (keyword guess)
+Action,density_small,density_small,12:92097,,circle-small,review (keyword guess)
+Action,disabled_visible,disabled_visible,12:92158,,,no Lucide equivalent
+Action,display_settings,display_settings,12:92203,,settings,review (keyword guess)
+Action,done,done,12:92272,,check,matched (synonym)
+Action,done_all,done_all,12:92313,CheckCheck CheckCheck,check-check,matched (synonym)
+Action,done_outline,done_outline,12:92354,,,no Lucide equivalent
+Action,donut_large,donut_large,12:92395,,donut,review (keyword guess)
+Action,donut_small,donut_small,12:92436,,circle-small,review (keyword guess)
+Action,drag_indicator,drag_indicator,12:92481,,,no Lucide equivalent
+Action,dynamic_form,dynamic_form,12:92522,,form,review (keyword guess)
+Action,edit_calendar,edit_calendar,12:92571,,calendar-cog,review (keyword guess)
+Action,edit_off,edit_off,12:92616,,,no Lucide equivalent
+Action,eject,eject,12:92669,,eject,matched (exact)
+Action,euro_symbol,euro_symbol,12:92714,,circle-euro,review (keyword guess)
+Action,event,event,12:92755,,,no Lucide equivalent
+Action,event_repeat,event_repeat,12:92800,,repeat,review (keyword guess)
+Action,event_seat,event_seat,12:92849,,,no Lucide equivalent
+Action,exit_to_app,exit_to_app,12:92894,,app-window,review (keyword guess)
+Action,expand,expand,12:92935,,expand,matched (exact)
+Action,explore_off,explore_off,12:92980,,,no Lucide equivalent
+Action,extension,extension,12:93025,,,no Lucide equivalent
+Action,extension_off,extension_off,12:93070,,,no Lucide equivalent
+Action,face,face,12:93115,ScanFace,scan-face,matched (synonym)
+Action,fact_check,fact_check,12:93168,,badge-check,review (keyword guess)
+Action,favorite_border,favorite_border,12:93237,,,no Lucide equivalent
+Action,fax,fax,12:93278,,,no Lucide equivalent
+Action,feedback,feedback,12:93363,MessageSquareWarning,message-square-exclamation-point,matched (synonym)
+Action,file_present,file_present,12:93408,,file,review (keyword guess)
+Action,filter_alt_off,filter_alt_off,12:93465,,,no Lucide equivalent
+Action,find_in_page,find_in_page,12:93522,FileSearch,file-search,matched (synonym)
+Action,find_replace,find_replace,12:93567,,replace,review (keyword guess)
+Action,fingerprint,fingerprint,12:93608,,fingerprint-pattern,matched (exact)
+Action,fit_screen,fit_screen,12:93649,,screen-share,review (keyword guess)
+Action,flaky,flaky,12:93698,,,no Lucide equivalent
+Action,flight_land,flight_land,12:93743,,land-plot,review (keyword guess)
+Action,flight_takeoff,flight_takeoff,12:93784,,plane-takeoff,review (keyword guess)
+Action,flip_to_back,flip_to_back,12:93825,,send-to-back,review (keyword guess)
+Action,flip_to_front,flip_to_front,12:93866,,bring-to-front,review (keyword guess)
+Action,flutter_dash,flutter_dash,12:93907,,,no Lucide equivalent
+Action,free_cancellation,free_cancellation,12:93960,,,no Lucide equivalent
+Action,g_translate,g_translate,12:94005,,letter-g,review (keyword guess)
+Action,gavel,gavel,12:94046,,gavel,matched (exact)
+Action,generating_tokens,generating_tokens,12:94087,,,no Lucide equivalent
+Action,get_app,get_app,12:94132,,app-window,review (keyword guess)
+Action,gif,gif,12:94177,,,no Lucide equivalent
+Action,gif_box,gif_box,12:94218,,boom-box,review (keyword guess)
+Action,grade,grade,12:94263,,,no Lucide equivalent
+Action,grading,grading,12:94308,,,no Lucide equivalent
+Action,group_work,group_work,12:94353,,group,review (keyword guess)
+Action,help_center,help_center,12:94410,,,no Lucide equivalent
+Action,help_outline,help_outline,12:94459,,,no Lucide equivalent
+Action,hide_source,hide_source,12:94500,,,no Lucide equivalent
+Action,highlight_alt,highlight_alt,12:94545,,,no Lucide equivalent
+Action,highlight_off,highlight_off,12:94590,,,no Lucide equivalent
+Action,history,history,12:94635,History,rotate-ccw-clock,matched (exact)
+Action,history_toggle_off,history_toggle_off,12:94676,,toggle-left,review (keyword guess)
+Action,hls,hls,12:94721,,,no Lucide equivalent
+Action,hls_off,hls_off,12:94766,,,no Lucide equivalent
+Action,horizontal_split,horizontal_split,12:94811,,square-split-horizontal,review (keyword guess)
+Action,hotel_class,hotel_class,12:94856,,hotel,review (keyword guess)
+Action,hourglass_disabled,hourglass_disabled,12:94901,,hourglass,review (keyword guess)
+Action,hourglass_empty,hourglass_empty,12:94954,,hourglass,review (keyword guess)
+Action,hourglass_full,hourglass_full,12:94995,,battery-full,review (keyword guess)
+Action,html,html,12:95040,,,no Lucide equivalent
+Action,http,http,12:95085,,,no Lucide equivalent
+Action,https,https,12:95126,,,no Lucide equivalent
+Action,important_devices,important_devices,12:95171,,,no Lucide equivalent
+Action,input,input,12:95216,,,no Lucide equivalent
+Action,install_desktop,install_desktop,12:95257,,,no Lucide equivalent
+Action,install_mobile,install_mobile,12:95318,,,no Lucide equivalent
+Action,integration_instructions,integration_instructions,12:95379,,,no Lucide equivalent
+Action,invert_colors,invert_colors,12:95464,,,no Lucide equivalent
+Action,javascript,javascript,12:95517,,,no Lucide equivalent
+Action,join_full,join_full,12:95562,,battery-full,review (keyword guess)
+Action,join_inner,join_inner,12:95619,,,no Lucide equivalent
+Action,join_left,join_left,12:95676,,arrow-left,review (keyword guess)
+Action,join_right,join_right,12:95745,,square-arrow-right-enter,review (keyword guess)
+Action,label,label,12:95814,,,no Lucide equivalent
+Action,label_important,label_important,12:95859,,,no Lucide equivalent
+Action,label_off,label_off,12:95904,,,no Lucide equivalent
+Action,language,language,12:95949,Globe,globe,matched (synonym)
+Action,launch,launch,12:95994,,,no Lucide equivalent
+Action,leaderboard,leaderboard,12:96035,,,no Lucide equivalent
+Action,lightbulb,lightbulb,12:96088,,lightbulb,matched (exact)
+Action,lightbulb_circle,lightbulb_circle,12:96149,,circle,review (keyword guess)
+Action,line_style,line_style,12:96214,,line-style,matched (exact)
+Action,line_weight,line_weight,12:96255,,chart-line,review (keyword guess)
+Action,lock_clock,lock_clock,12:96296,,alarm-clock,review (keyword guess)
+Action,lock_person,lock_person,12:96353,,user-lock,review (keyword guess)
+Action,lock_reset,lock_reset,12:96410,,book-lock,review (keyword guess)
+Action,loyalty,loyalty,12:96451,,,no Lucide equivalent
+Action,manage_accounts,manage_accounts,12:96504,UserCog,user-cog,matched (synonym)
+Action,manage_history,manage_history,12:96569,,,no Lucide equivalent
+Action,mark_as_unread,mark_as_unread,12:96614,,mail-question-mark,review (keyword guess)
+Action,markunread_mailbox,markunread_mailbox,12:96675,,mailbox,review (keyword guess)
+Action,maximize,maximize,12:96720,,maximize,matched (exact)
+Action,mediation,mediation,12:96761,,,no Lucide equivalent
+Action,minimize,minimize,12:96810,,minimize,matched (exact)
+Action,model_training,model_training,12:96851,,,no Lucide equivalent
+Action,network_ping,network_ping,12:96896,,chart-network,review (keyword guess)
+Action,new_label,new_label,12:96941,,,no Lucide equivalent
+Action,next_plan,next_plan,12:96986,,,no Lucide equivalent
+Action,nightlight_round,nightlight_round,12:97043,,contact-round,review (keyword guess)
+Action,no_accounts,no_accounts,12:97096,,,no Lucide equivalent
+Action,noise_aware,noise_aware,12:97145,,,no Lucide equivalent
+Action,noise_control_off,noise_control_off,12:97254,,tower-control,review (keyword guess)
+Action,not_accessible,not_accessible,12:97323,,equal-not,review (keyword guess)
+Action,not_started,not_started,12:97368,,equal-not,review (keyword guess)
+Action,offline_bolt,offline_bolt,12:97417,,bolt,review (keyword guess)
+Action,offline_pin,offline_pin,12:97462,,map-pin,review (keyword guess)
+Action,on_device_training,on_device_training,12:97507,,,no Lucide equivalent
+Action,online_prediction,online_prediction,12:97580,,,no Lucide equivalent
+Action,opacity,opacity,12:97625,,opacity,matched (exact)
+Action,open_in_browser,open_in_browser,12:97670,,panel-top-open,review (keyword guess)
+Action,open_in_new_off,open_in_new_off,12:97711,,book-open,review (keyword guess)
+Action,outbound,outbound,12:97752,,,no Lucide equivalent
+Action,outbox,outbox,12:97797,,,no Lucide equivalent
+Action,outlet,outlet,12:97854,,,no Lucide equivalent
+Action,output,output,12:97899,,,no Lucide equivalent
+Action,pageview,pageview,12:97952,,,no Lucide equivalent
+Action,paid,paid,12:97997,HandCoins,hand-coins,matched (synonym)
+Action,pan_tool,pan_tool,12:98054,,pen-tool,review (keyword guess)
+Action,pan_tool_alt,pan_tool_alt,12:98099,,pen-tool,review (keyword guess)
+Action,payment,payment,12:98148,,,no Lucide equivalent
+Action,pending,pending,12:98193,,,no Lucide equivalent
+Action,pending_actions,pending_actions,12:98258,,,no Lucide equivalent
+Action,perm_camera_mic,perm_camera_mic,12:98307,,camera,review (keyword guess)
+Action,perm_contact_calendar,perm_contact_calendar,12:98352,,calendar,review (keyword guess)
+Action,perm_data_setting,perm_data_setting,12:98397,,,no Lucide equivalent
+Action,perm_device_information,perm_device_information,12:98438,,,no Lucide equivalent
+Action,perm_identity,perm_identity,12:98483,,,no Lucide equivalent
+Action,perm_media,perm_media,12:98532,,,no Lucide equivalent
+Action,perm_phone_msg,perm_phone_msg,12:98577,,phone,review (keyword guess)
+Action,perm_scan_wifi,perm_scan_wifi,12:98622,,file-scan,review (keyword guess)
+Action,pets,pets,12:98667,,,no Lucide equivalent
+Action,php,php,12:98724,,,no Lucide equivalent
+Action,picture_in_picture,picture_in_picture,12:98769,,picture-in-picture,matched (exact)
+Action,picture_in_picture_alt,picture_in_picture_alt,12:98818,,picture-in-picture,review (keyword guess)
+Action,pin_end,pin_end,12:98863,,list-end,review (keyword guess)
+Action,pin_invoke,pin_invoke,12:98904,,map-pin,review (keyword guess)
+Action,pinch,pinch,12:98945,,,no Lucide equivalent
+Action,plagiarism,plagiarism,12:98994,,,no Lucide equivalent
+Action,play_for_work,play_for_work,12:99055,,bug-play,review (keyword guess)
+Action,polymer,polymer,12:99096,,,no Lucide equivalent
+Action,pregnant_woman,pregnant_woman,12:99137,,,no Lucide equivalent
+Action,preview,preview,12:99178,,,no Lucide equivalent
+Action,privacy_tip,privacy_tip,12:99227,,,no Lucide equivalent
+Action,private_connectivity,private_connectivity,12:99276,,,no Lucide equivalent
+Action,production_quantity_limits,production_quantity_limits,12:99321,,,no Lucide equivalent
+Action,published_with_changes,published_with_changes,12:99362,,,no Lucide equivalent
+Action,query_builder,query_builder,12:99403,,,no Lucide equivalent
+Action,question_answer,question_answer,12:99448,,question-mark,review (keyword guess)
+Action,question_mark,question_mark,12:99493,,question-mark,matched (exact)
+Action,quickreply,quickreply,12:99538,,,no Lucide equivalent
+Action,receipt,receipt,12:99607,Receipt,receipt,matched (exact)
+Action,record_voice_over,record_voice_over,12:99652,,,no Lucide equivalent
+Action,remove_done,remove_done,12:99705,,remove-formatting,review (keyword guess)
+Action,remove_shopping_cart,remove_shopping_cart,12:99750,,shopping-cart-minus,review (keyword guess)
+Action,reorder,reorder,12:99799,,,no Lucide equivalent
+Action,repartition,repartition,12:99840,,,no Lucide equivalent
+Action,report_problem,report_problem,12:99905,,,no Lucide equivalent
+Action,request_page,request_page,12:99950,,,no Lucide equivalent
+Action,restore,restore,12:99995,,,no Lucide equivalent
+Action,restore_from_trash,restore_from_trash,12:100036,,trash,review (keyword guess)
+Action,restore_page,restore_page,12:100081,,,no Lucide equivalent
+Action,rocket,rocket,12:100126,,rocket,matched (exact)
+Action,rocket_launch,rocket_launch,12:100191,,rocket,review (keyword guess)
+Action,room,room,12:100248,,,no Lucide equivalent
+Action,rounded_corner,rounded_corner,12:100297,,,no Lucide equivalent
+Action,rowing,rowing,12:100338,,,no Lucide equivalent
+Action,rule,rule,12:100379,,,no Lucide equivalent
+Action,satellite_alt,satellite_alt,12:100424,,satellite,review (keyword guess)
+Action,saved_search,saved_search,12:100481,,book-search,review (keyword guess)
+Action,savings,savings,12:100534,PiggyBank,piggy-bank,matched (synonym)
+Action,schedule_send,schedule_send,12:100587,,send,review (keyword guess)
+Action,search_off,search_off,12:100644,SearchX,search-x,matched (app-map)
+Action,segment,segment,12:100697,,,no Lucide equivalent
+Action,send_and_archive,send_and_archive,12:100742,,archive,review (keyword guess)
+Action,sensors,sensors,12:100811,,,no Lucide equivalent
+Action,sensors_off,sensors_off,12:100852,,,no Lucide equivalent
+Action,settings_accessibility,settings_accessibility,12:100893,,accessibility,review (keyword guess)
+Action,settings_applications,settings_applications,12:100938,,settings,review (keyword guess)
+Action,settings_backup_restore,settings_backup_restore,12:100983,,database-backup,review (keyword guess)
+Action,settings_bluetooth,settings_bluetooth,12:101024,,bluetooth,review (keyword guess)
+Action,settings_brightness,settings_brightness,12:101065,,settings,review (keyword guess)
+Action,settings_cell,settings_cell,12:101110,,settings,review (keyword guess)
+Action,settings_ethernet,settings_ethernet,12:101155,,ethernet-port,review (keyword guess)
+Action,settings_input_antenna,settings_input_antenna,12:101196,,antenna,review (keyword guess)
+Action,settings_input_component,settings_input_component,12:101237,,component,review (keyword guess)
+Action,settings_input_composite,settings_input_composite,12:101282,,file-input,review (keyword guess)
+Action,settings_input_hdmi,settings_input_hdmi,12:101327,,hdmi-port,review (keyword guess)
+Action,settings_input_svideo,settings_input_svideo,12:101372,,file-input,review (keyword guess)
+Action,settings_overscan,settings_overscan,12:101437,,settings,review (keyword guess)
+Action,settings_phone,settings_phone,12:101482,,phone,review (keyword guess)
+Action,settings_power,settings_power,12:101527,,circle-power,review (keyword guess)
+Action,settings_remote,settings_remote,12:101568,,settings,review (keyword guess)
+Action,settings_voice,settings_voice,12:101621,,settings,review (keyword guess)
+Action,shop,shop,12:101666,,,no Lucide equivalent
+Action,shop_2,shop_2,12:101711,,,no Lucide equivalent
+Action,shop_two,shop_two,12:101772,,,no Lucide equivalent
+Action,shopping_basket,shopping_basket,12:101817,,shopping-basket,matched (exact)
+Action,shopping_cart_checkout,shopping_cart_checkout,12:101862,,shopping-cart-minus,review (keyword guess)
+Action,smart_button,smart_button,12:101907,,,no Lucide equivalent
+Action,source,source,12:101952,,,no Lucide equivalent
+Action,spatial_audio,spatial_audio,12:102001,,audio-lines,review (keyword guess)
+Action,spatial_audio_off,spatial_audio_off,12:102070,,audio-lines,review (keyword guess)
+Action,spatial_tracking,spatial_tracking,12:102139,,,no Lucide equivalent
+Action,speaker_notes,speaker_notes,12:102208,,eighth-notes,review (keyword guess)
+Action,speaker_notes_off,speaker_notes_off,12:102253,,eighth-notes,review (keyword guess)
+Action,spellcheck,spellcheck,12:102298,,,no Lucide equivalent
+Action,star_rate,star_rate,12:102339,,circle-star,review (keyword guess)
+Action,stars,stars,12:102388,,sparkles,matched (exact)
+Action,sticky_note_2,sticky_note_2,12:102433,,sticky-note,review (keyword guess)
+Action,store,store,12:102478,,store,matched (exact)
+Action,subject,subject,12:102523,,,no Lucide equivalent
+Action,subtitles_off,subtitles_off,12:102564,,,no Lucide equivalent
+Action,supervised_user_circle,supervised_user_circle,12:102633,,circle-user,review (keyword guess)
+Action,supervisor_account,supervisor_account,12:102682,,,no Lucide equivalent
+Action,swap_horiz,swap_horiz,12:102731,ArrowLeftRight ArrowRightLeft,arrow-left-right,matched (synonym)
+Action,swap_horizontal_circle,swap_horizontal_circle,12:102772,,circle-arrow-left,review (keyword guess)
+Action,swap_vert,swap_vert,12:102817,ArrowUpDown,arrow-up-down,matched (synonym)
+Action,swap_vertical_circle,swap_vertical_circle,12:102858,,circle-arrow-down,review (keyword guess)
+Action,swipe,swipe,12:102903,,,no Lucide equivalent
+Action,swipe_down,swipe_down,12:102968,,arrow-down,review (keyword guess)
+Action,swipe_down_alt,swipe_down_alt,12:103017,,arrow-down,review (keyword guess)
+Action,swipe_left,swipe_left,12:103066,,arrow-left,review (keyword guess)
+Action,swipe_left_alt,swipe_left_alt,12:103115,,arrow-left,review (keyword guess)
+Action,swipe_right,swipe_right,12:103164,,arrow-right,review (keyword guess)
+Action,swipe_right_alt,swipe_right_alt,12:103213,,arrow-right,review (keyword guess)
+Action,swipe_up,swipe_up,12:103262,,arrow-up,review (keyword guess)
+Action,swipe_up_alt,swipe_up_alt,12:103311,,arrow-up,review (keyword guess)
+Action,swipe_vertical,swipe_vertical,12:103360,,gallery-vertical,review (keyword guess)
+Action,switch_access_shortcut,switch_access_shortcut,12:103409,,switch-camera,review (keyword guess)
+Action,switch_access_shortcut_add,switch_access_shortcut_add,12:103450,,switch-camera,review (keyword guess)
+Action,sync_alt,sync_alt,12:103491,,,no Lucide equivalent
+Action,system_update_alt,system_update_alt,12:103544,,,no Lucide equivalent
+Action,tab,tab,12:103585,,,no Lucide equivalent
+Action,tab_unselected,tab_unselected,12:103626,,,no Lucide equivalent
+Action,table_view,table_view,12:103667,,table,review (keyword guess)
+Action,task_alt,task_alt,12:103716,,,no Lucide equivalent
+Action,text_rotate_up,text_rotate_up,12:103757,,a-arrow-up,review (keyword guess)
+Action,text_rotate_vertical,text_rotate_vertical,12:103798,,align-center-vertical,review (keyword guess)
+Action,text_rotation_angledown,text_rotation_angledown,12:103839,,book-open-text,review (keyword guess)
+Action,text_rotation_angleup,text_rotation_angleup,12:103880,,book-open-text,review (keyword guess)
+Action,text_rotation_down,text_rotation_down,12:103921,,a-arrow-down,review (keyword guess)
+Action,text_rotation_none,text_rotation_none,12:103962,,book-open-text,review (keyword guess)
+Action,theaters,theaters,12:104003,,,no Lucide equivalent
+Action,thumb_down_off_alt,thumb_down_off_alt,12:104048,,arrow-down,review (keyword guess)
+Action,thumb_up_off_alt,thumb_up_off_alt,12:104105,,arrow-up,review (keyword guess)
+Action,thumbs_up_down,thumbs_up_down,12:104162,,arrow-down-up,review (keyword guess)
+Action,timeline,timeline,12:104207,,timeline,matched (exact)
+Action,tips_and_updates,tips_and_updates,12:104256,,,no Lucide equivalent
+Action,toc,toc,12:104301,,,no Lucide equivalent
+Action,today,today,12:104342,,,no Lucide equivalent
+Action,token,token,12:104387,,,no Lucide equivalent
+Action,toll,toll,12:104432,,,no Lucide equivalent
+Action,touch_app,touch_app,12:104477,MousePointerClick,mouse-pointer-click,matched (synonym)
+Action,tour,tour,12:104530,,,no Lucide equivalent
+Action,track_changes,track_changes,12:104587,,train-track,review (keyword guess)
+Action,transcribe,transcribe,12:104628,,,no Lucide equivalent
+Action,translate,translate,12:104697,,,no Lucide equivalent
+Action,trending_flat,trending_flat,12:104738,,trending-down,review (keyword guess)
+Action,troubleshoot,troubleshoot,12:104779,,,no Lucide equivalent
+Action,try,try,12:104832,,,no Lucide equivalent
+Action,turned_in,turned_in,12:104889,,log-in,review (keyword guess)
+Action,turned_in_not,turned_in_not,12:104934,,equal-approximately-not,review (keyword guess)
+Action,unfold_less_double,unfold_less_double,12:104975,,bed-double,review (keyword guess)
+Action,unfold_more_double,unfold_more_double,12:105036,,bed-double,review (keyword guess)
+Action,unpublished,unpublished,12:105089,,,no Lucide equivalent
+Action,update,update,12:105134,,,no Lucide equivalent
+Action,update_disabled,update_disabled,12:105183,,,no Lucide equivalent
+Action,upgrade,upgrade,12:105224,,,no Lucide equivalent
+Action,verified,verified,12:105269,,badge-check,matched (exact)
+Action,verified_user,verified_user,12:105326,ShieldCheck,shield-check,matched (synonym)
+Action,vertical_split,vertical_split,12:105371,,square-split-vertical,review (keyword guess)
+Action,view_agenda,view_agenda,12:105416,,view,review (keyword guess)
+Action,view_array,view_array,12:105477,,view,review (keyword guess)
+Action,view_carousel,view_carousel,12:105522,,view,review (keyword guess)
+Action,view_comfy_alt,view_comfy_alt,12:105567,,view,review (keyword guess)
+Action,view_compact_alt,view_compact_alt,12:105636,,view,review (keyword guess)
+Action,view_cozy,view_cozy,12:105705,,view,review (keyword guess)
+Action,view_day,view_day,12:105774,,view,review (keyword guess)
+Action,view_headline,view_headline,12:105819,,view,review (keyword guess)
+Action,view_in_ar,view_in_ar,12:105860,,log-in,review (keyword guess)
+Action,view_kanban,view_kanban,12:105937,,folder-kanban,review (keyword guess)
+Action,view_list,view_list,12:106002,,clipboard-list,review (keyword guess)
+Action,view_module,view_module,12:106047,,view,review (keyword guess)
+Action,view_quilt,view_quilt,12:106092,,view,review (keyword guess)
+Action,view_stream,view_stream,12:106137,,view,review (keyword guess)
+Action,view_timeline,view_timeline,12:106182,,timeline,review (keyword guess)
+Action,view_week,view_week,12:106247,,view,review (keyword guess)
+Action,voice_over_off,voice_over_off,12:106292,,,no Lucide equivalent
+Action,watch_later,watch_later,12:106337,,watch,review (keyword guess)
+Action,webhook,webhook,12:106390,,webhook,matched (exact)
+Action,width_full,width_full,12:106435,,battery-full,review (keyword guess)
+Action,width_normal,width_normal,12:106488,,stroke-width,review (keyword guess)
+Action,width_wide,width_wide,12:106541,,stroke-width,review (keyword guess)
+Action,wifi_protected_setup,wifi_protected_setup,12:106594,,wifi-lock,review (keyword guess)
+Action,work_history,work_history,12:106655,,,no Lucide equivalent
+Action,work_off,work_off,12:106712,,,no Lucide equivalent
+Action,work_outline,work_outline,12:106757,,,no Lucide equivalent
+Action,wysiwyg,wysiwyg,12:106798,,,no Lucide equivalent
+Action,youtube_searched_for,youtube_searched_for,12:106847,,,no Lucide equivalent

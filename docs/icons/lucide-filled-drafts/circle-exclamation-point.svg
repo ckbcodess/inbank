@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <defs>
+    <mask id="gcb-fill-circle-exclamation-point" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28">
+      <rect x="-2" y="-2" width="28" height="28" fill="#fff" stroke="none" />
+      <g stroke="#000" fill="none">
+        <line x1="12" x2="12" y1="8" y2="12" />
+        <line x1="12" x2="12.01" y1="16" y2="16" />
+      </g>
+    </mask>
+  </defs>
+  <g fill="currentColor" mask="url(#gcb-fill-circle-exclamation-point)">
+    <circle cx="12" cy="12" r="10" />
+  </g>
+</svg>

@@ -1,0 +1,179 @@
+app_name,material_glyph_today,lucide_component,status
+AlertCircle,error,CircleExclamationPoint,renamed in Lucide
+AlertTriangle,warning,TriangleExclamationPoint,renamed in Lucide
+ArrowDownLeft,south_west,ArrowDownLeft,same name
+ArrowDownRight,south_east,ArrowDownRight,same name
+ArrowDownToLine,download,ArrowDownToLine,same name
+ArrowLeft,arrow_back,ArrowLeft,same name
+ArrowLeftRight,swap_horiz,ArrowLeftRight,same name
+ArrowRight,arrow_forward,ArrowRight,same name
+ArrowRightLeft,swap_horiz,ArrowRightLeft,same name
+ArrowUp,arrow_upward,ArrowUp,same name
+ArrowUpDown,swap_vert,ArrowUpDown,same name
+ArrowUpRight,north_east,ArrowUpRight,same name
+Banknote,payments,Banknote,same name
+BarChart3,bar_chart,ChartColumn,renamed in Lucide
+Bell,notifications,Bell,same name
+Bike,pedal_bike,Bike,same name
+BookOpen,menu_book,BookOpen,same name
+Briefcase,work,Briefcase,same name
+Brush,brush,Brush,same name
+Building2,apartment,BuildingComplex,renamed in Lucide
+Calculator,calculate,Calculator,same name
+Calendar,calendar_month,Calendar,same name
+CalendarClock,calendar_clock,CalendarClock,same name
+Camera,photo_camera,Camera,same name
+CameraOff,no_photography,CameraOff,same name
+Car,directions_car,Car,same name
+Check,check,Check,same name
+CheckCheck,done_all,CheckCheck,same name
+CheckCircle2,check_circle,CircleCheck,renamed in Lucide
+ChevronDown,keyboard_arrow_down,ChevronDown,same name
+ChevronLeft,chevron_left,ChevronLeft,same name
+ChevronRight,chevron_right,ChevronRight,same name
+ChevronsUpDown,unfold_more,ChevronsUpDown,same name
+Church,church,Church,same name
+Circle,circle,Circle,same name
+CircleDashed,stroke_partial,CircleDashed,same name
+CircleHelp,help,CircleQuestionMark,renamed in Lucide
+CircleMinus,do_not_disturb_on,CircleMinus,same name
+ClipboardCheck,assignment_turned_in,ClipboardCheck,same name
+ClipboardList,assignment,ClipboardList,same name
+Clock,schedule,Clock,same name
+Code,code,Code,same name
+Construction,construction,Construction,same name
+Copy,content_copy,Copy,same name
+CreditCard,credit_card,CreditCard,same name
+Crosshair,my_location,Crosshair,same name
+Download,download,Download,same name
+Droplets,water_drop,Droplets,same name
+ExternalLink,open_in_new,ExternalLink,same name
+Eye,visibility,Eye,same name
+EyeOff,visibility_off,EyeOff,same name
+FileCheck,task,FileCheck,same name
+FileCheck2,task,FileCheckCorner,renamed in Lucide
+FileDown,download,FileDown,same name
+FileSearch,find_in_page,FileSearch,same name
+FileSpreadsheet,table_chart,FileSpreadsheet,same name
+FileText,description,FileText,same name
+FileWarning,report,FileExclamationPoint,renamed in Lucide
+Files,file_copy,Files,same name
+Filter,filter_list,Funnel,renamed in Lucide
+Fuel,local_gas_station,Fuel,same name
+Gauge,speed,Gauge,same name
+GitCompare,compare_arrows,GitCompare,same name
+Globe,language,Globe,same name
+GraduationCap,school,GraduationCap,same name
+HandCoins,paid,HandCoins,same name
+HandHeart,volunteer_activism,HandHeart,same name
+Heart,favorite,Heart,same name
+History,history,RotateCcwClock,renamed in Lucide
+Home,home,House,renamed in Lucide
+IdCard,id_card,IdCard,same name
+Inbox,inbox,Inbox,same name
+Archive,archive,Archive,same name
+Info,info,Info,same name
+Key,key,Key,same name
+KeyRound,vpn_key,KeyRound,same name
+Landmark,account_balance,Landmark,same name
+Laptop,laptop_mac,Laptop,same name
+Layers,layers,Layers,same name
+LayoutDashboard,dashboard,LayoutDashboard,same name
+LayoutGrid,grid_view,LayoutGrid,same name
+Headset,headset_mic,Headset,same name
+LineChart,show_chart,ChartLine,renamed in Lucide
+Link2,link,Link2,same name
+Lock,lock,Lock,same name
+LogOut,logout,LogOut,same name
+Mail,mail,Mail,same name
+MapPin,location_on,MapPin,same name
+Maximize2,open_in_full,Maximize2,same name
+Menu,menu,Menu,same name
+MessageCircle,chat,MessageCircle,same name
+MessageSquareWarning,feedback,MessageSquareExclamationPoint,renamed in Lucide
+Minimize2,close_fullscreen,Minimize2,same name
+Minus,remove,Minus,same name
+Monitor,desktop_windows,Monitor,same name
+Moon,dark_mode,Moon,same name
+MoreHorizontal,more_horiz,Ellipsis,renamed in Lucide
+MoreVertical,more_vert,EllipsisVertical,renamed in Lucide
+MousePointerClick,touch_app,MousePointerClick,same name
+Navigation,navigation,Navigation,same name
+Palette,palette,Palette,same name
+PanelLeftClose,left_panel_close,PanelLeftClose,same name
+PanelLeftOpen,left_panel_open,PanelLeftOpen,same name
+Paperclip,attach_file,Paperclip,same name
+PartyPopper,celebration,PartyPopper,same name
+Passport,passport,,missing in Lucide
+Pause,pause,Pause,same name
+Pencil,edit,Pencil,same name
+Percent,percent,Percent,same name
+Phone,call,Phone,same name
+PhoneCall,phone_in_talk,PhoneCall,same name
+PieChart,pie_chart,ChartPie,renamed in Lucide
+PiggyBank,savings,PiggyBank,same name
+Plane,flight,Plane,same name
+Play,play_arrow,Play,same name
+Plus,add,Plus,same name
+PlusCircle,add_circle,CirclePlus,renamed in Lucide
+QrCode,qr_code_2,QrCode,same name
+Radio,radio,Radio,same name
+Receipt,receipt,Receipt,same name
+ReceiptText,receipt_long,ReceiptText,same name
+RefreshCw,refresh,RefreshCw,same name
+Repeat,repeat,Repeat,same name
+RotateCcw,rotate_left,RotateCcw,same name
+RotateCw,rotate_right,RotateCw,same name
+ScanFace,face,ScanFace,same name
+ScanLine,document_scanner,ScanLine,same name
+ScrollText,article,ScrollText,same name
+Search,search,Search,same name
+SearchX,search_off,SearchX,same name
+Send,send,Send,same name
+Settings,settings,Settings,same name
+Share,share,Share,same name
+Share2,share,Share2,same name
+Shield,shield,Shield,same name
+ShieldAlert,gpp_bad,ShieldExclamationPoint,renamed in Lucide
+ShieldCheck,verified_user,ShieldCheck,same name
+ShieldOff,remove_moderator,ShieldOff,same name
+ShieldPlus,add_moderator,ShieldPlus,same name
+ShieldQuestion,gpp_maybe,ShieldQuestionMark,renamed in Lucide
+Ship,directions_boat,Ship,same name
+ShoppingBag,shopping_bag,ShoppingBag,same name
+ShoppingCart,shopping_cart,ShoppingCart,same name
+Signal,signal_cellular_alt,Signal,same name
+Sliders,tune,SlidersVertical,renamed in Lucide
+SlidersHorizontal,tune,SlidersHorizontal,same name
+Smartphone,mobile,Smartphone,same name
+Sparkles,stars_2,Sparkles,same name
+SquarePen,edit_square,SquarePen,same name
+Store,storefront,Store,same name
+Sun,light_mode,Sun,same name
+SunMoon,contrast,SunMoon,same name
+Tag,sell,Tag,same name
+Ticket,confirmation_number,Ticket,same name
+Timer,timer,Timer,same name
+Trash2,delete,Trash,renamed in Lucide
+TrendingDown,trending_down,TrendingDown,same name
+TrendingUp,trending_up,TrendingUp,same name
+TriangleAlert,warning,TriangleExclamationPoint,renamed in Lucide
+Truck,local_shipping,Truck,same name
+Tv,tv,Tv,same name
+Umbrella,umbrella,Umbrella,same name
+Undo2,undo,Undo2,same name
+Unlock,lock_open,LockOpen,renamed in Lucide
+Upload,upload,Upload,same name
+User,person,User,same name
+UserCheck,person_check,UserCheck,same name
+UserCog,manage_accounts,UserCog,same name
+UserPlus,person_add,UserPlus,same name
+UserRound,person,UserRound,same name
+Users,group,Users,same name
+UtensilsCrossed,restaurant,UtensilsCrossed,same name
+Wallet,account_balance_wallet,Wallet,same name
+Waves,waves,WavesHorizontal,renamed in Lucide
+Wifi,wifi,Wifi,same name
+X,close,X,same name
+XCircle,cancel,CircleX,renamed in Lucide
+Zap,bolt,Zap,same name

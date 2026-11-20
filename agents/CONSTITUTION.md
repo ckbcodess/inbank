@@ -216,11 +216,14 @@ here. Never fall back to dense, boxed layouts.
 
 ## 7. Icons
 
-- **Material Symbols (rounded) only,** imported from `@/components/ui/icons`, at `size={15}` to `{18}`. Never
-  import an icon package directly. The weight is set once for every icon in
-  `scripts/gen-material-icons.mts`, so there is no per-icon stroke prop. Navigation chevrons may go up to 20–22px.
-- **Adding an icon:** add a line to the map in that script (the app's name on the left, the Material Symbols name on
-  the right), run `npx tsx scripts/gen-material-icons.mts`, then import it by name. Never edit `icons.tsx` by hand.
+- **Lucide only** (designer, 2026-11-20), imported from `@/components/ui/icons`, at `size={15}` to `{18}`. Never
+  import an icon package directly. The stroke defaults to 1.8 for every icon (`scripts/gen-lucide-icons.mts`); a
+  call site may set `strokeWidth` between 1.7 and 1.9. Navigation chevrons may go up to 20–22px.
+- **Filled variants are drawn in Lucide style,** never borrowed from another family. Lucide ships outlines only, so the
+  GCB pack adds the filled ones (drafted by `scripts/gen-lucide-filled.mts`, finished by the designer). What Lucide
+  lacks entirely (Passport) is drawn on its 24 grid as a GCB addition, in the script's `CUSTOM` list.
+- **Adding an icon:** add a line to the map in that script (the app's name on the left, the Lucide file name on the
+  right), run `npx tsx scripts/gen-lucide-icons.mts`, then import it by name. Never edit `icons.tsx` by hand.
 - **Deliberate exceptions:** the Send & Pay hub's duotone and glass icons (Reicon, `reicon-react`), network and bank logos, and country flags (`public/flags/`). Don't add new exceptions without the
   designer.
 
