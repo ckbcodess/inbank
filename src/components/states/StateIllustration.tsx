@@ -32,7 +32,7 @@ const RENDERS: Partial<Record<StateIllustrationId, { w: number; h: number; show:
   // Saved people and billers share the group figures.
   "empty-people": { w: 800, h: 718, show: 170, file: "empty-groups" },
   "empty-sources": { w: 800, h: 734, show: 170 },
-  "empty-activity": { w: 680, h: 800, show: 176 },
+  "empty-activity": { w: 679, h: 800, show: 176 },
   "empty-spends": { w: 518, h: 800, show: 176 },
 };
 
