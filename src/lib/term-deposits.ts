@@ -28,6 +28,21 @@ export const TENURES: readonly { days: number; rate: number }[] = [
   { days: 364, rate: 15 },
 ] as const;
 
+/**
+ * The bank's published fixed-deposit rate sheet, per year in percent, by amount band and tenure in months.
+ * Shown on the Rates page only. The Invest flow still prices on `TENURES` above until the bank confirms
+ * which sheet applies (WORKING_LOG: Gap).
+ */
+export const DEPOSIT_RATE_SHEET_MONTHS = [1, 2, 3, 6, 12] as const;
+export const DEPOSIT_RATE_SHEET: readonly { band: string; rates: readonly number[] }[] = [
+  { band: "1,000 – 10,000", rates: [1.1, 1.75, 2.0, 2.25, 2.5] },
+  { band: "10,001 – 50,000", rates: [1.75, 2.0, 2.25, 2.75, 3.25] },
+  { band: "50,001 – 100,000", rates: [2.0, 2.25, 2.5, 3.0, 3.5] },
+  { band: "100,001 – 500,000", rates: [2.25, 2.5, 2.75, 3.5, 3.75] },
+  { band: "500,001 & above", rates: [3.0, 3.0, 3.75, 4.0, 4.5] },
+  { band: "Above 1,000,000", rates: [3.5, 3.2, 4.25, 4.75, 5.5] },
+] as const;
+
 export function rateFor(days: number): number {
   return TENURES.find((t) => t.days === days)?.rate ?? TENURES[0].rate;
 }

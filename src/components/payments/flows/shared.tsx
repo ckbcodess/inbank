@@ -753,10 +753,13 @@ export function DualAmountFields({
   onFocus,
   hasError,
   onSwap,
+  split,
 }: {
   foreign: string;
   ghs: string;
   rate?: number;
+  /** Passed to both amount boxes: text left, currency right, no edge ring. */
+  split?: boolean;
   /** A code, or a control such as a currency picker, shown in the box beside the amount. */
   foreignCurrency: React.ReactNode;
   sendCurrency?: React.ReactNode;
@@ -777,7 +780,13 @@ export function DualAmountFields({
   const ghsShown = ghs !== "" ? ghs : numForeign > 0 ? String(ghsFor(numForeign)) : "";
 
   return (
-    <div className="relative grid grid-cols-1 items-center gap-2 md:grid-cols-2">
+    <div
+      className={cn(
+        split
+          ? cn("grid grid-cols-1 items-end gap-2 md:gap-3", onSwap ? "md:grid-cols-[1fr_auto_1fr]" : "md:grid-cols-2")
+          : "relative grid grid-cols-1 items-center gap-2 md:grid-cols-2",
+      )}
+    >
       <AmountInput
         value={ghsShown}
         onChange={(val) => {
@@ -789,19 +798,26 @@ export function DualAmountFields({
         label={labels.send}
         onFocus={onFocus}
         hasError={hasError}
+        split={split}
       />
 
       {onSwap ? (
+        <div className={split ? "flex items-center justify-center md:h-[68px]" : "contents"}>
         <button
           type="button"
           onClick={onSwap}
           aria-label="Swap currencies"
           title="Swap currencies"
-          className="absolute left-1/2 top-1/2 z-10 flex size-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 md:top-[calc(50%+14px)]"
+          className={cn(
+            "z-10 flex cursor-pointer items-center justify-center justify-self-center rounded-full border border-border bg-card text-foreground shadow-sm transition-colors hover:bg-muted",
+            split ? "size-8" : "size-10",
+            !split && "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:top-[calc(50%+14px)]",
+          )}
         >
-          <ArrowLeftRight size={18} aria-hidden="true" />
+          <ArrowLeftRight size={split ? 15 : 18} aria-hidden="true" />
         </button>
-      ) : (
+        </div>
+      ) : split ? null : (
         <div className="absolute left-1/2 top-[calc(50%+14px)] z-10 hidden -translate-x-1/2 -translate-y-1/2 md:flex">
           <div className="flex size-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm">
             <ArrowLeftRight size={15} />
@@ -816,6 +832,7 @@ export function DualAmountFields({
         label={labels.get}
         onFocus={onFocus}
         hasError={hasError}
+        split={split}
       />
     </div>
   );
@@ -850,6 +867,7 @@ export function AmountInput({
   onNext,
   enterKeyHint = "next",
   action,
+  split = false,
 }: {
   value: string;
   onChange: (val: string) => void;
@@ -860,6 +878,8 @@ export function AmountInput({
   label?: string;
   /** A link or control that sits on the label row, right-aligned, as Send to new group does on a group field. */
   action?: React.ReactNode;
+  /** Text on the left and the currency on the right of the box, with no edge ring. Used by the Rates converter. */
+  split?: boolean;
   error?: React.ReactNode;
   /** A quiet line under the amount ("You can take up to GHS 20,000.00"). An error takes its place. */
   helper?: React.ReactNode;
@@ -1031,6 +1051,19 @@ export function AmountInput({
   }
   /* eslint-enable no-restricted-syntax */
 
+  const currencyEl = (
+    <span
+      className={cn(
+        "font-medium select-none transition-colors transition-[font-size] duration-150",
+        currencySizeClass,
+        isError ? "text-destructive/80" : "text-muted-foreground"
+      )}
+    >
+      {/* A picker in this slot must not also focus the amount */}
+      <span onClick={(e) => e.stopPropagation()}>{currency}</span>
+    </span>
+  );
+
   return (
     <Field label={label} action={action}>
       <div
@@ -1044,17 +1077,8 @@ export function AmountInput({
           "focus-within:bg-field-focus",
         )}
       >
-        <div className="inline-flex items-center justify-center gap-2">
-          <span
-            className={cn(
-              "font-medium select-none transition-colors transition-[font-size] duration-150",
-              currencySizeClass,
-              isError ? "text-destructive/80" : "text-muted-foreground"
-            )}
-          >
-            {/* A picker in this slot must not also focus the amount */}
-            <span onClick={(e) => e.stopPropagation()}>{currency}</span>
-          </span>
+        <div className={cn(split ? "flex w-full items-center justify-between gap-2" : "inline-flex items-center justify-center gap-2")}>
+          {!split && currencyEl}
           <div className="relative inline-flex items-center min-h-[36px]">
             {/* Ghost text that dynamically drives the width of the input wrapper */}
             <span
@@ -1114,6 +1138,7 @@ export function AmountInput({
               )}
             />
           </div>
+          {split && currencyEl}
         </div>
       </div>
       {error ? (

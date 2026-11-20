@@ -83,7 +83,7 @@ export const PRODUCT_TOUR_STEPS: TourStep[] = [
   {
     id: "more",
     title: "More services",
-    body: () => "Lifestyle, FX Rates, EagleSave and your other services are in here.",
+    body: () => "Lifestyle, Rates, EagleSave and your other services are in here.",
     side: "right",
     sideNarrow: "top",
   },

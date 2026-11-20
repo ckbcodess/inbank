@@ -9,7 +9,7 @@
  */
 
 import Link from "next/link";
-import { ChevronRight } from "@/components/ui/icons";
+import { ChevronRight, ExternalLink } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 type TileIcon = React.ComponentType<{
@@ -33,6 +33,8 @@ interface ActionTileProps {
   /** The hub's amber icon (INTERFACE §E) instead of the neutral one. */
   accent?: boolean;
   href?: string;
+  /** An outside page: opens in a new tab and shows the external-link mark instead of the chevron. Needs `href`. */
+  external?: boolean;
   onClick?: () => void;
   disabled?: boolean;
   /** Phone layout for two tiles per row: chip and label stay side by side, the label may wrap, no chevron. */
@@ -92,6 +94,7 @@ export function ActionTile({
   trailing,
   accent = false,
   href,
+  external = false,
   onClick,
   disabled,
   compactOnMobile = false,
@@ -117,13 +120,25 @@ export function ActionTile({
         </span>
       </div>
       {trailing && <span className="ml-auto flex shrink-0 items-center">{trailing}</span>}
-      <ChevronRight
-        size={20}
-        aria-hidden="true"
-        className={cn("shrink-0 text-muted-foreground transition-transform duration-hover group-hover:text-foreground", compactOnMobile && "max-sm:hidden")}
-      />
+      {external ? (
+        <ExternalLink size={18} aria-hidden="true" className="shrink-0 text-muted-foreground transition-colors duration-hover group-hover:text-foreground" />
+      ) : (
+        <ChevronRight
+          size={20}
+          aria-hidden="true"
+          className={cn("shrink-0 text-muted-foreground transition-transform duration-hover group-hover:text-foreground", compactOnMobile && "max-sm:hidden")}
+        />
+      )}
     </>
   );
+
+  if (href && !disabled && external) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} className={cn(TILE, TILE_FILL[variant], compactOnMobile && "max-sm:p-3", className)}>
+        {body}
+      </a>
+    );
+  }
 
   if (href && !disabled) {
     return (

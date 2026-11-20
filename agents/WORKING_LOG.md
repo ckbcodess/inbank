@@ -1526,12 +1526,20 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ### 2026-11-20
 - Decision: the FX page (`fx-rates/page.tsx`) is titled "Rates" with three tabs: FX Rates, Card Rates, Fixed Deposits. The tab lives in `?tab=card|deposits` and changes with router.replace.
 - Conflict: the Change column keeps green up / red down, as the designer's screenshot shows. CONSTITUTION §4 says a downward trend is `text-muted-foreground`, never destructive. Ask the designer whether the rule or the screenshot wins.
-- Gap: Card Rates rows are placeholders ("Mid rate + 2.5%", "Mid rate + 3.5%", "GHS 5.00 per withdrawal"). No card pricing source exists. The bank has to confirm them before launch; the tab says so.
+- ~~Gap: Card Rates rows are placeholders.~~ Resolved 2026-11-20: the tab now shows the published USD sheet (see 2026-11-20). Other currencies and the ATM fee are still missing.
 - Decision: Rates segments use `SegmentedControl` (not underline tabs), and the subtitle is dropped. The converter is `DualAmountFields` (the PAPSS and wire amount field), with currency pickers in the box and the swap in its middle switch.
 - Decision: `DualAmountFields` takes `onSwap` (the middle switch becomes a 40px yellow button on every width). `AmountInput`'s `currency` and `DualAmountFields`' currency props take a node, so a picker fits. PAPSS and the wire flow are unchanged. The only other change is the picker's click stops at the amount box.
 - Gap: the converter swap no longer uses the icon Button, so `icon-lg` 36px doesn't apply. It is a 40px native button with `size-10`.
 - Question: Fixed Deposits reads `TENURES` in `lib/term-deposits.ts`, which are placeholders. Does the tab also need an "Open a deposit" link into Invest?
 - Gap: not viewed in a browser (the project rule forbids a dev server). Check the underline tabs (TabsList `variant="line"`) and the converter stacking below `sm`.
+
+## 2026-11-20
+
+- Decision: Card Rates shows the bank's published USD sheet (selling 12.6528, markup 7.50%, as at 19 Nov 2026), replacing the placeholder rows. Visa and Mastercard rate calculators are outbound links in a new tab (`VISA_CALCULATOR_URL`, `MASTERCARD_CALCULATOR_URL` in `fx-rates/page.tsx`).
+- Gap: the calculator URLs are placeholders (`https://www.gcbbank.com.gh/`). Replace with the exact pages.
+- Decision: Fixed Deposits shows the published rate sheet by amount band and tenure in months (`DEPOSIT_RATE_SHEET` in `lib/term-deposits.ts`, as at 16 Nov 2026).
+- Gap: the Rates sheet conflicts with the Invest flow. The flow still prices 91, 182 and 364 days at 12.5, 13.5 and 15% (`TENURES`). The Rates page shows the bank sheet. The bank must confirm which applies; one must feed the other (PATTERNS: one source per fact).
+- Gap: the new Rates strings (Card, Selling, Markup on rate, calculator links, month headers) are English only. The page's strings are not in the i18n catalog yet, so FR, ES and ZH rows are missing.
 
 ## Consolidation history
 - **2026-10-03:** Bootstrap. Built the five files from these sources:

@@ -518,9 +518,9 @@ const dashboard: Entry[] = [
   ],
   ["More services", "Autres services", "Más servicios", "更多服务"],
   [
-    "Lifestyle, FX Rates, EagleSave and your other services are in here.",
-    "Lifestyle, taux de change, EagleSave et vos autres services sont ici.",
-    "Lifestyle, tipos de cambio, EagleSave y tus otros servicios están aquí.",
+    "Lifestyle, Rates, EagleSave and your other services are in here.",
+    "Lifestyle, taux, EagleSave et vos autres services sont ici.",
+    "Lifestyle, tarifas, EagleSave y tus otros servicios están aquí.",
     "生活方式、汇率、EagleSave 及您的其他服务都在这里。",
   ],
   ["Your profile", "Votre profil", "Tu perfil", "您的个人资料"],

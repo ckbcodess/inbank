@@ -281,9 +281,10 @@ export function PapssPaymentFlow({
       {isDestinationValid && (
         <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Section: You Send (GHS) vs Recipient Gets (Foreign) with switcher */}
-          <Field label="Transfer Amount">
+          <div className="flex flex-col gap-2">
 
             <DualAmountFields
+              split
               foreign={state.wForeign}
               ghs={state.wGhs}
               rate={rate}
@@ -300,7 +301,7 @@ export function PapssPaymentFlow({
             />
 
             {/* Exchange rate display underneath fields */}
-            <div className="flex items-center justify-end px-1 pt-0.5 text-caption text-muted-foreground font-medium">
+            <div className="flex items-center justify-start px-1 pt-0.5 text-caption text-muted-foreground font-medium">
               <span>Rate: 1 {state.wCurrency || "NGN"} = GHS {rate}</span>
             </div>
 
@@ -310,7 +311,7 @@ export function PapssPaymentFlow({
                 <InsufficientFundsAlert />
               </div>
             )}
-</Field>
+          </div>
 
           {/* 4. Purpose of Payment */}
           <Field label="Purpose of Payment">

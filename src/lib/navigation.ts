@@ -28,7 +28,7 @@ export interface NavItem {
 /** The secondary products and services, gathered in the collapsible "More Services" dropdown. */
 const MORE_SERVICES: NavItem[] = [
   { key: "lifestyle", label: "Lifestyle", path: "/lifestyle", icon: "Sparkles", group: "More Services" },
-  { key: "fx-rates", label: "FX Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
+  { key: "fx-rates", label: "Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
   { key: "eaglesave", label: "EagleSave", path: "/eaglesave", icon: "PiggyBank", group: "More Services" },
 ];
 
