@@ -31,6 +31,7 @@ import {
 import { useMyDeposits, useTermDeposits } from "@/lib/term-deposits";
 import { LIST_CARD_CLASS } from "@/components/ui/list-card";
 import { cn } from "@/lib/utils";
+import { DashedDivider } from "@/components/ui/dashed-divider";
 
 /** The Invest page: the one home for everything. */
 export const INVEST_HOME = "/invest";
@@ -63,7 +64,7 @@ export function FactsPanel({ rows, keyRow }: { rows: Array<[React.ReactNode, Rea
           // The key fact, styled as the total on a payment review, with the same dashed line after it.
           <div key={i}>
             <TotalRow label={label} value={value} className="px-3 py-3" />
-            <div aria-hidden="true" className="mx-3 my-2 h-px bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />
+            <DashedDivider className="mx-3 my-2" />
           </div>
         ) : (
           <div key={i} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">

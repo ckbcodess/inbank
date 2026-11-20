@@ -37,7 +37,7 @@ export function GCBLogo({
     >
       <g id="Group-2-Copy">
         {showWordmark && (
-          <g id="GCB-Letters" fill={wordmarkColor} className="fill-current text-foreground">
+          <g id="GCB-Letters" fill={wordmarkColor} className={cn("fill-current", wordmarkColor === "currentColor" && "text-foreground")}>
             {/* G */}
             <path
               id="Fill-6761"

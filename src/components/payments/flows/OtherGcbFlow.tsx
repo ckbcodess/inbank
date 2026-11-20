@@ -66,25 +66,41 @@ export function OtherGcbFlow({
   );
 
   const cleanAcct = state.benAcct.replace(/[\s-]/g, "");
-  // A saved recipient is already known to the bank, so picking one verifies without a 13-digit number.
-  // Editing the number afterwards stops it matching, and the normal check applies again.
+  // Numbers run from 10 digits (a GCB account) to 13 (a virtual account). The Search appears at 10 and the
+  // person runs it themselves; typing never looks the number up on its own.
+  const canSearch = cleanAcct.length >= 10;
+  // A saved recipient is already known to the bank, so picking one verifies without a search.
+  // Editing the number afterwards stops it matching, and the search applies again.
   const [pickedAcct, setPickedAcct] = useState("");
-  const isAcctValid = cleanAcct.length === 13 || (pickedAcct !== "" && cleanAcct === pickedAcct);
+  // The number the person last searched for. Editing it afterwards stops it matching.
+  const [checkedAcct, setCheckedAcct] = useState("");
+  // A number that was searched and matched no account. Editing it afterwards clears the message.
+  const [notFoundAcct, setNotFoundAcct] = useState("");
+  const isAcctValid = (canSearch && cleanAcct === checkedAcct) || (pickedAcct !== "" && cleanAcct === pickedAcct);
+  // Virtual accounts have 10 digits and GCB accounts 13. Other lengths can be searched but never match.
+  const isKnownAcctLength = (len: number) => len === 10 || len === 13;
 
-  // Resolving / Verification state
-  const [resolving, setResolving] = useState(false);
+  // Searching state: a short "Verifying..." beat, then the name resolves or the number is reported as not found.
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
-    if (isAcctValid) {
-      setResolving(true);
-      const timer = setTimeout(() => {
-        setResolving(false);
-      }, 250);
-      return () => clearTimeout(timer);
-    } else {
-      setResolving(false);
-    }
-  }, [cleanAcct, isAcctValid]);
+    if (!searching) return;
+    const timer = setTimeout(() => {
+      if (isKnownAcctLength(cleanAcct.length)) {
+        setCheckedAcct(cleanAcct);
+        setNotFoundAcct("");
+        onChange("benName", resolveAccountName(cleanAcct));
+      } else {
+        setNotFoundAcct(cleanAcct);
+      }
+      setSearching(false);
+    }, 250);
+    return () => clearTimeout(timer);
+    // onChange is recreated on each parent render; the timer should only restart when the search starts or the number changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searching, cleanAcct]);
+
+  const resolving = searching;
 
   const verifiedName = useMemo(() => {
     return resolveAccountName(state.benAcct, state.benName);
@@ -106,7 +122,11 @@ export function OtherGcbFlow({
       />
 
       {/* 2. Destination (GCB Account) */}
-      <Field label="Beneficiary Details" action={!(isVerified && isCollapsed) && <SavedRecipientLink value={state.benAcct} onPicked={(item) => setPickedAcct(item.acct.replace(/[\s-]/g, ""))} />}>
+      <Field
+        label="Beneficiary Details"
+        action={!(isVerified && isCollapsed) && <SavedRecipientLink value={state.benAcct} onPicked={(item) => setPickedAcct(item.acct.replace(/[\s-]/g, ""))} />}
+        error={notFoundAcct !== "" && notFoundAcct === cleanAcct && `No account has ${cleanAcct.length} digits. Check the number.`}
+      >
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `GCB Account ${state.benAcct}`}
@@ -122,17 +142,15 @@ export function OtherGcbFlow({
             onChange={(raw) => {
               const val = raw.replace(/[^0-9]/g, "").slice(0, 13);
               onChange("benAcct", val);
-              if (val.length === 13) {
-                const resolved = resolveAccountName(val, "");
-                if (resolved) onChange("benName", resolved);
-              }
             }}
             placeholder="Enter account number"
-            canVerify={isAcctValid}
+            canVerify={canSearch}
             verified={isVerified}
-            resolving={isAcctValid && resolving}
+            resolving={resolving}
             verifiedName={verifiedName}
-            auto
+            onVerify={() => {
+              if (canSearch && !isVerified) setSearching(true);
+            }}
           />
         )}
       </Field>

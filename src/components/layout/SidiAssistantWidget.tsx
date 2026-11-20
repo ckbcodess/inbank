@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { DURATION, EASE, SPRING } from "@/lib/motion";
 import { isBusinessProfile } from "@/lib/profile";
+import { SUPPORT } from "@/lib/support";
 
 interface ChatMessage {
   id: string;
@@ -265,11 +266,11 @@ export function SidiAssistantWidget() {
                     Get help
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" sideOffset={6} className="w-56">
-                    <DropdownMenuItem render={<a href="tel:+233302681531" />} className="gap-2 px-2 py-2">
+                    <DropdownMenuItem render={<a href={`tel:${SUPPORT.phone.tel}`} />} className="gap-2 px-2 py-2">
                       <Phone size={16} className="text-muted-foreground" />
                       <span className="flex flex-col">
                         <span className="text-body text-foreground">Call customer care</span>
-                        <span className="text-caption text-muted-foreground tabular">+233 302 681 531, 24/7</span>
+                        <span className="text-caption text-muted-foreground tabular">{SUPPORT.phone.display}, 24/7</span>
                       </span>
                     </DropdownMenuItem>
                     <DropdownMenuItem render={<Link href="/locate-us" onClick={() => setOpen(false)} />} className="gap-2 px-2 py-2">

@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import {
-  Check,
   Building2,
   ChevronRight,
   ChevronLeft,
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import type { PaymentCard, DeliveryStatus } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { ProgressTracker } from "@/components/ui/progress-tracker";
 
 export interface CardDeliveryTrackerProps {
   card: PaymentCard;
@@ -161,76 +161,10 @@ export function CardDeliveryTracker({
         </span>
       </div>
 
-      {/* 4-Step Timeline Stepper matching Figma 1:1 */}
-      <div className="relative flex flex-col pl-1">
-        {steps.map((step, idx) => {
-          const isCompleted = idx <= currentStepIndex;
-          const isLast = idx === steps.length - 1;
-          const isCurrentActive = idx === currentStepIndex;
-
-          return (
-            <div key={step.key} className="relative flex items-start gap-3 pb-5 last:pb-0">
-              {/* Connecting vertical stroke line */}
-              {!isLast && (
-                <div
-                  className={cn(
-                    "absolute left-[13px] top-[26px] bottom-0 w-[2px] transition-colors",
-                    isCompleted && idx < currentStepIndex
-                      ? "bg-primary"
-                      : "bg-border"
-                  )}
-                />
-              )}
-
-              {/* Node indicator */}
-              <div
-                className={cn(
-                  "size-6 rounded-full flex items-center justify-center shrink-0 transition z-10 select-none",
-                  isCompleted
-                    ? "bg-primary text-primary-foreground font-medium"
-                    : "bg-muted text-muted-foreground text-caption border border-border"
-                )}
-              >
-                {isCompleted ? (
-                  <Check size={15} />
-                ) : (
-                  <span className="text-caption font-medium tabular-nums">{step.stepNum}</span>
-                )}
-              </div>
-
-              {/* Content Row */}
-              <div className="flex flex-col min-w-0 flex-1 pt-0.5">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <span
-                    className={cn(
-                      "text-body leading-tight tracking-[var(--ls-tight)]",
-                      isCompleted ? "text-foreground font-medium" : "text-muted-foreground"
-                    )}
-                  >
-                    {step.title}
-                  </span>
-                  {step.dateStr && (
-                    <span
-                      className={cn(
-                        "text-body tabular-nums",
-                        isCurrentActive ? "text-foreground font-medium" : "text-muted-foreground"
-                      )}
-                    >
-                      {step.dateStr}
-                    </span>
-                  )}
-                </div>
-
-                {step.description && (
-                  <p className="text-body text-muted-foreground mt-1 leading-relaxed">
-                    {step.description}
-                  </p>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <ProgressTracker
+        steps={steps.map((st) => ({ key: st.key, title: st.title, description: st.description, date: st.dateStr }))}
+        current={currentStepIndex}
+      />
 
       {/* Branch Location Item (Shows when branch details exist) */}
       {isBranchPickup && isReadyForPickup && (

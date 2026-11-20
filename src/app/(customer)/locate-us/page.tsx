@@ -1,377 +1,248 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import {
-  Clock,
-  ExternalLink,
-  MapPin,
-  Navigation,
-  Phone,
-  Search,
-  X,
-} from "@/components/ui/icons";
-import PageHeader from "@/components/layout/PageHeader";
-import { Input } from "@/components/ui/input";
-import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
-import { FilteredEmptyState, TrueEmptyState } from "@/components/states/ListStates";
+/**
+ * Locate us: GCB branches, ATMs and cash deposit terminals. Quiet rows (name, area, whether it's open right now,
+ * worked out from its hours); a row opens a sheet with the hours, phone, services and directions. Branches or ATMs is
+ * a segmented control (ATMs includes cash deposit terminals); search sits with a location dropdown beside it. Both
+ * choices live in the URL.
+ */
 
-export interface BranchLocation {
-  id: string;
-  name: string;
-  type: "branch" | "atm" | "deposit";
-  address: string;
-  city: string;
-  region: string;
-  hours: string;
-  phone: string;
-  services: string[];
-  isOpenNow: boolean;
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Banknote, ChevronRight, ExternalLink, Landmark, Navigation, Phone, PiggyBank } from "@/components/ui/icons";
+import PageHeader from "@/components/layout/PageHeader";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { SearchField } from "@/components/ui/search-field";
+import { ListCard } from "@/components/ui/list-card";
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FilteredEmptyState } from "@/components/states/ListStates";
+import { LOCATIONS, LOCATION_TYPE_LABEL, hoursRows, openStatus, type BranchLocation, type LocationType } from "@/lib/locations";
+import { cn } from "@/lib/utils";
+
+const TYPE_ICON: Record<LocationType, typeof Landmark> = { branch: Landmark, atm: Banknote, deposit: PiggyBank };
+
+const CITIES = Array.from(new Set(LOCATIONS.map((l) => l.city))).sort((a, b) => a.localeCompare(b));
+
+type Kind = "all" | "branch" | "atm";
+const KIND_OPTIONS: { value: Kind; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "branch", label: "Branches" },
+  { value: "atm", label: "ATMs" },
+];
+/** A cash deposit terminal is a machine too, so it sits with the ATMs. */
+const kindOf = (type: LocationType): Exclude<Kind, "all"> => (type === "branch" ? "branch" : "atm");
+
+const directionsUrl = (loc: BranchLocation) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`GCB Bank ${loc.name}, ${loc.address}, ${loc.city}`)}`;
+
+/** The clock, read after mount (so the server and the first paint agree) and once a minute after that. */
+function useNow(): Date | null {
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    setNow(new Date());
+    const timer = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(timer);
+  }, []);
+  return now;
 }
 
-const LOCATIONS: BranchLocation[] = [
-  {
-    id: "loc-01",
-    name: "Accra Main Branch — High Street",
-    type: "branch",
-    address: "Thorpe Road, High Street, Central Business District",
-    city: "Accra",
-    region: "Greater Accra",
-    hours: "Mon – Fri: 8:30 AM – 4:00 PM · Sat: 9:00 AM – 1:00 PM",
-    phone: "+233 30 266 4910",
-    services: ["Forex Bureau", "Corporate Banking", "Priority Banking", "24/7 ATM", "Safe Deposit Boxes"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-02",
-    name: "Airport City Branch & Prestige Lounge",
-    type: "branch",
-    address: "Ground Floor, Silver Star Tower, Airport City",
-    city: "Accra",
-    region: "Greater Accra",
-    hours: "Mon – Fri: 8:30 AM – 5:00 PM · Sat: 9:00 AM – 2:00 PM",
-    phone: "+233 30 277 8214",
-    services: ["Prestige Banking", "Forex Bureau", "Cash Deposit Terminal", "24/7 ATM"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-03",
-    name: "East Legon Smart Branch",
-    type: "branch",
-    address: "Lagos Avenue, Opposite PH Hotel, East Legon",
-    city: "Accra",
-    region: "Greater Accra",
-    hours: "Mon – Fri: 8:30 AM – 4:30 PM · Sat: 9:00 AM – 2:00 PM",
-    phone: "+233 30 254 1109",
-    services: ["Smart Teller", "Forex Bureau", "Cash Deposit ATM", "24/7 ATM"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-04",
-    name: "Accra Mall 24/7 Cash Hub",
-    type: "atm",
-    address: "Tetteh Quarshie Interchange, Food Court Entrance",
-    city: "Accra",
-    region: "Greater Accra",
-    hours: "Open 24/7 (365 Days)",
-    phone: "+233 30 268 1525",
-    services: ["Cardless Cash", "Cash Withdrawal", "PIN Services", "GhanaPay QR"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-05",
-    name: "Spintex Road Branch",
-    type: "branch",
-    address: "Spintex Coastal Estate Junction, Near Shell",
-    city: "Accra",
-    region: "Greater Accra",
-    hours: "Mon – Fri: 8:30 AM – 4:00 PM",
-    phone: "+233 30 281 3340",
-    services: ["SME Banking", "Bulk Cash Deposit", "24/7 ATM"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-06",
-    name: "Tema Main Branch",
-    type: "branch",
-    address: "Community 1, Near Meridian Hotel Roundabout",
-    city: "Tema",
-    region: "Greater Accra",
-    hours: "Mon – Fri: 8:30 AM – 4:00 PM · Sat: 9:00 AM – 1:00 PM",
-    phone: "+233 30 320 2851",
-    services: ["Harbour Clearing Services", "Trade & FX", "24/7 ATM", "Night Depository"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-07",
-    name: "Kumasi Main Branch — Harper Road",
-    type: "branch",
-    address: "Harper Road, Adum Commercial District",
-    city: "Kumasi",
-    region: "Ashanti",
-    hours: "Mon – Fri: 8:30 AM – 4:30 PM · Sat: 9:00 AM – 2:00 PM",
-    phone: "+233 32 202 2314",
-    services: ["Commercial Banking", "Forex Bureau", "Prestige Lounge", "24/7 ATM"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-08",
-    name: "KNUST Campus Branch",
-    type: "branch",
-    address: "Commercial Area, Kwame Nkrumah University, Kumasi",
-    city: "Kumasi",
-    region: "Ashanti",
-    hours: "Mon – Fri: 8:30 AM – 4:00 PM",
-    phone: "+233 32 206 0142",
-    services: ["Student Accounts", "Tuition Fee Services", "24/7 Multi-ATM"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-09",
-    name: "Takoradi Main Branch — Market Circle",
-    type: "branch",
-    address: "Market Circle, Collins Avenue",
-    city: "Takoradi",
-    region: "Western",
-    hours: "Mon – Fri: 8:30 AM – 4:00 PM",
-    phone: "+233 31 202 3551",
-    services: ["Oil & Gas Desk", "Trade Services", "24/7 ATM", "Bulk Cash Deposit"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-10",
-    name: "Tamale Main Branch",
-    type: "branch",
-    address: "Old Market Road, Central Business Area",
-    city: "Tamale",
-    region: "Northern",
-    hours: "Mon – Fri: 8:30 AM – 4:00 PM",
-    phone: "+233 37 202 2451",
-    services: ["Agribusiness Finance", "Forex Bureau", "24/7 ATM"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-11",
-    name: "Osu Oxford Street Cash Depository",
-    type: "deposit",
-    address: "Oxford Street, Opposite Woodin, Osu",
-    city: "Accra",
-    region: "Greater Accra",
-    hours: "Open 24/7",
-    phone: "+233 30 268 1525",
-    services: ["Instant Cash Deposit", "Bulk Note Acceptor", "Real-time Account Credit"],
-    isOpenNow: true,
-  },
-  {
-    id: "loc-12",
-    name: "Cape Coast Main Branch",
-    type: "branch",
-    address: "Commercial Street, Near Cape Coast Castle",
-    city: "Cape Coast",
-    region: "Central",
-    hours: "Mon – Fri: 8:30 AM – 4:00 PM",
-    phone: "+233 33 213 2410",
-    services: ["Institutional Banking", "Forex Bureau", "24/7 ATM"],
-    isOpenNow: true,
-  },
-];
+function LocationSheet({ loc, now, onClose }: { loc: BranchLocation | null; now: Date | null; onClose: () => void }) {
+  const status = loc && now ? openStatus(loc.hours, now) : null;
+  return (
+    <Dialog open={!!loc} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent size="sm">
+        {loc && (
+          <>
+            <DialogHeader>
+              <DialogTitle>{loc.name}</DialogTitle>
+            </DialogHeader>
+            <DialogBody className="gap-8">
+              {/* The answer first: can I go now? Then where it is and its number. */}
+              <div className="flex flex-col gap-1 px-1">
+                {status && (
+                  <span className="flex items-center gap-2 text-body text-foreground">
+                    <span aria-hidden="true" className={cn("size-2 shrink-0 rounded-full", status.open ? "bg-success" : "bg-muted-foreground/50")} />
+                    {status.label}
+                  </span>
+                )}
+                <span className="text-body text-muted-foreground">
+                  {loc.address}, {loc.city}
+                </span>
+                <span className="tabular text-body text-muted-foreground" translate="no">
+                  {loc.phone}
+                </span>
+              </div>
 
-const CITY_OPTIONS = Array.from(new Set(LOCATIONS.map((l) => l.city)))
-  .sort((a, b) => a.localeCompare(b))
-  .map((city) => ({ value: city, label: city }));
+              <section className="flex flex-col gap-2">
+                <h3 className="px-1 text-body font-medium text-foreground">Opening hours</h3>
+                <dl className="flex flex-col">
+                  {hoursRows(loc.hours, now).map((r) => (
+                    <div
+                      key={r.days}
+                      className={cn("flex items-baseline justify-between gap-6 px-1 py-2", r.today ? "text-foreground" : "text-muted-foreground")}
+                    >
+                      <dt className="text-body">{r.days}</dt>
+                      <dd className={cn("tabular text-body", r.today && "font-medium")}>{r.time}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
 
-export default function LocateUsPage() {
+              <section className="flex flex-col gap-3">
+                <h3 className="px-1 text-body font-medium text-foreground">Services</h3>
+                <ul className="flex flex-wrap gap-2 px-1">
+                  {loc.services.map((s) => (
+                    <li key={s}>
+                      <Badge variant="secondary">{s}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </DialogBody>
+            <DialogFooter className="flex-row gap-2">
+              <Button variant="outline" size="md" className="flex-1" nativeButton={false} render={<a href={`tel:${loc.phone.replace(/\s/g, "")}`} />}>
+                <Phone size={15} aria-hidden="true" />
+                Call
+              </Button>
+              <Button
+                size="md"
+                className="flex-1"
+                nativeButton={false}
+                render={<a href={directionsUrl(loc)} target="_blank" rel="noopener noreferrer" />}
+              >
+                <Navigation size={15} aria-hidden="true" />
+                Directions
+                <ExternalLink size={13} aria-hidden="true" />
+              </Button>
+            </DialogFooter>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function LocateUs() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+  const now = useNow();
   const [query, setQuery] = useState("");
-  const [filterType, setFilterType] = useState<"all" | "branch" | "atm" | "deposit">("all");
-  const [selectedCity, setSelectedCity] = useState<string>("all");
+  const [selected, setSelected] = useState<BranchLocation | null>(null);
 
-  const filteredLocations = useMemo(() => {
+  const kind = (params.get("type") as Kind | null) ?? "all";
+  const selectedCity = params.get("city") ?? "all";
+
+  const setParam = (key: string, value: string) => {
+    const next = new URLSearchParams(params.toString());
+    if (value === "all") next.delete(key);
+    else next.set(key, value);
+    const qs = next.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  };
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
     return LOCATIONS.filter((loc) => {
-      const matchType = filterType === "all" || loc.type === filterType;
+      const matchType = kind === "all" || kindOf(loc.type) === kind;
       const matchCity = selectedCity === "all" || loc.city === selectedCity;
       const matchQuery =
-        !query.trim() ||
-        loc.name.toLowerCase().includes(query.toLowerCase()) ||
-        loc.address.toLowerCase().includes(query.toLowerCase()) ||
-        loc.city.toLowerCase().includes(query.toLowerCase()) ||
-        loc.region.toLowerCase().includes(query.toLowerCase()) ||
-        loc.services.some((s) => s.toLowerCase().includes(query.toLowerCase()));
-
+        !q ||
+        [loc.name, loc.address, loc.city, loc.region, ...loc.services].some((s) => s.toLowerCase().includes(q));
       return matchType && matchCity && matchQuery;
     });
-  }, [query, filterType, selectedCity]);
+  }, [query, kind, selectedCity]);
 
-  const filterGroups: FilterGroup[] = [
-    {
-      id: "type",
-      kind: "single",
-      label: "Type",
-      options: [
-        { value: "branch", label: "Branches" },
-        { value: "atm", label: "24/7 ATMs" },
-        { value: "deposit", label: "Cash Deposit" },
-      ],
-      value: filterType,
-      onChange: (v) => setFilterType(v as typeof filterType),
-    },
-    {
-      id: "city",
-      kind: "single",
-      label: "City",
-      options: CITY_OPTIONS,
-      value: selectedCity,
-      onChange: setSelectedCity,
-    },
-  ];
-
-  function clearFilters() {
-    setFilterType("all");
-    setSelectedCity("all");
-  }
+  const clearFilters = () => router.replace(pathname, { scroll: false });
 
   return (
-    <div className="flex flex-col gap-5 w-full max-w-5xl mx-auto py-2">
-      <PageHeader
-        title="Locate Us"
-        description="Find GCB Bank branches, prestige lounges, 24/7 cash withdrawal ATMs, and instant deposit terminals nationwide."
-      />
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+      <PageHeader title="Locate Us" />
 
-      {/* ── Search & Filter Controls (the applied-filter row brings its own gap) ── */}
-      <div className="flex flex-col">
-        <div className="flex items-center gap-2">
-          {/* Search Bar */}
-          <div className="relative flex-1 max-w-md">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search branch, city or service"
-              className="pl-8 pr-6 h-9 text-body bg-card border-border"
-            />
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label="Clear search"
-              >
-                <X size={15} />
-              </button>
-            )}
-          </div>
-
-          <FilterPanel groups={filterGroups} onClear={clearFilters} />
-        </div>
-        <AppliedFilters groups={filterGroups} />
+      <div className="flex items-center">
+        <SegmentedControl aria-label="Branches or ATMs" options={KIND_OPTIONS} value={kind} onChange={(v) => setParam("type", v)} />
       </div>
 
-      {/* ── Locations Grid ── */}
-      {filteredLocations.length === 0 ? (
-        query || selectedCity !== "all" || filterType !== "all" ? (
-          <FilteredEmptyState
-            onReset={() => {
-              setQuery("");
-              clearFilters();
-            }}
-            description={
-              query
-                ? `We couldn't find any branch or ATM matching "${query}". Clear filters to view all locations.`
-                : "No branch or ATM found matching the selected filters."
-            }
-          />
-        ) : (
-          <TrueEmptyState illustration="no-results"
-            icon={<MapPin size={22} />}
-            title="No locations found"
-            description="Branch and ATM locations will appear here."
-          />
-        )
+      <div className="flex w-full items-center gap-2">
+        <SearchField value={query} onChange={setQuery} placeholder="Search branch, area or service" />
+        <Select value={selectedCity} onValueChange={(v) => setParam("city", (v as string) ?? "all")}>
+          <SelectTrigger size="md" className="w-40 shrink-0 sm:w-48" aria-label="Location">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All locations</SelectItem>
+            {CITIES.map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {filtered.length === 0 ? (
+        <FilteredEmptyState
+          onReset={() => {
+            setQuery("");
+            clearFilters();
+          }}
+          description={
+            query.trim()
+              ? `No branch or ATM matches “${query.trim()}”.`
+              : "No branch or ATM matches these filters."
+          }
+        />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {filteredLocations.map((loc) => {
-            const mapsQuery = encodeURIComponent(`GCB Bank ${loc.name}, ${loc.address}, ${loc.city}`);
-            const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
-
+        <ListCard>
+          {filtered.map((loc) => {
+            const Icon = TYPE_ICON[loc.type];
+            const status = now ? openStatus(loc.hours, now) : null;
             return (
-              <div
-                key={loc.id}
-                className="flex flex-col justify-between rounded-2xl border border-border bg-card p-4 transition-shadow hover:shadow-sm"
-              >
-                <div className="flex flex-col gap-2">
-                  {/* Header Row: Title & Type Pill */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex flex-col">
-                      <span className="text-h4 font-medium text-foreground tracking-tight">
-                        {loc.name}
-                      </span>
-                      <span className="text-caption text-muted-foreground mt-0.5">
-                        {loc.address}, {loc.city}
-                      </span>
-                    </div>
-                    <span
-                      className={`text-caption font-medium px-2 py-0.5 rounded-lg shrink-0 ${
-                        loc.type === "branch"
-                          ? "bg-warning/10 text-warning-text"
-                          : loc.type === "atm"
-                          ? "bg-info/10 text-info-text"
-                          : "bg-success/10 text-success-text"
-                      }`}
-                    >
-                      {loc.type === "branch" ? "Branch" : loc.type === "atm" ? "ATM" : "Deposit"}
+              <li key={loc.id}>
+                <button
+                  type="button"
+                  onClick={() => setSelected(loc)}
+                  className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
+                >
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+                    <Icon size={16} aria-hidden="true" />
+                  </span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-body text-foreground">{loc.name}</span>
+                    <span className="truncate text-caption text-muted-foreground">
+                      {LOCATION_TYPE_LABEL[loc.type]} · {loc.city}
                     </span>
-                  </div>
-
-                  {/* Hours & Contact */}
-                  <div className="flex flex-col gap-2 text-caption text-muted-foreground pt-1 border-t border-border/50">
-                    <div className="flex items-center gap-2">
-                      <Clock size={14} className="shrink-0 text-muted-foreground" />
-                      <span>{loc.hours}</span>
-                    </div>
-                    {loc.phone && (
-                      <div className="flex items-center gap-2">
-                        <Phone size={14} className="shrink-0 text-muted-foreground" />
-                        <a href={`tel:${loc.phone}`} className="hover:text-foreground hover:underline">
-                          {loc.phone}
-                        </a>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Services Chips */}
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {loc.services.map((svc) => (
-                      <span
-                        key={svc}
-                        className="text-caption bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-lg"
-                      >
-                        {svc}
+                    {status && (
+                      <span className={cn("truncate text-caption sm:hidden", status.open ? "text-success-text" : "text-muted-foreground")}>
+                        {status.label}
                       </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Actions Footer */}
-                <div className="flex items-center justify-between gap-2 pt-3 mt-2 border-t border-border/60">
-                  <div className="flex items-center gap-2 text-caption text-success-text">
-                    <span className="size-1.5 rounded-full bg-success" />
-                    <span>Open for Service</span>
-                  </div>
-
-                  <a
-                    href={directionsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-caption font-medium text-primary hover:underline"
-                  >
-                    <Navigation size={13} />
-                    <span>Get Directions</span>
-                    <ExternalLink size={11} className="opacity-70" />
-                  </a>
-                </div>
-              </div>
+                    )}
+                  </span>
+                  {status && (
+                    <span className={cn("shrink-0 text-right text-caption max-sm:hidden", status.open ? "text-success-text" : "text-muted-foreground")}>
+                      {status.label}
+                    </span>
+                  )}
+                  <ChevronRight size={15} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ListCard>
       )}
+
+      <LocationSheet loc={selected} now={now} onClose={() => setSelected(null)} />
     </div>
+  );
+}
+
+export default function LocateUsPage() {
+  return (
+    <Suspense fallback={null}>
+      <LocateUs />
+    </Suspense>
   );
 }

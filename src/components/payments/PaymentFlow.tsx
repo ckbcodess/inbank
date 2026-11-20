@@ -40,6 +40,7 @@ import {
   BillerCategory,
   BILLERS,
   CARDS,
+  findTransaction,
   fundCard,
   formatMoney,
   recordTransaction,
@@ -1656,7 +1657,84 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     handleLookup(key, val);
   };
 
+  /**
+   * Repeat from a receipt (`?repeat=<transaction id>`). The same payee, amount, narration and source account are filled
+   * in, and the flow lands on the review step so the next tap is Proceed. A data bundle is still the customer's
+   * choice, so that flow stops at the bundle step.
+   */
+  const applyRepeat = (txnId: string) => {
+    const txn = findTransaction(txnId);
+    if (!txn) return;
+    const acct = txn.counterpartyAccount.replace(/\s+/g, "");
+    const digits = acct.replace(/\D/g, "");
+    const amount = String(txn.amount);
+    const payee = (rail: Rail, bank: string): RecentPayeeAvatar => ({
+      id: `repeat-${txn.id}`,
+      name: txn.counterparty,
+      bank,
+      acct,
+      initials: "",
+      rail,
+    });
+    const fromAccount = accounts.some((a) => a.id === txn.accountId) ? txn.accountId : null;
+    let complete = true;
+
+    switch (txn.paymentMethod) {
+      case "airtime":
+        selectBeneficiary(payee("airtime", txn.counterparty));
+        setF((p) => ({ ...p, airtimeAmount: amount }));
+        break;
+      case "data":
+        selectBeneficiary(payee("data", ""));
+        complete = false; // the bundle is chosen every time
+        break;
+      case "momo": {
+        selectBeneficiary(payee("momo", detectTelcoNetwork(acct)?.walletName || "MTN Mobile Money"));
+        setF((p) => ({ ...p, wAmount: amount, wRef: txn.description }));
+        break;
+      }
+      case "bill": {
+        const biller =
+          BILLERS.find((b) => b.name === txn.counterparty) ??
+          BILLERS.find((b) => b.name.toLowerCase().includes(txn.counterparty.toLowerCase()));
+        if (!biller) {
+          complete = false;
+          break;
+        }
+        selectBeneficiary({ ...payee("bill", biller.name), billerId: biller.id, category: biller.category });
+        setF((p) => ({ ...p, billRef: digits || acct, billAmount: amount }));
+        break;
+      }
+      case "own-account": {
+        const own = accounts.find((a) => a.number.replace(/\s+/g, "") === acct);
+        setRail("bank");
+        setBankCategory("own");
+        setF((p) => ({ ...p, toOwnAccountId: own?.id ?? "", bankAmount: amount, bankRef: txn.description }));
+        if (!own) complete = false;
+        break;
+      }
+      case "ach":
+      case "gip":
+      default: {
+        // Another bank: the bank rail picks GCB or other-bank from the name, the same as a saved recipient
+        selectBeneficiary(payee("bank", txn.counterpartyBank ?? "GCB Bank"));
+        if (txn.paymentMethod === "ach") setRail("ach");
+        setF((p) => ({ ...p, benAcct: digits || acct, bank: txn.counterpartyBank ?? "GCB Bank", bankAmount: amount, bankRef: txn.description }));
+        break;
+      }
+    }
+
+    if (fromAccount) setF((p) => ({ ...p, fromId: fromAccount }));
+    setStage1Collapsed(true);
+    setStage(complete ? 2 : 1);
+  };
+
   const applyDeepLink = () => {
+    const repeatId = searchParams.get("repeat");
+    if (repeatId) {
+      applyRepeat(repeatId);
+      return;
+    }
     const r = searchParams.get("rail") as Rail | null;
     const recipientParam = searchParams.get("recipient");
     const productParam = searchParams.get("product") as "airtime" | "data" | null;

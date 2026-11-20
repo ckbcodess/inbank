@@ -189,6 +189,7 @@ const recent: Entry[] = [
   ["Saving your PIN…", "Enregistrement de votre PIN…", "Guardando tu PIN…", "正在保存您的 PIN…"],
   ["By continuing, you agree to our", "En continuant, vous acceptez nos", "Al continuar, aceptas nuestros", "继续即表示您同意我们的"],
   ["Terms", "Conditions", "Términos", "条款"],
+  ["Terms of service", "Conditions d’utilisation", "Términos de servicio", "服务条款"],
   ["and", "et", "y", "和"],
   ["Privacy Policy", "Politique de confidentialité", "Política de privacidad", "隐私政策"],
   ["Title", "Civilité", "Título", "称谓"],

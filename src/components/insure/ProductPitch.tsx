@@ -28,6 +28,7 @@ import type { HighlightIcon, PlanHighlight } from "@/lib/product-highlights";
 import { PRODUCT_PHOTO_HEIGHT } from "@/lib/page-layout";
 import { PRODUCT_IMAGES } from "@/lib/product-images";
 import { cn } from "@/lib/utils";
+import { DashedDivider } from "@/components/ui/dashed-divider";
 
 type HighlightIconComponent = React.ComponentType<{ size?: number; strokeWidth?: number; "aria-hidden"?: boolean | "true" | "false" }>;
 
@@ -103,15 +104,15 @@ function ProductBenefits({ highlights }: { highlights: readonly PlanHighlight[] 
 
 /** The price, set into a dashed line: what you get above, what it costs on the line, the action below. */
 function PriceDivider({ price }: { price?: PitchPrice }) {
-  if (!price) return <div aria-hidden="true" className="h-px bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />;
+  if (!price) return <DashedDivider />;
   return (
     <div className="flex items-center gap-4 text-body text-muted-foreground">
-      <span aria-hidden="true" className="h-px flex-1 bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />
+      <DashedDivider className="flex-1" />
       <span className="tabular">
         {price.prefix} <span className="text-h3 text-foreground">{price.figure}</span>
         {price.suffix ? ` ${price.suffix}` : ""}
       </span>
-      <span aria-hidden="true" className="h-px flex-1 bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]" />
+      <DashedDivider className="flex-1" />
     </div>
   );
 }

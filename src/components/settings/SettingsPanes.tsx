@@ -28,7 +28,8 @@ import { LIMITS, limitFor, useLimits, usedToday, type LimitDef, type LimitKind }
 import { accountsForProfile, formatMoney } from "@/lib/mock-data";
 import { roundMoney } from "@/lib/money";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
-import { GcbEagleEmblem } from "@/components/brand/GcbEagleEmblem";
+import Image from "next/image";
+import { GCBLogo } from "@/components/ui/GCBLogo";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { DEMO_REFERRED_FRIENDS, referralCodeFor, referralLinkFor, referredFriendsFor, type ReferralStatus } from "@/lib/referrals";
@@ -1018,33 +1019,33 @@ export function ReferralPane({ onBackToMenu }: PaneProps) {
   return (
     <PaneShell>
       <PaneHeader title="Refer a Friend" onBack={onBackToMenu} />
-      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-4">
-        <section className="flex flex-col items-center gap-6 rounded-2xl border border-border/80 px-5 py-8 text-center sm:px-10 sm:py-10">
-          <GcbEagleEmblem className="h-12 w-auto" />
-          <div className="flex flex-col gap-2">
-            <h3 className="text-h1 font-medium tracking-[var(--ls-heading)] text-foreground">Invite others to GCB</h3>
-            <p className="text-body leading-relaxed text-muted-foreground">Send your link. Friends who open it join with you already filled in.</p>
+      <div className="mx-auto flex w-full max-w-[592px] flex-col gap-4">
+        {/* The invite card. It is custom artwork, so its colours stay the same in dark mode. */}
+        <section className="relative isolate flex flex-col gap-6 overflow-hidden rounded-2xl border border-[#ebebeb] bg-[linear-gradient(to_bottom,#ffe396,#ffc423_76%)] p-6 text-[#111]">
+          <GCBLogo className="h-6 w-auto self-start text-[#111]" eagleColor="#111" wordmarkColor="#111" />
+          <div className="relative z-10 flex flex-col gap-2">
+            <h3 className="text-h2">Invite others to GCB</h3>
+            <p className="text-body">Invite friends with your referral code.</p>
           </div>
-          <div className="flex w-full max-w-[380px] flex-col gap-3">
-            <div className="flex h-[var(--control-xl)] items-center justify-between gap-2 rounded-lg border border-field-border bg-field pl-4 pr-1">
-              <span className="tabular min-w-0 select-all truncate text-body text-foreground">{link.replace(/^https?:\/\//, "")}</span>
-              <Button variant="ghost" size="md" aria-label="Copy link" onClick={() => copy(link, "Link copied")}>
-                <Copy size={18} aria-hidden="true" />
+          <div className="relative z-10 flex w-full max-w-[394px] items-stretch gap-2">
+            <div className="flex h-[var(--control-xl)] min-w-0 flex-1 items-center justify-between gap-2 rounded-xl bg-white pl-4 pr-1">
+              <span className="tabular min-w-0 select-all truncate text-body text-[#111]">{link.replace(/^https?:\/\//, "")}</span>
+              <Button variant="ghost" size="md" aria-label="Copy link" className="text-[#111]" onClick={() => copy(link, "Link copied")}>
+                <Copy size={16} aria-hidden="true" />
               </Button>
             </div>
-            <Button size="xl" className="w-full" onClick={share}>
-              Share Your Link
+            <Button
+              size="xl"
+              className="w-[81px] border-transparent bg-[#111] text-white shadow-none [background-image:none] hover:bg-[#111]/90"
+              onClick={share}
+            >
+              Share
             </Button>
-            <p className="text-body text-muted-foreground">
-              Or give them your code{" "}
-              <button
-                type="button"
-                onClick={() => copy(code, "Code copied")}
-                className="tabular cursor-pointer font-medium text-foreground underline decoration-border underline-offset-4 transition-colors duration-hover hover:decoration-foreground"
-              >
-                {code}
-              </button>
-            </p>
+          </div>
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+            <Image src="/referral/invite-photo-3.png" alt="" width={82} height={82} unoptimized className="absolute -right-[30px] top-[9px] rotate-[160deg] rounded-full object-cover" />
+            <Image src="/referral/invite-photo-4.png" alt="" width={81} height={81} unoptimized className="absolute right-[42px] top-[77px] rounded-full object-cover" />
+            <Image src="/referral/invite-photo-5.png" alt="" width={71} height={71} unoptimized className="absolute right-[72px] top-[168px] rounded-full object-cover" />
           </div>
         </section>
 

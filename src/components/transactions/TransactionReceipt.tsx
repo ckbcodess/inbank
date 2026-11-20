@@ -68,6 +68,8 @@ export interface TransactionReceiptProps {
   extraStates?: readonly TransactionState[];
   /** How an app-specific state is shown (the common ones are drawn here). */
   renderBand?: (state: TransactionState, txn: Transaction) => React.ReactNode;
+  /** Quick actions only this app has, after Share, Save as PDF and Repeat (personal: Report Issue). */
+  renderActions?: (txn: Transaction) => React.ReactNode;
 }
 
 function getTransactionMethodLabel(t: Transaction): string {
@@ -104,7 +106,7 @@ function receiptTime(t: Transaction): string {
   return `${hour12}:${String(mm).padStart(2, "0")} ${hh >= 12 ? "PM" : "AM"}`;
 }
 
-export function TransactionReceipt({ id, list, success, repeatHref, extraStates = [], renderBand }: TransactionReceiptProps) {
+export function TransactionReceipt({ id, list, success, repeatHref, extraStates = [], renderBand, renderActions }: TransactionReceiptProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromSuccess = searchParams.get("from") === "success";
@@ -377,6 +379,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
           <RoundAction icon={Share} label="Share" onClick={() => setShareFormat("text")} />
           <RoundAction icon={FileDown} label="Save as PDF" onClick={() => setShareFormat("pdf")} />
           {!isCredit && repeatTo && <RoundAction icon={RefreshCw} label="Repeat" onClick={handleRepeat} />}
+          {renderActions?.(txn)}
         </div>
 
       <ShareReceiptDialog format={shareFormat} onClose={() => setShareFormat(null)} onShare={shareReceipt} />

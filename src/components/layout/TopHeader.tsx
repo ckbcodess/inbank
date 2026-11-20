@@ -9,10 +9,13 @@ import {
   CircleHelp,
   Eye,
   Globe,
+  Headset,
   EyeOff,
   Layers,
   LogOut,
+  MapPin,
   Menu,
+  MessageSquareWarning,
   Monitor,
   Moon,
   Play,
@@ -49,6 +52,7 @@ import { ROLE_LABEL, type Actor } from "@/lib/roles";
 import { useDevUserStore, DEMO_USER_CONFIGS } from "@/lib/dev-user-simulation";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
+import { ContactSupportDialog } from "@/components/help/ContactSupportDialog";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { switchTheme } from "@/lib/theme-transition";
 import { openSettings } from "@/lib/settings-modal";
@@ -141,6 +145,7 @@ export default function TopHeader({
   const simBadge = business ? businessDevBadge(actor.id) : DEMO_USER_CONFIGS[simUserType]?.badgeLabel || "Dev";
   const { t } = useTranslation();
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const devPanelOpen = useDevModePanel((s) => s.open);
   const toggleDevPanel = useDevModePanel((s) => s.toggle);
   const pathname = usePathname();
@@ -206,13 +211,6 @@ export default function TopHeader({
               </DropdownMenuTrigger>
             </SimpleTooltip>
             <DropdownMenuContent align="end" sideOffset={6} className="w-[220px] p-2 rounded-2xl">
-              <DropdownMenuItem
-                render={<Link href="/help" />}
-                className={HELP_ITEM}
-              >
-                <CircleHelp size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                <span>{t("header.helpItem", "Help")}</span>
-              </DropdownMenuItem>
               {/* There is no release-notes screen yet, so this goes nowhere until one exists. */}
               <DropdownMenuItem className={HELP_ITEM}>
                 <Sparkles size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
@@ -222,7 +220,23 @@ export default function TopHeader({
                 <Play size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.playTour", "Play tour guide")}</span>
               </DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/locate-us" />} className={HELP_ITEM}>
+                <MapPin size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.locateUs", "Locate us")}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setContactOpen(true)} className={HELP_ITEM}>
+                <Headset size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.contactSupport", "Contact support")}</span>
+              </DropdownMenuItem>
+              {/* Lands on Reported Issues with the form open, so the new case shows where it will be tracked. */}
+              <DropdownMenuItem render={<Link href="/help/issues?new=1" />} className={HELP_ITEM}>
+                <MessageSquareWarning size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.reportIssue", "Report an issue")}</span>
+              </DropdownMenuItem>
               <DropdownMenuSeparator className="my-1" />
+              <DropdownMenuItem render={<Link href="/help" />} className={HELP_ITEM}>
+                <span>{t("header.faqs", "FAQs")}</span>
+              </DropdownMenuItem>
               <DropdownMenuItem
                 render={<a href="https://www.gcbbank.com.gh/privacy-policy" target="_blank" rel="noopener noreferrer" />}
                 className={HELP_ITEM}
@@ -233,11 +247,13 @@ export default function TopHeader({
                 render={<a href="https://www.gcbbank.com.gh" target="_blank" rel="noopener noreferrer" />}
                 className={HELP_ITEM}
               >
-                <span>{t("header.terms", "Terms")}</span>
+                <span>{t("header.terms", "Terms of service")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
+
+        {actor.shell === "customer" && !business && <ContactSupportDialog open={contactOpen} onOpenChange={setContactOpen} />}
 
         {/* FR-22 — notifications open in a panel under the bell, not a page */}
         {actor.shell === "customer" && !business && <NotificationsMenu />}

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { ListCard } from "@/components/ui/list-card";
 import { TotalRow } from "@/components/ui/total-row";
 import { cn } from "@/lib/utils";
+import { DashedDivider } from "@/components/ui/dashed-divider";
 
 export interface ReviewRow {
   label: string;
@@ -40,10 +41,7 @@ export function ReviewSummary({
       {detailsExtra}
 
       {/* One box: what it is above, what it costs below, parted by a dashed line */}
-      <div
-        aria-hidden="true"
-        className="mx-3 my-2 h-px bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]"
-      />
+      <DashedDivider className="mx-3 my-2" />
 
       {breakdown.map((row, i) => (
         <Row key={`${i}-${row.label}`} row={row} />
