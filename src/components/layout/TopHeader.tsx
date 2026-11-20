@@ -11,6 +11,9 @@ import {
   Globe,
   Headset,
   EyeOff,
+  ExternalLink,
+  FileText,
+  Info,
   Layers,
   LogOut,
   MapPin,
@@ -228,26 +231,31 @@ export default function TopHeader({
                 <Headset size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.contactSupport", "Contact support")}</span>
               </DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/help" />} className={HELP_ITEM}>
+                <CircleHelp size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.faqs", "FAQs")}</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="my-1" />
+              <DropdownMenuItem
+                render={<a href="https://www.gcbbank.com.gh/privacy-policy" target="_blank" rel="noopener noreferrer" />}
+                className={`${HELP_ITEM} group`}
+              >
+                <Info size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.privacyPolicy", "Privacy policy")}</span>
+                <ExternalLink size={14} className="ml-auto shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100" aria-hidden="true" />
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={<a href="https://www.gcbbank.com.gh" target="_blank" rel="noopener noreferrer" />}
+                className={`${HELP_ITEM} group`}
+              >
+                <FileText size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.terms", "Terms of service")}</span>
+                <ExternalLink size={14} className="ml-auto shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100" aria-hidden="true" />
+              </DropdownMenuItem>
               {/* Lands on Reported Issues with the form open, so the new case shows where it will be tracked. */}
               <DropdownMenuItem render={<Link href="/help/issues?new=1" />} className={HELP_ITEM}>
                 <MessageSquareWarning size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.reportIssue", "Report an issue")}</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="my-1" />
-              <DropdownMenuItem render={<Link href="/help" />} className={HELP_ITEM}>
-                <span>{t("header.faqs", "FAQs")}</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                render={<a href="https://www.gcbbank.com.gh/privacy-policy" target="_blank" rel="noopener noreferrer" />}
-                className={HELP_ITEM}
-              >
-                <span>{t("header.privacyPolicy", "Privacy policy")}</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                render={<a href="https://www.gcbbank.com.gh" target="_blank" rel="noopener noreferrer" />}
-                className={HELP_ITEM}
-              >
-                <span>{t("header.terms", "Terms of service")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
