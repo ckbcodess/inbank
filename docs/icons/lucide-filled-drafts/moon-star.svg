@@ -1,0 +1,25 @@
+<svg
+  class="lucide lucide-moon-star"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <defs>
+    <mask id="gcb-fill-moon-star" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28">
+      <rect x="-2" y="-2" width="28" height="28" fill="#fff" stroke="none" />
+      <g stroke="#000" fill="none">
+        <path d="M20 3v4" />
+      </g>
+    </mask>
+  </defs>
+  <g fill="currentColor" mask="url(#gcb-fill-moon-star)">
+    <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+  </g>
+  <path d="M18 5h4" />
+</svg>

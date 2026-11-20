@@ -1,0 +1,29 @@
+<svg
+  class="lucide lucide-bandage"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <defs>
+    <mask id="gcb-fill-bandage" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28">
+      <rect x="-2" y="-2" width="28" height="28" fill="#fff" stroke="none" />
+      <g stroke="#000" fill="none">
+        <path d="M10 10.01h.01" />
+        <path d="M10 14.01h.01" />
+        <path d="M14 10.01h.01" />
+        <path d="M14 14.01h.01" />
+        <path d="M18 6v12" />
+        <path d="M6 6v12" />
+      </g>
+    </mask>
+  </defs>
+  <g fill="currentColor" mask="url(#gcb-fill-bandage)">
+    <rect x="2" y="6" width="20" height="12" rx="2" />
+  </g>
+</svg>

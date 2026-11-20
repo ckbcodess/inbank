@@ -1,0 +1,28 @@
+<svg
+  class="lucide lucide-locate-fixed"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <defs>
+    <mask id="gcb-fill-locate-fixed" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28">
+      <rect x="-2" y="-2" width="28" height="28" fill="#fff" stroke="none" />
+      <g stroke="#000" fill="none">
+        <circle cx="12" cy="12" r="3" />
+      </g>
+    </mask>
+  </defs>
+  <g fill="currentColor" mask="url(#gcb-fill-locate-fixed)">
+    <circle cx="12" cy="12" r="7" />
+  </g>
+  <line x1="2" x2="5" y1="12" y2="12" />
+  <line x1="19" x2="22" y1="12" y2="12" />
+  <line x1="12" x2="12" y1="2" y2="5" />
+  <line x1="12" x2="12" y1="19" y2="22" />
+</svg>

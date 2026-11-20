@@ -1,0 +1,26 @@
+<svg
+  class="lucide lucide-smile"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <defs>
+    <mask id="gcb-fill-smile" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28">
+      <rect x="-2" y="-2" width="28" height="28" fill="#fff" stroke="none" />
+      <g stroke="#000" fill="none">
+        <path d="M15 10V9" />
+        <path d="M16.472 15a6 6 0 01-8.943 0" />
+        <path d="M9 10V9" />
+      </g>
+    </mask>
+  </defs>
+  <g fill="currentColor" mask="url(#gcb-fill-smile)">
+    <circle cx="12" cy="12" r="10" />
+  </g>
+</svg>

@@ -3,26 +3,25 @@
 // negative space (the way Material's filled style works). Icons with nothing closed to fill (arrows, chevrons, X) keep
 // their outline as the filled variant. Icons whose body is drawn with open paths are flagged for hand drawing.
 //
-//   npx tsx scripts/gen-lucide-filled.mts <folder of Lucide SVGs> [names.csv]
+//   npx tsx scripts/gen-lucide-filled.mts [folder of Lucide SVGs] [names.csv ...]
 //
-// The SVG folder is lucide-static's `icons/` or the GCB assets repo. names.csv defaults to
-// docs/icons/app-icons-to-lucide.csv (its lucide_component column). Writes docs/icons/lucide-filled-drafts/*.svg
-// and prototype/lucide-filled-review.html.
+// The SVG folder defaults to lucide-static's `icons/`. The names come from the CSVs in docs/icons: the app's icons
+// (lucide_component) and the GCB Figma pack's matched icons (lucide_icon, rows whose status is "matched"). Writes
+// docs/icons/lucide-filled-drafts/*.svg, prototype/lucide-filled-review.html and docs/icons/lucide-parts.json (each
+// icon's outline, bodies, cut-outs and remaining strokes, which the Figma swap reads).
 import fs from "node:fs";
 import path from "node:path";
 
-const [srcDir, namesCsv = "docs/icons/app-icons-to-lucide.csv"] = process.argv.slice(2);
-if (!srcDir) {
-  console.error("Usage: npx tsx scripts/gen-lucide-filled.mts <folder of Lucide SVGs> [names.csv]");
-  process.exit(1);
-}
+const [srcDir = path.join("node_modules", "lucide-static", "icons"), ...csvArgs] = process.argv.slice(2);
+const namesCsvs = csvArgs.length ? csvArgs : ["docs/icons/app-icons-to-lucide.csv", "docs/icons/gcb-pack-to-lucide.csv"];
+const PARTS = path.join("docs", "icons", "lucide-parts.json");
 const OUT = path.join("docs", "icons", "lucide-filled-drafts");
 const REVIEW = path.join("prototype", "lucide-filled-review.html");
 const TOL = 0.35; // grid units of slack when testing whether one shape sits inside another
 
 // Where the geometry can't decide (reviewed by eye, 2026-11-20). Extend these as more icons are reviewed.
 // Line icons whose arc nearly closes, so the rule mistakes them for a body. Their filled variant is the outline.
-const LINE = new Set(["rotate-ccw", "rotate-cw", "rotate-ccw-clock", "refresh-cw", "paperclip", "utensils-crossed"]);
+const LINE = new Set(["rotate-ccw", "rotate-cw", "rotate-ccw-clock", "refresh-cw", "paperclip", "utensils-crossed", "history", "rotate-3d", "search"]); // search: a filled lens reads as a disc
 // Bodies drawn as open strokes (a slash breaks the outline, or the outline is two paths). A designer draws these.
 const DRAW = new Set([
   "building-complex", "camera-off", "church", "eye-off", "file-check-corner", "fuel", "hand-heart",
@@ -187,7 +186,8 @@ function splitSubpaths(svg: string) {
   });
 }
 
-function draft(name: string, svg: string): { kind: Kind; svg: string } {
+type Parts = { bodies: string[]; details: string[]; rest: string[] };
+function draft(name: string, svg: string): { kind: Kind; svg: string; parts?: Parts } {
   if (LINE.has(name)) return { kind: "outline", svg };
   if (DRAW.has(name)) return { kind: "draw", svg };
   const els = parse(splitSubpaths(svg));
@@ -214,17 +214,29 @@ function draft(name: string, svg: string): { kind: Kind; svg: string } {
     : "";
   const body = `  <g fill="currentColor"${details.length ? ` mask="url(#${id})"` : ""}>\n${bodies.map((e) => "    " + e.raw).join("\n")}\n  </g>\n`;
   const out = `${head}\n${mask}${body}${rest.map((e) => "  " + e.raw).join("\n")}${rest.length ? "\n" : ""}</svg>\n`;
-  return { kind: "filled", svg: out };
+  const raw = (list: El[]) => list.map((e) => e.raw);
+  return { kind: "filled", svg: out, parts: { bodies: raw(bodies), details: raw(details), rest: raw(rest) } };
 }
 
-// The names to draft: the lucide_component column of the CSV (or the only column of a plain list).
-const csv = fs.readFileSync(namesCsv, "utf8").trim().split(/\r?\n/);
-const col = csv[0].split(",").indexOf("lucide_component");
-const names = [...new Set(csv.slice(col >= 0 ? 1 : 0).map((l) => l.split(",")[col >= 0 ? col : 0]).filter(Boolean).map(kebab))].sort();
+// The names to draft. A column named lucide_component is taken whole; lucide_icon only where status says matched (the
+// pack's keyword guesses wait for review); a file with neither header is a plain list, one name per line.
+const names = [
+  ...new Set(
+    namesCsvs.flatMap((file) => {
+      const rows = fs.readFileSync(file, "utf8").trim().split(/\r?\n/).map((l) => l.split(","));
+      const head = rows[0];
+      const comp = head.indexOf("lucide_component"), icon = head.indexOf("lucide_icon"), status = head.indexOf("status");
+      if (comp >= 0) return rows.slice(1).map((r) => r[comp]).filter(Boolean).map(kebab);
+      if (icon >= 0) return rows.slice(1).filter((r) => (r[status] ?? "").startsWith("matched")).map((r) => r[icon]).filter(Boolean);
+      return rows.map((r) => r[0]).filter(Boolean);
+    }),
+  ),
+].sort();
 
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 const results: { name: string; kind: Kind | "missing"; outline: string; filled: string }[] = [];
+const partsOut: Record<string, { kind: Kind; outline: string[]; parts?: Parts }> = {};
 for (const name of names) {
   const file = path.join(srcDir, `${name}.svg`);
   if (!fs.existsSync(file)) { results.push({ name, kind: "missing", outline: "", filled: "" }); continue; }
@@ -232,7 +244,9 @@ for (const name of names) {
   const d = draft(name, outline);
   fs.writeFileSync(path.join(OUT, `${name}.svg`), d.svg);
   results.push({ name, kind: d.kind, outline, filled: d.svg });
+  partsOut[name] = { kind: d.kind, outline: parse(outline).map((e) => e.raw), parts: d.parts };
 }
+fs.writeFileSync(PARTS, JSON.stringify(partsOut));
 
 const count = (k: string) => results.filter((r) => r.kind === k).length;
 const strip = (s: string) => s.replace(/ width="24" height="24"/, "").replace(/ xmlns="[^"]*"/, "");

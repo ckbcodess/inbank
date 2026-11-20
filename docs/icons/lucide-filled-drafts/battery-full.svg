@@ -1,0 +1,27 @@
+<svg
+  class="lucide lucide-battery-full"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <defs>
+    <mask id="gcb-fill-battery-full" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28">
+      <rect x="-2" y="-2" width="28" height="28" fill="#fff" stroke="none" />
+      <g stroke="#000" fill="none">
+        <path d="M10 10v4" />
+        <path d="M14 10v4" />
+        <path d="M6 10v4" />
+      </g>
+    </mask>
+  </defs>
+  <g fill="currentColor" mask="url(#gcb-fill-battery-full)">
+    <rect x="2" y="6" width="16" height="12" rx="2" />
+  </g>
+  <path d="M22 14v-4" />
+</svg>
