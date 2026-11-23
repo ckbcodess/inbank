@@ -182,6 +182,14 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-22
+- Override (designer): the "Hide/Show floating dev tools" item in the account menu (`components/layout/TopHeader.tsx`) now shows in the production build. It was gated on `NODE_ENV !== "production"`. `SHOW_DEMO_TOOLS` is unchanged, so the colour tuner, sandboxes and studios still stay out of production.
+- Decision (designer): the Dev Mode panel, header button and `HeroWaveTuner` stay live in production, so user types can be switched as on localhost. `SHOW_DEMO_TOOLS` still gates the colour tuner, sandboxes and the look and exploration switches. `ColorTuner` and `BackdropTuner` were already dev-only.
+- Override (designer): CONSTITUTION §10 now names the production exceptions: the Dev Mode panel with its header button and pre-auth pill, the Demo hub, the hero wave tuner and the dev-tools toggle. Anything else still needs the designer.
+- Gap: the business and admin sign-in doors are closed in production (`lib/launch.ts`). The `signInOpenFor` check is only on `/login`, so the Dev Mode panel's switch to a business or admin user should not hit it. Not yet confirmed in a production build.
+- Gap: "Hide floating dev tools" / "Show floating dev tools" are English-only and not in the i18n catalog. They now reach production as well.
+- Decision: the identity partner's QR handoff (`components/auth/IdentityPartnerWindow.tsx`) now expires after 5 minutes in every build, and offers "Get a new code". It used to wait forever outside the demo. The 5 minutes is my pick; the designer should confirm it.
+
 ### 2026-11-20
 
 - Override (designer): icons move from Material Symbols back to Lucide (public set, `lucide-static` 1.77.0, dev dependency; `@material-symbols/svg-400` removed). `scripts/gen-lucide-icons.mts` replaces `gen-material-icons.mts` and keeps the same 178 names, so no call site changed. The stroke defaults to 1.8, and the `strokeWidth` props left at call sites work again. Constitution §7 rewritten. This supersedes the 2026-10-24 Material override; the Send & Pay hub stays Reicon.

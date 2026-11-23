@@ -316,23 +316,21 @@ export default function TopHeader({
               </>
             )}
 
-            {/* Dev Tools Visibility Toggle (dev only, hidden in live build) */}
-            {process.env.NODE_ENV !== "production" && (
-              <DropdownMenuItem
-                onClick={toggleDevToolsHidden}
-                className="flex items-center justify-between py-2 px-2 text-body cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
-              >
-                <span className="flex items-center gap-2">
-                  {devToolsHidden ? (
-                    <Eye size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                  ) : (
-                    <EyeOff size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                  )}
-                  <span>{devToolsHidden ? "Show floating dev tools" : "Hide floating dev tools"}</span>
-                </span>
-                <span className="text-caption font-mono text-muted-foreground/70 bg-muted px-2 py-0.5 rounded-sm">Ctrl+Shift+D</span>
-              </DropdownMenuItem>
-            )}
+            {/* Dev Tools Visibility Toggle: shows or hides the floating dev tools in every build (also Ctrl+Shift+D) */}
+            <DropdownMenuItem
+              onClick={toggleDevToolsHidden}
+              className="flex items-center justify-between py-2 px-2 text-body cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                {devToolsHidden ? (
+                  <Eye size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                ) : (
+                  <EyeOff size={16} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                )}
+                <span>{devToolsHidden ? "Show floating dev tools" : "Hide floating dev tools"}</span>
+              </span>
+              <span className="text-caption font-mono text-muted-foreground/70 bg-muted px-2 py-0.5 rounded-sm">Ctrl+Shift+D</span>
+            </DropdownMenuItem>
 
             <DropdownMenuSeparator className="my-1" />
 

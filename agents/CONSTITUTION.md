@@ -304,8 +304,11 @@ here. Never fall back to dense, boxed layouts.
 - **Every route segment has a `loading.tsx`** that renders a content-shaped skeleton.
 - **Every new customer-facing string gets FR, ES and ZH catalog rows** (run the coverage script).
   Customer data (names, merchants, banks, references, amounts) is never translated.
-- **Prototype scaffolding** (the Demo hub, studios, tuners) sits behind `SHOW_DEMO_TOOLS` and never
-  reaches a production build.
+- **Prototype scaffolding** (studios, colour and sandbox pages, look switches) sits behind `SHOW_DEMO_TOOLS` and
+  never reaches a production build. Designer exceptions (2026-11-22), so user types can be switched in production as
+  on localhost: the Dev Mode panel with its header button and pre-auth pill, the Demo hub it opens (`SHOW_DEMO_HUB`),
+  the hero wave tuner and the dev-tools visibility toggle. The Dev Mode panel's user-type switching must stay
+  dev-independent. Any other production exception needs the designer.
 - **Theme changes** go through `toggleTheme` / `switchTheme` from `@/lib/theme-transition`.
 - **Quality bar:** `tsc` clean and eslint at zero warnings. A screen is correct in light and dark
   with no theme-specific code.
