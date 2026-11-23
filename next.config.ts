@@ -28,10 +28,12 @@ const nextConfig: NextConfig = {
   devIndicators: false,
 
   // Pictures: serve the smallest format the browser takes, and let the optimised copies live for a week instead of
-  // the default minute, so a returning visit doesn't fetch them again.
+  // the default minute, so a returning visit doesn't fetch them again. Every `quality` an <Image> uses must be listed
+  // here (Next 16 refuses unlisted ones): 75 is the default, 95 is the app-download picture on the dashboard.
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 7,
+    qualities: [75, 95],
   },
 
   // Files in /public are served with "revalidate every time" unless told otherwise. These never change under the
