@@ -188,7 +188,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Override (designer): CONSTITUTION §10 now names the production exceptions: the Dev Mode panel with its header button and pre-auth pill, the Demo hub, the hero wave tuner and the dev-tools toggle. Anything else still needs the designer.
 - Gap: the business and admin sign-in doors are closed in production (`lib/launch.ts`). The `signInOpenFor` check is only on `/login`, so the Dev Mode panel's switch to a business or admin user should not hit it. Not yet confirmed in a production build.
 - Gap: "Hide floating dev tools" / "Show floating dev tools" are English-only and not in the i18n catalog. They now reach production as well.
-- Decision: the identity partner's QR handoff (`components/auth/IdentityPartnerWindow.tsx`) now expires after 3 seconds in every build, and offers "Get a new code". It used to wait forever outside the demo. The designer set 3 seconds (previously 5 minutes, my first pick); a phone scan may take longer, so the designer should confirm it.
+- Decision (designer): the identity partner window (`components/auth/IdentityPartnerWindow.tsx`) completes the check by itself 3 seconds after the QR code appears, in every build, the same way the demo's "Finish on Phone" does. It uses the selected demo outcome, so in production it auto-passes. Gap: gate it on `SHOW_DEMO_TOOLS` before any real partner is wired in, and confirm the 3 seconds against a real phone scan.
 
 ### 2026-11-20
 

@@ -19,8 +19,8 @@ import {
 
 const STEP_DELAY = { opening: 800, checking: 1500, done: 900 } as const;
 
-/** The QR code only works for a short time, as a real partner session does. Past this, the window offers a new one. */
-const HANDOFF_TIMEOUT_MS = 3 * 1000;
+/** While the QR code waits for the phone, the window finishes the check by itself after this long, as if the phone had. */
+const HANDOFF_COMPLETE_MS = 3 * 1000;
 
 /**
  * The identity partner's window, drawn in the page for the prototype.
@@ -54,9 +54,6 @@ export default function IdentityPartnerWindow({
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [flashing, setFlashing] = useState(false);
   const drag = useRef<{ startX: number; startY: number; fromX: number; fromY: number } | null>(null);
-  // The QR code's time limit: once it passes, the window says so. `handoffKey` restarts the clock for a new code.
-  const [expired, setExpired] = useState(false);
-  const [handoffKey, setHandoffKey] = useState(0);
 
   // Keep the latest callbacks without restarting the timers below.
   const handlers = useRef({ onProgress, onResult });
@@ -67,14 +64,14 @@ export default function IdentityPartnerWindow({
     if (!open) return;
     setProgress("opening");
     setOffset({ x: 0, y: 0 });
-    setExpired(false);
   }, [open]);
 
+  // Until the phone finishes, the check completes by itself, the same way the demo's "Finish on Phone" does.
   useEffect(() => {
     if (!open || progress !== "handoff") return;
-    const t = window.setTimeout(() => setExpired(true), HANDOFF_TIMEOUT_MS);
+    const t = window.setTimeout(() => setProgress("checking"), HANDOFF_COMPLETE_MS);
     return () => window.clearTimeout(t);
-  }, [open, progress, handoffKey]);
+  }, [open, progress]);
 
   useEffect(() => {
     if (!open) return;
@@ -160,15 +157,7 @@ export default function IdentityPartnerWindow({
         </div>
 
         <div className="custom-scrollbar flex flex-1 flex-col items-center gap-4 overflow-y-auto px-6 py-8 text-center">
-          <PartnerStep
-            progress={progress}
-            onNext={setProgress}
-            expired={expired}
-            onNewCode={() => {
-              setExpired(false);
-              setHandoffKey((k) => k + 1);
-            }}
-          />
+          <PartnerStep progress={progress} onNext={setProgress} />
         </div>
 
         <div className="flex shrink-0 flex-col gap-3 border-t border-border px-4 py-3">
@@ -197,17 +186,7 @@ export default function IdentityPartnerWindow({
  * The partner's own screens. The check is QR-only: the passport and the selfie are taken on the customer's phone,
  * never on this computer, so there is no photo capture or upload here.
  */
-function PartnerStep({
-  progress,
-  onNext,
-  expired,
-  onNewCode,
-}: {
-  progress: PartnerProgress;
-  onNext: (p: PartnerProgress) => void;
-  expired: boolean;
-  onNewCode: () => void;
-}) {
+function PartnerStep({ progress, onNext }: { progress: PartnerProgress; onNext: (p: PartnerProgress) => void }) {
   const partnerButton = (label: string, next: PartnerProgress) => (
     <Button type="button" size="xl" onClick={() => onNext(next)} className="w-full">
       {label}
@@ -248,22 +227,6 @@ function PartnerStep({
         <a href="#" className="text-caption text-muted-foreground underline underline-offset-4 hover:text-foreground">
           Privacy notice
         </a>
-      </>
-    );
-  }
-
-  if (progress === "handoff" && expired) {
-    return (
-      <>
-        <h2 className="text-h3 font-medium tracking-[var(--ls-tight)]">This code has expired</h2>
-        <p className="max-w-80 text-body leading-relaxed text-muted-foreground">
-          For your security, this code only works for a few minutes. Get a new one to continue on your phone.
-        </p>
-        <div className="mt-auto w-full">
-          <Button type="button" size="xl" onClick={onNewCode} className="w-full">
-            Get a new code
-          </Button>
-        </div>
       </>
     );
   }
