@@ -20,7 +20,7 @@ import {
 const STEP_DELAY = { opening: 800, checking: 1500, done: 900 } as const;
 
 /** The QR code only works for a short time, as a real partner session does. Past this, the window offers a new one. */
-const HANDOFF_TIMEOUT_MS = 5 * 60 * 1000;
+const HANDOFF_TIMEOUT_MS = 3 * 1000;
 
 /**
  * The identity partner's window, drawn in the page for the prototype.

@@ -763,7 +763,7 @@ const onboarding: Entry[] = [
   ["This takes a few seconds.", "Cela prend quelques secondes.", "Esto tarda unos segundos.", "这需要几秒钟。"],
   ["Taking you back to GCB Bank.", "Retour vers GCB Bank.", "Volviendo a GCB Bank.", "正在返回 GCB Bank。"],
   ["This code has expired", "Ce code a expiré", "Este código ha caducado", "此码已过期"],
-  ["For your security, this code only works for a few minutes. Get a new one to continue on your phone.", "Pour votre sécurité, ce code n’est valable que quelques minutes. Obtenez-en un nouveau pour continuer sur votre téléphone.", "Por tu seguridad, este código solo funciona durante unos minutos. Obtén uno nuevo para continuar en tu teléfono.", "为了您的安全，此码仅在几分钟内有效。请获取新码，以便在手机上继续。"],
+  ["For your security, this code has timed out. Get a new one to continue on your phone.", "Pour votre sécurité, ce code a expiré. Obtenez-en un nouveau pour continuer sur votre téléphone.", "Por tu seguridad, este código ha caducado. Obtén uno nuevo para continuar en tu teléfono.", "为了您的安全，此码已超时。请获取新码，以便在手机上继续。"],
   ["Get a new code", "Obtenir un nouveau code", "Obtener un código nuevo", "获取新码"],
 ];
 
