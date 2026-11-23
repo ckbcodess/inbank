@@ -5,7 +5,7 @@
  *
  * Strength: presence. The balance sits centred on a slate hero panel with the
  * account pill above it, and the panels rise out of the hero on one sheet:
- * Recent activity · Pay again · Cards · Analytics, then Exchange rates. Send /
+ * Recent activity · My Spends · Recommended · Cards · Pay again · Coming up. Send /
  * Pay Bill / Top-Up sit beside the greeting, where every other layout keeps
  * them. The app promo closes the page.
  */
@@ -83,11 +83,11 @@ export function HeroLayout(props: DashViewProps) {
             className="rounded-3xl"
             onOpenFundModal={props.onOpenFundModal}
           />
-          <PayAgainCard data={data} loading={loading} className="rounded-3xl" />
           <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
-          <CardsCard data={data} loading={loading} className="rounded-3xl" onOpenFundModal={props.onOpenFundModal} />
-          <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
           <RecommendedCard loading={loading} className="rounded-3xl" />
+          <CardsCard data={data} loading={loading} className="rounded-3xl" onOpenFundModal={props.onOpenFundModal} />
+          <PayAgainCard data={data} loading={loading} className="rounded-3xl" />
+          <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
         </AccountScoped>
       </HeroStack>
 
