@@ -21,6 +21,7 @@ import {
   TELCO_NETWORKS,
   getBundlesForNetwork,
   SchedulePaymentSection,
+  scheduleReady,
   ScheduleFrequency,
   detectTelcoNetwork,
   operatorBadgeIcon,
@@ -118,7 +119,7 @@ export function DataBundleFlow({
 
   const numAmount = selectedBundle?.price ?? 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
-  const isValid = Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
+  const isValid = scheduleReady(state) && Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
 
   // "My own number": every line that's yours — registered plus linked wallets' numbers.
   const own = useOwnDestination({

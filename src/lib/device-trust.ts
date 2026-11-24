@@ -1,86 +1,12 @@
 "use client";
 
 /**
- * Device trust — what makes a returning customer's login fast.
+ * Device checks at sign-in. There is no "remember this device" any more: every log-in from a browser that isn't the
+ * customer's usual one goes through the verification step (a selfie, then a one-time code, `/mfa`). Nothing here is
+ * stored as trust, so there is no trusted browser to skip that step.
  *
- * When someone ticks "Remember this device" after proving it's them (a one-time
- * code at login, or finishing activation / migration), this browser remembers
- * who they are for TRUST_DAYS. Next time the login screen greets them by name,
- * asks for their password only, and skips the one-time code. They can see and revoke
- * it in Settings, and "Not you?" on the login screen never signs anyone in.
- *
- * Prototype only: a real bank binds this to a device key held server-side. It is held for the browser session,
- * not for TRUST_DAYS, so a fresh visit opens on the ordinary log-in form; the Demo hub's "Welcome back" entry
- * switches it on for the visit.
+ * Prototype only: a real bank decides "new device" from a device key held server-side.
  */
-
-import { useSyncExternalStore } from "react";
-import type { Actor } from "./roles";
-
-export const TRUST_DAYS = 30;
-const KEY = "nibs-trusted-device";
-
-export interface TrustedDevice {
-  actorId: string;
-  name: string;
-  email: string;
-  /** ms epoch */
-  trustedAt: number;
-  /** ms epoch */
-  until: number;
-}
-
-type Listener = () => void;
-const listeners = new Set<Listener>();
-let cache: TrustedDevice | null | undefined;
-
-function read(): TrustedDevice | null {
-  if (cache !== undefined) return cache;
-  try {
-    const raw = sessionStorage.getItem(KEY);
-    const parsed = raw ? (JSON.parse(raw) as TrustedDevice) : null;
-    cache = parsed && parsed.until > Date.now() ? parsed : null;
-  } catch {
-    cache = null;
-  }
-  return cache;
-}
-
-function write(value: TrustedDevice | null) {
-  cache = value;
-  try {
-    if (value) sessionStorage.setItem(KEY, JSON.stringify(value));
-    else sessionStorage.removeItem(KEY);
-  } catch {
-    // Storage blocked — trust lasts for this visit only.
-  }
-  listeners.forEach((l) => l());
-}
-
-export function trustThisDevice(actor: Actor) {
-  const now = Date.now();
-  write({ actorId: actor.id, name: actor.name, email: actor.email, trustedAt: now, until: now + TRUST_DAYS * 86_400_000 });
-}
-
-export function forgetThisDevice() {
-  write(null);
-}
-
-export function getTrustedDevice(): TrustedDevice | null {
-  return typeof window === "undefined" ? null : read();
-}
-
-/** The trusted identity on this device, or null. Null on the server and first client render. */
-export function useTrustedDevice(): TrustedDevice | null {
-  return useSyncExternalStore(
-    (l) => {
-      listeners.add(l);
-      return () => listeners.delete(l);
-    },
-    () => read(),
-    () => null,
-  );
-}
 
 /** What this browser is, read from the browser itself. */
 export function thisDeviceName(): string {

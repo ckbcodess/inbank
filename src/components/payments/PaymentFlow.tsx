@@ -2064,11 +2064,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         successMsg = `Your transfer of ${formattedAmount} is authorized. We’ve notified Esther Appiah to review and approve.`;
       } else if (f.isScheduled) {
         successTitle = "Payment scheduled";
-        const freqText = f.scheduleFrequency === "once" ? "once" : f.scheduleFrequency.toLowerCase();
-        successMsg = `We’ll automatically send ${formattedAmount} to ${recipientDisplayName} on ${scheduleWhen(f)} (${freqText}).`;
+        successMsg = `We’ll automatically send ${formattedAmount} to ${recipientDisplayName} on ${scheduleWhen(f)}.`;
       } else if (isOwnTransfer) {
         successTitle = "Transfer complete!";
-        successMsg = `You’ve moved ${formattedAmount} to your ${toOwnAccount?.name || "account"}. It’s ready to use.`;
+        successMsg = `You’ve moved ${formattedAmount} to your ${toOwnAccount?.name || "account"}.`;
       } else if (rail === "group") {
         successMsg = `You’ve sent ${formattedAmount} to ${groupPeople} of ${recipientDisplayName}.`;
       } else if (rail === "card-topup") {
@@ -2199,7 +2198,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             : []),
           ["Payment Method", isOwnTransfer ? "OWN ACCOUNT TRANSFER" : ((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod ? getPaymentMethodName(f.paymentMethod) : rail.toUpperCase()],
           ["Delivery Speed", isDualMandate ? "Upon Co-Signatory Approval" : (f.isScheduled ? `Scheduled for ${scheduleWhen(f)}` : deliverySpeed)],
-          ["Payment Timing", f.isScheduled ? `Scheduled · ${f.scheduleFrequency === "once" ? "Once" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${scheduleWhen(f)})` : "Immediate Transfer"],
+          ["Payment Timing", f.isScheduled ? `Pay Later · ${scheduleWhen(f)}` : "Immediate Transfer"],
           ["Fee", feeDetails.feeAmount === 0 ? "Free (GHS 0.00)" : formatMoney(feeDetails.feeAmount, "GHS", true)],
           // Who got what stays on the receipt, one line each, for the customer's own records.
           ...(rail === "group" && selectedGroupObj
@@ -3803,7 +3802,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 {
                   label: "Payment Timing",
                   value: f.isScheduled
-                    ? `Scheduled · ${f.scheduleFrequency === "once" ? "Once" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${scheduleWhen(f)})`
+                    ? `Pay Later · ${scheduleWhen(f)}`
                     : "Immediate Transfer",
                 },
                 ...(f.saveBeneficiary

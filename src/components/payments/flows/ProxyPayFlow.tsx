@@ -13,6 +13,7 @@ import {
   LookupInput,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
+  scheduleReady,
   ScheduleFrequency,
   resolveAccountName,
 } from "./shared";
@@ -94,7 +95,7 @@ export function ProxyPayFlow({
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
-  const isValid = Boolean(state.fromId) && isVerified && numAmount > 0 && !overBalance;
+  const isValid = scheduleReady(state) && Boolean(state.fromId) && isVerified && numAmount > 0 && !overBalance;
 
   return (
     <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">

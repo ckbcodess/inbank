@@ -10,8 +10,8 @@
  *   Log in: every login and recovery screen for both apps (`LoginFlowSections`).
  *   GCB account holder (/activate): pick the demo customer, then a step.
  *   New to GCB (/signup): a step, or straight to linking after sign-up.
- *   Returning customers: the trusted-device power user, a first-timer on a
- *   new device, and someone moving from the old internet banking (/migrate).
+ *   Returning customers: a first-timer on a new device, and someone moving
+ *   from the old internet banking (/migrate).
  *
  * Steps open with `?step=<id>` (see `src/lib/onboarding-steps.ts`). Opened from the
  * "Jump to a step" row in the Dev Mode panel, on the entry and onboarding screens only
@@ -30,7 +30,7 @@ import { BusinessFlowSections } from "./BusinessFlowSections";
 import { LoginFlowSections, type LoginApp } from "./LoginFlowSections";
 import { homePathForActor } from "@/lib/navigation";
 import { ACTIVATION_STEPS, SIGNUP_STEPS, parseOnboardingStep } from "@/lib/onboarding-steps";
-import { forgetThisDevice, setFirstRun, setPendingFundPrompt, setPendingReferral, trustThisDevice } from "@/lib/device-trust";
+import { setFirstRun, setPendingFundPrompt, setPendingReferral } from "@/lib/device-trust";
 import { LEGACY_DEMO_MOBILE, MIGRATION_STEPS, parseMigrationStep } from "@/lib/migration";
 import { setDevToolsHidden, useDevToolsHidden } from "@/lib/dev-tools-visibility";
 import { isDemoHubPath, useDemoHub } from "@/lib/demo-hub";
@@ -132,18 +132,9 @@ function PersonaFlowSwitcherContent() {
     go(to ?? homePathForActor(actor));
   }
 
-  /** A regular on their own laptop: this browser already trusts them, so login is one tap. */
-  function goPowerUser() {
-    const actor = ACTORS[0];
-    signOut();
-    trustThisDevice(actor);
-    go("/login");
-  }
-
-  /** The ordinary log-in screen. This browser forgets any trusted device first, so it opens on the full form. */
+  /** The ordinary log-in screen. */
   function goLogin(type: LoginApp, state?: "error") {
     signOut();
-    forgetThisDevice();
     const params = new URLSearchParams();
     if (type === "business") params.set("type", "business");
     if (state) params.set("state", state);
@@ -156,24 +147,16 @@ function PersonaFlowSwitcherContent() {
     return ACTORS.find((a) => a.id === (type === "business" ? "u-dual" : "u-retail")) ?? ACTORS[0];
   }
 
-  /** A trusted device for that app's demo user, then its log-in screen: greeted by name, password only. */
-  function goWelcomeBack(type: LoginApp) {
-    signOut();
-    trustThisDevice(loginActor(type));
-    go(type === "business" ? "/login?type=business" : "/login");
-  }
-
-  /** The step after the password: logged in as that app's demo user but not yet verified. */
-  function goEnterPin(type: LoginApp, newDevice: boolean) {
+  /** The step after the password: logged in as that app's demo user, not yet verified (a selfie, then a code). */
+  function goNewDevice(type: LoginApp) {
     signOut();
     signIn(loginActor(type));
-    go(newDevice ? "/mfa?device=new" : "/mfa");
+    go("/mfa");
   }
 
   /** First internet-banking login, on a device we've never seen: activation, then the welcome. */
   function goFirstTimer() {
     signOut();
-    forgetThisDevice();
     go("/activate?persona=single&step=ghana_card");
   }
 
@@ -316,7 +299,7 @@ function PersonaFlowSwitcherContent() {
             {view === "login" ? (
               <LoginFlowSections
                 stepRow={stepRow}
-                actions={{ login: goLogin, welcomeBack: goWelcomeBack, enterPin: goEnterPin }}
+                actions={{ login: goLogin, newDevice: goNewDevice }}
                 pathname={pathname}
                 stage={searchParams.get("stage")}
                 type={searchParams.get("type")}
@@ -424,7 +407,6 @@ function PersonaFlowSwitcherContent() {
                       type="button"
                       onClick={() => {
                         signOut();
-                        forgetThisDevice();
                         go("/select-banking");
                       }}
                       className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
@@ -456,21 +438,11 @@ function PersonaFlowSwitcherContent() {
                   <li>
                     <button
                       type="button"
-                      onClick={goPowerUser}
-                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
-                    >
-                      <span className="text-[13px] text-foreground">Welcome back screen</span>
-                      <span className="text-[12px] text-muted-foreground">Trusted device, greeted by name, password only</span>
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      type="button"
                       onClick={goFirstTimer}
                       className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
                       <span className="text-[13px] text-foreground">First time, new device</span>
-                      <span className="text-[12px] text-muted-foreground">Activation, remember device, welcome</span>
+                      <span className="text-[12px] text-muted-foreground">Activation, then welcome</span>
                     </button>
                   </li>
                 </ol>

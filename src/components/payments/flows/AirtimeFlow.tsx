@@ -16,6 +16,7 @@ import {
   CollapsedDetailsBadge,
   TELCO_NETWORKS,
   SchedulePaymentSection,
+  scheduleReady,
   ScheduleFrequency,
   detectTelcoNetwork,
   operatorBadgeIcon,
@@ -104,7 +105,7 @@ export function AirtimeFlow({
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
-  const isValid = Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
+  const isValid = scheduleReady(state) && Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
 
   // "My own number": every line that's yours — registered plus linked wallets' numbers.
   const own = useOwnDestination({

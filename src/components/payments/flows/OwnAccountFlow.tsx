@@ -20,6 +20,7 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   SchedulePaymentSection,
+  scheduleReady,
   ScheduleFrequency,
 } from "./shared";
 
@@ -83,6 +84,7 @@ export function OwnAccountFlow({
     Boolean(toAccount);
 
   const isValid =
+    scheduleReady(state) &&
     Boolean(state.fromId) &&
     isDetailsValid &&
     numAmount > 0 &&

@@ -388,9 +388,6 @@ export function NotificationsMenu() {
                 <RowSkeleton />
               </div>
             )}
-            {!hasMore && (
-              <p className="px-4 py-4 text-center text-caption text-muted-foreground">You&apos;re all caught up.</p>
-            )}
           </>
         )}
       </div>

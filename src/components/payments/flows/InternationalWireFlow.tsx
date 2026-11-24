@@ -21,7 +21,9 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   CollapsedDetailsBadge,
-  SchedulePaymentSection,
+  SchedulePaymentSection,
+
+  scheduleReady,
   ScheduleFrequency,
   RATES,
   DualAmountFields,
@@ -258,6 +260,7 @@ export function InternationalWireFlow({
     bankDetailsOk;
 
   const isValid =
+    scheduleReady(state) &&
     Boolean(state.fromId) && isDestinationValid && numForeign > 0 && !overBalance;
 
   return (

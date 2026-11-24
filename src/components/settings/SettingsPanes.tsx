@@ -19,8 +19,8 @@ import { DASHBOARD_COLORS, useDashboardColor } from "@/lib/dashboard-color";
 import { PASSWORD_RULES, hasConsecutiveDigits, hasRepeatingDigits, maskEmail, passwordMeetsRules } from "@/lib/auth-shared";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
-import { forgetThisDevice, thisDeviceName, useTrustedDevice } from "@/lib/device-trust";
 import { otherTrustedDevicesFor, useTrustedDevices, type DeviceKind } from "@/lib/trusted-devices";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { shrinkPhoto, useProfilePhoto, useProfilePhotos } from "@/lib/profile-photo";
 import { switchTheme } from "@/lib/theme-transition";
 import { cn } from "@/lib/utils";
@@ -414,8 +414,8 @@ function ChangeEmail({ data, update, onDone }: { data: SettingsData; update: (pa
 
 const TIMEOUT_OPTIONS = [
   { value: "5", label: "5 minutes" },
+  { value: "10", label: "10 minutes" },
   { value: "15", label: "15 minutes" },
-  { value: "30", label: "30 minutes" },
 ];
 
 const DEVICE_ICONS = { laptop: Laptop, phone: Smartphone, desktop: Monitor } as const;
@@ -428,10 +428,6 @@ function formatWhen(ms: number) {
   return `${date}, ${time}`;
 }
 
-function formatDay(ms: number) {
-  return new Date(ms).toLocaleDateString("en-GB", { day: "numeric", month: "long" });
-}
-
 interface TrustedRow {
   id: string;
   kind: DeviceKind;
@@ -441,27 +437,25 @@ interface TrustedRow {
 
 /**
  * Its own section in the Safety group. The devices that skip the one-time code. There is one session at a time, so
- * nothing here is "logged in now": removing a device only ends its trust. State lives in `lib/trusted-devices.ts`;
- * this browser is built from the live trust state, never from the seed.
+ * nothing here is "logged in now": removing a device only ends its trust, and asks first. State lives in
+ * `lib/trusted-devices.ts`. Browsers are not listed: nothing is remembered on a browser any more.
  */
 export function DevicesPane({ onBackToMenu }: PaneProps) {
   const actor = useSession((s) => s.actor);
-  const trustedHere = useTrustedDevice();
   const removed = useTrustedDevices((s) => (actor ? s.removed[actor.id] : undefined));
   const removeDevice = useTrustedDevices((s) => s.removeDevice);
   const hydrated = useSessionHydrated();
+  const [pendingRemove, setPendingRemove] = useState<TrustedRow | null>(null);
 
   const rows = useMemo<TrustedRow[]>(() => {
     if (!actor) return [];
-    const list: TrustedRow[] = [];
-    if (trustedHere && trustedHere.actorId === actor.id) {
-      list.push({ id: "this", kind: "laptop", name: thisDeviceName(), detail: `Trusted until ${formatDay(trustedHere.until)}` });
-    }
-    for (const d of otherTrustedDevicesFor(actor.id, removed ?? [])) {
-      list.push({ id: d.id, kind: d.kind, name: d.name, detail: `Last used ${formatWhen(d.lastUsed)}` });
-    }
-    return list;
-  }, [actor, trustedHere, removed]);
+    return otherTrustedDevicesFor(actor.id, removed ?? []).map((d) => ({
+      id: d.id,
+      kind: d.kind,
+      name: d.name,
+      detail: `Last used ${formatWhen(d.lastUsed)}`,
+    }));
+  }, [actor, removed]);
 
   if (!hydrated || !actor) return null;
 
@@ -470,7 +464,7 @@ export function DevicesPane({ onBackToMenu }: PaneProps) {
       <PaneHeader title="Trusted devices" onBack={onBackToMenu} />
       {rows.length === 0 ? (
         <p className="text-body leading-relaxed text-muted-foreground">
-          No trusted devices. Tick “Remember this device” when you log in on a device you use, and you won’t need a code there next time.
+          No trusted devices. The devices you trust appear here, and you can remove any of them at any time.
         </p>
       ) : (
         <Rows>
@@ -483,15 +477,7 @@ export function DevicesPane({ onBackToMenu }: PaneProps) {
                   <span className="truncate text-body font-medium text-foreground">{d.name}</span>
                   <span className="tabular text-caption text-muted-foreground">{[DEVICE_KIND_LABEL[d.kind], d.detail].join(" · ")}</span>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    if (d.id === "this") forgetThisDevice();
-                    else removeDevice(actor.id, d.id);
-                    toast(`Removed ${d.name}. It will need a code next time.`);
-                  }}
-                >
+                <Button variant="outline" size="sm" onClick={() => setPendingRemove(d)}>
                   Remove
                 </Button>
               </div>
@@ -499,6 +485,29 @@ export function DevicesPane({ onBackToMenu }: PaneProps) {
           })}
         </Rows>
       )}
+      <Dialog open={pendingRemove !== null} onOpenChange={(open) => !open && setPendingRemove(null)}>
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>Remove {pendingRemove?.name}?</DialogTitle>
+            <DialogDescription>It will need a one-time code the next time you log in on it.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setPendingRemove(null)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (!actor || !pendingRemove) return;
+                removeDevice(actor.id, pendingRemove.id);
+                toast(`Removed ${pendingRemove.name}. It will need a code next time.`);
+                setPendingRemove(null);
+              }}
+            >
+              Remove device
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PaneShell>
   );
 }
@@ -524,7 +533,7 @@ export function SecurityPane({ data, update, onBackToMenu }: PaneProps) {
         >
         </Row>
         <Row
-          title="Login PIN"
+          title="PIN"
           action={
             <Button variant="outline" size="sm" onClick={() => setChangingPin(true)}>
               Change
@@ -623,7 +632,7 @@ const PIN_STAGE_COPY: Record<PinStage, { title: string; description: string; act
   },
   new: {
     title: "Choose a New PIN",
-    description: "Pick a 4-digit PIN you’ll remember. You’ll use it to log in.",
+    description: "Pick a 4-digit PIN you’ll remember.",
     action: "Continue",
   },
   confirm: {
@@ -634,8 +643,8 @@ const PIN_STAGE_COPY: Record<PinStage, { title: string; description: string; act
 };
 
 /**
- * Change the login PIN in three steps: current PIN, new PIN, confirm. Settings only; the Forgot PIN flow (selfie
- * check) stays on the login screen. Prototype: any PIN except 0000 counts as the current one, as in useAuthorisation.
+ * Change the PIN in three steps: current PIN, new PIN, confirm. Settings only; Forgot PIN (a selfie check) is its own
+ * page. Prototype: any PIN except 0000 counts as the current one.
  */
 function PinStep({ onDone }: { onDone: () => void }) {
   const [stage, setStage] = useState<PinStage>("current");
@@ -695,13 +704,13 @@ function PinStep({ onDone }: { onDone: () => void }) {
       setConfirm(BLANK_PIN);
       return;
     }
-    toast.success("Login PIN changed");
+    toast.success("PIN changed");
     onDone();
   }
 
   return (
-    <PaneShell step="Change Login PIN">
-      <StepHeader back={stage === "current" ? "Security" : "Back"} title="Change Login PIN" onBack={goBack} />
+    <PaneShell step="Change PIN">
+      <StepHeader back={stage === "current" ? "Security" : "Back"} title="Change PIN" onBack={goBack} />
       <form
         key={stage}
         className="mx-auto flex w-full max-w-[440px] flex-col items-center gap-5 pt-2"

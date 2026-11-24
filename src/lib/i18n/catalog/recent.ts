@@ -147,7 +147,6 @@ const recent: Entry[] = [
   ["Log in", "Se connecter", "Iniciar sesión", "登录"],
   ["Don’t have an account? Apply for business account", "Pas de compte ? Demandez un compte entreprise", "¿No tienes cuenta? Solicita una cuenta empresarial", "还没有账户？申请企业账户"],
   ["New to Internet Banking? Register", "Nouveau sur la banque en ligne ? Inscrivez-vous", "¿Nuevo en la banca en línea? Regístrate", "首次使用网上银行？立即注册"],
-  ["Welcome back, {0}", "Bon retour, {0}", "Te damos la bienvenida de nuevo, {0}", "欢迎回来，{0}"],
   ["Use another account", "Utiliser un autre compte", "Usar otra cuenta", "使用其他账户"],
   ["Trusted device until {0}", "Appareil de confiance jusqu’au {0}", "Dispositivo de confianza hasta el {0}", "受信任设备，有效期至 {0}"],
   ["Trusted device until", "Appareil de confiance jusqu’au", "Dispositivo de confianza hasta el", "受信任设备，有效期至"],
@@ -155,8 +154,6 @@ const recent: Entry[] = [
   ["Log in with passkey", "Se connecter avec une clé d’accès", "Iniciar sesión con llave de acceso", "使用通行密钥登录"],
   ["Use password instead", "Utiliser le mot de passe", "Usar contraseña", "改用密码"],
   ["Back to registration options", "Retour aux options d’inscription", "Volver a las opciones de registro", "返回注册选项"],
-  ["Remember this device for {0} days", "Mémoriser cet appareil pendant {0} jours", "Recordar este dispositivo durante {0} días", "记住此设备 {0} 天"],
-  ["Remember this device for", "Mémoriser cet appareil pendant", "Recordar este dispositivo durante", "记住此设备"],
   ["Log in faster next time, without a code. Only on a device you don’t share.", "Connectez-vous plus vite la prochaine fois, sans code. Uniquement sur un appareil que vous ne partagez pas.", "Inicia sesión más rápido la próxima vez, sin código. Solo en un dispositivo que no compartas.", "下次无需验证码即可更快登录。仅限您不与他人共用的设备。"],
 
   // ── One-time codes ──

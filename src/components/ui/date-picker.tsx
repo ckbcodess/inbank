@@ -41,14 +41,14 @@ export function DatePicker({
         id={id}
         disabled={disabled}
         className={cn(
-          "flex h-8 w-full items-center justify-between gap-2 field-surface rounded-lg border border-transparent bg-transparent px-2 py-2 text-body whitespace-nowrap transition-all outline-none",
+          "group flex h-8 w-full items-center justify-between gap-2 field-surface rounded-lg border border-transparent bg-transparent px-2 py-2 text-body whitespace-nowrap transition-all outline-none",
           "disabled:cursor-not-allowed disabled:opacity-50 dark:bg-border/30 dark:hover:bg-border/50",
           !selected && "text-muted-foreground",
           className
         )}
       >
         {selected ? format(selected, "PP") : placeholder}
-        <CalendarIcon className="size-3.5 shrink-0 text-muted-foreground" />
+        <CalendarIcon className="size-3.5 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
       </PopoverTrigger>
       <PopoverContent className="p-0" align="start">
         <Calendar

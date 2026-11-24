@@ -18,6 +18,7 @@ import {
   LookupInput,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
+  scheduleReady,
   ScheduleFrequency,
   resolveAccountName,
   RATES,
@@ -198,6 +199,7 @@ export function PapssPaymentFlow({
   const isDestinationValid = isVerified;
 
   const isValid =
+    scheduleReady(state) &&
     Boolean(state.fromId) && isDestinationValid && numForeign > 0 && !overBalance;
 
   return (

@@ -60,9 +60,9 @@ const CARD_RATES: readonly { currency: string; selling: number; markup: string }
   { currency: "USD", selling: 12.6528, markup: "7.50%" },
 ];
 
-/** Where the Visa and Mastercard calculators live on the bank's site. Confirm the exact pages before launch. */
-const VISA_CALCULATOR_URL = "https://www.gcbbank.com.gh/";
-const MASTERCARD_CALCULATOR_URL = "https://www.gcbbank.com.gh/";
+/** The card networks' own exchange-rate calculators, opened from the Card Rates tab. */
+const VISA_CALCULATOR_URL = "https://africa.visa.com/en_MW/support/consumer/travel-support/exchange-rate-calculator.html";
+const MASTERCARD_CALCULATOR_URL = "https://www.mastercard.com/am/en/personal/get-support/currency-exchange-rate-converter.html";
 
 const CURRENCIES = [
   { code: "USD", name: "US Dollar" },

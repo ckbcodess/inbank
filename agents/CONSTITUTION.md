@@ -190,9 +190,9 @@ here. Never fall back to dense, boxed layouts.
 
 ## 6. Shape and spacing
 
-- **Spacing scale (padding, margin, gap): 2 · 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64**, i.e. steps
-  `0.5 1 2 3 4 5 6 8 10 12 16`. Nothing in between (no `p-1.5`, `gap-2.5`, `p-7`). Bigger values are layout
-  clearances (the phone tab bar), not spacing. Component sizes (`h-*`, `size-*`, `w-*`) aren't spacing tokens.
+- **Spacing scale (padding, margin, gap): 2 · 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64 · 80 · 96 · 120 · 128 · 160 · 192 · 256**, i.e. steps
+  `0.5 1 2 3 4 5 6 8 10 12 16 20 24 30 32 40 48 64` (4px grid; Tailwind multiples of `--spacing`). Nothing in between (no `p-1.5`, `gap-2.5`, `p-7`, no 6px gap). Values above 256px are layout
+  clearances (the phone tab bar), not spacing. Component sizes (`h-*`, `size-*`, `w-*`) aren't spacing tokens. Negative gaps don't exist: overlaps use negative margins in code, never a token.
 - **Radius: five names plus full.** `rounded-sm` 4 (small bits), `rounded-lg` 8 (controls, icon tiles),
   `rounded-xl` 10 (insets), `rounded-2xl` 10 (panels), `rounded-3xl` 10 (hero and large sheets), `rounded-full`
   (badges and pills). The code is the source for these values (designer, 2026-11-06). xl, 2xl and 3xl are equal

@@ -25,7 +25,6 @@ import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Field } from "@/components/ui/field";
-import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Switch } from "@/components/ui/switch";
 import { DatePicker } from "@/components/ui/date-picker";
 import { format } from "date-fns";
@@ -1517,44 +1516,23 @@ export type ScheduleTiming = "now" | "later";
 
 export interface ScheduleState {
   enabled: boolean;
-  startDate: string; // YYYY-MM-DD, today when timing is "now"
+  startDate: string; // YYYY-MM-DD, today when timing is "now", empty until picked when timing is "later"
   frequency: ScheduleFrequency;
   endDate?: string;
   timing?: ScheduleTiming; // defaults to "now"
   startTime?: string; // HH:mm, only used when timing is "later"
 }
 
-const FREQUENCY_OPTIONS: { value: ScheduleFrequency; label: string }[] = [
-  { value: "once", label: "Once" },
-  { value: "daily", label: "Daily" },
-  { value: "weekly", label: "Weekly" },
-  { value: "monthly", label: "Monthly" },
-];
-
-const TIMING_OPTIONS: { value: ScheduleTiming; label: string }[] = [
-  { value: "now", label: "Now" },
-  { value: "later", label: "Later" },
-];
-
-const DEFAULT_LATER_TIME = "09:00";
-
-/** Every half hour of the day, as HH:mm. Payments run on these slots only. */
-const TIME_SLOTS = Array.from({ length: 48 }, (_, i) => `${String(Math.floor(i / 2)).padStart(2, "0")}:${i % 2 ? "30" : "00"}`);
-
-/** "09:30" → "9:30 am", for the dropdown and its trigger. */
-function timeLabel(hhmm: string) {
-  const [h, m] = hhmm.split(":").map(Number);
-  return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${h < 12 ? "am" : "pm"}`;
-}
-
 /** Local calendar dates as yyyy-MM-dd, so a payment dated "today" is today for the person, not in UTC. */
-function todayIso() {
-  return format(new Date(), "yyyy-MM-dd");
-}
 function tomorrowIso() {
   const d = new Date();
   d.setDate(d.getDate() + 1);
   return format(d, "yyyy-MM-dd");
+}
+
+/** A Pay Later payment can't proceed until its date and time are picked: nothing is preselected. Straight-away payments always can. */
+export function scheduleReady(s: { isScheduled?: boolean; scheduleDate?: string; scheduleTime?: string }): boolean {
+  return !s.isScheduled || Boolean(s.scheduleDate && s.scheduleTime);
 }
 
 export function SchedulePaymentSection({
@@ -1564,83 +1542,53 @@ export function SchedulePaymentSection({
   state: ScheduleState;
   onChange: (updates: Partial<ScheduleState>) => void;
 }) {
-  const timing: ScheduleTiming = state.timing ?? "now";
-
   return (
     <div className="flex flex-col gap-4 transition">
       <div className="flex items-center justify-between">
-        <div className="flex flex-col">
-          <span id="schedule-payment-label" className="text-body font-medium text-foreground">Schedule Payment</span>
-          <span className="text-caption text-muted-foreground">
-            Set up a future date or recurring transfer
-          </span>
-        </div>
+        <span id="schedule-payment-label" className="text-body font-medium text-foreground">Pay Later</span>
         <Switch
           checked={state.enabled}
-          onCheckedChange={(enabled) => onChange({ enabled })}
+          onCheckedChange={(enabled) =>
+            // Pay Later is always one payment on a later day, so turning it on sets those fields and nothing else is asked.
+            onChange(
+              enabled
+                ? {
+                    enabled,
+                    frequency: "once",
+                    timing: "later",
+                    startDate: "",
+                    startTime: "",
+                  }
+                : { enabled },
+            )
+          }
           aria-labelledby="schedule-payment-label"
         />
       </div>
 
       {state.enabled && (
-        <div className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card p-3 animate-in fade-in slide-in-from-top-1 duration-150">
-          <Field label="Frequency">
-            <SegmentedControl
-              fullWidth
-              aria-label="Frequency"
-              options={FREQUENCY_OPTIONS}
-              value={state.frequency}
-              onChange={(frequency) => onChange({ frequency })}
+        <div className="grid grid-cols-1 gap-3 rounded-2xl border border-border/80 bg-card p-3 animate-in fade-in slide-in-from-top-1 duration-150 sm:grid-cols-2">
+          <Field label="Date">
+            {/* Sized and surfaced like the Time input beside it, so the two fields match. */}
+            <DatePicker
+              value={state.startDate}
+              placeholder="Pick a date"
+              min={tomorrowIso()}
+              onChange={(startDate) => onChange({ startDate })}
+              className="h-(--control-xl) rounded-xl bg-field px-3 text-body text-foreground tabular"
             />
           </Field>
-
-          <Field label="Starts">
-            <SegmentedControl
-              fullWidth
-              aria-label="When the first payment starts"
-              options={TIMING_OPTIONS}
-              value={timing}
-              onChange={(next) => {
-                if (next === "now") {
-                  onChange({ timing: "now", startDate: todayIso(), startTime: undefined });
-                } else {
-                  const pickable = state.startDate > todayIso() ? state.startDate : tomorrowIso();
-                  onChange({ timing: "later", startDate: pickable, startTime: state.startTime || DEFAULT_LATER_TIME });
-                }
-              }}
+          <Field label="Time" htmlFor="schedule-time">
+            {/* Typed in, like the date: any minute of the day, 24-hour HH:mm. */}
+            <Input
+              id="schedule-time"
+              type="time"
+              step={60}
+              value={state.startTime ?? ""}
+              onChange={(e) => onChange({ startTime: e.target.value })}
+              className="h-(--control-xl) rounded-xl bg-field px-3 text-body text-foreground tabular [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:transition-opacity hover:[&::-webkit-calendar-picker-indicator]:opacity-100"
             />
           </Field>
-
-          {timing === "later" && (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label="Date">
-                {/* Sized and surfaced like the Time input beside it, so the two fields match. */}
-                <DatePicker
-                  value={state.startDate}
-                  min={todayIso()}
-                  onChange={(startDate) => onChange({ startDate })}
-                  className="h-(--control-xl) rounded-xl bg-field px-3 text-body text-foreground tabular"
-                />
-              </Field>
-              <Field label="Time">
-                <Select
-                  value={state.startTime || DEFAULT_LATER_TIME}
-                  onValueChange={(startTime) => startTime && onChange({ startTime })}
-                >
-                  <SelectTrigger className="h-(--control-xl) w-full rounded-xl bg-field px-3 text-body text-foreground tabular">
-                    <span>{timeLabel(state.startTime || DEFAULT_LATER_TIME)}</span>
-                  </SelectTrigger>
-                  <SelectContent className="max-h-72">
-                    {TIME_SLOTS.map((slot) => (
-                      <SelectItem key={slot} value={slot} className="tabular">
-                        {timeLabel(slot)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
-            </div>
-          )}
         </div>
       )}
     </div>

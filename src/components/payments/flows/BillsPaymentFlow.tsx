@@ -17,6 +17,7 @@ import {
   ProceedButton,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
+  scheduleReady,
   ScheduleFrequency,
   LookupInput,
   resolveAccountName,
@@ -288,6 +289,7 @@ export function BillsPaymentFlow({
   }, [state.subType, isGhanaGov, ownAgency, govSvc, payVals, state.govProduct, govMode, state.ecgMeter, state.govService, state.govRef, state.billerId, selectedBiller?.id, state.billRef, minRef]);
 
   const isValid =
+    scheduleReady(state) &&
     Boolean(state.fromId) &&
     isDestinationValid &&
     isVerified &&

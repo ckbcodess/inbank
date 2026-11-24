@@ -12,12 +12,10 @@ type StepRow = (href: string, label: string, n: number, active: boolean) => Reac
 export type LoginApp = "personal" | "business";
 
 export interface LoginActions {
-  /** The log-in form, with this browser's trusted device forgotten. `error` opens it on the wrong-password state. */
+  /** The log-in form. `error` opens it on the wrong-password state. */
   login: (app: LoginApp, state?: "error") => void;
-  /** A trusted device: greeted by name, password only. */
-  welcomeBack: (app: LoginApp) => void;
-  /** The step after the password, for a logged-in-but-unverified demo user. */
-  enterPin: (app: LoginApp, newDevice: boolean) => void;
+  /** The verification step after the password: a selfie, then the one-time code. */
+  newDevice: (app: LoginApp) => void;
 }
 
 const PASSWORD_STAGES = [
@@ -74,9 +72,7 @@ export function LoginFlowSections({
     <ol className="flex flex-col">
       {row("Log in", app === "business" ? "The business door" : "The front door", () => actions.login(app), pathname === "/login" && (type === "business") === (app === "business"))}
       {row("Wrong password", "The form with its error", () => actions.login(app, "error"))}
-      {row("Welcome back", "Trusted device, greeted by name, password only", () => actions.welcomeBack(app))}
-      {row("Enter your PIN", "The step after the password", () => actions.enterPin(app, false))}
-      {row("New device", "Confirm it's you with a one-time code", () => actions.enterPin(app, true))}
+      {row("Verify it's you", "Selfie, then a one-time code", () => actions.newDevice(app))}
     </ol>
   );
 

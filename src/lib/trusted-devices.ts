@@ -32,7 +32,7 @@ function ago(ms: number) {
 }
 
 const SEEDED: Record<string, TrustedDeviceRow[]> = {
-  default: [{ id: "phone", kind: "phone", name: "GCB Mobile on iPhone", lastUsed: ago(2 * HOUR) }],
+  default: [{ id: "phone", kind: "phone", name: "iPhone", lastUsed: ago(2 * HOUR) }],
   // A new device, a new activation and a migration start with no other trusted device.
   "u-yaw": [],
   "u-clean": [],

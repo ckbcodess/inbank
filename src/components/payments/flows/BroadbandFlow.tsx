@@ -23,6 +23,7 @@ import {
   LookupInput,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
+  scheduleReady,
   ScheduleFrequency,
   NetworkSelect,
   operatorBadgeIcon,
@@ -127,7 +128,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
   const [editingAmount, setEditingAmount] = useState(false);
   const payable = state.amount ? Number(state.amount.replace(/[^0-9.]/g, "")) || 0 : price;
   const overBalance = payable > (fromAccount?.available ?? 0);
-  const isValid = Boolean(state.fromId) && isVerified && Boolean(selected) && payable > 0 && !overBalance;
+  const isValid = scheduleReady(state) && Boolean(state.fromId) && isVerified && Boolean(selected) && payable > 0 && !overBalance;
   // A different package starts from its own price
   const selectedId = selected?.id;
   useEffect(() => {

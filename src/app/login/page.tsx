@@ -4,7 +4,7 @@ import { AlertToast } from "@/components/ui/alert-toast";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, ShieldCheck, User } from "@/components/ui/icons";
+import { Eye, EyeOff, User } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { KeyboardDock } from "@/components/ui/keyboard-dock";
 import { Input } from "@/components/ui/input";
@@ -15,9 +15,7 @@ import { useSession } from "@/lib/session-store";
 import { useBusinessTheme } from "@/lib/business-theme";
 import { ACTORS, findActorByPhone } from "@/lib/mock-data";
 import { toLocalMobile } from "@/lib/phone";
-import { useTrustedDevice, type TrustedDevice } from "@/lib/device-trust";
 import type { Actor } from "@/lib/roles";
-import { homePathForActor } from "@/lib/navigation";
 import { findLegacyUser } from "@/lib/migration";
 import { BUSINESS_SIGN_IN_OPEN, signInOpenFor } from "@/lib/launch";
 import { WorkInProgress } from "@/components/states/WorkInProgress";
@@ -33,10 +31,7 @@ function LoginForm() {
   const [bankingType, setBankingType] = useState<"personal" | "business">(() => {
     return searchParams.get("type") === "business" ? "business" : "personal";
   });
-  const { signIn, verifyMfa } = useSession();
-  const trusted = useTrustedDevice();
-  // "Not you?" switches to the full form for this visit; the device stays trusted.
-  const [notYou, setNotYou] = useState(false);
+  const { signIn } = useSession();
   // Set when login is closed: the form is replaced by the work-in-progress screen.
   const [closed, setClosed] = useState(false);
   // Business login is closed for now (lib/launch.ts). Retail login is open.
@@ -99,26 +94,14 @@ function LoginForm() {
     }, 600);
   }
 
-  /**
-   * A trusted device skips the one-time code. Any other device is a new one: it gets the code, and the customer is
-   * told once they're in (see `NewDeviceNotice`).
-   */
+  /** Every password log-in goes on to the verification step (a selfie, then a one-time code) before the customer is in. */
   function continueWith(actor: Actor) {
     signIn(actor);
-    if (trusted?.actorId === actor.id) {
-      verifyMfa();
-      router.push(homePathForActor(actor));
-      return;
-    }
-    router.push("/mfa?device=new");
+    router.push("/mfa");
   }
 
   if (closed) {
     return <SignInClosed onBack={() => setClosed(false)} />;
-  }
-
-  if (trusted && !notYou) {
-    return <ReturningSignIn trusted={trusted} onNotYou={() => setNotYou(true)} doorOpen={doorOpen} />;
   }
 
   return (
@@ -269,129 +252,5 @@ export default function LoginPage() {
     <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
       <LoginDoor />
     </Suspense>
-  );
-}
-
-/**
- * The fast path for someone on their own, trusted device: greeted by name and
- * asked for their password. No mobile number to retype and no one-time code — the
- * device itself is the second factor. "Use another account" drops back to the full form.
- */
-function ReturningSignIn({
-  trusted,
-  onNotYou,
-  doorOpen,
-}: {
-  trusted: TrustedDevice;
-  onNotYou: () => void;
-  doorOpen: boolean;
-}) {
-  const router = useRouter();
-  const { signIn, verifyMfa } = useSession();
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [closed, setClosed] = useState(false);
-
-  const firstName = trusted.name.split(" ")[0];
-  const initials = trusted.name
-    .split(" ")
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-  const until = new Date(trusted.until).toLocaleDateString("en-GB", { day: "numeric", month: "long" });
-
-  function finish() {
-    const actor = ACTORS.find((a) => a.id === trusted.actorId) ?? ACTORS[0];
-    if (!doorOpen || !signInOpenFor(actor)) {
-      setSubmitting(false);
-      setClosed(true);
-      return;
-    }
-    signIn(actor);
-    verifyMfa();
-    router.push(homePathForActor(actor));
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    window.setTimeout(finish, 600);
-  }
-
-  if (closed) {
-    return <SignInClosed onBack={() => setClosed(false)} />;
-  }
-
-  return (
-    <AuthLayout
-      vAlign="center"
-      title={`Welcome back, ${firstName}`}
-      width="compact"
-    >
-      <div className="flex flex-col gap-5">
-        <div className="flex items-center gap-2 rounded-2xl border border-border bg-muted/20 px-3 py-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-body text-primary-foreground">
-            {initials}
-          </span>
-          <span className="flex min-w-0 flex-col">
-            <span className="truncate text-body text-foreground">{trusted.name}</span>
-            <span className="flex items-center gap-2 text-caption text-muted-foreground">
-              <ShieldCheck size={13} aria-hidden="true" />
-              <span className="tabular">Trusted device until {until}</span>
-            </span>
-          </span>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <Field label="Password" htmlFor="returning-password">
-            <div className="relative">
-              <Input
-                id="returning-password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                placeholder="Enter your password"
-                autoFocus
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="pr-10"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-            <Link
-              href="/forgot-password"
-              className="mt-1 self-end text-caption text-foreground underline underline-offset-4 hover:text-foreground/70"
-            >
-              Forgot password?
-            </Link>
-</Field>
-          <KeyboardDock>
-            <Button type="submit" variant="default" size="md" loading={submitting} className="w-full">
-              Log in
-            </Button>
-          </KeyboardDock>
-        </form>
-
-        <p className="text-center text-body text-muted-foreground">
-          Not {firstName}?{" "}
-          <button
-            type="button"
-            onClick={onNotYou}
-            className="text-foreground underline underline-offset-4 hover:text-foreground/80 cursor-pointer"
-          >
-            Use another account
-          </button>
-        </p>
-      </div>
-    </AuthLayout>
   );
 }

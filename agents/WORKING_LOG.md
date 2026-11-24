@@ -182,6 +182,26 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-24
+- Override: new-device sign-in is now a selfie, then the 6-digit SMS code, on `/mfa`. No PIN. Conflicts with CONSTITUTION §2 ("Sign-in keeps its own PIN (/mfa)"). Requested by Ransford; propose the constitution change once he confirms.
+- Override: the 30-day remembrance is gone. No browser is trusted, so every web log-in goes through the selfie and code. The remember checkbox, the welcome-back shortcut and their Demo hub entries are removed. Settings → Trusted devices lists only app devices. Confirm this is what was meant (the alternative is to keep remembering a device until it is removed in Settings).
+- Decision: removing a trusted device asks first (`DevicesPane`). The phone is named "iPhone".
+- Decision: auto-logout offers 5, 10 and 15 minutes.
+- Decision: Pay Later takes a typed time (any minute, 24-hour), so the half-hour slots are gone. Date and time are never preselected: every flow's Proceed waits for both (`scheduleReady` in `flows/shared.tsx`, used in the 12 flows that show Pay Later).
+- Question: Security → "PIN" (was "Login PIN") no longer logs anyone in. What does it secure now? Left as is.
+- Gap: the selfie is a prototype pass. There is no real face match and no retry or branch path on `/mfa`.
+- Gap: `useAuthorisation` still has its PIN method, now unused by log-in.
+- Gap: the new verification copy and the Settings labels are literal English, with no FR/ES/ZH rows yet.
+
+### 2026-11-23
+- Reuse: the Figma plugin **Screen Remapper** (`C:\Users\rnsfo\xprmnts\screen-remapper`, outside this repo) rebuilds old frames in MOBILE-APP-SECTIONS on the MobileScreen and Modal templates (slots, Selector, AmountField, Input, List, text, colour and spacing tokens). Its rules are the `CONFIG` table at the top of `code.js`.
+- Discovery: MobileScreen, Modal, Selector, AmountField and CTARegion are local, unpublished components in MOBILE-APP-SECTIONS. The plugin only finds them in that file until they're published.
+- Gap: the test sections "Remap test · 23 Nov (safe to delete)" on the Data, More Services and Send to Bank pages of MOBILE-APP-SECTIONS are throwaway and can be deleted.
+- Discovery: in the Modal and Title Bar grids, hiding the back arrow slides the title into its cell, and inside an instance slot the hidden arrow drops out entirely. Keep it and set opacity 0 instead.
+- Decision (designer): the payment section's "Schedule Payment" is now "Pay Later" (`SchedulePaymentSection`, `flows/shared.tsx`). Frequency and the Now/Later choice are gone; on, it asks only for a date (from tomorrow) and a time. Recurring stays in Standing Orders. Receipts drop the frequency word.
+- Gap: the success page's "Schedule Payment" card still opens the recurring `SchedulePaymentFlow` (`PaymentSuccessScreen.tsx`, ~line 356). It has the same name the section had and offers frequency, so it contradicts Pay Later. Rename or cut it.
+- Gap: Pay Later can't pick a time later today; the date starts tomorrow. Add a same-day rule if the designer wants it.
+
 ### 2026-11-22
 - Override (designer): the "Hide/Show floating dev tools" item in the account menu (`components/layout/TopHeader.tsx`) now shows in the production build. It was gated on `NODE_ENV !== "production"`. `SHOW_DEMO_TOOLS` is unchanged, so the colour tuner, sandboxes and studios still stay out of production.
 - Decision (designer): the Dev Mode panel, header button and `HeroWaveTuner` stay live in production, so user types can be switched as on localhost. `SHOW_DEMO_TOOLS` still gates the colour tuner, sandboxes and the look and exploration switches. `ColorTuner` and `BackdropTuner` were already dev-only.
@@ -189,6 +209,15 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Gap: the business and admin sign-in doors are closed in production (`lib/launch.ts`). The `signInOpenFor` check is only on `/login`, so the Dev Mode panel's switch to a business or admin user should not hit it. Not yet confirmed in a production build.
 - Gap: "Hide floating dev tools" / "Show floating dev tools" are English-only and not in the i18n catalog. They now reach production as well.
 - Decision (designer): the identity partner window (`components/auth/IdentityPartnerWindow.tsx`) completes the check by itself 3 seconds after the QR code appears, in every build, the same way the demo's "Finish on Phone" does. It uses the selected demo outcome, so in production it auto-passes. Gap: gate it on `SHOW_DEMO_TOOLS` before any real partner is wired in, and confirm the 3 seconds against a real phone scan.
+
+### 2026-11-21
+- Decision (designer): the spacing scale runs to 128px. Steps 20, 24, 30 and 32 (80, 96, 120, 128px) are spacing, not clearances; CONSTITUTION §6 now lists them. Above 128px is layout clearance only. This matches the 2026-11-07 keep-decision in `docs/design-system-token-plan.md`.
+- Decision (designer): steps above 128px are spacing too: 40, 48 and 64 (160, 192 and 256px), added to Spacing and CONSTITUTION §6. Mobile mode mirrors Desktop for these until the Mobile decision. Above 256px is layout clearance only.
+- Decision (designer, overrides the 2026-11-20 note below on spacing names): the Spacing collection in 1. TOKENS now uses the code's step numbers, so `spacing/2` = 8px and `spacing/4` = 16px (was 4px and 8px). Renamed by ID. The two duplicate steps are in `_deprecated/spacing/2` (4px) and `_deprecated/spacing/4` (8px); Mobile mode left unchanged.
+- Decision: Mobile modes removed from Typography and Control Sizing (breakpoints are code only, and nothing in code reads Control Sizing Mobile). Typography keeps Desktop and App. Control Sizing now has Desktop and App, with App heights bumped for touch: xs 28, sm 36, default 44, md 48, xl 52 (was 20/28/36/40/44). The App padding, gap and radius values copy Desktop. Mobile-only values (control/x/lg 20, button radius 999) are gone. Gap: the h1/h2 phone sizes (18→20, 22→24 at 640px) are only in code now; they're documented in CONSTITUTION §5.
+- Decision: the Spacing collection's Mobile mode is removed. Every step is one value (Desktop), matching the code and CONSTITUTION §6. A compressed phone scale can't avoid repeats (steps 3 and 4 both hit 12px) unless it uses off-scale values such as 56px, and phone tightness lives in component classes. `spacing/0-5` renamed `spacing/0_5` (Figma rejects dots in variable names). Check CORE COMPONENTS and Internet Banking, which bind to the old names.
+- Gap: CORE COMPONENTS and Internet Banking still bind to the old Spacing names. They'll update on republish but haven't been checked. `docs/figma-cleanup-plan.md` Phase 2 needs redoing with the new names.
+- Decision: no 6px gap and no negative gaps. The scale is on a 4px grid; overlaps use negative margins in code.
 
 ### 2026-11-20
 

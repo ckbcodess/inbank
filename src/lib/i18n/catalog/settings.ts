@@ -90,7 +90,7 @@ const settings: Entry[] = [
 
   // ── Security ──
   ["Password", "Mot de passe", "Contraseña", "密码"],
-  ["Login PIN", "Code de connexion", "PIN de acceso", "登录 PIN"],
+  ["PIN", "Code PIN", "PIN", "PIN"],
   ["Reset", "Réinitialiser", "Restablecer", "重置"],
   ["Payment approval", "Approbation des paiements", "Aprobación de pagos", "付款确认"],
   ["Two-step login", "Connexion en deux étapes", "Inicio de sesión en dos pasos", "两步登录"],
@@ -99,8 +99,8 @@ const settings: Entry[] = [
   ["This device will ask for a code next time", "Cet appareil demandera un code la prochaine fois", "Este dispositivo pedirá un código la próxima vez", "下次此设备将要求输入验证码"],
   ["Auto-logout", "Déconnexion automatique", "Cierre de sesión automático", "自动退出"],
   ["5 minutes", "5 minutes", "5 minutos", "5 分钟"],
+  ["10 minutes", "10 minutes", "10 minutos", "10 分钟"],
   ["15 minutes", "15 minutes", "15 minutos", "15 分钟"],
-  ["30 minutes", "30 minutes", "30 minutos", "30 分钟"],
   ["Auto-logout updated", "Déconnexion automatique mise à jour", "Cierre de sesión automático actualizado", "自动退出已更新"],
 
   // ── Change password ──

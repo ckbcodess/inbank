@@ -254,7 +254,7 @@ const payments: Entry[] = [
   ["Payment scheduled", "Paiement programmé", "Pago programado", "付款已预约"],
   ["We’ll automatically send {0} to {1} on {2} ({3}).", "Nous enverrons automatiquement {0} à {1} le {2} ({3}).", "Enviaremos automáticamente {0} a {1} el {2} ({3}).", "我们将于 {2} 自动向 {1} 转账 {0}（{3}）。"],
   ["Transfer complete!", "Virement effectué !", "¡Transferencia completada!", "转账完成！"],
-  ["You’ve moved {0} to your {1}. It’s ready to use.", "Vous avez transféré {0} vers votre {1}. Les fonds sont disponibles.", "Has movido {0} a tu {1}. Ya está disponible.", "您已将 {0} 转入您的{1}，可立即使用。"],
+  ["You’ve moved {0} to your {1}.", "Vous avez transféré {0} vers votre {1}.", "Has movido {0} a tu {1}.", "您已将 {0} 转入您的{1}。"],
   ["Card topped up!", "Carte rechargée !", "¡Tarjeta recargada!", "卡片充值成功！"],
   ["You’ve added {0} to your {1}. It’s ready to spend.", "Vous avez ajouté {0} à votre {1}. Vous pouvez l’utiliser.", "Has añadido {0} a tu {1}. Ya puedes usarlo.", "您已向{1}充值 {0}，可立即消费。"],
   ["ATM voucher ready", "Bon de retrait prêt", "Cupón de cajero listo", "ATM 取款码已生成"],
