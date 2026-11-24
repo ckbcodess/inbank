@@ -183,6 +183,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ## Inbox
 
 ### 2026-11-24
+- Override: a wallet to another person preselects MTN, and the number field comes first and is focused (requested by Ransford). Conflicts with CONSTITUTION §2 "No silent default on a destination". A number on another network switches the network to match.
 - Override: new-device sign-in is now a selfie, then the 6-digit SMS code, on `/mfa`. No PIN. Conflicts with CONSTITUTION §2 ("Sign-in keeps its own PIN (/mfa)"). Requested by Ransford; propose the constitution change once he confirms.
 - Override: the 30-day remembrance is gone. No browser is trusted, so every web log-in goes through the selfie and code. The remember checkbox, the welcome-back shortcut and their Demo hub entries are removed. Settings → Trusted devices lists only app devices. Confirm this is what was meant (the alternative is to keep remembering a device until it is removed in Settings).
 - Decision: removing a trusted device asks first (`DevicesPane`). The phone is named "iPhone".

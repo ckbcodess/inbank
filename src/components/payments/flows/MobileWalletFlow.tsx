@@ -82,6 +82,11 @@ export function MobileWalletFlow({
     }
   }, [walletCategory, setCollapsed]);
 
+  // Another person's wallet starts on MTN, so the number field is ready from the first screen.
+  useEffect(() => {
+    if (!isSelf && !state.wNetwork) onChange("wNetwork", "MTN Mobile Money");
+  }, [isSelf, state.wNetwork, onChange]);
+
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
     [accounts, state.fromId]
@@ -170,20 +175,16 @@ export function MobileWalletFlow({
               />
             ) : (
               <>
-                <NetworkSelect
-                  value={state.wNetwork || ""}
-                  onChange={(val) => onChange("wNetwork", val)}
-                  options={NETWORKS}
-                />
-
+                {/* The number comes first and is ready to type into. The network is below it, preset to MTN. */}
                 <LookupInput
                   phone={{}}
                   value={state.wPhone}
-                  placeholder={state.wNetwork ? "Enter mobile number" : "Choose a network first"}
+                  placeholder="Enter mobile number"
                   onChange={(val) => {
                     onChange("wPhone", val);
+                    // A number on another network moves the network to match it.
                     const detected = detectTelcoNetwork(val);
-                    if (detected && !state.wNetwork) {
+                    if (detected) {
                       onChange("wNetwork", detected.walletName);
                     }
                     const resolved = resolveAccountName(val, "");
@@ -196,7 +197,13 @@ export function MobileWalletFlow({
                   resolving={!isSelf && isDetailsEntered && resolving}
                   verifiedName={isVerified && !isSelf ? verifiedName : null}
                   auto
-                  inputProps={{ "aria-label": "Mobile number", disabled: !state.wNetwork }}
+                  inputProps={{ "aria-label": "Mobile number", autoFocus: true }}
+                />
+
+                <NetworkSelect
+                  value={state.wNetwork || ""}
+                  onChange={(val) => onChange("wNetwork", val)}
+                  options={NETWORKS}
                 />
               </>
             )}

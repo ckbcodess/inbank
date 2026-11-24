@@ -156,7 +156,7 @@ function HubPageSkeletonBody({ groups = 2, tiles = 4 }: { groups?: number; tiles
   );
 }
 
-/** A flow's first question: back arrow, the question as a title, then one tile per answer (e.g. "Which bank do you want to send to?"). */
+/** A flow's first question: back arrow, the question as a title, then one tile per answer (e.g. "Select a bank to send to"). */
 function StepListSkeletonBody({ tiles = 4 }: { tiles?: number }) {
   return (
     <Frame className="mx-auto max-w-2xl gap-6">

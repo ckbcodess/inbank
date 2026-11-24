@@ -2483,11 +2483,11 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
-  // Intermediary Screen: "Which bank do you want to send to?" (Figma Node 837:9937 / 859:23459)
+  // Intermediary Screen: "Select a bank to send to" (Figma Node 837:9937 / 859:23459)
   if (rail === "bank" && !bankCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <PageHeader title="Which bank do you want to send to?" backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
+        <PageHeader title="Select a bank to send to"backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* Recent Bank Beneficiaries Avatars */}
         <RailBeneficiaryStrip
@@ -2562,11 +2562,11 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
-  // Intermediary Screen: "Which wallet do you want to send to?"
+  // Intermediary Screen: "Select a wallet to send to"
   if ((rail === "wallet" || rail === "momo") && !walletCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <PageHeader title="Which wallet do you want to send to?" backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
+        <PageHeader title="Select a wallet to send to"backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* Recent Wallet Beneficiaries Avatars */}
         <RailBeneficiaryStrip
@@ -2710,11 +2710,11 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
-  // Intermediary Screen: Card Top up Chooser ("Which card do you want to top up?")
+  // Intermediary Screen: Card Top up Chooser ("Select a card to top up")
   if (rail === "card-topup" && !cardTopupCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
-        <PageHeader title="Which card do you want to top up?" backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
+        <PageHeader title="Select a card to top up"backTo={{ href: "", label: "Send & Pay", onClick: handleBackNavigation }} />
 
         {/* Cards saved as beneficiaries */}
         <RailBeneficiaryStrip

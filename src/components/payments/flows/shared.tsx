@@ -1768,7 +1768,7 @@ export function LookupInput({
   auto?: boolean;
   phone?: { country?: string; onCountryChange?: (code: string) => void };
   /** Passed through to the input. */
-  inputProps?: Pick<React.ComponentProps<"input">, "id" | "maxLength" | "onBlur" | "aria-invalid" | "aria-label" | "autoComplete" | "disabled">;
+  inputProps?: Pick<React.ComponentProps<"input">, "id" | "maxLength" | "onBlur" | "aria-invalid" | "aria-label" | "autoComplete" | "autoFocus" | "disabled">;
 }) {
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !auto && onVerify && canVerify && !verified && !resolving) {
