@@ -2,8 +2,11 @@
 
 /**
  * Invited business user activation — BRD v2 §8.3, FR-COR-04 to FR-COR-06.
- * The bank sets up the user; they activate online by verifying their invitation, confirming their Ghana Card,
- * validating an OTP, and setting up their password and PIN.
+ * The bank sets up the user. The invitation link comes by email; they confirm their date of birth, then a code sent
+ * to their mobile, and set a password and PIN. The two channels stay apart on purpose: fraud on the old platform
+ * stopped once the username and the password link went different ways (bank call, 2026-10-22). Date of birth
+ * replaces the Ghana Card (designer, 2026-11-25), because the bank's form doesn't ask for one and many business
+ * users have none on file.
  */
 
 import { Suspense, useEffect, useMemo, useState } from "react";
@@ -18,7 +21,7 @@ import FindBranchDialog from "@/components/corporate/FindBranchDialog";
 import { AlertToast } from "@/components/ui/alert-toast";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
-import { GhanaCardInput } from "@/components/ui/ghana-card-input";
+import { DateOfBirthInput } from "@/components/ui/date-of-birth-input";
 import { AppLoader } from "@/components/ui/loader";
 import { hasConsecutiveDigits, hasRepeatingDigits, maskMobile } from "@/lib/auth-shared";
 import {
@@ -27,16 +30,17 @@ import {
   INVITE_MAX_ATTEMPTS,
 } from "@/lib/corporate/onboarding";
 import { setFirstRun, setPendingReferral } from "@/lib/device-trust";
-import { isCompleteGhanaCard } from "@/lib/ghana-card";
-import { findAccount } from "@/lib/mock-data";
+import { companyUserFor } from "@/lib/corporate/controls";
+import { displayDateOfBirth, isCompleteDateOfBirth, parseDateOfBirth } from "@/lib/date-of-birth";
+import { findAccount, formatMoney } from "@/lib/mock-data";
 
-type Step = "invite" | "ghana_card" | "otp" | "password" | "pin" | "confirm_pin";
+type Step = "invite" | "identity" | "otp" | "password" | "pin" | "confirm_pin";
 
 const RESEND_SECONDS = 30;
 
 const stepNumberMap: Record<Step, number> = {
   invite: 1,
-  ghana_card: 2,
+  identity: 2,
   otp: 3,
   password: 4,
   pin: 5,
@@ -45,7 +49,7 @@ const stepNumberMap: Record<Step, number> = {
 
 function parseBusinessActivateStep(step: string | null): Step | null {
   if (!step) return null;
-  if (["invite", "ghana_card", "otp", "password", "pin", "confirm_pin"].includes(step)) {
+  if (["invite", "identity", "otp", "password", "pin", "confirm_pin"].includes(step)) {
     return step as Step;
   }
   return null;
@@ -63,7 +67,7 @@ function BusinessActivateContent() {
   const [isExpired, setIsExpired] = useState(expiredParam);
   const [isLocked, setIsLocked] = useState(outcomeParam === "locked");
 
-  const [cardInput, setCardInput] = useState(BUSINESS_INVITE_DEMO.ghanaCardOnRecord);
+  const [birthInput, setBirthInput] = useState(displayDateOfBirth(BUSINESS_INVITE_DEMO.dateOfBirthOnRecord));
   const [mismatchCount, setMismatchCount] = useState(0);
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -113,23 +117,22 @@ function BusinessActivateContent() {
     return () => window.clearTimeout(t);
   }, [step, countdown]);
 
+  const inviteLimit = companyUserFor({ id: BUSINESS_INVITE_DEMO.actorId })?.limit ?? 0;
   const inviteAccounts = useMemo(() => {
     return BUSINESS_INVITE_DEMO.accountIds
       .map((id) => findAccount(id))
       .filter((a): a is NonNullable<typeof a> => Boolean(a));
   }, []);
 
-  function handleGhanaCardSubmit(e: React.FormEvent) {
+  function handleIdentitySubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isCompleteGhanaCard(cardInput)) {
-      setErrorMsg("Enter all ten digits of your Ghana Card number: nine, then the check digit.");
+    const dateOfBirth = parseDateOfBirth(birthInput);
+    if (!dateOfBirth) {
+      setErrorMsg("Enter a real date, day first.");
       return;
     }
 
-    const cleanEntered = cardInput.replace(/\D/g, "");
-    const cleanExpected = BUSINESS_INVITE_DEMO.ghanaCardOnRecord.replace(/\D/g, "");
-
-    if (cleanEntered !== cleanExpected) {
+    if (dateOfBirth !== BUSINESS_INVITE_DEMO.dateOfBirthOnRecord) {
       const nextMisses = mismatchCount + 1;
       setMismatchCount(nextMisses);
       if (nextMisses >= INVITE_MAX_ATTEMPTS) {
@@ -137,7 +140,7 @@ function BusinessActivateContent() {
         setIsLocked(true);
         return;
       }
-      setErrorMsg("This number doesn't match the one GCB Bank holds for you. Check it and try again.");
+      setErrorMsg("This doesn't match the date GCB holds for you. Check it and try again.");
       return;
     }
 
@@ -279,8 +282,8 @@ function BusinessActivateContent() {
       setStep("otp");
     } else if (step === "otp") {
       setDigits(Array(OTP_LENGTH).fill(""));
-      setStep("ghana_card");
-    } else if (step === "ghana_card") {
+      setStep("identity");
+    } else if (step === "identity") {
       setStep("invite");
     } else {
       router.push("/login?type=business");
@@ -348,7 +351,7 @@ function BusinessActivateContent() {
       title={
         step === "invite"
           ? "Accept Your Invitation"
-          : step === "ghana_card"
+          : step === "identity"
           ? "Confirm Your Identity"
           : step === "otp"
           ? "Confirm Your Code"
@@ -361,8 +364,8 @@ function BusinessActivateContent() {
       description={
         step === "invite" ? (
           `GCB Bank has set you up on ${BUSINESS_INVITE_DEMO.companyName}'s business banking.`
-        ) : step === "ghana_card" ? (
-          "Enter the Ghana Card number GCB Bank holds for you."
+        ) : step === "identity" ? (
+          "Enter your date of birth, as your company gave it to GCB."
         ) : step === "otp" ? (
           <>
             A 6-digit code has been sent to {maskMobile(BUSINESS_INVITE_DEMO.mobile)}.
@@ -400,6 +403,13 @@ function BusinessActivateContent() {
               </span>
             </div>
 
+            {inviteLimit > 0 && (
+              <div className="flex flex-col gap-1">
+                <span className="text-caption text-muted-foreground">Your Limit for One Payment</span>
+                <span className="tabular text-body text-foreground">{formatMoney(inviteLimit, "GHS", true)}</span>
+              </div>
+            )}
+
             <div className="flex flex-col gap-2">
               <span className="text-caption text-muted-foreground">Accounts You Can See</span>
               <div className="flex flex-col gap-1.5">
@@ -418,32 +428,35 @@ function BusinessActivateContent() {
           <Button
             size="md"
             className="w-full"
-            onClick={() => setStep("ghana_card")}
+            onClick={() => setStep("identity")}
           >
             Accept Invitation
           </Button>
         </div>
       )}
 
-      {/* STEP 2: Confirm Identity via Ghana Card */}
-      {step === "ghana_card" && (
-        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
-          <Field label="Ghana Card Number" htmlFor="ghanaCard">
-            <GhanaCardInput
-              id="ghanaCard"
-              value={cardInput}
-              onValueChange={setCardInput}
-              required
+      {/* STEP 2: Confirm identity by date of birth */}
+      {step === "identity" && (
+        <form onSubmit={handleIdentitySubmit} className="flex flex-col gap-4">
+          <Field label="Date of Birth" htmlFor="dateOfBirth" error={errorMsg}>
+            <DateOfBirthInput
+              id="dateOfBirth"
+              value={birthInput}
+              onValueChange={(v) => {
+                setBirthInput(v);
+                if (errorMsg) setErrorMsg("");
+              }}
+              aria-invalid={Boolean(errorMsg)}
+              autoFocus
             />
           </Field>
-
-          <AlertToast when={errorMsg} message={errorMsg} />
 
           <Button
             type="submit"
             variant="default"
             size="md"
             loading={busy}
+            disabled={!isCompleteDateOfBirth(birthInput)}
             className="mt-2 w-full"
           >
             Continue

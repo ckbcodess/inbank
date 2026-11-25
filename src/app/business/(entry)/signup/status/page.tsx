@@ -353,7 +353,7 @@ function StatusContent() {
               })}
             </ul>
             <p className="text-caption text-muted-foreground">
-              Each person gets their username by SMS and a link to set their password by email.
+              Each person gets a link by email and a code by text message to set their password.
             </p>
           </section>
         )}

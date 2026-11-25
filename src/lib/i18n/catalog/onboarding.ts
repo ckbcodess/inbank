@@ -385,7 +385,6 @@ const onboarding: Entry[] = [
   ["Link expired", "Lien expiré", "Enlace caducado", "链接已过期"],
   ["Details sent", "Identifiants envoyés", "Datos enviados", "信息已发送"],
   ["Resend", "Renvoyer", "Reenviar", "重新发送"],
-  ["Each person gets their username by SMS and a link to set their password by email.", "Chaque personne reçoit son identifiant par SMS et un lien par e-mail pour définir son mot de passe.", "Cada persona recibe su nombre de usuario por SMS y un enlace por correo electrónico para definir su contraseña.", "每人将通过短信收到用户名，并通过邮件收到设置密码的链接。"],
   ["Progress", "Avancement", "Progreso", "进度"],
   ["(done)", "(terminé)", "(hecho)", "（已完成）"],
   ["(now)", "(en cours)", "(en curso)", "（进行中）"],
@@ -403,7 +402,6 @@ const onboarding: Entry[] = [
   ["Confirming by phone", "Confirmation par téléphone", "Confirmación por teléfono", "电话确认"],
   ["We'll call {0} to confirm. We will never ask for a code or password.", "Nous appellerons le {0} pour confirmer. Nous ne vous demanderons jamais de code ni de mot de passe.", "Llamaremos al {0} para confirmar. Nunca le pediremos un código ni una contraseña.", "我们将致电 {0} 确认。我们绝不会索要验证码或密码。"],
   ["Approved, login details sent", "Approuvée, identifiants envoyés", "Aprobada, datos de acceso enviados", "已批准，登录信息已发送"],
-  ["Each user gets their username by SMS and a link to set their password by email.", "Chaque utilisateur reçoit son identifiant par SMS et un lien par e-mail pour définir son mot de passe.", "Cada usuario recibe su nombre de usuario por SMS y un enlace por correo electrónico para definir su contraseña.", "每位用户将通过短信收到用户名，并通过邮件收到设置密码的链接。"],
 
   // ── Sole proprietor self-onboarding ──
   ["We Couldn't Verify Your Ghana Card", "Impossible de vérifier votre carte Ghana", "No pudimos verificar su Ghana Card", "未能验证您的加纳身份证"],

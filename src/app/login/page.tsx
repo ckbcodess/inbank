@@ -4,7 +4,7 @@ import { AlertToast } from "@/components/ui/alert-toast";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, User } from "@/components/ui/icons";
+import { Building2, Eye, EyeOff, User } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { KeyboardDock } from "@/components/ui/keyboard-dock";
 import { Input } from "@/components/ui/input";
@@ -111,16 +111,25 @@ function LoginForm() {
       width="compact"
       footer={
         <div className="flex flex-col items-center gap-2 text-center">
-          {/* Personal is the front door. Only a business login (reached by link) offers the way back. */}
-          {bankingType === "business" && (
+          {/* Where business login is open, each door links to the other. */}
+          {(bankingType === "business" || BUSINESS_SIGN_IN_OPEN) && (
             <button
               type="button"
-              data-tour="entry-personal"
-              onClick={() => handleTypeChange("personal")}
+              data-tour={bankingType === "business" ? "entry-personal" : "entry-business"}
+              onClick={() => handleTypeChange(bankingType === "business" ? "personal" : "business")}
               className="inline-flex items-center gap-2 text-caption font-medium text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
             >
-              <User size={13.5} className="shrink-0" />
-              <span>Switch to Personal Banking</span>
+              {bankingType === "business" ? (
+                <>
+                  <User size={13.5} className="shrink-0" />
+                  <span>Switch to Personal Banking</span>
+                </>
+              ) : (
+                <>
+                  <Building2 size={13.5} className="shrink-0" />
+                  <span>Switch to Business Banking</span>
+                </>
+              )}
             </button>
           )}
         </div>

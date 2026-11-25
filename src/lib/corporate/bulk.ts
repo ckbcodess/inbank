@@ -15,6 +15,7 @@
  */
 
 import { PAYMENT_METHODS } from "@/components/payments/flows/shared";
+import { csvRows, splitCsvRow } from "../csv";
 import { recordTransaction, type Transaction } from "../mock-data";
 import { roundMoney, sumMoney } from "../money";
 import { APPROVAL_QUEUE, type ApprovalItem } from "./approvals";
@@ -111,29 +112,9 @@ Ama Darko,Absa Bank Ghana Limited,0119223477120,ACH,3800.00,October salary
 Yaw Mensah,Ecobank Ghana Limited,1441009873311,GIP,4100.00,October salary
 `;
 
-function splitCsvRow(row: string): string[] {
-  const out: string[] = [];
-  let cur = "";
-  let quoted = false;
-  for (let i = 0; i < row.length; i++) {
-    const ch = row[i];
-    if (ch === '"') {
-      if (quoted && row[i + 1] === '"') {
-        cur += '"';
-        i++;
-      } else quoted = !quoted;
-    } else if (ch === "," && !quoted) {
-      out.push(cur);
-      cur = "";
-    } else cur += ch;
-  }
-  out.push(cur);
-  return out.map((c) => c.trim());
-}
-
 /** Reads a CSV in the template's columns. Returns the lines, or why the file can't be read at all. */
 export function parseCsv(text: string): { lines: BulkLine[] } | { problem: string } {
-  const rows = text.replace(/\r\n?/g, "\n").split("\n").filter((r) => r.trim() !== "");
+  const rows = csvRows(text);
   if (rows.length === 0) return { problem: "The file is empty." };
   const header = splitCsvRow(rows[0]).map((h) => h.toLowerCase());
   const col = (name: string) => header.indexOf(name);

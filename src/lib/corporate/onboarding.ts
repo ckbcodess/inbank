@@ -37,7 +37,8 @@ export const BUSINESS_INVITE_DEMO = {
   companyName: "Adinkra Textiles Ltd",
   inviteeName: "Ransford Gyasi",
   role: "Inputter" as BusinessUserRole,
-  ghanaCardOnRecord: "GHA-334455667-8",
+  /** From the signed request letter, or the mandate for a signatory. */
+  dateOfBirthOnRecord: "1988-03-21",
   mobile: "+233244300411",
   actorId: "u-dual",
   accountIds: ["acc-001", "acc-002"],

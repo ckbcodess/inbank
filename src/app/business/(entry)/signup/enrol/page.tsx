@@ -8,60 +8,67 @@
  * its signatories come from the bank's records, the applicant proves their number with a code, and we write the
  * letter. They print it on their letterhead, sign it and upload it, or send it by email, post or branch and the
  * application waits for it. Anyone at the company can apply; someone who isn't a signatory (a company secretary)
- * gives their own details, and the signatories approve by signing the letter. Model and steps:
- * `lib/corporate-enrolment.ts`.
+ * gives their own details, and the signatories approve by signing the letter.
+ *
+ * The signatories are checked before anything is filled in: a letter signed by people who no longer sign is the
+ * commonest reason an application comes back. Model, steps and sources: `lib/corporate-enrolment.ts`.
  */
 
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Building2, CheckCircle2, FileText, Mail, Plus, SearchX, UserPlus, X } from "@/components/ui/icons";
+import { Building2, CheckCircle2, FileText, Mail, SearchX, Users } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import FindBranchDialog from "@/components/corporate/FindBranchDialog";
 import LetterUpload, { type AttachedFile } from "@/components/corporate/onboarding/LetterUpload";
+import PeopleStep, { accessLine, type PeopleView } from "@/components/corporate/onboarding/PeopleStep";
 import { openRequestLetter } from "@/components/corporate/onboarding/request-letter";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field } from "@/components/ui/field";
-import { GhanaCardInput } from "@/components/ui/ghana-card-input";
 import { Input } from "@/components/ui/input";
 import { AppLoader } from "@/components/ui/loader";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { maskMobile } from "@/lib/auth-shared";
 import {
   CORPORATE_ROLE_LINE,
+  CORPORATE_SERVICES,
+  DEFAULT_USER_LIMIT,
   ENROLMENT_DEMO_ACCOUNTS,
   ENROLMENT_PROGRESS_STEPS,
+  cleanAccountNumber,
   findCorporateEnrolmentScenario,
   lastFour,
+  limitsStall,
   lookupCorporateAccount,
   newEnrolmentReference,
   NON_SIGNATORY_DEMO,
   reviewerFor,
-  rolesFor,
   signatoryLabel,
-  usersReady,
+  TERMS_URL,
   type CompanyApplicant,
-  type CorporateAppRole,
   type CorporateCompanyRecord,
   type CorporateEnrolmentOutcome,
   type CorporateEnrolmentStep,
   type CorporateUserDraft,
 } from "@/lib/corporate-enrolment";
 import { submitEnrolment } from "@/lib/enrolment-store";
-import { isCompleteGhanaCard } from "@/lib/ghana-card";
-import { isCompleteGhanaMobile } from "@/lib/phone";
+import { formatMoney } from "@/lib/mock-data";
+import { isCompleteGhanaMobile, toNationalDigits } from "@/lib/phone";
 
 const RESEND_SECONDS = 30;
 const DEMO_REFERENCE = "ENR-2026-0814";
 
 type Step = CorporateEnrolmentStep;
 
-/** A signatory picked by their place on the mandate, or someone else at the company. */
-type ApplicantChoice = number | "other";
+/** Someone who signs for the company, or anyone else who works there. */
+type ApplicantChoice = "signatory" | "other";
 
-/** Signatories start as Authorisers: they already approve for the company on the mandate. */
+/**
+ * Signatories start as Authorisers, because they already approve for the company on the mandate, at the bank's
+ * default limit. Their accounts are filled in once the company has chosen which ones to put online.
+ */
 function usersFromMandate(company: CorporateCompanyRecord): CorporateUserDraft[] {
   return company.signatories.map((s, i) => ({
     id: `u-mandate-${i + 1}`,
@@ -71,6 +78,9 @@ function usersFromMandate(company: CorporateCompanyRecord): CorporateUserDraft[]
     role: "Authoriser",
     designation: s.designation,
     isFromMandate: true,
+    limit: DEFAULT_USER_LIMIT,
+    accountIds: [],
+    services: CORPORATE_SERVICES.map((c) => c.id),
   }));
 }
 
@@ -92,6 +102,7 @@ function CorporateEnrolmentFlow() {
 
   // Applicant and code
   const [applicantChoice, setApplicantChoice] = useState<ApplicantChoice | null>(null);
+  const [signatoryMobile, setSignatoryMobile] = useState("");
   const [otherName, setOtherName] = useState("");
   const [otherDesignation, setOtherDesignation] = useState("");
   const [otherMobile, setOtherMobile] = useState("");
@@ -101,13 +112,10 @@ function CorporateEnrolmentFlow() {
 
   // Users
   const [users, setUsers] = useState<CorporateUserDraft[]>([]);
-  const [adding, setAdding] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newMobile, setNewMobile] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [newGhanaCard, setNewGhanaCard] = useState("");
-  const [newRole, setNewRole] = useState<CorporateAppRole>("Inputter");
-  const [newDesignation, setNewDesignation] = useState("");
+  const [peopleView, setPeopleView] = useState<PeopleView>({ kind: "list" });
+
+  // Whether the people on the mandate still sign
+  const [stillSign, setStillSign] = useState<"yes" | "no" | null>(null);
 
   // Letter
   const [reference, setReference] = useState("");
@@ -125,9 +133,12 @@ function CorporateEnrolmentFlow() {
     isCompleteGhanaMobile(otherMobile);
 
   let applicant: CompanyApplicant | null = null;
-  if (company && typeof applicantChoice === "number") {
-    const s = company.signatories[applicantChoice];
-    applicant = { name: s.name, mobile: s.mobile, email: s.email, ghanaCard: s.ghanaCard, designation: s.designation, isSignatory: true };
+  if (company && applicantChoice === "signatory") {
+    // Found by the number they hold on the mandate, never picked from a list: the names stay hidden until the code.
+    const s = company.signatories.find((x) => toNationalDigits(x.mobile) === toNationalDigits(signatoryMobile));
+    if (s) {
+      applicant = { name: s.name, mobile: s.mobile, email: s.email, designation: s.designation, isSignatory: true };
+    }
   } else if (applicantChoice === "other") {
     applicant = {
       name: otherName.trim(),
@@ -138,16 +149,40 @@ function CorporateEnrolmentFlow() {
     };
   }
   const accounts = company ? company.accounts.filter((a) => selectedAccountIds.includes(a.id)) : [];
-  const usersBlock = usersReady(users);
+  const stall = limitsStall(users);
   // Someone who isn't a signatory isn't a user yet; offer to add them, with what they already typed.
-  const canAddSelf = applicant !== null && !applicant.isSignatory && !users.some((u) => u.mobile === applicant.mobile);
+  const self =
+    applicant && !applicant.isSignatory && !users.some((u) => u.mobile === applicant.mobile)
+      ? { name: applicant.name, email: applicant.email, mobile: applicant.mobile, designation: applicant.designation }
+      : null;
 
-  const loadCompany = useCallback((record: CorporateCompanyRecord) => {
+  /** Starts with the account they entered. Others are theirs to add (the bank shows only what's on the form). */
+  const loadCompany = useCallback((record: CorporateCompanyRecord, number: string) => {
+    const entered = record.accounts.find((a) => a.number === cleanAccountNumber(number)) ?? record.accounts[0];
     setCompany(record);
-    setSelectedAccountIds(record.accounts.map((a) => a.id));
+    setSelectedAccountIds([entered.id]);
     setUsers(usersFromMandate(record));
     setApplicantChoice(null);
+    setSignatoryMobile(record.signatories[0]?.mobile ?? "");
+    setStillSign(null);
+    setPeopleView({ kind: "list" });
   }, []);
+
+  /** Changing who can do what makes a letter that was already signed out of date, so it has to be uploaded again. */
+  function changeUsers(next: CorporateUserDraft[] | ((prev: CorporateUserDraft[]) => CorporateUserDraft[])) {
+    setUsers(next);
+    setLetter(null);
+  }
+
+  /** Puts the chosen accounts on everyone. Someone already narrowed to fewer keeps those that are still chosen. */
+  function applyAccounts(ids: string[]) {
+    changeUsers((prev) =>
+      prev.map((u) => {
+        const kept = u.accountIds.filter((id) => ids.includes(id));
+        return { ...u, accountIds: kept.length > 0 ? kept : ids };
+      }),
+    );
+  }
 
   // `?scenario=` opens the flow on a given screen (the Demo hub links with it).
   const appliedScenario = useRef<string | null>(null);
@@ -159,10 +194,19 @@ function CorporateEnrolmentFlow() {
 
     setBusy(false);
     setErrorMsg("");
-    setAdding(false);
+    setPeopleView({ kind: "list" });
     setLetter(null);
     setSendingLater(false);
 
+    if (scenario.outcome === "mandate-outdated") {
+      const record = lookupCorporateAccount(ENROLMENT_DEMO_ACCOUNTS.default);
+      if (record) loadCompany(record, ENROLMENT_DEMO_ACCOUNTS.default);
+      setApplicantChoice("signatory");
+      setStillSign("no");
+      setStep("mandate");
+      setOutcome("mandate-outdated");
+      return;
+    }
     if (scenario.outcome) {
       const number =
         scenario.outcome === "not-found" ? ENROLMENT_DEMO_ACCOUNTS.notFound : ENROLMENT_DEMO_ACCOUNTS.alreadyEnrolled;
@@ -181,19 +225,30 @@ function CorporateEnrolmentFlow() {
       setStep("account");
       return;
     }
-    loadCompany(record);
+    loadCompany(record, number);
     if (scenario.nonSignatory) {
       setApplicantChoice("other");
       setOtherName(NON_SIGNATORY_DEMO.name);
       setOtherDesignation(NON_SIGNATORY_DEMO.designation ?? "");
       setOtherMobile(NON_SIGNATORY_DEMO.mobile);
       setOtherEmail(NON_SIGNATORY_DEMO.email);
-    } else if (scenario.step !== "applicant") {
-      setApplicantChoice(0);
+    } else {
+      setApplicantChoice("signatory");
+    }
+    if (scenario.step && ENROLMENT_PROGRESS_STEPS.indexOf(scenario.step) > ENROLMENT_PROGRESS_STEPS.indexOf("mandate")) {
+      setStillSign("yes");
     }
     if (scenario.step === "users" || scenario.step === "review" || scenario.step === "letter" || scenario.step === "submitted") {
+      const ids = record.accounts.map((a) => a.id);
+      setSelectedAccountIds(ids);
       // The demo company's third signatory is the Inputter, as on the invitation demo.
-      setUsers((prev) => prev.map((u, i) => (i === 2 ? { ...u, role: "Inputter" } : u)));
+      setUsers((prev) =>
+        prev.map((u, i) =>
+          i === 2
+            ? { ...u, role: "Inputter", limit: 1_000_000, accountIds: ids.slice(0, 2) }
+            : { ...u, limit: 1_000_000, accountIds: ids },
+        ),
+      );
     }
     if (scenario.step === "letter" || scenario.step === "submitted") setReference(DEMO_REFERENCE);
     if (scenario.step === "otp") {
@@ -233,12 +288,17 @@ function CorporateEnrolmentFlow() {
         setOutcome("already-enrolled");
         return;
       }
-      loadCompany(record);
+      loadCompany(record, accountNumber);
     }, 500);
   }
 
   function handleSendCode() {
     if (applicantChoice === null || (applicantChoice === "other" && !otherReady)) return;
+    if (!applicant) {
+      setErrorMsg("That isn't a signatory's number on our records. Check it, or choose Someone Else.");
+      return;
+    }
+    setErrorMsg("");
     setBusy(true);
     window.setTimeout(() => {
       setBusy(false);
@@ -261,59 +321,23 @@ function CorporateEnrolmentFlow() {
     setBusy(true);
     window.setTimeout(() => {
       setBusy(false);
-      setStep("users");
+      setStep("mandate");
     }, 600);
   }
 
-  const newUserError =
-    newMobile && !isCompleteGhanaMobile(newMobile)
-      ? "Enter a full Ghana mobile number."
-      : newGhanaCard && !isCompleteGhanaCard(newGhanaCard)
-      ? "Enter all ten digits of the Ghana Card number."
-      : "";
-  const newUserReady =
-    newName.trim() !== "" &&
-    newEmail.includes("@") &&
-    isCompleteGhanaMobile(newMobile) &&
-    isCompleteGhanaCard(newGhanaCard);
-
-  function resetNewUser() {
-    setNewName("");
-    setNewMobile("");
-    setNewEmail("");
-    setNewGhanaCard("");
-    setNewRole("Inputter");
-    setNewDesignation("");
-    setAdding(false);
-  }
-
-  /** Opens the add form with the applicant's own details, so they only add their Ghana Card number. */
-  function startAddingSelf() {
-    if (!applicant) return;
-    setNewName(applicant.name);
-    setNewMobile(applicant.mobile);
-    setNewEmail(applicant.email);
-    setNewDesignation(applicant.designation ?? "");
-    setAdding(true);
-  }
-
-  function handleAddUser(e: React.FormEvent) {
-    e.preventDefault();
-    if (!newUserReady) return;
-    setUsers((prev) => [
-      ...prev,
-      {
-        id: `u-added-${Date.now()}`,
-        name: newName.trim(),
-        email: newEmail.trim(),
-        mobile: newMobile,
-        ghanaCard: newGhanaCard,
-        role: newRole,
-        designation: newDesignation || undefined,
-        isFromMandate: false,
-      },
-    ]);
-    resetNewUser();
+  function handleMandateContinue() {
+    if (!company) return;
+    if (stillSign === "no") {
+      setOutcome("mandate-outdated");
+      return;
+    }
+    // One account leaves nothing to choose.
+    if (company.accounts.length === 1) {
+      applyAccounts(company.accounts.map((a) => a.id));
+      setStep("users");
+      return;
+    }
+    setStep("accounts");
   }
 
   function goToLetter() {
@@ -343,18 +367,31 @@ function CorporateEnrolmentFlow() {
   function handleBack() {
     setErrorMsg("");
     setBusy(false);
+    if (outcome === "mandate-outdated") {
+      setOutcome(null);
+      setStillSign(null);
+      return;
+    }
     if (outcome) {
       setOutcome(null);
       setCompany(null);
       setStep("account");
       return;
     }
+    if (step === "users" && peopleView.kind !== "list") {
+      setPeopleView(
+        peopleView.kind === "access" && peopleView.isNew
+          ? { kind: "details", draft: peopleView.draft }
+          : { kind: "list" },
+      );
+      return;
+    }
     if (step === "letter") setStep("review");
     else if (step === "review") setStep("users");
-    else if (step === "users") {
-      resetNewUser();
-      setStep("applicant");
-    } else if (step === "otp") setStep("applicant");
+    else if (step === "users") setStep(company && company.accounts.length > 1 ? "accounts" : "mandate");
+    else if (step === "accounts") setStep("mandate");
+    // The code has been used; going back starts again from who's applying.
+    else if (step === "mandate" || step === "otp") setStep("applicant");
     else if (step === "applicant") setStep("account");
     else router.push("/business/signup?type=company");
   }
@@ -428,6 +465,40 @@ function CorporateEnrolmentFlow() {
     );
   }
 
+  if (outcome === "mandate-outdated" && company) {
+    const manager = company.relationshipManager;
+    return (
+      <>
+        <AuthLayout
+          title="Update Who Signs First"
+          description="The bank checks the letter against the signatures on your mandate, so a change there comes first. Once it's updated, apply again and your new signatories will be here."
+          icon={Users}
+          align="center"
+          onBack={handleBack}
+          backLabel="Back to your company"
+          width="compact"
+        >
+          <div className="flex flex-col gap-6">
+            {manager && (
+              <ReviewGroup title="Your Relationship Manager">
+                <ReviewLine primary={manager.name} secondary={manager.phone} tabular />
+              </ReviewGroup>
+            )}
+            <div className="flex flex-col gap-3">
+              <Button size="md" className="w-full" onClick={() => setShowBranchDialog(true)}>
+                Find a Branch
+              </Button>
+              <Button variant="outline" size="md" className="w-full" onClick={() => router.push("/login?type=business")}>
+                Back to Login
+              </Button>
+            </div>
+          </div>
+        </AuthLayout>
+        <FindBranchDialog open={showBranchDialog} onOpenChange={setShowBranchDialog} />
+      </>
+    );
+  }
+
   if (step === "submitted" && company) {
     const reviewer = reviewerFor(company);
     const reviewerName = reviewer.type === "rm" ? `${reviewer.name}, your relationship manager,` : `Our ${reviewer.name}`;
@@ -481,8 +552,18 @@ function CorporateEnrolmentFlow() {
       ? "Who's Applying?"
       : step === "otp"
       ? "Confirm Your Code"
+      : step === "mandate"
+      ? "Check Your Company"
+      : step === "accounts"
+      ? "Choose Accounts"
       : step === "users"
-      ? "Who Will Use Internet Banking?"
+      ? peopleView.kind === "details"
+        ? "Add a Person"
+        : peopleView.kind === "access"
+        ? peopleView.draft.name
+        : peopleView.kind === "file"
+        ? "Add Many People"
+        : "Who Will Use Internet Banking?"
       : step === "review"
       ? "Check Your Application"
       : "Sign Your Letter";
@@ -491,15 +572,25 @@ function CorporateEnrolmentFlow() {
     step === "account" ? (
       "Enter any GCB account number your company holds."
     ) : step === "applicant" ? (
-      "Choose yourself if you sign for the company. Anyone else can apply too."
+      "Anyone at the company can apply. Your signatories approve by signing the letter."
     ) : step === "otp" ? (
       <>
         A 6-digit code has been sent to {maskMobile(applicant?.mobile ?? "")}.
         <br />
         Please enter the code below.
       </>
+    ) : step === "mandate" ? (
+      "This is what GCB holds for your company."
+    ) : step === "accounts" ? (
+      "Only the accounts you choose will be on internet banking."
     ) : step === "users" ? (
-      "Your signatories come from your mandate. Give each person a role."
+      peopleView.kind === "details"
+        ? "They'll confirm these details when they set up their login."
+        : peopleView.kind === "access"
+        ? CORPORATE_ROLE_LINE[peopleView.draft.role]
+        : peopleView.kind === "file"
+        ? "Fill in one row for each person. Each can prepare payments or view; only signatories review or authorise."
+        : "Your signatories come from your mandate. Choose what each person can do."
     ) : step === "review" ? (
       "This is what goes on your request letter."
     ) : (
@@ -536,50 +627,11 @@ function CorporateEnrolmentFlow() {
               />
             </Field>
 
-            {company && (
-              <div className="flex flex-col gap-3">
-                <h2 className="text-body font-medium text-foreground">{company.companyName}</h2>
-                <div className="flex flex-col gap-1">
-                  {company.accounts.map((acc) => {
-                    const checked = selectedAccountIds.includes(acc.id);
-                    return (
-                      <label
-                        key={acc.id}
-                        className="-mx-2 flex cursor-pointer items-center justify-between gap-3 rounded-xl px-2 py-2 transition-colors duration-hover hover:bg-muted/50"
-                      >
-                        <span className="flex min-w-0 items-center gap-3">
-                          <Checkbox
-                            checked={checked}
-                            onCheckedChange={(next) =>
-                              setSelectedAccountIds((prev) =>
-                                next ? [...prev, acc.id] : prev.filter((id) => id !== acc.id),
-                              )
-                            }
-                          />
-                          <span className="truncate text-body text-foreground">{acc.name}</span>
-                        </span>
-                        <span className="tabular shrink-0 text-body text-muted-foreground">{lastFour(acc.number)}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            {company && <p className="text-body font-medium text-foreground">{company.companyName}</p>}
 
-            <div className="flex flex-col gap-2">
-              <Button
-                type="submit"
-                size="md"
-                loading={busy}
-                disabled={Boolean(company) && selectedAccountIds.length === 0}
-                className="w-full"
-              >
-                {company ? "Continue" : "Find Company"}
-              </Button>
-              {company && selectedAccountIds.length === 0 && (
-                <p className="text-center text-caption text-muted-foreground">Choose at least one account.</p>
-              )}
-            </div>
+            <Button type="submit" size="md" loading={busy} className="w-full">
+              {company ? "Continue" : "Find Company"}
+            </Button>
           </form>
         )}
 
@@ -588,23 +640,38 @@ function CorporateEnrolmentFlow() {
         {step === "applicant" && company && (
           <div className="flex flex-col gap-6">
             <div role="radiogroup" aria-label="Who's applying" className="flex flex-col gap-2">
-              {company.signatories.map((s, i) => (
-                <ApplicantOption
-                  key={s.name}
-                  selected={applicantChoice === i}
-                  onSelect={() => setApplicantChoice(i)}
-                  primary={s.name}
-                  secondary={signatoryLabel(s)}
-                  meta={maskMobile(s.mobile)}
-                />
-              ))}
+              <ApplicantOption
+                selected={applicantChoice === "signatory"}
+                onSelect={() => {
+                  setApplicantChoice("signatory");
+                  setErrorMsg("");
+                }}
+                primary="I Sign for the Company"
+                secondary="You're on the mandate"
+              />
               <ApplicantOption
                 selected={applicantChoice === "other"}
-                onSelect={() => setApplicantChoice("other")}
+                onSelect={() => {
+                  setApplicantChoice("other");
+                  setErrorMsg("");
+                }}
                 primary="Someone Else"
                 secondary="Not on the mandate, such as a company secretary"
               />
             </div>
+
+            {applicantChoice === "signatory" && (
+              <Field label="Mobile Number GCB Holds for You" htmlFor="signatoryMobile" error={errorMsg}>
+                <PhoneInput
+                  id="signatoryMobile"
+                  value={signatoryMobile}
+                  onValueChange={(v) => {
+                    setSignatoryMobile(v);
+                    if (errorMsg) setErrorMsg("");
+                  }}
+                />
+              </Field>
+            )}
 
             {applicantChoice === "other" && (
               <div className="flex flex-col gap-4">
@@ -635,22 +702,18 @@ function CorporateEnrolmentFlow() {
               </div>
             )}
 
-            <div className="flex flex-col gap-2">
-              <Button
-                size="md"
-                loading={busy}
-                disabled={applicantChoice === null || (applicantChoice === "other" && !otherReady)}
-                onClick={handleSendCode}
-                className="w-full"
-              >
-                Send Code
-              </Button>
-              {applicantChoice === "other" && (
-                <p className="text-center text-caption text-muted-foreground">
-                  {`Your signatories approve the application by signing the letter we write (${company.signingRule}).`}
-                </p>
-              )}
-            </div>
+            <Button
+              size="md"
+              loading={busy}
+              disabled={
+                applicantChoice === null ||
+                (applicantChoice === "other" ? !otherReady : !isCompleteGhanaMobile(signatoryMobile))
+              }
+              onClick={handleSendCode}
+              className="w-full"
+            >
+              Send Code
+            </Button>
           </div>
         )}
 
@@ -720,138 +783,115 @@ function CorporateEnrolmentFlow() {
           </form>
         )}
 
-        {/* 4. Users and roles */}
-        {step === "users" && (
+        {/* 4. What the bank holds, and whether the people who sign have changed */}
+        {step === "mandate" && company && (
           <div className="flex flex-col gap-6">
-            <ul className="flex flex-col gap-1">
-              {users.map((u) => (
-                <li key={u.id} className="flex items-center justify-between gap-3 py-2">
-                  <div className="min-w-0">
-                    <p className="truncate text-body text-foreground">{u.name}</p>
-                    <p className="truncate text-caption text-muted-foreground">
-                      {u.isFromMandate ? u.designation : (u.designation ?? "Added by you")}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-1">
-                    <Select
-                      value={u.role}
-                      onValueChange={(v) =>
-                        v &&
-                        setUsers((prev) => prev.map((x) => (x.id === u.id ? { ...x, role: v as CorporateAppRole } : x)))
-                      }
-                    >
-                      <SelectTrigger aria-label={`Role for ${u.name}`} className="w-[132px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {rolesFor(Boolean(u.isFromMandate)).map((r) => (
-                          <SelectItem key={r} value={r}>
-                            {r}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-10"
-                      aria-label={`Remove ${u.name}`}
-                      onClick={() => setUsers((prev) => prev.filter((x) => x.id !== u.id))}
-                    >
-                      <X size={16} />
-                    </Button>
-                  </div>
-                </li>
+            <ReviewGroup title={company.companyName}>
+              <FactLine label="Set up as" value={company.structure} />
+              <FactLine label="Address" value={company.address} />
+              <FactLine label="Phone" value={company.phone} tabular />
+              <FactLine label="Email" value={company.email} />
+            </ReviewGroup>
+
+            <ReviewGroup title="Who Signs">
+              {company.signatories.map((s) => (
+                <ReviewLine key={s.name} primary={s.name} secondary={signatoryLabel(s)} />
               ))}
-            </ul>
+              <FactLine label="Signing rule" value={company.mandate} />
+            </ReviewGroup>
 
-            {adding ? (
-              <form onSubmit={handleAddUser} className="flex flex-col gap-4">
-                <h2 className="text-body font-medium text-foreground">Add a User</h2>
-                <Field label="Full Name" htmlFor="newName">
-                  <Input id="newName" autoComplete="off" value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus />
-                </Field>
-                <Field label="Mobile Number" htmlFor="newMobile">
-                  <PhoneInput id="newMobile" value={newMobile} onValueChange={setNewMobile} />
-                </Field>
-                <Field label="Email" htmlFor="newEmail">
-                  <Input id="newEmail" type="email" autoComplete="off" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
-                </Field>
-                <Field
-                  label="Ghana Card Number"
-                  htmlFor="newGhanaCard"
-                  error={newUserError}
-                >
-                  <GhanaCardInput id="newGhanaCard" value={newGhanaCard} onValueChange={setNewGhanaCard} />
-                </Field>
-                <Field label="Role" htmlFor="newRole">
-                  <Select value={newRole} onValueChange={(v) => v && setNewRole(v as CorporateAppRole)}>
-                    <SelectTrigger id="newRole" className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {rolesFor(false).map((r) => (
-                        <SelectItem key={r} value={r}>
-                          {r}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <div className="flex gap-3">
-                  <Button type="button" variant="outline" size="md" className="flex-1" onClick={resetNewUser}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" size="md" disabled={!newUserReady} className="flex-1">
-                    Add User
-                  </Button>
-                </div>
-              </form>
-            ) : (
-              <div className="flex flex-col gap-3">
-                {canAddSelf && (
-                  <Button variant="outline" size="md" className="w-full" onClick={startAddingSelf}>
-                    <UserPlus size={16} />
-                    Add Myself
-                  </Button>
-                )}
-                <Button variant="outline" size="md" className="w-full" onClick={() => setAdding(true)}>
-                  <Plus size={16} />
-                  Add a User
-                </Button>
-              </div>
-            )}
+            <div className="flex flex-col gap-3">
+              <h2 className="text-body font-medium text-foreground">Do these people still sign for the company?</h2>
+              <RadioGroup
+                aria-label="Do these people still sign for the company?"
+                options={[
+                  { value: "yes", label: "Yes" },
+                  { value: "no", label: "No" },
+                ]}
+                value={stillSign}
+                onChange={(v) => setStillSign(v)}
+              />
+            </div>
 
-            <dl className="flex flex-col gap-1 text-caption text-muted-foreground">
-              {(Object.keys(CORPORATE_ROLE_LINE) as CorporateAppRole[]).map((r) => (
-                <div key={r} className="flex gap-1">
-                  <dt className="text-foreground">{r}:</dt>
-                  <dd>{CORPORATE_ROLE_LINE[r]}</dd>
-                </div>
-              ))}
-            </dl>
-
-            {!adding && (
-              <div className="flex flex-col gap-2">
-                <Button
-                  size="md"
-                  disabled={Boolean(usersBlock)}
-                  onClick={() => setStep("review")}
-                  className="w-full"
-                >
-                  Continue
-                </Button>
-                {usersBlock && <p className="text-center text-caption text-muted-foreground">{usersBlock}</p>}
-              </div>
-            )}
+            <Button size="md" disabled={stillSign === null} onClick={handleMandateContinue} className="w-full">
+              Continue
+            </Button>
           </div>
         )}
 
-        {/* 5. Review */}
+        {/* 5. Accounts */}
+        {step === "accounts" && company && (
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-1">
+              {company.accounts.map((acc) => (
+                <label
+                  key={acc.id}
+                  className="-mx-2 flex cursor-pointer items-center justify-between gap-3 rounded-xl px-2 py-2 transition-colors duration-hover hover:bg-muted/50"
+                >
+                  <span className="flex min-w-0 items-center gap-3">
+                    <Checkbox
+                      checked={selectedAccountIds.includes(acc.id)}
+                      onCheckedChange={(next) =>
+                        setSelectedAccountIds((prev) =>
+                          next ? [...prev, acc.id] : prev.filter((id) => id !== acc.id),
+                        )
+                      }
+                    />
+                    <span className="truncate text-body text-foreground">{acc.name}</span>
+                  </span>
+                  <span className="tabular shrink-0 text-body text-muted-foreground">{lastFour(acc.number)}</span>
+                </label>
+              ))}
+            </div>
+            <div className="flex flex-col gap-2">
+              <Button
+                size="md"
+                disabled={selectedAccountIds.length === 0}
+                onClick={() => {
+                  applyAccounts(selectedAccountIds);
+                  setStep("users");
+                }}
+                className="w-full"
+              >
+                Continue
+              </Button>
+              {selectedAccountIds.length === 0 && (
+                <p className="text-center text-caption text-muted-foreground">Choose at least one account.</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 6. People: role, limit, what they can do and accounts for each */}
+        {step === "users" && (
+          <PeopleStep
+            view={peopleView}
+            onViewChange={setPeopleView}
+            users={users}
+            onUsersChange={changeUsers}
+            accounts={accounts}
+            self={self}
+            onContinue={() => setStep("review")}
+          />
+        )}
+
+        {/* 7. Review */}
         {step === "review" && company && (
           <div className="flex flex-col gap-6">
-            <ReviewGroup title="Company" onEdit={() => setStep("account")}>
-              <ReviewLine primary={company.companyName} />
+            {stall && (
+              <p className="text-body text-warning-text">
+                {`Payments above ${formatMoney(stall.release, "GHS", true)} can be prepared but not released. Raise an Authoriser's limit, or lower the Inputter's.`}{" "}
+                <button
+                  type="button"
+                  onClick={() => setStep("users")}
+                  className="cursor-pointer underline underline-offset-4"
+                >
+                  Change limits
+                </button>
+              </p>
+            )}
+
+            <ReviewGroup title={company.companyName} onEdit={() => setStep(company.accounts.length > 1 ? "accounts" : "mandate")}>
               {accounts.map((a) => (
                 <ReviewLine key={a.id} primary={a.name} secondary={lastFour(a.number)} tabular />
               ))}
@@ -866,9 +906,17 @@ function CorporateEnrolmentFlow() {
               )}
             </ReviewGroup>
 
-            <ReviewGroup title="Users" onEdit={() => setStep("users")}>
+            <ReviewGroup title="People" onEdit={() => setStep("users")}>
               {users.map((u) => (
-                <ReviewLine key={u.id} primary={u.name} secondary={u.role} />
+                <div key={u.id} className="py-1">
+                  <p className="truncate text-body text-foreground">{u.name}</p>
+                  <p className="tabular text-caption text-muted-foreground">
+                    {`${accessLine(u)} · ${accounts
+                      .filter((a) => u.accountIds.includes(a.id))
+                      .map((a) => lastFour(a.number))
+                      .join(", ")}`}
+                  </p>
+                </div>
               ))}
             </ReviewGroup>
 
@@ -878,7 +926,7 @@ function CorporateEnrolmentFlow() {
           </div>
         )}
 
-        {/* 6. The letter: we write it, they sign it */}
+        {/* 8. The letter: we write it, they sign it */}
         {step === "letter" && company && (
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3">
@@ -893,6 +941,17 @@ function CorporateEnrolmentFlow() {
               </Button>
               <p className="tabular text-center text-caption text-muted-foreground">
                 {`Your reference ${reference} is printed on it.`}
+              </p>
+              <p className="text-center text-body text-muted-foreground">
+                By signing, they accept the{" "}
+                <a
+                  href={TERMS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground underline underline-offset-4 hover:text-foreground/80"
+                >
+                  Terms &amp; Conditions
+                </a>
               </p>
             </div>
 
@@ -986,6 +1045,16 @@ function ReviewGroup({ title, onEdit, children }: { title: string; onEdit?: () =
       </div>
       <div className="flex flex-col gap-1">{children}</div>
     </section>
+  );
+}
+
+/** A label and its value, for facts too long to sit beside a name (an address, an email). */
+function FactLine({ label, value, tabular }: { label: string; value: string; tabular?: boolean }) {
+  return (
+    <div className="flex items-start justify-between gap-6 py-1 text-body">
+      <span className="shrink-0 text-muted-foreground">{label}</span>
+      <span className={`min-w-0 break-words text-right text-foreground ${tabular ? "tabular" : ""}`}>{value}</span>
+    </div>
   );
 }
 

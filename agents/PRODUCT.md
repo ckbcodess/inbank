@@ -279,12 +279,12 @@ to RPT-17; Trade monitoring is `[NOT IN v2]`.
   - **Corporate password reset:** the bank-approved method (OI-01), a lockout rule, then in-branch recovery.
   - **Onboarding and setup:**
     - Companies apply online at `/business/signup/enrol` `[DECIDED 2026-10-20]`, following the bank's real process
-      (Esther, 2026-10-16): account number → a signatory proves it with a code to their number on file → users and roles
-      (signatories pre-filled from the mandate) → review → we write the request letter, they sign it on letterhead and
+      (Esther, 2026-10-16): account number → who's applying, proved with a code → check the company and who signs → accounts → people
+      (role, limit, what they can do, accounts) → review → we write the request letter, they sign it on letterhead and
       upload it, or email, post or bring it in. Staff check signatures against Flexcube, call, then approve at
       `/admin/enrolments`; letters that arrive outside the app are recorded there, so branch capture (FR-ADM-05) and online
       share one queue. Status at `/business/signup/status`. On approval each user activates at `/business/activate`
-      (Ghana Card number match, OTP, password, PIN; 3 mismatches lock out to branch).
+      (date of birth match, OTP, password, PIN; 3 mismatches lock out to branch).
     - Sole proprietors self-onboard online at `/business/signup/sole-proprietor` (Ghana Card verification, liveness
       selfie, account discovery, OTP, password, PIN) and land directly on `/business/overview`.
   - **Prototype today:** sole proprietor payments send directly without an approval leg (`paysWithoutApproval`);
@@ -434,8 +434,9 @@ to RPT-17; Trade monitoring is `[NOT IN v2]`.
     signatures and approves everything. Branch staff record letters that arrive by email, post or at the counter.
   - Roles on the application: Inputter, Authoriser, Viewer (the bank's form says Initiator, Authorizer, Viewer). Only
     mandate signatories can be Authorisers (BRL-03); an application needs at least one Inputter and one Authoriser.
-  - Users added by the applicant give a Ghana Card number, because activation matches it; signatories' come from Flexcube.
-  - Invited users activate at `/business/activate` by confirming that Ghana Card number, an OTP, password and PIN.
+  - `[DECIDED 2026-11-25]` What each person gives follows the bank's current form (GCB/IBCAF/2014/038): name, email, mobile,
+    date of birth, role, limit, services and accounts. No Ghana Card. The signed letter carries all of it, as the contract.
+  - Invited users activate at `/business/activate` by confirming their date of birth, an OTP, password and PIN.
   - Sole proprietors self-onboard at `/business/signup/sole-proprietor` (Ghana Card, liveness selfie, account discovery
     without balances, OTP, password, PIN) and land on `/business/overview`. Passport is held (BRL-01).
   - Sole proprietor payments need no approval leg (`paysWithoutApproval`) and leave after the OTP.

@@ -1,54 +1,75 @@
 "use client";
 
 /**
- * The three things an administrator sets for a user: role, limit for one payment, and the accounts they can see.
- * Shared by Add User and Change Access, so both show the same rules in the same place: roles a person can't hold
- * aren't offered (reviewers and authorisers must be on the mandate), the limit field names the bank's ceiling, and
- * only the accounts the bank enabled are listed.
+ * What a person can do for a company: role, limit for one payment, and the accounts they can see. Shared by Add User
+ * and Change Access in Administration and by the company's application (/business/signup/enrol), so all show the same
+ * rules in the same place: roles a person can't hold aren't offered (reviewers and authorisers must be on the
+ * mandate) and only the accounts enabled for the company are listed.
+ *
+ * Administration passes nothing and gets the bank's ceilings (`BANK_SETUP`). The application has no ceilings yet, so
+ * it passes its own roles, accounts and placeholder, and adds what else the form asks through `children`.
  */
 
+import type { ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-  BANK_SETUP,
-  roleHasLimit,
-  roleNeedsMandate,
-  type CompanyRole,
-  type UserDraft,
-} from "@/lib/corporate/controls";
+import { BANK_SETUP, roleHasLimit, roleNeedsMandate, type CompanyRole } from "@/lib/corporate/controls";
 import { findAccount, formatMoney } from "@/lib/mock-data";
 
-const ROLES: CompanyRole[] = ["Inputter", "Reviewer", "Authoriser", "Viewer", "Administrator"];
+const ROLES: readonly CompanyRole[] = ["Inputter", "Reviewer", "Authoriser", "Viewer", "Administrator"];
 
-export default function UserAccessFields({
+export interface AccessDraft {
+  role: CompanyRole;
+  limit: number;
+  accountIds: string[];
+  onMandate: boolean;
+}
+
+export interface AccessAccount {
+  id: string;
+  name: string;
+  number: string;
+}
+
+function bankEnabledAccounts(): AccessAccount[] {
+  return BANK_SETUP.enabledAccountIds.flatMap((id) => findAccount(id) ?? []);
+}
+
+export default function UserAccessFields<T extends AccessDraft>({
   draft,
   onChange,
   limitError,
   accountsError,
+  roles = ROLES,
+  accounts = bankEnabledAccounts(),
+  limitPlaceholder = `Up to ${formatMoney(BANK_SETUP.maxUserLimit, "GHS", true)}`,
+  children,
 }: {
-  draft: UserDraft;
-  onChange: (next: UserDraft) => void;
+  draft: T;
+  onChange: (next: T) => void;
   /** Shown under the limit field (the ceiling, or a missing limit). */
   limitError?: string;
   /** Shown under the accounts (none chosen). */
   accountsError?: string;
+  roles?: readonly CompanyRole[];
+  accounts?: readonly AccessAccount[];
+  limitPlaceholder?: string;
+  /** Extra fields between the limit and the accounts. */
+  children?: ReactNode;
 }) {
-  const roles = ROLES.filter((r) => draft.onMandate || !roleNeedsMandate(r));
+  const allowed = roles.filter((r) => draft.onMandate || !roleNeedsMandate(r));
 
   return (
     <div className="flex flex-col gap-5">
-      <Field
-        label="Role"
-        htmlFor="user-role"
-      >
+      <Field label="Role" htmlFor="user-role">
         <Select value={draft.role} onValueChange={(v) => v && onChange({ ...draft, role: v as CompanyRole })}>
           <SelectTrigger id="user-role" className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {roles.map((r) => (
+            {allowed.map((r) => (
               <SelectItem key={r} value={r}>
                 {r}
               </SelectItem>
@@ -58,32 +79,29 @@ export default function UserAccessFields({
       </Field>
 
       {roleHasLimit(draft.role) && (
-        <Field
-          label="Limit for One Payment"
-          htmlFor="user-limit"
-          error={limitError}
-        >
+        <Field label="Limit for One Payment (GHS)" htmlFor="user-limit" error={limitError}>
           <Input
             id="user-limit"
-            inputMode="decimal"
+            inputMode="numeric"
             className="tabular"
-            placeholder={`Up to ${formatMoney(BANK_SETUP.maxUserLimit, "GHS", true)}`}
-            value={draft.limit ? String(draft.limit) : ""}
+            placeholder={limitPlaceholder}
+            value={draft.limit ? draft.limit.toLocaleString("en-GB") : ""}
             aria-invalid={Boolean(limitError)}
-            onChange={(e) => onChange({ ...draft, limit: Number(e.target.value.replace(/[^0-9.]/g, "")) || 0 })}
+            // Whole cedis: anything after a decimal point is dropped, so a pasted "10,000.00" stays ten thousand.
+            onChange={(e) => onChange({ ...draft, limit: Number(e.target.value.split(".")[0].replace(/\D/g, "")) })}
           />
         </Field>
       )}
 
+      {children}
+
       <Field label="Accounts" error={accountsError}>
         <div className="flex flex-col gap-1">
-          {BANK_SETUP.enabledAccountIds.map((id) => {
-            const account = findAccount(id);
-            if (!account) return null;
-            const checked = draft.accountIds.includes(id);
+          {accounts.map((account) => {
+            const checked = draft.accountIds.includes(account.id);
             return (
               <label
-                key={id}
+                key={account.id}
                 className="-mx-2 flex cursor-pointer items-center justify-between gap-3 rounded-xl px-2 py-2 transition-colors duration-hover hover:bg-muted/50"
               >
                 <span className="flex min-w-0 items-center gap-3">
@@ -92,7 +110,9 @@ export default function UserAccessFields({
                     onCheckedChange={(next) =>
                       onChange({
                         ...draft,
-                        accountIds: next ? [...draft.accountIds, id] : draft.accountIds.filter((a) => a !== id),
+                        accountIds: next
+                          ? [...draft.accountIds, account.id]
+                          : draft.accountIds.filter((a) => a !== account.id),
                       })
                     }
                   />

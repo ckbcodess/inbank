@@ -3,7 +3,7 @@
 /**
  * The Business view of the Demo hub: three journeys linking the new flows:
  *   Sole proprietor: 7 steps + 3 off-happy-path outcomes
- *   Company: business type chooser, online application (6 steps + outcomes), status page, staff queue
+ *   Company: business type chooser, online application (8 steps + outcomes), status page, staff queue
  *   Business users: 6 activation steps + expired + lockout
  */
 
@@ -25,7 +25,7 @@ const SOLE_PROPRIETOR_STEPS = [
 
 const BUSINESS_USER_STEPS = [
   { id: "invite", label: "Accept Invitation" },
-  { id: "ghana_card", label: "Confirm Identity" },
+  { id: "identity", label: "Confirm Identity" },
   { id: "otp", label: "Confirm Code" },
   { id: "password", label: "Create Password" },
   { id: "pin", label: "Set PIN" },

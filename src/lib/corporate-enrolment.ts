@@ -9,9 +9,16 @@
  * captured by branch staff land in the same queue (FR-ADM-05), so there is one store and one status.
  *
  *   Customer (/business/signup/enrol):
- *     Account -> Who's applying -> Code -> Users -> Review -> Letter -> Submitted
+ *     Account -> Who's applying -> Code -> Company and signatories -> Accounts -> People -> Review -> Letter
  *   Anyone at the company can apply, a signatory or not (designer, 2026-10-22). A company secretary gives their
  *   own details and proves their number with the code; the signatories approve by signing the letter.
+ *   Nothing the bank holds (signatories, accounts) shows before the code: a company's account number is on its
+ *   cheques and invoices, so knowing it proves nothing.
+ *
+ *   What we ask for follows the bank's current form, GCB/IBCAF/2014/038 (designer, 2026-11-25): each person's
+ *   name, email, date of birth and mobile, what they can do, their limit and their accounts. The signed letter is
+ *   the contract, so everything the bank sets up is on it. The form asks for no Ghana Card, so neither do we.
+ *
  *   Customer (/business/signup/status): reference -> code -> status, re-upload in place
  *   Staff (/admin/enrolments): signature check against Flexcube -> callback -> approve, return or decline
  */
@@ -22,6 +29,8 @@ export type CorporateEnrolmentStep =
   | "account"
   | "applicant"
   | "otp"
+  | "mandate"
+  | "accounts"
   | "users"
   | "review"
   | "letter"
@@ -32,12 +41,14 @@ export const ENROLMENT_PROGRESS_STEPS: CorporateEnrolmentStep[] = [
   "account",
   "applicant",
   "otp",
+  "mandate",
+  "accounts",
   "users",
   "review",
   "letter",
 ];
 
-export type CorporateEnrolmentOutcome = "not-found" | "already-enrolled";
+export type CorporateEnrolmentOutcome = "not-found" | "already-enrolled" | "mandate-outdated";
 
 export interface CorporateEnrolmentScenario {
   id: string;
@@ -55,13 +66,16 @@ export const CORPORATE_ENROLMENT_SCENARIOS: readonly CorporateEnrolmentScenario[
   { id: "applicant", label: "Who's applying", step: "applicant" },
   { id: "applicant-other", label: "Company secretary applying", step: "applicant", nonSignatory: true },
   { id: "otp", label: "Confirm code", step: "otp" },
-  { id: "users", label: "Users and roles", step: "users" },
+  { id: "mandate", label: "Check your company", step: "mandate" },
+  { id: "accounts", label: "Choose accounts", step: "accounts" },
+  { id: "users", label: "People and access", step: "users" },
   { id: "review", label: "Review", step: "review" },
   { id: "letter", label: "Sign the letter", step: "letter" },
   { id: "submitted", label: "Submitted", step: "submitted" },
   { id: "no-rm", label: "Company without an RM", step: "account", account: "1001884422000" },
   { id: "not-found", label: "Account not found", outcome: "not-found" },
   { id: "already-enrolled", label: "Already on internet banking", outcome: "already-enrolled" },
+  { id: "mandate-outdated", label: "Signatories have changed", outcome: "mandate-outdated" },
 ];
 
 export function findCorporateEnrolmentScenario(id: string): CorporateEnrolmentScenario | undefined {
@@ -90,14 +104,68 @@ export function rolesFor(isFromMandate: boolean): readonly CorporateAppRole[] {
   return isFromMandate ? CORPORATE_ROLES : CORPORATE_ROLES.filter((r) => r !== "Authoriser" && r !== "Reviewer");
 }
 
-/** A company needs someone to prepare payments and someone else to approve them (BRL-04). */
-export function usersReady(users: Pick<CorporateUserDraft, "role">[]): string {
+/** What a person may do, beyond seeing accounts. The bank's form also lists term deposits and trade inquiries. */
+export type CorporateService = "transfers" | "bulk";
+
+/**
+ * The services switched on today. Term deposits and trade inquiries are on the form but not active on the bank's
+ * platform (bank walkthrough, 2026-11-18), so they aren't offered.
+ */
+export const CORPORATE_SERVICES: readonly { id: CorporateService; label: string }[] = [
+  { id: "transfers", label: "Transfers and payments" },
+  { id: "bulk", label: "Bulk payments" },
+];
+
+export function serviceLabels(services: readonly CorporateService[]): string {
+  return CORPORATE_SERVICES.filter((s) => services.includes(s.id))
+    .map((s) => s.label)
+    .join(", ");
+}
+
+/** What the bank sets when the form's limit is left empty: GHS 10,000 for one payment (bank walkthrough, 2026-11-18). */
+export const DEFAULT_USER_LIMIT = 10_000;
+
+/** The bank's form this application replaces; its terms are the ones signatories accept. */
+export const BANK_FORM_NUMBER = "GCB/IBCAF/2014/038";
+
+/** Where the corporate terms are read. A placeholder until the bank hosts the document (see WORKING_LOG). */
+export const TERMS_URL = "https://www.gcbbank.com.gh";
+
+/** Viewers only see balances and history, so they carry no limit and no services. */
+export function roleActs(role: CorporateAppRole): boolean {
+  return role !== "Viewer";
+}
+
+/** What's missing from one person's access, or "". */
+export function accessProblem(user: Pick<CorporateUserDraft, "role" | "limit" | "accountIds" | "services">): string {
+  if (user.accountIds.length === 0) return "Choose at least one account.";
+  if (!roleActs(user.role)) return "";
+  if (user.services.length === 0) return "Choose at least one thing they can do.";
+  if (user.limit <= 0) return "Enter a limit for one payment.";
+  return "";
+}
+
+/** A company needs someone to prepare payments and someone else to approve them (BRL-04, and the bank's form). */
+export function usersReady(users: CorporateUserDraft[]): string {
   const hasInputter = users.some((u) => u.role === "Inputter");
   const hasAuthoriser = users.some((u) => u.role === "Authoriser");
   if (!hasInputter && !hasAuthoriser) return "Add at least one Inputter and one Authoriser.";
   if (!hasInputter) return "Add at least one Inputter, so someone can prepare payments.";
   if (!hasAuthoriser) return "Make at least one signatory an Authoriser, so payments can be approved.";
+  const incomplete = users.find((u) => accessProblem(u));
+  if (incomplete) return `Finish setting up ${incomplete.name}.`;
   return "";
+}
+
+/**
+ * Set when someone can prepare a larger payment than any authoriser can release. The bank would set it up as asked
+ * and those payments would stall, so the review says it before anyone signs.
+ */
+export function limitsStall(users: CorporateUserDraft[]): { prepare: number; release: number } | null {
+  const top = (role: CorporateAppRole) => Math.max(0, ...users.filter((u) => u.role === role).map((u) => u.limit));
+  const prepare = top("Inputter");
+  const release = top("Authoriser");
+  return prepare > release ? { prepare, release } : null;
 }
 
 /* ── Domain model ──────────────────────────────────────────────────────────── */
@@ -110,9 +178,16 @@ export interface CorporateUserDraft {
   role: CorporateAppRole;
   /** Signatories carry their designation from the mandate. */
   designation?: string;
-  ghanaCard?: string;
+  /** ISO date. A signatory's is on the bank's records; anyone else gives theirs. Activation checks it. */
+  dateOfBirth?: string;
   dateAppointed?: string;
   isFromMandate?: boolean;
+  /** The most they may prepare, pass on or release in one payment, in GHS. 0 for viewers. */
+  limit: number;
+  /** The accounts they can see and act on. */
+  accountIds: string[];
+  /** What they may do. Empty for viewers. */
+  services: CorporateService[];
   inviteStatus?: "pending" | "sent" | "used" | "expired";
   inviteToken?: string;
 }
@@ -131,7 +206,6 @@ export interface CompanyApplicant {
   name: string;
   mobile: string;
   email: string;
-  ghanaCard?: string;
   /** Their position at the company. A signatory's comes from the mandate. */
   designation?: string;
   /** False for someone applying who isn't on the mandate, such as a company secretary. */
@@ -256,7 +330,6 @@ export interface MandateSignatory {
   signingClass?: "A" | "B";
   email: string;
   mobile: string;
-  ghanaCard: string;
   specimenUrl?: string;
 }
 
@@ -264,6 +337,9 @@ export interface CorporateCompanyRecord {
   companyName: string;
   tin: string;
   address: string;
+  phone: string;
+  /** What the form calls the nature of business: sole proprietor, partnership or company. */
+  structure: string;
   /** The company's email address on file in Flexcube. */
   email: string;
   alreadyEnrolled?: boolean;
@@ -294,6 +370,8 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
     companyName: "Adinkra Textiles Ltd",
     tin: "C0012345678",
     address: "Plot 14 Industrial Area, North Kaneshie, Accra",
+    phone: "+233 30 222 4410",
+    structure: "Limited company",
     email: "info@adinkratextiles.com",
     mandate: "Both to sign",
     signingRule: "one Signatory A and one Signatory B",
@@ -309,9 +387,9 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
       { id: "acc-003", name: "USD Trade Account", number: "2200889100430", currency: "USD", type: "Foreign Currency", balance: 486220.15 },
     ],
     signatories: [
-      { name: "Yaw Oppong", designation: "Managing Director", signingClass: "A", email: "yaw.oppong@adinkratextiles.com", mobile: "0244123456", ghanaCard: "GHA-789012345-1", specimenUrl: "/signatures/specimen-yaw.svg" },
-      { name: "Esther Appiah", designation: "Finance Director", signingClass: "B", email: "esther.appiah@adinkratextiles.com", mobile: "0244300412", ghanaCard: "GHA-345678901-2", specimenUrl: "/signatures/specimen-esther.svg" },
-      { name: "Ransford Gyasi", designation: "Executive Director", signingClass: "A", email: "ransford.gyasi@adinkratextiles.com", mobile: "0244300411", ghanaCard: "GHA-334455667-8", specimenUrl: "/signatures/specimen-kwame.svg" },
+      { name: "Yaw Oppong", designation: "Managing Director", signingClass: "A", email: "yaw.oppong@adinkratextiles.com", mobile: "0244123456", specimenUrl: "/signatures/specimen-yaw.svg" },
+      { name: "Esther Appiah", designation: "Finance Director", signingClass: "B", email: "esther.appiah@adinkratextiles.com", mobile: "0244300412", specimenUrl: "/signatures/specimen-esther.svg" },
+      { name: "Ransford Gyasi", designation: "Executive Director", signingClass: "A", email: "ransford.gyasi@adinkratextiles.com", mobile: "0244300411", specimenUrl: "/signatures/specimen-kwame.svg" },
     ],
   },
   // One account, no RM: the Corporate Banking Team reviews it
@@ -319,6 +397,8 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
     companyName: "Volta River Logistics Ltd",
     tin: "C0098765432",
     address: "Harbour Road, Tema",
+    phone: "+233 30 320 1184",
+    structure: "Limited company",
     email: "operations@voltariver.com",
     mandate: "Either to sign",
     signingRule: "either signatory",
@@ -328,8 +408,8 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
       { id: "acc-volta-1", name: "Commercial Operating Account", number: "1001884422000", currency: "GHS", type: "Current", balance: 780400 },
     ],
     signatories: [
-      { name: "Kofi Mensah", designation: "Chief Executive Officer", email: "kofi.mensah@voltariver.com", mobile: "0201200314", ghanaCard: "GHA-901234567-3", specimenUrl: "/signatures/specimen-kofi.svg" },
-      { name: "Ama Serwaa", designation: "Chief Operating Officer", email: "ama.serwaa@voltariver.com", mobile: "0244889911", ghanaCard: "GHA-123456789-0", specimenUrl: "/signatures/specimen-ama.svg" },
+      { name: "Kofi Mensah", designation: "Chief Executive Officer", email: "kofi.mensah@voltariver.com", mobile: "0201200314", specimenUrl: "/signatures/specimen-kofi.svg" },
+      { name: "Ama Serwaa", designation: "Chief Operating Officer", email: "ama.serwaa@voltariver.com", mobile: "0244889911", specimenUrl: "/signatures/specimen-ama.svg" },
     ],
   },
   // Already on internet banking
@@ -337,6 +417,8 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
     companyName: "Gold Coast Agro Processing Ltd",
     tin: "C0044556677",
     address: "Spintex Road, Accra",
+    phone: "+233 30 281 0077",
+    structure: "Limited company",
     email: "admin@goldcoastagro.com",
     alreadyEnrolled: true,
     mandate: "Any two to sign",
@@ -351,7 +433,7 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
       { id: "acc-agro-1", name: "Primary Treasury", number: "1001992244110", currency: "GHS", type: "Current", balance: 3500000 },
     ],
     signatories: [
-      { name: "Nana Addo Dankwa", designation: "Chairman", email: "nana.addo@goldcoastagro.com", mobile: "0244400511", ghanaCard: "GHA-556677889-1", specimenUrl: "/signatures/specimen-nana.svg" },
+      { name: "Nana Addo Dankwa", designation: "Chairman", email: "nana.addo@goldcoastagro.com", mobile: "0244400511", specimenUrl: "/signatures/specimen-nana.svg" },
     ],
   },
 };

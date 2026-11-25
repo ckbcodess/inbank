@@ -48,7 +48,8 @@ import {
 } from "@/components/ui/select";
 import ReturnForClarificationDialog from "@/components/approvals/ReturnForClarificationDialog";
 import RejectionDialog from "@/components/approvals/RejectionDialog";
-import { CHANNEL_LABEL, type LetterChannel } from "@/lib/corporate-enrolment";
+import { CHANNEL_LABEL, lastFour, roleActs, serviceLabels, type LetterChannel } from "@/lib/corporate-enrolment";
+import { displayDateOfBirth } from "@/lib/date-of-birth";
 import {
   approveEnrolment,
   getEnrolment,
@@ -150,11 +151,8 @@ export default function AdminEnrolmentDetailPage({
     };
 
     const updated = updateEnrolment(application.reference, {
+      // Logging a call never approves: approval is its own decision, with the invitations and the audit entry.
       verificationCall: callLog,
-      status:
-        callOutcome === "verified" && allSignaturesMatch
-          ? "approved"
-          : application.status,
     });
     if (updated) {
       setApplication(updated);
@@ -410,6 +408,19 @@ export default function AdminEnrolmentDetailPage({
                   </div>
                   <p className="text-caption text-muted-foreground truncate">
                     {u.email} · {u.mobile}
+                    {u.dateOfBirth && ` · Born ${displayDateOfBirth(u.dateOfBirth)}`}
+                  </p>
+                  <p className="text-caption text-foreground tabular">
+                    {[
+                      roleActs(u.role) ? `Up to ${formatMoney(u.limit, "GHS", true)} for one payment` : "View only",
+                      serviceLabels(u.services),
+                      application.accounts
+                        .filter((a) => u.accountIds.includes(a.id))
+                        .map((a) => lastFour(a.number))
+                        .join(", "),
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
                   </p>
                 </div>
 
