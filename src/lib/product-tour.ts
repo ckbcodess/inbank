@@ -43,57 +43,59 @@ export interface TourStep {
 }
 
 /**
- * In the order a customer's eye moves: the account and what it can do, getting paid, paying, the panels
- * under the balance (one step for all six), the rest of the services, then who they are and their settings.
+ * Top of the screen to the bottom, so the tour only ever scrolls down: the top bar (who you are), the account and
+ * its QR code, Send & Pay, the panels under the balance (one step for all six), then the services at the foot of
+ * the page. Pinned controls (top bar, sidebar, phone tab bar) never move the page.
  */
 export const PRODUCT_TOUR_STEPS: TourStep[] = [
   {
+    id: "profile",
+    title: "Your Profile & Settings",
+    body: () =>
+      "Manage your personal details, app appearance, security preferences and notifications. You can also log out securely when you're done.",
+    side: "bottom",
+    sideNarrow: "bottom",
+  },
+  {
     id: "account",
-    title: "Account and options",
+    title: "Account & Options",
     body: ({ multiAccount }) =>
       multiAccount
-        ? "Switch between your accounts here, and the menu beside it copies your account number, shares your details or downloads a statement."
-        : "Open your account details here, and the menu beside it copies your account number, shares your details or downloads a statement.",
+        ? "Switch between your accounts and use the options menu to copy your account number, share your account details or download your statement."
+        : "Open your account details and use the options menu to copy your account number, share your account details or download your statement.",
     side: "right",
     sideNarrow: "bottom",
   },
   {
     id: "qr",
-    title: "Your QR code",
-    body: () => "Show it and someone can scan it to pay you.",
+    title: "Get Paid with Your QR Code",
+    body: () => "Share your QR code and let others scan to send money directly to your account.",
     side: "left",
     sideNarrow: "bottom",
   },
   {
     id: "send-pay",
-    title: "Send and pay",
+    title: "Send & Pay",
     body: () =>
-      "Send money, pay bills or top up from here. You review every payment before it goes, and confirm it with a one-time code.",
+      "Transfer money, pay bills and top up with ease. Review your transactions and securely confirm each payment with a one-time code.",
     side: "bottom",
     sideNarrow: "bottom",
   },
   {
     id: "glance",
-    title: "Your account at a glance",
+    title: "Your Account Overview",
     body: () =>
-      "Under your balance: your recent activity, the people and bills you pay again, your spending, your cards, what is coming up and picks for you.",
+      "Get a clear view of your finances, including recent transactions, frequent payments, spending insights, cards, upcoming payments and personalised offers.",
     side: "left",
     sideNarrow: "bottom",
   },
   {
     id: "more",
-    title: "More services",
-    body: () => "Lifestyle, Rates, EagleSave and your other services are in here.",
+    title: "Explore More Services",
+    body: () =>
+      "Access more banking and lifestyle services, check FX rates, explore EagleSave and discover other services available to you.",
     side: "right",
     sideNarrow: "top",
-  },
-  {
-    id: "profile",
-    title: "Your profile",
-    body: () =>
-      "Manage your profile, theme, security and alerts here. Log out when you're done.",
-    side: "bottom",
-    sideNarrow: "bottom",
   },
 ];
 

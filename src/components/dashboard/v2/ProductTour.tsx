@@ -12,7 +12,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverDescription, PopoverTitle } from "@/components/ui/popover";
 import {
@@ -97,18 +96,6 @@ function Spotlight({ target }: { target: HTMLElement }) {
   return createPortal(<div ref={ref} aria-hidden className="tour-dim fixed z-[45]" />, document.body);
 }
 
-/** Back to the top of the dashboard: the page may scroll in the window or in an inner pane, so both go up. */
-function scrollToTop() {
-  const from = findTourTarget("account");
-  for (let node = from?.parentElement ?? null; node; node = node.parentElement) {
-    const { overflowY } = getComputedStyle(node);
-    if ((overflowY === "auto" || overflowY === "scroll") && node.scrollHeight > node.clientHeight) {
-      node.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
 export function ProductTour(ctx: TourContext) {
   const active = useProductTour((s) => s.active);
 
@@ -159,12 +146,12 @@ function TourRun({ ctx }: { ctx: TourContext }) {
 
   const step = queue?.[index];
   const total = queue?.length ?? 0;
-  // After the last pointer the tour closes on a screen of its own, not a tooltip.
-  const closing = queue !== null && index >= total;
-
+  // The last step's button ends the tour; every other step moves on to the next pointer.
+  const isLast = queue !== null && index >= total - 1;
   const forward = useCallback(() => {
-    setIndex((i) => i + 1);
-  }, []);
+    if (isLast) finish();
+    else setIndex((i) => i + 1);
+  }, [isLast, finish]);
 
   // Find the step's control (waiting a moment for it to appear), bring it into view and dim the rest.
   useEffect(() => {
@@ -180,12 +167,14 @@ function TourRun({ ctx }: { ctx: TourContext }) {
         const pinned = isFixed(target) || CHROME_STEPS.has(step.id);
         // A block taller than the screen (the panels under the balance) is brought in from its top.
         const tall = target.getBoundingClientRect().height > window.innerHeight * 0.7;
-        if (pinned) scrollToTop();
-        else if (step.id === "glance" && narrow) {
+        // Pinned and page-chrome controls are always on screen, so the page stays put for them.
+        if (!pinned && step.id === "glance" && narrow) {
           // On a phone the tooltip hangs below the section, so scroll until its bottom edge has room under it.
           target.style.scrollMarginBottom = `${TOOLTIP_ROOM_PX}px`;
           target.scrollIntoView({ block: "end", behavior: "smooth", inline: "nearest" });
-        } else target.scrollIntoView({ block: tall ? "start" : "center", behavior: "smooth", inline: "nearest" });
+        } else if (!pinned) {
+          target.scrollIntoView({ block: tall ? "start" : "center", behavior: "smooth", inline: "nearest" });
+        }
         // The tooltip points at the whole block, as much of it as is on screen. On a wide screen the panels span the
         // page, so it opens to the left of them, where the sidebar is; on a phone it hangs below.
         const anchorEl = step.id === "glance" ? (narrow ? visiblePart(target) : leftEdgeOf(target)) : target;
@@ -205,11 +194,6 @@ function TourRun({ ctx }: { ctx: TourContext }) {
     };
   }, [step, forward, narrow]);
 
-  // The closing screen starts from the top of the dashboard too.
-  useEffect(() => {
-    if (closing) scrollToTop();
-  }, [closing]);
-
   // Esc ends the tour from anywhere on the page.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -218,32 +202,6 @@ function TourRun({ ctx }: { ctx: TourContext }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [finish]);
-
-  if (closing) {
-    return (
-      <Dialog open onOpenChange={(open) => !open && finish()}>
-        <DialogContent size="sm">
-          <DialogHeader>
-            <DialogTitle>{"You're all set"}</DialogTitle>
-          </DialogHeader>
-          <DialogBody>
-            <p className="text-body leading-relaxed text-foreground">
-              That is the whole tour. You know your way around now, so you can start using your account. Help is always
-              in the top bar if you need it.
-            </p>
-          </DialogBody>
-          <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => setIndex((i) => i - 1)}>
-              Back
-            </Button>
-            <Button type="button" onClick={finish}>
-              Finish
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
-  }
 
   if (!step) return null;
   // The dim stays up between steps (it follows the next control once it is found); only the tooltip waits for its step.
@@ -303,7 +261,7 @@ function TourRun({ ctx }: { ctx: TourContext }) {
               </Button>
             )}
             <Button ref={nextRef} type="button" onClick={forward}>
-              Next
+              {index === total - 1 ? "Finish Tour" : "Next"}
             </Button>
           </div>
         </div>
