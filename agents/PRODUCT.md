@@ -283,13 +283,13 @@ to RPT-17; Trade monitoring is `[NOT IN v2]`.
       (role, limit, what they can do, accounts) → review → we write the request letter, they sign it on letterhead and
       upload it, or email, post or bring it in. Staff check signatures against Flexcube, call, then approve at
       `/admin/enrolments`; letters that arrive outside the app are recorded there, so branch capture (FR-ADM-05) and online
-      share one queue. Status at `/business/signup/status`. On approval each user activates at `/business/activate`
+      share one queue. No tracking page: updates are emailed to the applicant and the company (2026-11-25). On approval each user activates at `/business/activate`
       (date of birth match, OTP, password, PIN; 3 mismatches lock out to branch).
-    - Sole proprietors self-onboard online at `/business/signup/sole-proprietor` (Ghana Card verification, liveness
-      selfie, account discovery, OTP, password, PIN) and land directly on `/business/overview`.
+    - Sole proprietors self-onboard online at `/business/signup/sole-proprietor` (account number and date of birth
+      match, OTP, then the business is shown, password, PIN; 3 mismatches lock out to branch), then log in.
   - **Prototype today:** sole proprietor payments send directly without an approval leg (`paysWithoutApproval`);
     company payments go review (above the threshold) then authorise, with comments and send-back (2026-10-22); bulk is the original stub;
-    online account opening is deleted (out of Phase 1); trade initiation and lifecycle
+    New to GCB opens the bank's account opening portal (COOS), as personal does (2026-11-25); trade initiation and lifecycle
     tracking `[NOT IN v2]`; user administration is Profile → Roles & Services → Limits → Approval matrices → Review `[CONFLICT v2]`.
 - **Admin portal:** transaction monitoring and exceptions, trade monitoring, customers, fee
   concessions, audit log.
@@ -437,10 +437,11 @@ to RPT-17; Trade monitoring is `[NOT IN v2]`.
   - `[DECIDED 2026-11-25]` What each person gives follows the bank's current form (GCB/IBCAF/2014/038): name, email, mobile,
     date of birth, role, limit, services and accounts. No Ghana Card. The signed letter carries all of it, as the contract.
   - Invited users activate at `/business/activate` by confirming their date of birth, an OTP, password and PIN.
-  - Sole proprietors self-onboard at `/business/signup/sole-proprietor` (Ghana Card, liveness selfie, account discovery
-    without balances, OTP, password, PIN) and land on `/business/overview`. Passport is held (BRL-01).
+  - `[DECIDED 2026-11-26]` Sole proprietors self-onboard at `/business/signup/sole-proprietor` with their account number
+    and the date of birth GCB holds, then an OTP. No Ghana Card or selfie. The business and its accounts (no balances)
+    show only after the code. Then password and PIN, then they log in.
   - Sole proprietor payments need no approval leg (`paysWithoutApproval`) and leave after the OTP.
-  - Online account opening is removed. `/activate` is personal activation only.
+  - Accounts are opened on the bank's COOS portal, never here. `/activate` is personal activation only.
 - `[DECIDED 2026-10-22]` **Company user administration is option C.** The bank sets ceilings at setup (enabled accounts,
   the highest per-person limit, the approval matrix, the daily limit). Inside them the company's administrator adds users
   and changes access. Widening access (new user, new role, higher limit, another account, reactivation) waits for an

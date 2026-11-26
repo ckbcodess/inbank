@@ -2,7 +2,7 @@
 
 /**
  * Business home, built like personal banking's (a greeting, the hero panel with the balance, panels rising on a
- * sheet) so the two read as one product, in business's smoke ash.
+ * sheet) so the two read as one product.
  *
  * The question a finance officer opens it with is "what can we spend, and what is waiting for me?". So the hero
  * holds one figure: available cash across the accounts this person can see, from the ledger, hidden until they

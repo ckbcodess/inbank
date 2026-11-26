@@ -21,7 +21,8 @@ import { findAccount, formatMoney } from "@/lib/mock-data";
 const ROLES: readonly CompanyRole[] = ["Inputter", "Reviewer", "Authoriser", "Viewer", "Administrator"];
 
 export interface AccessDraft {
-  role: CompanyRole;
+  /** Null only in the company's application, before a role is chosen. */
+  role: CompanyRole | null;
   limit: number;
   accountIds: string[];
   onMandate: boolean;
@@ -66,7 +67,7 @@ export default function UserAccessFields<T extends AccessDraft>({
       <Field label="Role" htmlFor="user-role">
         <Select value={draft.role} onValueChange={(v) => v && onChange({ ...draft, role: v as CompanyRole })}>
           <SelectTrigger id="user-role" className="w-full">
-            <SelectValue />
+            <SelectValue placeholder="Choose a role" />
           </SelectTrigger>
           <SelectContent>
             {allowed.map((r) => (
@@ -78,8 +79,8 @@ export default function UserAccessFields<T extends AccessDraft>({
         </Select>
       </Field>
 
-      {roleHasLimit(draft.role) && (
-        <Field label="Limit for One Payment (GHS)" htmlFor="user-limit" error={limitError}>
+      {draft.role && roleHasLimit(draft.role) && (
+        <Field label="Payment Limit (GHS)" htmlFor="user-limit" error={limitError}>
           <Input
             id="user-limit"
             inputMode="numeric"

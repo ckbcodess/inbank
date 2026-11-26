@@ -125,8 +125,8 @@ function DialogContent({
         data-fullscreen={size === "full" ? "true" : undefined}
         className={cn(
           size === "full"
-            ? "fixed inset-0 z-50 flex flex-col w-full h-full bg-modal text-foreground overflow-y-auto"
-            : "fixed top-1/2 left-1/2 z-50 flex flex-col w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl outline-none shadow-[var(--shadow-modal)] bg-modal text-foreground overflow-hidden max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 max-sm:max-h-[92dvh]",
+            ? "surface-raised fixed inset-0 z-50 flex flex-col w-full h-full bg-modal text-foreground overflow-y-auto"
+            : "surface-raised fixed top-1/2 left-1/2 z-50 flex flex-col w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl outline-none shadow-[var(--shadow-modal)] bg-modal text-foreground overflow-hidden max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 max-sm:max-h-[92dvh]",
           sizeClasses[size],
           className
         )}

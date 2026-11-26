@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>People List: 12 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--fld:#fcfcfc;--fbd:#ebebeb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--fld:#1c1c1c;--fbd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h2{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500;margin:0}
+  .pills,.seg{display:inline-flex;gap:4px}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .cap{font-size:12px;color:var(--mu);text-align:center;margin-bottom:8px}
+  .frame{width:460px;max-width:100%;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow)}
+  .frame.phone{width:375px}
+  .page{padding:28px;display:flex;flex-direction:column;gap:24px}.phone .page{padding:20px 12px}
+  .hd{text-align:center;display:flex;flex-direction:column;gap:8px}.hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu)}
+  .person{padding:6px 0}.person .w{color:#b45309;font-size:12px}[data-theme=dark] .person .w{color:#fbbf24}
+  .btn{height:40px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.sm{height:28px;padding:0 10px;font-size:13px;border-radius:8px}
+  .btn.am{background:var(--am);color:#111}.btn.out{border:1px solid var(--bd);background:var(--surf)}.btn.full{width:100%}.btn.dis{opacity:.4;pointer-events:none}
+  .btn.gh{color:var(--tx)}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--mu);font-size:13px}.link:hover{color:var(--tx)}
+  .link.tx{color:var(--tx)}
+  .zone{border:1px dashed var(--fbd);background:var(--fld);border-radius:10px}
+  .zone.drag{border-color:var(--tx);background:var(--amsoft)}
+  .ico{width:40px;height:40px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:#b7860b}[data-theme=dark] .ico{color:var(--am)}
+  .act{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}
+  .act:hover{background:var(--tile)}
+  .grow{flex:1;min-width:0}
+  .num{width:24px;height:24px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .file{display:flex;align-items:center;gap:12px}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.in{animation:in .2s ease}
+  svg{flex:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>People step: how the list of people reads</h1>
+    <div class="row" style="gap:12px"><div class="pills" id="pills"></div>
+    <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage" id="stage"></div>
+<style>
+  .warn{color:#b45309}[data-theme=dark] .warn{color:#fbbf24}
+  .av{width:36px;height:36px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .av.need{background:var(--amsoft);color:#b45309}[data-theme=dark] .av.need{color:#fbbf24}
+  .pr{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}
+  .pr:hover{background:var(--tile)}
+  .sh{display:flex;align-items:center;justify-content:space-between;min-height:24px;margin-bottom:4px}
+  .sec{display:flex;flex-direction:column}
+  .tbl{width:100%;border-collapse:collapse}.tbl th{font-size:12px;color:var(--mu);font-weight:400;text-align:left;padding:6px 4px;border-bottom:1px solid var(--bd)}
+  .tbl td{padding:10px 4px;border-bottom:1px solid var(--bd);vertical-align:top}.tbl tr:hover td{background:var(--tile)}
+  .sel{height:32px;border:1px solid var(--fbd);background:var(--fld);border-radius:8px;padding:0 8px;font:inherit;font-size:13px;color:inherit}
+  .sel.need{border-color:#f59e0b}
+  .tag{font-size:12px;color:var(--mu)}
+  .count{font-size:12px}
+  .phone .hide-ph{display:none}
+  .mark{width:20px;height:20px;border-radius:50%;border:1.5px solid #f59e0b;flex:none;display:flex;align-items:center;justify-content:center}
+  .mark.ok{border-color:#059669;background:#059669;color:#fff}
+</style>
+<script>
+const I={
+ tick:'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+ chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>',
+ user:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>',
+ plus:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'
+};
+const P=[
+ {n:'Yaw Oppong',sig:true,des:'Managing Director',role:'Inputter',lim:'GHS 10,000.00',acc:'•••• 7890, •••• 2231'},
+ {n:'Esther Appiah',sig:true,des:'Finance Director',role:null},
+ {n:'Ransford Gyasi',sig:true,des:'Executive Director',role:null},
+ {n:'Adwoa Mensah',sig:false,des:'',role:'Inputter',lim:'GHS 10,000.00',acc:'•••• 7890'},
+ {n:'Kojo Asamoah',sig:false,des:'',role:'Viewer',acc:'All accounts'},
+];
+const NOTES=[
+ ['Signatories, then the rest','Two short sections: Signatories (from your mandate) and Added by you. The signatory sections explain where those names came from, and only they can be Authorisers, so the split matches the rules.'],
+ ['Needs you first','People still to set up sit at the top with a count (2 to set up), each with an amber initials circle. Everyone done sits below in a quiet list. The page tells you what is left.'],
+ ['Initials and the full picture','Every row gets initials, and the second line carries the role, limit and accounts. The role is the first word, so a scan down the list reads Inputter, Viewer. Nothing new, just more said per row.'],
+ ['Grouped by role','Sections by role: Authorisers, Inputters, Viewers, and Not Set Up. Checking that someone can approve and someone can prepare is a glance at the headings, which is exactly what the Continue rule asks for.'],
+ ['A table on desktop','Name, Role, Limit and Accounts as columns, for companies with many people. On a phone it folds back to two-line rows. Rows still open the person.'],
+ ['Set the role in the list','Each row has its role picker inline, so ten people take ten taps, not ten screens. Tapping the name opens the full set-up for limit, services and accounts.'],
+ ['A checklist','Each person has a status mark: an empty amber ring until they are set up, a tick once they are. The list reads as a to-do that you work down, without moving anyone.'],
+ ['Summary on top','One line above the list counts what the company has so far: Authorisers, Inputters, Viewers, and how many are left to set up. The Continue rule is answered before you read a row.'],
+ ['Role on the right','Name and position on the left, the role and limit on the right, like a details row. Scanning the right edge gives the whole set-up; amber Set up marks who is left.'],
+ ['Set up in place','Tapping a person opens their set-up inside the list (role, limit, accounts) instead of a new screen, and Done folds them back. You never lose sight of everyone else.'],
+ ['Needs you first, with sources','Variation 2 with 1 folded in: To Set Up and Ready, and each signatory carries Signatory before their status, so where a name came from is still clear.'],
+ ['Progress, then the list','A thin progress bar with 2 of 5 set up, then one list with the people still to do on top. The count moves as you go, so the end is in sight.']
+];
+let V=1;
+const $=s=>document.querySelector(s);
+const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2);
+const line=p=>!p.role?'<span class="warn">Choose a role.</span>':p.role==='Viewer'?`<span class="mu">Viewer · ${p.acc}</span>`:`<span class="mu">${p.role}, up to ${p.lim}</span>`;
+const fullLine=p=>!p.role?'<span class="warn">Choose a role, limit and accounts</span>':p.role==='Viewer'?`<span class="mu">Viewer · ${p.acc}</span>`:`<span class="mu">${p.role} · ${p.lim} · ${p.acc}</span>`;
+const row=(p,sub=line(p),av=false)=>`<button class="pr">${av?`<span class="av ${p.role?'':'need'}">${ini(p.n)}</span>`:''}<span class="grow"><span style="display:block">${p.n}</span><span class="s12">${sub}</span></span><span class="mu">${I.chev}</span></button>`;
+function list(){switch(V){
+ case 1: return `<div class="sec"><div class="sh"><span class="md">Signatories</span><span class="tag">From your mandate</span></div>${P.filter(p=>p.sig).map(p=>row(p)).join('')}</div>
+   <div class="sec"><div class="sh"><span class="md">Added by You</span></div>${P.filter(p=>!p.sig).map(p=>row(p)).join('')}</div>`;
+ case 2: { const need=P.filter(p=>!p.role), done=P.filter(p=>p.role);
+   return `<div class="sec"><div class="sh"><span class="md">To Set Up</span><span class="count warn">${need.length} left</span></div>${need.map(p=>row(p,'<span class="warn">Choose a role.</span>',true)).join('')}</div>
+   <div class="sec"><div class="sh"><span class="md">Ready</span><span class="count mu">${done.length}</span></div>${done.map(p=>row(p,line(p),true)).join('')}</div>`; }
+ case 3: return `<div class="sec">${P.map(p=>row(p,fullLine(p),true)).join('')}</div>`;
+ case 4: { const g=[['Authorisers',P.filter(p=>p.role==='Authoriser')],['Inputters',P.filter(p=>p.role==='Inputter')],['Viewers',P.filter(p=>p.role==='Viewer')],['Not Set Up',P.filter(p=>!p.role)]];
+   return g.map(([h,ps])=>`<div class="sec"><div class="sh"><span class="md ${h==='Not Set Up'?'warn':''}">${h}</span><span class="count mu">${ps.length}</span></div>${ps.length?ps.map(p=>row(p,p.role?`<span class="mu">${p.role==='Viewer'?p.acc:'Up to '+p.lim}</span>`:`<span class="mu">${p.des}</span>`)).join(''):`<p class="mu s12" style="padding:4px 0 8px">${h==='Authorisers'?'Nobody yet. Only signatories can authorise.':'Nobody yet.'}</p>`}</div>`).join(''); }
+ case 5: return `<table class="tbl"><thead><tr><th>Name</th><th>Role</th><th class="hide-ph">Limit</th><th class="hide-ph">Accounts</th></tr></thead><tbody>${P.map(p=>`<tr><td>${p.n}${p.sig?'<div class="mu s12">Signatory</div>':''}</td><td>${p.role?p.role:'<span class="warn">Choose</span>'}</td><td class="hide-ph tab">${p.lim||'<span class="mu">None</span>'}</td><td class="hide-ph s12">${p.acc||'<span class="mu">None</span>'}</td></tr>`).join('')}</tbody></table>`;
+ case 6: return `<div class="sec">${P.map(p=>`<div class="pr" style="cursor:default"><span class="av ${p.role?'':'need'}">${ini(p.n)}</span><button class="grow" style="text-align:left"><span style="display:block">${p.n}</span><span class="s12 mu">${p.role&&p.role!=='Viewer'?'Up to '+p.lim:p.role==='Viewer'?p.acc:(p.des||'Set up')}</span></button>
+   <select class="sel ${p.role?'':'need'}"><option ${!p.role?'selected':''} disabled>Role</option>${(p.sig?['Inputter','Reviewer','Authoriser','Viewer']:['Inputter','Viewer']).map(r=>`<option ${p.role===r?'selected':''}>${r}</option>`).join('')}</select></div>`).join('')}</div>`;
+ case 7: return `<div class="sec">${P.map(p=>`<button class="pr"><span class="mark ${p.role?'ok':''}">${p.role?I.tick:''}</span><span class="grow"><span style="display:block">${p.n}</span><span class="s12">${line(p)}</span></span><span class="mu">${I.chev}</span></button>`).join('')}</div>`;
+ case 8: { const c=r=>P.filter(p=>p.role===r).length, need=P.filter(p=>!p.role).length;
+   return `<p class="s12 mu" style="display:flex;gap:8px;flex-wrap:wrap"><span>${c('Authoriser')} Authorisers</span><span>·</span><span>${c('Inputter')} Inputter</span><span>·</span><span>${c('Viewer')} Viewer</span><span>·</span><span class="warn">${need} to set up</span></p><div class="sec">${P.map(p=>row(p,line(p),true)).join('')}</div>`; }
+ case 9: return `<div class="sec">${P.map(p=>`<button class="pr"><span class="av ${p.role?'':'need'}">${ini(p.n)}</span><span class="grow"><span style="display:block">${p.n}</span><span class="s12 mu">${p.sig?p.des:'Added by you'}</span></span><span class="s12 ${p.role?'':'warn'}" style="text-align:right">${p.role?p.role+(p.lim?'<br><span class="mu tab">'+p.lim+'</span>':''):'Set up'}</span><span class="mu">${I.chev}</span></button>`).join('')}</div>`;
+ case 10: return `<div class="sec">${P.map((p,i)=>i===OPEN
+   ?`<div class="in" style="border:1px solid var(--bd);border-radius:12px;padding:12px;margin:4px 0;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px"><span class="av need">${ini(p.n)}</span><span class="grow md">${p.n}</span><button class="link" data-open="-1">Done</button></div>
+      <div><span class="s12 md" style="display:block;margin-bottom:6px">Role</span><div style="display:flex;gap:6px;flex-wrap:wrap">${['Inputter','Reviewer','Authoriser','Viewer'].map(r=>`<span class="btn sm out">${r}</span>`).join('')}</div></div>
+      <div><span class="s12 md" style="display:block;margin-bottom:6px">Payment Limit (GHS)</span><div class="sel" style="display:flex;align-items:center;height:36px">10,000</div></div>
+      <div><span class="s12 md" style="display:block;margin-bottom:6px">Accounts</span><span class="s12 mu">Current •••• 7890 · Savings •••• 2231</span></div></div>`
+   :`<button class="pr" data-open="${i}"><span class="av ${p.role?'':'need'}">${ini(p.n)}</span><span class="grow"><span style="display:block">${p.n}</span><span class="s12">${line(p)}</span></span><span class="mu" style="transform:rotate(90deg);display:inline-flex">${I.chev}</span></button>`).join('')}</div>`;
+ case 11: { const need=P.filter(p=>!p.role), done=P.filter(p=>p.role);
+   const r=p=>row(p,`${p.sig?'<span class="mu">Signatory · </span>':''}${line(p)}`,true);
+   return `<div class="sec"><div class="sh"><span class="md">To Set Up</span><span class="count warn">${need.length} left</span></div>${need.map(r).join('')}</div>
+   <div class="sec"><div class="sh"><span class="md">Ready</span><span class="count mu">${done.length}</span></div>${done.map(r).join('')}</div>`; }
+ case 12: { const done=P.filter(p=>p.role).length;
+   return `<div style="display:flex;flex-direction:column;gap:6px"><div class="s12" style="display:flex;justify-content:space-between"><span class="mu">${done} of ${P.length} set up</span><span class="warn">${P.length-done} left</span></div><div style="height:4px;border-radius:4px;background:var(--tile)"><div style="width:${done/P.length*100}%;height:100%;border-radius:4px;background:var(--am)"></div></div></div>
+   <div class="sec">${[...P.filter(p=>!p.role),...P.filter(p=>p.role)].map(p=>row(p,line(p),true)).join('')}</div>`; }
+}}
+let OPEN=1;
+function body(){
+  return `<div class="page"><div class="hd"><h2>Who Gets Access?</h2><p>Signatories come from your mandate. Set up each person.</p></div>${list()}
+  <div style="display:flex;flex-direction:column;gap:8px"><button class="btn out full">${I.user}Add Myself</button><button class="btn out full">${I.plus}Add a Person</button></div>
+  <div style="display:flex;flex-direction:column;gap:8px"><button class="btn am full dis">Continue</button><p class="mu s12" style="text-align:center">Finish setting up Esther Appiah.</p></div></div>`;
+}
+function render(){
+  $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1}</button>`).join('');
+  $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]}`;
+  const h=body(); $('#stage').innerHTML=`<div><p class="cap">Desktop</p><div class="frame">${h}</div></div><div><p class="cap">Phone</p><div class="frame phone">${h}</div></div>`;
+}
+document.addEventListener('click',e=>{
+  const v=e.target.closest('[data-v]'); if(v){V=+v.dataset.v;OPEN=1;render();return;}
+  const o=e.target.closest('[data-open]'); if(o){OPEN=+o.dataset.open;render();return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));}
+});
+render();
+</script>
+</body>
+</html>

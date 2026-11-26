@@ -2,66 +2,68 @@
 
 /**
  * Sole proprietor self-onboarding — BRD v2 §5.1 Corporate ("Self-Onboarding: Sole Proprietor").
- * Seven steps mirroring retail activation: Ghana Card, selfie, business confirmation, OTP, password, PIN.
- * Completes into /business/overview with no approval queue required (single user / sole signatory).
+ * Account number and date of birth, a code to the mobile on file, then the business, password and PIN. No Ghana Card
+ * or selfie (designer, 2026-11-26): the date of birth GCB holds is enough, as for invited business users. The
+ * business shows only after the code, so an account number and a birthday alone reveal nothing. Three wrong dates
+ * send them to a branch. No approval queue (single user, sole signatory). It ends at business login.
  */
 
 import { Suspense, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Building2, Check, ExternalLink, SearchX, ShieldAlert, User } from "@/components/ui/icons";
+import { Building2, SearchX, ShieldAlert } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
+import OpenGcbAccountDialog from "@/components/auth/OpenGcbAccountDialog";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import PinRequirements from "@/components/auth/PinRequirements";
-import SelfieCapture from "@/components/auth/SelfieCapture";
 import { AlertToast } from "@/components/ui/alert-toast";
 import { Button } from "@/components/ui/button";
+import { DateOfBirthInput } from "@/components/ui/date-of-birth-input";
 import { Field } from "@/components/ui/field";
-import { GhanaCardInput } from "@/components/ui/ghana-card-input";
+import { Input } from "@/components/ui/input";
 import { AppLoader } from "@/components/ui/loader";
 import { hasConsecutiveDigits, hasRepeatingDigits, maskMobile } from "@/lib/auth-shared";
 import {
-  GHANA_CARD_LINKAGE_URL,
+  INVITE_MAX_ATTEMPTS,
   SOLE_PROPRIETOR_DEMO,
   soleProprietorOutcome,
 } from "@/lib/corporate/onboarding";
 import { setFirstRun, setPendingReferral } from "@/lib/device-trust";
-import { isCompleteGhanaCard } from "@/lib/ghana-card";
+import { displayDateOfBirth, isCompleteDateOfBirth, parseDateOfBirth } from "@/lib/date-of-birth";
 import { findAccount } from "@/lib/mock-data";
-import { parseOnboardingStep, type OnboardingStep } from "@/lib/onboarding-steps";
 
-type Step = OnboardingStep;
-type Outcome = "not-verified" | "no-account" | "company";
+type Step = "identity" | "otp" | "review_details" | "password" | "pin" | "confirm_pin";
+type Outcome = "locked" | "no-account" | "company";
+
+const STEPS: readonly Step[] = ["identity", "otp", "review_details", "password", "pin", "confirm_pin"];
+const OUTCOMES: readonly Outcome[] = ["locked", "no-account", "company"];
+
+function parseStep(value: string | null): Step | null {
+  return STEPS.includes(value as Step) ? (value as Step) : null;
+}
+
+function parseOutcome(value: string | null): Outcome | null {
+  return OUTCOMES.includes(value as Outcome) ? (value as Outcome) : null;
+}
 
 const RESEND_SECONDS = 30;
-
-const stepNumberMap: Record<Step, number> = {
-  ghana_card: 1,
-  selfie: 2,
-  review_details: 3,
-  otp: 4,
-  password: 5,
-  pin: 6,
-  confirm_pin: 7,
-};
 
 function SoleProprietorSignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const stepParam = parseOnboardingStep(searchParams.get("step"));
-  const outcomeParam = searchParams.get("outcome");
+  const stepParam = parseStep(searchParams.get("step"));
+  const outcomeParam = parseOutcome(searchParams.get("outcome"));
 
-  const [step, setStep] = useState<Step>(stepParam ?? "ghana_card");
-  const [outcome, setOutcome] = useState<Outcome | null>(
-    outcomeParam === "not-verified" || outcomeParam === "no-account" || outcomeParam === "company"
-      ? outcomeParam
-      : null,
-  );
+  const [step, setStep] = useState<Step>(stepParam ?? "identity");
+  const [showOpenAccount, setShowOpenAccount] = useState(false);
+  const [outcome, setOutcome] = useState<Outcome | null>(outcomeParam);
 
-  const [ghanaCard, setGhanaCard] = useState(SOLE_PROPRIETOR_DEMO.ghanaCard);
-  const [selfieImage, setSelfieImage] = useState<string | null>(null);
+  const [accountNumber, setAccountNumber] = useState(SOLE_PROPRIETOR_DEMO.accountNumber);
+  const [birthInput, setBirthInput] = useState(displayDateOfBirth(SOLE_PROPRIETOR_DEMO.dateOfBirthOnRecord));
+  const [accountError, setAccountError] = useState("");
+  const [birthError, setBirthError] = useState("");
+  const [mismatchCount, setMismatchCount] = useState(0);
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -88,7 +90,7 @@ function SoleProprietorSignupContent() {
   }, [stepParam]);
 
   useEffect(() => {
-    if (outcomeParam === "not-verified" || outcomeParam === "no-account" || outcomeParam === "company") {
+    if (outcomeParam) {
       setOutcome(outcomeParam);
       setErrorMsg("");
       setBusy(false);
@@ -108,42 +110,41 @@ function SoleProprietorSignupContent() {
       .filter((a): a is NonNullable<typeof a> => Boolean(a));
   }, []);
 
-  function handleGhanaCardSubmit(e: React.FormEvent) {
+  function handleIdentitySubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isCompleteGhanaCard(ghanaCard)) {
-      setErrorMsg("Enter all ten digits of your Ghana Card number: nine, then the check digit.");
+    if (accountNumber.replace(/\D/g, "").length < 10) {
+      setAccountError("Enter the full account number.");
       return;
     }
-    setErrorMsg("");
+    const dateOfBirth = parseDateOfBirth(birthInput);
+    if (!dateOfBirth) {
+      setBirthError("Enter a real date, day first.");
+      return;
+    }
+    setAccountError("");
+    setBirthError("");
     setBusy(true);
 
     window.setTimeout(() => {
       setBusy(false);
-      const outcomeResult = soleProprietorOutcome(ghanaCard);
-      if (outcomeResult !== "ok") {
-        setOutcome(outcomeResult);
+      const found = soleProprietorOutcome(accountNumber);
+      if (found !== "ok") {
+        setOutcome(found);
         return;
       }
-      setStep("selfie");
-    }, 600);
-  }
-
-  function handleCaptureSelfie(imageDataUrl: string) {
-    setSelfieImage(imageDataUrl);
-    setBusy(true);
-    window.setTimeout(() => {
-      setBusy(false);
-      setStep("review_details");
-    }, 800);
-  }
-
-  function handleConfirmBusiness() {
-    setBusy(true);
-    window.setTimeout(() => {
+      if (dateOfBirth !== SOLE_PROPRIETOR_DEMO.dateOfBirthOnRecord) {
+        const nextMisses = mismatchCount + 1;
+        setMismatchCount(nextMisses);
+        if (nextMisses >= INVITE_MAX_ATTEMPTS) {
+          setOutcome("locked");
+          return;
+        }
+        setBirthError("Doesn't match our records. Check it and try again.");
+        return;
+      }
       setDigits(Array(OTP_LENGTH).fill(""));
-      setBusy(false);
-      setStep("otp");
       setCountdown(RESEND_SECONDS);
+      setStep("otp");
     }, 600);
   }
 
@@ -152,7 +153,7 @@ function SoleProprietorSignupContent() {
     if (code.length < OTP_LENGTH || busy) return;
 
     if (code === "000000") {
-      setErrorMsg("The code entered is incorrect or has expired. Please try again or request a new code.");
+      setErrorMsg("Wrong or expired code. Try again, or resend it.");
       setDigits(Array(OTP_LENGTH).fill(""));
       return;
     }
@@ -161,14 +162,20 @@ function SoleProprietorSignupContent() {
     setBusy(true);
     window.setTimeout(() => {
       setBusy(false);
-      setStep("password");
+      setStep("review_details");
     }, 700);
+  }
+
+  function handleConfirmBusiness() {
+    setPassword("");
+    setConfirmPassword("");
+    setStep("password");
   }
 
   function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!password) {
-      setErrorMsg("Please enter a password.");
+      setErrorMsg("Enter a password.");
       return;
     }
     if (password === "00000" || password === "000000") {
@@ -176,7 +183,7 @@ function SoleProprietorSignupContent() {
       return;
     }
     if (!confirmPassword) {
-      setErrorMsg("Please confirm your password.");
+      setErrorMsg("Confirm your password.");
       return;
     }
     if (password !== confirmPassword) {
@@ -195,7 +202,7 @@ function SoleProprietorSignupContent() {
   function handlePinSubmit(incomingPin?: string) {
     const pin = incomingPin ?? pinDigits.join("");
     if (pin.length < 4 || busy) {
-      if (pin.length < 4) setErrorMsg("Please enter a 4-digit PIN");
+      if (pin.length < 4) setErrorMsg("Enter a 4-digit PIN.");
       return;
     }
     if (hasConsecutiveDigits(pin)) {
@@ -227,13 +234,13 @@ function SoleProprietorSignupContent() {
   function handleConfirmPinSubmit(incomingConfirmPin?: string) {
     const confirmPin = incomingConfirmPin ?? confirmPinDigits.join("");
     if (confirmPin.length < 4 || busy) {
-      if (confirmPin.length < 4) setErrorMsg("Please confirm your 4-digit PIN");
+      if (confirmPin.length < 4) setErrorMsg("Confirm your PIN.");
       return;
     }
     const originalPin = pinDigits.join("");
     if (originalPin.length === 4 && confirmPin !== originalPin) {
       if (pinMisses + 1 >= 2) {
-        restartPin("Those didn't match twice, so let's start again. Choose a PIN you'll remember.");
+        restartPin("They didn't match twice. Choose a new PIN.");
         return;
       }
       setPinMisses(pinMisses + 1);
@@ -247,8 +254,8 @@ function SoleProprietorSignupContent() {
     window.setTimeout(() => {
       setFirstRun("new");
       setPendingReferral(false);
-      // The application is in: the applicant goes to its status. Nothing signs them in.
-      router.push("/business/signup/status");
+      // Set up, with no bank review to wait for. Nothing logs them in, as with an invited user.
+      router.push("/login?type=business");
     }, 600);
   }
 
@@ -256,8 +263,9 @@ function SoleProprietorSignupContent() {
     setErrorMsg("");
     setBusy(false);
     if (outcome) {
+      if (outcome === "locked") setMismatchCount(0);
       setOutcome(null);
-      setStep("ghana_card");
+      setStep("identity");
       return;
     }
     if (step === "confirm_pin") {
@@ -269,64 +277,45 @@ function SoleProprietorSignupContent() {
     } else if (step === "password") {
       setPassword("");
       setConfirmPassword("");
-      setDigits(Array(OTP_LENGTH).fill(""));
-      setCountdown(RESEND_SECONDS);
-      setStep("otp");
-    } else if (step === "otp") {
-      setDigits(Array(OTP_LENGTH).fill(""));
       setStep("review_details");
-    } else if (step === "review_details") {
-      setSelfieImage(null);
-      setStep("selfie");
-    } else if (step === "selfie") {
-      setStep("ghana_card");
+    } else if (step === "review_details" || step === "otp") {
+      // Going back past the code means proving it again.
+      setDigits(Array(OTP_LENGTH).fill(""));
+      setStep("identity");
     } else {
       router.push("/business/signup?step=type");
     }
   }
 
   // Off-happy-path outcomes
-  if (outcome === "not-verified") {
+  if (outcome === "locked") {
     return (
-      <AuthLayout
-        title="We Couldn't Verify Your Ghana Card"
-        description="Link your Ghana Card to your GCB account, then try again."
-        icon={ShieldAlert}
-        align="center"
-        onBack={handleBackStep}
-        backLabel="Back to registration"
-        width="compact"
-      >
-        <div className="flex flex-col gap-3">
-          <Button
-            size="md"
-            className="w-full"
-            onClick={() => window.open(GHANA_CARD_LINKAGE_URL, "_blank")}
-          >
-            Link Your Ghana Card
-            <ExternalLink size={15} />
-          </Button>
-          <Button
-            variant="outline"
-            size="md"
-            className="w-full"
-            onClick={() => {
-              setOutcome(null);
-              setStep("ghana_card");
-            }}
-          >
-            Try Again
-          </Button>
-        </div>
-      </AuthLayout>
+      <>
+        <AuthLayout
+          title="We Couldn't Confirm Your Identity"
+          description="For your security, finish at a branch."
+          icon={ShieldAlert}
+          align="center"
+          onBack={handleBackStep}
+          backLabel="Back to registration"
+          width="compact"
+        >
+          <div className="flex flex-col gap-3">
+            <Button size="md" className="w-full" onClick={() => router.push("/branches")}>
+              Find a Branch
+            </Button>
+          </div>
+        </AuthLayout>
+      </>
     );
   }
 
   if (outcome === "no-account") {
     return (
+      <>
         <AuthLayout
-          title="We Couldn't Find a Business Account"
-          description="There's no sole proprietor account under this Ghana Card. If you don't bank with GCB yet, we'll call you to open one."
+          title="No Business Account Found"
+          description="Check the number, or open an account."
           icon={SearchX}
           align="center"
           onBack={handleBackStep}
@@ -337,7 +326,7 @@ function SoleProprietorSignupContent() {
             <Button
               size="md"
               className="w-full"
-              onClick={() => router.push("/business/signup/new-to-gcb?type=sole")}
+              onClick={() => setShowOpenAccount(true)}
             >
               Open an Account
             </Button>
@@ -347,21 +336,23 @@ function SoleProprietorSignupContent() {
               className="w-full"
               onClick={() => {
                 setOutcome(null);
-                setStep("ghana_card");
+                setStep("identity");
               }}
             >
               Try Again
             </Button>
           </div>
         </AuthLayout>
+        <OpenGcbAccountDialog open={showOpenAccount} onOpenChange={setShowOpenAccount} />
+      </>
     );
   }
 
   if (outcome === "company") {
     return (
       <AuthLayout
-        title="Your Business Is Registered as a Company"
-        description="Companies apply with their account number. Your signatories sign a letter we prepare."
+        title="This Is a Company Account"
+        description="Apply as a company instead."
         icon={Building2}
         align="center"
         onBack={handleBackStep}
@@ -374,7 +365,7 @@ function SoleProprietorSignupContent() {
             className="w-full"
             onClick={() => router.push("/business/signup/enrol")}
           >
-            Apply for Your Company
+            Apply as Company
           </Button>
           <Button
             variant="outline"
@@ -392,14 +383,12 @@ function SoleProprietorSignupContent() {
   return (
     <AuthLayout
       title={
-        step === "ghana_card"
+        step === "identity"
           ? "Verify Your Identity"
-          : step === "selfie"
-          ? "Selfie Match"
-          : step === "review_details"
-          ? "Confirm Your Business"
           : step === "otp"
           ? "Confirm Your Code"
+          : step === "review_details"
+          ? "Confirm Your Business"
           : step === "password"
           ? "Create Your Password"
           : step === "pin"
@@ -407,48 +396,60 @@ function SoleProprietorSignupContent() {
           : "Confirm Your PIN"
       }
       description={
-        step === "ghana_card" ? (
-          "We will securely verify your identity using your Ghana Card."
-        ) : step === "selfie" ? (
-          "Center your face in the circle."
+        step === "identity" ? (
+          undefined
         ) : step === "review_details" ? (
-          "We found this business under your Ghana Card."
+          undefined
         ) : step === "otp" ? (
           <>
-            A 6-digit code has been sent to {maskMobile(SOLE_PROPRIETOR_DEMO.mobile)}.
-            <br />
-            Please enter the code below.
+            Sent to {maskMobile(SOLE_PROPRIETOR_DEMO.mobile)}.
           </>
         ) : step === "password" ? (
-          "Choose a password you will remember."
+          undefined
         ) : step === "pin" ? (
-          "Set a 4-digit PIN for secure access."
+          "You'll use it with your password to log in."
         ) : (
-          "Re-enter your 4-digit PIN to confirm."
+          undefined
         )
       }
       onBack={handleBackStep}
       backLabel="Back to previous step"
       stepProgress={{
-        current: stepNumberMap[step],
-        total: 7,
+        current: STEPS.indexOf(step) + 1,
+        total: STEPS.length,
       }}
       width="compact"
       animateHeight={true}
     >
-      {/* STEP 1: Enter Ghana Card */}
-      {step === "ghana_card" && (
-        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
-          <Field label="Ghana Card Number" htmlFor="ghanaCard">
-            <GhanaCardInput
-              id="ghanaCard"
-              value={ghanaCard}
-              onValueChange={setGhanaCard}
-              required
+      {/* STEP 1: Account number and date of birth */}
+      {step === "identity" && (
+        <form onSubmit={handleIdentitySubmit} className="flex flex-col gap-4">
+          <Field label="Account Number" htmlFor="accountNumber" error={accountError}>
+            <Input
+              id="accountNumber"
+              inputMode="numeric"
+              autoComplete="off"
+              className="tabular"
+              value={accountNumber}
+              onChange={(e) => {
+                setAccountNumber(e.target.value);
+                if (accountError) setAccountError("");
+              }}
+              aria-invalid={Boolean(accountError)}
             />
           </Field>
 
-          <AlertToast when={errorMsg} message={errorMsg} />
+          <Field label="Date of Birth" htmlFor="dateOfBirth" error={birthError}>
+            <DateOfBirthInput
+              id="dateOfBirth"
+              value={birthInput}
+              onValueChange={(v) => {
+                setBirthInput(v);
+                if (birthError) setBirthError("");
+              }}
+              aria-invalid={Boolean(birthError)}
+            />
+          </Field>
 
           <div className="mt-3 flex flex-col gap-3">
             <Button
@@ -456,6 +457,7 @@ function SoleProprietorSignupContent() {
               variant="default"
               size="md"
               loading={busy}
+              disabled={!isCompleteDateOfBirth(birthInput)}
               className="w-full"
             >
               Continue
@@ -481,80 +483,7 @@ function SoleProprietorSignupContent() {
         </form>
       )}
 
-      {/* STEP 2: Selfie */}
-      {step === "selfie" && (
-        <SelfieCapture
-          onCapture={handleCaptureSelfie}
-          busy={busy}
-          capturedImage={selfieImage}
-          onRetake={() => setSelfieImage(null)}
-        />
-      )}
-
-      {/* STEP 3: Confirm Business */}
-      {step === "review_details" && (
-        <div className="flex flex-col gap-6">
-          {/* Verified holder row */}
-          <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-muted/15 px-3 py-3">
-            <div className="flex min-w-0 items-center gap-2">
-              <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 text-primary">
-                {selfieImage ? (
-                  <Image
-                    src={selfieImage}
-                    alt={SOLE_PROPRIETOR_DEMO.holderName}
-                    width={36}
-                    height={36}
-                    unoptimized
-                    className="size-full object-cover"
-                  />
-                ) : (
-                  <User size={16} />
-                )}
-              </div>
-              <div className="min-w-0">
-                <span className="block truncate text-body font-medium text-foreground">
-                  {SOLE_PROPRIETOR_DEMO.holderName}
-                </span>
-                <span className="tabular text-caption text-muted-foreground">{ghanaCard}</span>
-              </div>
-            </div>
-            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-caption font-medium text-pill-success-text">
-              <Check size={12} />
-              Verified
-            </span>
-          </div>
-
-          {/* Business and accounts */}
-          <div className="flex flex-col gap-3">
-            <h2 className="text-body font-medium text-foreground">
-              {SOLE_PROPRIETOR_DEMO.businessName}
-            </h2>
-            <div className="flex flex-col gap-2">
-              {accounts.map((acc) => (
-                <div key={acc.id} className="flex items-center justify-between py-1">
-                  <span className="text-body text-foreground">{acc.name}</span>
-                  <span className="tabular text-body text-muted-foreground">
-                    •••• {acc.number.replace(/\s/g, "").slice(-4)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <Button
-            type="button"
-            variant="default"
-            size="md"
-            loading={busy}
-            className="w-full"
-            onClick={handleConfirmBusiness}
-          >
-            Continue
-          </Button>
-        </div>
-      )}
-
-      {/* STEP 4: OTP Verification */}
+      {/* STEP 2: OTP Verification */}
       {step === "otp" && (
         <form
           onSubmit={(e) => {
@@ -623,7 +552,42 @@ function SoleProprietorSignupContent() {
         </form>
       )}
 
-      {/* STEP 5: Create Password */}
+      {/* STEP 3: Confirm Business, shown only after the code */}
+      {step === "review_details" && (
+        <div className="flex flex-col gap-6">
+          {/* Business and accounts */}
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-0.5">
+              <h2 className="text-body font-medium text-foreground">
+                {SOLE_PROPRIETOR_DEMO.businessName}
+              </h2>
+              <p className="text-caption text-muted-foreground">{SOLE_PROPRIETOR_DEMO.holderName}</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              {accounts.map((acc) => (
+                <div key={acc.id} className="flex items-center justify-between py-1">
+                  <span className="text-body text-foreground">{acc.name}</span>
+                  <span className="tabular text-body text-muted-foreground">
+                    •••• {acc.number.replace(/\s/g, "").slice(-4)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="default"
+            size="md"
+            className="w-full"
+            onClick={handleConfirmBusiness}
+          >
+            Continue
+          </Button>
+        </div>
+      )}
+
+      {/* STEP 4: Create Password */}
       {step === "password" && (
         <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4">
           <NewPasswordFields
@@ -650,12 +614,12 @@ function SoleProprietorSignupContent() {
             loading={busy}
             className="mt-2 w-full"
           >
-            Proceed
+            Continue
           </Button>
         </form>
       )}
 
-      {/* STEP 6: Set PIN */}
+      {/* STEP 5: Set PIN */}
       {step === "pin" && (
         <form
           onSubmit={(e) => {
@@ -700,7 +664,7 @@ function SoleProprietorSignupContent() {
         </form>
       )}
 
-      {/* STEP 7: Confirm PIN */}
+      {/* STEP 6: Confirm PIN */}
       {step === "confirm_pin" && (
         <form
           onSubmit={(e) => {

@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Airtime for Others: three iterations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#efefed; --card:#ffffff; --tile:#f5f5f4; --fg:#1a1a1a; --muted:#6b6b6b;
+  --border:#e4e4e2; --amber:#ffc423; --amber-hover:#ffd966; --ok:#1f7a4a; --err:#b42318;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101010; --card:#1b1b1b; --tile:#262626; --fg:#f2f2f2; --muted:#a3a3a3;
+    --border:#333333; --ok:#5fd394; --err:#ff8a80;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101010; --card:#1b1b1b; --tile:#262626; --fg:#f2f2f2; --muted:#a3a3a3;
+  --border:#333333; --ok:#5fd394; --err:#ff8a80;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"DM Sans",system-ui,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:24px 16px 48px}
+.head h1{font-size:20px;font-weight:500;margin:0 0 4px}
+.head p{margin:0;color:var(--muted);font-size:12px;line-height:1.5;max-width:640px}
+.seg{display:inline-flex;background:var(--tile);border-radius:10px;padding:4px;gap:4px;margin:20px 0}
+.seg button{height:36px;padding:0 14px;border:0;background:transparent;border-radius:8px;cursor:pointer;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.stage{display:grid;grid-template-columns:390px 1fr;gap:40px;align-items:start}
+@media (max-width:900px){.stage{grid-template-columns:1fr;justify-items:center}}
+.phone{width:390px;height:844px;background:var(--card);border:1px solid var(--border);border-radius:28px;overflow:hidden;display:flex;flex-direction:column}
+@media (max-width:430px){
+  .wrap{padding:16px 0}
+  .phone{width:100%;height:100vh;height:100dvh;border:0;border-radius:0}
+}
+.screen{flex:1;min-height:0;overflow:auto;padding:40px 16px 16px;display:flex;flex-direction:column;gap:16px}
+.foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:8px}
+.topbar{display:flex;align-items:center;height:40px;margin:0 0 0 -8px}
+.topbar.end{justify-content:flex-end;margin:0 -8px 0 0}
+.iconbtn{width:40px;height:40px;border:0;background:transparent;border-radius:999px;display:grid;place-items:center;cursor:pointer;color:var(--fg)}
+.iconbtn:hover{background:var(--tile)}
+.title{font-size:20px;font-weight:500;margin:4px 0 0;line-height:1.3}
+.caption{font-size:12px;color:var(--muted);line-height:1.5}
+.label{font-size:12px;font-weight:500;display:block}
+.block{display:flex;flex-direction:column;gap:6px}
+.input{width:100%;height:44px;border:1px solid var(--border);background:var(--card);border-radius:8px;padding:0 12px;font-size:14px;font-variant-numeric:tabular-nums}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.row>span:first-child{color:var(--muted)}
+.row>span:last-child{font-variant-numeric:tabular-nums;text-align:right}
+.tile{width:100%;min-height:56px;display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--tile);border:0;border-radius:10px;cursor:pointer;text-align:left;font-weight:500}
+.tile:hover{background:var(--border)}
+.avatar{width:40px;height:40px;border-radius:999px;background:var(--border);display:grid;place-items:center;font-weight:500;flex:none;font-size:14px}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.quick button{background:transparent;border:0;padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;border-radius:10px;font-size:12px;font-weight:500}
+.quick button:hover{background:var(--tile)}
+.quick small{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:400}
+.collapsed{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--tile);border-radius:10px;padding:12px 16px}
+.link{background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-weight:500;font-size:12px;align-self:flex-start}
+.ok{color:var(--ok);font-size:12px;font-weight:500;display:flex;gap:6px;align-items:center}
+.err{color:var(--err);font-size:12px;line-height:1.5}
+.amountbox{display:flex;align-items:baseline;gap:8px;border-bottom:1px solid var(--border);padding:8px 0}
+.amountbox .cur{font-size:14px;color:var(--muted)}
+.amountbox input{border:0;background:transparent;width:100%;font-size:32px;font-weight:400;outline:none;font-variant-numeric:tabular-nums;padding:0}
+.cta{height:44px;width:100%;border:0;border-radius:8px;background:var(--amber);color:#1a1a1a;font-weight:500;cursor:pointer}
+.cta:hover{background:var(--amber-hover)}
+.cta:disabled{opacity:.45;cursor:not-allowed}
+.cta.ghost{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1px var(--border)}
+.restate{background:var(--tile);border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:4px}
+.otp{position:relative;display:flex;gap:8px;cursor:text}
+.otp input{position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;border:0}
+.otp .box{flex:1;height:52px;border:1px solid var(--border);border-radius:8px;display:grid;place-items:center;font-size:20px;font-variant-numeric:tabular-nums;background:var(--card)}
+.otp .box.on{border-color:var(--fg)}
+.netpick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.netpick button{height:56px;border:1px solid var(--border);background:var(--card);border-radius:10px;cursor:pointer;font-weight:500}
+.netpick button[aria-pressed="true"]{border-color:var(--fg);background:var(--tile)}
+.done-mark{width:56px;height:56px;border-radius:999px;background:var(--ok);color:#fff;display:grid;place-items:center;margin-top:8px}
+.center{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.notes{min-width:0}
+.notes h2{font-size:18px;font-weight:500;margin:0 0 4px}
+.notes .lead{color:var(--muted);font-size:12px;line-height:1.5;margin:0 0 8px}
+.call{padding:14px 0;border-bottom:1px solid var(--border)}
+.call b{font-weight:500;display:block;margin-bottom:4px}
+.call p{margin:0 0 4px;font-size:12px;line-height:1.5;color:var(--muted)}
+.gate{margin-top:16px;font-size:12px;line-height:1.6}
+.gate div{padding:4px 0}
+.gate strong{font-weight:500}
+.placeholder{font-size:12px;color:var(--muted);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <h1>Airtime for Others</h1>
+    <p>Three iterations of the same send flow. Click through a phone from start to receipt. The notes beside each one give the calls, the principle behind each call, and the trade-off accepted. Demo numbers: 0549252564 is Ishmael Gyan, 0241234567 is Tsotsoo Mills, any code except 000000 passes.</p>
+  </header>
+
+  <div class="seg" role="group" aria-label="Iteration">
+    <button type="button" data-tab="A" aria-pressed="true">A · One question per screen</button>
+    <button type="button" data-tab="B" aria-pressed="false">B · One form</button>
+    <button type="button" data-tab="C" aria-pressed="false">C · Network first</button>
+  </div>
+
+  <div class="stage">
+    <div class="phone" id="phone" aria-live="polite"></div>
+    <aside class="notes" id="notes"></aside>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ---- Mock data ---------------------------------------------------------
+  var ACC = { name: 'Savings Account', balance: 14500 };
+  var NET = { 'MTN': ['024', '054', '055', '059'], 'Telecel': ['020', '050'], 'AT Money': ['026', '027', '056', '057'] };
+  var SAVED = [
+    { first: 'Jeff', name: 'Jeff Asante', phone: '0201234590' },
+    { first: 'Matt', name: 'Matt Boateng', phone: '0201234511' },
+    { first: 'Seth', name: 'Seth Mensah', phone: '0201234598' },
+    { first: 'Jeff', name: 'Jeff Darko', phone: '0201234545' }
+  ];
+  var KNOWN = { '0549252564': 'Ishmael Gyan', '0241234567': 'Tsotsoo Mills' };
+  var PREV = {
+    A: { recipient: 'chooser', amount: 'recipient', review: 'amount', otp: 'review' },
+    B: { form: 'chooser', review: 'form', otp: 'review' },
+    C: { amount: 'home', review: 'amount', otp: 'review' }
+  };
+
+  var ICON = {
+    back: '<path d="m15 18-6-6 6-6"/>',
+    close: '<path d="M18 6 6 18M6 6l12 12"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    chevron: '<path d="m9 18 6-6-6-6"/>',
+    phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>'
+  };
+  function svg(path, size, sw) {
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (sw || 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + '</svg>';
+  }
+
+  // ---- Helpers -----------------------------------------------------------
+  function h(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function validPhone(p) { return /^0\d{9}$/.test(p); }
+  function detect(p) {
+    if (!p || p.length < 3) return '';
+    for (var n in NET) if (NET[n].indexOf(p.slice(0, 3)) !== -1) return n;
+    return '';
+  }
+  function lookup(p) {
+    for (var i = 0; i < SAVED.length; i++) if (SAVED[i].phone === p) return SAVED[i].name;
+    return KNOWN[p] || null;
+  }
+  function fmt(p) { return p.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1 $2 $3'); }
+  function money(n) { return 'GHS ' + Number(n).toLocaleString('en-GH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function amt() { var v = parseFloat(st.amount); return isNaN(v) ? 0 : v; }
+  function initials(name) { return name.split(' ').map(function (x) { return x[0]; }).slice(0, 2).join('').toUpperCase(); }
+  function mismatch() {
+    var d = detect(st.phone);
+    return validPhone(st.phone) && !!st.network && !!d && d !== st.network;
+  }
+  function canRecipient() { return validPhone(st.phone) && !!st.network && !mismatch(); }
+  function canAmount() { var a = amt(); return a > 0 && a <= ACC.balance; }
+  function nameOf() { return lookup(st.phone); }
+  function nameLabel() { return nameOf() || 'Unnamed number'; }
+
+  // ---- State -------------------------------------------------------------
+  var it = 'A';
+  var st;
+  function fresh() {
+    return {
+      step: it === 'C' ? 'home' : 'chooser',
+      phone: '', network: '', amount: '', code: '',
+      err: '', note: '', changeOpen: false, focus: null, ref: ''
+    };
+  }
+  st = fresh();
+
+  // ---- Shared pieces ------------------------------------------------------
+  function back() {
+    return '<div class="topbar"><button class="iconbtn" data-act="back" aria-label="Back">' + svg(ICON.back, 20, 1.8) + '</button></div>';
+  }
+  function close() {
+    return '<div class="topbar end"><button class="iconbtn" data-act="again" aria-label="Close">' + svg(ICON.close, 20, 1.8) + '</button></div>';
+  }
+  function screen(inner, foot) {
+    return '<div class="screen">' + inner + (foot ? '<div class="foot">' + foot + '</div>' : '') + '</div>';
+  }
+  function cta(label, disabled, act, cls) {
+    return '<button class="cta' + (cls ? ' ' + cls : '') + '" data-act="' + act + '"' + (disabled ? ' disabled' : '') + '>' + label + '</button>';
+  }
+  function numberBlock() {
+    return '<div class="block"><label class="label" for="ph">Mobile number</label>' +
+      '<input id="ph" class="input" inputmode="numeric" autocomplete="tel" placeholder="024 123 4567" value="' + h(st.phone) + '" data-field="phone" data-id="phone"></div>';
+  }
+  function networkBlock() {
+    var opts = '<option value="">Select network</option>';
+    for (var n in NET) opts += '<option value="' + n + '"' + (st.network === n ? ' selected' : '') + '>' + n + '</option>';
+    return '<div class="block"><label class="label" for="net">Network</label>' +
+      '<select id="net" class="input" data-field="network" data-id="net">' + opts + '</select></div>';
+  }
+  function nameLine() {
+    if (!validPhone(st.phone)) return '';
+    var n = nameOf();
+    if (n) return '<div class="ok">' + svg(ICON.check, 12, 2.4) + ' Name confirmed: ' + h(n) + '</div>';
+    return '<div class="caption">We couldn’t find a name for this number. You can still send airtime to it.</div>';
+  }
+  function mismatchLine() {
+    if (!mismatch()) return '';
+    var d = detect(st.phone);
+    return '<div class="err">This number is on ' + d + '. Change the network to ' + d + ', or use a ' + st.network + ' number.</div>';
+  }
+  function recipientRow() {
+    return '<div class="collapsed"><div class="block" style="gap:2px"><span style="font-weight:500">' + h(nameLabel()) + '</span>' +
+      '<span class="caption">' + h(st.network) + ' · ' + h(fmt(st.phone)) + '</span></div>' +
+      '<button class="link" data-act="change">Change</button></div>';
+  }
+  function fromBlock() {
+    return '<div class="block" style="gap:2px"><span class="caption">From</span><span style="font-weight:500">' + ACC.name + '</span>' +
+      '<span class="caption">' + money(ACC.balance) + ' available</span></div>';
+  }
+  function amountBlock() {
+    var over = amt() > ACC.balance;
+    return '<div class="block"><label class="label" for="amt">Amount</label>' +
+      '<div class="amountbox"><span class="cur">GHS</span>' +
+      '<input id="amt" inputmode="decimal" placeholder="0.00" value="' + h(st.amount) + '" data-field="amount" data-id="amt"></div>' +
+      (over ? '<div class="err">Only ' + money(ACC.balance) + ' is available. Enter a lower amount to continue.</div>' : '') +
+      '</div>';
+  }
+  function rows(list) {
+    return list.map(function (r) { return '<div class="row"><span>' + r[0] + '</span><span>' + h(r[1]) + '</span></div>'; }).join('');
+  }
+  function chooserView() {
+    return screen(
+      close() +
+      '<h2 class="title">Who is this airtime for?</h2>' +
+      '<div class="quick">' + SAVED.map(function (s) {
+        return '<button data-act="pick" data-phone="' + s.phone + '" aria-label="Send to ' + h(s.name) + ', ' + fmt(s.phone) + '">' +
+          '<span class="avatar">' + initials(s.name) + '</span>' + h(s.first) + '<small>' + fmt(s.phone) + '</small></button>';
+      }).join('') + '</div>' +
+      '<button class="tile" data-act="newnumber"><span class="avatar">' + svg(ICON.phone, 18, 1.8) + '</span>Enter a new number<span style="margin-left:auto;color:var(--muted)">' + svg(ICON.chevron, 16, 1.8) + '</span></button>'
+    );
+  }
+  function amountView() {
+    return screen(
+      back() +
+      '<h2 class="title">Amount</h2>' +
+      recipientRow() + fromBlock() + amountBlock(),
+      cta('Review', !canAmount(), 'review')
+    );
+  }
+  function reviewView() {
+    var a = amt();
+    return screen(
+      back() +
+      '<h2 class="title">Review</h2>' +
+      '<div>' + rows([
+        ['To', nameLabel()],
+        ['Number', fmt(st.phone)],
+        ['Network', st.network],
+        ['Amount', money(a)],
+        ['Fee', money(0)],
+        ['Total', money(a)],
+        ['From', ACC.name],
+        ['Arrives', 'Right away']
+      ]) + '</div>',
+      cta('Continue', false, 'otp') +
+      '<div class="caption" style="text-align:center">You’ll confirm with a code on the next screen.</div>'
+    );
+  }
+  function otpView() {
+    var a = amt();
+    var boxes = '';
+    for (var i = 0; i < 6; i++) {
+      boxes += '<span class="box' + (i === st.code.length ? ' on' : '') + '">' + (st.code[i] || '') + '</span>';
+    }
+    return screen(
+      back() +
+      '<h2 class="title">Confirm with your code</h2>' +
+      '<div class="restate"><span style="font-weight:500">Send ' + money(a) + ' airtime to ' + h(nameLabel()) + '</span>' +
+      '<span class="caption">' + h(st.network) + ' · ' + h(fmt(st.phone)) + ' · from ' + ACC.name + '</span></div>' +
+      '<div class="block"><span class="label">6-digit code</span>' +
+      '<label class="otp" aria-label="6-digit code"><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" value="' + h(st.code) + '" data-field="code" data-id="code">' + boxes + '</label></div>' +
+      (st.err ? '<div class="err">' + h(st.err) + '</div>' : '') +
+      (st.note ? '<div class="caption">' + h(st.note) + '</div>' : '') +
+      '<div class="caption">We sent a 6-digit code by SMS. <button class="link" data-act="resend">Resend code</button> or use the shortcode on your phone.</div>',
+      cta('Confirm and send', st.code.length !== 6, 'confirm')
+    );
+  }
+  function doneView() {
+    var a = amt();
+    return screen(
+      close() +
+      '<div class="center"><span class="done-mark">' + svg(ICON.check, 28, 2.4) + '</span>' +
+      '<h2 class="title">Airtime sent</h2>' +
+      '<p class="caption" style="font-size:14px;color:var(--fg);margin:0">' + money(a) + ' of ' + h(st.network) + ' airtime went to ' + h(nameLabel()) + '.</p></div>' +
+      '<div style="margin-top:8px">' + rows([
+        ['Reference', st.ref],
+        ['Date', new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })],
+        ['Recipient', nameLabel()],
+        ['Number', fmt(st.phone)],
+        ['Network', st.network],
+        ['Amount', money(a)],
+        ['Fee', money(0)],
+        ['Total', money(a)],
+        ['From', ACC.name]
+      ]) + '</div>',
+      '<button class="cta ghost" data-act="again">Send another</button>' + cta('Done', false, 'closed')
+    );
+  }
+  function closedView() {
+    return screen(
+      close() +
+      '<h2 class="title">Done</h2><p class="caption">Back on Send &amp; Pay. Start again to click through the flow.</p>',
+      cta('Start again', false, 'again')
+    );
+  }
+
+  // ---- Iteration A: one question per screen -------------------------------
+  function recipientView() {
+    return screen(
+      back() +
+      '<h2 class="title">Recipient</h2>' +
+      numberBlock() + networkBlock() + nameLine() + mismatchLine(),
+      cta('Continue', !canRecipient(), 'toAmount')
+    );
+  }
+  function chooserA() { return chooserView(); }
+
+  // ---- Iteration B: one form, recipient folds once verified -------------
+  function collapsedB() { return canRecipient() && !st.changeOpen; }
+  function formView() {
+    var recipient = collapsedB()
+      ? recipientRow()
+      : numberBlock() + networkBlock() + nameLine() + mismatchLine() +
+        (st.changeOpen && validPhone(st.phone) ? '<button class="link" data-act="closeChange">Done</button>' : '');
+    var amount = canRecipient() ? fromBlock() + amountBlock() : '';
+    return screen(
+      back() +
+      '<h2 class="title">Airtime for others</h2>' +
+      recipient + amount,
+      cta('Review', !(canRecipient() && canAmount()), 'review')
+    );
+  }
+
+  // ---- Iteration C: network first, then a recent or new number -----------
+  function homeView() {
+    var pick = '';
+    if (st.network) {
+      var list = SAVED.filter(function (s) { return detect(s.phone) === st.network; });
+      pick = '<div class="block"><span class="label">Recent numbers</span>' +
+        (list.length
+          ? list.map(function (s) {
+              return '<button class="tile" data-act="pick" data-phone="' + s.phone + '"><span class="avatar">' + initials(s.name) + '</span>' +
+                '<span class="block" style="gap:0"><span>' + h(s.name) + '</span><span class="caption">' + fmt(s.phone) + '</span></span></button>';
+            }).join('')
+          : '<span class="caption">No recent numbers on ' + h(st.network) + '.</span>') +
+        '</div>' +
+        '<div class="block"><span class="label">Or a new number</span>' + numberBlock() + nameLine() + mismatchLine() + '</div>';
+    }
+    var nets = '';
+    for (var n in NET) nets += '<button type="button" data-act="net" data-net="' + n + '" aria-pressed="' + (st.network === n) + '">' + n + '</button>';
+    return screen(
+      '<h2 class="title">Send airtime</h2>' +
+      '<div class="block"><span class="label">Network</span><div class="netpick">' + nets + '</div></div>' +
+      pick,
+      cta('Continue', !canRecipient(), 'toAmount')
+    );
+  }
+
+  // ---- View tables -------------------------------------------------------
+  var VIEWS = {
+    A: { chooser: chooserA, recipient: recipientView, amount: amountView, review: reviewView, otp: otpView, done: doneView, closed: closedView },
+    B: { chooser: chooserA, form: formView, review: reviewView, otp: otpView, done: doneView, closed: closedView },
+    C: { home: homeView, amount: amountView, review: reviewView, otp: otpView, done: doneView, closed: closedView }
+  };
+
+  // ---- Notes beside the phone ---------------------------------------------
+  var NOTES = {
+    A: {
+      title: 'A · One question per screen',
+      lead: 'Recipient, then amount, then review. One decision on each screen.',
+      calls: [
+        { d: 'Recipient, amount, review and code each get their own screen.', p: 'Progressive disclosure (CONSTITUTION §9). Nothing is asked before it is needed.', t: 'More taps on a first send. A saved recipient skips straight to amount.' },
+        { d: 'The name resolves on the recipient screen, before the amount is asked.', p: 'The recipient resolves before the amount (CONSTITUTION §2). Paying the wrong number cannot be undone.', t: 'One more screen before the amount.' },
+        { d: 'The code screen restates the amount, the number and the account above the boxes. The code never auto-submits.', p: 'Money-movement rules (CONSTITUTION §2): restate the payment, never auto-submit.', t: 'The person presses Confirm after the sixth digit.' }
+      ],
+      gate: [
+        ['In control?', 'Yes. The review shows the number, network, amount, fee and account before the code.'],
+        ['Without judgment?', 'Yes. The low-balance line names the limit and the next step.'],
+        ['Lighter?', 'No. Four screens for one top-up. Named here, not buried: the trade is clarity over speed for a first send.']
+      ]
+    },
+    B: {
+      title: 'B · One form',
+      lead: 'Everything on one screen. The recipient folds into a verified line once it checks out.',
+      calls: [
+        { d: 'The recipient block collapses to a verified line once the number and network are valid. The amount appears below it.', p: 'Progressive disclosure. Finished blocks collapse, and Change reopens them (pattern 10).', t: 'The form is denser on one screen, and a Change tap is needed to edit the number.' },
+        { d: 'The name shows inside the collapsed line, so the person sees who gets the airtime before the amount.', p: 'Recipient resolves before the amount. Verified state is shown, not decorated (honest status).', t: 'If the name is not found, the line says so instead of showing a tick.' },
+        { d: 'Review, code and receipt are shared with A.', p: 'One money-movement chassis (pattern 11), so the code rules cannot drift.', t: 'Iterations A and B differ only in the entry screens.' }
+      ],
+      gate: [
+        ['In control?', 'Yes. The amount and the recipient are visible together before Review.'],
+        ['Without judgment?', 'Yes. Mismatched networks name the network the number is on.'],
+        ['Lighter?', 'Yes. Fewest screens: form, review, code, receipt.']
+      ]
+    },
+    C: {
+      title: 'C · Network first',
+      lead: 'Pick the network, then a recent number on it or a new one. Recognition over recall.',
+      calls: [
+        { d: 'Network comes first, and recent numbers filter to it.', p: 'Recognition over recall. Saved recipients sit above manual entry (CONSTITUTION §1).', t: 'A new number on a network chosen second needs an extra tap.' },
+        { d: 'A number whose prefix belongs to another network is refused inline, and it names the network to use.', p: 'Prevent errors rather than report them. Filter out what cannot work.', t: 'Someone who knows only the number must learn the network first.' },
+        { d: 'Recent numbers come from the ledger (src/lib/payees.ts), not a separate list.', p: 'Two journeys, one store. One source per fact.', t: 'Needs the recents query built. Not built in this prototype: the list here is mock data.' }
+      ],
+      gate: [
+        ['In control?', 'Yes. Same review and code as A and B.'],
+        ['Without judgment?', 'Yes. The mismatch line says what to do next.'],
+        ['Lighter?', 'Mid. Shorter for repeat sends, one step longer for a new number.']
+      ]
+    }
+  };
+  var FOOT = 'Fee is GHS 0.00 here as a placeholder from the Figma flow. Confirm it against the fee table before build. The Figma frames still show a 6-digit PIN; CONSTITUTION §2 says a one-time code, so this prototype uses the code.';
+
+  function renderNotes() {
+    var n = NOTES[it];
+    var calls = n.calls.map(function (c) {
+      return '<div class="call"><b>' + h(c.d) + '</b><p>' + h(c.p) + '</p><p>Trade-off: ' + h(c.t) + '</p></div>';
+    }).join('');
+    var gate = n.gate.map(function (g) { return '<div><strong>' + h(g[0]) + '</strong> ' + h(g[1]) + '</div>'; }).join('');
+    document.getElementById('notes').innerHTML =
+      '<h2>' + h(n.title) + '</h2><p class="lead">' + h(n.lead) + '</p>' +
+      calls +
+      '<div class="gate"><div style="font-weight:500;margin-bottom:4px">Gate check</div>' + gate + '</div>' +
+      '<p class="placeholder" style="margin-top:16px">' + h(FOOT) + '</p>';
+  }
+
+  // ---- Render ------------------------------------------------------------
+  function render() {
+    var root = document.getElementById('phone');
+    var view = VIEWS[it][st.step] || VIEWS[it][it === 'C' ? 'home' : 'chooser'];
+    root.innerHTML = view();
+    if (st.focus) {
+      var el = root.querySelector('[data-id="' + st.focus + '"]');
+      if (el) {
+        el.focus();
+        try { var l = el.value.length; el.setSelectionRange(l, l); } catch (e) { /* select has no caret */ }
+      }
+      st.focus = null;
+    }
+  }
+
+  function go(step) { st.step = step; st.err = ''; render(); }
+
+  // ---- Actions -----------------------------------------------------------
+  function act(name, ds) {
+    if (name === 'back') { var p = PREV[it][st.step]; if (p) { st.err = ''; st.note = ''; go(p); } return; }
+    if (name === 'again') { st = fresh(); render(); return; }
+    if (name === 'pick') {
+      st.phone = ds.phone;
+      st.network = detect(ds.phone) || st.network;
+      st.changeOpen = false;
+      st.amount = '';
+      go(it === 'B' ? 'form' : 'amount');
+      return;
+    }
+    if (name === 'newnumber') { st.phone = ''; st.network = ''; st.amount = ''; go(it === 'B' ? 'form' : 'recipient'); return; }
+    if (name === 'net') { st.network = ds.net; st.focus = null; render(); return; }
+    if (name === 'toAmount') { go('amount'); return; }
+    if (name === 'change') {
+      if (it === 'B') { st.changeOpen = true; render(); return; }
+      go(it === 'A' ? 'recipient' : 'home');
+      return;
+    }
+    if (name === 'closeChange') { st.changeOpen = false; render(); return; }
+    if (name === 'review') { go('review'); return; }
+    if (name === 'otp') { st.code = ''; st.note = ''; go('otp'); return; }
+    if (name === 'resend') { st.note = 'We sent a new code.'; st.err = ''; st.code = ''; render(); return; }
+    if (name === 'confirm') {
+      if (st.code === '000000') {
+        st.err = 'That code doesn’t match. Check the SMS and try again.';
+        st.code = '';
+        st.focus = 'code';
+        render();
+        return;
+      }
+      st.ref = 'AIR' + String(Date.now()).slice(-8);
+      go('done');
+      return;
+    }
+    if (name === 'closed') { go('closed'); return; }
+  }
+
+  var root = document.getElementById('phone');
+  root.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b || b.disabled) return;
+    act(b.getAttribute('data-act'), b.dataset);
+  });
+  root.addEventListener('input', function (e) {
+    var f = e.target.getAttribute('data-field');
+    if (!f) return;
+    if (f === 'phone') {
+      st.phone = e.target.value.replace(/\D/g, '').slice(0, 10);
+      if (it !== 'C') { var d = detect(st.phone); if (d) st.network = d; }
+    } else if (f === 'amount') {
+      st.amount = e.target.value.replace(/[^0-9.]/g, '').slice(0, 9);
+    } else if (f === 'code') {
+      st.code = e.target.value.replace(/\D/g, '').slice(0, 6);
+      st.err = '';
+    }
+    st.focus = e.target.getAttribute('data-id');
+    render();
+  });
+  root.addEventListener('change', function (e) {
+    if (e.target.getAttribute('data-field') === 'network') {
+      st.network = e.target.value;
+      st.focus = 'net';
+      render();
+    }
+  });
+
+  document.querySelector('.seg').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-tab]');
+    if (!b) return;
+    it = b.getAttribute('data-tab');
+    var all = document.querySelectorAll('[data-tab]');
+    for (var i = 0; i < all.length; i++) all[i].setAttribute('aria-pressed', String(all[i] === b));
+    st = fresh();
+    renderNotes();
+    render();
+  });
+
+  renderNotes();
+  render();
+})();
+</script>
+</body>
+</html>

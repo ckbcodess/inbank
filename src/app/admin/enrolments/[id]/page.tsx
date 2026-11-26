@@ -7,7 +7,9 @@
  *
  * Staff capabilities:
  *   - Summary of company, enrolled accounts, applicant, mandate, and users
- *   - Signed letter: uploaded online, or recorded by staff when it arrives by email, post or at a branch
+ *   - Signed letter: uploaded online, or recorded by staff when it arrives by email, post or at a branch. A corrected
+ *     letter after a return is recorded the same way: the customer has no status page to upload it to
+ *   - Resend a user's login details once approved
  *   - Signature verification: Side-by-side comparison of the Flexcube specimen vs the signed letter
  *   - Security callback log: phone called, who answered, outcome
  *   - Approval action: Gated until all signatures match AND callback is verified
@@ -56,6 +58,7 @@ import {
   recordLetterReceived,
   reassignEnrolment,
   rejectEnrolment,
+  resendUserInvite,
   returnEnrolment,
   updateEnrolment,
   type EnrolmentApplication,
@@ -173,7 +176,23 @@ export default function AdminEnrolmentDetailPage({
     );
     if (updated) {
       setApplication(updated);
-      setFeedbackMsg(`Signed letter recorded as received by ${letterVia}.`);
+      setFeedbackMsg(`${application.status === "returned" ? "Corrected" : "Signed"} letter recorded as received by ${letterVia}.`);
+      setTimeout(() => setFeedbackMsg(""), 3500);
+    }
+  }
+
+  // The customer has no status page, so a lost or expired link is resent from here
+  function handleResend(userId: string, name: string) {
+    if (!application) return;
+    const updated = resendUserInvite(
+      application.reference,
+      userId,
+      application.assignedTo.name,
+      application.assignedTo.type === "rm" ? "Relationship Manager" : "Corporate Operations User",
+    );
+    if (updated) {
+      setApplication(updated);
+      setFeedbackMsg(`Login details sent to ${name}.`);
       setTimeout(() => setFeedbackMsg(""), 3500);
     }
   }
@@ -206,7 +225,7 @@ export default function AdminEnrolmentDetailPage({
     if (returned) {
       setApplication(returned);
       setReturnDialogOpen(false);
-      setFeedbackMsg("Application returned to applicant for clarification.");
+      setFeedbackMsg("Application returned. The applicant is emailed what to fix.");
     }
   }
 
@@ -257,12 +276,16 @@ export default function AdminEnrolmentDetailPage({
   const matchedSignatures = application.signatureChecks.filter((s) => s.status === "match").length;
   const allSignaturesMatch = totalSignatures > 0 && matchedSignatures === totalSignatures;
   const isCallVerified = application.verificationCall.logged && application.verificationCall.outcome === "verified";
-  const letterIn = application.status !== "awaiting_letter";
+  const isReturned = application.status === "returned";
+  const letterIn = application.status !== "awaiting_letter" && !isReturned;
+  const openReturn = isReturned ? (application.returns.find((r) => !r.resolved) ?? application.returns[0]) : undefined;
   const canApprove = letterIn && allSignaturesMatch && isCallVerified && application.status !== "approved";
 
   const approvalBlockReason =
     application.status === "approved"
       ? "This application has already been approved."
+      : isReturned
+      ? "Waiting for a corrected letter. Record it here when it arrives by email, post or at a branch."
       : !letterIn
       ? "Waiting for the signed letter. Record it here when it arrives by email, post or at a branch."
       : !allSignaturesMatch && !isCallVerified
@@ -335,11 +358,11 @@ export default function AdminEnrolmentDetailPage({
               <dt className="text-muted-foreground">Applicant</dt>
               <dd className="font-medium text-foreground">
                 {application.applicant.name} ({application.applicant.mobile})
-                {!application.applicant.isSignatory && (
-                  <span className="block text-caption font-normal text-muted-foreground">
-                    {application.applicant.designation ?? "Not a signatory"}, not on the mandate
-                  </span>
-                )}
+                <span className="block text-caption font-normal text-muted-foreground">
+                  {application.applicant.designation ? `${application.applicant.designation}, ` : ""}
+                  {application.applicant.isSignatory ? "signatory on the mandate" : "not on the mandate"}
+                </span>
+                <span className="block text-caption font-normal text-muted-foreground">{application.applicant.email}</span>
               </dd>
             </div>
             <div className="flex justify-between">
@@ -424,9 +447,19 @@ export default function AdminEnrolmentDetailPage({
                   </p>
                 </div>
 
-                <Badge variant="outline" className="shrink-0 text-caption">
-                  {u.role}
-                </Badge>
+                <div className="flex shrink-0 flex-col items-end gap-2">
+                  <Badge variant="outline" className="text-caption">
+                    {u.role}
+                  </Badge>
+                  {application.status === "approved" &&
+                    (u.inviteStatus === "used" ? (
+                      <span className="text-caption text-muted-foreground">Logged in</span>
+                    ) : (
+                      <Button variant="outline" size="sm" onClick={() => handleResend(u.id, u.name)}>
+                        {u.inviteStatus === "expired" ? "Link Expired, Resend" : "Resend Login Details"}
+                      </Button>
+                    ))}
+                </div>
               </div>
             ))}
           </div>
@@ -443,7 +476,9 @@ export default function AdminEnrolmentDetailPage({
           ) : (
             <div className="mt-auto flex flex-col gap-2 pt-2 border-t border-border/50">
               <p className="text-caption text-muted-foreground">
-                Signed letter not received yet. Record it when it arrives.
+                {openReturn
+                  ? `Returned: ${openReturn.reason.replace(/\.$/, "")}. Record the corrected letter when it arrives.`
+                  : "Signed letter not received yet. Record it when it arrives."}
               </p>
               <div className="flex items-center gap-2">
                 <Select
@@ -712,7 +747,7 @@ export default function AdminEnrolmentDetailPage({
         onOpenChange={setReturnDialogOpen}
         onConfirm={handleReturnConfirm}
         reference={application.reference}
-        subheading={`This keeps ${application.reference} alive. The applicant can re-upload corrected signatures directly in their status tracker.`}
+        subheading={`${application.reference} stays open. The applicant is emailed what to fix, and sends a corrected letter by email, post or branch.`}
         items={[
           { id: "sig-page-2", name: "Signatures on Page 2 (Indemnity box)" },
           { id: "sig-specimen-mismatch", name: "Signatory signature mismatch against registered card" },

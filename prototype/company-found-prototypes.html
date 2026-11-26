@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Company Found: 12 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--act:#0b0b0c;--shadow:0 24px 60px -24px rgba(0,0,0,.3);--scrim:rgba(0,0,0,.35)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--act:#f5f5f5;--shadow:0 24px 60px -24px rgba(0,0,0,.9);--scrim:rgba(0,0,0,.6)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;font-size:14px}
+  button,input{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  h1,h2,h3,p{margin:0;padding:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .tab{font-variant-numeric:tabular-nums} .md{font-weight:500}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill:hover{background:var(--tile);color:var(--tx)}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}
+  .note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+  .frame{position:relative;width:460px;max-width:100%;min-height:560px;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+  .frame.phone{width:375px}
+  .cap{font-size:12px;color:var(--mu);text-align:center;margin-bottom:8px}
+  .page{padding:28px;display:flex;flex-direction:column;gap:24px}
+  .phone .page{padding:20px 12px}
+  .back{display:flex;align-items:center;gap:8px;color:var(--mu)}
+  .prog{display:flex;gap:6px}.prog i{flex:1;height:4px;border-radius:4px;background:var(--tile)}.prog i.on{background:var(--am)}
+  .hd{text-align:center;display:flex;flex-direction:column;gap:8px}
+  .hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}
+  .hd p{color:var(--mu)}
+  .lbl{font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;min-height:18px;gap:8px}
+  .inp{outline:none;background:var(--tile);border:1px solid var(--bd);border-radius:10px;height:44px;width:100%;padding:0 12px;font-size:14px;font-variant-numeric:tabular-nums}
+  .inp:focus{border-color:var(--mu)}
+  .slot{position:relative}
+  .inslot{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px;font-size:13px;max-width:62%;white-space:nowrap}
+  .inslot span{overflow:hidden;text-overflow:ellipsis}
+  .btn{height:44px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.am{background:var(--am);color:#111} .btn.am:hover{background:#ffd966}
+  .btn.out{border:1px solid var(--bd)} .btn.out:hover{background:var(--tile)}
+  .btn.gh{color:var(--mu)} .btn.gh:hover{color:var(--tx)}
+  .btn.full{width:100%}
+  .btn.dis{opacity:.4;pointer-events:none}
+  .link{text-decoration:underline;text-underline-offset:3px;font-size:13px}
+  .link.mu:hover{color:var(--tx)}
+  .ring{width:13px;height:13px;border-radius:50%;border:1.5px dashed var(--mu);animation:spin .8s linear infinite;flex:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .in{animation:in .25s ease}
+  .ico{width:40px;height:40px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:var(--mu)}
+  .ico.am{background:var(--amsoft);color:#b7860b}
+  [data-theme=dark] .ico.am{color:var(--am)}
+  .co{display:flex;align-items:center;gap:12px}
+  .co .grow{flex:1;min-width:0}
+  .co .nm{display:block;font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .co .sub{display:block;font-size:12px;color:var(--mu)}
+  .box{border:1px solid var(--bd);background:var(--tile);border-radius:10px;padding:12px}
+  .two{height:auto;min-height:56px;padding:8px 12px;display:flex;align-items:center;gap:12px}
+  .radio{display:flex;flex-direction:column;gap:8px}
+  .rad{display:flex;align-items:center;gap:8px;border:1px solid var(--bd);border-radius:10px;padding:12px}
+  .rad.on{border-color:var(--act)}
+  .dot{width:14px;height:14px;border-radius:50%;border:1px solid var(--bd);flex:none;display:flex;align-items:center;justify-content:center}
+  .rad.on .dot{background:var(--act);border-color:var(--act)} .rad.on .dot::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--surf)}
+  .pop{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;background:var(--surf);border:1px solid var(--bd);border-radius:12px;padding:6px;box-shadow:var(--shadow);animation:in .15s ease}
+  .pop button{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border-radius:8px}
+  .pop button:hover{background:var(--tile)}
+  .scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;animation:in .15s ease;z-index:20}
+  .sheet{background:var(--surf);border:1px solid var(--bd);border-radius:20px 20px 0 0;width:100%;padding:24px;display:flex;flex-direction:column;gap:20px}
+  .big{font-size:22px;font-weight:500;letter-spacing:-.02em}
+  .fact{display:flex;justify-content:space-between;gap:16px;padding:4px 0}
+  .tick{width:18px;height:18px;border-radius:50%;background:#059669;color:#fff;display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .legend{max-width:460px;font-size:12px;color:var(--mu);line-height:1.5;margin-top:16px;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row">
+    <h1>Find Your Company: how the found company is shown</h1>
+    <div class="row" style="gap:12px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="theme"><button data-t="light">Light</button><button data-t="dark" class="on">Dark</button></div>
+    </div>
+  </div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage" id="stage"></div>
+<p class="legend" style="margin:0 auto 48px">Find Company looks the number up. Any 10+ digits finds Adinkra Textiles Ltd. Change or Not My Company starts again. Each variation is shown at desktop and phone width.</p>
+
+<script>
+const CO='Adinkra Textiles Ltd', TYPE='Limited company', ACCT='Current Account';
+const I={
+  bld:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg>',
+  back:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>',
+  chk:'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+  search:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  x:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+};
+const NOTES=[
+ ['Today, tidied','The name sits as a row with the building icon and the account type, instead of loose bold text. Change sits on the row. Smallest step from what ships.'],
+ ['The field becomes the company','After the lookup the input folds into one company row: name on top, number under it. The number was the question; the company is the answer. Change puts the number back.'],
+ ['Name inside the field','The Find button sits inside the field and becomes the name when found. Nothing is added below, so the page never moves. Long names get cut off.'],
+ ['Is this your company?','The result comes back as a question with Yes and No. It asks the person to compare, which is what the check is for. Two radio cards, then Continue.'],
+ ['The heading becomes the company','Once found, the title changes from Find Your Company to the company name, and the field folds into a quiet line. The page is now about them.'],
+ ['Two-line field','The input turns into a taller field holding the name and the number. Same box, same place, nothing new on the page.'],
+ ['Search result to pick','Find drops one result down like a search. Tapping it puts the company in the field. Makes choosing the company a deliberate act.'],
+ ['Found as its own moment','Find goes to a short screen: icon, company name, the account, and Continue or Not My Company. Most certain, but one more screen.'],
+ ['Continue names the company','The name shows as a quiet line and the main button reads Continue as Adinkra Textiles. The action and the confirmation are the same tap.'],
+ ['Label carries the result','No button: the number is looked up as it is typed, and the name appears on the label line, right-aligned, like the account name check in Send & Pay.'],
+ ['Confirmation sheet','Find opens a bottom sheet with the company and two buttons. Suits a phone; on a desktop it covers the page for a one-line answer.'],
+ ['Fact rows','The found company shows as label and value rows (Company, Type, Account), the house pattern for details pages. Reads like a record the bank holds.']
+];
+
+let V=1, S={acct:'1001234567890', st:'idle', pick:null, theme:'dark'}; // st: idle | busy | found
+const $=s=>document.querySelector(s);
+const valid=()=>S.acct.replace(/\D/g,'').length>=10;
+const last4=()=>'•••• '+S.acct.slice(-4);
+
+function pills(){ $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1}</button>`).join(''); $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]}`; }
+
+const shell=(body,title='Find Your Company',desc='Any GCB account your company holds.')=>`
+  <div class="page">
+    <div class="back">${I.back}<span>Back</span></div>
+    <div class="prog">${'<i></i>'.repeat(8).replace('<i></i>','<i class="on"></i>')}</div>
+    <div class="hd"><h2>${title}</h2>${desc?`<p>${desc}</p>`:''}</div>
+    ${body}
+  </div>`;
+const input=(extra='')=>`<input class="inp" data-acct inputmode="numeric" value="${S.acct}" ${extra}/>`;
+const field=(inner, right='')=>`<div><span class="lbl"><span>Account Number</span>${right}</span>${inner}</div>`;
+const busy=()=>`<span class="ring"></span>`;
+const findBtn=(label='Find Company')=>`<button class="btn am full ${valid()?'':'dis'}" data-act="find">${S.st==='busy'?busy():''}${S.st==='busy'?'Finding…':label}</button>`;
+const cont=(label='Continue')=>`<button class="btn am full">${label}</button>`;
+const coRow=(sub=`${TYPE}`,action=`<button class="link mu" data-act="reset">Change</button>`)=>`<div class="co in"><span class="ico am">${I.bld}</span><span class="grow"><span class="nm">${CO}</span><span class="sub">${sub}</span></span>${action}</div>`;
+
+function body(){
+  const f=S.st==='found';
+  switch(V){
+  case 1: return shell(`${field(input())}${f?coRow():''}${f?cont():findBtn()}`);
+  case 2: return shell(f
+      ? `<div><span class="lbl">Your Company</span>${`<div class="box in">${coRow(`<span class="tab">${ACCT} · ${last4()}</span>`)}</div>`}</div>${cont()}`
+      : `${field(input())}${findBtn()}`);
+  case 3: return shell(`${field(`<div class="slot">${input('style="padding-right:46%"')}<div class="inslot">${
+        f?`<span class="tick">${I.chk}</span><span class="md">${CO}</span>`
+         :S.st==='busy'?`${busy()}<span class="mu">Finding…</span>`
+         :`<button class="link ${valid()?'':'mu'}" data-act="find" style="font-size:13px">Find</button>`}</div></div>`)}${cont().replace('class="btn am full"',`class="btn am full ${f?'':'dis'}"`)}`);
+  case 4: return shell(f
+      ? `${field(input())}<div class="in" style="display:flex;flex-direction:column;gap:12px"><p class="md">Is this your company?</p>${coRow(TYPE,'')}<div class="radio" style="flex-direction:row">${['Yes','No'].map(o=>`<button class="rad ${S.pick===o?'on':''}" style="flex:1" data-pick="${o}"><span class="dot"></span>${o}</button>`).join('')}</div></div>
+         <button class="btn am full ${S.pick?'':'dis'}" data-act="${S.pick==='No'?'reset':'none'}">Continue</button>`
+      : `${field(input())}${findBtn()}`);
+  case 5: return f
+      ? shell(`<div class="in" style="text-align:center;display:flex;flex-direction:column;gap:4px"><span class="mu tab">${ACCT} · ${last4()}</span><button class="link mu" data-act="reset" style="align-self:center">Not your company?</button></div>${cont()}`, CO, TYPE)
+      : shell(`${field(input())}${findBtn()}`);
+  case 6: return shell(f
+      ? `${field(`<div class="inp two in">${`<span class="ico am" style="width:32px;height:32px">${I.bld}</span>`}<span style="flex:1;min-width:0"><span class="md" style="display:block">${CO}</span><span class="mu s12 tab">${S.acct}</span></span><button class="link mu" data-act="reset">Edit</button></div>`)}${cont()}`
+      : `${field(input())}${findBtn()}`);
+  case 7: return shell(`${field(`<div class="slot">${f&&S.pick?`<div class="inp two in" style="min-height:44px">${coRow(`<span class="tab">${last4()}</span>`,`<button data-act="reset" class="mu" aria-label="Clear">${I.x}</button>`)}</div>`:input()}
+      ${f&&!S.pick?`<div class="pop"><button data-pick="it">${coRow(`<span class="tab">${ACCT} · ${last4()}</span>`,'')}</button></div>`:''}</div>`)}
+      ${f&&S.pick?cont():`<button class="btn am full ${valid()&&!f?'':'dis'}" data-act="find">${S.st==='busy'?busy()+'Finding…':I.search+'Find Company'}</button>`}`);
+  case 8: return f
+      ? `<div class="page"><div class="back">${I.back}<span>Back</span></div><div class="prog">${'<i></i>'.repeat(8).replace('<i></i>','<i class="on"></i>')}</div>
+         <div class="in" style="display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding-top:24px">
+           <span class="ico am" style="width:56px;height:56px;border-radius:12px">${I.bld}</span>
+           <div style="display:flex;flex-direction:column;gap:4px"><h2 class="big">${CO}</h2><span class="mu tab">${ACCT} · ${last4()}</span></div>
+         </div>
+         <div style="display:flex;flex-direction:column;gap:8px;margin-top:auto">${cont()}<button class="btn gh full" data-act="reset">Not My Company</button></div></div>`
+      : shell(`${field(input())}${findBtn()}`);
+  case 9: return shell(`${field(input())}${f?`<p class="mu in" style="text-align:center">Found <span style="color:var(--tx)">${CO}</span> · <button class="link mu" data-act="reset">Change</button></p>`:''}
+      ${f?cont(`Continue as ${CO.replace(' Ltd','')}`):findBtn()}`);
+  case 10: return shell(`${field(input('data-live'), S.st==='busy'?`<span class="mu" style="font-weight:400;display:flex;gap:6px;align-items:center">${busy()}Checking</span>`:f?`<span class="in" style="font-weight:400;display:flex;gap:6px;align-items:center"><span class="tick">${I.chk}</span>${CO}</span>`:'')}
+      <button class="btn am full ${f?'':'dis'}">Continue</button>`, 'Find Your Company', 'Any GCB account your company holds.');
+  case 11: return shell(`${field(input())}${findBtn()}`) + (f?`<div class="scrim"><div class="sheet in">
+        <h3 class="md" style="font-size:16px">Is this your company?</h3>${coRow(`<span class="tab">${ACCT} · ${last4()}</span>`,'')}
+        <div style="display:flex;flex-direction:column;gap:8px">${cont('Yes, Continue')}<button class="btn gh full" data-act="reset">No, Try Another Number</button></div></div></div>`:'');
+  case 12: return shell(f
+      ? `<div class="in" style="display:flex;flex-direction:column;gap:4px">
+           <div class="fact"><span class="mu">Company</span><span class="md" style="font-size:20px;letter-spacing:-.01em;text-align:right">${CO}</span></div>
+           <div class="fact"><span class="mu">Type</span><span>${TYPE}</span></div>
+           <div class="fact"><span class="mu">Account</span><span class="tab">${last4()}</span></div>
+           <button class="link mu" data-act="reset" style="align-self:flex-start;margin-top:8px">Use another account</button></div>${cont()}`
+      : `${field(input())}${findBtn()}`);
+  }
+}
+
+function render(){
+  pills();
+  const html=body();
+  $('#stage').innerHTML=`<div><p class="cap">Desktop</p><div class="frame">${html}</div></div><div><p class="cap">Phone</p><div class="frame phone">${html}</div></div>`;
+}
+function find(){
+  if(!valid()||S.st!=='idle')return;
+  S.st='busy';render();
+  setTimeout(()=>{S.st='found';S.pick=null;render();},650);
+}
+let liveT;
+document.addEventListener('click',e=>{
+  const v=e.target.closest('[data-v]'); if(v){V=+v.dataset.v;S.st='idle';S.pick=null;render();return;}
+  const t=e.target.closest('[data-t]'); if(t){S.theme=t.dataset.t;document.documentElement.dataset.theme=S.theme;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+  const p=e.target.closest('[data-pick]'); if(p){S.pick=p.dataset.pick;render();return;}
+  const a=e.target.closest('[data-act]'); if(!a)return;
+  if(a.dataset.act==='find')find();
+  if(a.dataset.act==='reset'){S.st='idle';S.pick=null;render();}
+});
+document.addEventListener('input',e=>{
+  if(!e.target.matches('[data-acct]'))return;
+  S.acct=e.target.value;
+  const pos=e.target.selectionStart, live=e.target.hasAttribute('data-live');
+  const wasFound=S.st!=='idle'; S.st='idle'; S.pick=null;
+  const frames=[...document.querySelectorAll('[data-acct]')].indexOf(e.target);
+  const rerender=()=>{render();const el=document.querySelectorAll('[data-acct]')[frames];if(el){el.focus();el.setSelectionRange(pos,pos);}};
+  if(live){clearTimeout(liveT); if(valid()){S.st='busy';rerender();liveT=setTimeout(()=>{S.st='found';rerender();},700);} else rerender(); return;}
+  if(wasFound||true)rerender();
+});
+document.documentElement.dataset.theme='dark';
+render();
+</script>
+</body>
+</html>

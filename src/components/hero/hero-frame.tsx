@@ -4,7 +4,7 @@
  * The hero frame shared by personal and business home screens: the slate panel with its two slow waves of light,
  * dither and dotted map (`HeroSurface`), the rounded sheet the panels rise on with its pointer rim light
  * (`HeroSheet`), and the two stacked (`HeroStack`). Presentation only: what goes inside is each app's own. Colours
- * come from the --hero-* tokens, so a theme (business's smoke ash) restyles it without code.
+ * come from the --hero-* tokens, so a dashboard colour restyles it without code.
  * Moved here from the personal dashboard (components/dashboard/v2/hero-parts.tsx re-exports it).
  */
 

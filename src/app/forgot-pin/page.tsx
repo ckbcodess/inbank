@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 /**
  * PIN Reset — Forgot PIN.
  *
@@ -47,7 +49,6 @@ const STEP_NUMBER_SESSION: Partial<Record<Stage, number>> = {
 };
 
 const MAX_SELFIE_ATTEMPTS = 3;
-const BRANCH_LOCATOR_URL = "https://www.gcbbank.com.gh/branches-and-atms";
 
 function selfieMatches(mobile: string): boolean {
   return !mobile.endsWith("0000");
@@ -397,7 +398,7 @@ function ForgotPinContent() {
             variant="default"
             size="md"
             nativeButton={false}
-            render={<a href={BRANCH_LOCATOR_URL} target="_blank" rel="noreferrer" />}
+            render={<Link href="/branches" />}
             className="w-full"
           >
             Find a branch

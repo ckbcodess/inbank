@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Application Review: Polish</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--fld:#fcfcfc;--fbd:#ebebeb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--fld:#1c1c1c;--fbd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h2{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500;margin:0}
+  .pills,.seg{display:inline-flex;gap:4px}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .cap{font-size:12px;color:var(--mu);text-align:center;margin-bottom:8px}
+  .frame{width:460px;max-width:100%;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow)}
+  .frame.phone{width:375px}
+  .page{padding:28px;display:flex;flex-direction:column;gap:24px}.phone .page{padding:20px 12px}
+  .hd{text-align:center;display:flex;flex-direction:column;gap:8px}.hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu)}
+  .person{padding:6px 0}.person .w{color:#b45309;font-size:12px}[data-theme=dark] .person .w{color:#fbbf24}
+  .btn{height:40px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.sm{height:28px;padding:0 10px;font-size:13px;border-radius:8px}
+  .btn.am{background:var(--am);color:#111}.btn.out{border:1px solid var(--bd);background:var(--surf)}.btn.full{width:100%}.btn.dis{opacity:.4;pointer-events:none}
+  .btn.gh{color:var(--tx)}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--mu);font-size:13px}.link:hover{color:var(--tx)}
+  .link.tx{color:var(--tx)}
+  .zone{border:1px dashed var(--fbd);background:var(--fld);border-radius:10px}
+  .zone.drag{border-color:var(--tx);background:var(--amsoft)}
+  .ico{width:40px;height:40px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:#b7860b}[data-theme=dark] .ico{color:var(--am)}
+  .act{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}
+  .act:hover{background:var(--tile)}
+  .grow{flex:1;min-width:0}
+  .num{width:24px;height:24px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .file{display:flex;align-items:center;gap:12px}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.in{animation:in .2s ease}
+  svg{flex:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Check Your Application: making 3.3 look better</h1>
+    <div class="row" style="gap:12px"><div class="pills" id="pills"></div>
+    <div class="seg" id="theme"><button data-t="light">Light</button><button data-t="dark" class="on">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage" id="stage"></div>
+<style>
+  .pr{display:flex;align-items:center;gap:12px;padding:6px 0}
+  .kv{display:flex;justify-content:space-between;gap:16px;padding:4px 0}
+  .r{text-align:right}
+  .num{font-size:20px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+  .panel{background:var(--tile);border-radius:12px;display:grid;grid-template-columns:repeat(3,1fr)}
+  .panel>div{padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+  .panel>div+div{border-left:1px solid var(--bd)}
+  .fold{display:flex;align-items:center;gap:12px;width:100%;text-align:left}
+  .plain .fold{padding:10px 8px;margin:0 -8px;width:calc(100% + 16px);border-radius:10px}
+  .plain .fold:hover{background:var(--tile)}
+  .tiles{display:flex;flex-direction:column;gap:8px}
+  .tiles .fw{background:var(--tile);border-radius:12px;padding:4px 14px}
+  .tiles .fold{padding:10px 0}
+  .ico{width:36px;height:36px}
+  .cnt{font-size:16px;font-variant-numeric:tabular-nums}
+  .facts-inline{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;color:var(--mu)}
+</style>
+<script>
+const I={ chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>',
+ acc:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+ ppl:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+ me:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>' };
+const ACC=[['Corporate Current Account','7890']];
+const AP={n:'Yaw Oppong',des:'Managing Director',ph:'+233 24 *** 3456',em:'yaw.oppong@adinkratextiles.com'};
+const P=[
+ {n:'Yaw Oppong',role:'Authoriser',lim:'GHS 10,000.00'},{n:'Esther Appiah',role:'Viewer'},{n:'Ransford Gyasi',role:'Viewer'},{n:'Adwoa Mensah',role:'Inputter',lim:'GHS 10,000.00'}];
+const NOTES=[
+ ['Facts in one panel','The three facts sit together in one quiet tinted panel, split by hairlines, so they read as a single summary rather than three loose numbers. The folds below lose their dividers and get a rounded hover, like other lists.'],
+ ['Counts on the folds','No separate facts row: each fold carries its own count on the right (Accounts 1, People 4), and Can approve moves into the People preview. One list instead of two blocks saying the same thing.'],
+ ['Folds as tiles','The facts stay as a row, and each fold becomes its own soft tile with an icon. Clear tap targets, more structure, at the cost of more fill on the page.'],
+ ['One summary line','The facts shrink to one centred line under the heading: 1 account · 4 people · 1 can approve. The folds carry an icon each and do the rest. The quietest version.']
+];
+let V=1, open={};
+const $=s=>document.querySelector(s);
+const auth=P.filter(p=>p.role==='Authoriser').length;
+const body_={a:()=>ACC.map(([n,l])=>`<div class="kv"><span>${n}</span><span class="mu tab">•••• ${l}</span></div>`).join(''),
+ p:()=>P.map(p=>`<div class="kv"><span>${p.n}</span><span class="s12 r">${p.role}${p.lim?`<br><span class="mu tab">${p.lim}</span>`:''}</span></div>`).join(''),
+ ap:()=>`<div class="kv"><span>${AP.n}</span><span class="mu s12 tab">${AP.ph}</span></div><div class="mu s12">${AP.des} · ${AP.em}</div>`};
+const prevs={a:'•••• 7890',p:'Yaw, Esther, Ransford and 1 more',ap:'Yaw Oppong, Managing Director'};
+const titles={a:'Accounts',p:'People',ap:'Applicant'};
+const icons={a:I.acc,p:I.ppl,ap:I.me};
+const chev=k=>`<span class="mu" style="display:inline-flex;transition:transform .2s;${open[k]?'transform:rotate(180deg)':''}">${I.chev}</span>`;
+function fold(k,{icon=false,count='',prev=prevs[k]}={}){
+  return `<div class="fw"><button class="fold" data-f="${k}">${icon?`<span class="ico">${icons[k]}</span>`:''}<span class="grow"><span class="md" style="display:block">${titles[k]}</span>${open[k]?'':`<span class="mu s12 tab">${prev}</span>`}</span>${count?`<span class="cnt">${count}</span>`:''}${chev(k)}</button>
+   ${open[k]?`<div class="in" style="padding:0 0 12px;display:flex;flex-direction:column">${body_[k]()}<button class="link" style="align-self:flex-start;margin-top:6px">Edit</button></div>`:''}</div>`;
+}
+function body(){
+ let b='';
+ switch(V){
+ case 1: b=`<div class="panel"><div><span class="num">${ACC.length}</span><span class="mu s12">Account</span></div><div><span class="num">${P.length}</span><span class="mu s12">People</span></div><div><span class="num">${auth}</span><span class="mu s12">Can approve</span></div></div>
+   <div class="plain">${['a','p','ap'].map(k=>fold(k)).join('')}</div>`; break;
+ case 2: b=`<div class="plain" style="display:flex;flex-direction:column">${fold('a',{count:ACC.length})}${fold('p',{count:P.length,prev:`${auth} can approve · Yaw, Esther, Ransford and 1 more`})}${fold('ap')}</div>`; break;
+ case 3: b=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center"><div><span class="num" style="display:block">${ACC.length}</span><span class="mu s12">Account</span></div><div><span class="num" style="display:block">${P.length}</span><span class="mu s12">People</span></div><div><span class="num" style="display:block">${auth}</span><span class="mu s12">Can approve</span></div></div>
+   <div class="tiles">${['a','p','ap'].map(k=>fold(k,{icon:true})).join('')}</div>`; break;
+ case 4: b=`<div class="plain">${['a','p','ap'].map(k=>fold(k,{icon:true})).join('')}</div>`; break;
+ }
+ const sub = V===4?`<p class="facts-inline s12"><span>${ACC.length} account</span><span>·</span><span>${P.length} people</span><span>·</span><span>${auth} can approve</span></p>`:'<p>This goes on your letter.</p>';
+ return `<div class="page"><div class="hd"><h2>Check Your Application</h2>${sub}</div>${b}<button class="btn am full">Continue</button></div>`;
+}
+function render(){
+  $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1}</button>`).join('');
+  $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]}`;
+  const h=body(); $('#stage').innerHTML=`<div><p class="cap">Desktop</p><div class="frame">${h}</div></div><div><p class="cap">Phone</p><div class="frame phone">${h}</div></div>`;
+}
+document.addEventListener('click',e=>{
+  const v=e.target.closest('[data-v]'); if(v){V=+v.dataset.v;open={};render();return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+  const f=e.target.closest('[data-f]'); if(f){open[f.dataset.f]=!open[f.dataset.f];render();}
+});
+document.documentElement.dataset.theme='dark';
+render();
+</script>
+</body>
+</html>

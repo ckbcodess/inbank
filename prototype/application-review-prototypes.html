@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Application Review: 6 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--fld:#fcfcfc;--fbd:#ebebeb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--fld:#1c1c1c;--fbd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h2{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500;margin:0}
+  .pills,.seg{display:inline-flex;gap:4px}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .cap{font-size:12px;color:var(--mu);text-align:center;margin-bottom:8px}
+  .frame{width:460px;max-width:100%;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow)}
+  .frame.phone{width:375px}
+  .page{padding:28px;display:flex;flex-direction:column;gap:24px}.phone .page{padding:20px 12px}
+  .hd{text-align:center;display:flex;flex-direction:column;gap:8px}.hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu)}
+  .person{padding:6px 0}.person .w{color:#b45309;font-size:12px}[data-theme=dark] .person .w{color:#fbbf24}
+  .btn{height:40px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.sm{height:28px;padding:0 10px;font-size:13px;border-radius:8px}
+  .btn.am{background:var(--am);color:#111}.btn.out{border:1px solid var(--bd);background:var(--surf)}.btn.full{width:100%}.btn.dis{opacity:.4;pointer-events:none}
+  .btn.gh{color:var(--tx)}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--mu);font-size:13px}.link:hover{color:var(--tx)}
+  .link.tx{color:var(--tx)}
+  .zone{border:1px dashed var(--fbd);background:var(--fld);border-radius:10px}
+  .zone.drag{border-color:var(--tx);background:var(--amsoft)}
+  .ico{width:40px;height:40px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:#b7860b}[data-theme=dark] .ico{color:var(--am)}
+  .act{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}
+  .act:hover{background:var(--tile)}
+  .grow{flex:1;min-width:0}
+  .num{width:24px;height:24px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .file{display:flex;align-items:center;gap:12px}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.in{animation:in .2s ease}
+  svg{flex:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Check Your Application: the review before the letter</h1>
+    <div class="row" style="gap:12px"><div class="pills" id="pills"></div>
+    <div class="seg" id="theme"><button data-t="light">Light</button><button data-t="dark" class="on">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage" id="stage"></div>
+<style>
+  .warn{color:#b45309}[data-theme=dark] .warn{color:#fbbf24}
+  .av{width:36px;height:36px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .pr{display:flex;align-items:center;gap:12px;padding:6px 0}
+  .sh{display:flex;align-items:center;justify-content:space-between;min-height:24px;margin-bottom:4px}
+  .sec{display:flex;flex-direction:column;gap:2px}
+  .kv{display:flex;justify-content:space-between;gap:16px;padding:4px 0}
+  .r{text-align:right}
+  .paper{background:#fff;color:#111;border-radius:6px;padding:20px;font-size:11px;line-height:1.5;box-shadow:0 8px 24px -12px rgba(0,0,0,.4)}
+  .paper .h{font-weight:500;font-size:12px}
+  .paper table{width:100%;border-collapse:collapse;margin-top:8px}.paper td,.paper th{border-bottom:1px solid #e5e5e5;padding:4px 2px;text-align:left;font-weight:400}
+  .paper th{color:#666}
+  .mx{width:100%;border-collapse:collapse}.mx th{font-size:12px;color:var(--mu);font-weight:400;padding:6px 4px;text-align:center;border-bottom:1px solid var(--bd)}
+  .mx th:first-child,.mx td:first-child{text-align:left}.mx td{padding:8px 4px;border-bottom:1px solid var(--bd);text-align:center}
+  .yes{color:#059669}.no{color:var(--mu)}
+  .flow{display:flex;flex-direction:column;gap:0}
+  .step{display:flex;gap:12px}.step .rail{display:flex;flex-direction:column;align-items:center}.step .dotx{width:10px;height:10px;border-radius:50%;background:var(--am);margin-top:5px}.step .ln{flex:1;width:1px;background:var(--bd);margin:4px 0}
+  .fold{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd);width:100%}
+</style>
+<script>
+const I={ chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>',
+ bld:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg>' };
+const CO='Adinkra Textiles Ltd';
+const ACC=[['Corporate Current Account','7890'],['USD Trade Account','0430']];
+const AP={n:'Yaw Oppong',des:'Managing Director',ph:'+233 24 *** 3456',em:'yaw.oppong@adinkratextiles.com'};
+const P=[
+ {n:'Yaw Oppong',src:'Managing Director',role:'Authoriser',lim:'GHS 10,000.00',acc:['7890']},
+ {n:'Esther Appiah',src:'Finance Director',role:'Authoriser',lim:'GHS 10,000.00',acc:['7890','0430']},
+ {n:'Ransford Gyasi',src:'Executive Director',role:'Viewer',acc:['7890','0430']},
+ {n:'Adwoa Mensah',src:'Added by you',role:'Inputter',lim:'GHS 10,000.00',acc:['7890']},
+ {n:'Kojo Asamoah',src:'Added by you',role:'Viewer',acc:['7890']},
+];
+const NOTES=[
+ ['Same rows as the people step','People read exactly as they did on the step before: initials, where they came from, role and limit on the right, accounts under. The applicant becomes one row. Review should look like what they set up, not a new format.'],
+ ['See the letter','The review is a small preview of the letter itself: the company, the accounts, a table of people. This is literally what the signatories will sign, so the check is against the real thing. Edit links sit beside it.'],
+ ['Summary, then folds','One line says what is being asked for (2 accounts, 5 people, by Yaw Oppong). Each section folds open on tap. Fast for a confident applicant, still complete for a careful one.'],
+ ['By role','People grouped as Authorisers, Inputters and Viewers with counts. The question a bank and a signatory ask at review is who can approve money, and the headings answer it.'],
+ ['Who can use which account','A grid of people against accounts, with each person’s role and limit. The one thing the list hides, who can act on the USD account, is visible at a glance.'],
+ ['How a payment will flow','The review explains the set-up as the path of a payment: Adwoa prepares, Yaw or Esther approves, up to GHS 10,000. The people list follows. Turns settings into a sentence a director can sign.']
+];
+let V=1, open={};
+const $=s=>document.querySelector(s);
+const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2);
+const edit=()=>`<button class="link">Edit</button>`;
+const sh=(t,right=edit())=>`<div class="sh"><span class="md">${t}</span>${right}</div>`;
+const accLines=()=>ACC.map(([n,l])=>`<div class="kv"><span>${n}</span><span class="mu tab">•••• ${l}</span></div>`).join('');
+const pRow=p=>`<div class="pr"><span class="av">${ini(p.n)}</span><span class="grow"><span style="display:block">${p.n}</span><span class="mu s12">${p.src} · ${p.acc.map(a=>'•••• '+a).join(', ')}</span></span><span class="s12 r">${p.role}${p.lim?`<br><span class="mu tab">${p.lim}</span>`:''}</span></div>`;
+const apRow=()=>`<div class="pr"><span class="av">${ini(AP.n)}</span><span class="grow"><span style="display:block">${AP.n}</span><span class="mu s12">${AP.des} · ${AP.em}</span></span><span class="mu s12 tab">${AP.ph}</span></div>`;
+function body(){
+ let b='';
+ switch(V){
+ case 1: b=`<div class="sec">${sh(CO)}${accLines()}</div><div class="sec">${sh('Applicant')}${apRow()}</div><div class="sec">${sh('People')}${P.map(pRow).join('')}</div>`; break;
+ case 2: b=`<div class="paper"><div class="h">${CO}</div><div style="color:#666">Request to set up internet banking</div>
+   <p style="margin-top:8px">Please set up internet banking on these accounts:</p>${ACC.map(([n,l])=>`<div>${n} ending ${l}</div>`).join('')}
+   <table><tr><th>Name</th><th>Role</th><th>Limit</th><th>Accounts</th></tr>${P.map(p=>`<tr><td>${p.n}</td><td>${p.role}</td><td>${p.lim||'None'}</td><td>${p.acc.join(', ')}</td></tr>`).join('')}</table>
+   <p style="margin-top:8px;color:#666">Prepared by ${AP.n}, ${AP.des}</p></div>
+   <div style="display:flex;gap:16px;flex-wrap:wrap" class="s12"><button class="link">Edit accounts</button><button class="link">Edit people</button><button class="link">Edit applicant</button></div>`; break;
+ case 3: { const f=(k,t,c)=>`<div><button class="fold" data-f="${k}"><span><span class="md">${t}</span></span><span class="mu" style="display:inline-flex;${open[k]?'transform:rotate(180deg)':''}">${I.chev}</span></button>${open[k]?`<div class="in" style="padding:8px 0">${c}</div>`:''}</div>`;
+   b=`<p class="lead" style="font-size:16px;line-height:1.6">Internet banking for <span class="md">${CO}</span> on ${ACC.length} accounts, for ${P.length} people, applied for by ${AP.n}.</p>
+   <div>${f('a','2 Accounts',accLines())}${f('p','5 People',P.map(pRow).join(''))}${f('ap','Applicant',apRow())}</div>`; break; }
+ case 4: b=`<div class="sec">${sh(CO)}${accLines()}</div>${['Authoriser','Inputter','Viewer'].map(r=>{const ps=P.filter(p=>p.role===r);return `<div class="sec">${sh(r+'s',`<span class="mu s12">${ps.length}</span>`)}${ps.map(p=>`<div class="pr"><span class="av">${ini(p.n)}</span><span class="grow"><span style="display:block">${p.n}</span><span class="mu s12">${p.src}</span></span><span class="mu s12 r tab">${p.lim?p.lim+'<br>':''}${p.acc.map(a=>'•••• '+a).join(', ')}</span></div>`).join('')}</div>`}).join('')}
+   <div style="display:flex;justify-content:space-between"><button class="link">Edit people</button></div><div class="sec">${sh('Applicant')}${apRow()}</div>`; break;
+ case 5: b=`<div class="sec">${sh(CO)}<span class="mu s12">Who can use each account</span></div>
+   <table class="mx"><tr><th></th>${ACC.map(([n,l])=>`<th>${n.split(' ')[0]}<br>•••• ${l}</th>`).join('')}</tr>${P.map(p=>`<tr><td><span style="display:block">${p.n}</span><span class="mu s12">${p.role}${p.lim?' · '+p.lim:''}</span></td>${ACC.map(([,l])=>`<td class="${p.acc.includes(l)?'yes':'no'}">${p.acc.includes(l)?'●':'–'}</td>`).join('')}</tr>`).join('')}</table>
+   <button class="link" style="align-self:flex-start">Edit people</button><div class="sec">${sh('Applicant')}${apRow()}</div>`; break;
+ case 6: b=`<div class="sec">${sh('How a Payment Will Flow')}
+   <div class="flow">${[['Prepared by','Adwoa Mensah','Up to GHS 10,000.00'],['Approved by','Yaw Oppong or Esther Appiah','Both to sign · up to GHS 10,000.00'],['Can see','Ransford Gyasi, Kojo Asamoah','Balances and statements']].map(([a,b2,c],i,arr)=>`<div class="step"><div class="rail"><span class="dotx"></span>${i<arr.length-1?'<span class="ln"></span>':''}</div><div style="padding-bottom:16px"><span class="mu s12">${a}</span><span style="display:block">${b2}</span><span class="mu s12">${c}</span></div></div>`).join('')}</div></div>
+   <div class="sec">${sh(CO)}${accLines()}</div><div class="sec">${sh('Applicant')}${apRow()}</div>`; break;
+ }
+ return `<div class="page"><div class="hd"><h2>Check Your Application</h2><p>This goes on your letter.</p></div>${b}<button class="btn am full">Continue</button></div>`;
+}
+function render(){
+  $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1}</button>`).join('');
+  $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]}`;
+  const h=body(); $('#stage').innerHTML=`<div><p class="cap">Desktop</p><div class="frame">${h}</div></div><div><p class="cap">Phone</p><div class="frame phone">${h}</div></div>`;
+}
+document.addEventListener('click',e=>{
+  const v=e.target.closest('[data-v]'); if(v){V=+v.dataset.v;open={};render();return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+  const f=e.target.closest('[data-f]'); if(f){open[f.dataset.f]=!open[f.dataset.f];render();}
+});
+document.documentElement.dataset.theme='dark';
+render();
+</script>
+</body>
+</html>

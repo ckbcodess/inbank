@@ -1,8 +1,8 @@
 /**
  * Shared Enrolment Store.
  *
- * Two journeys, one store (CONSTITUTION §1): the customer's online application (/business/signup/enrol), the
- * status page (/business/signup/status) and the staff queue (/admin/enrolments) all read and write here. An
+ * Two journeys, one store (CONSTITUTION §1): the customer's online application (/business/signup/enrol) and the
+ * staff queue (/admin/enrolments) both read and write here. The customer hears by email; there is no status page. An
  * application that arrives by email, post or at a branch is captured by staff into the same store.
  *
  * Persisted in browser localStorage (with in-memory fallback), seeded with realistic scenarios.
@@ -17,7 +17,6 @@ import {
   type EnrolmentReturnRecord,
   type EnrolmentStaffAssignment,
   type EnrolmentStatus,
-  type EnrolmentTimelineEvent,
   type LetterChannel,
   type CompanyApplicant,
   type SignatureCheckItem,
@@ -149,48 +148,6 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       outcome: null,
     },
     returns: [],
-    timeline: [
-      {
-        status: "received",
-        label: "Application received",
-        description: "Request pack uploaded and application registered in queue.",
-        timestamp: "18 Oct 2026, 10:28 AM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "rm_review",
-        label: "Assigned to Relationship Manager",
-        description: "Assigned to Kwame Asante (High Street Branch).",
-        timestamp: "18 Oct 2026, 11:15 AM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "checking_signatures",
-        label: "Checking signatures",
-        description: "Comparing the signed letter with the specimen signatures in our records.",
-        timestamp: "19 Oct 2026, 08:15 AM",
-        done: false,
-        current: true,
-      },
-      {
-        status: "call_verification",
-        label: "Security callback verification",
-        description: "We will call the primary contact on 024 ••• 3456. We will never ask for a code or password.",
-        timestamp: "Pending signature verification",
-        done: false,
-        current: false,
-      },
-      {
-        status: "approved",
-        label: "Approved, login details sent",
-        description: "Each person gets a link by email and a code by text message to set their password.",
-        timestamp: "Pending",
-        done: false,
-        current: false,
-      },
-    ],
   },
 
   // 2. Ready for Call: Volta River Logistics - Signatures matched, awaiting phone verification
@@ -267,48 +224,6 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       outcome: null,
     },
     returns: [],
-    timeline: [
-      {
-        status: "received",
-        label: "Application received",
-        description: "Request pack uploaded.",
-        timestamp: "17 Oct 2026, 02:05 PM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "rm_review",
-        label: "Corporate Banking Operations review",
-        description: "Assigned to Central Corporate Desk.",
-        timestamp: "17 Oct 2026, 03:00 PM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "checking_signatures",
-        label: "Checking signatures",
-        description: "All signatures verified against specimen on file.",
-        timestamp: "18 Oct 2026, 04:20 PM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "call_verification",
-        label: "Security callback verification",
-        description: "We will call the primary contact on 020 ••• 0314. We will never ask for a code or password.",
-        timestamp: "In progress",
-        done: false,
-        current: true,
-      },
-      {
-        status: "approved",
-        label: "Approved, login details sent",
-        description: "Each person gets a link by email and a code by text message to set their password.",
-        timestamp: "Pending",
-        done: false,
-        current: false,
-      },
-    ],
   },
 
   // 3. Returned: Accra Timber Merchants - Specific return reason with re-upload in place
@@ -399,32 +314,6 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
           "Signature of Kwabena Yeboah (Managing Director, Signatory A)",
         ],
         resolved: false,
-      },
-    ],
-    timeline: [
-      {
-        status: "received",
-        label: "Application received",
-        description: "Initial application submitted.",
-        timestamp: "15 Oct 2026, 09:10 AM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "rm_review",
-        label: "Assigned to Relationship Manager",
-        description: "Assigned to Kwame Asante.",
-        timestamp: "15 Oct 2026, 11:30 AM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "returned",
-        label: "Returned for clarification",
-        description: "One signature doesn't match our records.",
-        timestamp: "16 Oct 2026, 02:45 PM",
-        done: false,
-        current: true,
       },
     ],
   },
@@ -531,48 +420,6 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       loggedBy: "Kwame Asante",
     },
     returns: [],
-    timeline: [
-      {
-        status: "received",
-        label: "Application received",
-        description: "Application submitted.",
-        timestamp: "10 Oct 2026, 08:00 AM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "rm_review",
-        label: "Relationship Manager review",
-        description: "Assigned to Kwame Asante.",
-        timestamp: "10 Oct 2026, 09:30 AM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "checking_signatures",
-        label: "Wet signatures verified",
-        description: "All signatures confirmed against specimen cards.",
-        timestamp: "11 Oct 2026, 03:15 PM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "call_verification",
-        label: "Security callback verification",
-        description: "Confirmed with Nana Akua Osei on 024 ••• 8899.",
-        timestamp: "12 Oct 2026, 10:45 AM",
-        done: true,
-        current: false,
-      },
-      {
-        status: "approved",
-        label: "Approved, login details sent",
-        description: "Each person gets a link by email and a code by text message to set their password.",
-        timestamp: "12 Oct 2026, 11:00 AM",
-        done: true,
-        current: true,
-      },
-    ],
   },
 
   // 5. Waiting for the signed letter: applied online, chose to email the letter to their RM
@@ -642,12 +489,6 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       outcome: null,
     },
     returns: [],
-    timeline: enrolmentTimeline(
-      "awaiting_letter",
-      { type: "operations", name: "Corporate Banking Team" },
-      { mobile: "0201200314", isSignatory: true },
-      "20 Oct 2026, 09:05 AM",
-    ),
   },
 ];
 
@@ -728,7 +569,7 @@ export function updateEnrolment(
 }
 
 /**
- * Staff Action: Approves the application, marks timeline, and issues user setup invites.
+ * Staff Action: Approves the application and issues user setup invites.
  */
 export function approveEnrolment(
   reference: string,
@@ -739,13 +580,6 @@ export function approveEnrolment(
   if (!app) return undefined;
 
   const nowIso = new Date().toISOString();
-  const dateFormatted = new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date());
 
   // Update user draft invites
   const updatedUsers = app.users.map((u, i) => ({
@@ -754,22 +588,9 @@ export function approveEnrolment(
     inviteToken: `corp-inv-${app.reference.toLowerCase().replace(/[^a-z0-9]/g, "")}-${i + 1}`,
   }));
 
-  const updatedTimeline = app.timeline.map((item) => {
-    if (item.status === "approved") {
-      return {
-        ...item,
-        timestamp: dateFormatted,
-        done: true,
-        current: true,
-      };
-    }
-    return { ...item, done: true, current: false };
-  });
-
   const updated = updateEnrolment(reference, {
     status: "approved",
     users: updatedUsers,
-    timeline: updatedTimeline,
   });
 
   // Record audit log entry
@@ -802,13 +623,6 @@ export function returnEnrolment(
   if (!app) return undefined;
 
   const nowIso = new Date().toISOString();
-  const dateFormatted = new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date());
 
   const newReturn: EnrolmentReturnRecord = {
     id: `ret-${Date.now()}`,
@@ -820,22 +634,9 @@ export function returnEnrolment(
     resolved: false,
   };
 
-  const updatedTimeline = [
-    ...app.timeline.filter((t) => t.status !== "returned"),
-    {
-      status: "returned",
-      label: "Returned for clarification",
-      description: reason,
-      timestamp: dateFormatted,
-      done: false,
-      current: true,
-    },
-  ];
-
   const updated = updateEnrolment(reference, {
     status: "returned",
     returns: [newReturn, ...app.returns],
-    timeline: updatedTimeline,
   });
 
   AUDIT_EVENTS.unshift({
@@ -865,30 +666,10 @@ export function rejectEnrolment(
   if (!app) return undefined;
 
   const nowIso = new Date().toISOString();
-  const dateFormatted = new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date());
-
-  const updatedTimeline = [
-    ...app.timeline,
-    {
-      status: "rejected",
-      label: "Application declined",
-      description: reason,
-      timestamp: dateFormatted,
-      done: false,
-      current: true,
-    },
-  ];
 
   const updated = updateEnrolment(reference, {
     status: "rejected",
     rejectionReason: reason,
-    timeline: updatedTimeline,
   });
 
   AUDIT_EVENTS.unshift({
@@ -936,170 +717,36 @@ export function reassignEnrolment(
   return updated;
 }
 
-/**
- * Customer Action: Re-uploads corrected document in-place for a returned application.
- */
-export function resubmitReturnedEnrolment(
+/** Staff: sends a user their login link and code again (the first link expired, or never reached them). */
+export function resendUserInvite(
   reference: string,
-  fileName: string,
-  fileSize: string,
+  userId: string,
+  staffName: string,
+  staffRole: string,
 ): EnrolmentApplication | undefined {
   const app = getEnrolment(reference);
-  if (!app) return undefined;
-
-  const nowIso = new Date().toISOString();
-  const dateFormatted = new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date());
-
-  const updatedReturns = app.returns.map((r, i) =>
-    i === 0 ? { ...r, resolved: true, resubmittedAt: nowIso } : r,
-  );
-
-  const resetSignatures: SignatureCheckItem[] = app.signatureChecks.map((s) => ({
-    ...s,
-    status: "unreviewed",
-  }));
-
-  const updatedTimeline = app.timeline
-    .filter((t) => t.status !== "returned")
-    .map((t) => {
-      if (t.status === "checking_signatures") {
-        return {
-          ...t,
-          timestamp: dateFormatted,
-          current: true,
-          done: false,
-          description: "Resubmitted document pack received. Re-verifying signatures.",
-        };
-      }
-      return t;
-    });
+  const user = app?.users.find((u) => u.id === userId);
+  if (!app || !user) return undefined;
 
   const updated = updateEnrolment(reference, {
-    status: "checking_signatures",
-    pack: {
-      uploadedFileName: fileName,
-      uploadedFileSize: fileSize,
-      uploadedAt: nowIso,
-    },
-    signatureChecks: resetSignatures,
-    returns: updatedReturns,
-    timeline: updatedTimeline,
+    users: app.users.map((u) =>
+      u.id === userId ? { ...u, inviteStatus: "sent" as const, inviteToken: `corp-inv-${Date.now().toString(36)}` } : u,
+    ),
   });
-
+  AUDIT_EVENTS.unshift({
+    id: `aud-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    actor: staffName,
+    role: staffRole,
+    action: `Resent login details to ${user.name}`,
+    target: `${app.companyName} · ${app.reference}`,
+    channel: "Admin Portal",
+    ip: "10.0.4.12",
+  });
   return updated;
 }
 
-/**
- * Customer or Admin Action: Re-sends activation invitation link to a user.
- */
-export function resendUserInvite(reference: string, userId: string): EnrolmentApplication | undefined {
-  const app = getEnrolment(reference);
-  if (!app) return undefined;
-
-  const updatedUsers = app.users.map((u) => {
-    if (u.id === userId) {
-      return {
-        ...u,
-        inviteStatus: "sent" as const,
-        inviteToken: `corp-inv-${Date.now().toString(36)}`,
-      };
-    }
-    return u;
-  });
-
-  return updateEnrolment(reference, {
-    users: updatedUsers,
-  });
-}
-
 /* ── Online applications and the signed letter ─────────────────────────────── */
-
-function stampNow(): string {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date());
-}
-
-function maskedMobile(mobile: string): string {
-  const digits = mobile.replace(/\D/g, "");
-  return `${digits.slice(0, 3)} ••• ${digits.slice(-4)}`;
-}
-
-function reviewerPhrase(assignedTo: Pick<EnrolmentStaffAssignment, "type" | "name">): string {
-  return assignedTo.type === "rm" ? `${assignedTo.name}, your relationship manager,` : `Our ${assignedTo.name}`;
-}
-
-/**
- * The customer-facing timeline for a new application, before or after the signed letter arrives. The call goes to
- * the applicant when they're a signatory; someone else applying (a company secretary) can't confirm for the
- * company, so the bank calls a signatory instead.
- */
-export function enrolmentTimeline(
-  status: "awaiting_letter" | "checking_signatures",
-  assignedTo: Pick<EnrolmentStaffAssignment, "type" | "name">,
-  applicant: Pick<CompanyApplicant, "mobile" | "isSignatory">,
-  stamp: string,
-): EnrolmentTimelineEvent[] {
-  const waiting = status === "awaiting_letter";
-  return [
-    {
-      status: "received",
-      label: waiting ? "Application started" : "Application received",
-      description: waiting ? "Your details are saved under this reference." : "We have your signed letter.",
-      timestamp: stamp,
-      done: true,
-      current: false,
-    },
-    ...(waiting
-      ? [
-          {
-            status: "awaiting_letter",
-            label: "Waiting for your signed letter",
-            description: "Upload it here, email it, post it or bring it to any branch.",
-            timestamp: "Now",
-            done: false,
-            current: true,
-          },
-        ]
-      : []),
-    {
-      status: "checking_signatures",
-      label: "Checking signatures",
-      description: `${reviewerPhrase(assignedTo)} compares the letter with the specimen signatures in our records.`,
-      timestamp: waiting ? "Next" : "In review",
-      done: false,
-      current: !waiting,
-    },
-    {
-      status: "call_verification",
-      label: "Confirming by phone",
-      description: applicant.isSignatory
-        ? `We'll call ${maskedMobile(applicant.mobile)} to confirm. We will never ask for a code or password.`
-        : "We'll call one of your signatories to confirm. We will never ask for a code or password.",
-      timestamp: "Next",
-      done: false,
-      current: false,
-    },
-    {
-      status: "approved",
-      label: "Approved, login details sent",
-      description: "Each person gets a link by email and a code by text message to set their password.",
-      timestamp: "Next",
-      done: false,
-      current: false,
-    },
-  ];
-}
 
 export interface NewEnrolmentInput {
   reference: string;
@@ -1155,41 +802,15 @@ export function submitEnrolment(input: NewEnrolmentInput): EnrolmentApplication 
       outcome: null,
     },
     returns: [],
-    timeline: enrolmentTimeline(status, assignedTo, input.applicant, stampNow()),
   };
   saveEnrolment(application);
   return application;
 }
 
-function letterArrived(
-  app: EnrolmentApplication,
-  via: LetterChannel,
-  file?: { fileName: string; fileSize: string },
-): EnrolmentApplication | undefined {
-  return updateEnrolment(app.reference, {
-    status: "checking_signatures",
-    pack: {
-      uploadedFileName: file?.fileName,
-      uploadedFileSize: file?.fileSize,
-      uploadedAt: new Date().toISOString(),
-      receivedVia: via,
-    },
-    timeline: enrolmentTimeline("checking_signatures", app.assignedTo, app.applicant, stampNow()),
-  });
-}
-
-/** Customer: uploads the signed letter for an application that was waiting for it. */
-export function uploadEnrolmentLetter(
-  reference: string,
-  fileName: string,
-  fileSize: string,
-): EnrolmentApplication | undefined {
-  const app = getEnrolment(reference);
-  if (!app || app.status !== "awaiting_letter") return undefined;
-  return letterArrived(app, "upload", { fileName, fileSize });
-}
-
-/** Staff: records a signed letter that arrived by email, post or at a branch. */
+/**
+ * Staff: records a signed letter that arrived by email, post or at a branch: the first one, or a corrected one after
+ * a return. Either way the signatures are checked again from the start.
+ */
 export function recordLetterReceived(
   reference: string,
   via: Exclude<LetterChannel, "upload">,
@@ -1197,14 +818,21 @@ export function recordLetterReceived(
   staffRole: string,
 ): EnrolmentApplication | undefined {
   const app = getEnrolment(reference);
-  if (!app || app.status !== "awaiting_letter") return undefined;
-  const updated = letterArrived(app, via);
+  if (!app || (app.status !== "awaiting_letter" && app.status !== "returned")) return undefined;
+  const corrected = app.status === "returned";
+  const nowIso = new Date().toISOString();
+  const updated = updateEnrolment(app.reference, {
+    status: "checking_signatures",
+    pack: { uploadedAt: nowIso, receivedVia: via },
+    signatureChecks: app.signatureChecks.map((c) => ({ ...c, status: "unreviewed" as const })),
+    returns: app.returns.map((r) => (r.resolved ? r : { ...r, resolved: true, resubmittedAt: nowIso })),
+  });
   AUDIT_EVENTS.unshift({
     id: `aud-${Date.now()}`,
-    timestamp: new Date().toISOString(),
+    timestamp: nowIso,
     actor: staffName,
     role: staffRole,
-    action: `Recorded signed letter received by ${via}`,
+    action: `Recorded ${corrected ? "corrected" : "signed"} letter received by ${via}`,
     target: `${app.companyName} · ${app.reference}`,
     channel: "Admin Portal",
     ip: "10.0.4.12",

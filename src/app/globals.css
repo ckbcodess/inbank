@@ -560,7 +560,9 @@
   --destructive-text: #b72a38;
   --info-text: var(--blue-700);
   /* Input fields, text areas, selects and the PIN boxes. */
-  --field: #ffffff;
+  --field: #fcfcfc;
+  /* Fields on a modal, sheet or the onboarding card. Light keeps the page fill; dark lifts it so the box still reads. */
+  --field-raised: #fcfcfc;
   --field-focus: var(--white);
   --field-border: var(--gray-200);
   --field-border-hover: color-mix(in srgb, var(--gray-900) 12%, var(--gray-200));
@@ -828,6 +830,7 @@
   --destructive-text: #b72a38;
   --info-text: var(--blue-300);
   --field: #181818;
+  --field-raised: var(--gray-850);
   --field-focus: var(--gray-875);
   --field-border: #212121;
   --field-border-hover: color-mix(in srgb, var(--white) 10%, #212121);
@@ -1027,63 +1030,6 @@ html.i18n-pending body {
 .dark[data-hero="ocean"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--blue-300) 50%, transparent); --hero-glow: color-mix(in srgb, var(--sea-600) 28%, transparent); --hero-wave-a: color-mix(in srgb, var(--sea-600) 77%, transparent); --hero-wave-b: color-mix(in srgb, var(--sea-400) 70%, transparent); }
 .dark[data-hero="clay"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--orange-300) 50%, transparent); --hero-glow: color-mix(in srgb, var(--orange-600) 28%, transparent); --hero-wave-a: color-mix(in srgb, var(--orange-700) 77%, transparent); --hero-wave-b: color-mix(in srgb, var(--amber-800) 70%, transparent); }
 .dark[data-hero="amber"] { --hero-surface: var(--gray-900); --hero-border: var(--gray-825); --sheet-rim: color-mix(in srgb, var(--gcb-amber) 50%, transparent); --hero-glow: color-mix(in srgb, var(--gcb-amber) 22%, transparent); --hero-wave-a: color-mix(in srgb, var(--gcb-amber) 55%, transparent); --hero-wave-b: color-mix(in srgb, var(--gcb-amber-dark-wave) 60%, transparent); --hero-foreground: var(--white); --hero-balance-foreground: var(--white); --hero-button-foreground: var(--white); --hero-primary: var(--white); --hero-primary-hover: var(--gcb-amber-dark-button-hover); --hero-primary-foreground: var(--black); --hero-glass-top: color-mix(in srgb, var(--smoke-900) 16.1%, transparent); --hero-glass-bottom: color-mix(in srgb, var(--smoke-400) 38%, transparent); --hero-glass-hover: color-mix(in srgb, var(--white) 7.8%, transparent); --hero-primary-inset-top: var(--gcb-amber-dark-button-inset); --hero-primary-inset-bottom: var(--gcb-amber-dark-button-inset); --hero-primary-edge: var(--white); }
-
-/* ── Business banking theme: smoke ash ─────────────────────────────────────
-   Business banking wears smoke ash where personal banking wears GCB amber (designer, 2026-10-22; an override of
-   CONSTITUTION §4 for the business app only). The business layout sets data-app="business" on <html> while a
-   /business page is open, so dialogs, menus and toasts in portals pick it up too. Only the brand accent and the
-   hero move; status colours (warning amber, success, destructive) and categorical colours stay as they are. */
-:root[data-app="business"] {
-  --primary: var(--smoke-600);
-  --primary-hover: var(--smoke-500);
-  --primary-foreground: var(--white);
-  --primary-edge: var(--primary);
-  --primary-inset-top: color-mix(in srgb, var(--primary) 70%, var(--white));
-  --primary-inset-bottom: color-mix(in srgb, var(--primary) 80%, var(--black));
-  --ring: var(--smoke-400);
-  --tile-accent: var(--smoke-600);
-  --duo-accent: var(--smoke-400);
-  --glass-shine: var(--smoke-300);
-  --glass-shade: var(--smoke-900);
-  /* The "amber" glass and duotone icon tone, in ash. */
-  --icon-amber-light: var(--smoke-100);
-  --icon-amber-mid: var(--smoke-400);
-  --icon-amber-dark: var(--smoke-600);
-  --icon-amber-ink: var(--smoke-500);
-  /* A deeper ash hero than personal's slate, so the two homes are told apart at a glance. */
-  --hero-surface: var(--smoke-800);
-  --hero-border: var(--smoke-700);
-  --hero-wave-a: color-mix(in srgb, var(--smoke-400) 48%, transparent);
-  --hero-wave-b: color-mix(in srgb, var(--smoke-300) 40%, transparent);
-  /* Filled buttons on the hero: light ash on the dark panel. */
-  --hero-primary: var(--smoke-100);
-  --hero-primary-hover: var(--white);
-  --hero-primary-foreground: var(--smoke-950);
-}
-.dark[data-app="business"] {
-  --primary: var(--smoke-600);
-  --primary-hover: var(--smoke-500);
-  --primary-foreground: var(--white);
-  --primary-edge: var(--primary);
-  --primary-inset-top: color-mix(in srgb, var(--primary) 70%, var(--white));
-  --primary-inset-bottom: color-mix(in srgb, var(--primary) 80%, var(--black));
-  --ring: var(--smoke-300);
-  --tile-accent: var(--smoke-300);
-  --duo-accent: var(--smoke-300);
-  --glass-shine: var(--white);
-  --glass-shade: var(--smoke-950);
-  --icon-amber-light: var(--smoke-300);
-  --icon-amber-mid: var(--smoke-700);
-  --icon-amber-dark: var(--smoke-500);
-  --icon-amber-ink: var(--smoke-200);
-  --hero-surface: var(--smoke-900);
-  --hero-border: var(--smoke-800);
-  --hero-wave-a: color-mix(in srgb, var(--smoke-600) 70%, transparent);
-  --hero-wave-b: color-mix(in srgb, var(--smoke-500) 55%, transparent);
-  --hero-primary: var(--smoke-200);
-  --hero-primary-hover: var(--smoke-100);
-  --hero-primary-foreground: var(--smoke-950);
-}
 
 /* Auth & Onboarding shell: reassign --card so all nested card utilities use the auth card token */
 [data-auth-shell] {
@@ -1828,6 +1774,12 @@ html[data-hide-focus-ring] .primary-sheen:focus-visible {
     inset 0 var(--primary-inset-offset) var(--primary-inset-blur) var(--primary-inset-top) !important;
 }
 /* A field's edge is its box shadow, so it keeps the resting edge while the focus ring is hidden. */
+/* Surfaces that sit above the page (modals, sheets, the onboarding card) take the raised field fill, so fields keep
+   their contrast on a white card. Set on the container; every field inside reads --field. */
+.surface-raised {
+  --field: var(--field-raised);
+}
+
 html[data-hide-focus-ring] .field-surface:focus,
 html[data-hide-focus-ring] .field-surface:focus-visible,
 html[data-hide-focus-ring] .field-surface:focus-within {

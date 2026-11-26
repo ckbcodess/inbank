@@ -17,7 +17,6 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import PinRequirements from "@/components/auth/PinRequirements";
-import FindBranchDialog from "@/components/corporate/FindBranchDialog";
 import { AlertToast } from "@/components/ui/alert-toast";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -84,7 +83,6 @@ function BusinessActivateContent() {
   const [pinMisses, setPinMisses] = useState(0);
   const [pinNote, setPinNote] = useState("");
 
-  const [showBranchDialog, setShowBranchDialog] = useState(false);
 
   useEffect(() => {
     if (stepParam) {
@@ -140,7 +138,7 @@ function BusinessActivateContent() {
         setIsLocked(true);
         return;
       }
-      setErrorMsg("This doesn't match the date GCB holds for you. Check it and try again.");
+      setErrorMsg("Doesn't match our records. Check it and try again.");
       return;
     }
 
@@ -159,7 +157,7 @@ function BusinessActivateContent() {
     if (code.length < OTP_LENGTH || busy) return;
 
     if (code === "000000") {
-      setErrorMsg("The code entered is incorrect or has expired. Please try again or request a new code.");
+      setErrorMsg("Wrong or expired code. Try again, or resend it.");
       setDigits(Array(OTP_LENGTH).fill(""));
       return;
     }
@@ -175,7 +173,7 @@ function BusinessActivateContent() {
   function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!password) {
-      setErrorMsg("Please enter a password.");
+      setErrorMsg("Enter a password.");
       return;
     }
     if (password === "00000" || password === "000000") {
@@ -183,7 +181,7 @@ function BusinessActivateContent() {
       return;
     }
     if (!confirmPassword) {
-      setErrorMsg("Please confirm your password.");
+      setErrorMsg("Confirm your password.");
       return;
     }
     if (password !== confirmPassword) {
@@ -202,7 +200,7 @@ function BusinessActivateContent() {
   function handlePinSubmit(incomingPin?: string) {
     const pin = incomingPin ?? pinDigits.join("");
     if (pin.length < 4 || busy) {
-      if (pin.length < 4) setErrorMsg("Please enter a 4-digit PIN");
+      if (pin.length < 4) setErrorMsg("Enter a 4-digit PIN.");
       return;
     }
     if (hasConsecutiveDigits(pin)) {
@@ -234,13 +232,13 @@ function BusinessActivateContent() {
   function handleConfirmPinSubmit(incomingConfirmPin?: string) {
     const confirmPin = incomingConfirmPin ?? confirmPinDigits.join("");
     if (confirmPin.length < 4 || busy) {
-      if (confirmPin.length < 4) setErrorMsg("Please confirm your 4-digit PIN");
+      if (confirmPin.length < 4) setErrorMsg("Confirm your PIN.");
       return;
     }
     const originalPin = pinDigits.join("");
     if (originalPin.length === 4 && confirmPin !== originalPin) {
       if (pinMisses + 1 >= 2) {
-        restartPin("Those didn't match twice, so let's start again. Choose a PIN you'll remember.");
+        restartPin("They didn't match twice. Choose a new PIN.");
         return;
       }
       setPinMisses(pinMisses + 1);
@@ -293,8 +291,8 @@ function BusinessActivateContent() {
   if (isExpired) {
     return (
       <AuthLayout
-        title="This Invitation Has Expired"
-        description="Ask your branch or relationship manager to send you a new one."
+        title="Invitation Expired"
+        description="Ask your branch or relationship manager for a new one."
         icon={Clock}
         align="center"
         backHref="/login?type=business"
@@ -320,7 +318,7 @@ function BusinessActivateContent() {
       <>
         <AuthLayout
           title="We Couldn't Confirm Your Identity"
-          description="For your security, finish setting up at your branch."
+          description="For your security, finish at a branch."
           icon={ShieldAlert}
           align="center"
           onBack={handleBackStep}
@@ -331,17 +329,12 @@ function BusinessActivateContent() {
             <Button
               size="md"
               className="w-full"
-              onClick={() => setShowBranchDialog(true)}
+              onClick={() => router.push("/branches")}
             >
               Find a Branch
             </Button>
           </div>
         </AuthLayout>
-
-        <FindBranchDialog
-          open={showBranchDialog}
-          onOpenChange={setShowBranchDialog}
-        />
       </>
     );
   }
@@ -363,21 +356,19 @@ function BusinessActivateContent() {
       }
       description={
         step === "invite" ? (
-          `GCB Bank has set you up on ${BUSINESS_INVITE_DEMO.companyName}'s business banking.`
+          `You've been added to ${BUSINESS_INVITE_DEMO.companyName}.`
         ) : step === "identity" ? (
-          "Enter your date of birth, as your company gave it to GCB."
+          "As your company gave it to GCB."
         ) : step === "otp" ? (
           <>
-            A 6-digit code has been sent to {maskMobile(BUSINESS_INVITE_DEMO.mobile)}.
-            <br />
-            Please enter the code below.
+            Sent to {maskMobile(BUSINESS_INVITE_DEMO.mobile)}.
           </>
         ) : step === "password" ? (
-          "Choose a password you will remember."
+          undefined
         ) : step === "pin" ? (
-          "Set a 4-digit PIN for secure access."
+          "You'll use it with your password to log in."
         ) : (
-          "Re-enter your 4-digit PIN to confirm."
+          undefined
         )
       }
       onBack={handleBackStep}
@@ -405,13 +396,13 @@ function BusinessActivateContent() {
 
             {inviteLimit > 0 && (
               <div className="flex flex-col gap-1">
-                <span className="text-caption text-muted-foreground">Your Limit for One Payment</span>
+                <span className="text-caption text-muted-foreground">Payment Limit</span>
                 <span className="tabular text-body text-foreground">{formatMoney(inviteLimit, "GHS", true)}</span>
               </div>
             )}
 
             <div className="flex flex-col gap-2">
-              <span className="text-caption text-muted-foreground">Accounts You Can See</span>
+              <span className="text-caption text-muted-foreground">Your Accounts</span>
               <div className="flex flex-col gap-1.5">
                 {inviteAccounts.map((acc) => (
                   <div key={acc.id} className="flex items-center justify-between text-body">
@@ -560,7 +551,7 @@ function BusinessActivateContent() {
             loading={busy}
             className="mt-2 w-full"
           >
-            Proceed
+            Continue
           </Button>
         </form>
       )}

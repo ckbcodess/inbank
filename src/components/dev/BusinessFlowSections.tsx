@@ -2,8 +2,8 @@
 
 /**
  * The Business view of the Demo hub: three journeys linking the new flows:
- *   Sole proprietor: 7 steps + 3 off-happy-path outcomes
- *   Company: business type chooser, online application (8 steps + outcomes), status page, staff queue
+ *   Sole proprietor: 6 steps + 3 off-happy-path outcomes
+ *   Company: business type chooser, online application (8 steps + outcomes), staff queue
  *   Business users: 6 activation steps + expired + lockout
  */
 
@@ -14,10 +14,9 @@ import { cn } from "@/lib/utils";
 type StepRow = (href: string, label: string, n: number, active: boolean) => ReactNode;
 
 const SOLE_PROPRIETOR_STEPS = [
-  { id: "ghana_card", label: "Verify Identity" },
-  { id: "selfie", label: "Selfie Match" },
-  { id: "review_details", label: "Confirm Business" },
+  { id: "identity", label: "Verify Identity" },
   { id: "otp", label: "Confirm Code" },
+  { id: "review_details", label: "Confirm Business" },
   { id: "password", label: "Create Password" },
   { id: "pin", label: "Set PIN" },
   { id: "confirm_pin", label: "Confirm PIN" },
@@ -35,13 +34,6 @@ const BUSINESS_USER_STEPS = [
 const ENROLMENT_STEPS = CORPORATE_ENROLMENT_SCENARIOS.filter((s) => s.step && !s.account);
 const ENROLMENT_OTHER = CORPORATE_ENROLMENT_SCENARIOS.filter((s) => s.outcome || s.account);
 
-const STATUS_DEMOS = [
-  { label: "waiting for letter", ref: "ENR-2026-0821" },
-  { label: "checking signatures", ref: "ENR-2026-0814" },
-  { label: "returned", ref: "ENR-2026-0790" },
-  { label: "approved", ref: "ENR-2026-0720" },
-] as const;
-
 export function BusinessFlowSections({
   stepRow,
   go,
@@ -52,7 +44,6 @@ export function BusinessFlowSections({
   expired,
   type,
   scenario,
-  ref_,
 }: {
   stepRow: StepRow;
   go: (route: string) => void;
@@ -63,7 +54,6 @@ export function BusinessFlowSections({
   expired?: string | null;
   type?: string | null;
   scenario?: string | null;
-  ref_?: string | null;
 }) {
   const row = (title: string, subtitle: string, onClick: () => void, active = false) => (
     <li key={title + subtitle}>
@@ -97,14 +87,14 @@ export function BusinessFlowSections({
             ),
           )}
           {row(
-            "ID not verified",
-            "Link Ghana Card prompt",
-            () => go("/business/signup/sole-proprietor?outcome=not-verified"),
-            pathname === "/business/signup/sole-proprietor" && outcome === "not-verified",
+            "Locked out",
+            "Three wrong dates of birth",
+            () => go("/business/signup/sole-proprietor?outcome=locked"),
+            pathname === "/business/signup/sole-proprietor" && outcome === "locked",
           )}
           {row(
             "No business account",
-            "Branch assistance required",
+            "Open an account prompt",
             () => go("/business/signup/sole-proprietor?outcome=no-account"),
             pathname === "/business/signup/sole-proprietor" && outcome === "no-account",
           )}
@@ -135,14 +125,8 @@ export function BusinessFlowSections({
             pathname === "/business/signup" && step === "type",
           )}
           {row(
-            "New to GCB",
-            "No business account yet: request a call",
-            () => go("/business/signup/new-to-gcb"),
-            pathname === "/business/signup/new-to-gcb",
-          )}
-          {row(
             "Set up your company",
-            "Apply online, track, or find a branch",
+            "Apply online or find a branch",
             () => go("/business/signup?type=company"),
             pathname === "/business/signup" && type === "company",
           )}
@@ -160,14 +144,6 @@ export function BusinessFlowSections({
               s.outcome ? "Off the happy path" : "Corporate Banking Team reviews",
               () => go(`/business/signup/enrol?scenario=${s.id}`),
               pathname === "/business/signup/enrol" && scenario === s.id,
-            ),
-          )}
-          {STATUS_DEMOS.map((d) =>
-            row(
-              `Status: ${d.label}`,
-              d.ref,
-              () => go(`/business/signup/status?ref=${d.ref}`),
-              pathname === "/business/signup/status" && ref_ === d.ref,
             ),
           )}
           {row(

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>People Upload: Iterating on 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--fld:#fcfcfc;--fbd:#ebebeb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--fld:#1c1c1c;--fbd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h2{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500;margin:0}
+  .pills,.seg{display:inline-flex;gap:4px}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .cap{font-size:12px;color:var(--mu);text-align:center;margin-bottom:8px}
+  .frame{width:460px;max-width:100%;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow)}
+  .frame.phone{width:375px}
+  .page{padding:28px;display:flex;flex-direction:column;gap:24px}.phone .page{padding:20px 12px}
+  .hd{text-align:center;display:flex;flex-direction:column;gap:8px}.hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu)}
+  .person{padding:6px 0}.person .w{color:#b45309;font-size:12px}[data-theme=dark] .person .w{color:#fbbf24}
+  .btn{height:40px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.sm{height:28px;padding:0 10px;font-size:13px;border-radius:8px}
+  .btn.am{background:var(--am);color:#111}.btn.out{border:1px solid var(--bd);background:var(--surf)}.btn.full{width:100%}.btn.dis{opacity:.4;pointer-events:none}
+  .btn.gh{color:var(--tx)}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--mu);font-size:13px}.link:hover{color:var(--tx)}
+  .link.tx{color:var(--tx)}
+  .zone{border:1px dashed var(--fbd);background:var(--fld);border-radius:10px}
+  .zone.drag{border-color:var(--tx);background:var(--amsoft)}
+  .ico{width:40px;height:40px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:#b7860b}[data-theme=dark] .ico{color:var(--am)}
+  .act{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}
+  .act:hover{background:var(--tile)}
+  .grow{flex:1;min-width:0}
+  .num{width:24px;height:24px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .file{display:flex;align-items:center;gap:12px}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.in{animation:in .2s ease}
+  svg{flex:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>People upload, iterating on 6: the zone becomes the file</h1>
+    <div class="row" style="gap:12px"><div class="pills" id="pills"></div>
+    <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage" id="stage"></div>
+<style>
+  .ring{width:16px;height:16px;border-radius:50%;border:1.5px dashed var(--mu);animation:spin .8s linear infinite;flex:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .warn{color:#b45309}[data-theme=dark] .warn{color:#fbbf24}
+  .zone.warnz{border-color:#f59e0b}
+  .mini{display:flex;flex-direction:column;gap:2px;padding-left:52px}
+  .issue{display:flex;gap:12px;font-size:13px}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--mu)}
+</style>
+<script>
+const I={
+ up:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>',
+ plus:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+ sheet:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h8M8 17h8M10 9H8"/></svg>',
+ user:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>',
+ x:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+ chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>'
+};
+const PEOPLE=['Adwoa Mensah','Kojo Asamoah','Efua Owusu','Kwesi Amoah','Akua Boakye','Kofi Nyarko','Ama Darko','Yaw Mensah','Abena Owusu','Kwabena Mensah','Nana Addo','Esi Quaye'];
+const ISSUES=[[4,"Check Kojo Asamoah's mobile number."],[9,"Account 5521 isn't one you chose."]];
+const NOTES=[
+ ['6 as it was, tightened','Empty: icon, one line, Browse Files and Sample CSV. Chosen: the file as a row, with how many people are ready and how many rows need fixing in amber. Review opens the review screen; the x clears the file.'],
+ ['Reading, then the result','Choosing a file shows a short Reading people.csv state in the same box, so there is a beat between picking and seeing the count. Then the result, as in 1.'],
+ ['Review inside the zone','No separate screen. The zone opens to the people it found and the rows that need fixing, and the main button reads Add 12 People. One screen less; the zone grows with the file.'],
+ ['First names, then the rest','The chosen file shows the first three names and and 9 more, so the person can see straight away it is the right file before reviewing.'],
+ ['Problems change the zone','A clean file is a quiet row. A file with problems takes an amber border and leads with Fix 2 rows, listing them inline, with Add the 12 that are fine as the action. Bad news comes with the next step.'],
+ ['Small until used','Empty, the zone is a single row (icon, Upload a list, Browse). Chosen, it grows into the file card from 1. Keeps the page short for the many companies that only add a person or two.']
+];
+let V=1, st={phase:'empty', drag:false, open:false};
+const $=s=>document.querySelector(s);
+const ready=PEOPLE.length, bad=ISSUES.length;
+const sampleBtn=()=>`<button class="btn sm out">Sample CSV</button>`;
+const browse=(cls='btn sm am',t='Browse Files')=>`<button class="${cls}" data-act="pick">${t}</button>`;
+const empty=(pad='20px')=>`<div class="zone ${st.drag?'drag':''}" data-drop style="padding:${pad};display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center"><span class="mu">${I.plus}</span><span>Drag your CSV here to upload</span><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">${browse()}${sampleBtn()}</div></div>`;
+const fileRow=(sub)=>`<div class="file"><span class="ico">${I.sheet}</span><span class="grow"><span style="display:block">people.csv</span><span class="s12">${sub}</span></span><button class="mu" data-act="clear" aria-label="Remove file" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px">${I.x}</button></div>`;
+const counts=()=>`<span class="mu">${ready} people ready</span> · <span class="warn">${bad} rows need fixing</span>`;
+const reviewBtn=(t='Review')=>`<button class="btn sm am" style="width:100%">${t}</button>`;
+function zone(){
+  const chosen=st.phase==='chosen', reading=st.phase==='reading';
+  switch(V){
+  case 1: return chosen?`<div class="zone in" style="padding:16px;display:flex;flex-direction:column;gap:12px">${fileRow(counts())}${reviewBtn()}</div>`:empty();
+  case 2: return reading?`<div class="zone in" style="padding:20px;display:flex;gap:12px;align-items:center;justify-content:center;min-height:118px"><span class="ring"></span><span class="mu">Reading people.csv…</span></div>`
+    :chosen?`<div class="zone in" style="padding:16px;display:flex;flex-direction:column;gap:12px">${fileRow(counts())}${reviewBtn()}</div>`:empty();
+  case 3: return chosen?`<div class="zone in" style="padding:16px;display:flex;flex-direction:column;gap:16px">${fileRow(counts())}
+      <div style="display:flex;flex-direction:column;gap:8px"><p class="md warn" style="font-size:13px">Won't be added</p>${ISSUES.map(([r,t])=>`<div class="issue"><span class="mu">Row ${r}</span><span>${t}</span></div>`).join('')}</div>
+      <div style="display:flex;flex-direction:column;gap:4px"><button class="md" data-act="open" style="font-size:13px;display:flex;align-items:center;gap:4px">${ready} to add <span class="mu" style="display:inline-flex;${st.open?'transform:rotate(180deg)':''}">${I.chev}</span></button>
+        ${st.open?PEOPLE.map(n=>`<div class="in" style="padding:2px 0">${n} <span class="mu s12">· Inputter, up to GHS 10,000.00</span></div>`).join(''):''}</div></div>`:empty();
+  case 4: return chosen?`<div class="zone in" style="padding:16px;display:flex;flex-direction:column;gap:12px">${fileRow(counts())}<div class="mini"><span>${PEOPLE.slice(0,3).join(', ')}</span><span class="mu s12">and ${ready-3} more</span></div>${reviewBtn()}</div>`:empty();
+  case 5: return chosen?`<div class="zone warnz in" style="padding:16px;display:flex;flex-direction:column;gap:12px">${fileRow(`<span class="warn">Fix ${bad} rows</span><span class="mu"> · ${ready} are fine</span>`)}
+      <div style="display:flex;flex-direction:column;gap:6px;padding-left:52px">${ISSUES.map(([r,t])=>`<div class="issue"><span class="mu">Row ${r}</span><span>${t}</span></div>`).join('')}</div>
+      <div style="display:flex;gap:8px">${browse('btn sm out','Upload Corrected File')}<button class="btn sm am" style="flex:1">Review the ${ready}</button></div></div>`:empty();
+  case 6: return chosen?`<div class="zone in" style="padding:16px;display:flex;flex-direction:column;gap:12px">${fileRow(counts())}${reviewBtn()}</div>`
+    :`<div style="display:flex;flex-direction:column;gap:6px"><div class="zone ${st.drag?'drag':''}" data-drop style="padding:12px"><div class="file"><span class="ico">${I.plus}</span><span class="grow"><span style="display:block">Upload a List</span><span class="mu s12">Drop a CSV here, one row per person</span></span>${browse('btn sm out','Browse')}</div></div><button class="link" style="align-self:flex-start">Download sample CSV</button></div>`;
+  }
+}
+function body(){
+  const v3=V===3&&st.phase==='chosen';
+  return `<div class="page"><div class="hd"><h2>Who Gets Access?</h2><p>Signatories come from your mandate. Set up each person.</p></div>
+  <div><div class="person"><span style="display:block">Yaw Oppong</span><span class="mu s12">Authoriser, up to GHS 10,000.00</span></div>
+  <div class="person"><span style="display:block">Esther Appiah</span><span class="w">Choose a role.</span></div></div>
+  <div style="display:flex;flex-direction:column;gap:8px"><button class="btn out full">${I.user}Add Myself</button><button class="btn out full">${I.plus}Add a Person</button></div>
+  ${zone()}
+  <div style="display:flex;flex-direction:column;gap:8px">${v3?`<button class="btn am full">Add ${ready} People</button><button class="btn full gh" data-act="clear">Cancel</button>`:`<button class="btn am full dis">Continue</button><p class="mu s12" style="text-align:center">Add at least one Inputter, so someone can prepare payments.</p>`}</div></div>`;
+}
+function render(){
+  $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">6.${i+1}</button>`).join('');
+  $('#note').innerHTML=`<b>6.${V} ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]} <span class="mu">Browse picks a sample file with ${ready} good rows and ${bad} to fix.</span>`;
+  const h=body(); $('#stage').innerHTML=`<div><p class="cap">Desktop</p><div class="frame">${h}</div></div><div><p class="cap">Phone</p><div class="frame phone">${h}</div></div>`;
+}
+function pick(){ if(V===2){st.phase='reading';render();setTimeout(()=>{st.phase='chosen';render();},900);} else {st.phase='chosen';render();} }
+document.addEventListener('click',e=>{
+  const v=e.target.closest('[data-v]'); if(v){V=+v.dataset.v;st={phase:'empty',drag:false,open:false};render();return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+  const a=e.target.closest('[data-act]'); if(!a)return;
+  if(a.dataset.act==='pick')return pick();
+  if(a.dataset.act==='clear'){st.phase='empty';st.open=false;}
+  if(a.dataset.act==='open')st.open=!st.open;
+  render();
+});
+document.addEventListener('dragover',e=>{if(e.target.closest('[data-drop]')){e.preventDefault();if(!st.drag){st.drag=true;render();}}});
+document.addEventListener('dragleave',e=>{if(st.drag&&!e.relatedTarget){st.drag=false;render();}});
+document.addEventListener('drop',e=>{e.preventDefault();st.drag=false;pick();});
+render();
+</script>
+</body>
+</html>

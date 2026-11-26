@@ -171,6 +171,7 @@ const MAP: Record<string, string> = {
   Undo2: "undo-2",
   Unlock: "lock-open",
   Upload: "upload",
+  Printer: "printer",
   User: "user",
   UserCheck: "user-check",
   UserCog: "user-cog",

@@ -148,7 +148,7 @@ function SheetContent({
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          "fixed z-50 flex flex-col bg-modal text-foreground overflow-hidden outline-none",
+          "surface-raised fixed z-50 flex flex-col bg-modal text-foreground overflow-hidden outline-none",
           // Right side sheet: a bottom sheet below `sm`, floating on desktop with balanced surrounding gap (top, bottom, right)
           side === "right" && [
             SHEET_MOBILE_BOTTOM,

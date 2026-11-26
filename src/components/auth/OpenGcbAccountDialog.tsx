@@ -1,10 +1,5 @@
 "use client";
 
-/**
- * Confirm dialog before redirecting the customer to the public GCB website to find a branch.
- * Used in business onboarding and activation when in-branch assistance is needed.
- */
-
 import { useState } from "react";
 import { ExternalLink } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
@@ -16,35 +11,47 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FIND_BRANCH_URL } from "@/lib/corporate/onboarding";
 
-interface FindBranchDialogProps {
+/**
+ * Hands a new customer to the bank's account opening portal (COOS), which opens in a new tab. Used by the personal and
+ * business sign-up doors and by wallet customers on Accounts.
+ */
+interface OpenGcbAccountDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  dataTourConfirm?: string;
 }
 
-export default function FindBranchDialog({ open, onOpenChange }: FindBranchDialogProps) {
+export default function OpenGcbAccountDialog({
+  open,
+  onOpenChange,
+  dataTourConfirm,
+}: OpenGcbAccountDialogProps) {
   const [isRedirecting, setIsRedirecting] = useState(false);
 
-  function executeRedirect() {
+  function executeCoosRedirect() {
     setIsRedirecting(true);
     setTimeout(() => {
-      window.open(FIND_BRANCH_URL, "_blank");
+      window.open("https://accountopeningportal.gcbltd.com/", "_blank");
       setIsRedirecting(false);
       onOpenChange(false);
-    }, 600);
+    }, 1000);
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent size="sm">
         <DialogHeader>
-          <DialogTitle>Find a GCB Branch</DialogTitle>
+          <DialogTitle>Open a GCB Account</DialogTitle>
         </DialogHeader>
 
         <DialogBody>
           <p className="text-body leading-relaxed text-muted-foreground">
-            You will be redirected to gcbbank.com.gh to find your nearest branch.
+            You will be redirected to{" "}
+            <span className="font-medium text-foreground">
+              accountopeningportal.gcbltd.com
+            </span>{" "}
+            to complete your account application.
           </p>
         </DialogBody>
 
@@ -59,12 +66,13 @@ export default function FindBranchDialog({ open, onOpenChange }: FindBranchDialo
           </Button>
           <Button
             type="button"
-            onClick={executeRedirect}
+            data-tour={dataTourConfirm}
+            onClick={executeCoosRedirect}
             loading={isRedirecting}
             className="gap-2"
           >
-            Continue to website
-            <ExternalLink size={15} />
+            Continue to portal
+            <ExternalLink className="size-3" />
           </Button>
         </DialogFooter>
       </DialogContent>

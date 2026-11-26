@@ -2,9 +2,9 @@
 
 /**
  * Business Send & Pay, laid out like the personal hub (Figma 916:36785): the title with the schedule beside it, then
- * the ways to pay as tiles in a two-column grid, with the same duotone glass icons (in smoke ash here, from the
- * business theme). A company pays one supplier at a time or many at once from a file; standing orders sit with the
- * title, as personal's scheduled payments do. No wallets, airtime, bills or QR: those are personal banking's.
+ * the ways to pay as tiles in a two-column grid, with the same duotone glass icons. A company pays one supplier at a
+ * time or many at once from a file; standing orders sit with the title, as personal's scheduled payments do. No
+ * wallets, airtime, bills or QR: those are personal banking's.
  */
 
 import Link from "next/link";

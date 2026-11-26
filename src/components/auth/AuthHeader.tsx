@@ -25,7 +25,7 @@ export default function AuthHeader() {
         <div className="flex items-center justify-center shrink-0">
           <GCBLogo className="h-7 w-auto text-foreground" />
         </div>
-        <span className="text-h3 font-medium tracking-tight text-foreground">
+        <span className="text-h4 font-medium tracking-[var(--ls-heading)] text-foreground">
           {t("header.brand", "Internet Banking")}
         </span>
       </Link>
@@ -53,12 +53,7 @@ export default function AuthHeader() {
         <Button
           nativeButton={false}
           render={
-            <a
-              href="https://www.gcbbank.com.gh/branches-and-atms"
-              target="_blank"
-              rel="noreferrer"
-              aria-label={t("header.locator", "Branch and ATM locator")}
-            />
+            <Link href="/branches" aria-label={t("header.locator", "Branch and ATM locator")} />
           }
           variant="ghost"
           size="icon-sm"

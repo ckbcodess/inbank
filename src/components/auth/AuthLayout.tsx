@@ -80,7 +80,7 @@ export default function AuthLayout({
   const maxWidthClass = "max-w-[500px]";
 
   const hasBack = Boolean(onBack || backHref);
-  const cardClassName = cn("rounded-3xl border border-border/80 bg-card-auth/95 px-5 sm:px-6", padY ?? "py-10 sm:py-12", "shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden");
+  const cardClassName = cn("surface-raised rounded-3xl border border-border/80 bg-card-auth/95 px-5 sm:px-6", padY ?? "py-10 sm:py-12", "shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden");
 
 
   return (

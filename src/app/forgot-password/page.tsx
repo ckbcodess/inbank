@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 /**
  * Password Reset — BRD FR-31.
  *
@@ -53,7 +55,6 @@ const STEP_NUMBER: Partial<Record<Stage, number>> = {
 
 const RESEND_SECONDS = 30;
 const MAX_SELFIE_ATTEMPTS = 3;
-const BRANCH_LOCATOR_URL = "https://www.gcbbank.com.gh/branches-and-atms";
 
 /** Demo hook: numbers ending in 0000 stand in for a face that won't match. */
 function selfieMatches(mobile: string): boolean {
@@ -352,7 +353,7 @@ function ForgotPasswordFlow() {
             variant="default"
             size="md"
             nativeButton={false}
-            render={<a href={BRANCH_LOCATOR_URL} target="_blank" rel="noreferrer" />}
+            render={<Link href="/branches" />}
             className="w-full"
           >
             Find a branch

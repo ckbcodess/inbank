@@ -19,14 +19,21 @@ import { csvRows, splitCsvRow } from "../csv";
 import { parseDateOfBirth } from "../date-of-birth";
 import { isCompleteGhanaMobile, toLocalMobile } from "../phone";
 
-const COLUMNS = ["name", "email", "mobile", "date_of_birth", "role", "limit", "accounts"] as const;
+const COLUMNS = ["name", "email", "mobile", "date_of_birth", "role", "limit", "account_last_4_digits"] as const;
 
-/** A template with two example rows. `accounts` takes last four digits separated by semicolons, or "all". */
+/** Files made from the earlier template called the accounts column "accounts". */
+const COLUMN_ALIASES: Partial<Record<(typeof COLUMNS)[number], string>> = { account_last_4_digits: "accounts" };
+
+/**
+ * A template with two example rows. The accounts column takes each account's last four digits, separated by
+ * semicolons, or "all". Dates are written with the month's name (14 May 1990): Excel can re-save 14/05/1990 as
+ * 05/14/1990 on a computer set to US dates, and a month name can't be misread.
+ */
 export function peopleTemplateCsv(accounts: readonly EnrolledAccountSummary[]): string {
   const last = accounts[0]?.number.slice(-4) ?? "0000";
   return `${COLUMNS.join(",")}
-Adwoa Mensah,adwoa.mensah@example.com,0244300420,14/05/1990,Inputter,10000,${last}
-Kojo Asamoah,kojo.asamoah@example.com,0209988776,02/11/1986,Viewer,,all
+Adwoa Mensah,adwoa.mensah@example.com,0244300420,14 May 1990,Inputter,10000,${last}
+Kojo Asamoah,kojo.asamoah@example.com,0209988776,2 Nov 1986,Viewer,,all
 `;
 }
 
@@ -44,7 +51,12 @@ export function parsePeopleCsv(
   const rows = csvRows(text);
   if (rows.length === 0) return { problem: "The file is empty." };
   const header = splitCsvRow(rows[0]).map((h) => h.toLowerCase());
-  const missing = COLUMNS.filter((c) => c !== "limit" && !header.includes(c));
+  const column = (c: (typeof COLUMNS)[number]) => {
+    const at = header.indexOf(c);
+    const alias = COLUMN_ALIASES[c];
+    return at >= 0 || !alias ? at : header.indexOf(alias);
+  };
+  const missing = COLUMNS.filter((c) => c !== "limit" && column(c) < 0);
   if (missing.length > 0) {
     return { problem: `The file is missing the ${missing.join(", ")} column${missing.length > 1 ? "s" : ""}. Use the template.` };
   }
@@ -57,7 +69,7 @@ export function parsePeopleCsv(
 
   rows.slice(1).forEach((line, i) => {
     const cells = splitCsvRow(line);
-    const cell = (name: (typeof COLUMNS)[number]) => cells[header.indexOf(name)] ?? "";
+    const cell = (name: (typeof COLUMNS)[number]) => cells[column(name)] ?? "";
     const row = i + 2;
     const fail = (reason: string) => problems.push({ row, reason });
 
@@ -65,7 +77,7 @@ export function parsePeopleCsv(
     const email = cell("email");
     const dateOfBirth = parseDateOfBirth(cell("date_of_birth"));
     const role = roles.find((r) => r.toLowerCase() === cell("role").toLowerCase());
-    const wanted = cell("accounts").split(/[;\s]+/).filter(Boolean);
+    const wanted = cell("account_last_4_digits").split(/[;\s]+/).filter(Boolean);
     const unknown = wanted.filter((w) => w.toLowerCase() !== "all" && !accounts.some((a) => a.number.endsWith(w)));
     const accountIds = wanted.some((w) => w.toLowerCase() === "all")
       ? accounts.map((a) => a.id)
@@ -78,7 +90,7 @@ export function parsePeopleCsv(
     if (!email.includes("@")) return fail(`Check ${name}'s email.`);
     if (seen.has(email.toLowerCase())) return fail(`${email} is already in the list.`);
     if (!isCompleteGhanaMobile(cell("mobile"))) return fail(`Check ${name}'s mobile number.`);
-    if (!dateOfBirth) return fail(`Check ${name}'s date of birth. Put the day first.`);
+    if (!dateOfBirth) return fail(`Check ${name}'s date of birth. Write it like 14 May 1990.`);
     if (!role) return fail(`${name}'s role has to be ${roles.join(" or ")}. Only signatories review or authorise.`);
     if (unknown.length > 0) return fail(`Account ${unknown[0]} isn't one you chose.`);
     if (accountIds.length === 0) return fail(`Choose an account for ${name}.`);

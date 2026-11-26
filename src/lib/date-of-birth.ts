@@ -14,12 +14,27 @@ export function isCompleteDateOfBirth(raw: string): boolean {
   return raw.replace(/\D/g, "").length === 8;
 }
 
-/** "14/05/1990", "4/5/1990" or "1990-05-14" → "1990-05-14". Returns "" for anything that isn't a real past date. */
+const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+
+/**
+ * "14/05/1990", "4/5/1990", "1990-05-14", "14 May 1990" or Excel's "14-May-90" → "1990-05-14". A two-digit year is
+ * this century only if that's not in the future. Returns "" for anything that isn't a real past date.
+ */
 export function parseDateOfBirth(raw: string): string {
   const text = raw.trim();
   const dayFirst = /^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/.exec(text);
   const yearFirst = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(text);
-  const parts = dayFirst ? [dayFirst[3], dayFirst[2], dayFirst[1]] : yearFirst ? yearFirst.slice(1) : null;
+  const named = /^(\d{1,2})[\s-]+([a-z]{3,9})[\s-]+(\d{2}|\d{4})$/i.exec(text);
+  const namedMonth = named ? MONTHS.indexOf(named[2].slice(0, 3).toLowerCase()) + 1 : 0;
+  const century = (yy: number) => (2000 + yy > new Date().getFullYear() ? 1900 + yy : 2000 + yy);
+  const year4 = named ? (named[3].length === 2 ? String(century(Number(named[3]))) : named[3]) : "";
+  const parts = dayFirst
+    ? [dayFirst[3], dayFirst[2], dayFirst[1]]
+    : yearFirst
+    ? yearFirst.slice(1)
+    : named && namedMonth > 0
+    ? [year4, String(namedMonth), named[1]]
+    : null;
   if (!parts) return "";
   const [year, month, day] = parts.map(Number);
   const date = new Date(Date.UTC(year, month - 1, day));

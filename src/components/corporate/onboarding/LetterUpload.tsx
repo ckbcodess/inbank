@@ -18,29 +18,26 @@ export function toAttachedFile(file: File): AttachedFile {
 
 /**
  * Attach the signed request letter: a quiet row with the file once chosen, and one button to choose or replace
- * it. Used when applying (/business/signup/enrol) and on the status page when the letter is still to come or
- * was returned.
+ * it. Used when applying (/business/signup/enrol). Kept as a row rather than a drop zone (designer, 2026-11-26).
  */
 export default function LetterUpload({
   id,
-  label = "Signed Letter",
   file,
   onChange,
 }: {
   id: string;
-  label?: string;
   file: AttachedFile | null;
   onChange: (file: AttachedFile) => void;
 }) {
   const [previewOpen, setPreviewOpen] = useState(false);
   return (
-    <div className="flex items-center justify-between gap-3 py-1">
+    <div className="flex items-center justify-between gap-3 rounded-2xl border border-border px-3 py-3">
       <div className="flex min-w-0 items-center gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-          <FileText size={17} aria-hidden="true" />
+        <span className="flex size-10 shrink-0 items-center justify-center text-muted-foreground">
+          <FileText size={18} aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <p className="text-body font-medium text-foreground">{label}</p>
+          <p className="text-body font-medium text-foreground">Signed Letter</p>
           <p className="truncate text-caption text-muted-foreground">
             {file ? (
               <>

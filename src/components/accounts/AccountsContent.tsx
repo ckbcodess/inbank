@@ -54,7 +54,7 @@ import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { formatMoney, type Account } from "@/lib/mock-data";
 import { useAccountPrefs, useLinkedSources, type LinkedSource } from "@/lib/accounts-store";
 import AddAccountDialog from "@/components/accounts/AddAccountDialog";
-import OpenGcbAccountDialog from "@/components/accounts/OpenGcbAccountDialog";
+import OpenGcbAccountDialog from "@/components/auth/OpenGcbAccountDialog";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import PageHeader from "@/components/layout/PageHeader";
 import { TileChip } from "@/components/ui/action-tile";

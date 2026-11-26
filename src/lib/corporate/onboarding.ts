@@ -5,10 +5,13 @@
  * - The business door (/business/signup). Companies apply online at /business/signup/enrol (lib/corporate-enrolment.ts)
  */
 
-import { formatGhanaCard } from "../ghana-card";
+import { cleanAccountNumber, lookupCorporateAccount } from "../corporate-enrolment";
 
+/** Sole proprietors prove who they are with the account number and their date of birth on file. No Ghana Card
+ *  (designer, 2026-11-26), as with invited business users. */
 export const SOLE_PROPRIETOR_DEMO = {
-  ghanaCard: "GHA-445566778-2",
+  accountNumber: "1001556677880",
+  dateOfBirthOnRecord: "1986-07-14",
   holderName: "Akosua Darko",
   businessName: "Akosua Darko Enterprises",
   mobile: "+233244300414",
@@ -16,20 +19,18 @@ export const SOLE_PROPRIETOR_DEMO = {
   accountIds: ["acc-sole-1", "acc-sole-2"],
 };
 
-/** Which outcome a typed Ghana Card number leads to (demo only). Anything else is the sole proprietor. */
-export function soleProprietorOutcome(card: string): "ok" | "not-verified" | "no-account" | "company" {
-  const digits = card.replace(/\D/g, "");
-  if (digits.includes("999999999")) return "not-verified";
-  if (digits.includes("111111111")) return "no-account";
-  if (digits.includes("223344556")) return "company";
-  return "ok";
+/** Which outcome a typed account number leads to (demo only). A company's account sends them to the company
+ *  application; any number that isn't the sole proprietor's is not found. */
+export function soleProprietorOutcome(accountNumber: string): "ok" | "no-account" | "company" {
+  if (lookupCorporateAccount(accountNumber)) return "company";
+  return cleanAccountNumber(accountNumber) === SOLE_PROPRIETOR_DEMO.accountNumber ? "ok" : "no-account";
 }
 
 export type BusinessUserRole = "Inputter" | "Reviewer" | "Authoriser";
 
 export const BUSINESS_ROLE_LINE: Record<BusinessUserRole, string> = {
   Inputter: "You prepare payments. Someone else reviews and authorises them.",
-  Reviewer: "You check payments and pass them on, or send them back with a comment.",
+  Reviewer: "You check payments, then pass them on or send them back.",
   Authoriser: "You give the final approval that sends a payment.",
 };
 
@@ -45,9 +46,3 @@ export const BUSINESS_INVITE_DEMO = {
 };
 
 export const INVITE_MAX_ATTEMPTS = 3;
-export const FIND_BRANCH_URL = "https://www.gcbbank.com.gh";
-export const GHANA_CARD_LINKAGE_URL = "https://www.gcbbank.com.gh";
-
-export function normalizeGhanaCard(raw: string): string {
-  return formatGhanaCard(raw);
-}

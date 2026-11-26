@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ExternalLink, Landmark, Plus, UserCheck } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import ChoiceRow from "@/components/auth/ChoiceRow";
-import OpenGcbAccountDialog from "@/components/accounts/OpenGcbAccountDialog";
+import OpenGcbAccountDialog from "@/components/auth/OpenGcbAccountDialog";
 
 export default function GetStartedPage() {
   const router = useRouter();

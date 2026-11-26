@@ -16,12 +16,12 @@
 
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Building2, CheckCircle2, FileText, Mail, SearchX, Users } from "@/components/ui/icons";
+import { Building2, CheckCircle2, ChevronDown, CreditCard, FileText, Mail, Printer, SearchX, User, Users } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
-import FindBranchDialog from "@/components/corporate/FindBranchDialog";
+import OpenGcbAccountDialog from "@/components/auth/OpenGcbAccountDialog";
 import LetterUpload, { type AttachedFile } from "@/components/corporate/onboarding/LetterUpload";
-import PeopleStep, { accessLine, type PeopleView } from "@/components/corporate/onboarding/PeopleStep";
+import PeopleStep, { type PeopleView } from "@/components/corporate/onboarding/PeopleStep";
 import { openRequestLetter } from "@/components/corporate/onboarding/request-letter";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -42,6 +42,7 @@ import {
   lastFour,
   limitsStall,
   lookupCorporateAccount,
+  roleActs,
   newEnrolmentReference,
   NON_SIGNATORY_DEMO,
   reviewerFor,
@@ -53,6 +54,7 @@ import {
   type CorporateEnrolmentStep,
   type CorporateUserDraft,
 } from "@/lib/corporate-enrolment";
+import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { submitEnrolment } from "@/lib/enrolment-store";
 import { formatMoney } from "@/lib/mock-data";
 import { isCompleteGhanaMobile, toNationalDigits } from "@/lib/phone";
@@ -75,12 +77,14 @@ function usersFromMandate(company: CorporateCompanyRecord): CorporateUserDraft[]
     name: s.name,
     email: s.email,
     mobile: s.mobile,
-    role: "Authoriser",
+    // Nothing chosen for them: the company picks each signatory's role, services and accounts. Only the limit starts
+    // at the bank's default (designer, 2026-11-26).
+    role: null,
     designation: s.designation,
     isFromMandate: true,
     limit: DEFAULT_USER_LIMIT,
     accountIds: [],
-    services: CORPORATE_SERVICES.map((c) => c.id),
+    services: [],
   }));
 }
 
@@ -93,20 +97,19 @@ function CorporateEnrolmentFlow() {
   const [outcome, setOutcome] = useState<CorporateEnrolmentOutcome | null>(null);
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [showBranchDialog, setShowBranchDialog] = useState(false);
+  const [showOpenAccount, setShowOpenAccount] = useState(false);
 
   // Account
   const [accountNumber, setAccountNumber] = useState<string>(ENROLMENT_DEMO_ACCOUNTS.default);
   const [company, setCompany] = useState<CorporateCompanyRecord | null>(null);
   const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([]);
 
-  // Applicant and code
+  // Applicant and code. Everyone gives the same four details; a signatory's mobile must be the one on the mandate.
   const [applicantChoice, setApplicantChoice] = useState<ApplicantChoice | null>(null);
-  const [signatoryMobile, setSignatoryMobile] = useState("");
-  const [otherName, setOtherName] = useState("");
-  const [otherDesignation, setOtherDesignation] = useState("");
-  const [otherMobile, setOtherMobile] = useState("");
-  const [otherEmail, setOtherEmail] = useState("");
+  const [applicantName, setApplicantName] = useState("");
+  const [applicantDesignation, setApplicantDesignation] = useState("");
+  const [applicantMobile, setApplicantMobile] = useState("");
+  const [applicantEmail, setApplicantEmail] = useState("");
   const [digits, setDigits] = useState<string[]>(() => Array<string>(OTP_LENGTH).fill(""));
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
 
@@ -115,38 +118,64 @@ function CorporateEnrolmentFlow() {
   const [peopleView, setPeopleView] = useState<PeopleView>({ kind: "list" });
 
   // Whether the people on the mandate still sign
-  const [stillSign, setStillSign] = useState<"yes" | "no" | null>(null);
+  // The company's address, phone and email on the check step, folded away: the question there is who signs.
+  const [companyOpen, setCompanyOpen] = useState(false);
+  // Which review sections are open. They start closed: each shows a one-line preview of what it holds.
+  const [reviewOpen, setReviewOpen] = useState<Record<"accounts" | "people" | "applicant", boolean>>({
+    accounts: false,
+    people: false,
+    applicant: false,
+  });
 
   // Letter
   const [reference, setReference] = useState("");
   const [letter, setLetter] = useState<AttachedFile | null>(null);
   const [sendingLater, setSendingLater] = useState(false);
 
-  const otherError =
-    otherMobile && !isCompleteGhanaMobile(otherMobile)
+  const mobileError =
+    applicantMobile && !isCompleteGhanaMobile(applicantMobile)
       ? "Enter a full Ghana mobile number."
       : "";
-  const otherReady =
-    otherName.trim() !== "" &&
-    otherDesignation.trim() !== "" &&
-    otherEmail.includes("@") &&
-    isCompleteGhanaMobile(otherMobile);
+  // A signatory's name and position come from the mandate, so they give only mobile and email. Anyone else gives all four.
+  const applicantReady =
+    applicantEmail.includes("@") &&
+    isCompleteGhanaMobile(applicantMobile) &&
+    (applicantChoice === "signatory" || (applicantName.trim() !== "" && applicantDesignation.trim() !== ""));
 
+  // Every update goes to the email they give here, signatory or not: there is no tracking page (2026-11-25). The
+  // mandate's email can be old or shared, so it isn't used.
+  const email = applicantEmail.trim();
   let applicant: CompanyApplicant | null = null;
-  if (company && applicantChoice === "signatory") {
+  if (company && applicantChoice === "signatory" && applicantReady) {
     // Found by the number they hold on the mandate, never picked from a list: the names stay hidden until the code.
-    const s = company.signatories.find((x) => toNationalDigits(x.mobile) === toNationalDigits(signatoryMobile));
-    if (s) {
-      applicant = { name: s.name, mobile: s.mobile, email: s.email, designation: s.designation, isSignatory: true };
-    }
-  } else if (applicantChoice === "other") {
+    const s = company.signatories.find((x) => toNationalDigits(x.mobile) === toNationalDigits(applicantMobile));
+    if (s) applicant = { name: s.name, designation: s.designation, mobile: s.mobile, email, isSignatory: true };
+  } else if (applicantChoice === "other" && applicantReady) {
     applicant = {
-      name: otherName.trim(),
-      designation: otherDesignation.trim(),
-      mobile: otherMobile,
-      email: otherEmail.trim(),
+      name: applicantName.trim(),
+      designation: applicantDesignation.trim(),
+      mobile: applicantMobile,
+      email,
       isSignatory: false,
     };
+  }
+
+  /** Demo only: fills in the details of the demo signatory or company secretary, unless they've typed their own. */
+  function chooseApplicant(choice: ApplicantChoice) {
+    setApplicantChoice(choice);
+    setErrorMsg("");
+    if (!SHOW_DEMO_TOOLS || !company) return;
+    const signatory = company.signatories[0];
+    const demos = [signatory?.name, NON_SIGNATORY_DEMO.name];
+    if (applicantName && !demos.includes(applicantName)) return;
+    const demo =
+      choice === "signatory" && signatory
+        ? { name: signatory.name, designation: signatory.designation, mobile: signatory.mobile, email: signatory.email }
+        : { ...NON_SIGNATORY_DEMO, designation: NON_SIGNATORY_DEMO.designation ?? "" };
+    setApplicantName(demo.name);
+    setApplicantDesignation(demo.designation);
+    setApplicantMobile(demo.mobile);
+    setApplicantEmail(demo.email);
   }
   const accounts = company ? company.accounts.filter((a) => selectedAccountIds.includes(a.id)) : [];
   const stall = limitsStall(users);
@@ -163,8 +192,10 @@ function CorporateEnrolmentFlow() {
     setSelectedAccountIds([entered.id]);
     setUsers(usersFromMandate(record));
     setApplicantChoice(null);
-    setSignatoryMobile(record.signatories[0]?.mobile ?? "");
-    setStillSign(null);
+    setApplicantName("");
+    setApplicantDesignation("");
+    setApplicantMobile("");
+    setApplicantEmail("");
     setPeopleView({ kind: "list" });
   }, []);
 
@@ -174,14 +205,9 @@ function CorporateEnrolmentFlow() {
     setLetter(null);
   }
 
-  /** Puts the chosen accounts on everyone. Someone already narrowed to fewer keeps those that are still chosen. */
+  /** Takes accounts no longer chosen off everyone. Nobody is given an account they weren't given by the company. */
   function applyAccounts(ids: string[]) {
-    changeUsers((prev) =>
-      prev.map((u) => {
-        const kept = u.accountIds.filter((id) => ids.includes(id));
-        return { ...u, accountIds: kept.length > 0 ? kept : ids };
-      }),
-    );
+    changeUsers((prev) => prev.map((u) => ({ ...u, accountIds: u.accountIds.filter((id) => ids.includes(id)) })));
   }
 
   // `?scenario=` opens the flow on a given screen (the Demo hub links with it).
@@ -200,9 +226,15 @@ function CorporateEnrolmentFlow() {
 
     if (scenario.outcome === "mandate-outdated") {
       const record = lookupCorporateAccount(ENROLMENT_DEMO_ACCOUNTS.default);
-      if (record) loadCompany(record, ENROLMENT_DEMO_ACCOUNTS.default);
-      setApplicantChoice("signatory");
-      setStillSign("no");
+      if (record) {
+        loadCompany(record, ENROLMENT_DEMO_ACCOUNTS.default);
+        const signatory = record.signatories[0];
+        setApplicantChoice("signatory");
+        setApplicantName(signatory.name);
+        setApplicantDesignation(signatory.designation);
+        setApplicantMobile(signatory.mobile);
+        setApplicantEmail(signatory.email);
+      }
       setStep("mandate");
       setOutcome("mandate-outdated");
       return;
@@ -226,27 +258,25 @@ function CorporateEnrolmentFlow() {
       return;
     }
     loadCompany(record, number);
-    if (scenario.nonSignatory) {
-      setApplicantChoice("other");
-      setOtherName(NON_SIGNATORY_DEMO.name);
-      setOtherDesignation(NON_SIGNATORY_DEMO.designation ?? "");
-      setOtherMobile(NON_SIGNATORY_DEMO.mobile);
-      setOtherEmail(NON_SIGNATORY_DEMO.email);
-    } else {
-      setApplicantChoice("signatory");
-    }
-    if (scenario.step && ENROLMENT_PROGRESS_STEPS.indexOf(scenario.step) > ENROLMENT_PROGRESS_STEPS.indexOf("mandate")) {
-      setStillSign("yes");
-    }
+    const signatory = record.signatories[0];
+    const demo = scenario.nonSignatory
+      ? { ...NON_SIGNATORY_DEMO, designation: NON_SIGNATORY_DEMO.designation ?? "" }
+      : { name: signatory.name, designation: signatory.designation, mobile: signatory.mobile, email: signatory.email };
+    setApplicantChoice(scenario.nonSignatory ? "other" : "signatory");
+    setApplicantName(demo.name);
+    setApplicantDesignation(demo.designation);
+    setApplicantMobile(demo.mobile);
+    setApplicantEmail(demo.email);
     if (scenario.step === "users" || scenario.step === "review" || scenario.step === "letter" || scenario.step === "submitted") {
       const ids = record.accounts.map((a) => a.id);
       setSelectedAccountIds(ids);
       // The demo company's third signatory is the Inputter, as on the invitation demo.
+      const services = CORPORATE_SERVICES.map((c) => c.id);
       setUsers((prev) =>
         prev.map((u, i) =>
           i === 2
-            ? { ...u, role: "Inputter", limit: 1_000_000, accountIds: ids.slice(0, 2) }
-            : { ...u, limit: 1_000_000, accountIds: ids },
+            ? { ...u, role: "Inputter", limit: 1_000_000, accountIds: ids.slice(0, 2), services }
+            : { ...u, role: "Authoriser", limit: 1_000_000, accountIds: ids, services },
         ),
       );
     }
@@ -293,9 +323,9 @@ function CorporateEnrolmentFlow() {
   }
 
   function handleSendCode() {
-    if (applicantChoice === null || (applicantChoice === "other" && !otherReady)) return;
+    if (applicantChoice === null || !applicantReady) return;
     if (!applicant) {
-      setErrorMsg("That isn't a signatory's number on our records. Check it, or choose Someone Else.");
+      setErrorMsg("Not a signatory's number on our records. Check it, or choose Someone Else.");
       return;
     }
     setErrorMsg("");
@@ -313,7 +343,7 @@ function CorporateEnrolmentFlow() {
     const code = incomingCode ?? digits.join("");
     if (code.length < OTP_LENGTH || busy) return;
     if (code === "000000") {
-      setErrorMsg("The code entered is incorrect or has expired. Please try again or request a new code.");
+      setErrorMsg("Wrong or expired code. Try again, or resend it.");
       setDigits(Array(OTP_LENGTH).fill(""));
       return;
     }
@@ -325,9 +355,10 @@ function CorporateEnrolmentFlow() {
     }, 600);
   }
 
-  function handleMandateContinue() {
+  /** The answer is the button: Yes moves on, Someone Has Changed goes to update the mandate first. */
+  function handleMandateContinue(answer: "yes" | "no") {
     if (!company) return;
-    if (stillSign === "no") {
+    if (answer === "no") {
       setOutcome("mandate-outdated");
       return;
     }
@@ -369,7 +400,6 @@ function CorporateEnrolmentFlow() {
     setBusy(false);
     if (outcome === "mandate-outdated") {
       setOutcome(null);
-      setStillSign(null);
       return;
     }
     if (outcome) {
@@ -403,7 +433,7 @@ function CorporateEnrolmentFlow() {
       <>
         <AuthLayout
           title="We Couldn't Find That Account"
-          description="Check the number and try again. If your company doesn't bank with GCB yet, we'll call you to open an account."
+          description="Check the number, or open an account."
           icon={SearchX}
           align="center"
           onBack={handleBack}
@@ -418,7 +448,7 @@ function CorporateEnrolmentFlow() {
               variant="outline"
               size="md"
               className="w-full"
-              onClick={() => router.push("/business/signup/new-to-gcb?type=company")}
+              onClick={() => setShowOpenAccount(true)}
             >
               Open an Account
             </Button>
@@ -426,13 +456,13 @@ function CorporateEnrolmentFlow() {
               variant="outline"
               size="md"
               className="w-full"
-              onClick={() => setShowBranchDialog(true)}
+              onClick={() => router.push("/branches")}
             >
               Find a Branch
             </Button>
           </div>
         </AuthLayout>
-        <FindBranchDialog open={showBranchDialog} onOpenChange={setShowBranchDialog} />
+        <OpenGcbAccountDialog open={showOpenAccount} onOpenChange={setShowOpenAccount} />
       </>
     );
   }
@@ -441,8 +471,8 @@ function CorporateEnrolmentFlow() {
     const contact = company.relationshipManager?.name ?? "your branch";
     return (
       <AuthLayout
-        title="Your Company Is Already Set Up"
-        description={`${company.companyName} already uses internet banking. To add users or change roles, contact ${contact}.`}
+        title="Company Already Set Up"
+        description={`To add users or change roles, contact ${contact}.`}
         icon={Building2}
         align="center"
         onBack={handleBack}
@@ -471,7 +501,7 @@ function CorporateEnrolmentFlow() {
       <>
         <AuthLayout
           title="Update Who Signs First"
-          description="The bank checks the letter against the signatures on your mandate, so a change there comes first. Once it's updated, apply again and your new signatories will be here."
+          description="Update your mandate at a branch, then apply again."
           icon={Users}
           align="center"
           onBack={handleBack}
@@ -485,7 +515,7 @@ function CorporateEnrolmentFlow() {
               </ReviewGroup>
             )}
             <div className="flex flex-col gap-3">
-              <Button size="md" className="w-full" onClick={() => setShowBranchDialog(true)}>
+              <Button size="md" className="w-full" onClick={() => router.push("/branches")}>
                 Find a Branch
               </Button>
               <Button variant="outline" size="md" className="w-full" onClick={() => router.push("/login?type=business")}>
@@ -494,7 +524,6 @@ function CorporateEnrolmentFlow() {
             </div>
           </div>
         </AuthLayout>
-        <FindBranchDialog open={showBranchDialog} onOpenChange={setShowBranchDialog} />
       </>
     );
   }
@@ -502,15 +531,17 @@ function CorporateEnrolmentFlow() {
   if (step === "submitted" && company) {
     const reviewer = reviewerFor(company);
     const reviewerName = reviewer.type === "rm" ? `${reviewer.name}, your relationship manager,` : `Our ${reviewer.name}`;
-    // Updates go to the applicant and to the company's own address, so the signatories hear about it too.
-    const updatesTo = applicant ? `${applicant.email} and ${company.email}` : company.email;
+    // There is no tracking page (designer, 2026-11-25): email is how they hear, so both addresses are shown. It goes to
+    // the applicant and to the company's own address, so the signatories hear about it too. Listed one per line, not
+    // run into the sentence, so a long address never breaks the paragraph.
+    const updatesTo = applicant && applicant.email !== company.email ? [applicant.email, company.email] : [company.email];
     return (
       <AuthLayout
         title={sendingLater ? "Application Saved" : "Application Sent"}
         description={
           sendingLater
-            ? `Send the signed letter to ${reviewer.email}, post it, or bring it to any branch. Quote your reference. We've emailed the details to ${updatesTo}.`
-            : `${reviewerName} will check the signatures against our records. We'll email ${updatesTo} as it moves.`
+            ? `Email the signed letter to ${reviewer.email}, or bring it to a branch.`
+            : `${reviewerName} will check the signatures.`
         }
         icon={sendingLater ? Mail : CheckCircle2}
         align="center"
@@ -521,23 +552,20 @@ function CorporateEnrolmentFlow() {
             <span className="text-caption text-muted-foreground">Your reference</span>
             <span className="tabular text-h1 tracking-[var(--ls-heading)] text-foreground">{reference}</span>
           </div>
-          <div className="flex flex-col gap-3">
-            <Button
-              size="md"
-              className="w-full"
-              onClick={() => router.push(`/business/signup/status?ref=${encodeURIComponent(reference)}`)}
-            >
-              Track Your Application
-            </Button>
-            <Button
-              variant="outline"
-              size="md"
-              className="w-full"
-              onClick={() => router.push("/login?type=business")}
-            >
-              Back to Login
-            </Button>
+          <div className="flex flex-col items-center gap-1 text-center">
+            <span className="text-caption text-muted-foreground">We&apos;ll email updates to</span>
+            {updatesTo.map((email) => (
+              <span key={email} className="break-all text-body text-foreground">
+                {email}
+              </span>
+            ))}
           </div>
+          <p className="text-center text-caption text-muted-foreground">
+            Once approved, everyone gets login details by email and text.
+          </p>
+          <Button size="md" className="w-full" onClick={() => router.push("/login?type=business")}>
+            Back to Login
+          </Button>
         </div>
       </AuthLayout>
     );
@@ -562,39 +590,39 @@ function CorporateEnrolmentFlow() {
         : peopleView.kind === "access"
         ? peopleView.draft.name
         : peopleView.kind === "file"
-        ? "Add Many People"
-        : "Who Will Use Internet Banking?"
+        ? "Review Your List"
+        : "Who Gets Access?"
       : step === "review"
       ? "Check Your Application"
       : "Sign Your Letter";
 
   const description =
     step === "account" ? (
-      "Enter any GCB account number your company holds."
+      "Any GCB account your company holds."
     ) : step === "applicant" ? (
-      "Anyone at the company can apply. Your signatories approve by signing the letter."
+      "Signatories approve by signing the letter."
     ) : step === "otp" ? (
       <>
-        A 6-digit code has been sent to {maskMobile(applicant?.mobile ?? "")}.
-        <br />
-        Please enter the code below.
+        Sent to {maskMobile(applicant?.mobile ?? "")}.
       </>
     ) : step === "mandate" ? (
-      "This is what GCB holds for your company."
+      undefined
     ) : step === "accounts" ? (
-      "Only the accounts you choose will be on internet banking."
+      undefined
     ) : step === "users" ? (
       peopleView.kind === "details"
-        ? "They'll confirm these details when they set up their login."
+        ? "They confirm these when they first log in."
         : peopleView.kind === "access"
-        ? CORPORATE_ROLE_LINE[peopleView.draft.role]
+        ? peopleView.draft.role
+          ? CORPORATE_ROLE_LINE[peopleView.draft.role]
+          : "Set their role, services and accounts."
         : peopleView.kind === "file"
-        ? "Fill in one row for each person. Each can prepare payments or view; only signatories review or authorise."
-        : "Your signatories come from your mandate. Choose what each person can do."
+        ? "Nobody is added until you confirm."
+        : "Signatories come from your mandate. Set up each person."
     ) : step === "review" ? (
-      "This is what goes on your request letter."
+      "This goes on your letter."
     ) : (
-      `We've written your request letter. Print it on your letterhead and have ${company?.signingRule ?? "your signatories"} sign it.`
+      "Print it on your letterhead and sign it as your mandate requires."
     );
 
   return (
@@ -627,7 +655,28 @@ function CorporateEnrolmentFlow() {
               />
             </Field>
 
-            {company && <p className="text-body font-medium text-foreground">{company.companyName}</p>}
+            {/* The company the number found, as a row: what it is, and a way to look up another. */}
+            {company && (
+              <div className="flex items-center gap-3">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[var(--tile)] text-[var(--tile-accent)]">
+                  <Building2 size={18} aria-hidden="true" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-body font-medium text-foreground">{company.companyName}</span>
+                  <span className="block truncate text-caption text-muted-foreground">{company.structure}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCompany(null);
+                    setAccountNumber("");
+                  }}
+                  className="shrink-0 cursor-pointer text-body text-muted-foreground underline underline-offset-4 transition-colors duration-hover hover:text-foreground"
+                >
+                  Change
+                </button>
+              </div>
+            )}
 
             <Button type="submit" size="md" loading={busy} className="w-full">
               {company ? "Continue" : "Find Company"}
@@ -639,64 +688,63 @@ function CorporateEnrolmentFlow() {
             the number they give). Either way the signatories approve by signing the letter. */}
         {step === "applicant" && company && (
           <div className="flex flex-col gap-6">
-            <div role="radiogroup" aria-label="Who's applying" className="flex flex-col gap-2">
-              <ApplicantOption
-                selected={applicantChoice === "signatory"}
-                onSelect={() => {
-                  setApplicantChoice("signatory");
-                  setErrorMsg("");
-                }}
-                primary="I Sign for the Company"
-                secondary="You're on the mandate"
-              />
-              <ApplicantOption
-                selected={applicantChoice === "other"}
-                onSelect={() => {
-                  setApplicantChoice("other");
-                  setErrorMsg("");
-                }}
-                primary="Someone Else"
-                secondary="Not on the mandate, such as a company secretary"
-              />
-            </div>
+            <RadioGroup
+              aria-label="Who's applying"
+              options={[
+                { value: "signatory", label: "I'm a Signatory", description: "You're on the mandate" },
+                { value: "other", label: "Someone Else", description: "Not on the mandate" },
+              ]}
+              value={applicantChoice}
+              onChange={(v) => chooseApplicant(v)}
+            />
 
-            {applicantChoice === "signatory" && (
-              <Field label="Mobile Number GCB Holds for You" htmlFor="signatoryMobile" error={errorMsg}>
-                <PhoneInput
-                  id="signatoryMobile"
-                  value={signatoryMobile}
-                  onValueChange={(v) => {
-                    setSignatoryMobile(v);
-                    if (errorMsg) setErrorMsg("");
-                  }}
-                />
-              </Field>
-            )}
-
-            {applicantChoice === "other" && (
+            {applicantChoice !== null && (
               <div className="flex flex-col gap-4">
-                <Field label="Full Name" htmlFor="otherName">
-                  <Input id="otherName" autoComplete="name" value={otherName} onChange={(e) => setOtherName(e.target.value)} autoFocus />
-                </Field>
-                <Field label="Position" htmlFor="otherDesignation">
-                  <Input
-                    id="otherDesignation"
-                    placeholder="For example, Company Secretary"
-                    autoComplete="organization-title"
-                    value={otherDesignation}
-                    onChange={(e) => setOtherDesignation(e.target.value)}
+                {applicantChoice === "other" && (
+                  <>
+                    <Field label="Full Name" htmlFor="applicantName">
+                      <Input
+                        id="applicantName"
+                        autoComplete="name"
+                        value={applicantName}
+                        onChange={(e) => setApplicantName(e.target.value)}
+                        autoFocus
+                      />
+                    </Field>
+                    <Field label="Position" htmlFor="applicantDesignation">
+                      <Input
+                        id="applicantDesignation"
+                        placeholder="e.g. Company Secretary"
+                        autoComplete="organization-title"
+                        value={applicantDesignation}
+                        onChange={(e) => setApplicantDesignation(e.target.value)}
+                      />
+                    </Field>
+                  </>
+                )}
+                <Field
+                  label={applicantChoice === "signatory" ? "Registered Mobile" : "Mobile Number"}
+                  htmlFor="applicantMobile"
+                  error={errorMsg || mobileError}
+                >
+                  <PhoneInput
+                    id="applicantMobile"
+                    autoFocus={applicantChoice === "signatory"}
+                    value={applicantMobile}
+                    onValueChange={(v) => {
+                      setApplicantMobile(v);
+                      if (errorMsg) setErrorMsg("");
+                    }}
                   />
                 </Field>
-                <Field label="Mobile Number" htmlFor="otherMobile" error={otherError}>
-                  <PhoneInput id="otherMobile" value={otherMobile} onValueChange={setOtherMobile} />
-                </Field>
-                <Field label="Email" htmlFor="otherEmail">
+                <Field label="Email" htmlFor="applicantEmail">
                   <Input
-                    id="otherEmail"
+                    id="applicantEmail"
                     type="email"
                     autoComplete="email"
-                    value={otherEmail}
-                    onChange={(e) => setOtherEmail(e.target.value)}
+                    placeholder="Updates go here"
+                    value={applicantEmail}
+                    onChange={(e) => setApplicantEmail(e.target.value)}
                   />
                 </Field>
               </div>
@@ -705,10 +753,7 @@ function CorporateEnrolmentFlow() {
             <Button
               size="md"
               loading={busy}
-              disabled={
-                applicantChoice === null ||
-                (applicantChoice === "other" ? !otherReady : !isCompleteGhanaMobile(signatoryMobile))
-              }
+              disabled={applicantChoice === null || !applicantReady}
               onClick={handleSendCode}
               className="w-full"
             >
@@ -786,36 +831,63 @@ function CorporateEnrolmentFlow() {
         {/* 4. What the bank holds, and whether the people who sign have changed */}
         {step === "mandate" && company && (
           <div className="flex flex-col gap-6">
-            <ReviewGroup title={company.companyName}>
-              <FactLine label="Set up as" value={company.structure} />
-              <FactLine label="Address" value={company.address} />
-              <FactLine label="Phone" value={company.phone} tabular />
-              <FactLine label="Email" value={company.email} />
-            </ReviewGroup>
+            {/* The company as one row; its details fold, because the question here is about who signs. */}
+            <section className="flex flex-col gap-2">
+              <button
+                type="button"
+                aria-expanded={companyOpen}
+                onClick={() => setCompanyOpen((o) => !o)}
+                className="-mx-2 flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors duration-hover hover:bg-muted/50"
+              >
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[var(--tile)] text-[var(--tile-accent)]">
+                  <Building2 size={18} aria-hidden="true" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-body font-medium text-foreground">{company.companyName}</span>
+                  <span className="block truncate text-caption text-muted-foreground">{company.structure}</span>
+                </span>
+                <ChevronDown
+                  size={16}
+                  aria-hidden="true"
+                  className={`shrink-0 text-muted-foreground transition-transform duration-hover ${companyOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {companyOpen && (
+                <div className="flex flex-col gap-2">
+                  <StackedFact label="Address" value={company.address} />
+                  <StackedFact label="Phone" value={company.phone} tabular />
+                  <StackedFact label="Email" value={company.email} />
+                </div>
+              )}
+            </section>
 
-            <ReviewGroup title="Who Signs">
+            <section className="flex flex-col gap-2">
+              <div className="flex min-h-6 items-center justify-between gap-3">
+                <h2 className="shrink-0 text-body font-medium text-foreground">Who Signs</h2>
+                <span className="truncate text-caption text-muted-foreground">{company.mandate}</span>
+              </div>
               {company.signatories.map((s) => (
-                <ReviewLine key={s.name} primary={s.name} secondary={signatoryLabel(s)} />
+                <div key={s.name} className="flex items-center gap-3 py-1">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-caption font-medium text-foreground">
+                    {s.name.split(" ").map((w) => w[0]).join("").slice(0, 2)}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate text-body text-foreground">{s.name}</span>
+                    <span className="block truncate text-caption text-muted-foreground">{signatoryLabel(s)}</span>
+                  </span>
+                </div>
               ))}
-              <FactLine label="Signing rule" value={company.mandate} />
-            </ReviewGroup>
+            </section>
 
             <div className="flex flex-col gap-3">
-              <h2 className="text-body font-medium text-foreground">Do these people still sign for the company?</h2>
-              <RadioGroup
-                aria-label="Do these people still sign for the company?"
-                options={[
-                  { value: "yes", label: "Yes" },
-                  { value: "no", label: "No" },
-                ]}
-                value={stillSign}
-                onChange={(v) => setStillSign(v)}
-              />
+              <h2 className="text-body font-medium text-foreground">Do they still sign?</h2>
+              <Button size="md" onClick={() => handleMandateContinue("yes")} className="w-full">
+                Yes, They Still Sign
+              </Button>
+              <Button variant="outline" size="md" onClick={() => handleMandateContinue("no")} className="w-full">
+                Someone Has Changed
+              </Button>
             </div>
-
-            <Button size="md" disabled={stillSign === null} onClick={handleMandateContinue} className="w-full">
-              Continue
-            </Button>
           </div>
         )}
 
@@ -880,7 +952,7 @@ function CorporateEnrolmentFlow() {
           <div className="flex flex-col gap-6">
             {stall && (
               <p className="text-body text-warning-text">
-                {`Payments above ${formatMoney(stall.release, "GHS", true)} can be prepared but not released. Raise an Authoriser's limit, or lower the Inputter's.`}{" "}
+                {`Payments above ${formatMoney(stall.release, "GHS", true)} can't be released.`}{" "}
                 <button
                   type="button"
                   onClick={() => setStep("users")}
@@ -891,34 +963,91 @@ function CorporateEnrolmentFlow() {
               </p>
             )}
 
-            <ReviewGroup title={company.companyName} onEdit={() => setStep(company.accounts.length > 1 ? "accounts" : "mandate")}>
-              {accounts.map((a) => (
-                <ReviewLine key={a.id} primary={a.name} secondary={lastFour(a.number)} tabular />
-              ))}
-            </ReviewGroup>
-
-            <ReviewGroup title="Applicant" onEdit={() => setStep("applicant")}>
-              {applicant && (
-                <>
-                  <ReviewLine primary={applicant.name} secondary={maskMobile(applicant.mobile)} tabular />
-                  {!applicant.isSignatory && applicant.designation && <ReviewLine primary={applicant.designation} />}
-                </>
-              )}
-            </ReviewGroup>
-
-            <ReviewGroup title="People" onEdit={() => setStep("users")}>
-              {users.map((u) => (
-                <div key={u.id} className="py-1">
-                  <p className="truncate text-body text-foreground">{u.name}</p>
-                  <p className="tabular text-caption text-muted-foreground">
-                    {`${accessLine(u)} · ${accounts
-                      .filter((a) => u.accountIds.includes(a.id))
-                      .map((a) => lastFour(a.number))
-                      .join(", ")}`}
-                  </p>
+            {/* Three facts first (designer, 2026-11-26, review variation 3.3), then each part folds open. */}
+            <div className="grid grid-cols-3 gap-3 text-center">
+              {[
+                [accounts.length, accounts.length === 1 ? "Account" : "Accounts"],
+                [users.length, users.length === 1 ? "Person" : "People"],
+                [users.filter((u) => u.role === "Authoriser").length, "Can approve"],
+              ].map(([value, label]) => (
+                <div key={label} className="flex flex-col gap-0.5">
+                  <span className="tabular text-body-lg text-foreground">{value}</span>
+                  <span className="text-caption text-muted-foreground">{label}</span>
                 </div>
               ))}
-            </ReviewGroup>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <ReviewFold
+                icon={CreditCard}
+                title="Accounts"
+                preview={accounts.map((a) => lastFour(a.number)).join(", ")}
+                open={reviewOpen.accounts}
+                onToggle={() => setReviewOpen((o) => ({ ...o, accounts: !o.accounts }))}
+                onEdit={() => setStep(company.accounts.length > 1 ? "accounts" : "mandate")}
+              >
+                {accounts.map((a) => (
+                  <ReviewLine key={a.id} primary={a.name} secondary={lastFour(a.number)} tabular />
+                ))}
+              </ReviewFold>
+
+              <ReviewFold
+                icon={Users}
+                title="People"
+                preview={
+                  users.length > 3
+                    ? `${users.slice(0, 3).map((u) => u.name.split(" ")[0]).join(", ")} and ${users.length - 3} more`
+                    : users.map((u) => u.name.split(" ")[0]).join(", ")
+                }
+                open={reviewOpen.people}
+                onToggle={() => setReviewOpen((o) => ({ ...o, people: !o.people }))}
+                onEdit={() => setStep("users")}
+              >
+                {users.map((u) => (
+                  <div key={u.id} className="flex items-center gap-3 py-1">
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-body text-foreground">{u.name}</span>
+                      <span className="tabular block truncate text-caption text-muted-foreground">
+                        {accounts
+                          .filter((a) => u.accountIds.includes(a.id))
+                          .map((a) => lastFour(a.number))
+                          .join(", ")}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-right text-caption">
+                      <span className="block text-foreground">{u.role}</span>
+                      {u.role && roleActs(u.role) && (
+                        <span className="tabular block text-muted-foreground">{formatMoney(u.limit, "GHS", true)}</span>
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </ReviewFold>
+
+              {applicant && (
+                <ReviewFold
+                  icon={User}
+                  title="Applicant"
+                  preview={applicant.designation ? `${applicant.name}, ${applicant.designation}` : applicant.name}
+                  open={reviewOpen.applicant}
+                  onToggle={() => setReviewOpen((o) => ({ ...o, applicant: !o.applicant }))}
+                  onEdit={() => setStep("applicant")}
+                >
+                  {/* Label and value rows, the house pattern for details. */}
+                  {[
+                    ["Name", applicant.name, false],
+                    ...(applicant.designation ? [["Position", applicant.designation, false] as const] : []),
+                    ["Mobile", maskMobile(applicant.mobile), true],
+                    ["Email", applicant.email, false],
+                  ].map(([label, value, tabular]) => (
+                    <div key={String(label)} className="flex items-baseline justify-between gap-4 py-1 text-body">
+                      <span className="shrink-0 text-muted-foreground">{label}</span>
+                      <span className={`min-w-0 truncate text-right text-foreground ${tabular ? "tabular" : ""}`}>{value}</span>
+                    </div>
+                  ))}
+                </ReviewFold>
+              )}
+            </div>
 
             <Button size="md" onClick={goToLetter} className="w-full">
               Continue
@@ -929,20 +1058,29 @@ function CorporateEnrolmentFlow() {
         {/* 8. The letter: we write it, they sign it */}
         {step === "letter" && company && (
           <div className="flex flex-col gap-6">
+            {/* The letter to print, as a row that mirrors the signed letter coming back at the bottom. */}
             <div className="flex flex-col gap-3">
-              <Button
-                variant="outline"
-                size="md"
-                className="w-full"
-                onClick={() => openRequestLetter({ reference, company, accounts, users, applicant })}
-              >
-                <FileText size={16} />
-                Open Letter to Print
-              </Button>
-              <p className="tabular text-center text-caption text-muted-foreground">
-                {`Your reference ${reference} is printed on it.`}
-              </p>
-              <p className="text-center text-body text-muted-foreground">
+              <div className="flex items-center justify-between gap-3 py-1">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="flex size-10 shrink-0 items-center justify-center text-muted-foreground">
+                    <FileText size={18} aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-body font-medium text-foreground">Request Letter</p>
+                    <p className="tabular truncate text-caption text-muted-foreground">{`Reference ${reference}`}</p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="md"
+                  className="shrink-0"
+                  onClick={() => openRequestLetter({ reference, company, accounts, users, applicant })}
+                >
+                  <Printer size={15} aria-hidden="true" />
+                  Print
+                </Button>
+              </div>
+              <p className="text-caption text-muted-foreground">
                 By signing, they accept the{" "}
                 <a
                   href={TERMS_URL}
@@ -955,76 +1093,107 @@ function CorporateEnrolmentFlow() {
               </p>
             </div>
 
-            <ReviewGroup title="Signed By">
+            {/* The same signatory rows as the Check Company step. */}
+            <section className="flex flex-col gap-2">
+              <h2 className="text-body font-medium text-foreground">Signed By</h2>
               {company.signatories.map((s) => (
-                <ReviewLine key={s.name} primary={s.name} secondary={signatoryLabel(s)} />
+                <div key={s.name} className="flex items-center gap-3 py-1">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-caption font-medium text-foreground">
+                    {s.name.split(" ").map((w) => w[0]).join("").slice(0, 2)}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate text-body text-foreground">{s.name}</span>
+                    <span className="block truncate text-caption text-muted-foreground">{signatoryLabel(s)}</span>
+                  </span>
+                </div>
               ))}
-            </ReviewGroup>
+            </section>
 
             <LetterUpload id="enrol" file={letter} onChange={setLetter} />
 
             <div className="flex flex-col gap-3">
-              <div className="flex flex-col gap-2">
-                <Button
-                  size="md"
-                  loading={busy && !sendingLater}
-                  disabled={!letter}
-                  onClick={() => handleSubmit(true)}
-                  className="w-full"
-                >
-                  Submit Application
-                </Button>
-                {!letter && (
-                  <p className="text-center text-caption text-muted-foreground">Upload the signed letter to submit.</p>
-                )}
-              </div>
+              {/* Until the letter is attached, the button says so itself, as on a person's set-up. */}
               <Button
-                variant="ghost"
+                size="md"
+                loading={busy && !sendingLater}
+                disabled={!letter}
+                onClick={() => handleSubmit(true)}
+                className="w-full"
+              >
+                {letter ? "Submit Application" : "Upload the Signed Letter"}
+              </Button>
+              <Button
+                variant="outline"
                 size="md"
                 loading={busy && sendingLater}
                 onClick={() => handleSubmit(false)}
                 className="w-full"
               >
-                I&apos;ll Email, Post or Bring It In
+                Send It Later
               </Button>
             </div>
           </div>
         )}
       </AuthLayout>
-      <FindBranchDialog open={showBranchDialog} onOpenChange={setShowBranchDialog} />
     </>
   );
 }
 
-function ApplicantOption({
-  selected,
-  onSelect,
-  primary,
-  secondary,
-  meta,
+/**
+ * A review section that folds: an icon tile, a title and a one-line preview, opening to its contents and an Edit link.
+ * A plain row with a hover inset, like the app's other lists; no tile behind it (designer, 2026-11-26).
+ */
+function ReviewFold({
+  icon: Icon,
+  title,
+  preview,
+  open,
+  onToggle,
+  onEdit,
+  children,
 }: {
-  selected: boolean;
-  onSelect: () => void;
-  primary: string;
-  secondary: string;
-  meta?: string;
+  icon: typeof Users;
+  title: string;
+  preview: string;
+  open: boolean;
+  onToggle: () => void;
+  onEdit: () => void;
+  children: React.ReactNode;
 }) {
   return (
-    <button
-      type="button"
-      role="radio"
-      aria-checked={selected}
-      onClick={onSelect}
-      className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-colors duration-hover ${
-        selected ? "border-[var(--active-border)] bg-[var(--active-bg)]" : "border-border bg-card hover:bg-muted/50"
-      }`}
-    >
-      <span className="min-w-0">
-        <span className="block truncate text-body text-foreground">{primary}</span>
-        <span className="block truncate text-caption text-muted-foreground">{secondary}</span>
-      </span>
-      {meta && <span className="tabular shrink-0 text-body text-muted-foreground">{meta}</span>}
-    </button>
+    <section className="flex flex-col">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={onToggle}
+        className="-mx-2 flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors duration-hover hover:bg-muted/50"
+      >
+        <span className="flex size-10 shrink-0 items-center justify-center text-muted-foreground">
+          <Icon size={18} aria-hidden="true" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-body font-medium text-foreground">{title}</span>
+          {!open && <span className="tabular block truncate text-caption text-muted-foreground">{preview}</span>}
+        </span>
+        <ChevronDown
+          size={16}
+          aria-hidden="true"
+          className={`shrink-0 text-muted-foreground transition-transform duration-hover ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open && (
+        <div className="flex flex-col gap-1 pb-3">
+          {children}
+          <button
+            type="button"
+            onClick={onEdit}
+            className="mt-1 cursor-pointer self-end text-body text-muted-foreground underline underline-offset-4 transition-colors duration-hover hover:text-foreground"
+          >
+            Edit
+          </button>
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -1048,12 +1217,12 @@ function ReviewGroup({ title, onEdit, children }: { title: string; onEdit?: () =
   );
 }
 
-/** A label and its value, for facts too long to sit beside a name (an address, an email). */
-function FactLine({ label, value, tabular }: { label: string; value: string; tabular?: boolean }) {
+/** A label over its value, for long facts in a narrow column (an address on a phone). */
+function StackedFact({ label, value, tabular }: { label: string; value: string; tabular?: boolean }) {
   return (
-    <div className="flex items-start justify-between gap-6 py-1 text-body">
-      <span className="shrink-0 text-muted-foreground">{label}</span>
-      <span className={`min-w-0 break-words text-right text-foreground ${tabular ? "tabular" : ""}`}>{value}</span>
+    <div className="flex flex-col gap-0.5">
+      <span className="text-caption text-muted-foreground">{label}</span>
+      <span className={`break-words text-body text-foreground ${tabular ? "tabular" : ""}`}>{value}</span>
     </div>
   );
 }

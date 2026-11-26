@@ -11,8 +11,6 @@ import SelfieCapture from "@/components/auth/SelfieCapture";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { OtpHelp } from "@/components/payments/OtpHelp";
 import { OTP_SHORTCODE, REGISTERED_PHONE, useAuthorisation } from "@/components/payments/useAuthorisation";
-import { useBusinessTheme } from "@/lib/business-theme";
-import { isBusinessProfile } from "@/lib/profile";
 import { homePathForProfile } from "@/lib/navigation";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { setNewDeviceSignIn, thisDeviceName } from "@/lib/device-trust";
@@ -29,8 +27,6 @@ type Stage = "selfie" | "code";
 function NewDeviceContent() {
   const router = useRouter();
   const { actor, verifyMfa } = useSession();
-  // A business login stays in smoke ash through the verification steps.
-  useBusinessTheme(isBusinessProfile(actor?.profiles[0]));
   const auth = useAuthorisation("otp");
   const hydrated = useSessionHydrated();
 

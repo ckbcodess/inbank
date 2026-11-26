@@ -66,7 +66,7 @@ export function requestLetterHtml({ reference, company, accounts, users, applica
         <td class="num">${i + 1}</td>
         <td>${esc(u.name)}${u.designation ? `<br><span class="muted">${esc(u.designation)}</span>` : ""}</td>
         <td>${contact}</td>
-        <td>${esc(u.role)}</td>
+        <td>${esc(u.role ?? "")}</td>
         <td class="num">${roleActs(u.role) ? esc(formatMoney(u.limit, "GHS", true)) : "None"}</td>
         <td>${roleActs(u.role) ? esc(serviceLabels(u.services)) : "View only"}</td>
         <td class="num">${esc(theirs.join(", "))}</td>
@@ -87,7 +87,7 @@ export function requestLetterHtml({ reference, company, accounts, users, applica
     .join("");
 
   const contact =
-    applicant && !applicant.isSignatory
+    applicant
       ? `<p>This request was prepared by ${esc(applicant.name)}${applicant.designation ? `, ${esc(applicant.designation)}` : ""}, who you may contact about it on <span class="num">${esc(applicant.mobile)}</span> or ${esc(applicant.email)}.</p>`
       : "";
 

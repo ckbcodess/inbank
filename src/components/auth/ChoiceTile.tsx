@@ -1,20 +1,22 @@
 /**
  * One option on a sign-up door ("GCB Account Holder", "Sole Proprietor"): an amber icon disc, a label, a line
- * and a chevron. The whole tile is the button. Same look as the personal door at /get-started.
+ * and a chevron (an external-link mark when it leaves for another site). The whole tile is the button. Same look as the personal door at /get-started.
  */
 
-import { ChevronRight, type Icon as IconType } from "@/components/ui/icons";
+import { ChevronRight, ExternalLink, type Icon as IconType } from "@/components/ui/icons";
 
 export default function ChoiceTile({
   icon: Icon,
   label,
   line,
   onClick,
+  external = false,
 }: {
   icon: IconType;
   label: string;
   line: string;
   onClick: () => void;
+  external?: boolean;
 }) {
   return (
     <button
@@ -33,10 +35,17 @@ export default function ChoiceTile({
           <span className="mt-0.5 text-body leading-snug text-muted-foreground">{line}</span>
         </div>
       </div>
-      <ChevronRight
-        size={20}
-        className="shrink-0 text-foreground/70 transition duration-hover group-hover:text-foreground"
-      />
+      {external ? (
+        <ExternalLink
+          size={18}
+          className="shrink-0 text-foreground/70 transition duration-hover group-hover:text-foreground"
+        />
+      ) : (
+        <ChevronRight
+          size={20}
+          className="shrink-0 text-foreground/70 transition duration-hover group-hover:text-foreground"
+        />
+      )}
     </button>
   );
 }

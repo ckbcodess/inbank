@@ -19,7 +19,8 @@
  *   name, email, date of birth and mobile, what they can do, their limit and their accounts. The signed letter is
  *   the contract, so everything the bank sets up is on it. The form asks for no Ghana Card, so neither do we.
  *
- *   Customer (/business/signup/status): reference -> code -> status, re-upload in place
+ *   No tracking page (designer, 2026-11-25): every update is an email to the applicant and the company. A late or
+ *   corrected letter comes by email, post or branch, and staff record it.
  *   Staff (/admin/enrolments): signature check against Flexcube -> callback -> approve, return or decline
  */
 
@@ -93,8 +94,8 @@ export type CorporateAppRole = "Inputter" | "Reviewer" | "Authoriser" | "Viewer"
 export const CORPORATE_ROLES: readonly CorporateAppRole[] = ["Inputter", "Reviewer", "Authoriser", "Viewer"];
 
 export const CORPORATE_ROLE_LINE: Record<CorporateAppRole, string> = {
-  Inputter: "Prepares payments. Someone else reviews and authorises them.",
-  Reviewer: "Checks payments and passes them on, or sends them back with a comment.",
+  Inputter: "Prepares payments for others to approve.",
+  Reviewer: "Checks payments, then passes them on or sends them back.",
   Authoriser: "Gives the final approval that sends a payment.",
   Viewer: "Sees balances, statements and history.",
 };
@@ -108,12 +109,13 @@ export function rolesFor(isFromMandate: boolean): readonly CorporateAppRole[] {
 export type CorporateService = "transfers" | "bulk";
 
 /**
- * The services switched on today. Term deposits and trade inquiries are on the form but not active on the bank's
- * platform (bank walkthrough, 2026-11-18), so they aren't offered.
+ * The services switched on today, named as the bank's form names them (FT and BU), so the letter and the bank's
+ * records use the same words (designer, 2026-11-26). Term deposits (TD) and trade inquiries (TI) are on the form but
+ * not active on the bank's platform (bank walkthrough, 2026-11-18), so they aren't offered.
  */
 export const CORPORATE_SERVICES: readonly { id: CorporateService; label: string }[] = [
-  { id: "transfers", label: "Transfers and payments" },
-  { id: "bulk", label: "Bulk payments" },
+  { id: "transfers", label: "Funds Transfer" },
+  { id: "bulk", label: "Bulk Uploads (Salary Processing)" },
 ];
 
 export function serviceLabels(services: readonly CorporateService[]): string {
@@ -131,16 +133,17 @@ export const BANK_FORM_NUMBER = "GCB/IBCAF/2014/038";
 /** Where the corporate terms are read. A placeholder until the bank hosts the document (see WORKING_LOG). */
 export const TERMS_URL = "https://www.gcbbank.com.gh";
 
-/** Viewers only see balances and history, so they carry no limit and no services. */
-export function roleActs(role: CorporateAppRole): boolean {
-  return role !== "Viewer";
+/** Viewers only see balances and history, so they carry no limit and no services. No role chosen yet acts on nothing. */
+export function roleActs(role: CorporateAppRole | null): role is Exclude<CorporateAppRole, "Viewer"> {
+  return role !== null && role !== "Viewer";
 }
 
 /** What's missing from one person's access, or "". */
 export function accessProblem(user: Pick<CorporateUserDraft, "role" | "limit" | "accountIds" | "services">): string {
+  if (!user.role) return "Choose a role.";
   if (user.accountIds.length === 0) return "Choose at least one account.";
   if (!roleActs(user.role)) return "";
-  if (user.services.length === 0) return "Choose at least one thing they can do.";
+  if (user.services.length === 0) return "Choose at least one service.";
   if (user.limit <= 0) return "Enter a limit for one payment.";
   return "";
 }
@@ -175,7 +178,9 @@ export interface CorporateUserDraft {
   name: string;
   email: string;
   mobile: string;
-  role: CorporateAppRole;
+  /** Null until the company chooses one. Nothing is chosen for them; only the limit starts at the bank's default
+   *  (designer, 2026-11-26). Every submitted application has one. */
+  role: CorporateAppRole | null;
   /** Signatories carry their designation from the mandate. */
   designation?: string;
   /** ISO date. A signatory's is on the bank's records; anyone else gives theirs. Activation checks it. */
@@ -206,7 +211,8 @@ export interface CompanyApplicant {
   name: string;
   mobile: string;
   email: string;
-  /** Their position at the company. A signatory's comes from the mandate. */
+  /** Their position at the company. A signatory's name, position and mobile come from the mandate; everyone types
+   *  their email, because the mandate's can be old or shared and every update goes there. */
   designation?: string;
   /** False for someone applying who isn't on the mandate, such as a company secretary. */
   isSignatory: boolean;
@@ -247,15 +253,6 @@ export interface EnrolmentReturnRecord {
   flaggedItems: string[];
   resolved: boolean;
   resubmittedAt?: string;
-}
-
-export interface EnrolmentTimelineEvent {
-  status: string;
-  label: string;
-  description: string;
-  timestamp: string;
-  done: boolean;
-  current: boolean;
 }
 
 export type EnrolmentStatus =
@@ -317,7 +314,6 @@ export interface EnrolmentApplication {
   verificationCall: VerificationCallLog;
   returns: EnrolmentReturnRecord[];
   rejectionReason?: string;
-  timeline: EnrolmentTimelineEvent[];
 }
 
 /* ── Company lookup (mock Flexcube) ────────────────────────────────────────── */
@@ -344,7 +340,7 @@ export interface CorporateCompanyRecord {
   email: string;
   alreadyEnrolled?: boolean;
   mandate: string;
-  /** The signing rule in plain words, used on the letter and the status page. */
+  /** The signing rule in plain words, used on the letter. */
   signingRule: string;
   approvalRule: string;
   relationshipManager: { name: string; email: string; phone: string } | null;

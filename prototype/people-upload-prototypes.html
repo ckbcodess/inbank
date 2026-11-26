@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>People Upload: 6 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--fld:#fcfcfc;--fbd:#ebebeb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--fld:#1c1c1c;--fbd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h2{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500;margin:0}
+  .pills,.seg{display:inline-flex;gap:4px}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .cap{font-size:12px;color:var(--mu);text-align:center;margin-bottom:8px}
+  .frame{width:460px;max-width:100%;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow)}
+  .frame.phone{width:375px}
+  .page{padding:28px;display:flex;flex-direction:column;gap:24px}.phone .page{padding:20px 12px}
+  .hd{text-align:center;display:flex;flex-direction:column;gap:8px}.hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu)}
+  .person{padding:6px 0}.person .w{color:#b45309;font-size:12px}[data-theme=dark] .person .w{color:#fbbf24}
+  .btn{height:40px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.sm{height:28px;padding:0 10px;font-size:13px;border-radius:8px}
+  .btn.am{background:var(--am);color:#111}.btn.out{border:1px solid var(--bd);background:var(--surf)}.btn.full{width:100%}.btn.dis{opacity:.4;pointer-events:none}
+  .btn.gh{color:var(--tx)}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--mu);font-size:13px}.link:hover{color:var(--tx)}
+  .link.tx{color:var(--tx)}
+  .zone{border:1px dashed var(--fbd);background:var(--fld);border-radius:10px}
+  .zone.drag{border-color:var(--tx);background:var(--amsoft)}
+  .ico{width:40px;height:40px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:#b7860b}[data-theme=dark] .ico{color:var(--am)}
+  .act{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}
+  .act:hover{background:var(--tile)}
+  .grow{flex:1;min-width:0}
+  .num{width:24px;height:24px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .file{display:flex;align-items:center;gap:12px}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.in{animation:in .2s ease}
+  svg{flex:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>People step: adding many from a file</h1>
+    <div class="row" style="gap:12px"><div class="pills" id="pills"></div>
+    <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage" id="stage"></div>
+<script>
+const I={
+ up:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>',
+ sheet:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h8M8 17h8M10 9H8"/></svg>',
+ plus:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+ user:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>',
+ dl:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 10 5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>',
+ chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>'
+};
+const NOTES=[
+ ['One quiet row','The zone shrinks to one row like the other add actions: a sheet icon, Upload a List with CSV, one row per person under it, and Browse on the right. The sample is a text link under the row. A third of the height of today.'],
+ ['Browse in the sentence','A shorter dashed zone with one line: Drop a CSV here or browse, where browse is the link. The sample link sits outside, under the zone, so the zone only does one thing.'],
+ ['Two numbered steps','Says the order out loud: 1 Download the sample, 2 Fill it in and upload it. Each step has its own button. Best for someone who has never seen the template.'],
+ ['One list of ways to add','Add Myself, Add a Person and Upload a List become three rows of the same kind, each with an icon tile. The upload row opens the file picker; the sample link sits under the list. Drop a file anywhere on the rows to upload it.'],
+ ['Behind a link','Bulk upload is for a few big companies, so it stays out of the way: a single line, Adding many people? Upload a list, that expands into the zone. Most companies never see it.'],
+ ['Zone that shows the file','The zone keeps its size but becomes the file once chosen: name, row count, and Review or Remove. Nothing jumps to another screen until they press Review.']
+];
+let V=1, st={file:false, open:false, drag:false};
+const $=s=>document.querySelector(s);
+const sample=(t='Download sample CSV')=>`<button class="link" style="align-self:flex-start;display:inline-flex;gap:6px;align-items:center">${I.dl}${t}</button>`;
+const list=()=>`<div><div class="person"><span style="display:block">Yaw Oppong</span><span class="mu s12">Authoriser, up to GHS 10,000.00</span></div>
+  <div class="person"><span style="display:block">Esther Appiah</span><span class="w">Choose a role.</span></div>
+  <div class="person"><span style="display:block">Ransford Gyasi</span><span class="mu s12">Inputter, up to GHS 10,000.00</span></div></div>`;
+const addBtns=()=>`<div style="display:flex;flex-direction:column;gap:8px"><button class="btn out full">${I.user}Add Myself</button><button class="btn out full">${I.plus}Add a Person</button></div>`;
+const chosen=()=>`<div class="zone in" style="padding:12px"><div class="file"><span class="ico">${I.sheet}</span><span class="grow"><span style="display:block">people.csv</span><span class="mu s12">14 rows · 2 need fixing</span></span><button class="link" data-act="clear">Remove</button></div></div>`;
+const browse=(cls='btn sm out')=>`<button class="${cls}" data-act="pick">Browse</button>`;
+function upload(){switch(V){
+ case 1: return st.file?chosen():`<div style="display:flex;flex-direction:column;gap:8px"><div class="zone ${st.drag?'drag':''}" data-drop style="padding:12px"><div class="file"><span class="ico">${I.sheet}</span><span class="grow"><span style="display:block">Upload a List</span><span class="mu s12">CSV, one row per person</span></span>${browse()}</div></div>${sample()}</div>`;
+ case 2: return st.file?chosen():`<div style="display:flex;flex-direction:column;gap:8px"><div class="zone ${st.drag?'drag':''}" data-drop style="padding:20px;text-align:center"><span class="mu" style="display:inline-flex;gap:8px;align-items:center">${I.up}<span style="color:var(--tx)">Drop a CSV here or <button class="link tx" data-act="pick" style="font-size:14px">browse</button></span></span></div>${sample()}</div>`;
+ case 3: return `<div style="display:flex;flex-direction:column;gap:12px"><p class="md">Add Many at Once</p>
+   <div class="file"><span class="num">1</span><span class="grow">Download the sample</span><button class="btn sm out">${I.dl}Sample CSV</button></div>
+   <div class="file"><span class="num">2</span><span class="grow">${st.file?'<span class="in">people.csv · 14 rows</span>':'Fill it in and upload it'}</span>${st.file?'<button class="link" data-act="clear">Remove</button>':browse('btn sm am')}</div></div>`;
+ case 4: return '';
+ case 5: return st.open?`<div class="in" style="display:flex;flex-direction:column;gap:8px">${st.file?chosen():`<div class="zone ${st.drag?'drag':''}" data-drop style="padding:20px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center"><span class="mu">${I.up}</span><span>Drop a CSV here</span><div style="display:flex;gap:8px">${browse('btn sm am')}<button class="btn sm out">Sample CSV</button></div></div>`}</div>`
+   :`<p class="mu" style="text-align:center">Adding many people? <button class="link tx" data-act="open" style="font-size:14px">Upload a list</button></p>`;
+ case 6: return `<div class="zone ${st.drag?'drag':''}" data-drop style="padding:${st.file?'16px':'20px'};min-height:116px;display:flex;flex-direction:column;justify-content:center;gap:12px;align-items:center;text-align:center">${st.file
+   ?`<div class="file in" style="width:100%;text-align:left"><span class="ico">${I.sheet}</span><span class="grow"><span style="display:block">people.csv</span><span class="mu s12">14 rows · 2 need fixing</span></span></div><div class="in" style="display:flex;gap:8px;width:100%"><button class="btn sm am" style="flex:1">Review</button><button class="btn sm out" data-act="clear">Remove</button></div>`
+   :`<span class="mu">${I.up}</span><span>Drop a CSV here</span><div style="display:flex;gap:8px">${browse('btn sm am')}<button class="btn sm out">Sample CSV</button></div>`}</div>`;
+}}
+function body(){
+  const adds = V===4
+    ? `<div><button class="act">${`<span class="ico">${I.user}</span>`}<span class="grow">Add Myself</span><span class="mu">${I.chev}</span></button>
+       <button class="act">${`<span class="ico">${I.plus}</span>`}<span class="grow">Add a Person</span><span class="mu">${I.chev}</span></button>
+       ${st.file?`<div class="act in"><span class="ico">${I.sheet}</span><span class="grow"><span style="display:block">people.csv</span><span class="mu s12">14 rows · 2 need fixing</span></span><button class="link" data-act="clear">Remove</button></div>`
+        :`<button class="act ${st.drag?'zone drag':''}" data-act="pick" data-drop><span class="ico">${I.up}</span><span class="grow"><span style="display:block">Upload a List</span><span class="mu s12">CSV, one row per person</span></span><span class="mu">${I.chev}</span></button>`}</div>${sample()}`
+    : `${addBtns()}${upload()}`;
+  return `<div class="page"><div class="hd"><h2>Who Gets Access?</h2><p>Signatories come from your mandate. Set up each person.</p></div>${list()}${adds}
+    <div style="display:flex;flex-direction:column;gap:8px"><button class="btn am full dis">Continue</button><p class="mu s12" style="text-align:center">Add at least one Inputter, so someone can prepare payments.</p></div></div>`;
+}
+function render(){
+  $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1}</button>`).join('');
+  $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]} <span class="mu">Browse picks a sample file; drag over a zone to see its drop state.</span>`;
+  const h=body(); $('#stage').innerHTML=`<div><p class="cap">Desktop</p><div class="frame">${h}</div></div><div><p class="cap">Phone</p><div class="frame phone">${h}</div></div>`;
+}
+document.addEventListener('click',e=>{
+  const v=e.target.closest('[data-v]'); if(v){V=+v.dataset.v;st={file:false,open:false,drag:false};render();return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+  const a=e.target.closest('[data-act]'); if(!a)return;
+  if(a.dataset.act==='pick')st.file=true; if(a.dataset.act==='clear')st.file=false; if(a.dataset.act==='open')st.open=true; render();
+});
+document.addEventListener('dragover',e=>{if(e.target.closest('[data-drop]')){e.preventDefault();if(!st.drag){st.drag=true;render();}}});
+document.addEventListener('dragleave',e=>{if(st.drag&&!e.relatedTarget){st.drag=false;render();}});
+document.addEventListener('drop',e=>{e.preventDefault();st.drag=false;st.file=true;render();});
+render();
+</script>
+</body>
+</html>

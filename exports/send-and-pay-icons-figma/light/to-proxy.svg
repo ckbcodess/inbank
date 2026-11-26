@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+<title>To Proxy</title>
+<defs>
+<radialGradient id="amber" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(12 7) rotate(70) scale(22.5 45)"><stop offset="0" stop-color="#fee39a"/><stop offset="0.5" stop-color="#f0a400"/><stop offset="1" stop-color="#ffc524"/></radialGradient>
+<radialGradient id="slate" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(12 7) rotate(70) scale(22.5 45)"><stop offset="0" stop-color="#a4ced5"/><stop offset="0.5" stop-color="#53676e"/><stop offset="1" stop-color="#3d72ae"/></radialGradient>
+<clipPath id="accent"><path d="M0 13 L24 13 L24 24 L0 24 Z"/></clipPath>
+</defs>
+<g transform="translate(24 24) scale(8)">
+<g><circle fill="url(#amber)" cx="12" cy="6" r="4"/><path fill="url(#amber)" d="M20 17.5C20 19.9853 20 22 12 22C4 22 4 19.9853 4 17.5C4 15.0147 7.58172 13 12 13C16.4183 13 20 15.0147 20 17.5Z"/></g>
+<g clip-path="url(#accent)"><circle fill="url(#slate)" cx="12" cy="6" r="4"/><path fill="url(#slate)" d="M20 17.5C20 19.9853 20 22 12 22C4 22 4 19.9853 4 17.5C4 15.0147 7.58172 13 12 13C16.4183 13 20 15.0147 20 17.5Z"/></g>
+</g>
+</svg>

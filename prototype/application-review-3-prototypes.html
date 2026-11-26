@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Application Review: Iterating on 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--fld:#fcfcfc;--fbd:#ebebeb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--fld:#1c1c1c;--fbd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h2{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500;margin:0}
+  .pills,.seg{display:inline-flex;gap:4px}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .cap{font-size:12px;color:var(--mu);text-align:center;margin-bottom:8px}
+  .frame{width:460px;max-width:100%;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow)}
+  .frame.phone{width:375px}
+  .page{padding:28px;display:flex;flex-direction:column;gap:24px}.phone .page{padding:20px 12px}
+  .hd{text-align:center;display:flex;flex-direction:column;gap:8px}.hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu)}
+  .person{padding:6px 0}.person .w{color:#b45309;font-size:12px}[data-theme=dark] .person .w{color:#fbbf24}
+  .btn{height:40px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.sm{height:28px;padding:0 10px;font-size:13px;border-radius:8px}
+  .btn.am{background:var(--am);color:#111}.btn.out{border:1px solid var(--bd);background:var(--surf)}.btn.full{width:100%}.btn.dis{opacity:.4;pointer-events:none}
+  .btn.gh{color:var(--tx)}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--mu);font-size:13px}.link:hover{color:var(--tx)}
+  .link.tx{color:var(--tx)}
+  .zone{border:1px dashed var(--fbd);background:var(--fld);border-radius:10px}
+  .zone.drag{border-color:var(--tx);background:var(--amsoft)}
+  .ico{width:40px;height:40px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:#b7860b}[data-theme=dark] .ico{color:var(--am)}
+  .act{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}
+  .act:hover{background:var(--tile)}
+  .grow{flex:1;min-width:0}
+  .num{width:24px;height:24px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .file{display:flex;align-items:center;gap:12px}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.in{animation:in .2s ease}
+  svg{flex:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Check Your Application, iterating on 3: summary, then folds</h1>
+    <div class="row" style="gap:12px"><div class="pills" id="pills"></div>
+    <div class="seg" id="theme"><button data-t="light">Light</button><button data-t="dark" class="on">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage" id="stage"></div>
+<style>
+  .av{width:32px;height:32px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex:none}
+  .pr{display:flex;align-items:center;gap:12px;padding:6px 0}
+  .kv{display:flex;justify-content:space-between;gap:16px;padding:4px 0}
+  .r{text-align:right}
+  .lead{font-size:16px;line-height:1.65}
+  .chipb{display:inline-flex;align-items:center;gap:4px;padding:0 8px;border-radius:999px;background:var(--tile);font-weight:500;line-height:26px}
+  .chipb.on{background:var(--am);color:#111}
+  .fold{display:flex;align-items:center;gap:12px;padding:12px 0;width:100%}
+  .fold+.fold,.fwrap+.fwrap{border-top:1px solid var(--bd)}
+  .fwrap{display:flex;flex-direction:column}
+  .stat{display:flex;flex-direction:column;gap:2px;flex:1}
+  .stat b{font-size:20px;font-weight:400;letter-spacing:-.01em}
+  .stats{display:flex;gap:12px}
+  .ico{width:36px;height:36px}
+</style>
+<script>
+const I={ chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>',
+ acc:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+ ppl:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+ me:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>' };
+const CO='Adinkra Textiles Ltd';
+const ACC=[['Corporate Current Account','7890'],['USD Trade Account','0430']];
+const AP={n:'Yaw Oppong',des:'Managing Director',ph:'+233 24 *** 3456',em:'yaw.oppong@adinkratextiles.com'};
+const P=[
+ {n:'Yaw Oppong',src:'Managing Director',role:'Authoriser',lim:'GHS 10,000.00',acc:['7890']},
+ {n:'Esther Appiah',src:'Finance Director',role:'Authoriser',lim:'GHS 10,000.00',acc:['7890','0430']},
+ {n:'Ransford Gyasi',src:'Executive Director',role:'Viewer',acc:['7890','0430']},
+ {n:'Adwoa Mensah',src:'Added by you',role:'Inputter',lim:'GHS 10,000.00',acc:['7890']},
+ {n:'Kojo Asamoah',src:'Added by you',role:'Viewer',acc:['7890']},
+];
+const NOTES=[
+ ['3 tightened','The sentence, then three folds: Accounts, People, Applicant. Each closed fold already says what is inside (the account numbers, the first names, the applicant), so most people can check without opening anything. Edit lives inside each opened fold.'],
+ ['The sentence is the control','The counts in the sentence are the folds: tap 2 accounts or 5 people and that section opens under the sentence. No separate headings at all.'],
+ ['Facts, then folds','Instead of a sentence, three plain facts in a row (2 accounts, 5 people, 2 can approve) in the key-fact size, then the folds. Quicker to scan than to read.'],
+ ['One open at a time','An accordion: People opens by default because it is what changes most; opening another closes it. The screen never grows longer than one section.'],
+ ['The sentence says who approves','The summary adds the part a signatory cares about: payments are prepared by 1 person and approved by 2. The folds follow, with the roles visible in the People preview.'],
+ ['Folds as rows','Each fold is a row with an icon tile, a title, a one-line preview and a chevron, like the rest of the app’s lists. Opening one shows its contents and an Edit link right there.']
+];
+let V=1, open={}, acc='p';
+const $=s=>document.querySelector(s);
+const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2);
+const first=n=>n.split(' ')[0];
+const accC=()=>ACC.map(([n,l])=>`<div class="kv"><span>${n}</span><span class="mu tab">•••• ${l}</span></div>`).join('');
+const pplC=()=>P.map(p=>`<div class="pr"><span class="av">${ini(p.n)}</span><span class="grow"><span style="display:block">${p.n}</span><span class="mu s12">${p.src} · ${p.acc.map(a=>'•••• '+a).join(', ')}</span></span><span class="s12 r">${p.role}${p.lim?`<br><span class="mu tab">${p.lim}</span>`:''}</span></div>`).join('');
+const apC=()=>`<div class="pr"><span class="av">${ini(AP.n)}</span><span class="grow"><span style="display:block">${AP.n}</span><span class="mu s12">${AP.des} · ${AP.em}</span></span><span class="mu s12 tab">${AP.ph}</span></div>`;
+const SEC={a:['Accounts',`${ACC.length} accounts`,ACC.map(a=>'•••• '+a[1]).join(', '),accC,I.acc],
+           p:['People',`${P.length} people`,`${P.slice(0,3).map(p=>first(p.n)).join(', ')} and ${P.length-3} more`,pplC,I.ppl],
+           ap:['Applicant','Applicant',`${AP.n}, ${AP.des}`,apC,I.me]};
+const edit=()=>`<button class="link" style="align-self:flex-start;margin-top:4px">Edit</button>`;
+const chev=k=>`<span class="mu" style="display:inline-flex;transition:transform .2s;${open[k]?'transform:rotate(180deg)':''}">${I.chev}</span>`;
+const fold=(k,withIcon=false)=>{const [t,,prev,c,ic]=SEC[k];return `<div class="fwrap"><button class="fold" data-f="${k}">${withIcon?`<span class="ico">${ic}</span>`:''}<span class="grow"><span class="md" style="display:block">${t}</span>${open[k]?'':`<span class="mu s12">${prev}</span>`}</span>${chev(k)}</button>${open[k]?`<div class="in" style="padding:0 0 12px;display:flex;flex-direction:column">${c()}${edit()}</div>`:''}</div>`;};
+const sentence=()=>`<p class="lead">Internet banking for <span class="md">${CO}</span> on ${ACC.length} accounts, for ${P.length} people, applied for by ${AP.n}.</p>`;
+function body(){
+ let b='';
+ switch(V){
+ case 1: b=`${sentence()}<div>${['a','p','ap'].map(k=>fold(k)).join('')}</div>`; break;
+ case 2: { const ch=(k,t)=>`<button class="chipb ${open[k]?'on':''}" data-f="${k}">${t}</button>`;
+   b=`<p class="lead">Internet banking for <span class="md">${CO}</span> on ${ch('a',ACC.length+' accounts')}, for ${ch('p',P.length+' people')}, applied for by ${ch('ap',AP.n)}.</p>
+   ${['a','p','ap'].filter(k=>open[k]).map(k=>`<div class="in" style="display:flex;flex-direction:column"><span class="md" style="margin-bottom:4px">${SEC[k][0]}</span>${SEC[k][3]()}${edit()}</div>`).join('')}
+   ${Object.values(open).some(Boolean)?'':'<p class="mu s12">Tap a highlighted part to see it.</p>'}`; break; }
+ case 3: b=`<div class="stats"><div class="stat"><b class="tab">${ACC.length}</b><span class="mu s12">Accounts</span></div><div class="stat"><b class="tab">${P.length}</b><span class="mu s12">People</span></div><div class="stat"><b class="tab">${P.filter(p=>p.role==='Authoriser').length}</b><span class="mu s12">Can approve</span></div></div>
+   <div>${['a','p','ap'].map(k=>fold(k)).join('')}</div>`; break;
+ case 4: b=`${sentence()}<div>${['a','p','ap'].map(k=>{const was=open[k];open[k]=acc===k;const h=fold(k);open[k]=was;return h;}).join('')}</div>`; break;
+ case 5: { const inp=P.filter(p=>p.role==='Inputter').length, au=P.filter(p=>p.role==='Authoriser').length, vw=P.filter(p=>p.role==='Viewer').length;
+   SEC.p[2]=`${au} approve · ${inp} prepares · ${vw} view`;
+   b=`<p class="lead">Internet banking for <span class="md">${CO}</span> on ${ACC.length} accounts. Payments are prepared by ${inp} person and approved by ${au}. ${vw} more can view.</p><div>${['a','p','ap'].map(k=>fold(k)).join('')}</div>`;
+   SEC.p[2]=`${P.slice(0,3).map(p=>first(p.n)).join(', ')} and ${P.length-3} more`; break; }
+ case 6: b=`${sentence()}<div>${['a','p','ap'].map(k=>fold(k,true)).join('')}</div>`; break;
+ }
+ return `<div class="page"><div class="hd"><h2>Check Your Application</h2><p>This goes on your letter.</p></div>${b}<button class="btn am full">Continue</button></div>`;
+}
+function render(){
+  $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">3.${i+1}</button>`).join('');
+  $('#note').innerHTML=`<b>3.${V} ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]}`;
+  const h=body(); $('#stage').innerHTML=`<div><p class="cap">Desktop</p><div class="frame">${h}</div></div><div><p class="cap">Phone</p><div class="frame phone">${h}</div></div>`;
+}
+document.addEventListener('click',e=>{
+  const v=e.target.closest('[data-v]'); if(v){V=+v.dataset.v;open={};acc='p';render();return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+  const f=e.target.closest('[data-f]'); if(f){const k=f.dataset.f; if(V===4)acc=acc===k?null:k; else open[k]=!open[k]; render();}
+});
+document.documentElement.dataset.theme='dark';
+render();
+</script>
+</body>
+</html>

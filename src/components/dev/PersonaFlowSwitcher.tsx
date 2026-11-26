@@ -316,7 +316,6 @@ function PersonaFlowSwitcherContent() {
                 expired={searchParams.get("expired")}
                 type={searchParams.get("type")}
                 scenario={searchParams.get("scenario")}
-                ref_={searchParams.get("ref")}
 
 
               />
