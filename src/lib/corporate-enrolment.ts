@@ -1,82 +1,48 @@
 /**
- * Corporate Internet Banking enrolment: a company that already banks with GCB asks for internet banking.
+ * Business internet banking enrolment: a company or a sole proprietor that already banks with GCB asks for internet
+ * banking. Retail covers personal and joint accounts only; every other account, sole proprietors included, comes here
+ * (bank meeting, 2026-11-26).
  *
- * This follows how GCB onboards companies today (Esther, 2026-10-16): a request letter on company letterhead
- * plus the internet banking application form, signed per the mandate. The bank checks the signatures against
- * the specimens in Flexcube, the RM, branch or central team approves, and each user then gets their login
- * details. The online journey only changes how the paperwork starts: the customer fills the form here, we write
- * the letter for them, and they upload it signed (or email it, post it or bring it to a branch). Applications
- * captured by branch staff land in the same queue (FR-ADM-05), so there is one store and one status.
+ *   Customer (/business/signup/enrol?type=company|sole), the bank's form rethought (designer, 2026-11-26):
+ *     Your details -> Company details -> Accounts -> Authorised users -> Letter (download it filled in, upload it
+ *     signed, accept the terms) -> Submitted
+ *   The request is saved when the letter screen opens, because signatures take days; the emailed link
+ *   (`?upload=<reference>`) brings them back to upload it.
  *
- *   Customer (/business/signup/enrol):
- *     Account -> Who's applying -> Code -> Company and signatories -> Accounts -> People -> Review -> Letter
- *   Anyone at the company can apply, a signatory or not (designer, 2026-10-22). A company secretary gives their
- *   own details and proves their number with the code; the signatories approve by signing the letter.
- *   Nothing the bank holds (signatories, accounts) shows before the code: a company's account number is on its
- *   cheques and invoices, so knowing it proves nothing.
+ *   The form's answers become a letter the signatories sign, so the signature covers exactly what was asked for, and
+ *   staff get the answers as data to check rather than retype. Nothing is looked up online: account numbers are typed
+ *   and staff match them in Flexcube. No tracking page: updates go to the requester and the business's official email.
  *
- *   What we ask for follows the bank's current form, GCB/IBCAF/2014/038 (designer, 2026-11-25): each person's
- *   name, email, date of birth and mobile, what they can do, their limit and their accounts. The signed letter is
- *   the contract, so everything the bank sets up is on it. The form asks for no Ghana Card, so neither do we.
- *
- *   No tracking page (designer, 2026-11-25): every update is an email to the applicant and the company. A late or
- *   corrected letter comes by email, post or branch, and staff record it.
- *   Staff (/admin/enrolments): signature check against Flexcube -> callback -> approve, return or decline
+ *   Staff (/admin/enrolments): letter against the answers, Flexcube, signature check -> callback -> approve or return
  */
 
 /* ── Flow steps and Demo hub scenarios ─────────────────────────────────────── */
 
-export type CorporateEnrolmentStep =
-  | "account"
-  | "applicant"
-  | "otp"
-  | "mandate"
-  | "accounts"
-  | "users"
-  | "review"
-  | "letter"
-  | "submitted";
+/** `upload` is where the emailed link lands, to upload the signed letter later. */
+export type CorporateEnrolmentStep = "details" | "business" | "accounts" | "people" | "letter" | "submitted" | "upload";
 
 /** The steps that count towards the progress bar (Submitted is the end state, not a step). */
-export const ENROLMENT_PROGRESS_STEPS: CorporateEnrolmentStep[] = [
-  "account",
-  "applicant",
-  "otp",
-  "mandate",
-  "accounts",
-  "users",
-  "review",
-  "letter",
-];
+export const ENROLMENT_PROGRESS_STEPS: CorporateEnrolmentStep[] = ["details", "business", "accounts", "people", "letter"];
 
-export type CorporateEnrolmentOutcome = "not-found" | "already-enrolled" | "mandate-outdated";
+/** A sole proprietor fills in the same form as a company; only the wording changes. */
+export type BusinessKind = "company" | "sole";
 
 export interface CorporateEnrolmentScenario {
   id: string;
   label: string;
-  step?: CorporateEnrolmentStep;
-  outcome?: CorporateEnrolmentOutcome;
-  /** Which demo account the scenario opens with. */
-  account?: string;
-  /** Opens with someone who isn't on the mandate applying (the demo company secretary). */
-  nonSignatory?: boolean;
+  step: CorporateEnrolmentStep;
+  kind?: BusinessKind;
 }
 
 export const CORPORATE_ENROLMENT_SCENARIOS: readonly CorporateEnrolmentScenario[] = [
-  { id: "account", label: "Find your company", step: "account" },
-  { id: "applicant", label: "Who's applying", step: "applicant" },
-  { id: "applicant-other", label: "Company secretary applying", step: "applicant", nonSignatory: true },
-  { id: "otp", label: "Confirm code", step: "otp" },
-  { id: "mandate", label: "Check your company", step: "mandate" },
-  { id: "accounts", label: "Choose accounts", step: "accounts" },
-  { id: "users", label: "People and access", step: "users" },
-  { id: "review", label: "Review", step: "review" },
-  { id: "letter", label: "Sign the letter", step: "letter" },
+  { id: "details", label: "Your details", step: "details" },
+  { id: "business", label: "Company details", step: "business" },
+  { id: "accounts", label: "Accounts", step: "accounts" },
+  { id: "people", label: "Authorised users", step: "people" },
+  { id: "letter", label: "Letter of request", step: "letter" },
   { id: "submitted", label: "Submitted", step: "submitted" },
-  { id: "no-rm", label: "Company without an RM", step: "account", account: "1001884422000" },
-  { id: "not-found", label: "Account not found", outcome: "not-found" },
-  { id: "already-enrolled", label: "Already on internet banking", outcome: "already-enrolled" },
-  { id: "mandate-outdated", label: "Signatories have changed", outcome: "mandate-outdated" },
+  { id: "upload", label: "Upload the letter later", step: "upload" },
+  { id: "sole", label: "Sole proprietor applying", step: "details", kind: "sole" },
 ];
 
 export function findCorporateEnrolmentScenario(id: string): CorporateEnrolmentScenario | undefined {
@@ -106,16 +72,18 @@ export function rolesFor(isFromMandate: boolean): readonly CorporateAppRole[] {
 }
 
 /** What a person may do, beyond seeing accounts. The bank's form also lists term deposits and trade inquiries. */
-export type CorporateService = "transfers" | "bulk";
+export type CorporateService = "transfers" | "bulk" | "trade";
 
 /**
- * The services switched on today, named as the bank's form names them (FT and BU), so the letter and the bank's
- * records use the same words (designer, 2026-11-26). Term deposits (TD) and trade inquiries (TI) are on the form but
- * not active on the bank's platform (bank walkthrough, 2026-11-18), so they aren't offered.
+ * The services a user can be given, named as the bank's form names them (FT, BU and TI), so the letter and the
+ * bank's records use the same words (designer, 2026-11-26). Trade Inquiries came back at the designer's request
+ * (2026-11-26) although the bank said on 2026-11-18 it isn't active on its platform yet (open in WORKING_LOG). Term
+ * deposits (TD) are on the form but not offered.
  */
 export const CORPORATE_SERVICES: readonly { id: CorporateService; label: string }[] = [
   { id: "transfers", label: "Funds Transfer" },
   { id: "bulk", label: "Bulk Uploads (Salary Processing)" },
+  { id: "trade", label: "Trade Inquiries" },
 ];
 
 export function serviceLabels(services: readonly CorporateService[]): string {
@@ -148,16 +116,39 @@ export function accessProblem(user: Pick<CorporateUserDraft, "role" | "limit" | 
   return "";
 }
 
-/** A company needs someone to prepare payments and someone else to approve them (BRL-04, and the bank's form). */
-export function usersReady(users: CorporateUserDraft[]): string {
+/**
+ * What the people list still needs, as the Continue button says it, or "". As on the bank's form, a business that
+ * only wants to view can list viewers alone. Anyone who prepares payments needs someone else to approve them
+ * (BRL-04), and an authoriser in a company needs someone to prepare them. A sole proprietor can be alone as an
+ * Authoriser: they approve their own payments.
+ */
+export function usersReady(users: CorporateUserDraft[], kind: BusinessKind = "company"): string {
+  if (users.length === 0) return "Add a User";
   const hasInputter = users.some((u) => u.role === "Inputter");
   const hasAuthoriser = users.some((u) => u.role === "Authoriser");
-  if (!hasInputter && !hasAuthoriser) return "Add at least one Inputter and one Authoriser.";
-  if (!hasInputter) return "Add at least one Inputter, so someone can prepare payments.";
-  if (!hasAuthoriser) return "Make at least one signatory an Authoriser, so payments can be approved.";
-  const incomplete = users.find((u) => accessProblem(u));
-  if (incomplete) return `Finish setting up ${incomplete.name}.`;
+  if (hasInputter && !hasAuthoriser) return "Add an Authoriser";
+  if (hasAuthoriser && !hasInputter && kind !== "sole") return "Add an Inputter";
+  const emails = users.map((u) => u.email.trim().toLowerCase()).filter(Boolean);
+  if (new Set(emails).size !== emails.length) return "Remove the Duplicate Email";
+  // The table on wide screens lets a row be half filled in, so every detail is checked, not only the access.
+  const incomplete = users.find((u) => userMissing(u).length > 0);
+  if (incomplete) return incomplete.name.trim() ? `Complete ${incomplete.name.trim()}` : "Complete the New User";
   return "";
+}
+
+/** What one user still needs, in words for a "Still needed: ..." line. Empty when they're complete. */
+export function userMissing(user: CorporateUserDraft): string[] {
+  const missing: string[] = [];
+  if (!user.name.trim()) missing.push("full name");
+  if (!user.email.includes("@")) missing.push("email address");
+  if (user.mobile.replace(/\D/g, "").length < 9) missing.push("mobile number");
+  if (!user.dateOfBirth) missing.push("date of birth");
+  if (!user.role) missing.push("role");
+  else if (roleActs(user.role)) {
+    if (user.services.length === 0) missing.push("services");
+    if (user.accountIds.length === 0) missing.push("accounts");
+  }
+  return missing;
 }
 
 /**
@@ -181,11 +172,13 @@ export interface CorporateUserDraft {
   /** Null until the company chooses one. Nothing is chosen for them; only the limit starts at the bank's default
    *  (designer, 2026-11-26). Every submitted application has one. */
   role: CorporateAppRole | null;
-  /** Signatories carry their designation from the mandate. */
+  /** Their position, where it's known. */
   designation?: string;
   /** ISO date. A signatory's is on the bank's records; anyone else gives theirs. Activation checks it. */
   dateOfBirth?: string;
   dateAppointed?: string;
+  /** Whether they sign for the business, as the applicant says. Staff confirm it against the mandate. Only
+   *  signatories can review or authorise (BRL-03). */
   isFromMandate?: boolean;
   /** The most they may prepare, pass on or release in one payment, in GHS. 0 for viewers. */
   limit: number;
@@ -207,23 +200,109 @@ export interface EnrolledAccountSummary {
   balance?: number;
 }
 
+/** Whoever fills in the request: often a secretary or an accountant, not a signatory. */
 export interface CompanyApplicant {
   name: string;
   mobile: string;
   email: string;
-  /** Their position at the company. A signatory's name, position and mobile come from the mandate; everyone types
-   *  their email, because the mandate's can be old or shared and every update goes there. */
+  /** Their position at the business, as they give it. */
   designation?: string;
-  /** False for someone applying who isn't on the mandate, such as a company secretary. */
+  /** Kept for staff records made before 2026-11-26; the online request doesn't ask. */
   isSignatory: boolean;
 }
 
-/** The demo company secretary who applies without being a signatory. */
-export const NON_SIGNATORY_DEMO: Omit<CompanyApplicant, "isSignatory"> = {
-  name: "Adwoa Mensah",
-  designation: "Company Secretary",
-  mobile: "0244300420",
-  email: "adwoa.mensah@adinkratextiles.com",
+/** What the applicant types about the business. Nothing is looked up from it. */
+export interface BusinessDetails {
+  kind: BusinessKind;
+  name: string;
+  /** What the business does: the form's "nature of business". */
+  nature: string;
+  email: string;
+  phone: string;
+  /** Where the business is, in their own words: the form's address, suburb, landmark and city in one line. */
+  location: string;
+}
+
+/** Account numbers are typed, never looked up. GCB's are 13 digits; 10 to 16 allows for older ones. */
+export function accountNumberProblem(raw: string): string {
+  const digits = cleanAccountNumber(raw);
+  if (!digits) return "";
+  if (!/^\d+$/.test(digits)) return "Please use digits only.";
+  if (digits.length < 10 || digits.length > 16) return "Account numbers must be 10 to 16 digits.";
+  return "";
+}
+
+/** A typed account as the request carries it. Staff fill in the name, type and currency from Flexcube. */
+export function typedAccount(number: string): EnrolledAccountSummary {
+  const clean = cleanAccountNumber(number);
+  return { id: clean, name: "", number: clean, currency: "", type: "" };
+}
+
+/** The business as the submission needs it, from what was typed. Staff add the rest from the letter and Flexcube. */
+export function businessRecord(details: BusinessDetails): CorporateCompanyRecord {
+  return {
+    companyName: details.name,
+    tin: "",
+    address: details.location,
+    phone: details.phone,
+    structure: details.kind === "sole" ? "Sole proprietor" : "Company or organisation",
+    email: details.email,
+    mandate: "",
+    signingRule: "",
+    approvalRule: "",
+    relationshipManager: null,
+    accounts: [],
+    signatories: [],
+  };
+}
+
+/** What the Demo hub fills in when it jumps past the first screen. */
+export const ENROLMENT_DEMO = {
+  requester: { name: "Adwoa Mensah", mobile: "0244300420", email: "adwoa.mensah@adinkratextiles.com" },
+  business: {
+    name: "Adinkra Textiles Ltd",
+    nature: "Textile manufacturing and wholesale",
+    email: "info@adinkratextiles.com",
+    phone: "0302224410",
+    location: "Plot 14 Industrial Area, North Kaneshie, Accra",
+  },
+  accounts: ["1001234567890", "1001234577100"],
+  users: [
+    {
+      id: "u-demo-1",
+      name: "Adwoa Mensah",
+      email: "adwoa.mensah@adinkratextiles.com",
+      mobile: "0244300420",
+      dateOfBirth: "1988-03-14",
+      role: "Inputter",
+      limit: 50_000,
+      accountIds: ["1001234567890", "1001234577100"],
+      services: ["transfers", "bulk"],
+    },
+    {
+      id: "u-demo-2",
+      name: "Yaw Oppong",
+      email: "yaw.oppong@adinkratextiles.com",
+      mobile: "0244123456",
+      dateOfBirth: "1971-09-02",
+      role: "Authoriser",
+      isFromMandate: true,
+      limit: 500_000,
+      accountIds: ["1001234567890", "1001234577100"],
+      services: ["transfers", "bulk"],
+    },
+    {
+      id: "u-demo-3",
+      name: "Esi Boateng",
+      email: "esi.boateng@adinkratextiles.com",
+      mobile: "0552309981",
+      dateOfBirth: "1993-11-21",
+      role: "Viewer",
+      limit: 0,
+      accountIds: ["1001234567890", "1001234577100"],
+      services: [],
+    },
+  ] satisfies CorporateUserDraft[],
 };
 
 export interface SignatureCheckItem {
@@ -314,6 +393,20 @@ export interface EnrolmentApplication {
   verificationCall: VerificationCallLog;
   returns: EnrolmentReturnRecord[];
   rejectionReason?: string;
+  /** Sole proprietor or company, as the applicant chose. */
+  businessKind?: BusinessKind;
+  /** The business's phone, as typed. */
+  companyPhone?: string;
+  /** What the business does, as typed. */
+  natureOfBusiness?: string;
+  /** Whether staff have found the business in Flexcube. Online requests start without it: the account numbers are
+   *  on the letter. */
+  foundInFlexcube?: boolean;
+  /**
+   * Who was told a request was made: the business's email on file and every signatory's mobile in Flexcube, so a
+   * stranger asking in the business's name is seen at once.
+   */
+  startAlert?: { at: string; companyEmail: string; signatoryMobiles: string[] };
 }
 
 /* ── Company lookup (mock Flexcube) ────────────────────────────────────────── */
@@ -434,13 +527,7 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = 
   },
 };
 
-export const ENROLMENT_DEMO_ACCOUNTS = {
-  default: "1001234567890",
-  noRm: "1001884422000",
-  alreadyEnrolled: "1001992244110",
-  notFound: "9999000011110",
-} as const;
-
+/** Staff side only: the business's Flexcube record, found from an account number on the letter. */
 export function lookupCorporateAccount(rawAccountNumber: string): CorporateCompanyRecord | null {
   return MOCK_CORPORATE_COMPANIES[cleanAccountNumber(rawAccountNumber)] ?? null;
 }

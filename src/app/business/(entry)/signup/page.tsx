@@ -3,9 +3,8 @@
 /**
  * Business registration door, shaped like the personal one (/get-started). First: does the business already bank
  * with GCB? New to GCB opens the bank's account opening portal, as personal does. Account holders then say how the
- * business is set up: sole proprietors self-onboard online (BRD v2 §5.1); companies apply online with a letter we
- * write for their signatories, or at a branch, and both reach the same bank review (FR-ADM-05).
- * `?type=company` opens on the company screen, `?step=type` on the business-type question.
+ * business is set up; both go straight to the same online request (letter of request, uploaded), which reaches the
+ * bank's review like a branch request (FR-ADM-05). `?step=type` opens on the business-type question.
  */
 
 import { Suspense, useState } from "react";
@@ -15,54 +14,15 @@ import { Building2, Plus, Store, UserCheck } from "@/components/ui/icons";
 import AuthLayout from "@/components/auth/AuthLayout";
 import ChoiceTile from "@/components/auth/ChoiceTile";
 import OpenGcbAccountDialog from "@/components/auth/OpenGcbAccountDialog";
-import { Button } from "@/components/ui/button";
 
 function BusinessSignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialType = searchParams.get("type");
-  const initialStep = searchParams.get("step");
+  // `?type=company` was the old "apply online or at a branch" screen; it now opens the business type question.
+  const initialStep = searchParams.get("step") ?? (searchParams.get("type") ? "type" : null);
 
-  const [screen, setScreen] = useState<"relationship" | "type" | "company">(
-    initialType === "company" ? "company" : initialStep === "type" ? "type" : "relationship",
-  );
+  const [screen, setScreen] = useState<"relationship" | "type">(initialStep === "type" ? "type" : "relationship");
   const [showOpenAccount, setShowOpenAccount] = useState(false);
-
-  if (screen === "company") {
-    return (
-      <>
-        <AuthLayout
-          title="Set Up Your Company"
-          description="We prepare the letter. Your signatories sign it."
-          icon={Building2}
-          align="center"
-          onBack={() => setScreen("type")}
-          backLabel="Back to business options"
-          width="compact"
-        >
-          <div className="flex flex-col gap-3">
-            <Button
-              size="md"
-              className="w-full"
-              onClick={() => router.push("/business/signup/enrol")}
-            >
-              Apply Online
-            </Button>
-            <p className="pt-2 text-center text-body text-muted-foreground">
-              Apply in person?{" "}
-              <button
-                type="button"
-                onClick={() => router.push("/branches")}
-                className="cursor-pointer font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
-              >
-                Find a branch
-              </button>
-            </p>
-          </div>
-        </AuthLayout>
-      </>
-    );
-  }
 
   if (screen === "type") {
     return (
@@ -77,13 +37,13 @@ function BusinessSignupContent() {
             icon={Store}
             label="Sole Proprietor"
             line="Registered in your own name."
-            onClick={() => router.push("/business/signup/sole-proprietor")}
+            onClick={() => router.push("/business/signup/enrol?type=sole")}
           />
           <ChoiceTile
             icon={Building2}
             label="Company or Organisation"
             line="Limited company, partnership, NGO and others."
-            onClick={() => setScreen("company")}
+            onClick={() => router.push("/business/signup/enrol?type=company")}
           />
         </div>
       </AuthLayout>

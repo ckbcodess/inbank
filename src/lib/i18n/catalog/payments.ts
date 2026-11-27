@@ -499,7 +499,6 @@ const payments: Entry[] = [
   ["Myself (Cardless Code)", "Moi-même (code sans carte)", "Yo (código sin tarjeta)", "本人（无卡取款码）"],
   ["Recipient {0}", "Bénéficiaire {0}", "Destinatario {0}", "收款人 {0}"],
   ["Self Cash Withdrawal · {0}", "Retrait personnel · {0}", "Retiro propio · {0}", "本人取现 · {0}"],
-  ["Registered Mobile", "Mobile enregistré", "Móvil registrado", "注册手机"],
   ["Select Mobile Network", "Choisissez le réseau mobile", "Selecciona la red móvil", "选择移动网络"],
   ["Verifying recipient phone number...", "Vérification du numéro du bénéficiaire…", "Verificando el teléfono del destinatario…", "正在验证收款人电话号码…"],
   ["Withdrawal amount", "Montant du retrait", "Importe del retiro", "取款金额"],

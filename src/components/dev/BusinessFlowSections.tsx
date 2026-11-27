@@ -1,9 +1,8 @@
 "use client";
 
 /**
- * The Business view of the Demo hub: three journeys linking the new flows:
- *   Sole proprietor: 6 steps + 3 off-happy-path outcomes
- *   Company: business type chooser, online application (8 steps + outcomes), staff queue
+ * The Business view of the Demo hub: two journeys linking the flows:
+ *   Business application (companies and sole proprietors, one form): door, steps, staff queue
  *   Business users: 6 activation steps + expired + lockout
  */
 
@@ -12,15 +11,6 @@ import { CORPORATE_ENROLMENT_SCENARIOS } from "@/lib/corporate-enrolment";
 import { cn } from "@/lib/utils";
 
 type StepRow = (href: string, label: string, n: number, active: boolean) => ReactNode;
-
-const SOLE_PROPRIETOR_STEPS = [
-  { id: "identity", label: "Verify Identity" },
-  { id: "otp", label: "Confirm Code" },
-  { id: "review_details", label: "Confirm Business" },
-  { id: "password", label: "Create Password" },
-  { id: "pin", label: "Set PIN" },
-  { id: "confirm_pin", label: "Confirm PIN" },
-] as const;
 
 const BUSINESS_USER_STEPS = [
   { id: "invite", label: "Accept Invitation" },
@@ -31,8 +21,8 @@ const BUSINESS_USER_STEPS = [
   { id: "confirm_pin", label: "Confirm PIN" },
 ] as const;
 
-const ENROLMENT_STEPS = CORPORATE_ENROLMENT_SCENARIOS.filter((s) => s.step && !s.account);
-const ENROLMENT_OTHER = CORPORATE_ENROLMENT_SCENARIOS.filter((s) => s.outcome || s.account);
+const ENROLMENT_STEPS = CORPORATE_ENROLMENT_SCENARIOS.filter((s) => !s.kind);
+const ENROLMENT_OTHER = CORPORATE_ENROLMENT_SCENARIOS.filter((s) => s.kind);
 
 export function BusinessFlowSections({
   stepRow,
@@ -72,45 +62,11 @@ export function BusinessFlowSections({
   );
 
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {/* 1. Sole Proprietor */}
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      {/* 1. Business application: companies and sole proprietors fill in one form */}
       <section className="flex flex-col gap-2">
-        <h3 className="px-2 text-[14px] font-medium text-foreground">Sole proprietor</h3>
-        <div className="flex h-7 items-center px-2 text-[13px] text-muted-foreground">Self-service onboarding</div>
-        <ol className="flex flex-col">
-          {SOLE_PROPRIETOR_STEPS.map((s, i) =>
-            stepRow(
-              `/business/signup/sole-proprietor?step=${s.id}`,
-              s.label,
-              i + 1,
-              pathname === "/business/signup/sole-proprietor" && step === s.id && !outcome,
-            ),
-          )}
-          {row(
-            "Locked out",
-            "Three wrong dates of birth",
-            () => go("/business/signup/sole-proprietor?outcome=locked"),
-            pathname === "/business/signup/sole-proprietor" && outcome === "locked",
-          )}
-          {row(
-            "No business account",
-            "Open an account prompt",
-            () => go("/business/signup/sole-proprietor?outcome=no-account"),
-            pathname === "/business/signup/sole-proprietor" && outcome === "no-account",
-          )}
-          {row(
-            "Registered as a company",
-            "Company setup prompt",
-            () => go("/business/signup/sole-proprietor?outcome=company"),
-            pathname === "/business/signup/sole-proprietor" && outcome === "company",
-          )}
-        </ol>
-      </section>
-
-      {/* 2. Company */}
-      <section className="flex flex-col gap-2">
-        <h3 className="px-2 text-[14px] font-medium text-foreground">Company</h3>
-        <div className="flex h-7 items-center px-2 text-[13px] text-muted-foreground">Online application</div>
+        <h3 className="px-2 text-[14px] font-medium text-foreground">Business application</h3>
+        <div className="flex h-7 items-center px-2 text-[13px] text-muted-foreground">Companies and sole proprietors</div>
         <ol className="flex flex-col">
           {row(
             "Account holder or new to GCB",
@@ -124,12 +80,6 @@ export function BusinessFlowSections({
             () => go("/business/signup?step=type"),
             pathname === "/business/signup" && step === "type",
           )}
-          {row(
-            "Set up your company",
-            "Apply online or find a branch",
-            () => go("/business/signup?type=company"),
-            pathname === "/business/signup" && type === "company",
-          )}
           {ENROLMENT_STEPS.map((s, i) =>
             stepRow(
               `/business/signup/enrol?scenario=${s.id}`,
@@ -141,7 +91,7 @@ export function BusinessFlowSections({
           {ENROLMENT_OTHER.map((s) =>
             row(
               s.label,
-              s.outcome ? "Off the happy path" : "Corporate Banking Team reviews",
+              "Same form, sole proprietor wording",
               () => go(`/business/signup/enrol?scenario=${s.id}`),
               pathname === "/business/signup/enrol" && scenario === s.id,
             ),
@@ -155,7 +105,7 @@ export function BusinessFlowSections({
         </ol>
       </section>
 
-      {/* 3. Business users */}
+      {/* 2. Business users */}
       <section className="flex flex-col gap-2">
         <h3 className="px-2 text-[14px] font-medium text-foreground">Business users</h3>
         <div className="flex h-7 items-center px-2 text-[13px] text-muted-foreground">Invited user activation</div>

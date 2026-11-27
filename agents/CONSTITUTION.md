@@ -105,7 +105,9 @@ here. Never fall back to dense, boxed layouts.
   that `globals.css` applies to every element. A new scroll area gets it by existing. Never style a scrollbar by hand,
   never ship the browser default, and hide one (`no-scrollbar`, `hide-scrollbar`) only for a reason, such as a horizontal
   chip row. `custom-scrollbar` is the same scrollbar plus `scrollbar-gutter: stable`, for page and pane roots whose
-  content must not shift when scrolling starts (designer, 2026-10-21).
+  content must not shift when scrolling starts (designer, 2026-10-21). A vertical scroll area also gets `scroll-fade`: a CSS
+  mask that fades the bottom edge while more waits below and disappears at the end, never the top (designer, 2026-10-29).
+  Not on popovers that draw their own shadow, and not with `animate-in` on the same element.
 - **Fill the container.** Functional components stretch to `w-full` and line up with their siblings.
   Narrow `max-w-*` is only for deliberate single-column pages (detail pages, flows, auth, modals).
 - **Comfortable hit targets.** Icon-only controls are at least 40px (`size-10`). Connected inputs get

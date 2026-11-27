@@ -1109,12 +1109,16 @@ a,
   /* The backdrop behind the card: the sidebar and the margin around the card are one continuous gradient. */
   --shell-surface-top: #f8f7f6;
   --shell-surface-bottom: #f8f7f6;
+  /* The top bar's fill: the card's top colour, translucent, blurred behind. Shared by the app's top bar (TopHeader)
+     and the login and sign-up header (AuthHeader), so both read as one bar (designer, 2026-11-26). */
+  --shell-header: color-mix(in srgb, var(--shell-top) 88%, transparent);
 }
 .dark {
   --shell-top: #121212;
   --shell-bottom: #030303;
   --shell-surface-top: #030303;
   --shell-surface-bottom: #050505;
+  --shell-header: color-mix(in srgb, var(--shell-top) 88%, transparent);
 }
 .shell-backdrop {
   background: linear-gradient(to bottom, var(--shell-surface-top) 0%, var(--shell-surface-bottom) 100%);

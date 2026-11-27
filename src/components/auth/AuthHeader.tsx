@@ -19,7 +19,7 @@ export default function AuthHeader() {
   useEffect(() => setMounted(true), []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 flex h-14 w-full items-center justify-between border-b border-border/40 bg-background/80 px-5 backdrop-blur-md transition-colors lg:px-10">
+    <header className="fixed top-0 left-0 right-0 z-30 flex h-14 w-full items-center justify-between border-b border-border/60 bg-[var(--shell-header)] px-5 backdrop-blur-xl backdrop-saturate-150 transition-colors lg:px-10">
       {/* Brand Logo & Title */}
       <Link href="/login" className="flex items-center gap-2 transition-opacity hover:opacity-90">
         <div className="flex items-center justify-center shrink-0">

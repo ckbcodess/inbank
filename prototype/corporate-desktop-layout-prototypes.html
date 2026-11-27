@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Business onboarding: 5 desktop layouts</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--card:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--fld:#fafafa;--fbd:#e3e3e3;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--amtx:#92400e;--err:#b91c1c;--banner:#d9d4cc;--shadow:0 24px 60px -24px rgba(0,0,0,.25)}
+  [data-theme=dark]{--page:#050505;--surf:#0d0d0d;--card:#151515;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--fld:#1c1c1c;--fbd:#2e2e2e;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--amtx:#fbbf24;--err:#f87171;--banner:#2a2622;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h1,h2,h3{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1100px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:24px;display:flex;justify-content:center}
+  /* the desktop window */
+  .win{width:100%;max-width:1440px;height:860px;background:var(--surf);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;position:relative}
+  .apphd{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--bd);background:var(--surf);position:relative;z-index:2}
+  .logo{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:500}.logo i{width:28px;height:28px;border-radius:8px;background:var(--am);display:block}
+  .body{flex:1;min-height:0;display:flex;position:relative}
+  .scroll{overflow-y:auto;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--tx) 18%,transparent) transparent}
+  .fade{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 24px),transparent)}
+  /* fields */
+  .sec{display:flex;flex-direction:column;gap:14px}.sec>h3{font-size:16px;font-weight:500}
+  .fld{display:flex;flex-direction:column;gap:8px;min-width:0}.fld>label{font-size:12px;font-weight:500}
+  .inp{height:44px;width:100%;border:1px solid transparent;background:var(--fld);border-radius:10px;padding:0 12px;font:inherit;color:var(--tx);outline:none;box-shadow:inset 0 0 0 1px var(--fbd)}
+  .inp::placeholder{color:var(--mu);opacity:.8}
+  .inp:focus{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tx) 45%,transparent),0 0 0 3px color-mix(in srgb,var(--am) 30%,transparent)}
+  .pre{position:relative}.pre span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mu)}.pre .inp{padding-left:52px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+  .btn{height:40px;padding:0 16px;border-radius:12px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  .btn.xl{height:44px;font-size:16px}.btn.sm{height:28px;padding:0 10px;font-size:12px;border-radius:10px}
+  .btn.am{background:var(--am);color:#111}.btn.out{box-shadow:inset 0 0 0 1px var(--bd);background:var(--card)}.btn.full{width:100%}
+  .btn[disabled]{background:var(--tile);color:var(--mu);pointer-events:none}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--mu);font-size:13px}.link:hover{color:var(--tx)}
+  .grow{flex:1;min-width:0}
+  .ins{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}.ins:hover{background:var(--tile)}
+  .av{width:36px;height:36px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .ell{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .needs{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,var(--am) 12%,transparent);color:var(--amtx)}
+  .back{display:inline-flex;align-items:center;gap:8px;color:var(--mu);font-weight:500}.back:hover{color:var(--tx)}
+  .prog{display:flex;gap:8px}.prog i{flex:1;height:6px;border-radius:3px;background:var(--bd)}.prog i.on{background:var(--am)}.prog i.done{background:color-mix(in srgb,var(--am) 60%,var(--bd))}
+  .hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu);margin-top:8px}
+  .dot{width:24px;height:24px;border-radius:50%;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none;background:var(--card)}
+  .dot.ok{background:var(--am);border-color:var(--am);color:#111}.dot.cur{border-color:var(--tx)}
+  .ln{flex:1;width:1px;background:var(--bd);margin:4px 0}
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:20px}
+  .kv{display:flex;justify-content:space-between;gap:16px;padding:6px 0}.kv span:first-child{color:var(--mu)}.kv span:last-child{text-align:right}
+  table.t{width:100%;border-collapse:collapse}.t th{font-size:12px;font-weight:500;color:var(--mu);text-align:left;padding:8px;border-bottom:1px solid var(--bd)}.t td{padding:10px 8px;border-bottom:1px solid var(--bd)}
+  /* paper */
+  .paper{background:#fff;color:#111;border-radius:6px;padding:28px 30px;font-size:10px;line-height:1.55;box-shadow:0 10px 30px -12px rgba(0,0,0,.35)}
+  .paper h4{font-size:11px;margin:10px 0 4px;font-weight:600}
+  .paper table{width:100%;border-collapse:collapse;margin:2px 0 6px}.paper th,.paper td{border:1px solid #bbb;padding:3px 5px;text-align:left;font-size:9px}.paper th{background:#f4f4f4;font-weight:600}
+  .paper .hl{background:#fff3c4;outline:2px solid #FFC423;outline-offset:2px;border-radius:2px;transition:background .3s}
+  .paper .blank{color:#aaa}
+  .sig{display:grid;grid-template-columns:1fr 1fr 80px;gap:12px;margin-top:10px}.sig div{border-top:1px solid #333;padding-top:3px;min-height:34px}
+  svg{flex:none}
+  @keyframes in{from{opacity:0;transform:translateY(4px)}}.in{animation:in .2s ease}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Business onboarding on desktop: 5 layouts</h1>
+    <div class="row" style="gap:8px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="jump"></div>
+      <div class="seg" id="theme"><button data-t="light">Light</button><button data-t="dark" class="on">Dark</button></div>
+      <button class="btn out sm" data-act="demo" style="height:36px">Fill Demo</button>
+      <button class="btn out sm" data-act="reset" style="height:36px">Reset</button>
+    </div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="win" id="win"></div></div>
+<script>
+const I={
+ back:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+ dl:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 10 5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>',
+ clip:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',
+ eye:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg>',
+ check:'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+ x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+ plus:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+ alert:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
+ chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+ phone:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
+};
+const REF='ENR-2026-0814';
+const STEPS=[
+ {k:'details',t:'Your Details',d:'Anyone at the business can ask. Signatories approve by signing the letter.',nav:'Your details',need:['Your name, position and contacts','The business’s name, location and official contacts']},
+ {k:'accounts',t:'Which Accounts?',d:'The accounts to put on internet banking.',nav:'Accounts',need:['Account numbers, from a cheque book or statement','Nothing is looked up: we match them at the bank']},
+ {k:'people',t:'Who Gets Access?',d:'Inputters and authorisers can view too.',nav:'People',need:['Each person’s email, mobile and date of birth','Who prepares payments, who approves them, and their limits']},
+ {k:'letter',t:'Your Request Letter',d:'We’ve written it from your answers.',nav:'Letter',need:['Your letterhead and stamp','Signatures from your signatories and each person']}
+];
+const SAMPLE=[
+ {name:'Adwoa Mensah',role:'Inputter',limit:'GHS 50,000.00',acc:'All accounts',email:'adwoa.mensah@adinkratextiles.com'},
+ {name:'Yaw Oppong',role:'Authoriser',limit:'GHS 500,000.00',acc:'All accounts',email:'yaw.oppong@adinkratextiles.com'},
+ {name:'Esi Boateng',role:'Viewer',limit:'',acc:'All accounts',email:'esi.boateng@adinkratextiles.com'},
+ {name:'Kofi Asare',role:'Inputter',limit:'GHS 20,000.00',acc:'•••• 7100',email:'kofi.asare@adinkratextiles.com'}
+];
+const NOTES=[
+ ['Split screen','A quiet left panel holds the journey: the four steps with ticks, what you’ll need for this step, and who to call. The form sits on the right in a comfortable column. The left panel replaces the banner, so the brand still frames the page. Nothing else changes about the form.'],
+ ['Steps, form, summary','Three columns. Steps on the left, the form in the middle, and on the right a summary that fills in as you type: the business, the accounts, the people. Every finished section has Edit, so going back is one click, not Back, Back, Back.'],
+ ['Form beside the letter','The letter is the outcome, so it’s on screen the whole time. As you type, the right side fills in the letter on paper and highlights the part you’re on. By the last step there’s nothing to preview: you’ve watched it being written. Download sits under the paper.'],
+ ['One page, sections reveal','No separate screens. All four sections are on one page with a sticky outline on the left. Finished sections fold to a one-line summary with Edit; the next one opens below. Details sit in two columns, so the page is shorter than the four cards together.'],
+ ['Wide card','The current card, just wider (about 1,000px) over the same banner, with the steps written out across the top. Fields sit in two columns, people become a table, and the letter step shows the letter beside its three steps. The closest to what you have today.']
+];
+let V=1, st=fresh(), maxStep=0;
+function fresh(){return{step:0,me:{name:'',position:'',mobile:'',email:''},biz:{name:'',nature:'',location:'',email:'',phone:''},accts:[''],people:[],dl:false,file:false,terms:false};}
+function demo(){st.me={name:'Adwoa Mensah',position:'Company Secretary',mobile:'024 430 0420',email:'adwoa.mensah@adinkratextiles.com'};
+ st.biz={name:'Adinkra Textiles Ltd',nature:'Textile manufacturing and wholesale',location:'Plot 14 Industrial Area, North Kaneshie, Accra',email:'info@adinkratextiles.com',phone:'030 222 4410'};
+ st.accts=['1001234567890','1001234577100'];st.people=SAMPLE.slice(0,3).map(p=>({...p}));}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const digits=s=>String(s||'').replace(/\D/g,'');
+const okAcct=a=>{const d=digits(a);return d.length>=10&&d.length<=16};
+const validAccts=()=>[...new Set(st.accts.filter(okAcct).map(digits))];
+function lack(i=st.step){
+ if(i===0){const m=st.me,b=st.biz;return [m.name,m.position,m.mobile,m.email,b.name,b.nature,b.location,b.email,b.phone].every(v=>v.trim())?'':'Fill In Your Details';}
+ if(i===1){const f=st.accts.filter(a=>a.trim());if(!f.length)return 'Add an Account';if(f.some(a=>!okAcct(a)))return 'Check the Account Numbers';return '';}
+ if(i===2){if(!st.people.length)return 'Add a Person';if(st.people.some(p=>p.role==='Inputter')&&!st.people.some(p=>p.role==='Authoriser'))return 'Add an Authoriser';return '';}
+ if(i===3){if(!st.dl)return 'Download Your Letter';if(!st.file)return 'Upload the Signed Letter';if(!st.terms)return 'Agree to the Terms';return '';}
+ return '';
+}
+const ctaLabel=()=>lack()||(st.step===3?'Send Request':'Continue');
+const cta=(extra='')=>`<button class="btn am xl ${extra}" data-act="next" ${lack()?'disabled':''}>${ctaLabel()}</button>`;
+
+/* ---------- shared step content ---------- */
+const fld=(k,label,ph,o={})=>{const [a,b]=k.split('.');const v=st[a][b];
+ return `<div class="fld" ${o.span?'style="grid-column:1/-1"':''}><label>${label}</label>${o.pre?`<div class="pre"><span>${o.pre}</span>`:''}<input class="inp tab" data-k="${k}" value="${esc(v)}" placeholder="${esc(ph)}" autocomplete="off">${o.pre?'</div>':''}</div>`;};
+function detailsBody(cols){
+ const you=`<div class="sec"><h3>About You</h3>${fld('me.name','Full Name','')}${fld('me.position','Position','Search or type a position')}${fld('me.mobile','Mobile Number','24 000 0000',{pre:'+233'})}${fld('me.email','Email','name@company.com')}</div>`;
+ const biz=`<div class="sec"><h3>Your Company</h3>${fld('biz.name','Company Name','')}${fld('biz.nature','What the Business Does','For example, textile manufacturing')}${fld('biz.location','Location','Building, street, area and city')}${fld('biz.email','Official Email','info@company.com')}${fld('biz.phone','Phone Number','30 000 0000',{pre:'+233'})}</div>`;
+ return cols===2?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">${you}${biz}</div>`:`<div style="display:flex;flex-direction:column;gap:32px">${you}${biz}</div>`;
+}
+function accountsBody(cols){
+ const items=st.accts.map((a,i)=>`<div class="fld"><label>Account Number${st.accts.length>1?' '+(i+1):''}</label><div style="display:flex;gap:8px;align-items:center"><input class="inp tab" data-k="acct.${i}" value="${esc(a)}" placeholder="From your cheque book or statement" autocomplete="off">${st.accts.length>1?`<button class="btn" style="width:40px;padding:0" data-act="rmacct" data-i="${i}" aria-label="Remove">${I.x}</button>`:''}</div></div>`).join('');
+ return `<div style="display:flex;flex-direction:column;gap:16px"><div class="${cols===2?'g2':''}" style="${cols===2?'':'display:flex;flex-direction:column;gap:16px'}">${items}</div><div><button class="btn out sm" data-act="addacct">${I.plus}Add Another Account</button></div></div>`;
+}
+function needsRow(){const p=st.people;return p.some(x=>x.role==='Inputter')&&!p.some(x=>x.role==='Authoriser')?`<div class="needs">${I.alert}<span class="grow">You need an authoriser to approve payments.</span><button class="link" style="color:var(--tx);font-size:14px" data-act="add">Add</button></div>`:'';}
+function peopleBody(table){
+ const p=st.people;
+ const list=table&&p.length?`<table class="t"><tr><th>Name</th><th>Role</th><th>Limit for one payment</th><th>Accounts</th><th></th></tr>${p.map((x,i)=>`<tr><td><div style="display:flex;align-items:center;gap:10px"><span class="av">${x.name.split(' ').map(w=>w[0]).join('')}</span><span><span class="ell">${esc(x.name)}</span><span class="ell mu s12">${esc(x.email)}</span></span></div></td><td>${x.role}</td><td class="tab">${x.limit||'<span class="mu">None</span>'}</td><td class="mu tab">${x.acc}</td><td style="text-align:right"><button class="link" data-act="rm" data-i="${i}">Remove</button></td></tr>`).join('')}</table>`
+  :p.map((x,i)=>`<button class="ins" data-act="rm" data-i="${i}" title="Click to remove (the dialog is unchanged from the app)"><span class="av">${x.name.split(' ').map(w=>w[0]).join('')}</span><span class="grow"><span class="ell">${esc(x.name)}</span><span class="ell mu s12 tab">${x.acc}</span></span><span style="text-align:right"><span style="display:block">${x.role}</span>${x.limit?`<span class="mu s12 tab">${x.limit}</span>`:''}</span>${I.chev}</button>`).join('');
+ return `<div style="display:flex;flex-direction:column;gap:16px">${needsRow()}${list}<div style="display:flex;gap:8px"><button class="btn out sm" data-act="add">${I.plus}Add a Person</button>${p.some(x=>x.name===st.me.name)||!st.me.name?'':`<button class="btn out sm" data-act="addme">Add Myself</button>`}</div>${p.length?'':'<p class="mu s12">The person dialog is the one in the app; here Add drops in a sample person.</p>'}</div>`;
+}
+function letterSteps(withPreview=true){
+ const items=[['Download your letter',`Filled in from your answers · ${REF}`,st.dl,`<span style="display:flex;gap:4px">${withPreview?`<button class="btn sm" data-act="preview">${I.eye}Preview</button>`:''}<button class="btn out sm" data-act="dl">${I.dl}Download</button></span>`],
+  ['Upload the signed letter',st.file?'adinkra-request-signed.pdf · 1.2 MB':'Signed by each person and your signatories · PDF or Word',st.file,`<button class="btn out sm" data-act="file">${I.clip}${st.file?'Replace':'Choose File'}</button>`],
+  ['Agree to the Terms & Conditions',st.terms?'Read and agreed':'Read them to the end, then agree',st.terms,`<button class="btn out sm" data-act="terms">${st.terms?'Read Again':'Read'}</button>`]];
+ return `<ol style="list-style:none;margin:0;padding:0">${items.map(([t,l,ok,a],i)=>`<li style="display:flex;gap:12px"><span style="display:flex;flex-direction:column;align-items:center"><span class="dot ${ok?'ok':''}">${ok?I.check:i+1}</span>${i<2?'<span class="ln"></span>':''}</span><span class="grow" style="display:flex;justify-content:space-between;gap:12px;padding-bottom:20px;flex-wrap:wrap"><span style="min-width:0"><span class="md" style="display:block">${t}</span><span class="mu s12 ell">${l}</span></span>${a}</span></li>`).join('')}</ol>
+ <p class="mu s12">Signatures can take a few days. We’ve saved your request and emailed ${esc(st.me.email||'you')} a link to come back and upload the letter.</p>`;
+}
+function stepBody(i,o={}){return i===0?detailsBody(o.cols||1):i===1?accountsBody(o.cols||1):i===2?peopleBody(o.table):letterSteps(o.preview!==false);}
+
+/* ---------- the letter, live ---------- */
+function letter(focus){
+ const b=st.biz, v=(x,ph)=>x.trim()?esc(x):`<span class="blank">${ph}</span>`, hl=k=>focus===k?'class="hl"':'';
+ const accts=validAccts();
+ return `<div class="paper">
+ <div style="display:flex;justify-content:space-between"><div style="border:1px dashed #bbb;color:#999;padding:10px 14px">Your letterhead</div><div style="text-align:right">26 November 2026<br>Ref: ${REF}</div></div>
+ <p style="margin-top:12px">The Corporate Banking Team<br>GCB Bank PLC</p>
+ <p style="margin-top:8px">Dear Sir or Madam,</p>
+ <p style="margin-top:6px;font-weight:600">Request for internet banking: ${v(b.name,'[company name]')}</p>
+ <p style="margin-top:6px" ${hl('details')}>${v(b.name,'[company name]')}, ${v(b.nature,'[what it does]')}, of ${v(b.location,'[location]')}, asks GCB Bank to give us internet banking on the accounts below, for the people below. Official email ${v(b.email,'[email]')}, telephone ${v(b.phone,'[phone]')}.</p>
+ <h4>Accounts</h4><div ${hl('accounts')}><table><tr><th style="width:20px">#</th><th>Account number</th></tr>${(accts.length?accts:['']).map((a,i)=>`<tr><td>${i+1}</td><td>${a||'<span class="blank">[account number]</span>'}</td></tr>`).join('')}</table></div>
+ <h4>Who may use internet banking</h4><div ${hl('people')}><table><tr><th>Name</th><th>Role</th><th>Limit</th><th>Accounts</th><th>Email</th><th style="width:60px">Signature</th></tr>${(st.people.length?st.people:[{}]).map(p=>`<tr><td>${p.name?esc(p.name):'<span class="blank">[name]</span>'}</td><td>${p.role||''}</td><td>${p.limit||(p.role?'None':'')}</td><td>${p.acc||''}</td><td>${esc(p.email||'')}</td><td style="height:20px"></td></tr>`).join('')}</table></div>
+ <p style="margin-top:6px">We confirm the people above may act on internet banking in the roles and up to the limits shown. We accept the GCB Internet Banking (Corporate) Terms &amp; Conditions. Signed as our mandate requires.</p>
+ <div class="sig"><div>Name, signature, date</div><div>Name, signature, date</div><div style="border:1px dashed #999;color:#999;display:flex;align-items:center;justify-content:center">Stamp</div></div>
+ <p style="margin-top:10px;color:#777;font-size:9px">Prepared online by ${v(st.me.name,'[your name]')}${st.me.position?', '+esc(st.me.position):''}.</p></div>`;
+}
+
+/* ---------- step navigation lists ---------- */
+function vsteps(compact){
+ return `<ol style="list-style:none;margin:0;padding:0">${STEPS.map((s,i)=>{const done=i<st.step||(i<=maxStep&&!lack(i)&&i!==st.step),cur=i===st.step,can=i<=maxStep;
+  return `<li style="display:flex;gap:12px"><span style="display:flex;flex-direction:column;align-items:center"><span class="dot ${done?'ok':''} ${cur?'cur':''}">${done?I.check:i+1}</span>${i<3?`<span class="ln" style="min-height:${compact?16:28}px"></span>`:''}</span>
+  <button ${can?`data-go="${i}"`:'disabled'} style="padding:2px 0 ${compact?16:24}px;${can?'':'cursor:default'}"><span class="${cur?'md':''}" style="display:block;color:${cur?'var(--tx)':can?'var(--tx)':'var(--mu)'}">${s.nav}</span>${!compact&&cur?`<span class="mu s12">${s.need[0]}</span>`:''}</button></li>`;}).join('')}</ol>`;
+}
+function hsteps(){return `<div style="display:flex;align-items:center;gap:12px">${STEPS.map((s,i)=>{const done=i<st.step,cur=i===st.step,can=i<=maxStep;return `<button ${can?`data-go="${i}"`:''} style="display:flex;align-items:center;gap:8px;${can?'':'cursor:default'}"><span class="dot ${done?'ok':''} ${cur?'cur':''}">${done?I.check:i+1}</span><span class="${cur?'md':'mu'}">${s.nav}</span></button>${i<3?'<span style="flex:1;height:1px;background:var(--bd);min-width:24px"></span>':''}`;}).join('')}</div>`;}
+function summary(){
+ const b=st.biz, accts=validAccts();
+ const sec=(t,i,body)=>`<div style="display:flex;flex-direction:column;gap:6px;padding:16px 0;border-top:1px solid var(--bd)"><div style="display:flex;justify-content:space-between"><span class="md">${t}</span>${i<=maxStep&&i!==st.step?`<button class="link" data-go="${i}">Edit</button>`:''}</div>${body}</div>`;
+ return `<div style="display:flex;flex-direction:column"><p class="md" style="font-size:16px;padding-bottom:12px">Your Request</p>
+  ${sec('Business',0,b.name?`<span>${esc(b.name)}</span><span class="mu s12">${esc(b.nature)}</span><span class="mu s12">${esc(b.location)}</span>`:'<span class="mu s12">Not filled in yet</span>')}
+  ${sec('Accounts',1,accts.length?accts.map(a=>`<span class="tab">${a}</span>`).join(''):'<span class="mu s12">None yet</span>')}
+  ${sec('People',2,st.people.length?st.people.map(p=>`<div class="kv" style="padding:2px 0"><span>${esc(p.name)}</span><span>${p.role}</span></div>`).join(''):'<span class="mu s12">None yet</span>')}
+  ${sec('Requested by',0,st.me.name?`<span>${esc(st.me.name)}</span><span class="mu s12">${esc(st.me.position)} · ${esc(st.me.email)}</span>`:'<span class="mu s12">Not filled in yet</span>')}</div>`;
+}
+const backBtn=()=>`<button class="back" data-act="back">${I.back}Back</button>`;
+const head=(i=st.step,c=false)=>`<div class="hd" style="${c?'text-align:center':''}"><h2>${STEPS[i].t}</h2><p>${STEPS[i].d}</p></div>`;
+const appHeader=()=>`<div class="apphd"><span class="logo"><i></i>GCB Business</span><span class="mu">Already registered? <span class="link" style="font-size:14px;color:var(--tx)">Log In</span></span></div>`;
+function sent(){return `<div style="flex:1;display:flex;align-items:center;justify-content:center"><div class="card in" style="width:460px;padding:40px;text-align:center;display:flex;flex-direction:column;gap:16px;align-items:center"><span class="dot ok" style="width:48px;height:48px">${I.check}</span><h2 style="font-size:22px;font-weight:500">Request Sent</h2><p class="mu">We’ll check your letter against our records and set you up.</p><p class="tab" style="font-size:24px">${REF}</p><button class="btn am xl full" data-act="reset">Back to Login</button></div></div>`;}
+
+/* ---------- the five layouts ---------- */
+function layout(){
+ if(st.step===4)return appHeader()+`<div class="body">${sent()}</div>`;
+ const i=st.step;
+ if(V===1){
+  return appHeader()+`<div class="body">
+   <aside style="width:38%;max-width:520px;background:var(--banner);padding:48px 56px;display:flex;flex-direction:column;gap:40px">
+     <div><p class="mu s12">Internet banking for your business</p><h1 style="font-size:28px;font-weight:500;letter-spacing:-.02em;margin-top:8px;line-height:1.25">Register ${esc(st.biz.name)||'your business'}</h1></div>
+     ${vsteps(false)}
+     <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px"><p class="md">For this step</p>${STEPS[i].need.map(n=>`<p class="mu" style="display:flex;gap:8px"><span style="color:var(--am)">•</span>${n}</p>`).join('')}
+       <p class="mu s12" style="display:flex;gap:8px;align-items:center;margin-top:12px">${I.phone}Questions? +233 30 268 1521</p></div>
+   </aside>
+   <main class="scroll fade" style="flex:1;padding:48px 64px"><div class="in" style="max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:32px">
+     ${i>0?backBtn():''}${head(i)}${stepBody(i)}${cta('full')}</div></main></div>`;
+ }
+ if(V===2){
+  return appHeader()+`<div class="body">
+   <aside style="width:240px;border-right:1px solid var(--bd);padding:40px 28px">${vsteps(true)}</aside>
+   <main class="scroll fade" style="flex:1;padding:40px 56px"><div class="in" style="max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:32px">${head(i)}${stepBody(i)}<div style="display:flex;justify-content:space-between;align-items:center">${i>0?backBtn():'<span></span>'}${cta()}</div></div></main>
+   <aside class="scroll" style="width:340px;border-left:1px solid var(--bd);padding:40px 28px;background:color-mix(in srgb,var(--tile) 50%,transparent)" data-live="summary">${summary()}</aside></div>`;
+ }
+ if(V===3){
+  const focus=STEPS[i].k;
+  return appHeader()+`<div class="body">
+   <main class="scroll fade" style="width:46%;max-width:620px;padding:40px 56px;border-right:1px solid var(--bd)"><div class="in" style="display:flex;flex-direction:column;gap:28px">
+     <div style="display:flex;align-items:center;justify-content:space-between">${i>0?backBtn():'<span></span>'}<span class="prog" style="width:160px">${[0,1,2,3].map(n=>`<i class="${n<i?'done':n===i?'on':''}"></i>`).join('')}</span></div>
+     ${head(i)}${stepBody(i,{preview:false})}${cta('full')}</div></main>
+   <section class="scroll" style="flex:1;background:var(--banner);padding:40px 56px;display:flex;flex-direction:column;gap:16px">
+     <div style="display:flex;justify-content:space-between;align-items:center;max-width:640px;width:100%;margin:0 auto"><span class="md">Your letter</span><span class="mu s12">Fills in as you type</span></div>
+     <div style="max-width:640px;width:100%;margin:0 auto" data-live="letter">${letter(focus)}</div>
+     ${i===3?`<div style="max-width:640px;width:100%;margin:0 auto;display:flex;justify-content:flex-end"><button class="btn out" data-act="dl">${I.dl}Download Letter</button></div>`:''}
+   </section></div>`;
+ }
+ if(V===4){
+  return appHeader()+`<div class="body"><aside style="width:260px;padding:48px 32px"><div style="position:sticky;top:0">${vsteps(true)}</div></aside>
+   <main class="scroll fade" style="flex:1;padding:40px 48px 120px"><div style="max-width:760px;display:flex;flex-direction:column;gap:16px">
+    <div class="hd" style="margin-bottom:16px"><h2 style="font-size:26px">Register your business</h2><p>Four short sections. Your answers become the letter your signatories sign.</p></div>
+    ${STEPS.map((s,n)=>{
+      if(n<i){const sum=n===0?`${esc(st.biz.name)} · requested by ${esc(st.me.name)}`:n===1?validAccts().join(', '):n===2?st.people.map(p=>`${esc(p.name)} (${p.role})`).join(', '):'';
+        return `<div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:16px"><span class="dot ok">${I.check}</span><span class="grow"><span class="md" style="display:block">${s.t}</span><span class="mu s12 ell tab">${sum}</span></span><button class="link" data-go="${n}">Edit</button></div>`;}
+      if(n===i)return `<div class="card in" style="padding:28px 32px;display:flex;flex-direction:column;gap:24px"><div style="display:flex;gap:16px;align-items:flex-start"><span class="dot cur">${n+1}</span><div class="hd grow"><h2 style="font-size:18px">${s.t}</h2><p>${s.d}</p></div></div>${stepBody(n,{cols:2,table:true})}<div style="display:flex;justify-content:flex-end">${cta()}</div></div>`;
+      return `<div style="padding:16px 20px;display:flex;align-items:center;gap:16px;opacity:.5"><span class="dot">${n+1}</span><span class="md">${s.t}</span></div>`;
+    }).join('')}
+   </div></main></div>`;
+ }
+ if(V===5){
+  return appHeader()+`<div class="body scroll fade" style="display:block;background:linear-gradient(var(--banner) 0 280px,transparent 280px)">
+   <div style="max-width:1040px;margin:48px auto 48px;padding:0 24px"><div class="card in" style="padding:40px 48px;display:flex;flex-direction:column;gap:32px">
+    ${hsteps()}
+    ${head(i,true)}
+    ${i===3?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start"><div style="display:flex;flex-direction:column;gap:16px">${letterSteps(false)}</div><div class="scroll" style="max-height:420px;padding:4px">${letter()}</div></div>`:stepBody(i,{cols:2,table:true})}
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bd);padding-top:24px">${i>0?backBtn():'<span></span>'}${cta()}</div>
+   </div></div></div>`;
+ }
+}
+function render(){
+ $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1} ${n[0]}</button>`).join('');
+ $('#jump').innerHTML=STEPS.map((s,i)=>`<button class="${i===st.step?'on':''}" data-jump="${i}">${s.nav}</button>`).join('');
+ $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]} <span class="mu">Fill Demo fills every step; the steps above jump straight to one.</span>`;
+ $('#win').innerHTML=layout();
+}
+function refreshLive(){
+ const c=document.querySelectorAll('[data-act="next"]');c.forEach(b=>{b.disabled=!!lack();b.textContent=ctaLabel();});
+ const s=$('[data-live="summary"]');if(s)s.innerHTML=summary();
+ const l=$('[data-live="letter"]');if(l)l.innerHTML=letter(STEPS[st.step]?.k);
+}
+function go(n){st.step=n;maxStep=Math.max(maxStep,Math.min(n,3));render();}
+document.addEventListener('input',e=>{const el=e.target.closest('[data-k]');if(!el)return;const [a,b]=el.dataset.k.split('.');
+ if(a==='acct')st.accts[+b]=el.value;else st[a][b]=el.value;refreshLive();});
+document.addEventListener('click',e=>{
+ const v=e.target.closest('[data-v]');if(v){V=+v.dataset.v;render();return;}
+ const j=e.target.closest('[data-jump]');if(j){if(!st.biz.name)demo();maxStep=3;go(+j.dataset.jump);return;}
+ const t=e.target.closest('[data-t]');if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+ const g=e.target.closest('[data-go]');if(g){go(+g.dataset.go);return;}
+ const a=e.target.closest('[data-act]');if(!a)return;const k=a.dataset.act;
+ if(k==='demo'){demo();maxStep=3;render();return;}
+ if(k==='reset'){st=fresh();maxStep=0;render();return;}
+ if(k==='next'){if(!lack())go(st.step+1);return;}
+ if(k==='back'){go(Math.max(0,st.step-1));return;}
+ if(k==='addacct'){st.accts.push('');render();const els=document.querySelectorAll('[data-k^="acct."]');els[els.length-1]?.focus();return;}
+ if(k==='rmacct'){st.accts.splice(+a.dataset.i,1);render();return;}
+ if(k==='add'){const next=SAMPLE.find(s=>!st.people.some(p=>p.name===s.name));if(next)st.people.push({...next});render();return;}
+ if(k==='addme'){if(st.me.name)st.people.push({name:st.me.name,role:'Inputter',limit:'GHS 10,000.00',acc:'All accounts',email:st.me.email});render();return;}
+ if(k==='rm'){st.people.splice(+a.dataset.i,1);render();return;}
+ if(k==='dl'||k==='preview'){st.dl=true;render();return;}
+ if(k==='file'){st.file=true;render();return;}
+ if(k==='terms'){st.terms=true;render();return;}
+});
+render();
+</script>
+</body>
+</html>

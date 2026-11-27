@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Request Letter: 8 Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--fld:#fcfcfc;--fbd:#ebebeb;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--fld:#1c1c1c;--fbd:#2a2a2a;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h2{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500;margin:0}
+  .pills,.seg{display:inline-flex;gap:4px}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:980px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .cap{font-size:12px;color:var(--mu);text-align:center;margin-bottom:8px}
+  .frame{width:460px;max-width:100%;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow)}
+  .frame.phone{width:375px}
+  .page{padding:28px;display:flex;flex-direction:column;gap:24px}.phone .page{padding:20px 12px}
+  .hd{text-align:center;display:flex;flex-direction:column;gap:8px}.hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu)}
+  .person{padding:6px 0}.person .w{color:#b45309;font-size:12px}[data-theme=dark] .person .w{color:#fbbf24}
+  .btn{height:40px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.sm{height:28px;padding:0 10px;font-size:13px;border-radius:8px}
+  .btn.am{background:var(--am);color:#111}.btn.out{border:1px solid var(--bd);background:var(--surf)}.btn.full{width:100%}.btn.dis{opacity:.4;pointer-events:none}
+  .btn.gh{color:var(--tx)}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--mu);font-size:13px}.link:hover{color:var(--tx)}
+  .link.tx{color:var(--tx)}
+  .zone{border:1px dashed var(--fbd);background:var(--fld);border-radius:10px}
+  .zone.drag{border-color:var(--tx);background:var(--amsoft)}
+  .ico{width:40px;height:40px;border-radius:8px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:#b7860b}[data-theme=dark] .ico{color:var(--am)}
+  .act{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}
+  .act:hover{background:var(--tile)}
+  .grow{flex:1;min-width:0}
+  .num{width:24px;height:24px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .file{display:flex;align-items:center;gap:12px}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.in{animation:in .2s ease}
+  svg{flex:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Your Request Letter: download, fill in, upload, agree</h1>
+    <div class="row" style="gap:12px"><div class="pills" id="pills"></div>
+    <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage" id="stage"></div>
+<style>
+  .lead{color:var(--mu);text-align:center}
+  .rowx{display:flex;align-items:center;gap:12px}
+  .ib{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:var(--mu);flex:none}
+  .ob{border:1px solid var(--bd);border-radius:14px;padding:12px}
+  .stepper{display:flex;flex-direction:column}
+  .st{display:flex;gap:12px}
+  .rail{display:flex;flex-direction:column;align-items:center}
+  .dot{width:24px;height:24px;border-radius:50%;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .dot.ok{background:#059669;border-color:#059669;color:#fff}
+  .ln{flex:1;width:1px;background:var(--bd);margin:4px 0}
+  .chk{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+  .box{width:16px;height:16px;border:1px solid var(--fbd);border-radius:4px;flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center}
+  .box.on{background:var(--am);border-color:var(--am);color:#111}
+  .tick{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--bd);flex:none;display:flex;align-items:center;justify-content:center}
+  .tick.on{background:#059669;border-color:#059669;color:#fff}
+  .terms{height:120px;overflow:auto;border:1px solid var(--bd);border-radius:12px;padding:12px;font-size:12px;color:var(--mu);line-height:1.6;background:var(--fld)}
+  .tiles2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tile{border:1px solid var(--bd);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .chipf{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--bd);border-radius:999px;padding:4px 6px 4px 12px;font-size:13px}
+  .chipf button{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--mu)}
+  .warnc{color:#b45309}
+</style>
+<script>
+const I={
+ doc:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8M16 13H8M16 17H8"/></svg>',
+ dl:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 10 5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>',
+ up:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>',
+ clip:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',
+ check:'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+ x:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+};
+const REF='ENR-2026-6068', FILE='adinkra-request-signed.pdf · 1.2 MB';
+const NOTES=[
+ ['Three numbered steps','A short vertical list: 1 Download the template, 2 Fill it in and sign it, 3 Upload it. Each step ticks green when done. The order the bank needs is the order on screen.'],
+ ['Two matching rows','The template and the signed letter are the same kind of row, both outlined: one goes out, one comes back. Terms sit under them, the button says what is left.'],
+ ['One letter, two actions','A single outlined block for the letter: Download the template on top, Upload the signed one underneath. It reads as one thing with a beginning and an end.'],
+ ['Upload first','Most people come back with the letter already done, so Upload is the big action. The template is a quiet line under it: No template yet? Download it.'],
+ ['A checklist','Three rows that tick as they are done: Download the template, Upload the signed letter, Agree to the Terms. Send turns on when all three are ticked.'],
+ ['Read the terms here','As on Trade Hub, the terms are a short scrolling box; the agree box unlocks once they reach the end. The template and upload follow. Heavier, but it is what the meeting described.'],
+ ['Side by side','Two tiles in a row, 1 Download and 2 Upload, each with its own button. On a phone they stay side by side; the upload tile shows the file once chosen.'],
+ ['Just buttons','No rows at all: Download Template as an outline button, Upload Signed Letter as the main button, the chosen file as a small chip with an x, then terms and Send.']
+];
+let V=1, st={dl:false,file:false,agree:false,scrolled:false};
+const $=s=>document.querySelector(s);
+const ready=()=>st.file&&st.agree;
+const sendLabel=()=>!st.file?'Upload the Signed Letter':!st.agree?'Agree to the Terms':'Send Request';
+const send=()=>`<button class="btn am full ${ready()?'':'dis'}">${sendLabel()}</button>`;
+const agree=(locked=false)=>`<div class="chk ${locked?'dis':''}" data-act="${locked?'':'agree'}" style="${locked?'opacity:.45;cursor:default':''}"><span class="box ${st.agree?'on':''}">${st.agree?I.check:''}</span><span>I agree to the <span class="link" style="font-size:14px;color:var(--tx)">Terms &amp; Conditions</span></span></div>`;
+const dlBtn=(cls='btn out')=>`<button class="${cls}" data-act="dl">${I.dl}${st.dl?'Download Again':'Download'}</button>`;
+const upBtn=(cls='btn out')=>`<button class="${cls}" data-act="file">${I.clip}${st.file?'Replace':'Choose File'}</button>`;
+const fileLine=()=>st.file?`<span class="mu s12">${FILE}</span>`:'<span class="mu s12">PDF or photo, signed and stamped</span>';
+function body(){
+ let b='';
+ switch(V){
+ case 1: {
+   const steps=[['Download the template',`<span class="mu s12">Reference ${REF} is on it</span>`,dlBtn('btn out sm'),st.dl],
+                ['Fill it in and sign it','<span class="mu s12">As your mandate requires, with your stamp</span>','',st.dl&&st.file],
+                ['Upload the signed letter',fileLine(),upBtn('btn out sm'),st.file]];
+   b=`<div class="stepper">${steps.map(([t,s,a,ok],i)=>`<div class="st"><div class="rail"><span class="dot ${ok?'ok':''}">${ok?I.check:i+1}</span>${i<2?'<span class="ln"></span>':''}</div><div class="rowx grow" style="padding-bottom:18px;align-items:flex-start"><div class="grow"><div class="md">${t}</div>${s}</div>${a}</div></div>`).join('')}</div>${agree()}${send()}`; break; }
+ case 2: b=`<div class="ob rowx"><span class="ib">${I.doc}</span><span class="grow"><span class="md" style="display:block">Letter of Request</span><span class="mu s12">Template · ${REF}</span></span>${dlBtn()}</div>
+   <div class="ob rowx"><span class="ib">${I.doc}</span><span class="grow"><span class="md" style="display:block">Signed Letter</span>${fileLine()}</span>${upBtn()}</div>${agree()}${send()}`; break;
+ case 3: b=`<div class="ob" style="display:flex;flex-direction:column;gap:12px;padding:16px">
+     <div class="rowx"><span class="ib">${I.doc}</span><span class="grow"><span class="md" style="display:block">Letter of Request</span><span class="mu s12">${REF}</span></span></div>
+     <div class="rowx" style="justify-content:space-between;border-top:1px solid var(--bd);padding-top:12px"><span>1. Get the template</span>${dlBtn('btn out sm')}</div>
+     <div class="rowx" style="justify-content:space-between;border-top:1px solid var(--bd);padding-top:12px"><span class="grow">2. Upload it signed<br>${fileLine()}</span>${upBtn('btn out sm')}</div>
+   </div>${agree()}${send()}`; break;
+ case 4: b=`<div class="ob" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;text-align:center">
+     <span class="ib" style="height:auto">${I.up}</span><span class="md">${st.file?'Signed letter added':'Upload your signed letter'}</span>${fileLine()}
+     <button class="btn am" data-act="file">${I.clip}${st.file?'Replace':'Choose File'}</button></div>
+   <p class="mu s12" style="text-align:center">No template yet? <button class="link" data-act="dl">Download it</button> · ${REF}</p>${agree()}${send()}`; break;
+ case 5: {
+   const items=[['Download the template',`Reference ${REF}`,'dl',st.dl,'Download'],['Upload the signed letter',st.file?FILE:'PDF or photo, signed and stamped','file',st.file,st.file?'Replace':'Choose File'],['Agree to the Terms & Conditions','Read them before you sign','agree',st.agree,st.agree?'Agreed':'Agree']];
+   b=`<div style="display:flex;flex-direction:column;gap:4px">${items.map(([t,s,act,on,lab])=>`<div class="rowx" style="padding:10px 0;border-bottom:1px solid var(--bd)"><span class="tick ${on?'on':''}">${on?I.check:''}</span><span class="grow"><span style="display:block">${t}</span><span class="mu s12">${s}</span></span><button class="btn out sm" data-act="${act}">${lab}</button></div>`).join('')}</div>
+   <button class="btn am full ${ready()?'':'dis'}">Send Request</button>`; break; }
+ case 6: b=`<div style="display:flex;flex-direction:column;gap:8px"><span class="md">Terms &amp; Conditions</span><div class="terms" id="terms">${'These terms govern your business’s use of GCB Internet Banking. Each user acts within the role and limit set out in your signed letter. You are responsible for keeping login details safe and for every instruction given with them. GCB may refuse an instruction it believes is not genuine. '.repeat(4)}<br><br><span style="color:var(--tx)">End of the Terms.</span></div>
+     ${agree(!st.scrolled)}${st.scrolled?'':'<span class="mu s12">Scroll to the end to agree.</span>'}</div>
+   <div class="ob rowx"><span class="ib">${I.doc}</span><span class="grow"><span class="md" style="display:block">Letter of Request</span><span class="mu s12">Template · ${REF}</span></span>${dlBtn()}</div>
+   <div class="ob rowx"><span class="ib">${I.doc}</span><span class="grow"><span class="md" style="display:block">Signed Letter</span>${fileLine()}</span>${upBtn()}</div>${send()}`; break;
+ case 7: b=`<div class="tiles2">
+     <div class="tile"><span class="mu s12">Step 1</span><span class="md">Download the template</span><span class="mu s12">${REF}</span>${dlBtn('btn out sm')}</div>
+     <div class="tile"><span class="mu s12">Step 2</span><span class="md">Upload it signed</span><span class="mu s12" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.file?'adinkra-request-signed.pdf':'PDF or photo'}</span>${upBtn('btn out sm')}</div>
+   </div>${agree()}${send()}`; break;
+ case 8: b=`<div style="display:flex;flex-direction:column;gap:8px">
+     <button class="btn out full" data-act="dl">${I.dl}${st.dl?'Download Template Again':'Download Template'}</button>
+     ${st.file?`<div style="display:flex;justify-content:center"><span class="chipf">${I.doc}adinkra-request-signed.pdf<button data-act="clear" aria-label="Remove">${I.x}</button></span></div>`:`<button class="btn am full" data-act="file">${I.up}Upload Signed Letter</button>`}
+     <p class="mu s12" style="text-align:center">Reference ${REF} · PDF or photo, signed and stamped</p></div>
+   ${agree()}<button class="btn ${ready()?'am':'out dis'} full">${sendLabel()}</button>`; break;
+ }
+ return `<div class="page"><div class="hd"><h2>Your Request Letter</h2><p>Fill in the template, sign it as your mandate requires, then upload it.</p></div>${b}</div>`;
+}
+function render(){
+  $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1}</button>`).join('');
+  $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]} <span class="mu">Download, Choose File and the agree box all work.</span>`;
+  const h=body(); $('#stage').innerHTML=`<div><p class="cap">Desktop</p><div class="frame">${h}</div></div><div><p class="cap">Phone</p><div class="frame phone">${h}</div></div>`;
+  document.querySelectorAll('#terms').forEach(el=>el.addEventListener('scroll',()=>{if(!st.scrolled&&el.scrollTop+el.clientHeight>=el.scrollHeight-4){st.scrolled=true;render();}}));
+}
+document.addEventListener('click',e=>{
+  const v=e.target.closest('[data-v]'); if(v){V=+v.dataset.v;st={dl:false,file:false,agree:false,scrolled:false};render();return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+  const a=e.target.closest('[data-act]'); if(!a||!a.dataset.act)return;
+  const k=a.dataset.act;
+  if(k==='dl')st.dl=true; if(k==='file')st.file=true; if(k==='clear')st.file=false; if(k==='agree')st.agree=!st.agree;
+  render();
+});
+render();
+</script>
+</body>
+</html>

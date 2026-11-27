@@ -350,6 +350,12 @@ export default function AdminEnrolmentDetailPage({
               <dt className="text-muted-foreground">Registered Name</dt>
               <dd className="font-medium text-foreground">{application.companyName}</dd>
             </div>
+            {application.natureOfBusiness && (
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted-foreground">Nature of Business</dt>
+                <dd className="text-right text-foreground">{application.natureOfBusiness}</dd>
+              </div>
+            )}
             <div className="flex justify-between">
               <dt className="text-muted-foreground">TIN</dt>
               <dd className="font-medium text-foreground tabular">{application.companyTin}</dd>
@@ -358,11 +364,22 @@ export default function AdminEnrolmentDetailPage({
               <dt className="text-muted-foreground">Applicant</dt>
               <dd className="font-medium text-foreground">
                 {application.applicant.name} ({application.applicant.mobile})
-                <span className="block text-caption font-normal text-muted-foreground">
-                  {application.applicant.designation ? `${application.applicant.designation}, ` : ""}
-                  {application.applicant.isSignatory ? "signatory on the mandate" : "not on the mandate"}
-                </span>
+                {application.applicant.designation && (
+                  <span className="block text-caption font-normal text-muted-foreground">{application.applicant.designation}</span>
+                )}
                 <span className="block text-caption font-normal text-muted-foreground">{application.applicant.email}</span>
+                {application.channel === "online" && (
+                  <span className="block text-caption font-normal text-muted-foreground">
+                    {application.foundInFlexcube
+                      ? "Business found in Flexcube from the account numbers. Check the letter matches what was typed"
+                      : "Account numbers not found in Flexcube. Check them against the letter"}
+                  </span>
+                )}
+                {application.startAlert && (
+                  <span className="block text-caption font-normal text-muted-foreground">
+                    {`Company (${application.startAlert.companyEmail}) and ${application.startAlert.signatoryMobiles.length} signatories told it was started`}
+                  </span>
+                )}
               </dd>
             </div>
             <div className="flex justify-between">
@@ -383,10 +400,11 @@ export default function AdminEnrolmentDetailPage({
                   key={acc.id}
                   className="flex items-center justify-between rounded-xl bg-muted/20 px-3 py-2 border border-border/40"
                 >
+                  {/* Online requests carry typed numbers; the name and type come from Flexcube when it matches. */}
                   <div>
-                    <p className="font-medium text-foreground">{acc.name}</p>
+                    <p className="font-medium text-foreground">{acc.name || "Not in Flexcube"}</p>
                     <p className="text-caption text-muted-foreground tabular">
-                      {acc.type} · {acc.number}
+                      {[acc.type, acc.number].filter(Boolean).join(" · ")}
                     </p>
                   </div>
                   {acc.balance !== undefined && (

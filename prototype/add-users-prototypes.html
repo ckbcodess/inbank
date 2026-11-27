@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Authorised users: 6 ways to add</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--card:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e7e7e9;--fld:#fafafa;--fbd:#e6e6e6;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff7df;--amtx:#92400e;--err:#b91c1c;--shadow:0 24px 60px -24px rgba(0,0,0,.22)}
+  [data-theme=dark]{--page:#050505;--surf:#0f0f0f;--card:#161616;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--fld:#1c1c1c;--fbd:#2e2e2e;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--amtx:#fbbf24;--err:#f87171;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button,select{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h1,h2,h3{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1100px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:24px;display:flex;justify-content:center}
+  .win{width:100%;max-width:1320px;height:820px;background:var(--surf);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;position:relative}
+  .apphd{height:56px;flex:none;display:flex;align-items:center;padding:0 40px;border-bottom:1px solid var(--bd)}
+  .logo{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:500}.logo i{width:28px;height:28px;border-radius:8px;background:var(--am);display:block}
+  .body{flex:1;min-height:0;display:flex;position:relative}
+  .nav{width:256px;flex:none;border-right:1px solid var(--bd);padding:48px 32px}
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
+  .scroll{flex:1;min-height:0;overflow-y:auto;padding:48px;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--tx) 18%,transparent) transparent;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 24px),transparent)}
+  .col{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+  .col.wide{max-width:860px}
+  .foot{flex:none;border-top:1px solid var(--bd);padding:20px 48px}.foot .in{max-width:640px;margin:0 auto;display:flex;justify-content:space-between;gap:16px}
+  .foot.wide .in{max-width:860px}
+  .dot{width:24px;height:24px;border-radius:50%;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .dot.ok{background:var(--am);border-color:var(--am);color:#111}.dot.cur{border-color:var(--tx)}
+  .ln{flex:1;width:1px;background:var(--bd);margin:4px 0;min-height:16px}
+  .hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu);margin-top:8px;line-height:1.5}
+  .back{display:inline-flex;align-items:center;gap:8px;color:var(--mu);font-weight:500;margin-bottom:-8px}
+  /* controls */
+  .fld{display:flex;flex-direction:column;gap:8px;min-width:0}.fld>label{font-size:12px;font-weight:500}
+  .inp{height:44px;width:100%;border:0;background:var(--fld);border-radius:10px;padding:0 12px;font:inherit;color:var(--tx);outline:none;box-shadow:inset 0 0 0 1px var(--fbd)}
+  .inp.sm{height:36px;border-radius:8px}
+  .inp::placeholder{color:var(--mu);opacity:.8}
+  .inp:focus{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tx) 45%,transparent),0 0 0 3px color-mix(in srgb,var(--am) 30%,transparent)}
+  select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mu) 50%),linear-gradient(135deg,var(--mu) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
+  .pre{position:relative}.pre span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mu)}.pre .inp{padding-left:52px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .btn{height:40px;padding:0 16px;border-radius:12px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  .btn.xl{height:44px;font-size:16px;min-width:160px}.btn.sm{height:32px;padding:0 12px;font-size:13px;border-radius:10px}
+  .btn.am{background:var(--am);color:#111}.btn.out{box-shadow:inset 0 0 0 1px var(--bd);background:var(--card)}.btn.out:hover{background:var(--tile)}
+  .btn.gh{color:var(--mu)}.btn.gh:hover{color:var(--tx);background:var(--tile)}
+  .btn[disabled]{background:var(--tile);color:var(--mu);pointer-events:none;box-shadow:none}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--mu)}.link:hover{color:var(--tx)}.link.tx{color:var(--tx)}
+  .grow{flex:1;min-width:0}
+  .ell{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .av{width:36px;height:36px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .av.sm{width:28px;height:28px;font-size:11px}
+  .ins{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}.ins:hover{background:var(--tile)}
+  .ins.on{background:var(--tile)}
+  .needs{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,var(--am) 14%,transparent);color:var(--amtx)}
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:16px}
+  .cb{display:flex;align-items:center;gap:10px;padding:6px 0}
+  .box{width:16px;height:16px;border:1px solid var(--fbd);border-radius:4px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--fld)}
+  .box.on{background:var(--am);border-color:var(--am);color:#111}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{height:32px;padding:0 12px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--bd);font-size:13px;display:inline-flex;align-items:center}
+  .chip.on{background:var(--amsoft);box-shadow:inset 0 0 0 1px var(--am);font-weight:500}
+  .suggest{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1px dashed var(--fbd)}
+  table.t{width:100%;border-collapse:collapse}.t th{font-size:12px;font-weight:500;color:var(--mu);text-align:left;padding:0 6px 8px}.t td{padding:4px 6px;vertical-align:top}
+  .drawer{position:absolute;top:0;right:0;bottom:0;width:440px;background:var(--surf);border-left:1px solid var(--bd);box-shadow:-24px 0 48px -24px rgba(0,0,0,.25);display:flex;flex-direction:column;animation:slide .2s ease}
+  .drawer .db{flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:20px}
+  .drawer .dh{padding:20px 24px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+  .drawer .df{padding:16px 24px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px}
+  .scrim{position:absolute;inset:0;background:rgba(0,0,0,.08);animation:fade .2s}
+  .modal{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;animation:fade .15s}
+  .modal .dlg{width:520px;background:var(--surf);border-radius:16px;border:1px solid var(--bd);box-shadow:var(--shadow);display:flex;flex-direction:column;max-height:90%}
+  .modal .dlg .db{padding:24px;overflow:auto;display:flex;flex-direction:column;gap:20px}
+  .modal .dlg .dh{padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center}
+  .modal .dlg .df{padding:16px 24px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .wz{display:flex;gap:6px}.wz i{flex:1;height:4px;border-radius:2px;background:var(--bd)}.wz i.on{background:var(--am)}
+  .rolecard{display:flex;gap:12px;padding:14px;border-radius:12px;box-shadow:inset 0 0 0 1px var(--bd);width:100%;align-items:flex-start}.rolecard:hover{background:var(--tile)}
+  .rolecard.on{background:var(--amsoft);box-shadow:inset 0 0 0 1px var(--am)}
+  .rad{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--fbd);flex:none;margin-top:2px}.on .rad{box-shadow:inset 0 0 0 5px #111;background:var(--am)}
+  @keyframes slide{from{transform:translateX(24px);opacity:0}}@keyframes fade{from{opacity:0}}@keyframes in{from{opacity:0;transform:translateY(4px)}}.in{animation:in .18s ease}
+  svg{flex:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Authorised Users: 6 ways to add</h1>
+    <div class="row" style="gap:8px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+      <button class="btn out sm" data-act="demo" style="height:36px">Fill Two Users</button>
+      <button class="btn out sm" data-act="reset" style="height:36px">Reset</button>
+    </div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="win" id="win"></div></div>
+<script>
+const I={
+ back:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+ plus:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+ userplus:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>',
+ check:'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+ x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+ chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+ down:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+ alert:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>'
+};
+const ACCTS=['1001234567890','1001234577100'];
+const ME={name:'Adwoa Mensah',email:'adwoa.mensah@adinkratextiles.com',mobile:'24 430 0420'};
+const ROLES={Viewer:'May view balances, statements and transaction history on all listed accounts.',Inputter:'May prepare payments for approval by an authoriser.',Authoriser:'May approve payments prepared by others. Must be a signatory.'};
+const SERVICES=['Funds Transfer','Bulk Uploads (Salary Processing)'];
+const NOTES=[
+ ['Inline form','“Add a User” opens the form right in the page, under the list, instead of a dialog. Saving folds it into a row; Edit opens the same form in that row’s place. Nothing covers the steps or the pinned buttons, and the list stays in view while typing.'],
+ ['Grouped by role','Three groups, Authorisers, Inputters and Viewers, each with its own Add. It mirrors the bank’s form (one table per role) without its codes, the role is decided by where you add, and the rules read off the page: an empty Authorisers group turns amber once there is an inputter.'],
+ ['Editable table','A spreadsheet for desktop: one row per user with name, email, mobile, date of birth, role and limit typed in place. Services default to Funds Transfer on all accounts; “More” opens a row to change them. Fastest for a company adding eight people.'],
+ ['Side panel','The list stays as it is; Add and Edit slide a panel in from the right instead of a centred dialog. The list behind stays visible, so you can see who you have already added while you type the next person.'],
+ ['List and detail','Two panes inside the step: the users down the left, the selected one’s details on the right, always editable. “New User” sits at the top of the list. With no users yet, the right pane is simply the form.'],
+ ['Quick add, complete later','One line adds someone: name, email and role. They join the list straight away, marked amber with what is still missing (mobile, date of birth, services). Complete opens the rest in place. The Continue button names whoever is unfinished.']
+];
+let V=1, users=[], draft=null, editId=null, openId=null, wizard=0, addRole=null, selId=null, quick={name:'',email:'',role:''}, expanded={};
+let uid=1;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const digits=s=>String(s||'').replace(/\D/g,'');
+const initials=n=>n.trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';
+const acts=r=>r==='Inputter'||r==='Authoriser';
+const blank=(o={})=>({id:'u'+(uid++),name:'',email:'',mobile:'',dob:'',role:'',services:[],accounts:[...ACCTS],limit:'',...o});
+function missing(u){const m=[];if(!u.name.trim())m.push('name');if(!/@/.test(u.email))m.push('email');if(digits(u.mobile).length<9)m.push('mobile');if(!/^\d{2}\/\d{2}\/\d{4}$/.test(u.dob))m.push('date of birth');if(!u.role)m.push('role');if(acts(u.role)&&!u.services.length)m.push('services');if(acts(u.role)&&!u.accounts.length)m.push('accounts');return m;}
+const firstMissingLabel=u=>{const m=missing(u)[0];return !m?'':{name:'Enter the Full Name',email:'Enter the Email Address',mobile:'Enter the Mobile Number','date of birth':'Enter the Date of Birth',role:'Select a Role',services:'Select a Service',accounts:'Select an Account'}[m];};
+function lack(){if(!users.length)return 'Add a User';const inc=users.find(u=>missing(u).length);if(inc)return `Complete ${inc.name||'the New User'}`;
+ if(users.some(u=>u.role==='Inputter')&&!users.some(u=>u.role==='Authoriser'))return 'Add an Authoriser';if(users.some(u=>u.role==='Authoriser')&&!users.some(u=>u.role==='Inputter'))return 'Add an Inputter';return '';}
+const fmtLimit=v=>{const n=Number(digits(String(v).split('.')[0]));return n?n.toLocaleString('en-GB'):''};
+const limitText=u=>acts(u.role)?'GHS '+(u.limit||'10,000')+'.00':'';
+const accText=u=>!acts(u.role)||u.accounts.length===ACCTS.length?'All accounts':u.accounts.map(a=>'•••• '+a.slice(-4)).join(', ');
+const meListed=()=>users.some(u=>u.email===ME.email);
+function demo(){users=[blank({name:'Adwoa Mensah',email:ME.email,mobile:ME.mobile,dob:'14/03/1988',role:'Inputter',services:['Funds Transfer','Bulk Uploads (Salary Processing)'],limit:'50,000'}),blank({name:'Yaw Oppong',email:'yaw.oppong@adinkratextiles.com',mobile:'24 412 3456',dob:'02/09/1971',role:'Authoriser',services:['Funds Transfer'],limit:'500,000'})];}
+
+/* ---------- shared pieces ---------- */
+const fld=(k,label,ph,v,o={})=>`<div class="fld" ${o.span?'style="grid-column:1/-1"':''}><label>${label}</label>${o.pre?`<div class="pre"><span>${o.pre}</span>`:''}<input class="inp tab" data-k="${k}" value="${esc(v)}" placeholder="${esc(ph)}" autocomplete="off">${o.pre?'</div>':''}</div>`;
+const roleSelect=(k,v,cls='inp')=>`<select class="${cls}" data-k="${k}"><option value="" ${v?'':'selected'} disabled>Select a role</option>${Object.keys(ROLES).map(r=>`<option ${v===r?'selected':''}>${r}</option>`).join('')}</select>`;
+/** The person's details as a form bound to `prefix` (d = the draft). */
+function personForm(d,prefix='d',o={}){
+ const cols=o.cols??2;
+ return `<div class="${cols===2?'g2':''}" style="${cols===2?'':'display:flex;flex-direction:column;gap:16px'}">
+   ${fld(prefix+'.name','Full Name','',d.name)}${fld(prefix+'.email','Email Address','name@company.com',d.email)}
+   ${fld(prefix+'.mobile','Mobile Number','24 123 4567',d.mobile,{pre:'+233'})}${fld(prefix+'.dob','Date of Birth','DD/MM/YYYY',d.dob)}
+   ${o.noRole?'':`<div class="fld" style="grid-column:1/-1"><label>Role</label>${roleSelect(prefix+'.role',d.role)}${d.role?`<span class="mu s12">${ROLES[d.role]}</span>`:''}</div>`}
+ </div>${accessFields(d,prefix,cols)}`;
+}
+function accessFields(d,prefix,cols=2){
+ if(!acts(d.role))return '';
+ return `<div class="${cols===2?'g2':''}" style="${cols===2?'':'display:flex;flex-direction:column;gap:16px'}">
+  <div class="fld"><label>Services</label>${SERVICES.map(s=>`<button class="cb" data-tog="${prefix}.services" data-v="${s}"><span class="box ${d.services.includes(s)?'on':''}">${d.services.includes(s)?I.check:''}</span>${s}</button>`).join('')}</div>
+  <div class="fld"><label>Accounts</label>${ACCTS.map(a=>`<button class="cb tab" data-tog="${prefix}.accounts" data-v="${a}"><span class="box ${d.accounts.includes(a)?'on':''}">${d.accounts.includes(a)?I.check:''}</span>${a}</button>`).join('')}</div>
+  ${fld(prefix+'.limit','Limit for One Payment (GHS)','GHS 10,000.00 if left empty',d.limit,{span:true})}</div>`;
+}
+function rowHtml(u,act='edit'){
+ const m=missing(u);
+ return `<button class="ins" data-act="${act}" data-id="${u.id}"><span class="av">${initials(u.name)}</span><span class="grow"><span class="ell">${esc(u.name)||'<span class="mu">New user</span>'}</span><span class="ell s12 tab ${m.length?'':'mu'}" style="${m.length?'color:var(--amtx)':''}">${m.length?'Still needed: '+m.join(', '):accText(u)}</span></span><span style="text-align:right;flex:none"><span style="display:block">${u.role||''}</span><span class="mu s12 tab">${limitText(u)}</span></span>${I.chev}</button>`;
+}
+function needsRow(){const n=users.some(u=>u.role==='Inputter')&&!users.some(u=>u.role==='Authoriser')?'An authoriser is required to approve payments.':users.some(u=>u.role==='Authoriser')&&!users.some(u=>u.role==='Inputter')?'An inputter is required to prepare payments.':'';
+ return n?`<div class="needs">${I.alert}<span class="grow">${n}</span></div>`:'';}
+const suggestMe=(act='addme')=>meListed()?'':`<div class="suggest"><span class="av sm">${initials(ME.name)}</span><span class="grow"><span style="display:block">${ME.name} <span class="mu">(you)</span></span><span class="mu s12">Will you use internet banking too?</span></span><button class="btn out sm" data-act="${act}">Add Myself</button></div>`;
+const saveLabel=(d,isNew)=>firstMissingLabel(d)||(isNew?'Add User':'Save Changes');
+
+/* ---------- the six variations ---------- */
+function content(){
+ if(V===1){ // inline form
+  const form=(isNew)=>`<div class="card in" style="padding:24px;display:flex;flex-direction:column;gap:20px"><div class="row"><span class="md" style="font-size:16px">${isNew?'Add a User':'Edit '+esc(draft.name)}</span>${isNew?'':`<button class="link" data-act="remove" data-id="${editId}">Remove</button>`}</div>${personForm(draft)}<div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn out" data-act="cancel">Cancel</button><button class="btn am" id="saveBtn" data-act="save" ${firstMissingLabel(draft)?'disabled':''}>${saveLabel(draft,isNew)}</button></div></div>`;
+  return `${needsRow()}${suggestMe()}<div style="display:flex;flex-direction:column">${users.map(u=>editId===u.id?form(false):rowHtml(u)).join('')}</div>
+   ${draft&&!editId?form(true):`<div><button class="btn out sm" data-act="new">${I.plus}Add a User</button></div>`}`;
+ }
+ if(V===2){ // grouped by role
+  const needAuth=users.some(u=>u.role==='Inputter')&&!users.some(u=>u.role==='Authoriser');
+  const needInp=users.some(u=>u.role==='Authoriser')&&!users.some(u=>u.role==='Inputter');
+  return Object.keys(ROLES).reverse().map(r=>{const list=users.filter(u=>u.role===r);const warn=(r==='Authoriser'&&needAuth)||(r==='Inputter'&&needInp);
+   return `<section style="display:flex;flex-direction:column;gap:10px"><div class="row" style="align-items:flex-start"><div><span class="md" style="font-size:16px">${r}s</span> <span class="mu s12">${list.length||''}</span><p class="mu s12" style="margin-top:2px">${ROLES[r]}</p></div><button class="btn out sm" data-act="newrole" data-r="${r}">${I.plus}Add ${r==='Inputter'?'an':'a'}${r==='Authoriser'?'n':''} ${r}</button></div>
+    ${warn?`<div class="needs">${I.alert}<span class="grow">${r==='Authoriser'?'Required: inputters’ payments need an authoriser to approve them.':'Required: an authoriser approves what an inputter prepares.'}</span></div>`:''}
+    <div style="display:flex;flex-direction:column">${list.map(u=>editId===u.id?roleForm(false):rowHtml(u)).join('')}</div>
+    ${addRole===r&&!editId?roleForm(true):''}
+    ${!list.length&&addRole!==r?`<p class="mu s12" style="padding:12px 0;border-top:1px dashed var(--fbd)">No ${r.toLowerCase()}s yet${r==='Viewer'?'. Optional.':'.'}</p>`:''}</section>`;}).join('<div style="height:1px;background:var(--bd)"></div>');
+ }
+ if(V===3){ // editable table
+  return `${needsRow()}<table class="t"><tr><th style="width:22%">Full Name</th><th style="width:24%">Email Address</th><th>Mobile</th><th style="width:110px">Date of Birth</th><th style="width:120px">Role</th><th style="width:110px">Limit (GHS)</th><th></th></tr>
+   ${users.map(u=>{const p='u.'+u.id;return `<tr><td><input class="inp sm" data-k="${p}.name" value="${esc(u.name)}" placeholder="Full name"></td><td><input class="inp sm" data-k="${p}.email" value="${esc(u.email)}" placeholder="name@company.com"></td><td><input class="inp sm tab" data-k="${p}.mobile" value="${esc(u.mobile)}" placeholder="24 123 4567"></td><td><input class="inp sm tab" data-k="${p}.dob" value="${esc(u.dob)}" placeholder="DD/MM/YYYY"></td><td>${roleSelect(p+'.role',u.role,'inp sm')}</td><td><input class="inp sm tab" data-k="${p}.limit" value="${acts(u.role)?esc(u.limit):''}" placeholder="${acts(u.role)?'10,000':'None'}" ${acts(u.role)?'':'disabled'}></td><td style="white-space:nowrap">${acts(u.role)?`<button class="btn gh sm" data-act="more" data-id="${u.id}" title="Services and accounts">${expanded[u.id]?'Less':'More'}</button>`:''}<button class="btn gh sm" style="width:32px;padding:0" data-act="remove" data-id="${u.id}" aria-label="Remove">${I.x}</button></td></tr>
+    ${expanded[u.id]&&acts(u.role)?`<tr><td colspan="7" style="padding:4px 6px 12px"><div style="background:var(--tile);border-radius:10px;padding:12px 16px">${accessFields(u,p)}</div></td></tr>`:''}
+    <tr><td colspan="7" style="padding:0 6px 8px"><span class="s12" style="color:var(--amtx)">${missing(u).length&&u.name?'Still needed: '+missing(u).join(', '):''}</span></td></tr>`;}).join('')}
+  </table><div style="display:flex;gap:8px"><button class="btn out sm" data-act="addrow">${I.plus}Add a Row</button>${meListed()?'':`<button class="btn out sm" data-act="addmerow">${I.userplus}Add Myself</button>`}</div>
+  <p class="mu s12">Services start as Funds Transfer on all accounts; More changes them. Viewers need no limit.</p>`;
+ }
+ if(V===4){ // side panel
+  return `${needsRow()}${suggestMe('addmepanel')}<div style="display:flex;flex-direction:column">${users.map(u=>rowHtml(u,'panel')).join('')}</div><div><button class="btn out sm" data-act="newpanel">${I.plus}Add a User</button></div>`;
+ }
+ if(V===5){ // list and detail
+  const sel=users.find(u=>u.id===selId)||draft;
+  return `${needsRow()}<div style="display:grid;grid-template-columns:240px 1fr;gap:32px;align-items:start">
+   <div style="display:flex;flex-direction:column;gap:4px;border-right:1px solid var(--bd);padding-right:16px;min-height:420px">
+     <button class="ins ${!selId?'on':''}" data-act="newdetail"><span class="av sm">${I.plus}</span><span class="md">New User</span></button>
+     ${meListed()?'':`<button class="ins" data-act="addmedetail"><span class="av sm">${initials(ME.name)}</span><span class="grow"><span class="ell">Add Myself</span><span class="ell mu s12">${ME.name}</span></span></button>`}
+     <div style="height:1px;background:var(--bd);margin:8px 0"></div>
+     ${users.map(u=>`<button class="ins ${selId===u.id?'on':''}" data-act="select" data-id="${u.id}"><span class="av sm">${initials(u.name)}</span><span class="grow"><span class="ell">${esc(u.name)||'New user'}</span><span class="ell s12" style="color:${missing(u).length?'var(--amtx)':'var(--mu)'}">${missing(u).length?'Incomplete':u.role}</span></span></button>`).join('')||'<p class="mu s12" style="padding:8px">No users yet.</p>'}
+   </div>
+   <div class="in" style="display:flex;flex-direction:column;gap:20px">${sel?`<div class="row"><span class="md" style="font-size:16px">${selId?esc(sel.name):'New User'}</span>${selId?`<button class="link" data-act="remove" data-id="${selId}">Remove</button>`:''}</div>${personForm(sel,selId?'u.'+selId:'d',{cols:1})}${selId?'':`<div style="display:flex;justify-content:flex-end"><button class="btn am" id="saveBtn" data-act="savedetail" ${firstMissingLabel(draft)?'disabled':''}>${saveLabel(draft,true)}</button></div>`}`:''}</div></div>`;
+ }
+ if(V===6){ // quick add
+  return `${needsRow()}${suggestMe('quickme')}<div class="card" style="padding:16px;display:grid;grid-template-columns:1.2fr 1.4fr 150px auto;gap:8px;align-items:end">
+    <div class="fld"><label>Full Name</label><input class="inp" data-k="q.name" value="${esc(quick.name)}" placeholder=""></div>
+    <div class="fld"><label>Email Address</label><input class="inp" data-k="q.email" value="${esc(quick.email)}" placeholder="name@company.com"></div>
+    <div class="fld"><label>Role</label>${roleSelect('q.role',quick.role)}</div>
+    <button class="btn am" id="quickBtn" style="height:44px" data-act="quickadd" ${quick.name.trim()&&/@/.test(quick.email)&&quick.role?'':'disabled'}>Add</button></div>
+   <div style="display:flex;flex-direction:column">${users.map(u=>openId===u.id?`<div class="card in" style="padding:20px;display:flex;flex-direction:column;gap:16px;margin:4px 0"><div class="row"><span class="md">${esc(u.name)} · ${u.role}</span><button class="link" data-act="collapse">Done</button></div><div class="g2">${fld('u.'+u.id+'.mobile','Mobile Number','24 123 4567',u.mobile,{pre:'+233'})}${fld('u.'+u.id+'.dob','Date of Birth','DD/MM/YYYY',u.dob)}</div>${accessFields(u,'u.'+u.id)}</div>`:rowHtml(u,'open')).join('')}</div>`;
+ }
+}
+function roleForm(isNew){const d=draft;return `<div class="card in" style="padding:20px;display:flex;flex-direction:column;gap:16px"><div class="row"><span class="md">${isNew?'New '+d.role:'Edit '+esc(d.name)}</span>${isNew?'':`<button class="link" data-act="remove" data-id="${editId}">Remove</button>`}</div>${personForm(d,'d',{noRole:true})}<div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn out" data-act="cancel">Cancel</button><button class="btn am" id="saveBtn" data-act="save" ${firstMissingLabel(d)?'disabled':''}>${saveLabel(d,isNew)}</button></div></div>`;}
+function overlay(){
+ if(V===4&&draft){const isNew=!editId;return `<div class="scrim" data-act="cancel"></div><div class="drawer"><div class="dh"><span class="md" style="font-size:18px">${isNew?'Add a User':'Edit '+esc(draft.name)}</span><button class="btn gh sm" style="width:32px;padding:0" data-act="cancel" aria-label="Close">${I.x}</button></div><div class="db">${personForm(draft,'d',{cols:1})}</div><div class="df">${isNew?'':`<button class="btn gh" style="margin-right:auto" data-act="remove" data-id="${editId}">Remove</button>`}<button class="btn out" data-act="cancel">Cancel</button><button class="btn am" id="saveBtn" data-act="save" ${firstMissingLabel(draft)?'disabled':''}>${saveLabel(draft,isNew)}</button></div></div>`;}
+ return '';
+}
+function layout(){
+ const steps=['Your details','Company details','Accounts','Authorised users','Letter of request'];
+ const wide=V===3||V===5;
+ return `<div class="apphd"><span class="logo"><i></i>GCB Business</span></div><div class="body">
+  <nav class="nav"><ol style="list-style:none;margin:0;padding:0">${steps.map((s,i)=>`<li style="display:flex;gap:12px"><span style="display:flex;flex-direction:column;align-items:center"><span class="dot ${i<3?'ok':''} ${i===3?'cur':''}">${i<3?I.check:i+1}</span>${i<4?'<span class="ln"></span>':''}</span><span style="padding:2px 0 20px;${i===3?'font-weight:500':''};color:${i>3?'var(--mu)':'var(--tx)'}">${s}</span></li>`).join('')}</ol></nav>
+  <div class="main"><div class="scroll"><div class="col ${wide?'wide':''}">
+   <button class="back">${I.back}Back</button>
+   <div class="hd"><h2>Authorised Users</h2><p>Please add each person who will use internet banking. Inputters and authorisers may also view.</p></div>
+   ${content()}
+  </div></div>
+  <div class="foot ${wide?'wide':''}"><div class="in"><button class="btn out xl">Previous</button><button class="btn am xl" id="cta" ${lack()?'disabled':''}>${lack()||'Continue'}</button></div></div>
+  ${overlay()}</div></div>`;
+}
+function render(){
+ $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1} ${n[0]}</button>`).join('');
+ $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]}`;
+ const scrollEl=$('.scroll'), top=scrollEl?scrollEl.scrollTop:0;
+ $('#win').innerHTML=layout();
+ const s=$('.scroll'); if(s)s.scrollTop=top;
+}
+function refresh(){ // after typing: update buttons and "still needed" without losing focus
+ const c=$('#cta'); if(c){c.disabled=!!lack();c.textContent=lack()||'Continue';}
+ const sb=$('#saveBtn'); if(sb&&draft&&V!==5){sb.disabled=!!firstMissingLabel(draft);sb.textContent=saveLabel(draft,!editId);}
+ if(sb&&V===5&&draft){sb.disabled=!!firstMissingLabel(draft);sb.textContent=saveLabel(draft,true);}
+ const qb=$('#quickBtn'); if(qb)qb.disabled=!(quick.name.trim()&&/@/.test(quick.email)&&quick.role);
+}
+function target(path){const [a,b,c]=path.split('.');if(a==='d')return [draft,b];if(a==='q')return [quick,b];if(a==='u')return [users.find(u=>u.id===b),c];}
+function resetState(){draft=null;editId=null;openId=null;addRole=null;selId=null;quick={name:'',email:'',role:''};expanded={};}
+document.addEventListener('input',e=>{const el=e.target.closest('[data-k]');if(!el||el.tagName==='SELECT')return;const [o,k]=target(el.dataset.k);if(!o)return;
+ if(k==='dob'){const d=digits(el.value).slice(0,8);el.value=[d.slice(0,2),d.slice(2,4),d.slice(4)].filter(Boolean).join('/');}
+ if(k==='limit'){el.value=fmtLimit(el.value);}
+ o[k]=el.value;refresh();});
+document.addEventListener('change',e=>{const el=e.target.closest('select[data-k]');if(!el)return;const [o,k]=target(el.dataset.k);if(o){o[k]=el.value;render();}});
+document.addEventListener('click',e=>{
+ const v=e.target.closest('[data-v]:not([data-tog])');if(v&&v.closest('#pills')){V=+v.dataset.v;resetState();render();return;}
+ const t=e.target.closest('[data-t]');if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+ const tg=e.target.closest('[data-tog]');if(tg){const [o,k]=target(tg.dataset.tog);const val=tg.dataset.v;o[k]=o[k].includes(val)?o[k].filter(x=>x!==val):[...o[k],val];render();return;}
+ const a=e.target.closest('[data-act]');if(!a)return;const k=a.dataset.act,id=a.dataset.id;
+ if(k==='demo'){resetState();demo();render();return;}
+ if(k==='reset'){resetState();users=[];render();return;}
+ if(k==='new'||k==='newpanel'){editId=null;draft=blank();render();return;}
+ if(k==='addme'||k==='addmepanel'){editId=null;draft=blank({...ME});render();return;}
+ if(k==='edit'||k==='panel'){editId=id;draft=JSON.parse(JSON.stringify(users.find(u=>u.id===id)));render();return;}
+ if(k==='newrole'){editId=null;addRole=a.dataset.r;draft=blank({role:a.dataset.r});render();return;}
+ if(k==='cancel'){draft=null;editId=null;addRole=null;render();return;}
+ if(k==='save'){if(firstMissingLabel(draft))return;if(editId)users=users.map(u=>u.id===editId?draft:u);else users.push(draft);draft=null;editId=null;addRole=null;render();return;}
+ if(k==='remove'){users=users.filter(u=>u.id!==id);draft=null;editId=null;if(selId===id){selId=null;draft=blank();}render();return;}
+ if(k==='addrow'){users.push(blank());render();return;}
+ if(k==='addmerow'){users.push(blank({...ME}));render();return;}
+ if(k==='more'){expanded[id]=!expanded[id];render();return;}
+ if(k==='newdetail'){selId=null;draft=blank();render();return;}
+ if(k==='addmedetail'){selId=null;draft=blank({...ME});render();return;}
+ if(k==='select'){selId=id;draft=null;render();return;}
+ if(k==='savedetail'){if(firstMissingLabel(draft))return;users.push(draft);selId=draft.id;draft=null;render();return;}
+ if(k==='quickadd'){const u=blank({name:quick.name.trim(),email:quick.email.trim(),role:quick.role,services:acts(quick.role)?['Funds Transfer']:[]});users.push(u);quick={name:'',email:'',role:''};openId=null;render();return;}
+ if(k==='quickme'){quick={name:ME.name,email:ME.email,role:''};render();return;}
+ if(k==='open'){openId=id;render();return;}
+ if(k==='collapse'){openId=null;render();return;}
+});
+// The list-and-detail variation shows the new-user form when nothing is selected.
+const _render=render;render=function(){if(V===5&&!selId&&!draft)draft=blank();_render();};
+render();
+</script>
+</body>
+</html>

@@ -1,8 +1,9 @@
 "use client";
 
 /**
- * Searchable occupation combobox with a standard catalog of professions.
- * Allows filtering, keyboard selection, or entering a custom occupation.
+ * Searchable combobox with a standard catalog of professions by default.
+ * Allows filtering, keyboard selection, or entering a custom value. Pass `options` (and `noun`) to search another
+ * list, such as company positions in the business application.
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -60,6 +61,10 @@ interface OccupationComboboxProps {
   onChange: (value: string) => void;
   id?: string;
   placeholder?: string;
+  /** The list to search. Defaults to OCCUPATIONS. */
+  options?: readonly string[];
+  /** What one option is called, for the empty state and screen readers ("occupation", "position"). */
+  noun?: string;
 }
 
 export function OccupationCombobox({
@@ -67,6 +72,8 @@ export function OccupationCombobox({
   onChange,
   id = "invest-occupation",
   placeholder = "Search or type occupation...",
+  options = OCCUPATIONS,
+  noun = "occupation",
 }: OccupationComboboxProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState(value);
@@ -124,11 +131,11 @@ export function OccupationCombobox({
   // Filter occupations
   const filteredOccupations = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return OCCUPATIONS;
-    return OCCUPATIONS.filter((occ) => occ.toLowerCase().includes(q));
-  }, [query]);
+    if (!q) return options;
+    return options.filter((occ) => occ.toLowerCase().includes(q));
+  }, [query, options]);
 
-  const hasExactMatch = OCCUPATIONS.some(
+  const hasExactMatch = options.some(
     (occ) => occ.toLowerCase() === query.trim().toLowerCase()
   );
 
@@ -223,7 +230,7 @@ export function OccupationCombobox({
             type="button"
             onClick={handleClear}
             className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            aria-label="Clear occupation"
+            aria-label={`Clear ${noun}`}
           >
             <X size={15} />
           </button>
@@ -237,7 +244,7 @@ export function OccupationCombobox({
             if (!open) inputRef.current?.focus();
           }}
           className="flex size-6 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
-          aria-label="Toggle occupation dropdown"
+          aria-label={`Show ${noun} options`}
         >
           <ChevronDown
             size={16}
@@ -298,7 +305,7 @@ export function OccupationCombobox({
             </div>
           ) : (
             <div className="p-2 text-center text-body text-muted-foreground">
-              No occupations found
+              {`No ${noun}s found`}
             </div>
           )}
 

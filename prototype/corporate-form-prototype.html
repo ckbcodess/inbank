@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Corporate Form: the paper form, rethought</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e5e7eb;--fld:#fcfcfc;--fbd:#e3e3e3;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff6dc;--amtx:#92400e;--err:#b91c1c;--shadow:0 24px 60px -24px rgba(0,0,0,.3)}
+  [data-theme=dark]{--page:#050505;--surf:#141414;--tile:#1c1c1c;--tileh:#232323;--bd:#2a2a2a;--fld:#1c1c1c;--fbd:#2e2e2e;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--amtx:#fbbf24;--err:#f87171;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h2,h3{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500;margin:0}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1040px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:32px 16px 80px;display:flex;justify-content:center}
+  .frame{width:480px;max-width:100%;background:var(--surf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--shadow);transition:width .3s}
+  .frame.phone{width:375px}
+  .page{padding:28px;display:flex;flex-direction:column;gap:28px}.phone .page{padding:20px 12px}
+  .hd{text-align:center;display:flex;flex-direction:column;gap:8px}.hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu)}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .back{display:inline-flex;align-items:center;gap:6px;color:var(--mu);height:32px}.back:hover{color:var(--tx)}
+  .prog{display:flex;gap:4px;width:96px}.prog i{flex:1;height:3px;border-radius:2px;background:var(--bd)}.prog i.on{background:var(--am)}
+  .sec{display:flex;flex-direction:column;gap:12px}.sec>h3{font-size:16px;font-weight:500}
+  .fld{display:flex;flex-direction:column;gap:6px;min-width:0}.fld>label{font-size:12px;font-weight:500}
+  .inp{height:40px;width:100%;border:1px solid var(--fbd);background:var(--fld);border-radius:8px;padding:0 12px;font:inherit;color:var(--tx);outline:none}
+  .inp::placeholder{color:var(--mu);opacity:.8}
+  .inp:focus{border-color:color-mix(in srgb,var(--tx) 45%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--am) 35%,transparent)}
+  .inp[aria-invalid=true]{border-color:var(--err)}
+  .pre{position:relative}.pre span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mu)}.pre .inp{padding-left:46px}
+  .err{color:var(--err);font-size:12px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.phone .two{grid-template-columns:1fr}
+  .btn{height:40px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  .btn.xl{height:44px}.btn.sm{height:28px;padding:0 10px;font-size:13px;border-radius:8px}
+  .btn.am{background:var(--am);color:#111}.btn.out{border:1px solid var(--bd);background:var(--surf)}.btn.full{width:100%}
+  .btn[disabled]{opacity:.45;pointer-events:none}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--mu);font-size:13px}.link:hover{color:var(--tx)}.link.tx{color:var(--tx)}
+  .grow{flex:1;min-width:0}
+  .ins{display:flex;align-items:center;gap:12px;padding:10px 8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}.ins:hover{background:var(--tile)}
+  .av{width:36px;height:36px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .ell{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .needs{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-radius:10px;background:var(--amsoft);color:var(--amtx)}
+  .needs .tx{color:var(--tx)}
+  .ib{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:var(--mu);border-radius:8px;flex:none}.ib:hover{background:var(--tile);color:var(--tx)}
+  /* stepper */
+  .st{display:flex;gap:12px}.rail{display:flex;flex-direction:column;align-items:center}
+  .dot{width:24px;height:24px;border-radius:50%;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .dot.ok{background:var(--am);border-color:var(--am);color:#111}
+  .ln{flex:1;width:1px;background:var(--bd);margin:4px 0}
+  /* options */
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opt{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--bd);border-radius:10px;padding:12px;width:100%}.opt:hover{background:var(--tile)}
+  .opt.on{border-color:var(--am);background:var(--amsoft)}
+  .rad{width:16px;height:16px;border-radius:50%;border:1px solid var(--fbd);flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center;background:var(--fld)}
+  .opt.on .rad{border-color:#111;background:var(--am)}.opt.on .rad:after{content:'';width:6px;height:6px;border-radius:50%;background:#111}
+  .cb{display:flex;align-items:center;gap:10px;padding:6px 0;width:100%}
+  .box{width:16px;height:16px;border:1px solid var(--fbd);border-radius:4px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--fld)}
+  .box.on{background:var(--am);border-color:var(--am);color:#111}
+  .chips{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+  /* modal */
+  .ov{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;animation:fade .15s ease}
+  .ov.sheet{align-items:flex-end;padding:0}
+  .dlg{background:var(--surf);border:1px solid var(--bd);border-radius:16px;width:520px;max-width:100%;max-height:calc(100vh - 32px);display:flex;flex-direction:column;box-shadow:var(--shadow);animation:up .15s ease}
+  .ov.sheet .dlg{width:375px;border-radius:16px 16px 0 0;max-height:92vh}
+  .dlg.wide{width:820px}
+  .dh{padding:20px 20px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px}.dh h3{font-size:18px;font-weight:500}
+  .db{padding:4px 20px 20px;overflow:auto;display:flex;flex-direction:column;gap:20px}
+  .df{padding:12px 20px 20px;display:flex;gap:8px;justify-content:flex-end;align-items:center;border-top:1px solid var(--bd)}
+  .terms{font-size:13px;line-height:1.65;color:var(--mu)}.terms b{color:var(--tx);font-weight:500;display:block;margin-top:12px}
+  /* the letter: always paper */
+  .paper{background:#fff;color:#111;border:1px solid #e5e5e5;border-radius:6px;padding:36px 40px;font-size:12px;line-height:1.55}
+  .paper h4{font-size:13px;margin:14px 0 6px;font-weight:600}
+  .paper table{width:100%;border-collapse:collapse;margin:4px 0 8px}.paper th,.paper td{border:1px solid #bbb;padding:5px 6px;text-align:left;vertical-align:top;font-size:11px}.paper th{background:#f4f4f4;font-weight:600}
+  .paper .sig{display:grid;grid-template-columns:1fr 1fr 110px;gap:16px;margin-top:14px}.paper .sig div{border-top:1px solid #333;padding-top:4px;font-size:11px;min-height:56px}
+  .paper .stamp{border:1px dashed #999;height:80px;display:flex;align-items:center;justify-content:center;color:#888;font-size:11px}
+  @keyframes fade{from{opacity:0}}@keyframes up{from{opacity:0;transform:translateY(8px)}}
+  svg{flex:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Corporate application: the paper form (GCB/IBCAF/2014/038), rethought</h1>
+    <div class="row" style="gap:8px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="kind"><button data-kind="company" class="on">Company</button><button data-kind="partnership">Partnership</button><button data-kind="sole">Sole</button></div>
+      <div class="seg" id="width"><button data-w="desk" class="on">Desktop</button><button data-w="phone">Phone</button></div>
+      <div class="seg" id="theme"><button data-t="light" class="on">Light</button><button data-t="dark">Dark</button></div>
+      <button class="btn out sm" data-act="demo" style="height:36px">Fill Demo</button>
+      <button class="btn out sm" data-act="reset" style="height:36px">Reset</button>
+    </div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage" id="stage"></div>
+<div id="modal"></div>
+<script>
+const I={
+ back:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+ dl:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 10 5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>',
+ clip:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',
+ eye:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg>',
+ check:'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+ bigcheck:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+ x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+ plus:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+ alert:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>'
+};
+const REF='ENR-2026-0814', FILE='adinkra-request-signed.pdf · 1.2 MB';
+const ROLES={
+ view:{t:'View Only',d:'Sees balances, statements and payments on every account here. Can’t move money.'},
+ init:{t:'Initiate',d:'Prepares payments. Someone else has to approve them.'},
+ auth:{t:'Authorise',d:'Approves payments that others prepare.'},
+ both:{t:'Initiate and Authorise',d:'Prepares and approves on their own. Only when the proprietor works alone.'}
+};
+const SERVICES=[['FT','Transfers'],['BU','Salary Uploads'],['TD','Fixed Deposits'],['TI','Trade Enquiries']];
+const SNAME=Object.fromEntries(SERVICES);
+const STEPS=['Business','Accounts','People','Letter','Sent','Upload Later'];
+const NOTES=[
+ ['Business','The details screen we have today, plus <b>What the Business Does</b> from the form. Suburb, landmark and city become one Location field. Fax, website and postal address are gone (postal address is a question for the bank). The type comes from the tiles before this screen; the paper form also has <b>Partnership</b>, which our tiles don’t, so the switch above adds it.'],
+ ['Accounts','Account numbers only. Staff confirm the account names in Flexcube, and nothing is looked up here, so typing a number reveals nothing. The paper’s A–H account codes are gone: on the next screen each person ticks the accounts they work on.'],
+ ['People','The paper’s three tables (Viewers, Initiators, Authorisers) become <b>one list, one role per person</b>, so an initiator can’t also be an authoriser. Viewers see every account; initiators and authorisers choose accounts, services (FT, BU, TD, TI in plain words) and a limit. Signatories aren’t typed in: they sign and print their names on the letter. If someone can initiate and nobody can authorise, an amber row says so. <b>For the bank:</b> is date of birth needed, is the limit per transaction or per day, and can a sole proprietor approve their own payments?'],
+ ['Letter','The letter is built from screens 1 to 3: <b>Preview</b> shows it, <b>Download</b> saves it. Each user signs beside their name, so it doubles as the board resolution the form asks for, and the signatories sign at the bottom. The request is saved when this screen opens, because signatures can take days; the requester gets an email link to come back (screen 6). Change an answer after downloading and step 1 asks for a new download.'],
+ ['Sent','Same as today’s sent screen. Staff get the answers as data, so they check rather than retype.'],
+ ['Upload later','Opened from the email link. The same steps, with finished ones already ticked. The letter can be downloaded again in case it got lost.']
+];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const digits=s=>String(s||'').replace(/\D/g,'');
+const okEmail=s=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(s).trim());
+const okPhone=s=>digits(s).length>=9;
+const okAcct=s=>{const d=digits(s);return d.length>=10&&d.length<=16};
+const okDob=s=>/^\d{2}\/\d{2}\/\d{4}$/.test(s);
+const fmtMoney=s=>{const n=parseFloat(String(s).replace(/,/g,''));return isNaN(n)?'':n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})};
+const initials=n=>n.trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+const mask=a=>{const d=digits(a);return '••'+d.slice(-4)};
+
+let S=1, W='desk', KIND='company', st=fresh(), draft=null, editIdx=-1, modal=null, touched={};
+function fresh(){return{me:{name:'',position:'',mobile:'',email:''},biz:{name:'',nature:'',location:'',email:'',phone:''},accounts:[''],people:[],ver:0,dlVer:-1,file:false,terms:false,saved:false};}
+function demo(){
+  st.me={name:'Ama Owusu',position:'Finance Manager',mobile:'024 412 3456',email:'ama@adinkratrading.com'};
+  st.biz={name:KIND==='sole'?'Adinkra Traders':'Adinkra Trading Limited',nature:'Wholesale of building materials',location:'14 Ring Road Central, Accra',email:'info@adinkratrading.com',phone:'030 276 1234'};
+  st.accounts=['1021130004567','1021130009812'];
+  st.people=KIND==='sole'
+   ?[{name:'Ama Owusu',email:'ama@adinkratrading.com',mobile:'024 412 3456',dob:'14/03/1986',role:'both',services:['FT','BU'],accounts:['1021130004567','1021130009812'],limit:'50,000.00'}]
+   :[{name:'Ama Owusu',email:'ama@adinkratrading.com',mobile:'024 412 3456',dob:'14/03/1986',role:'init',services:['FT','BU'],accounts:['1021130004567','1021130009812'],limit:'50,000.00'},
+     {name:'Kofi Mensah',email:'kofi@adinkratrading.com',mobile:'020 811 4420',dob:'02/09/1971',role:'auth',services:['FT','BU','TD'],accounts:['1021130004567','1021130009812'],limit:'500,000.00'},
+     {name:'Esi Boateng',email:'esi@adinkratrading.com',mobile:'055 230 9981',dob:'21/11/1993',role:'view',services:[],accounts:[],limit:''}];
+  st.ver++;
+}
+const kindWord=()=>KIND==='company'?'Company':KIND==='partnership'?'Partnership':'Business';
+const validAccts=()=>[...new Set(st.accounts.map(digits).filter(d=>d.length>=10&&d.length<=16))];
+const stale=()=>st.dlVer>=0&&st.dlVer!==st.ver;
+const downloaded=()=>st.dlVer>=0&&!stale();
+
+/* ---------- what's missing (the disabled button says it) ---------- */
+function lack(){
+  if(S===1){const m=st.me,b=st.biz;
+    if(!m.name.trim()||!m.position.trim()||!okPhone(m.mobile)||!okEmail(m.email))return 'Fill In Your Details';
+    if(!b.name.trim()||!b.nature.trim()||!b.location.trim()||!okEmail(b.email)||!okPhone(b.phone))return `Fill In the ${kindWord()} Details`;
+    return '';}
+  if(S===2){const filled=st.accounts.filter(a=>a.trim());
+    if(!filled.length)return 'Add an Account';
+    if(filled.some(a=>!okAcct(a)))return 'Check the Account Numbers';
+    if(new Set(filled.map(digits)).size!==filled.length)return 'Remove the Repeated Account';
+    return '';}
+  if(S===3){const p=st.people;
+    if(!p.length)return 'Add a Person';
+    if(p.some(x=>x.role==='init')&&!p.some(x=>x.role==='auth'))return 'Add Someone to Authorise';
+    if(p.some(x=>x.role==='auth')&&!p.some(x=>x.role==='init')&&KIND!=='sole')return 'Add Someone to Initiate';
+    return '';}
+  if(S===4||S===6){if(!downloaded()&&S===4)return 'Download Your Letter';if(!st.file)return 'Upload the Signed Letter';if(!st.terms)return 'Agree to the Terms';return '';}
+  return '';
+}
+function draftLack(){const d=draft;
+  if(!d.name.trim())return 'Enter Their Name';
+  if(!okEmail(d.email))return 'Enter Their Email';
+  if(!okPhone(d.mobile))return 'Enter Their Mobile';
+  if(!okDob(d.dob))return 'Enter Their Date of Birth';
+  if(!d.role)return 'Choose a Role';
+  if(d.role!=='view'){
+    if(!d.services.length)return 'Choose a Service';
+    if(!d.accounts.length)return 'Choose an Account';
+    if(d.services.some(s=>s==='FT'||s==='BU')&&!fmtMoney(d.limit))return 'Set a Limit';}
+  return '';
+}
+const cta=()=>{const l=lack();
+  const label=S===4||S===6?(l||'Send Request'):(l||'Continue');
+  return `<button class="btn am xl full" id="cta" data-act="next" ${l?'disabled':''}>${label}</button>`;};
+
+/* ---------- fields ---------- */
+const field=(k,label,val,ph,o={})=>`<div class="fld"><label for="f-${k}">${label}</label>${o.pre?`<div class="pre"><span>${o.pre}</span>`:''}<input class="inp tab" id="f-${k}" data-k="${k}" value="${esc(val)}" placeholder="${esc(ph)}" ${o.type?`type="${o.type}"`:''} ${o.mode?`inputmode="${o.mode}"`:''} autocomplete="off">${o.pre?'</div>':''}${o.after||''}</div>`;
+
+/* ---------- screens ---------- */
+function screen(){
+  const top=(S<=4)?`<div class="top"><button class="back" data-act="back">${I.back}Back</button><span class="mu s12 tab">Step ${S} of 4</span><span class="prog">${[1,2,3,4].map(i=>`<i class="${i<=S?'on':''}"></i>`).join('')}</span></div>`:'';
+  let h='';
+  if(S===1){const m=st.me,b=st.biz;
+    h=`<div class="hd"><h2>Your Details</h2><p>Who’s asking, and for which ${kindWord().toLowerCase()}.</p></div>
+    <div class="sec"><h3>About You</h3>
+      ${field('me.name','Full Name',m.name,'As on your ID')}
+      ${field('me.position','Position',m.position,'Search or type a position')}
+      <div class="two">${field('me.mobile','Mobile',m.mobile,'024 000 0000',{pre:'+233',mode:'tel'})}${field('me.email','Email',m.email,'name@company.com',{type:'email'})}</div></div>
+    <div class="sec"><h3>Your ${kindWord()}</h3>
+      ${field('biz.name',KIND==='sole'?'Business Name':`${kindWord()} Name`,b.name,KIND==='sole'?'As registered':'As on your certificate')}
+      ${field('biz.nature','What the Business Does',b.nature,'For example, wholesale of building materials')}
+      ${field('biz.location','Location',b.location,'Building, street, area and city')}
+      <div class="two">${field('biz.email','Official Email',b.email,'info@company.com',{type:'email'})}${field('biz.phone','Office Phone',b.phone,'030 000 0000',{pre:'+233',mode:'tel'})}</div></div>`;
+  }
+  if(S===2){
+    h=`<div class="hd"><h2>Which Accounts?</h2><p>The accounts to put on internet banking.</p></div>
+    <div class="sec">${st.accounts.map((a,i)=>`<div class="fld"><label for="f-acct.${i}">Account Number${st.accounts.length>1?' '+(i+1):''}</label>
+      <div style="display:flex;gap:8px;align-items:center"><input class="inp tab grow" id="f-acct.${i}" data-k="acct.${i}" value="${esc(a)}" placeholder="13 digits, from your cheque book or statement" inputmode="numeric" autocomplete="off" ${acctErr(i)?'aria-invalid="true"':''}>
+      ${st.accounts.length>1?`<button class="ib" data-act="rmacct" data-i="${i}" aria-label="Remove this account">${I.x}</button>`:''}</div>
+      <p class="err" id="err-${i}" ${acctErr(i)?'':'hidden'}>${esc(acctErr(i))}</p></div>`).join('')}
+      <div><button class="btn out sm" data-act="addacct">${I.plus}Add Another Account</button></div></div>`;
+  }
+  if(S===3){const p=st.people, needAuth=p.some(x=>x.role==='init')&&!p.some(x=>x.role==='auth'), needInit=KIND!=='sole'&&p.some(x=>x.role==='auth')&&!p.some(x=>x.role==='init');
+    const meIn=p.some(x=>x.name.trim().toLowerCase()===st.me.name.trim().toLowerCase()&&st.me.name.trim());
+    h=`<div class="hd"><h2>Who Gets Access?</h2><p>Initiators and authorisers can view too.</p></div>
+    <div class="sec">
+      ${needAuth?`<div class="needs">${I.alert}<span class="grow"><span class="tx md" style="display:block">Nobody can approve payments yet</span>Payments an initiator prepares need an authoriser. <button class="link tx" data-act="add">Add a person</button></span></div>`:''}
+      ${needInit?`<div class="needs">${I.alert}<span class="grow"><span class="tx md" style="display:block">Nobody can prepare payments yet</span>An authoriser approves what an initiator prepares. <button class="link tx" data-act="add">Add a person</button></span></div>`:''}
+      ${p.length?`<div style="display:flex;flex-direction:column">${p.map((x,i)=>`<button class="ins" data-act="edit" data-i="${i}"><span class="av">${esc(initials(x.name))}</span><span class="grow"><span class="ell">${esc(x.name)}</span><span class="ell mu s12 tab">${esc(personLine(x))}</span></span><span class="link">Edit</span></button>`).join('')}</div>`:''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn out sm" data-act="add">${I.plus}Add a Person</button>${!meIn&&st.me.name.trim()?`<button class="btn out sm" data-act="addme">Add Myself</button>`:''}</div>
+    </div>`;
+  }
+  if(S===4||S===6){
+    const later=S===6;
+    const dlLine=stale()?'<span class="s12" style="color:var(--amtx)">Your answers changed. Download it again.</span>':`<span class="mu s12 tab">Filled in from your answers · ${REF}</span>`;
+    const items=[
+      {t:later?'Your letter':'Download your letter',line:later?`<span class="mu s12 tab">${REF} · lost it? Download it again</span>`:dlLine,done:later||downloaded(),act:`<span style="display:flex;gap:4px"><button class="btn sm" data-act="preview">${I.eye}Preview</button><button class="btn out sm" data-act="dl">${I.dl}Download</button></span>`},
+      {t:'Upload the signed letter',line:`<span class="mu s12 ell">${st.file?FILE:'Signed by each user and your signatories, stamped · PDF or Word'}</span>`,done:st.file,act:`<button class="btn out sm" data-act="file">${I.clip}${st.file?'Replace':'Choose File'}</button>`},
+      {t:'Agree to the Terms & Conditions',line:`<span class="mu s12">${st.terms?'Read and agreed':'Read them to the end, then agree'}</span>`,done:st.terms,act:`<button class="btn out sm" data-act="terms">${st.terms?'Read Again':'Read'}</button>`}
+    ];
+    const narrow=W==='phone';
+    h=`<div class="hd"><h2>${later?'Upload Your Signed Letter':'Your Request Letter'}</h2><p class="tab">${later?esc(st.biz.name||'Adinkra Trading Limited')+' · '+REF:'We’ve written it from your answers.'}</p></div>
+    <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column">${items.map((it,i)=>`<li class="st"><span class="rail"><span class="dot ${it.done?'ok':''}">${it.done?I.check:i+1}</span>${i<items.length-1?'<span class="ln"></span>':''}</span>
+      <span class="grow" style="display:flex;${narrow?'flex-direction:column;gap:8px':'justify-content:space-between;gap:12px'};padding-bottom:20px;min-width:0"><span style="min-width:0"><span class="md" style="display:block">${it.t}</span>${it.line}</span>${it.act}</span></li>`).join('')}</ol>
+    ${later?'':`<p class="mu s12" style="margin-top:-12px">Signatures can take a few days. We’ve saved your request and emailed ${esc(st.me.email||'you')} a link to come back and upload the letter.</p>`}`;
+  }
+  if(S===5){
+    h=`<div class="hd" style="align-items:center"><span style="width:48px;height:48px;border-radius:50%;background:var(--am);color:#111;display:flex;align-items:center;justify-content:center">${I.bigcheck}</span><h2>Request Sent</h2><p>We’ll check your letter against our records and set you up.</p></div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="top"><span class="mu">Reference</span><span class="tab">${REF}</span></div>
+      <div class="top" style="align-items:flex-start"><span class="mu">Updates go to</span><span style="text-align:right">${esc(st.me.email||'ama@adinkratrading.com')}<br>${esc(st.biz.email||'info@adinkratrading.com')}</span></div>
+      <p class="mu s12">Once approved, everyone on the letter gets login details by email and text.</p></div>`;
+  }
+  const foot=S===5?`<button class="btn out xl full" data-go="1">Back to Login</button>`:cta();
+  return `<div class="page">${top}${h}${foot}</div>`;
+}
+function personLine(x){
+  if(x.role==='view')return 'View only · every account';
+  const all=validAccts(), acc=x.accounts.filter(a=>all.includes(a));
+  return [ROLES[x.role].t, x.services.map(s=>SNAME[s]).join(', '), x.limit?'up to GHS '+x.limit:'', acc.length===all.length?'all accounts':acc.map(mask).join(', ')].filter(Boolean).join(' · ');
+}
+function acctErr(i){
+  const a=st.accounts[i]||''; if(!a.trim())return '';
+  const d=digits(a);
+  if(d.length>16||(touched['acct.'+i]&&d.length<10))return 'Account numbers are 10 to 16 digits.';
+  if(okAcct(a)&&st.accounts.findIndex(x=>digits(x)===d)!==i)return 'You’ve already added this account.';
+  return '';
+}
+
+/* ---------- person sheet ---------- */
+function sheet(){
+  const d=draft, roles=KIND==='sole'?['view','init','auth','both']:['view','init','auth'];
+  const accts=validAccts(), money=d.services.some(s=>s==='FT'||s==='BU');
+  const l=draftLack();
+  return `<div class="dh"><h3>${editIdx>=0?'Edit '+esc(st.people[editIdx].name.split(' ')[0]):'Add a Person'}</h3><button class="ib" data-act="close" aria-label="Close">${I.x}</button></div>
+  <div class="db">
+    <div class="sec">
+      ${field('d.name','Full Name',d.name,'As on their ID')}
+      <div class="two">${field('d.email','Email',d.email,'name@company.com',{type:'email'})}${field('d.mobile','Mobile',d.mobile,'024 000 0000',{pre:'+233',mode:'tel'})}</div>
+      ${field('d.dob','Date of Birth',d.dob,'DD/MM/YYYY',{mode:'numeric'})}
+    </div>
+    <div class="sec"><h3 style="font-size:14px">What Can They Do?</h3><div class="opts">${roles.map(r=>`<button class="opt ${d.role===r?'on':''}" data-act="role" data-r="${r}"><span class="rad"></span><span class="grow"><span class="md" style="display:block">${ROLES[r].t}</span><span class="mu s12">${ROLES[r].d}</span></span></button>`).join('')}</div></div>
+    ${d.role&&d.role!=='view'?`
+    <div class="sec"><h3 style="font-size:14px">Services</h3><div class="chips">${SERVICES.map(([c,n])=>`<button class="cb" data-act="svc" data-c="${c}"><span class="box ${d.services.includes(c)?'on':''}">${d.services.includes(c)?I.check:''}</span>${n}</button>`).join('')}</div></div>
+    <div class="sec"><h3 style="font-size:14px">Accounts</h3><div>${accts.map(a=>`<button class="cb tab" data-act="acc" data-a="${a}"><span class="box ${d.accounts.includes(a)?'on':''}">${d.accounts.includes(a)?I.check:''}</span>${a}</button>`).join('')}</div></div>
+    ${money?field('d.limit',d.role==='auth'?'Approval Limit':d.role==='init'?'Payment Limit':'Limit',d.limit,'For example, 50,000.00',{pre:'GHS',mode:'decimal'}):''}`:''}
+  </div>
+  <div class="df">${editIdx>=0?`<button class="link" data-act="remove" style="margin-right:auto">Remove ${esc(st.people[editIdx].name.split(' ')[0])}</button>`:''}<button class="btn out" data-act="close">Cancel</button><button class="btn am" id="sheetCta" data-act="save" ${l?'disabled':''}>${l||(editIdx>=0?'Save':'Add Person')}</button></div>`;
+}
+
+/* ---------- the generated letter ---------- */
+function letterBody(){
+  const b=st.biz, accts=validAccts(), when=new Date(2026,10,26).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const users=st.people.length?st.people:[];
+  return `<div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start"><div style="border:1px dashed #bbb;color:#999;padding:14px 18px;font-size:11px">Print on your letterhead</div><div style="text-align:right">${when}<br>Ref: ${REF}</div></div>
+  <p style="margin-top:18px">The Branch Manager<br>GCB Bank PLC</p>
+  <p style="margin-top:12px">Dear Sir or Madam,</p>
+  <p style="margin-top:8px;font-weight:600">Request for GCB Internet Banking (Corporate)</p>
+  <p style="margin-top:8px">${esc(b.name||'[Business name]')} (${kindWord().toLowerCase()}), ${esc(b.nature||'[what the business does]')}, of ${esc(b.location||'[location]')}, asks GCB Bank to put the accounts below on internet banking for the users named. Official email ${esc(b.email||'[email]')}, telephone +233 ${esc(b.phone||'[phone]')}.</p>
+  <h4>Accounts</h4>
+  <table><tr><th style="width:28px">#</th><th>Account number</th></tr>${(accts.length?accts:['','']).map((a,i)=>`<tr><td>${i+1}</td><td>${a||'&nbsp;'}</td></tr>`).join('')}</table>
+  <h4>Users</h4>
+  <table><tr><th>Name</th><th>Role</th><th>Services</th><th>Limit (GHS)</th><th>Accounts</th><th>Email</th><th>Mobile</th><th>Date of birth</th><th style="width:90px">Signature</th></tr>
+  ${(users.length?users:[{},{}]).map(u=>`<tr><td>${esc(u.name||'')}</td><td>${u.role?ROLES[u.role].t:''}</td><td>${u.role==='view'?'View':(u.services||[]).map(s=>SNAME[s]).join(', ')}</td><td>${esc(u.limit||(u.role?'–':''))}</td><td>${u.role==='view'?'All':(u.accounts||[]).filter(a=>accts.includes(a)).map(a=>'…'+a.slice(-4)).join(', ')}</td><td>${esc(u.email||'')}</td><td>${esc(u.mobile||'')}</td><td>${esc(u.dob||'')}</td><td style="height:30px"></td></tr>`).join('')}</table>
+  <p style="font-size:11px;color:#555">Initiators and authorisers can also view. Default account, cheque and customer services are included. Each user signs beside their name.</p>
+  <p style="margin-top:10px">We have read and accept the GCB Internet Banking (Corporate) Terms &amp; Conditions, and confirm the people above may use the service as stated.</p>
+  <h4>Signed for the ${kindWord().toLowerCase()}, as our mandate requires</h4>
+  <div class="sig"><div>Name<br><br>Signature &amp; date</div><div>Name<br><br>Signature &amp; date</div><div class="stamp" style="border-top:1px dashed #999">Stamp</div></div>
+  <p style="margin-top:16px;font-size:10px;color:#777">Prepared online by ${esc(st.me.name||'[name]')}, ${esc(st.me.position||'[position]')}, on GCB Internet Banking. Return the signed letter by uploading it with reference ${REF}.</p>`;
+}
+function downloadLetter(){
+  const css=[...document.querySelector('style').sheet.cssRules].filter(r=>r.selectorText&&r.selectorText.startsWith('.paper')).map(r=>r.cssText).join('\n');
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>GCB internet banking request ${REF}</title><style>body{font-family:'Open Sans',Arial,sans-serif;margin:24px}${css}.paper{border:0}</style></head><body><div class="paper">${letterBody()}</div></body></html>`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download=`GCB-internet-banking-request-${REF}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+const TERMS=`<b>GCB INTERNET BANKING (CORPORATE) TERMS &amp; CONDITIONS</b>
+<b>Definitions</b>“The Bank” means GCB Bank Limited (GCB). “The Customer” means a customer of GCB Bank Limited who is now or henceforth registered on the GCB Internet Banking Service. “The Service” means GCB Bank Limited Internet Banking Service. In consideration of GCB allowing the Customer access to the Service, the Customer agrees with the Bank as follows:
+<b>1. Hardware and software requirements</b>a) The customer shall access the Service by use of a hardware device such as a personal computer, cell phone or similar technology and the necessary Internet browser software and hardware, connected to the Internet through the Customer’s preferred Internet access service.<br>b) The Customer shall remain solely responsible for the purchase and maintenance of the hardware device and associated Internet browser software.
+<b>2. Confidentiality</b>a) The Customer shall initiate all Internet Banking transactions or inquiries by use of its Internet banking password in combination with the assigned user name or login Identity (ID).<br>b) The Customer shall not create a password that will be easy for others to determine as its password.<br>c) The Customer shall keep password (confidential).<br>d) The Customer shall not give or disclose password (to anyone).<br>e) The Customer shall not store, write or display password in any place.<br>f) The Customer shall change password immediately upon realisation of leakage to a third party.
+<p style="margin-top:12px;font-style:italic">Sections 3 to 18 follow here in the app, word for word from the form.</p>
+<b>End of the Terms &amp; Conditions.</b>`;
+function renderModal(){
+  const m=$('#modal');
+  if(!modal){m.innerHTML='';return;}
+  const sheetMode=W==='phone';
+  let inner='';
+  if(modal==='person')inner=`<div class="dlg">${sheet()}</div>`;
+  if(modal==='preview')inner=`<div class="dlg wide"><div class="dh"><h3>Your Letter</h3><button class="ib" data-act="close" aria-label="Close">${I.x}</button></div><div class="db"><div class="paper">${letterBody()}</div></div><div class="df"><button class="btn out" data-act="close">Close</button><button class="btn am" data-act="dl">${I.dl}Download</button></div></div>`;
+  if(modal==='terms')inner=`<div class="dlg"><div class="dh"><h3>Terms &amp; Conditions</h3><button class="ib" data-act="close" aria-label="Close">${I.x}</button></div><div class="db terms" id="tbody">${TERMS}</div><div class="df"><button class="btn out" data-act="close">Cancel</button><button class="btn am" id="agreeBtn" data-act="agree" ${st._end?'':'disabled'}>${st._end?'I Agree':'Read to the End'}</button></div></div>`;
+  const keepScroll=m.querySelector('.db')?.scrollTop||0;
+  m.innerHTML=`<div class="ov ${sheetMode&&modal!=='preview'?'sheet':''}" data-act="ovclose">${inner}</div>`;
+  const db=m.querySelector('.db'); if(db&&modal==='person')db.scrollTop=keepScroll;
+  const tb=$('#tbody'); if(tb){const chk=()=>{if(!st._end&&tb.scrollTop+tb.clientHeight>=tb.scrollHeight-4){st._end=true;const b=$('#agreeBtn');b.disabled=false;b.textContent='I Agree';}};tb.addEventListener('scroll',chk);setTimeout(chk,50);}
+}
+
+/* ---------- render + events ---------- */
+function render(){
+  $('#pills').innerHTML=STEPS.map((n,i)=>`<button class="pill ${i+1===S?'on':''}" data-go="${i+1}">${i+1} ${n}</button>`).join('');
+  $('#note').innerHTML=`<b>${S}. ${NOTES[S-1][0]}.</b> ${NOTES[S-1][1]}`;
+  $('#stage').innerHTML=`<div class="frame ${W==='phone'?'phone':''}">${screen()}</div>`;
+  renderModal();
+}
+function go(n){S=n;if(S===4)st.saved=true;st.people.forEach(p=>p.accounts=p.accounts.filter(a=>validAccts().includes(a)));window.scrollTo({top:0});render();}
+function setPath(k,v){
+  const [a,b]=k.split('.');
+  if(a==='me'||a==='biz'){st[a][b]=v;st.ver++;}
+  else if(a==='acct'){st.accounts[+b]=v;st.ver++;}
+  else if(a==='d'){draft[b]=v;}
+}
+document.addEventListener('input',e=>{
+  const el=e.target.closest('[data-k]'); if(!el)return;
+  const k=el.dataset.k;
+  if(k==='d.dob'){const d=digits(el.value).slice(0,8);el.value=[d.slice(0,2),d.slice(2,4),d.slice(4)].filter(Boolean).join('/');}
+  if(k==='d.limit'){el.value=el.value.replace(/[^\d.,]/g,'');}
+  if(k.startsWith('acct.')){el.value=el.value.replace(/[^\d ]/g,'');}
+  setPath(k,el.value);
+  if(k.startsWith('acct.')){const i=+k.split('.')[1];const msg=acctErr(i),p=$('#err-'+i);p.textContent=msg;p.hidden=!msg;el.setAttribute('aria-invalid',msg?'true':'false');}
+  if(k.startsWith('d.')){const s=$('#sheetCta'),l=draftLack();s.disabled=!!l;s.textContent=l||(editIdx>=0?'Save':'Add Person');}
+  else{const c=$('#cta');if(c)c.outerHTML=cta();}
+});
+document.addEventListener('focusout',e=>{
+  const el=e.target.closest('[data-k]'); if(!el)return;const k=el.dataset.k;
+  if(k.startsWith('acct.')){touched[k]=true;const i=+k.split('.')[1];const msg=acctErr(i),p=$('#err-'+i);p.textContent=msg;p.hidden=!msg;el.setAttribute('aria-invalid',msg?'true':'false');const c=$('#cta');if(c)c.outerHTML=cta();}
+  if(k==='d.limit'&&el.value){el.value=fmtMoney(el.value);draft.limit=el.value;}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal){modal=null;renderModal();}});
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]'); if(g){modal=null;go(+g.dataset.go);return;}
+  const t=e.target.closest('[data-t]'); if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+  const w=e.target.closest('[data-w]'); if(w){W=w.dataset.w;document.querySelectorAll('#width button').forEach(b=>b.classList.toggle('on',b===w));render();return;}
+  const kd=e.target.closest('[data-kind]'); if(kd){KIND=kd.dataset.kind;document.querySelectorAll('#kind button').forEach(b=>b.classList.toggle('on',b===kd));if(KIND!=='sole')st.people.forEach(p=>{if(p.role==='both')p.role='init';});render();return;}
+  const a=e.target.closest('[data-act]'); if(!a)return;
+  const k=a.dataset.act;
+  if(k==='ovclose'){if(e.target===a){modal=null;renderModal();}return;}
+  if(k==='demo'){demo();render();return;}
+  if(k==='reset'){st=fresh();touched={};modal=null;go(1);return;}
+  if(k==='back'){if(S>1)go(S-1);return;}
+  if(k==='next'){if(lack())return;go(S===4||S===6?5:S+1);return;}
+  if(k==='addacct'){st.accounts.push('');render();const els=document.querySelectorAll('[data-k^="acct."]');els[els.length-1].focus();return;}
+  if(k==='rmacct'){st.accounts.splice(+a.dataset.i,1);touched={};st.ver++;render();return;}
+  if(k==='add'||k==='addme'){const accts=validAccts();editIdx=-1;draft={name:'',email:'',mobile:'',dob:'',role:'',services:[],accounts:accts.length===1?[...accts]:[],limit:''};
+    if(k==='addme')Object.assign(draft,{name:st.me.name,email:st.me.email,mobile:st.me.mobile});
+    modal='person';renderModal();return;}
+  if(k==='edit'){editIdx=+a.dataset.i;draft=JSON.parse(JSON.stringify(st.people[editIdx]));modal='person';renderModal();return;}
+  if(k==='role'){draft.role=a.dataset.r;renderModal();return;}
+  if(k==='svc'){const c=a.dataset.c;draft.services=draft.services.includes(c)?draft.services.filter(x=>x!==c):[...draft.services,c];renderModal();return;}
+  if(k==='acc'){const v=a.dataset.a;draft.accounts=draft.accounts.includes(v)?draft.accounts.filter(x=>x!==v):[...draft.accounts,v];renderModal();return;}
+  if(k==='save'){if(draftLack())return;const p={...draft};if(p.role==='view'){p.services=[];p.accounts=[];p.limit='';}if(!p.services.some(s=>s==='FT'||s==='BU'))p.limit='';
+    if(editIdx>=0)st.people[editIdx]=p;else st.people.push(p);st.ver++;modal=null;render();return;}
+  if(k==='remove'){st.people.splice(editIdx,1);st.ver++;modal=null;render();return;}
+  if(k==='close'){modal=null;renderModal();return;}
+  if(k==='preview'){modal='preview';renderModal();return;}
+  if(k==='dl'){downloadLetter();st.dlVer=st.ver;render();return;}
+  if(k==='file'){st.file=true;render();return;}
+  if(k==='terms'){st._end=false;modal='terms';renderModal();return;}
+  if(k==='agree'){st.terms=true;modal=null;render();return;}
+});
+render();
+</script>
+</body>
+</html>

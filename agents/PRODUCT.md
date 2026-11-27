@@ -278,15 +278,18 @@ to RPT-17; Trade monitoring is `[NOT IN v2]`.
     expire (BRL-27, BRL-28; what happens to the funds is OI-10).
   - **Corporate password reset:** the bank-approved method (OI-01), a lockout rule, then in-branch recovery.
   - **Onboarding and setup:**
-    - Companies apply online at `/business/signup/enrol` `[DECIDED 2026-10-20]`, following the bank's real process
-      (Esther, 2026-10-16): account number → who's applying, proved with a code → check the company and who signs → accounts → people
-      (role, limit, what they can do, accounts) → review → we write the request letter, they sign it on letterhead and
-      upload it, or email, post or bring it in. Staff check signatures against Flexcube, call, then approve at
-      `/admin/enrolments`; letters that arrive outside the app are recorded there, so branch capture (FR-ADM-05) and online
-      share one queue. No tracking page: updates are emailed to the applicant and the company (2026-11-25). On approval each user activates at `/business/activate`
-      (date of birth match, OTP, password, PIN; 3 mismatches lock out to branch).
-    - Sole proprietors self-onboard online at `/business/signup/sole-proprietor` (account number and date of birth
-      match, OTP, then the business is shown, password, PIN; 3 mismatches lock out to branch), then log in.
+    - `[DECIDED 2026-11-26]` Companies and sole proprietors ask online at `/business/signup/enrol` (`?type=company|sole`).
+      It is the bank's form (GCB/IBCAF/2014/038) rethought, not copied, in five steps: their details (name, mobile,
+      email); the company's (registered name, nature of business, address, official email, office phone); account numbers; one list of people, each with one role (Viewer, Inputter,
+      Authoriser) and, for anyone who acts, services, accounts and a limit for one payment; then the letter. The letter is
+      written from the answers, signed per the mandate with each person signing beside their name (so it is also the
+      form's "board resolution specifying users"), stamped and uploaded, and the terms are agreed in a scroll-to-end modal.
+      The request is saved when the letter screen opens, since signatures take days; the emailed link
+      (`?upload=<reference>`) brings them back to upload it. Nothing is looked up or verified online. Staff get the answers
+      as data, match the account numbers in Flexcube, check the letter against the answers and the signatures, call and
+      approve at `/admin/enrolments`; branch, email and post letters share the queue (FR-ADM-05). No tracking page:
+      updates go to the requester and the business's official email (2026-11-25). On approval each user
+      activates at `/business/activate` (date of birth match, OTP, password, PIN; 3 mismatches lock out to branch).
   - **Prototype today:** sole proprietor payments send directly without an approval leg (`paysWithoutApproval`);
     company payments go review (above the threshold) then authorise, with comments and send-back (2026-10-22); bulk is the original stub;
     New to GCB opens the bank's account opening portal (COOS), as personal does (2026-11-25); trade initiation and lifecycle
@@ -428,18 +431,20 @@ to RPT-17; Trade monitoring is `[NOT IN v2]`.
   direct bank fixed deposits (no CSD securities account required, instant creation). Treasury Bills &
   Bonds are government securities held at the CSD and require an active securities account (7-day setup).
   `[CONFLICT v2]` OS-05 excludes a standalone treasury bill service; term deposits stay.
-- `[DECIDED 2026-10-20]` **Business onboarding.** Companies apply online with a letter we write; sole proprietors self-onboard.
-  - Companies: the online application above replaces "set up at your branch" (designer, after the Esther call). It
-    deviates from a strict reading of FR-ADM-05 (branch capture) but feeds the same bank review; the bank still checks
-    signatures and approves everything. Branch staff record letters that arrive by email, post or at the counter.
+- `[DECIDED 2026-10-20, revised 2026-11-26]` **Business onboarding.** Businesses ask online with a letter we write; the bank
+  verifies in-house. Retail covers personal and joint accounts only; sole proprietors use the business form, because they
+  may add their own users (bank meeting, 2026-11-26).
+  - The online request replaces "set up at your branch". It deviates from a strict reading of FR-ADM-05 (branch capture)
+    but feeds the same bank review; the bank checks signatures and approves everything.
+  - Nothing the bank holds is shown to the applicant: an account number that returned a company name let anyone probe
+    accounts. Every field is typed; staff look the business up from the account numbers on the letter.
   - Roles on the application: Inputter, Authoriser, Viewer (the bank's form says Initiator, Authorizer, Viewer). Only
-    mandate signatories can be Authorisers (BRL-03); an application needs at least one Inputter and one Authoriser.
+    mandate signatories can be Authorisers (BRL-03); the applicant says who signs and staff check it. As on the bank's
+    form, a business may list viewers only; anyone who can prepare payments needs an Authoriser, and in a company an
+    Authoriser needs an Inputter (2026-11-26). A sole proprietor can be the only person, as an Authoriser.
   - `[DECIDED 2026-11-25]` What each person gives follows the bank's current form (GCB/IBCAF/2014/038): name, email, mobile,
     date of birth, role, limit, services and accounts. No Ghana Card. The signed letter carries all of it, as the contract.
   - Invited users activate at `/business/activate` by confirming their date of birth, an OTP, password and PIN.
-  - `[DECIDED 2026-11-26]` Sole proprietors self-onboard at `/business/signup/sole-proprietor` with their account number
-    and the date of birth GCB holds, then an OTP. No Ghana Card or selfie. The business and its accounts (no balances)
-    show only after the code. Then password and PIN, then they log in.
   - Sole proprietor payments need no approval leg (`paysWithoutApproval`) and leave after the OTP.
   - Accounts are opened on the bank's COOS portal, never here. `/activate` is personal activation only.
 - `[DECIDED 2026-10-22]` **Company user administration is option C.** The bank sets ceilings at setup (enabled accounts,

@@ -9,7 +9,9 @@
  */
 
 import {
+  lookupCorporateAccount,
   reviewerFor,
+  type BusinessKind,
   type CorporateCompanyRecord,
   type CorporateUserDraft,
   type EnrolledAccountSummary,
@@ -754,6 +756,9 @@ export interface NewEnrolmentInput {
   accounts: EnrolledAccountSummary[];
   applicant: CompanyApplicant;
   users: CorporateUserDraft[];
+  businessKind: BusinessKind;
+  /** What the business does, as typed. */
+  natureOfBusiness?: string;
   /** The signed letter, when uploaded now. Without it the application waits for the letter. */
   letter?: { fileName: string; fileSize: string };
 }
@@ -761,7 +766,11 @@ export interface NewEnrolmentInput {
 /** Customer: submits an online application, with or without the signed letter. */
 export function submitEnrolment(input: NewEnrolmentInput): EnrolmentApplication {
   const nowIso = new Date().toISOString();
-  const assignedTo = reviewerFor(input.company);
+  // In-house: staff find the business in Flexcube from the account numbers on the request. The applicant never sees
+  // this; it decides who reviews it, whose signatures are checked and who is told (bank meeting, 2026-11-26).
+  const flexcube = input.accounts.map((a) => lookupCorporateAccount(a.number)).find(Boolean) ?? null;
+  const onFile = flexcube ?? input.company;
+  const assignedTo = reviewerFor(onFile);
   const status = input.letter ? "checking_signatures" : "awaiting_letter";
   const application: EnrolmentApplication = {
     reference: input.reference,
@@ -769,14 +778,23 @@ export function submitEnrolment(input: NewEnrolmentInput): EnrolmentApplication 
     updatedAt: nowIso,
     channel: "online",
     companyName: input.company.companyName,
-    companyTin: input.company.tin,
+    companyTin: flexcube?.tin ?? "",
     companyAddress: input.company.address,
     companyEmail: input.company.email,
-    accounts: input.accounts,
+    // Typed numbers only from the customer; staff see Flexcube's name, type and currency beside each. The id stays
+    // the typed number, because each person's accounts point at it.
+    accounts: input.accounts.map((a) => {
+      const held = flexcube?.accounts.find((f) => f.number === a.number);
+      return held ? { ...held, id: a.id } : a;
+    }),
     applicant: { ...input.applicant },
     users: input.users.map((u) => ({ ...u, inviteStatus: "pending" })),
-    mandate: input.company.mandate,
-    approvalRule: input.company.approvalRule,
+    mandate: flexcube?.mandate ?? "",
+    approvalRule: flexcube?.approvalRule ?? "",
+    businessKind: input.businessKind,
+    natureOfBusiness: input.natureOfBusiness,
+    companyPhone: input.company.phone,
+    foundInFlexcube: Boolean(flexcube),
     pack: input.letter
       ? {
           uploadedFileName: input.letter.fileName,
@@ -787,7 +805,7 @@ export function submitEnrolment(input: NewEnrolmentInput): EnrolmentApplication 
       : {},
     status,
     assignedTo,
-    signatureChecks: input.company.signatories.map((sig) => ({
+    signatureChecks: onFile.signatories.map((sig) => ({
       signatoryName: sig.name,
       role: sig.designation,
       specimenUrl: sig.specimenUrl,
@@ -795,16 +813,41 @@ export function submitEnrolment(input: NewEnrolmentInput): EnrolmentApplication 
     })),
     verificationCall: {
       logged: false,
-      calledNumber: input.applicant.isSignatory
-        ? input.applicant.mobile
-        : (input.company.signatories[0]?.mobile ?? ""),
+      calledNumber: onFile.signatories[0]?.mobile ?? input.applicant.mobile,
       answeredBy: "",
       outcome: null,
     },
     returns: [],
+    startAlert: {
+      at: nowIso,
+      companyEmail: onFile.email,
+      signatoryMobiles: onFile.signatories.map((s) => s.mobile),
+    },
   };
   saveEnrolment(application);
   return application;
+}
+
+/**
+ * Customer: uploads the signed letter to a request saved earlier, now or from the emailed link. The signatures are
+ * checked from the start. Undefined when the request isn't waiting for a letter.
+ */
+export function uploadEnrolmentLetter(
+  reference: string,
+  letter: { fileName: string; fileSize: string },
+): EnrolmentApplication | undefined {
+  const app = getEnrolment(reference);
+  if (!app || app.status !== "awaiting_letter") return undefined;
+  return updateEnrolment(app.reference, {
+    status: "checking_signatures",
+    pack: {
+      uploadedFileName: letter.fileName,
+      uploadedFileSize: letter.fileSize,
+      uploadedAt: new Date().toISOString(),
+      receivedVia: "upload",
+    },
+    signatureChecks: app.signatureChecks.map((c) => ({ ...c, status: "unreviewed" as const })),
+  });
 }
 
 /**

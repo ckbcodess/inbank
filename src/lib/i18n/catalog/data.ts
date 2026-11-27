@@ -101,7 +101,7 @@ const data: Entry[] = [
   ["Just now", "À l’instant", "Justo ahora", "刚刚"],
   ["{0}m ago", "il y a {0} min", "hace {0} min", "{0} 分钟前"],
   ["{0}h ago", "il y a {0} h", "hace {0} h", "{0} 小时前"],
-  ["{0}d ago", "il y a {0} j", "hace {0} d", "{0} 天前"],
+  ["{0}d ago", "il y a {0} j", "hace {0} d", "{0} 天前"],
   ["Bank Charges", "Frais bancaires", "Comisiones bancarias", "银行费用"],
   ["Rent & Facilities", "Loyer et locaux", "Alquiler e instalaciones", "租金与设施"],
   ["Taxes & Levies", "Impôts et taxes", "Impuestos y tasas", "税费"],

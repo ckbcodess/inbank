@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Authorised users: 5 upload directions</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--page:#ececea;--surf:#fff;--card:#fff;--tile:#f4f4f5;--tileh:#ebebed;--bd:#e7e7e9;--fld:#fafafa;--fbd:#e3e3e3;--tx:#0b0b0c;--mu:#6b7280;--am:#FFC423;--amsoft:#fff7df;--amtx:#92400e;--menu:#fff;--shadow:0 24px 60px -24px rgba(0,0,0,.22)}
+  [data-theme=dark]{--page:#050505;--surf:#0c0c0c;--card:#151515;--tile:#1b1b1b;--tileh:#222;--bd:#262626;--fld:#1a1a1a;--fbd:#2e2e2e;--tx:#f5f5f5;--mu:#a3a3a3;--amsoft:#2a2410;--amtx:#fbbf24;--menu:#1a1a1a;--shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--tx);font-family:'Open Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  p,h1,h2,h3{margin:0;font-weight:inherit}
+  .mu{color:var(--mu)} .s12{font-size:12px} .md{font-weight:500} .tab{font-variant-numeric:tabular-nums}
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surf) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .bar h1{font-size:14px;font-weight:500}
+  .pills,.seg{display:inline-flex;gap:4px;flex-wrap:wrap}.seg{background:var(--tile);border-radius:12px;padding:4px}
+  .pill,.seg button{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:36px}
+  .pill.on,.seg button.on{background:var(--am);color:#111;font-weight:500}
+  .note-bar{font-size:13px;color:var(--mu);line-height:1.5;max-width:1100px}.note-bar b{color:var(--tx);font-weight:500}
+  .stage{padding:24px;display:flex;justify-content:center}
+  .win{width:100%;max-width:1280px;height:760px;background:var(--surf);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;position:relative}
+  .apphd{height:56px;flex:none;display:flex;align-items:center;padding:0 40px;border-bottom:1px solid var(--bd)}
+  .logo{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:500}.logo i{width:28px;height:28px;border-radius:8px;background:var(--am);display:block}
+  .body{flex:1;min-height:0;display:flex}
+  .nav{width:256px;flex:none;border-right:1px solid var(--bd);padding:48px 32px}
+  .main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .scroll{flex:1;min-height:0;overflow-y:auto;padding:48px}
+  .col{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+  .foot{flex:none;border-top:1px solid var(--bd);padding:20px 48px}.foot .in{max-width:600px;margin:0 auto;display:flex;justify-content:space-between}
+  .dot{width:24px;height:24px;border-radius:50%;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .dot.ok{background:var(--am);border-color:var(--am);color:#111}.dot.cur{border-color:var(--tx)}
+  .ln{flex:1;width:1px;background:var(--bd);margin:4px 0;min-height:16px}
+  .hd h2{font-size:22px;font-weight:500;letter-spacing:-.02em}.hd p{color:var(--mu);margin-top:8px;line-height:1.5}
+  .back{display:inline-flex;align-items:center;gap:8px;color:var(--mu);font-weight:500;margin-bottom:-8px}
+  .btn{height:40px;padding:0 16px;border-radius:12px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  .btn.xl{height:44px;font-size:16px;min-width:160px}.btn.sm{height:32px;padding:0 12px;font-size:13px;border-radius:10px}
+  .btn.am{background:var(--am);color:#111}.btn.out{box-shadow:inset 0 0 0 1px var(--bd);background:var(--card)}.btn.out:hover{background:var(--tile)}
+  .btn.gh{color:var(--mu)}.btn.gh:hover{color:var(--tx);background:var(--tile)}
+  .btn[disabled]{background:var(--tile);color:var(--mu);pointer-events:none;box-shadow:none}
+  .link{text-decoration:underline;text-underline-offset:3px;color:var(--tx)}
+  .grow{flex:1;min-width:0}
+  .ell{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .av{width:36px;height:36px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+  .ins{display:flex;align-items:center;gap:12px;padding:8px;margin:0 -8px;border-radius:10px;width:calc(100% + 16px)}.ins:hover{background:var(--tile)}
+  .ico{width:40px;height:40px;border-radius:10px;background:var(--tile);display:flex;align-items:center;justify-content:center;flex:none;color:#b7860b}[data-theme=dark] .ico{color:var(--am)}
+  .tile{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:16px;box-shadow:inset 0 0 0 1px var(--bd);background:var(--card);width:100%}.tile:hover{background:var(--tile)}
+  .zone{border:1px dashed var(--fbd);border-radius:14px;padding:20px;display:flex;align-items:center;gap:14px;background:color-mix(in srgb,var(--tile) 40%,transparent)}
+  .zone.drag{border-color:var(--am);background:var(--amsoft)}
+  .menu{position:absolute;z-index:20;min-width:260px;background:var(--menu);border:1px solid var(--bd);border-radius:14px;padding:6px;box-shadow:var(--shadow);animation:pop .12s ease}
+  .mi{display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:10px;width:100%}.mi:hover{background:var(--tile)}
+  .sep{height:1px;background:var(--bd);margin:6px 4px}
+  .split{display:inline-flex}.split .btn:first-child{border-radius:12px 0 0 12px}.split .btn:last-child{border-radius:0 12px 12px 0;padding:0 10px;box-shadow:inset 1px 0 0 color-mix(in srgb,#000 18%,transparent)}
+  .suggest{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1px dashed var(--fbd)}
+  .modal{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;animation:fade .15s;z-index:40}
+  .dlg{width:520px;background:var(--surf);border-radius:16px;border:1px solid var(--bd);box-shadow:var(--shadow);display:flex;flex-direction:column;max-height:90%}
+  .dlg .dh{padding:18px 24px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+  .dlg .db{padding:20px 24px;overflow:auto;display:flex;flex-direction:column;gap:18px}
+  .dlg .df{padding:14px 24px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px}
+  .segc{display:grid;grid-template-columns:1fr 1fr;background:var(--tile);border-radius:12px;padding:4px}.segc button{text-align:center;padding:8px;border-radius:9px;color:var(--mu)}.segc button.on{background:var(--card);color:var(--tx);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .fld{display:flex;flex-direction:column;gap:8px}.fld label{font-size:12px;font-weight:500}.inp{height:44px;border-radius:10px;background:var(--fld);box-shadow:inset 0 0 0 1px var(--fbd);padding:0 12px;color:var(--mu);display:flex;align-items:center}
+  .hdrow{display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+  @keyframes fade{from{opacity:0}}@keyframes pop{from{opacity:0;transform:translateY(-4px)}}
+  svg{flex:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="row"><h1>Authorised Users: 5 ways to offer the CSV upload</h1>
+    <div class="row" style="gap:8px">
+      <div class="pills" id="pills"></div>
+      <div class="seg" id="theme"><button data-t="light">Light</button><button data-t="dark" class="on">Dark</button></div>
+      <div class="seg" id="state"><button data-s="empty" class="on">Empty</button><button data-s="some">With Users</button></div>
+    </div></div>
+  <p class="note-bar" id="note"></p>
+</div>
+<div class="stage"><div class="win" id="win"></div></div>
+<script>
+const I={
+ back:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+ plus:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+ user:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>',
+ sheet:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2z"/><path d="M14 2v6h6"/><path d="M8 13h2M14 13h2M8 17h2M14 17h2"/></svg>',
+ up:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>',
+ dl:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 10 5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>',
+ down:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+ dots:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>',
+ chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+ x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+};
+const SAMPLE=[{n:'Adwoa Mensah',r:'Inputter',l:'GHS 50,000.00'},{n:'Yaw Oppong',r:'Authoriser',l:'GHS 500,000.00'}];
+const FROM_FILE=[{n:'Kofi Asare',r:'Inputter',l:'GHS 20,000.00'},{n:'Esi Boateng',r:'Viewer',l:''},{n:'Akua Danso',r:'Viewer',l:''}];
+const NOTES=[
+ ['One button, a menu','A single “Add Users” button with a chevron opens a short menu: Add One User, Upload a List, Download the Template, and Add Myself. One control on the page instead of three buttons and a line of text; the template sits next to the upload it belongs to.'],
+ ['Two tiles when empty','With nobody added yet, the step offers two choices as tiles: “Add users one by one” and “Upload a list” (with its template link inside the tile). Once there are users, the tiles give way to a quiet row of actions under the list.'],
+ ['Drop zone','Add a User and Add Myself stay as buttons. Under them, one dashed zone does the upload: drag a CSV onto it or choose a file, with the template link in the same box. The upload reads as a place to put a file, not another button.'],
+ ['Header actions','A small header over the list (“Users · 2”) carries Add a User on the right and a ⋯ menu for Upload a List and the template. Add Myself becomes a dashed suggestion row in the list until you’re on it. Tidy once the list is long.'],
+ ['Inside the Add dialog','Only one button on the page. The Add a User dialog opens with a switch at the top: One User (the form) or Many Users (a drop zone and the template). The upload is still one click deeper, but it never clutters the page.']
+];
+let V=1, S='empty', users=[], menu=false, review=false, dialog=null, drag=false, meAdded=false;
+const $=s=>document.querySelector(s);
+const reset=()=>{users=S==='some'?SAMPLE.map(x=>({...x})):[];menu=false;review=false;dialog=null;meAdded=false;};
+const ini=n=>n.split(' ').map(w=>w[0]).join('');
+const list=()=>users.map(u=>`<button class="ins"><span class="av">${ini(u.n)}</span><span class="grow"><span class="ell">${u.n}</span><span class="ell mu s12">All accounts</span></span><span style="text-align:right"><span style="display:block">${u.r}</span><span class="mu s12 tab">${u.l}</span></span>${I.chev}</button>`).join('');
+const meBtn=(cls='btn out sm')=>meAdded?'':`<button class="${cls}" data-act="me">${I.user.replace('18','15').replace('18','15')}Add Myself</button>`;
+
+function content(){
+ if(V===1){
+  return `${list()}<div style="position:relative;display:inline-block">
+   <span class="split"><button class="btn out" data-act="add">${I.plus}Add Users</button><button class="btn out" data-act="menu" aria-label="More ways to add">${I.down}</button></span>
+   ${menu?`<div class="menu" style="top:46px;left:0">
+     <button class="mi" data-act="add"><span class="ico" style="width:32px;height:32px">${I.user}</span><span><span class="md" style="display:block">Add One User</span><span class="mu s12">Enter their details in a form</span></span></button>
+     <button class="mi" data-act="upload"><span class="ico" style="width:32px;height:32px">${I.sheet}</span><span><span class="md" style="display:block">Upload a List</span><span class="mu s12">Many users at once, from a CSV file</span></span></button>
+     <div class="sep"></div>
+     <button class="mi" data-act="tpl" style="align-items:center">${I.dl}<span>Download the CSV Template</span></button>
+     ${meAdded?'':`<button class="mi" data-act="me" style="align-items:center">${I.plus}<span>Add Myself</span></button>`}
+   </div>`:''}</div>`;
+ }
+ if(V===2){
+  if(!users.length)return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <button class="tile" data-act="add"><span class="ico">${I.user}</span><span><span class="md" style="display:block">Add users one by one</span><span class="mu s12" style="display:block;margin-top:4px;line-height:1.5">Best for a few people. Enter each person’s details in a form.</span></span></button>
+    <div class="tile" style="flex-direction:column;gap:12px"><button data-act="upload" style="display:flex;gap:14px;align-items:flex-start;width:100%"><span class="ico">${I.sheet}</span><span><span class="md" style="display:block">Upload a list</span><span class="mu s12" style="display:block;margin-top:4px;line-height:1.5">Best for many people. Fill in our template and upload it.</span></span></button><button class="link s12" style="margin-left:54px" data-act="tpl">Download the CSV template</button></div>
+   </div>${meAdded?'':`<p class="mu s12">Will you use internet banking too? <button class="link" data-act="me">Add yourself</button></p>`}`;
+  return `${list()}<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn out sm" data-act="add">${I.plus}Add a User</button><button class="btn out sm" data-act="upload">${I.up}Upload a List</button>${meBtn()}</div>`;
+ }
+ if(V===3){
+  return `${list()}<div style="display:flex;gap:8px">${`<button class="btn out sm" data-act="add">${I.plus}Add a User</button>`}${meBtn()}</div>
+   <div class="zone ${drag?'drag':''}" data-act="upload" id="zone"><span class="ico">${I.sheet}</span><span class="grow"><span class="md" style="display:block">Adding many users?</span><span class="mu s12">Drop a CSV file here, or <span class="link">choose a file</span></span></span><button class="btn gh sm" data-act="tpl" onclick="event.stopPropagation()">${I.dl}Template</button></div>`;
+ }
+ if(V===4){
+  return `<div style="display:flex;flex-direction:column;gap:8px"><div class="hdrow"><span class="md">Users <span class="mu">· ${users.length}</span></span>
+    <span style="display:flex;gap:4px;position:relative"><button class="btn out sm" data-act="add">${I.plus}Add a User</button><button class="btn gh sm" style="width:32px;padding:0" data-act="menu" aria-label="More">${I.dots}</button>
+    ${menu?`<div class="menu" style="top:38px;right:0;min-width:240px"><button class="mi" data-act="upload" style="align-items:center">${I.up}<span>Upload a List</span></button><button class="mi" data-act="tpl" style="align-items:center">${I.dl}<span>Download the CSV Template</span></button></div>`:''}</span></div>
+   ${meAdded?'':`<div class="suggest"><span class="av" style="width:28px;height:28px;font-size:11px">AM</span><span class="grow"><span style="display:block">Adwoa Mensah <span class="mu">(you)</span></span><span class="mu s12">Will you use internet banking too?</span></span><button class="btn out sm" data-act="me">Add Myself</button></div>`}
+   ${list()||`<p class="mu" style="padding:24px 0;text-align:center">No users yet. Add them one at a time, or upload a list from the ⋯ menu.</p>`}</div>`;
+ }
+ if(V===5){
+  return `${list()}<div style="display:flex;gap:8px"><button class="btn out sm" data-act="dialog">${I.plus}Add Users</button>${meBtn()}</div>`;
+ }
+}
+function overlay(){
+ if(review)return `<div class="modal"><div class="dlg"><div class="dh"><span class="md" style="font-size:18px">Review the List</span><button class="btn gh sm" style="width:32px;padding:0" data-act="close">${I.x}</button></div>
+  <div class="db"><p class="mu">users-march.csv · nobody is added until you confirm.</p><div><p class="md" style="margin-bottom:6px">3 Users to Add</p>${FROM_FILE.map(u=>`<div class="row" style="padding:8px 0;border-bottom:1px solid var(--bd)"><span>${u.n}</span><span class="mu">${u.r}${u.l?' · '+u.l:''}</span></div>`).join('')}</div>
+  <div><p class="md" style="margin-bottom:6px">1 Row Won’t Be Added</p><p style="color:var(--amtx)">Row 5: Please check Kwame Boadu’s mobile number.</p></div></div>
+  <div class="df"><button class="btn out" data-act="close">Cancel</button><button class="btn am" data-act="confirm">Add 3 Users</button></div></div></div>`;
+ if(dialog)return `<div class="modal"><div class="dlg"><div class="dh"><span class="md" style="font-size:18px">Add Users</span><button class="btn gh sm" style="width:32px;padding:0" data-act="close">${I.x}</button></div>
+  <div class="db">${V===5?`<div class="segc"><button class="${dialog==='one'?'on':''}" data-act="one">One User</button><button class="${dialog==='many'?'on':''}" data-act="many">Many Users</button></div>`:''}
+  ${dialog==='many'?`<div class="zone" style="flex-direction:column;text-align:center;padding:32px" data-act="upload"><span class="ico">${I.sheet}</span><span class="md">Drop your CSV file here</span><span class="mu s12">or <span class="link">choose a file</span></span></div><p class="mu s12">Use our template so the columns match. <button class="link" data-act="tpl">Download the CSV template</button></p>`
+   :`<div class="fld"><label>Full Name</label><div class="inp"></div></div><div class="fld"><label>Email Address</label><div class="inp">name@company.com</div></div><div class="fld"><label>Mobile Number</label><div class="inp">+233  24 123 4567</div></div><div class="fld"><label>Role</label><div class="inp">Select a role</div></div><p class="mu s12">The form is the one in the app; here Add drops in a sample user.</p>`}</div>
+  <div class="df"><button class="btn out" data-act="close">Cancel</button>${dialog==='many'?'':`<button class="btn am" data-act="addone">Add User</button>`}</div></div></div>`;
+ return '';
+}
+function render(){
+ $('#pills').innerHTML=NOTES.map((n,i)=>`<button class="pill ${i+1===V?'on':''}" data-v="${i+1}">${i+1} ${n[0]}</button>`).join('');
+ $('#note').innerHTML=`<b>${V}. ${NOTES[V-1][0]}.</b> ${NOTES[V-1][1]} <span class="mu">Upload opens the review with a sample file; Add drops in a sample user.</span>`;
+ const steps=['Your details','Company details','Accounts','Authorised users','Letter of request'];
+ $('#win').innerHTML=`<div class="apphd"><span class="logo"><i></i>Internet Banking</span></div><div class="body">
+  <nav class="nav"><ol style="list-style:none;margin:0;padding:0">${steps.map((s,i)=>`<li style="display:flex;gap:12px"><span style="display:flex;flex-direction:column;align-items:center"><span class="dot ${i<3?'ok':''} ${i===3?'cur':''}">${i<3?'✓':i+1}</span>${i<4?'<span class="ln"></span>':''}</span><span style="padding:2px 0 20px;${i===3?'font-weight:500':''};color:${i>3?'var(--mu)':'var(--tx)'}">${s}</span></li>`).join('')}</ol></nav>
+  <div class="main"><div class="scroll"><div class="col"><button class="back">${I.back}Back</button>
+   <div class="hd"><h2>Authorised Users</h2><p>Please add each person who will use internet banking. Inputters and authorisers may also view.</p></div>
+   <div style="display:flex;flex-direction:column;gap:16px">${content()}</div></div></div>
+   <div class="foot"><div class="in"><button class="btn out xl">Previous</button><button class="btn am xl" ${users.length?'':'disabled'}>${users.length?'Continue':'Add a User'}</button></div></div></div></div>${overlay()}`;
+}
+const addOne=()=>{users.push({n:['Kwesi Ofori','Abena Sarpong','Nana Boateng'][users.length%3],r:'Viewer',l:''});};
+document.addEventListener('click',e=>{
+ const v=e.target.closest('[data-v]');if(v){V=+v.dataset.v;reset();render();return;}
+ const t=e.target.closest('[data-t]');if(t){document.documentElement.dataset.theme=t.dataset.t;document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b===t));return;}
+ const s=e.target.closest('[data-s]');if(s){S=s.dataset.s;document.querySelectorAll('#state button').forEach(b=>b.classList.toggle('on',b===s));reset();render();return;}
+ const a=e.target.closest('[data-act]');
+ if(!a){if(menu){menu=false;render();}return;}
+ const k=a.dataset.act;
+ if(k==='menu'){menu=!menu;render();return;}
+ menu=false;
+ if(k==='add'){if(V===5){dialog='one';}else{addOne();}render();return;}
+ if(k==='dialog'){dialog='one';render();return;}
+ if(k==='one'||k==='many'){dialog=k;render();return;}
+ if(k==='addone'){addOne();dialog=null;render();return;}
+ if(k==='upload'){review=true;dialog=null;render();return;}
+ if(k==='tpl'){const b=a.textContent;a.textContent='Template downloaded';setTimeout(()=>render(),900);return;}
+ if(k==='me'){users.unshift({n:'Adwoa Mensah',r:'Inputter',l:'GHS 10,000.00'});meAdded=true;render();return;}
+ if(k==='close'){review=false;dialog=null;render();return;}
+ if(k==='confirm'){users.push(...FROM_FILE.map(x=>({...x})));review=false;render();return;}
+});
+document.addEventListener('dragover',e=>{if(e.target.closest('#zone')){e.preventDefault();if(!drag){drag=true;render();}}});
+document.addEventListener('dragleave',e=>{if(drag&&!e.target.closest('#zone')){drag=false;render();}});
+document.addEventListener('drop',e=>{if(e.target.closest('#zone')){e.preventDefault();drag=false;review=true;render();}});
+reset();render();
+</script>
+</body>
+</html>

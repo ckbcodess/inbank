@@ -44,7 +44,7 @@ export default function LetterUpload({
                 {file.name} · <span className="tabular">{file.size}</span>
               </>
             ) : (
-              "PDF or photo, signed and stamped"
+              "PDF or Word, signed and stamped"
             )}
           </p>
         </div>
@@ -64,7 +64,7 @@ export default function LetterUpload({
           <input
             type="file"
             id={`letter-${id}`}
-            accept=".pdf,.jpg,.jpeg,.png"
+            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             className="sr-only"
             onChange={(e) => {
               const chosen = e.target.files?.[0];

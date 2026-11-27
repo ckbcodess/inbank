@@ -30,7 +30,7 @@ import {
 } from "@/lib/corporate/onboarding";
 import { setFirstRun, setPendingReferral } from "@/lib/device-trust";
 import { companyUserFor } from "@/lib/corporate/controls";
-import { displayDateOfBirth, isCompleteDateOfBirth, parseDateOfBirth } from "@/lib/date-of-birth";
+import { isCompleteDateOfBirth, parseDateOfBirth } from "@/lib/date-of-birth";
 import { findAccount, formatMoney } from "@/lib/mock-data";
 
 type Step = "invite" | "identity" | "otp" | "password" | "pin" | "confirm_pin";
@@ -66,7 +66,7 @@ function BusinessActivateContent() {
   const [isExpired, setIsExpired] = useState(expiredParam);
   const [isLocked, setIsLocked] = useState(outcomeParam === "locked");
 
-  const [birthInput, setBirthInput] = useState(displayDateOfBirth(BUSINESS_INVITE_DEMO.dateOfBirthOnRecord));
+  const [birthInput, setBirthInput] = useState("");
   const [mismatchCount, setMismatchCount] = useState(0);
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
