@@ -2,13 +2,13 @@ import type { Actor } from "./roles";
 
 /**
  * Launch switches. Local development (`npm run dev`) keeps everything open.
- * In a production build each door stays closed until its env var is "true"
- * on the host. Retail login is always open. Onboarding is never gated.
+ * In a production build the admin doors stay closed until their env var is "true"
+ * on the host. Retail and business login are always open. Onboarding is never gated.
  */
 const isDev = process.env.NODE_ENV !== "production";
 
-/** Business login (the business door and any business credentials). Closed in production: a work-in-progress screen. */
-export const BUSINESS_SIGN_IN_OPEN = isDev || process.env.NEXT_PUBLIC_BUSINESS_SIGN_IN_OPEN === "true";
+/** Business login (the business door and any business credentials). Open everywhere, production too (designer, 2026-11-27). */
+export const BUSINESS_SIGN_IN_OPEN = true;
 
 /** Bank staff login (the admin portal). Closed in production. */
 export const ADMIN_SIGN_IN_OPEN = isDev || process.env.NEXT_PUBLIC_ADMIN_SIGN_IN_OPEN === "true";

@@ -33,7 +33,7 @@ function LoginForm() {
   const { signIn } = useSession();
   // Set when login is closed: the form is replaced by the work-in-progress screen.
   const [closed, setClosed] = useState(false);
-  // Business login is closed for now (lib/launch.ts). Retail login is open.
+  // Each door's login is set in lib/launch.ts. Retail and business are open.
   const doorOpen = bankingType !== "business" || BUSINESS_SIGN_IN_OPEN;
 
   const [mobile, setMobile] = useState("");
@@ -58,7 +58,7 @@ function LoginForm() {
     setState("submitting");
 
     window.setTimeout(() => {
-      // Business login is closed for now: the work-in-progress screen, whatever credentials were entered.
+      // A closed door shows the work-in-progress screen, whatever credentials were entered.
       if (!doorOpen) {
         setClosed(true);
         return;

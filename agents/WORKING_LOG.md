@@ -182,6 +182,10 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-11-27
+
+- Decision (designer): business login is open in production, so the login screen shows Switch to Business Banking on the live site. `BUSINESS_SIGN_IN_OPEN` in `lib/launch.ts` is now always true; admin login and the enrolment portal stay closed.
+
 ### 2026-11-26
 - Decision (bank meeting): corporate onboarding collects company info and a request letter online; account and user verification stays in-house (staff copy the account number from the letter, check signatures, pull Flexcube details, pick services and accounts, create users). Nothing is looked up from what the applicant types: an account number returning a company name lets anyone probe accounts.
 - Conflict (bank meeting vs PRODUCT): retail covers personal and joint accounts only. Sole proprietors go through the corporate form, not account number + date of birth self-onboarding, because they may add their own users.
@@ -230,7 +234,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Discovery (form call, 2026-10-22, missed before): some companies already fill the form as a PDF, add e-signatures and send it to the RM, who checks them against the mandate. So our print-only letter may be stricter than today.
 - Gap: companies already on the old platform have no business migration flow (`/migrate` is personal), though they are migrated with a password reset. 
 - Decision (proposed, not adopted): corporate onboarding plan. The application collects everything the bank sets up, so the signatories sign a complete setup and staff confirm it instead of retyping. Order: the application and letter, activation, bank setup, migration, then later changes as a request the bank confirms.
-- Decision (designer): branch `corporate-v2` brings business back. The login screen links to the business door wherever business login is open (it was dropped 2026-09-29). Production stays closed by `lib/launch.ts` until `NEXT_PUBLIC_BUSINESS_SIGN_IN_OPEN` is set.
+- Decision (designer): branch `corporate-v2` brings business back. The login screen links to the business door wherever business login is open (it was dropped 2026-09-29). Business login is now open in production too (2026-11-27).
 - Decision (designer: the bank's form is current): the application is now account, who's applying, code, check the company and who signs, accounts, people, review, letter. Each person has a role, limit (default GHS 10,000), services and accounts; many can be added from a CSV. Outdated signatories are stopped before anything is filled in. The letter carries all of it. Changing people or accounts clears an uploaded letter.
 - Decision: nothing the bank holds shows before the code. A signatory is found by their mobile, not picked from a list, and only the entered account starts ticked.
 - Override: `/business/activate` matches date of birth instead of the Ghana Card number (PRODUCT updated). The email link and the SMS code stay separate channels.
@@ -272,7 +276,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Override (designer): the "Hide/Show floating dev tools" item in the account menu (`components/layout/TopHeader.tsx`) now shows in the production build. It was gated on `NODE_ENV !== "production"`. `SHOW_DEMO_TOOLS` is unchanged, so the colour tuner, sandboxes and studios still stay out of production.
 - Decision (designer): the Dev Mode panel, header button and `HeroWaveTuner` stay live in production, so user types can be switched as on localhost. `SHOW_DEMO_TOOLS` still gates the colour tuner, sandboxes and the look and exploration switches. `ColorTuner` and `BackdropTuner` were already dev-only.
 - Override (designer): CONSTITUTION §10 now names the production exceptions: the Dev Mode panel with its header button and pre-auth pill, the Demo hub, the hero wave tuner and the dev-tools toggle. Anything else still needs the designer.
-- Gap: the business and admin sign-in doors are closed in production (`lib/launch.ts`). The `signInOpenFor` check is only on `/login`, so the Dev Mode panel's switch to a business or admin user should not hit it. Not yet confirmed in a production build.
+- Gap: the admin sign-in door is closed in production (business opened 2026-11-27) (`lib/launch.ts`). The `signInOpenFor` check is only on `/login`, so the Dev Mode panel's switch to a business or admin user should not hit it. Not yet confirmed in a production build.
 - Gap: "Hide floating dev tools" / "Show floating dev tools" are English-only and not in the i18n catalog. They now reach production as well.
 - Decision (designer): the identity partner window (`components/auth/IdentityPartnerWindow.tsx`) completes the check by itself 3 seconds after the QR code appears, in every build, the same way the demo's "Finish on Phone" does. It uses the selected demo outcome, so in production it auto-passes. Gap: gate it on `SHOW_DEMO_TOOLS` before any real partner is wired in, and confirm the 3 seconds against a real phone scan.
 
